@@ -1,13 +1,14 @@
 package executionFlow;
 
+import info.ClassConstructorInfo;
+import info.ClassMethodInfo;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import info.ClassConstructorInfo;
-import info.ClassMethodInfo;
 
 
 /**
@@ -21,8 +22,8 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	private ClassExecutionFlow classExecutionFlow;
 	private Map<Method, List<Integer>> classPaths = new HashMap<>();
-	private List<ClassMethodInfo> methods;
-	private ClassConstructorInfo classConstructorInfo;
+	private Collection<ClassMethodInfo> methods;
+	private Object instance;
 	
 	
 	//-----------------------------------------------------------------------
@@ -37,11 +38,11 @@ public class ExecutionFlow
 	 * @param cci Information about the constructor of {@link classPath} (necessary
 	 * if there are non static methods in {@link ClassMethodInfo the list of methods})
 	 */
-	public ExecutionFlow(String classPath, List<ClassMethodInfo> cmi, ClassConstructorInfo cci) 
+	public ExecutionFlow(String classPath, Collection<ClassMethodInfo> cmi, Object instance) 
 	{
 		this.classExecutionFlow = new ClassExecutionFlow(classPath);
 		this.methods = cmi;
-		this.classConstructorInfo = cci;
+		this.instance = instance;
 	}
 	
 	/**
@@ -52,7 +53,7 @@ public class ExecutionFlow
 	 * @param cmi List of {@link ClassMethodInfo methods} to be analyzed
 	 * @implNote If there are non static methods you also have to pass {@link ClassConstructorInfo}
 	 */
-	public ExecutionFlow(String classPath, List<ClassMethodInfo> cmi) 
+	public ExecutionFlow(String classPath, Collection<ClassMethodInfo> cmi) 
 	{
 		this(classPath, cmi, null);
 	}
@@ -74,7 +75,7 @@ public class ExecutionFlow
 			Method m = entry.getKey();
 			StringBuilder parameterTypes = new StringBuilder();
 			
-			for (var parameterType : m.getParameterTypes()) {
+			for (Class<?> parameterType : m.getParameterTypes()) {
 				parameterTypes.append(parameterType.getTypeName() +",");
 			}
 			
@@ -107,7 +108,10 @@ public class ExecutionFlow
 			methodPath = new ArrayList<>();
 			
 			// Para cada metodo calcula seu path
-			mef = new MethodExecutionFlow(classExecutionFlow, method, classConstructorInfo);
+			if (instance == null)
+				mef = new MethodExecutionFlow(classExecutionFlow, method, method.getInstance());
+			else
+				mef = new MethodExecutionFlow(classExecutionFlow, method, instance);
 			
 			methodPath.addAll( mef.execute().getMethodPath() );
 			classPaths.put(classExecutionFlow.getMethod(method.getSignature()), methodPath);

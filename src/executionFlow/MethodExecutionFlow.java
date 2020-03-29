@@ -19,24 +19,23 @@ public class MethodExecutionFlow
 	private String methodName;
 	private List<Integer> methodPath;
 	private String methodSignature;
-	private ClassConstructorInfo cci;
-	
-	/**
-	 * Method's parameters
-	 */
+	//private ClassConstructorInfo cci;
 	private Object[] args;
+	private Object instance;
 	
 
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
-	public MethodExecutionFlow(ClassExecutionFlow classExecutionFlow, ClassMethodInfo cmi, ClassConstructorInfo cci) 
+	//public MethodExecutionFlow(ClassExecutionFlow classExecutionFlow, ClassMethodInfo cmi, ClassConstructorInfo cci) 
+	public MethodExecutionFlow(ClassExecutionFlow classExecutionFlow, ClassMethodInfo cmi, Object instance)
 	{
 		this.classExecutionFlow = classExecutionFlow;
 		this.methodName = cmi.getMethodName();
 		this.args = cmi.getArgs();
 		this.methodSignature = cmi.getSignature();
-		this.cci = cci;
+		this.instance = instance;
+		//this.cci = cci;
 	}
 
 
@@ -51,7 +50,7 @@ public class MethodExecutionFlow
 	private MethodType getMethodType() 
 	{
 		Method m = classExecutionFlow.getMethod(methodSignature);
-		var params = m.getParameterTypes();
+		Class<?>[] params = m.getParameterTypes();
 		
 		return methodType(m.getReturnType(), params);
 	}
@@ -73,7 +72,7 @@ public class MethodExecutionFlow
 		if (methodName == null) { return this; }
 		
 		MethodType mt = getMethodType();
-		methodPath = CheapCoverage.getExecutionPath(methodName, mt, args, cci);
+		methodPath = CheapCoverage.getExecutionPath(methodName, mt, args, instance);
 
 		return this;
 	}

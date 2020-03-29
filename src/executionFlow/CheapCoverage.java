@@ -12,6 +12,7 @@ import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
 
 import java.io.IOException;
 import java.lang.constant.MethodTypeDesc;
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -105,21 +106,21 @@ public class CheapCoverage
 	}
 	
 	
-	// Só funciona com métodos estáticos
-	public static List<Integer> getExecutionPath(String methodName, MethodType methodTypes, Object[] args, ClassConstructorInfo cci) throws Throwable 
+	// Sï¿½ funciona com mï¿½todos estï¿½ticos
+	public static List<Integer> getExecutionPath(String methodName, MethodType methodTypes, Object[] args, Object instance) throws Throwable 
 	{
 		RT.clearExecutionPath();
 
 		try {	// Try to invoke the method as static
-			var mh = lookup().findStatic(parsedClass, methodName, methodTypes);
+			MethodHandle mh = lookup().findStatic(parsedClass, methodName, methodTypes);
 			mh.invokeWithArguments(args);
 		} catch(Throwable t) {		// Try to invoke the method as non static
-			var mh = lookup().findVirtual(parsedClass, methodName, methodTypes);
+			MethodHandle mh = lookup().findVirtual(parsedClass, methodName, methodTypes);
 			
-			if (cci == null)	// Constructor default (empty)
+			if (instance == null)	// Constructor default (empty)
 				mh = mh.bindTo(parsedClass.getConstructor().newInstance());
 			else
-				mh = mh.bindTo(parsedClass.getConstructor(cci.getInitTypes()).newInstance(cci.getInitArgs()));
+				mh = mh.bindTo(instance);
 			
 			mh.invokeWithArguments(args);
 		}

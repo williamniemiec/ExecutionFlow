@@ -1,5 +1,7 @@
 package info;
 
+import java.util.Arrays;
+
 
 public class ClassMethodInfo 
 {
@@ -9,6 +11,7 @@ public class ClassMethodInfo
 	private String methodName;
 	private Class<?>[] parameterTypes;
 	private Object[] args;
+	private Object instance;
 	
 	
 	//-----------------------------------------------------------------------
@@ -25,10 +28,17 @@ public class ClassMethodInfo
 	{
 		this.methodName = methodName;
 	}
+	
+	
+	public ClassMethodInfo(Object instance, String methodName, Class<?>[] parameterTypes, Object... args) 
+	{
+		this(methodName, parameterTypes, args);
+		this.instance = instance;
+	}
 
 	
 	//-----------------------------------------------------------------------
-	//		Getters
+	//		Getters & Setters
 	//-----------------------------------------------------------------------
 	public String getMethodName() 
 	{
@@ -40,7 +50,7 @@ public class ClassMethodInfo
 		StringBuilder types = new StringBuilder();
 		
 		if (parameterTypes != null) {
-			for (var paramType : parameterTypes) {
+			for (Class<?> paramType : parameterTypes) {
 				types.append(paramType.getTypeName()+",");
 			}
 			
@@ -59,5 +69,33 @@ public class ClassMethodInfo
 	public Object[] getArgs() 
 	{
 		return args;
+	}
+	
+	public Object getInstance() 
+	{
+		return instance;
+	}
+	
+	public void setInstance(Object instance) 
+	{
+		this.instance = instance;
+	}
+	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
+	public boolean hasInstance()
+	{
+		return instance != null;
+	}
+
+	@Override
+	public String toString() 
+	{
+		return "ClassMethodInfo [methodName=" + methodName
+				+ ", parameterTypes=" + Arrays.toString(parameterTypes)
+				+ ", args=" + Arrays.toString(args) + ", instance=" + instance
+				+ "]";
 	}
 }
