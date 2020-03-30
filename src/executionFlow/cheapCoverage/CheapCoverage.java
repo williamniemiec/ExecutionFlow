@@ -1,4 +1,4 @@
-package executionFlow;
+package executionFlow.cheapCoverage;
 
 import static java.lang.constant.ConstantDescs.CD_CallSite;
 import static java.lang.constant.ConstantDescs.CD_MethodHandles_Lookup;
@@ -16,9 +16,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -26,7 +24,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-import info.ClassConstructorInfo;
+import executionFlow.info.ClassConstructorInfo;
 
 
 /**
@@ -36,26 +34,37 @@ import info.ClassConstructorInfo;
  */
 public class CheapCoverage 
 {
+	//-----------------------------------------------------------------------
+	//		Attributes
+	//-----------------------------------------------------------------------
 	private static final Handle BSM = new Handle(H_INVOKESTATIC, RT.class.getName().replace('.', '/'), "bsm",
 			MethodTypeDesc.of(CD_CallSite, CD_MethodHandles_Lookup, CD_String, CD_MethodType, CD_String, CD_int)
 					.descriptorString(),
 			false);
-	
 	private static Class<?> parsedClass;
+	
 	
 	// ####################### DEBUG #######################
 	/*
 	public static void main(String... args) 
 	{
 		try {
-			parseClass("Calculator.class");
-			//int[] a = new int[] {2, 3};
-			ArrayList<Integer> l = new ArrayList<>();
-			l.add(2);
-			l.add(3);
+			//parseClass("Calculator.class");
+			String classPath = "C:\\Users\\William Niemiec\\Documents\\IC.local\\workspace_ec12\\ExecutionFlow\\bin\\runtime\\Te.class";
+			Map<String, Object[]> methods = new HashMap<>();
+			methods.put("teste", Arrays.asList(2,3, "Teste").toArray());
+			
+			parseClass(classPath);
+			
+			List<ClassMethodInfo> classMethodInfo = new ArrayList<>();
+			classMethodInfo.add(new ClassMethodInfo("teste3", new Class<?>[] {int.class, int.class, String.class}, 2,3, "teste"));
+
 			//List<Integer> path = getExecutionPath("sum", methodType(int.class, int.class, int.class), new int[] {2, 3});
 			//List<Integer> path = getExecutionPath("sum", methodType(int.class, int.class, int.class), l.toArray());
-			List<Integer> path = getExecutionPath("sum", methodType(int.class, int.class, int.class), l.toArray());
+			//List<Integer> path = getExecutionPath("sum", methodType(int.class, int.class, int.class), l.toArray());
+			//Object instance = new Te();
+			ClassConstructorInfo cci = new ClassConstructorInfo(new Class<?>[] {int.class}, 55);
+			List<Integer> path = getExecutionPath("teste3", methodType(void.class, int.class, int.class, String.class), Arrays.asList(2,3, "Teste").toArray(), cci);
 			System.out.println(path);
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -63,8 +72,13 @@ public class CheapCoverage
 	}
 	*/
 	// #####################################################
-
+	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	public static Class<?> getParsedClass() { return parsedClass; }
+	
 	
 	public static void parseClass(String classPath) throws IOException 
 	{
@@ -81,10 +95,7 @@ public class CheapCoverage
 			@Override
 			public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 					String[] exceptions) 
-			{
-				//System.out.println("sig: "+signature);
-				//System.out.println("name: "+name);
-				
+			{	
 				var mv = super.visitMethod(access, name, descriptor, signature, exceptions);
 				
 				return new MethodVisitor(ASM7, mv) {
@@ -106,25 +117,30 @@ public class CheapCoverage
 	}
 	
 	
-	// S� funciona com m�todos est�ticos
-	public static List<Integer> getExecutionPath(String methodName, MethodType methodTypes, Object[] args, Object instance) throws Throwable 
+	public static List<Integer> getExecutionPath(String methodName, MethodType methodTypes, Object[] args, ClassConstructorInfo cci) throws Throwable 
 	{
 		RT.clearExecutionPath();
-
-		try {	// Try to invoke the method as static
+		
+		try {						// Try to invoke the method as static
 			MethodHandle mh = lookup().findStatic(parsedClass, methodName, methodTypes);
 			mh.invokeWithArguments(args);
 		} catch(Throwable t) {		// Try to invoke the method as non static
 			MethodHandle mh = lookup().findVirtual(parsedClass, methodName, methodTypes);
 			
-			if (instance == null)	// Constructor default (empty)
+			if (cci == null)		// Constructor default (empty)
 				mh = mh.bindTo(parsedClass.getConstructor().newInstance());
 			else
-				mh = mh.bindTo(instance);
+				mh = mh.bindTo(parsedClass.getConstructor(cci.getConstructorTypes()).newInstance(cci.getConstructorArgs()));
 			
 			mh.invokeWithArguments(args);
 		}
 		
-		return RT.getExecutionPath();
+		// Remove last line if method has no return (otherwise it considers empty return line)
+		List<Integer> path = RT.getExecutionPath();
+		
+		if (methodTypes.returnType() == void.class)
+			path.remove(path.size()-1);
+		
+		return path;
 	}
 }

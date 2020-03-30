@@ -1,4 +1,5 @@
 package executionFlow;
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -6,11 +7,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
+import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.ClassMethodInfo;
 
-import info.ClassConstructorInfo;
-import info.ClassMethodInfo;
 
 public class ExecutionFlowTest 
 {
@@ -33,7 +33,7 @@ public class ExecutionFlowTest
 		
 		// Expected result
 		Map<String, List<Integer>> expectedClassPaths = new HashMap<>();
-		expectedClassPaths.put("Math.Calculator.loop()", Arrays.asList(19, 21, 22, 21, 22, 21, 22, 21, 24));
+		expectedClassPaths.put("Math.Calculator.loop()", Arrays.asList(19, 21, 22, 21, 22, 21, 22, 21));
 		expectedClassPaths.put("Math.Calculator.sum(int,int)", Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14));
 		
 		// Results obtained
@@ -88,7 +88,7 @@ public class ExecutionFlowTest
 		
 		// Expected result
 		Map<String, List<Integer>> expectedClassPaths = new HashMap<>();
-		expectedClassPaths.put("Math.CalculatorNonStaticWithConstructor.loop()", Arrays.asList(27,29,30,29,30,29,32));
+		expectedClassPaths.put("Math.CalculatorNonStaticWithConstructor.loop()", Arrays.asList(27,29,30,29,30,29));
 		
 		// Results obtained
 		ef.execute().export();

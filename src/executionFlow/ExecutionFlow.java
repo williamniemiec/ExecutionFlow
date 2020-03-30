@@ -1,8 +1,5 @@
 package executionFlow;
 
-import info.ClassConstructorInfo;
-import info.ClassMethodInfo;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,10 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.ClassMethodInfo;
+
 
 /**
  * Given a class path and specific methods calculate the execution path for each
- * of these methods
+ * of these methods. This is the main class of execution flow
  */
 public class ExecutionFlow 
 {
@@ -22,8 +22,8 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	private ClassExecutionFlow classExecutionFlow;
 	private Map<Method, List<Integer>> classPaths = new HashMap<>();
-	private Collection<ClassMethodInfo> methods;
-	private Object instance;
+	private ClassConstructorInfo cci;
+	private List<ClassMethodInfo> methods = new ArrayList<>();
 	
 	
 	//-----------------------------------------------------------------------
@@ -35,32 +35,32 @@ public class ExecutionFlow
 	 * 
 	 * @param classPath Path of the class, including ".class" in the end
 	 * @param cmi List of {@link ClassMethodInfo methods} to be analyzed
-	 * @param cci Information about the constructor of {@link classPath} (necessary
+	 //*@param cci Information about the constructor of {@link classPath} (necessary
 	 * if there are non static methods in {@link ClassMethodInfo the list of methods})
 	 */
-	public ExecutionFlow(String classPath, Collection<ClassMethodInfo> cmi, Object instance) 
+	public ExecutionFlow(String classPath, Collection<ClassMethodInfo> cmi, ClassConstructorInfo cci) 
 	{
-		this.classExecutionFlow = new ClassExecutionFlow(classPath);
-		this.methods = cmi;
-		this.instance = instance;
+		this(classPath, cmi);
+		this.cci = cci;
 	}
 	
 	/**
 	 * Given a class path and specific methods calculate the execution path for each
-	 * of these methods
+	 * of these methods. Use this constructor if there are not concrete methods.
 	 * 
 	 * @param classPath Path of the class, including ".class" in the end
 	 * @param cmi List of {@link ClassMethodInfo methods} to be analyzed
-	 * @implNote If there are non static methods you also have to pass {@link ClassConstructorInfo}
+	 * @implNote If there is a non static methods you also have to pass {@link ClassConstructorInfo}
 	 */
 	public ExecutionFlow(String classPath, Collection<ClassMethodInfo> cmi) 
 	{
-		this(classPath, cmi, null);
+		this.classExecutionFlow = new ClassExecutionFlow(classPath);
+		this.methods.addAll(cmi);		// It is necessary to avoid ConcurrentModificationException
 	}
 	
 	
 	//-----------------------------------------------------------------------
-	//		Getters & Setters
+	//		Getters
 	//-----------------------------------------------------------------------
 	/**
 	 * Give method's execution path
@@ -80,7 +80,7 @@ public class ExecutionFlow
 			}
 			
 			if (parameterTypes.length() > 0)
-				parameterTypes.deleteCharAt(parameterTypes.length()-1);	// Remove last comma
+				parameterTypes.deleteCharAt(parameterTypes.length()-1);		// Remove last comma
 			
 			String signature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
 			
@@ -90,33 +90,30 @@ public class ExecutionFlow
 		return response; 
 	}
 	
-	public void setMethodPath(Method method, List<Integer> path) {
-		classPaths.put(method, path);
-	}
-	
 
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
-	public ExecutionFlow execute() throws Throwable {
-		// Percorre tds metodos
+	/**
+	 * Walk the method recording its execution path and save the result in
+	 * {@link #classPaths}
+	 * 
+	 * @return The instance (to allow chained calls)
+	 * @throws Throwable If an error occurs
+	 */
+	public ExecutionFlow execute() throws Throwable 
+	{
 		List<Integer> methodPath = new ArrayList<>();
 		MethodExecutionFlow mef;
 		
-		//for (Map.Entry<String, Object[]> entry : methods.entrySet()) {
 		for (ClassMethodInfo method : methods) {
 			methodPath = new ArrayList<>();
-			
-			// Para cada metodo calcula seu path
-			if (instance == null)
-				mef = new MethodExecutionFlow(classExecutionFlow, method, method.getInstance());
-			else
-				mef = new MethodExecutionFlow(classExecutionFlow, method, instance);
+			mef = new MethodExecutionFlow(classExecutionFlow, method, cci);
 			
 			methodPath.addAll( mef.execute().getMethodPath() );
 			classPaths.put(classExecutionFlow.getMethod(method.getSignature()), methodPath);
+			
 		}
-		
 		return this;
 	}
 	
@@ -124,6 +121,7 @@ public class ExecutionFlow
 	 * Show info on display, where info is:
 	 * <li>Method's signature</li>
 	 * <li>Method's execution path</li>
+	 * @implNote This method will be changed to export to a file
 	 */
 	public void export() 
 	{

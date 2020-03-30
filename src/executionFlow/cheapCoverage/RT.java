@@ -1,4 +1,4 @@
-package executionFlow;
+package executionFlow.cheapCoverage;
 
 import static java.lang.invoke.MethodHandles.insertArguments;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -13,8 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Helper class for {@link CheapCoverage}
+ * 
+ * Modified from {@link https://github.com/forax/cheapcoverage}
+ */
 public class RT 
 {
+	//-----------------------------------------------------------------------
+	//		Attributes
+	//-----------------------------------------------------------------------
 	private static final MethodHandle PROBE;
 	private static List<Integer> path = new ArrayList<>();
 	private static int lastAddLine = 0;
@@ -28,10 +36,13 @@ public class RT
 	}
 
 	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@SuppressWarnings("unused")
 	private static void probe(String method, int line) 
 	{
-		if (!method.contains("<init>") && line != lastAddLine) {	// Não considera linhas do construtor
+		if (!method.contains("<init>") && !method.contains("<clinit>") && !method.contains("preClinit") && line != lastAddLine) {	// Não considera linhas do construtor
 			path.add(line);
 			lastAddLine = line;
 		}

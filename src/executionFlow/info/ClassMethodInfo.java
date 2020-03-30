@@ -1,8 +1,11 @@
-package info;
+package executionFlow.info;
 
 import java.util.Arrays;
 
 
+/**
+ * Stores information about a class' method
+ */
 public class ClassMethodInfo 
 {
 	//-----------------------------------------------------------------------
@@ -11,12 +14,19 @@ public class ClassMethodInfo
 	private String methodName;
 	private Class<?>[] parameterTypes;
 	private Object[] args;
-	private Object instance;
+	private String classPath;
 	
 	
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
+	/**
+	 * Create a MethodInfo for a method with arguments
+	 * 
+	 * @param methodName Method's name
+	 * @param parameterTypes Types of method's parameters
+	 * @param args Method's values
+	 */
 	public ClassMethodInfo(String methodName, Class<?>[] parameterTypes, Object... args) 
 	{
 		this.methodName = methodName;
@@ -24,16 +34,14 @@ public class ClassMethodInfo
 		this.args = args;
 	}
 	
+	/**
+	 * Create a MethodInfo for a method without arguments
+	 * 
+	 * @param methodName Method's name
+	 */
 	public ClassMethodInfo(String methodName) 
 	{
 		this.methodName = methodName;
-	}
-	
-	
-	public ClassMethodInfo(Object instance, String methodName, Class<?>[] parameterTypes, Object... args) 
-	{
-		this(methodName, parameterTypes, args);
-		this.instance = instance;
 	}
 
 	
@@ -45,57 +53,56 @@ public class ClassMethodInfo
 		return methodName;
 	}
 	
-	public String getSignature()
-	{
-		StringBuilder types = new StringBuilder();
-		
-		if (parameterTypes != null) {
-			for (Class<?> paramType : parameterTypes) {
-				types.append(paramType.getTypeName()+",");
-			}
-			
-			if (types.length() > 0)
-				types.deleteCharAt(types.length()-1);	// Remove last comma
-		}
-		
-		return methodName+"("+types+")";
-	}
-
 	public Class<?>[] getParameterTypes() 
 	{
 		return parameterTypes;
 	}
-
+	
 	public Object[] getArgs() 
 	{
 		return args;
 	}
 	
-	public Object getInstance() 
+	public String getClassPath()
 	{
-		return instance;
+		return this.classPath;
 	}
 	
-	public void setInstance(Object instance) 
+	public void setClassPath(String classPath)
 	{
-		this.instance = instance;
+		this.classPath = classPath;
 	}
 	
+	/**
+	 * Get method's signature with the following format:<br />
+	 * <code> methodPackage.methodName(arg1,arg2,...) </code>
+	 * 
+	 * @return Method's signature
+	 */
+	public String getSignature()
+	{
+		if (parameterTypes == null) { return methodName+"()"; }
+		
+		StringBuilder types = new StringBuilder();
+		
+		for (Class<?> paramType : parameterTypes) {
+			types.append(paramType.getTypeName()+",");
+		}
+		
+		if (types.length() > 0)
+			types.deleteCharAt(types.length()-1);	// Remove last comma
+		
+		return methodName+"("+types+")";
+	}
+
 	
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
-	public boolean hasInstance()
-	{
-		return instance != null;
-	}
-
 	@Override
 	public String toString() 
 	{
-		return "ClassMethodInfo [methodName=" + methodName
-				+ ", parameterTypes=" + Arrays.toString(parameterTypes)
-				+ ", args=" + Arrays.toString(args) + ", instance=" + instance
-				+ "]";
-	}
+		return "ClassMethodInfo [methodName=" + methodName + ", parameterTypes=" + Arrays.toString(parameterTypes)
+		+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + "]";
+	}	
 }
