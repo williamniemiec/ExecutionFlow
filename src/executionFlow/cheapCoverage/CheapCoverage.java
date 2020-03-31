@@ -44,36 +44,6 @@ public class CheapCoverage
 	private static Class<?> parsedClass;
 	
 	
-	// ####################### DEBUG #######################
-	/*
-	public static void main(String... args) 
-	{
-		try {
-			//parseClass("Calculator.class");
-			String classPath = "C:\\Users\\William Niemiec\\Documents\\IC.local\\workspace_ec12\\ExecutionFlow\\bin\\runtime\\Te.class";
-			Map<String, Object[]> methods = new HashMap<>();
-			methods.put("teste", Arrays.asList(2,3, "Teste").toArray());
-			
-			parseClass(classPath);
-			
-			List<ClassMethodInfo> classMethodInfo = new ArrayList<>();
-			classMethodInfo.add(new ClassMethodInfo("teste3", new Class<?>[] {int.class, int.class, String.class}, 2,3, "teste"));
-
-			//List<Integer> path = getExecutionPath("sum", methodType(int.class, int.class, int.class), new int[] {2, 3});
-			//List<Integer> path = getExecutionPath("sum", methodType(int.class, int.class, int.class), l.toArray());
-			//List<Integer> path = getExecutionPath("sum", methodType(int.class, int.class, int.class), l.toArray());
-			//Object instance = new Te();
-			ClassConstructorInfo cci = new ClassConstructorInfo(new Class<?>[] {int.class}, 55);
-			List<Integer> path = getExecutionPath("teste3", methodType(void.class, int.class, int.class, String.class), Arrays.asList(2,3, "Teste").toArray(), cci);
-			System.out.println(path);
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
-	*/
-	// #####################################################
-	
-	
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------

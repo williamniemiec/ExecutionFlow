@@ -10,8 +10,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.ExecutionFlow;
-
 
 /**
  * Helper class used to create a bridge between data collected with AOP and {@link ExecutionFlow}
