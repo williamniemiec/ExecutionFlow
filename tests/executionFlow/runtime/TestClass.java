@@ -4,7 +4,6 @@ package executionFlow.runtime;
 /**
  * Class created for aspect tests
  */
-@Test
 public class TestClass {
 	public TestClass(int x) {
 		x = 2;
