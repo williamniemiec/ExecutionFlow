@@ -3,9 +3,10 @@ package executionFlow.runtime;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import executionFlow.ExecutionFlow;
+import executionFlow.*;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
+import executionFlow.cheapCoverage.*;
 
 
 /**
@@ -61,7 +62,6 @@ public aspect RuntimeCollector {
 													 && !within(CollectorExecutionFlow) 
 													 && !within(ExecutionFlow) 
 													 && !within(ClassExecutionFlow)
-													 && !within(MethodParam)
 													 && !within(RT)
 													 && !within(CheapCoverage);
 	before(): pc2()		// Executed before the end of each internal call of a method with @Test annotation
