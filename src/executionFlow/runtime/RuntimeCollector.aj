@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import executionFlow.*;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.cheapCoverage.*;
 import org.junit.*;
 import org.junit.Assert.*;
+import org.junit.runner.JUnitCore;
 
 
 /**
@@ -22,6 +22,7 @@ import org.junit.Assert.*;
  * <li>Each test only tests methods of a class / constructor</li>
  * <li>Each test must have <code>@Test</code> annotation</li>
  */
+@SuppressWarnings("unused")
 public aspect RuntimeCollector {
 	//-----------------------------------------------------------------------
 	//		Attributes
@@ -33,16 +34,6 @@ public aspect RuntimeCollector {
 	private static boolean firstTime = true;
 	private static String testClassSignature;
 	
-	public void finalize() 
-	{
-		ExecutionFlow ef = new ExecutionFlow(classPath, methodCollector.values(), cci);
-		try {
-			ef.execute().export();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
-	
 	
 	//-----------------------------------------------------------------------
 	//		Pointcuts
@@ -51,9 +42,9 @@ public aspect RuntimeCollector {
 	 * Captures all executed methods with <code>@Test</code> annotation, not including
 	 * internal calls.
 	 */
-	pointcut pc3(): execution(void executionFlow.runtime.JUnitTest.*(*)) && !within(RuntimeCollector);
+	pointcut pc3(): execution(@Test * *.*()) && !within(RuntimeCollector);
 	after() returning(): pc3() 		// Executed after the end of a method with @Test annotation
-	{
+	{	
 		// Reset firstTime flag
 		firstTime = true;
 		
@@ -65,6 +56,40 @@ public aspect RuntimeCollector {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	/**
+	 * Captures class instantiation
+	 */
+	pointcut collectConstructor(): preinitialization(*.new(*)) 	&& !within(RuntimeCollector) 
+																&& !within(CollectorExecutionFlow) 
+																&& !within(ExecutionFlow) 
+																&& !within(ClassExecutionFlow)
+																&& !within(RT)
+																&& !within(CheapCoverage)
+																&& !call(* org.junit.runner.JUnitCore.runClasses(*))
+																&& !call(void org.junit.Assert.*(*,*));
+	after(): collectConstructor()
+	{
+		String signature = thisJoinPoint.getSignature().toString();
+		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]+\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
+		
+		// Collect constructor data
+		Class<?>[] consParamTypes;		// Constructor parameter types
+		Object[] consParamValues;		// Constructor parameter values
+		
+		// Checks if it is a constructor signature and if it has not been collected yet
+		if (signature.matches(constructorRegex) && !consCollector.containsKey(signature)) {
+			// Extracts constructor data
+			consParamTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
+			consParamValues = thisJoinPoint.getArgs();
+			
+			// Save extracted data
+			consCollector.put(signature, new ClassConstructorInfo(consParamTypes, consParamValues));
+			cci = new ClassConstructorInfo(consParamTypes, consParamValues);
+		}
+	}
+	
 	
 	/**
 	 * Captures all executed methods with <code>@Test</code> annotation, including
@@ -104,30 +129,14 @@ public aspect RuntimeCollector {
 			firstTime = false;
 			return; 
 		}
-		
+				
 		// Ignores native java methods
-		if (signature.contains("java.")) { return; }		
+		if (signature == null || signature.contains("java.")) { return; }
 		
-		// Ignores methods in the method test (with @Test) (will only consider internal calls)
-		if (signature.contains(testClassSignature)) { return; }	
+		// Ignores methods in the method test (with @Test) (it will only consider internal calls)
+		if (testClassSignature != null && signature.contains(testClassSignature)) { return; }	
 		
 		String methodRegex = "[A-z]+\\s([A-z0-9-_$]+\\.)+[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
-		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]+\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
-		
-		// Collect constructor data
-		Class<?>[] consParamTypes;		// Constructor parameter types
-		Object[] consParamValues;		// Constructor parameter values
-		
-		// Checks if it is a constructor signature and if it has not been collected yet
-		if (signature.matches(constructorRegex) && !consCollector.containsKey(signature)) {
-			// Extracts constructor data
-			consParamTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
-			consParamValues = thisJoinPoint.getArgs();
-			
-			// Save extracted data
-			consCollector.put(signature, new ClassConstructorInfo(consParamTypes, consParamValues));
-			cci = new ClassConstructorInfo(consParamTypes, consParamValues);
-		}
 		
 		// Check if is a method signature
 		if (signature.matches(methodRegex)){
@@ -137,24 +146,20 @@ public aspect RuntimeCollector {
 			// Extract types of method parameters (if any)
 			Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
 			
-			// Checks if the method has already been collected
-			if (methodCollector.containsKey(signature)) {
-				// If it was, get its ClassMethodInfo
-				ClassMethodInfo cmi = methodCollector.get(signature);
-				
-				// Gets class path and save its in the method
+			// Gets class path (if has not been found yet)
+			if (classPath == null) {
 				try {
 					classPath = CollectorExecutionFlow.findCurrentClassPath();
-					cmi.setClassPath(classPath);		
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
-			} else {	// If the method has not been collected, collect it
-				 ClassMethodInfo cmi = new ClassMethodInfo(methodName, paramTypes, thisJoinPoint.getArgs());
-				 methodCollector.put(signature, cmi);
-				 
-				System.out.println("sig added: "+signature);
-			}			
+			}
+			
+			// If the method has not been collected, collect it
+			if (!methodCollector.containsKey(signature)) {
+				ClassMethodInfo cmi = new ClassMethodInfo(methodName, paramTypes, thisJoinPoint.getArgs());
+				methodCollector.put(signature, cmi);
+			}
 		}
 	}
 }

@@ -32,8 +32,7 @@ public class TestClass {
 		x = 3;
 	}
 	
-	public static void test4() {
-	}
+	public static void test4() { }
 	
 	public long factorial(int x) {
 		long response = 1;

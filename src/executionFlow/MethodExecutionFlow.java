@@ -5,7 +5,6 @@ import static java.lang.invoke.MethodType.methodType;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.List;
-
 import executionFlow.cheapCoverage.CheapCoverage;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
@@ -59,7 +58,6 @@ public class MethodExecutionFlow
 	private MethodType getMethodType() 
 	{
 		Method m = classExecutionFlow.getMethod(methodSignature);
-		System.out.println(methodSignature);
 		Class<?>[] params = m.getParameterTypes();
 		
 		if (params.length == 0)

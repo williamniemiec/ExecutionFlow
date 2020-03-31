@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 import executionFlow.cheapCoverage.CheapCoverage;
 
 
@@ -30,6 +29,7 @@ public class ClassExecutionFlow
 	public ClassExecutionFlow(String classPath)
 	{
 		this.classPath = classPath;
+		
 		try {
 			CheapCoverage.parseClass(classPath);
 			Class<?> parsedClass = CheapCoverage.getParsedClass();
@@ -95,8 +95,6 @@ public class ClassExecutionFlow
 						types.deleteCharAt(types.length()-1);	// Remove last comma
 					
 					String methodSignature = allMethods[i].getName()+"("+types+")";
-					
-					System.out.println("put: "+methodSignature+","+allMethods[i]);
 					classMethods.put(methodSignature, allMethods[i]);
 				}
 			}

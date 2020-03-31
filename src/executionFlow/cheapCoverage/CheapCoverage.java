@@ -23,7 +23,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-
 import executionFlow.info.ClassConstructorInfo;
 
 
@@ -53,7 +52,6 @@ public class CheapCoverage
 	public static void parseClass(String classPath) throws IOException 
 	{
 		byte[] data;
-		
 		try (var input = Files.newInputStream(Path.of(classPath))) {
 			data = input.readAllBytes();
 		}
@@ -105,7 +103,7 @@ public class CheapCoverage
 			mh.invokeWithArguments(args);
 		}
 		
-		// Remove last line if method has no return (otherwise it considers empty return line)
+		// Remove last line if method has no return (otherwise it considers empty return as a line)
 		List<Integer> path = RT.getExecutionPath();
 		
 		if (methodTypes.returnType() == void.class)
