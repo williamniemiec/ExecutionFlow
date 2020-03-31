@@ -34,4 +34,14 @@ public class TestClass {
 	
 	public static void test4() {
 	}
+	
+	public long factorial(int x) {
+		long response = 1;
+		
+		for (int i=1; i<=x; i++) {
+			response *= i;
+		}
+		
+		return response;
+	}
 }

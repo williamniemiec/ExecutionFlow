@@ -1,11 +1,13 @@
 package executionFlow.runtime;
 
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 /**
  * Class created for aspect tests
  */
 public class Main {
-	@Test
 	public static void main(String[] args) {
 		int k = 0;
 		

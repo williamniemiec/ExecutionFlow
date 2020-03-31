@@ -59,6 +59,7 @@ public class MethodExecutionFlow
 	private MethodType getMethodType() 
 	{
 		Method m = classExecutionFlow.getMethod(methodSignature);
+		System.out.println(methodSignature);
 		Class<?>[] params = m.getParameterTypes();
 		
 		if (params.length == 0)

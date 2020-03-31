@@ -96,6 +96,7 @@ public class ClassExecutionFlow
 					
 					String methodSignature = allMethods[i].getName()+"("+types+")";
 					
+					System.out.println("put: "+methodSignature+","+allMethods[i]);
 					classMethods.put(methodSignature, allMethods[i]);
 				}
 			}

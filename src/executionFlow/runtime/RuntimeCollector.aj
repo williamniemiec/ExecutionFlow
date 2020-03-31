@@ -3,10 +3,15 @@ package executionFlow.runtime;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import executionFlow.*;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.cheapCoverage.*;
+import org.junit.*;
+import org.junit.Assert.*;
 
 
 /**
@@ -26,6 +31,17 @@ public aspect RuntimeCollector {
 	private static String classPath;
 	private static ClassConstructorInfo cci;
 	private static boolean firstTime = true;
+	private static String testClassSignature;
+	
+	public void finalize() 
+	{
+		ExecutionFlow ef = new ExecutionFlow(classPath, methodCollector.values(), cci);
+		try {
+			ef.execute().export();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	//-----------------------------------------------------------------------
@@ -35,8 +51,8 @@ public aspect RuntimeCollector {
 	 * Captures all executed methods with <code>@Test</code> annotation, not including
 	 * internal calls.
 	 */
-	pointcut pc3(): execution(@Test * *.*(*));
-	after(): pc3() 		// Executed after the end of a method with @Test annotation
+	pointcut pc3(): execution(void executionFlow.runtime.JUnitTest.*(*)) && !within(RuntimeCollector);
+	after() returning(): pc3() 		// Executed after the end of a method with @Test annotation
 	{
 		// Reset firstTime flag
 		firstTime = true;
@@ -56,24 +72,44 @@ public aspect RuntimeCollector {
 	 * 
 	 * @implNote Excludes calls to native java methods and ExecutionFlow's classes
 	 */
-	pointcut pc2(): cflow(execution(@Test * *.*(*))) && !within(ClassMethodInfo) 
+	pointcut pc2(): (cflow(execution(@Test * *.*(*))) || cflow(call(* *.*(*)))) && !within(ClassMethodInfo) 
 													 && !within(ClassConstructorInfo)
 													 && !within(RuntimeCollector) 
 													 && !within(CollectorExecutionFlow) 
 													 && !within(ExecutionFlow) 
 													 && !within(ClassExecutionFlow)
 													 && !within(RT)
-													 && !within(CheapCoverage);
+													 && !within(CheapCoverage)
+													 && !call(* org.junit.runner.JUnitCore.runClasses(*))
+													 && !call(void org.junit.Assert.*(*,*));
 	before(): pc2()		// Executed before the end of each internal call of a method with @Test annotation
 	{
-		if (firstTime) {			// Ignores the external method (with @Test annotation) of the collection
+		String signature = thisJoinPoint.getSignature().toString();
+		
+		// Ignores the external method (with @Test annotation) of the collection
+		if (firstTime) {
+			Pattern p = Pattern.compile("[A-z0-9-_$]+\\.\\<");
+			Matcher m = p.matcher(signature);
+			
+			if (m.find()) {
+				String name = m.group();
+				p = Pattern.compile("[A-z0-9-_$]+");
+				m = p.matcher(name);
+				
+				if (m.find()) {
+					testClassSignature = m.group();
+				}
+			}
+			
 			firstTime = false;
 			return; 
 		}
 		
-		String signature = thisJoinPoint.getSignature().toString();
+		// Ignores native java methods
+		if (signature.contains("java.")) { return; }		
 		
-		if (signature.contains("java.")) { return; }		// Ignores native java methods
+		// Ignores methods in the method test (with @Test) (will only consider internal calls)
+		if (signature.contains(testClassSignature)) { return; }	
 		
 		String methodRegex = "[A-z]+\\s([A-z0-9-_$]+\\.)+[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]+\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
@@ -116,6 +152,8 @@ public aspect RuntimeCollector {
 			} else {	// If the method has not been collected, collect it
 				 ClassMethodInfo cmi = new ClassMethodInfo(methodName, paramTypes, thisJoinPoint.getArgs());
 				 methodCollector.put(signature, cmi);
+				 
+				System.out.println("sig added: "+signature);
 			}			
 		}
 	}
