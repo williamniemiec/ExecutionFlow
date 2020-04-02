@@ -20,7 +20,8 @@ public class ExecutionFlow
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private ClassExecutionFlow classExecutionFlow;
-	private Map<Method, List<Integer>> classPaths = new HashMap<>();
+	//private Map<Method, List<Integer>> classPaths = new HashMap<>();
+	private Map<ClassMethodInfo, List<Integer>> classPaths = new HashMap<>();
 	private ClassConstructorInfo cci;
 	private List<ClassMethodInfo> methods = new ArrayList<>();
 	
@@ -70,8 +71,10 @@ public class ExecutionFlow
 	{
 		Map<String, List<Integer>> response = new HashMap<>();
 		
-		for (Map.Entry<Method, List<Integer>> entry : classPaths.entrySet()) {
-			Method m = entry.getKey();
+		for (Map.Entry<ClassMethodInfo, List<Integer>> entry : classPaths.entrySet()) {
+			ClassMethodInfo cmi = entry.getKey();
+			Method m = classExecutionFlow.getMethod(cmi.getSignature());
+			
 			StringBuilder parameterTypes = new StringBuilder();
 			
 			for (Class<?> parameterType : m.getParameterTypes()) {
@@ -110,7 +113,8 @@ public class ExecutionFlow
 			mef = new MethodExecutionFlow(classExecutionFlow, method, cci);
 			
 			methodPath.addAll( mef.execute().getMethodPath() );
-			classPaths.put(classExecutionFlow.getMethod(method.getSignature()), methodPath);
+			//classPaths.put(classExecutionFlow.getMethod(method.getSignature()), methodPath);
+			classPaths.put(method, methodPath);
 			
 		}
 		return this;
@@ -127,8 +131,12 @@ public class ExecutionFlow
 		System.out.println("---------------------------------------------------------------------");
 		System.out.println("                                EXPORT                               ");
 		System.out.println("---------------------------------------------------------------------");
-		for (Map.Entry<Method, List<Integer>> e : classPaths.entrySet()) {
-			Method m = e.getKey();
+		//for (Map.Entry<Method, List<Integer>> e : classPaths.entrySet()) {
+		for (Map.Entry<ClassMethodInfo, List<Integer>> e : classPaths.entrySet()) {
+			//Method m = e.getKey();
+			ClassMethodInfo cmi = e.getKey();
+			Method m = classExecutionFlow.getMethod(cmi.getSignature());
+			
 			StringBuilder parameterTypes = new StringBuilder();
 			
 			for (var parameterType : m.getParameterTypes()) {
@@ -140,6 +148,7 @@ public class ExecutionFlow
 			
 			String signature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
 			
+			System.out.println("test method signature: "+cmi.getTestMethodSignature());
 			System.out.println(signature);
 			System.out.println(e.getValue());
 			System.out.println();

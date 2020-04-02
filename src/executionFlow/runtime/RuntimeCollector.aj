@@ -33,6 +33,7 @@ public aspect RuntimeCollector {
 	private static ClassConstructorInfo cci;
 	private static boolean firstTime = true;
 	private static String testClassSignature;
+	private static String testMethodSignature;
 	
 	
 	public boolean hasSkipCollectionAnnotation(Class<?> c)
@@ -46,29 +47,6 @@ public aspect RuntimeCollector {
 	//		Pointcuts
 	//-----------------------------------------------------------------------
 	/**
-	 * Captures all executed methods with <code>@Test</code> annotation, not including
-	 * internal calls.
-	 */
-	pointcut pc3(): execution(@Test * *.*()) && !within(RuntimeCollector);
-	after() returning(): pc3() 		// Executed after the end of a method with @Test annotation
-	{	
-		//if (thisJoinPoint.getThis().getClass().isAnnotationPresent(SkipCollection.class)) { return; };
-		if (hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) { return; }
-		
-		// Reset firstTime flag
-		firstTime = true;
-		
-		// Show method execution path
-		ExecutionFlow ef = new ExecutionFlow(classPath, methodCollector.values(), cci);
-		try {
-			ef.execute().export();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	/**
 	 * Captures class instantiation
 	 */
 	pointcut collectConstructor(): preinitialization(*.new(*)) 	&& !within(RuntimeCollector) 
@@ -81,7 +59,7 @@ public aspect RuntimeCollector {
 																&& !call(void org.junit.Assert.*(*,*));
 	after(): collectConstructor()
 	{
-		//if (thisJoinPoint.getThis().getClass().isAnnotationPresent(SkipCollection.class)) { return; };
+		// Ignores if the class has @SkipCollection annotation
 		if (thisJoinPoint.getThis() != null && hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) {
 			return;
 		}
@@ -132,6 +110,7 @@ public aspect RuntimeCollector {
 													 && !call(void org.junit.Assert.*(*,*));
 	before(): pc2()		// Executed before the end of each internal call of a method with @Test annotation
 	{
+		// Ignores if the class has @SkipCollection annotation
 		if (thisJoinPoint.getThis() != null && hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) {
 			return;
 		}
@@ -184,12 +163,38 @@ public aspect RuntimeCollector {
 			
 			// If the method has not been collected, collect it
 			if (!methodCollector.containsKey(signature)) {
-				ClassMethodInfo cmi = new ClassMethodInfo(methodName, paramTypes, thisJoinPoint.getArgs());
+				ClassMethodInfo cmi = new ClassMethodInfo(testMethodSignature, methodName, paramTypes, thisJoinPoint.getArgs());
 				methodCollector.put(signature, cmi);
 				
 				// -----<DEBUG>-----
 				//System.out.println("put: "+signature);
 			}
+		}
+	}
+	
+	/**
+	 * Captures all executed methods with <code>@Test</code> annotation, not including
+	 * internal calls.
+	 */
+	pointcut pc3(): execution(@Test * *.*()) && !within(RuntimeCollector);
+	before(): pc3()
+	{
+		testMethodSignature = thisJoinPoint.getSignature().toString();
+	}
+	after() returning(): pc3() 		// Executed after the end of a method with @Test annotation
+	{	
+		// Ignores if the class has @SkipCollection annotation
+		if (hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) { return; }
+		
+		// Reset firstTime flag
+		firstTime = true;
+		
+		// Show method execution path
+		ExecutionFlow ef = new ExecutionFlow(classPath, methodCollector.values(), cci);
+		try {
+			ef.execute().export();
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 	}
 }
