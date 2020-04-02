@@ -20,7 +20,6 @@ public class ExecutionFlow
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private ClassExecutionFlow classExecutionFlow;
-	//private Map<Method, List<Integer>> classPaths = new HashMap<>();
 	private Map<ClassMethodInfo, List<Integer>> classPaths = new HashMap<>();
 	private ClassConstructorInfo cci;
 	private List<ClassMethodInfo> methods = new ArrayList<>();
@@ -113,7 +112,6 @@ public class ExecutionFlow
 			mef = new MethodExecutionFlow(classExecutionFlow, method, cci);
 			
 			methodPath.addAll( mef.execute().getMethodPath() );
-			//classPaths.put(classExecutionFlow.getMethod(method.getSignature()), methodPath);
 			classPaths.put(method, methodPath);
 			
 		}
@@ -131,9 +129,7 @@ public class ExecutionFlow
 		System.out.println("---------------------------------------------------------------------");
 		System.out.println("                                EXPORT                               ");
 		System.out.println("---------------------------------------------------------------------");
-		//for (Map.Entry<Method, List<Integer>> e : classPaths.entrySet()) {
 		for (Map.Entry<ClassMethodInfo, List<Integer>> e : classPaths.entrySet()) {
-			//Method m = e.getKey();
 			ClassMethodInfo cmi = e.getKey();
 			Method m = classExecutionFlow.getMethod(cmi.getSignature());
 			
@@ -148,7 +144,10 @@ public class ExecutionFlow
 			
 			String signature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
 			
-			System.out.println(cmi.getTestMethodSignature());	// Test method signature
+			// Test method signature
+			if (cmi.getTestMethodSignature() != null)
+				System.out.println(cmi.getTestMethodSignature());
+			
 			System.out.println(signature);						// Method signature
 			System.out.println(e.getValue());					// Test path
 			System.out.println();
