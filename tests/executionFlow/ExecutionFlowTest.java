@@ -40,7 +40,7 @@ public class ExecutionFlowTest
 		expectedClassPaths.put("Math.Calculator.sum(int,int)", Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14));
 		
 		// Results obtained
-		//ef.execute().export();
+		ef.execute().export();
 		Map<String, List<Integer>> classPathsObtained = ef.execute().getClassPaths();
 		
 		assertEquals(expectedClassPaths, classPathsObtained);
@@ -66,7 +66,7 @@ public class ExecutionFlowTest
 		expectedClassPaths.put("Math.CalculatorNonStatic.sum(int,int)", Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14));
 		
 		// Results obtained
-		//ef.execute().export();
+		ef.execute().export();
 		Map<String, List<Integer>> classPathsObtained = ef.execute().getClassPaths();
 		
 		assertEquals(expectedClassPaths, classPathsObtained);
@@ -94,7 +94,7 @@ public class ExecutionFlowTest
 		expectedClassPaths.put("Math.CalculatorNonStaticWithConstructor.loop()", Arrays.asList(27,29,30,29,30,29));
 		
 		// Results obtained
-		//ef.execute().export();
+		ef.execute().export();
 		Map<String, List<Integer>> classPathsObtained = ef.execute().getClassPaths();
 		
 		assertEquals(expectedClassPaths, classPathsObtained);
