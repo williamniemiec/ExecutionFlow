@@ -12,7 +12,6 @@ import executionFlow.cheapCoverage.*;
 import org.junit.*;
 import org.junit.Assert.*;
 import org.junit.runner.JUnitCore;
-import executionFlow.SkipCollection;
 
 
 /**

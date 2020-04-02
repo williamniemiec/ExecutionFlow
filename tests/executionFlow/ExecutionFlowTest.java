@@ -9,6 +9,7 @@ import java.util.Map;
 import org.junit.Test;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
+import executionFlow.runtime.SkipCollection;
 
 
 /**
