@@ -23,7 +23,8 @@ import org.junit.runner.JUnitCore;
  * <li>Each test must have <code>@Test</code> annotation</li>
  */
 @SuppressWarnings("unused")
-public aspect RuntimeCollector {
+public aspect RuntimeCollector 
+{
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
@@ -36,6 +37,15 @@ public aspect RuntimeCollector {
 	private static String testMethodSignature;
 	
 	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
+	/**
+	 * Checks if there is the {@link @SkipCollection} annotation in the class
+	 * 
+	 * @param c Class to be analyzed
+	 * @return If {@link @SkipCollection} annotation is present in the class;
+	 */
 	public boolean hasSkipCollectionAnnotation(Class<?> c)
 	{
 		if (c == null) { return false; }
@@ -43,6 +53,9 @@ public aspect RuntimeCollector {
 		return c.isAnnotationPresent(SkipCollection.class);
 	}
 	
+	/**
+	 * Sets default value for all attributes
+	 */
 	public void reset()
 	{
 		methodCollector.clear();
@@ -52,6 +65,7 @@ public aspect RuntimeCollector {
 		testClassSignature = null;
 		testMethodSignature = null;
 	}
+	
 	
 	//-----------------------------------------------------------------------
 	//		Pointcuts
@@ -197,9 +211,6 @@ public aspect RuntimeCollector {
 		// Ignores if the class has @SkipCollection annotation
 		if (hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) { return; }
 		
-		// Reset firstTime flag
-		//firstTime = true;
-		
 		// Show method execution path
 		ExecutionFlow ef = new ExecutionFlow(classPath, methodCollector.values(), cci);
 		try {
@@ -208,6 +219,6 @@ public aspect RuntimeCollector {
 			e.printStackTrace();
 		}
 		
-		reset();		// Prepares for the next test
+		reset();	// Prepares for the next test
 	}
 }
