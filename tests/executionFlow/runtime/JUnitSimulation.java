@@ -16,9 +16,23 @@ public class JUnitSimulation
 	public void testFactorial() 
 	{
 		int num = 4;
-		long expectedResult = 24; 
+		long expectedResult = 24;
+		
 		TestClass tc = new TestClass(4);
 		long res = tc.factorial(num);
+		
+		assertEquals(expectedResult, res);
+	}
+	
+	
+	@Test
+	public void testFibonacci() 
+	{
+		int num = 5;
+		long expectedResult = 5; 
+		
+		TestClass tc = new TestClass(4);
+		long res = tc.fibonacci(num);
 		
 		assertEquals(expectedResult, res);
 	}

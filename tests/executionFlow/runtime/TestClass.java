@@ -43,4 +43,18 @@ public class TestClass {
 		
 		return response;
 	}
+	
+	public long fibonacci(int x) {
+		long response = 1;
+		long last = 1;
+		long aux = 0;
+
+		for (int i=2; i<x; i++) {
+			aux = response;
+			response = response + last;
+			last = aux;
+		}
+		
+		return response;
+	}
 }

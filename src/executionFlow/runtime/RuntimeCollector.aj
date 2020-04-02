@@ -43,6 +43,16 @@ public aspect RuntimeCollector {
 		return c.isAnnotationPresent(SkipCollection.class);
 	}
 	
+	public void reset()
+	{
+		methodCollector.clear();
+		consCollector.clear();
+		cci = null;
+		firstTime = true;
+		testClassSignature = null;
+		testMethodSignature = null;
+	}
+	
 	//-----------------------------------------------------------------------
 	//		Pointcuts
 	//-----------------------------------------------------------------------
@@ -188,7 +198,7 @@ public aspect RuntimeCollector {
 		if (hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) { return; }
 		
 		// Reset firstTime flag
-		firstTime = true;
+		//firstTime = true;
 		
 		// Show method execution path
 		ExecutionFlow ef = new ExecutionFlow(classPath, methodCollector.values(), cci);
@@ -197,5 +207,7 @@ public aspect RuntimeCollector {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		
+		reset();		// Prepares for the next test
 	}
 }
