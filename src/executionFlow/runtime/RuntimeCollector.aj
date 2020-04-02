@@ -180,6 +180,7 @@ public aspect RuntimeCollector {
 	before(): pc3()
 	{
 		testMethodSignature = thisJoinPoint.getSignature().toString();
+		testMethodSignature = testMethodSignature.substring(5);		// Removes return type
 	}
 	after() returning(): pc3() 		// Executed after the end of a method with @Test annotation
 	{	

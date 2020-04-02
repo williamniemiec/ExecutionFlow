@@ -148,9 +148,9 @@ public class ExecutionFlow
 			
 			String signature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
 			
-			System.out.println("test method signature: "+cmi.getTestMethodSignature());
-			System.out.println(signature);
-			System.out.println(e.getValue());
+			System.out.println(cmi.getTestMethodSignature());	// Test method signature
+			System.out.println(signature);						// Method signature
+			System.out.println(e.getValue());					// Test path
 			System.out.println();
 		}
 	}

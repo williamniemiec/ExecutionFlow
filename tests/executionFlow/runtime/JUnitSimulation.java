@@ -13,7 +13,8 @@ import org.junit.Test;
 public class JUnitSimulation 
 {
 	@Test
-	public void testFactorial() {
+	public void testFactorial() 
+	{
 		int num = 4;
 		long expectedResult = 24; 
 		TestClass tc = new TestClass(4);
