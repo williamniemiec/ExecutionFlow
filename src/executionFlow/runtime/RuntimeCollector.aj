@@ -12,6 +12,7 @@ import executionFlow.cheapCoverage.*;
 import org.junit.*;
 import org.junit.Assert.*;
 import org.junit.runner.JUnitCore;
+import executionFlow.SkipCollection;
 
 
 /**
@@ -35,6 +36,13 @@ public aspect RuntimeCollector {
 	private static String testClassSignature;
 	
 	
+	public boolean hasSkipCollectionAnnotation(Class<?> c)
+	{
+		if (c == null) { return false; }
+		
+		return c.isAnnotationPresent(SkipCollection.class);
+	}
+	
 	//-----------------------------------------------------------------------
 	//		Pointcuts
 	//-----------------------------------------------------------------------
@@ -45,6 +53,9 @@ public aspect RuntimeCollector {
 	pointcut pc3(): execution(@Test * *.*()) && !within(RuntimeCollector);
 	after() returning(): pc3() 		// Executed after the end of a method with @Test annotation
 	{	
+		//if (thisJoinPoint.getThis().getClass().isAnnotationPresent(SkipCollection.class)) { return; };
+		if (hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) { return; }
+		
 		// Reset firstTime flag
 		firstTime = true;
 		
@@ -71,6 +82,11 @@ public aspect RuntimeCollector {
 																&& !call(void org.junit.Assert.*(*,*));
 	after(): collectConstructor()
 	{
+		//if (thisJoinPoint.getThis().getClass().isAnnotationPresent(SkipCollection.class)) { return; };
+		if (thisJoinPoint.getThis() != null && hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) {
+			return;
+		}
+		
 		String signature = thisJoinPoint.getSignature().toString();
 		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]+\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		
@@ -103,12 +119,24 @@ public aspect RuntimeCollector {
 													 && !within(CollectorExecutionFlow) 
 													 && !within(ExecutionFlow) 
 													 && !within(ClassExecutionFlow)
+													 && !cflow(call(* executionFlow.runtime.CollectorExecutionFlow.*(*)))
+													 && !cflow(call(* executionFlow.info.ClassMethodInfo.*(*)))
+													 && !cflow(call(* executionFlow.info.ClassConstructorInfo.*(*)))
+													 && !cflow(call(* executionFlow.MethodExecutionFlow.*(*)))
+													 && !cflow(call(* executionFlow.ExecutionFlow.*(*)))
+													 && !cflow(call(* executionFlow.ClassExecutionFlow.*(*)))
+													 && !cflow(call(* executionFlow.cheapCoverage.CheapCoverage.*(*)))
+													 && !cflow(call(* executionFlow.cheapCoverage.RT.*(*)))
 													 && !within(RT)
 													 && !within(CheapCoverage)
 													 && !call(* org.junit.runner.JUnitCore.runClasses(*))
 													 && !call(void org.junit.Assert.*(*,*));
 	before(): pc2()		// Executed before the end of each internal call of a method with @Test annotation
 	{
+		if (thisJoinPoint.getThis() != null && hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) {
+			return;
+		}
+		
 		String signature = thisJoinPoint.getSignature().toString();
 		
 		// Ignores the external method (with @Test annotation) of the collection
@@ -159,6 +187,9 @@ public aspect RuntimeCollector {
 			if (!methodCollector.containsKey(signature)) {
 				ClassMethodInfo cmi = new ClassMethodInfo(methodName, paramTypes, thisJoinPoint.getArgs());
 				methodCollector.put(signature, cmi);
+				
+				// -----<DEBUG>-----
+				//System.out.println("put: "+signature);
 			}
 		}
 	}
