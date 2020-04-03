@@ -13,7 +13,7 @@ import executionFlow.runtime.SkipCollection;
 
 
 /**
- * Test whether the program is working after the collection has been made
+ * Test whether the program is working after the collection has been made.
  */
 @SkipCollection
 public class ExecutionFlowTest 

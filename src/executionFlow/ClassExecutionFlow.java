@@ -79,12 +79,12 @@ public class ClassExecutionFlow
 		try {
 			// Return explicit and implicit methods
 			allMethods = parsedClass.getMethods();
-			
+
 			for (int i = 0; i < allMethods.length; i++) {
 				// Check if it is a valid method (declared in the class)
+				
 				if (allMethods[i].toString().contains(this.classSignature)) {
 					// Save method name and method
-					
 					StringBuilder types = new StringBuilder();
 					
 					for (var paramType : allMethods[i].getParameterTypes()) {
@@ -94,8 +94,9 @@ public class ClassExecutionFlow
 					if (types.length() > 0)
 						types.deleteCharAt(types.length()-1);	// Remove last comma
 					
-					String methodSignature = allMethods[i].getName()+"("+types+")";
-					classMethods.put(methodSignature, allMethods[i]);
+					// Format: methodName(arg1,arg2,...)
+					String methodName = allMethods[i].getName()+"("+types+")";
+					classMethods.put(methodName, allMethods[i]);
 				}
 			}
 		} catch (SecurityException e) {

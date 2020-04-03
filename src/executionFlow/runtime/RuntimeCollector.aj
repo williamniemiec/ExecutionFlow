@@ -1,17 +1,20 @@
 package executionFlow.runtime;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import executionFlow.*;
+
+import org.junit.Test;
+
+import executionFlow.ClassExecutionFlow;
+import executionFlow.ExecutionFlow;
+import executionFlow.cheapCoverage.CheapCoverage;
+import executionFlow.cheapCoverage.RT;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
-import executionFlow.cheapCoverage.*;
-import org.junit.*;
-import org.junit.Assert.*;
-import org.junit.runner.JUnitCore;
 
 
 /**
@@ -35,6 +38,7 @@ public aspect RuntimeCollector
 	private static boolean firstTime = true;
 	private static String testClassSignature;
 	private static String testMethodSignature;
+	private static String lastInsertedMethod = "";
 	
 	
 	//-----------------------------------------------------------------------
@@ -64,6 +68,7 @@ public aspect RuntimeCollector
 		firstTime = true;
 		testClassSignature = null;
 		testMethodSignature = null;
+		lastInsertedMethod = "";
 	}
 	
 	
@@ -173,25 +178,45 @@ public aspect RuntimeCollector
 			// Extract the method name
 			String methodName = CollectorExecutionFlow.extractClassName(signature);
 			
-			// Extract types of method parameters (if any)
+			// Extract types of method parameters (if there is any)
 			Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
 			
-			// Gets class path (if has not been found yet)
-			if (classPath == null) {
-				try {
-					classPath = CollectorExecutionFlow.findCurrentClassPath();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+			// Gets class path
+			try {
+				classPath = CollectorExecutionFlow.findCurrentClassPath();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
 			
 			// If the method has not been collected, collect it
 			if (!methodCollector.containsKey(signature)) {
-				ClassMethodInfo cmi = new ClassMethodInfo(testMethodSignature, methodName, paramTypes, thisJoinPoint.getArgs());
-				methodCollector.put(signature, cmi);
+				// Gets class package
+				Pattern p = Pattern.compile("([A-z0-9\\-_$]+\\.)+");
+				Matcher m = p.matcher(signature);
+				String classPackage = "";
+
+				if (m.find()) {
+					String[] tmp = m.group().split("\\.");
+					StringBuilder sb = new StringBuilder();
+					
+					for (int i=0; i<tmp.length-1; i++) {
+						sb.append(tmp[i]);
+						sb.append(".");
+					}
+					
+					sb.deleteCharAt(sb.length()-1);		// Remove last dot
+					classPackage = sb.toString();
+				}
 				
-				// -----<DEBUG>-----
-				//System.out.println("put: "+signature);
+				// Checks if it is an internal call (if it is, ignore it)
+				if (!lastInsertedMethod.contains(classPackage)) {
+					ClassMethodInfo cmi = new ClassMethodInfo(testMethodSignature, methodName, paramTypes, thisJoinPoint.getArgs());
+					methodCollector.put(signature, cmi);
+					lastInsertedMethod = signature;
+					
+					// -----<DEBUG>-----
+					// System.out.println("put: "+signature);
+				}
 			}
 		}
 	}
@@ -206,7 +231,7 @@ public aspect RuntimeCollector
 		testMethodSignature = thisJoinPoint.getSignature().toString();
 		testMethodSignature = testMethodSignature.substring(5);		// Removes return type
 	}
-	after() returning(): pc3() 		// Executed after the end of a method with @Test annotation
+	after(): pc3() 		// Executed after the end of a method with @Test annotation
 	{	
 		// Ignores if the class has @SkipCollection annotation
 		if (hasSkipCollectionAnnotation(thisJoinPoint.getThis().getClass())) { return; }
