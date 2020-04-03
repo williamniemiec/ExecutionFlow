@@ -1,30 +1,48 @@
 package executionFlow.runtime;
 
-import java.util.Arrays;
-
 /**
  * Class created for aspect tests
  */
 public class TestClass {
-	public TestClass(int x) {
+	/**
+	 * Random constructor.
+	 */
+	public TestClass(int x) 
+	{
 		x = 2;
 	}
 	
-	public TestClass(int x, int y) {
+	/**
+	 * Random function.
+	 */
+	public TestClass(int x, int y) 
+	{
 		x = 2;
 	}
 	
-	public TestClass(String x) {
+	/**
+	 * Random function.
+	 */
+	public TestClass(String x) 
+	{
 		x = "2";
 	}
 	
-	public void test(int x, int y, String k) {
+	/**
+	 * Random function.
+	 */
+	public void test(int x, int y, String k) 
+	{
 		x = 3;
 	}
 	
-	public void test2() {	}
+	/**
+	 * Empty concrete function.
+	 */
+	public void test2() { }
 	
-	public static void test3(int x, int y, String k) {
+	public static void test3(int x, int y, String k) 
+	{
 		x = 0;
 		while (x < 3) {
 			x++;
@@ -33,9 +51,19 @@ public class TestClass {
 		x = 3;
 	}
 	
+	/**
+	 * Empty static function.
+	 */
 	public static void test4() { }
 	
-	public long factorial(int x) {
+	/**
+	 * Calculates the factorial of a number.
+	 * 
+	 * @param x Number you want to know the factorial
+	 * @return Factorial of the number
+	 */
+	public long factorial(int x) 
+	{
 		long response = 1;
 		
 		for (int i=1; i<=x; i++) {
@@ -45,7 +73,14 @@ public class TestClass {
 		return response;
 	}
 	
-	public long fibonacci(int x) {
+	/**
+	 * Calculates x-th fibonacci term.
+	 * 
+	 * @param x Fibonacci index term
+	 * @return x-th fibonacci term
+	 */
+	public long fibonacci(int x) 
+	{
 		long response = 1;
 		long last = 1;
 		long aux = 0;
@@ -59,7 +94,14 @@ public class TestClass {
 		return response;
 	}
 	
-	public static char[] parseLetters_noInternalCall(char[] letters) {
+	/**
+	 * Inverts letters without calling a function.
+	 * 
+	 * @param letters Letters that will be inverted.
+	 * @return Inverted letters
+	 */
+	public static char[] parseLetters_noInternalCall(char[] letters)
+	{
 		char[] response = new char[letters.length];
 		
 		for (int i=0; i<letters.length; i++) {
@@ -72,18 +114,33 @@ public class TestClass {
 		return response;
 	}
 	
-	public static char[] parseLetters_withInternalCall(char[] letters) {
+	
+	/**
+	 * Inverts letters by calling a function.
+	 * 
+	 * @param letters Letters that will be inverted..
+	 * @return Inverted letters
+	 */
+	public static char[] parseLetters_withInternalCall(char[] letters) 
+	{
 		char[] response = new char[letters.length];
 		
 		for (int i=0; i<letters.length; i++) {
-			// Internal call - should not be considered the path made within the call
+			// Internal call - should not be considered the path made within this call
 			response[i] = invertLetter(letters[i]);
 		}
 		
 		return response;
 	}
 	
-	private static char invertLetter(char letter) {
+	/**
+	 * Turns a lowercase letter to an uppercase letter and vice versa.
+	 * 
+	 * @param letter Letter to be inverted
+	 * @return The letter inverted
+	 */
+	private static char invertLetter(char letter) 
+	{
 		if (letter == Character.toUpperCase(letter)) {
 			return Character.toLowerCase(letter);
 		}

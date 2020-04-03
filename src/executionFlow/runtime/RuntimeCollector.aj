@@ -204,7 +204,7 @@ public aspect RuntimeCollector
 						sb.append(".");
 					}
 					
-					sb.deleteCharAt(sb.length()-1);		// Remove last dot
+					sb.deleteCharAt(sb.length()-1);		// Removes last dot
 					classPackage = sb.toString();
 				}
 				
