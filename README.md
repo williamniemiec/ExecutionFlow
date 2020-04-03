@@ -3,13 +3,23 @@ Aplicação que exibe o caminho de execução (caminho de teste) de métodos.
 
 <b>OBS:</b> Esse projeto não está completo, e, portanto, pode apresentar falhas.
 
+<hr />
+
+## Como funciona?
+...
+
+## Como usar?
+...
+
 ## Requisitos
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
 - [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) (não testado com Java 13)
+- [ASM 7 ou superior](https://github.com/williamniemiec/ExecutionFlow/tree/master/lib) (Incluído no projeto)
 
 ## Organização do projeto
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png)
+
 ##  Arquivos
 ### /
 |        Nome        |Tipo|Descrição|
@@ -37,20 +47,19 @@ Aplicação que exibe o caminho de execução (caminho de teste) de métodos.
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
 | executionFlow|`Diretório`|Testes relacionados ao pacote `executionFlow`|
-|Math|`Diretório`| Classes usadas pelo teste `ExecutionFlowTest.java` (/tests/executionFlow) |
+|math|`Diretório`| Classes usadas pelo teste [ExecutionFlowTest.java](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/ExecutionFlowTest.java) |
 
 ### /tests/executionFlow
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
 | runtime|`Diretório`|Classes responsáveis por percorrer e registrar o caminho de execução de um método|
-|ExecutionFlowTest.java|`Arquivo`| Classe que contém alguns testes unitários para testar o pacote `executionFlow`|
+|ExecutionFlowTest.java|`Arquivo`| Testes relacionados com a classe [ExecutionFlow](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/ExecutionFlow.java)|
 
 ### /tests/executionFlow/runtime
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
-| Main.java|`Arquivo`|Classe que testa o aspecto `RuntimeCollector.aj` (/src/executionFlow/runtime)|
-|Test.java|`Arquivo`| Classes que manipulam métodos e classes  |
-|TestClass.java|`Arquivo`| Anotação usada no arquivo `Main.java`|
+|JUnitSimulation.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação com testes feitos com o JUnit|
+| TestClass.java |`Arquivo`      |Classe criada para executar os testes do arquivo `JUnitSimulation.java`|
 
 ## Exemplo de saída
 [ExecutionFlowTest.java](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/ "ExecutionFlowTest.java")
