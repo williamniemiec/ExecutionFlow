@@ -27,7 +27,7 @@ import executionFlow.info.ClassConstructorInfo;
 
 
 /**
- * Helper class that will trace a method execution
+ * Helper class that will trace a method execution.
  * 
  * Modified from {@link https://github.com/forax/cheapcoverage}
  */

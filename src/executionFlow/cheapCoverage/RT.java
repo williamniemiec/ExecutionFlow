@@ -14,7 +14,8 @@ import java.util.List;
 
 
 /**
- * Helper class for {@link CheapCoverage}
+ * Helper class for {@link CheapCoverage}. It will be responsible for storing
+ * the test path.
  * 
  * Modified from {@link https://github.com/forax/cheapcoverage}
  */
@@ -26,6 +27,7 @@ public class RT
 	private static final MethodHandle PROBE;
 	private static List<Integer> path = new ArrayList<>();
 	private static int lastAddLine = 0;
+	private static String lastAddMethod;
 	
 	static {
 		try {
@@ -42,7 +44,13 @@ public class RT
 	@SuppressWarnings("unused")
 	private static void probe(String method, int line) 
 	{
-		if (!method.contains("<init>") && !method.contains("<clinit>") && !method.contains("preClinit") && line != lastAddLine) {	// Não considera linhas do construtor
+		// Ignores constructor lines
+		if (!method.contains("<init>") && !method.contains("<clinit>") && !method.contains("preClinit") && line != lastAddLine) {	 
+			if (lastAddMethod == null) { lastAddMethod = method; }
+			
+			// Ignores internal calls in test path
+			if (!method.equals(lastAddMethod)) { return; }
+				
 			path.add(line);
 			lastAddLine = line;
 		}
@@ -61,5 +69,6 @@ public class RT
 			path.clear(); 
 		
 		lastAddLine = 0;
+		lastAddMethod = null;
 	}
 }
