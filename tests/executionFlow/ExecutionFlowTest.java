@@ -21,7 +21,7 @@ public class ExecutionFlowTest
 	@Test
 	public void testStaticMethods() throws Throwable 
 	{
-		String classPath = "bin/Math/Calculator.class";
+		String classPath = "bin/math/Calculator.class";
 		Map<String, Object[]> methods = new HashMap<>();
 		
 		methods.put("sum", Arrays.asList(2,3).toArray());
@@ -37,8 +37,8 @@ public class ExecutionFlowTest
 		
 		// Expected result
 		Map<String, List<Integer>> expectedClassPaths = new HashMap<>();
-		expectedClassPaths.put("Math.Calculator.loop()", Arrays.asList(19, 21, 22, 21, 22, 21, 22, 21));
-		expectedClassPaths.put("Math.Calculator.sum(int,int)", Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14));
+		expectedClassPaths.put("math.Calculator.loop()", Arrays.asList(19, 21, 22, 21, 22, 21, 22, 21));
+		expectedClassPaths.put("math.Calculator.sum(int,int)", Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14));
 		
 		// Results obtained
 		ef.execute().export();
@@ -50,7 +50,7 @@ public class ExecutionFlowTest
 	@Test
 	public void testNonStaticMethods() throws Throwable 
 	{
-		String classPath = "bin/Math/CalculatorNonStatic.class";
+		String classPath = "bin/math/CalculatorNonStatic.class";
 		Map<String, Object[]> methods = new HashMap<>();
 				
 		// ClassMethodInfo init
@@ -64,7 +64,7 @@ public class ExecutionFlowTest
 		
 		// Expected result
 		Map<String, List<Integer>> expectedClassPaths = new HashMap<>();
-		expectedClassPaths.put("Math.CalculatorNonStatic.sum(int,int)", Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14));
+		expectedClassPaths.put("math.CalculatorNonStatic.sum(int,int)", Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14));
 		
 		// Results obtained
 		ef.execute().export();
@@ -76,7 +76,7 @@ public class ExecutionFlowTest
 	@Test
 	public void testNonStaticMethodsWithConstructor() throws Throwable 
 	{
-		String classPath = "bin/Math/CalculatorNonStaticWithConstructor.class";
+		String classPath = "bin/math/CalculatorNonStaticWithConstructor.class";
 		Map<String, Object[]> methods = new HashMap<>();
 				
 		// ClassMethodInfo init
@@ -92,7 +92,7 @@ public class ExecutionFlowTest
 		
 		// Expected result
 		Map<String, List<Integer>> expectedClassPaths = new HashMap<>();
-		expectedClassPaths.put("Math.CalculatorNonStaticWithConstructor.loop()", Arrays.asList(27,29,30,29,30,29));
+		expectedClassPaths.put("math.CalculatorNonStaticWithConstructor.loop()", Arrays.asList(27,29,30,29,30,29));
 		
 		// Results obtained
 		ef.execute().export();
