@@ -24,12 +24,18 @@ public class ExecutionFlow
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private ClassExecutionFlow classExecutionFlow;
-	//private Map<ClassMethodInfo, List<Integer>> classPaths = new HashMap<>();
 	private Map<SignaturesInfo, List<Integer>> classPaths = new HashMap<>();
 	private ClassConstructorInfo cci;
 	private List<ClassMethodInfo> methods = new ArrayList<>();
 	final ExporterExecutionFlow exporter;
 	
+	
+	//-----------------------------------------------------------------------
+	//		Initialization block
+	//-----------------------------------------------------------------------
+	/**
+	 * Defines how the export will be done.
+	 */
 	{
 		exporter = new ConsoleExporter(classPaths);
 	}
@@ -67,6 +73,80 @@ public class ExecutionFlow
 		this.methods.addAll(cmi);		// It is necessary to avoid ConcurrentModificationException
 	}
 	
+
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
+	/**
+	 * Walks the method recording its execution path and save the result in
+	 * {@link #classPaths}.
+	 * 
+	 * @return The instance (to allow chained calls)
+	 * @throws Throwable If an error occurs
+	 */
+	public ExecutionFlow execute() throws Throwable 
+	{
+		List<Integer> methodPath = new ArrayList<>();
+		MethodExecutionFlow mef;
+		
+		// Generates the test path for each method that was provided in the constructor
+		for (ClassMethodInfo method : methods) {
+			methodPath = new ArrayList<>();
+			mef = new MethodExecutionFlow(classExecutionFlow, method, cci);
+			
+			methodPath.addAll( mef.execute().getMethodPath() );
+			classPaths.put(extractSignatures(method), methodPath);
+			
+		}
+		
+		return this;
+	}
+	
+	/**
+	 * Exports the result.
+	 */
+	public void export() 
+	{
+		exporter.export();
+	}
+	
+	/**
+	 * Extracts test method's signature and method's signature.
+	 * 
+	 * @param cmi Method that signatures will be obtained
+	 * @return {@link SignaturesInfo} with the signatures
+	 */
+	private SignaturesInfo extractSignatures(ClassMethodInfo cmi)
+	{
+		Method m = classExecutionFlow.getMethod(cmi.getSignature());
+		String parameterTypes = extractParameterTypes(m.getParameterTypes());
+		
+		String methodSignature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
+		String testMethodSignature = cmi.getTestMethodSignature();
+		
+		return new SignaturesInfo(methodSignature, testMethodSignature);
+	}
+	
+	/**
+	 * Extracts the types of the method parameters.
+	 * 
+	 * @param parametersTypes Types of each method's parameter
+	 * @return String with the name of each type separated by commas
+	 */
+	private String extractParameterTypes(Class<?>[] parametersTypes)
+	{
+		StringBuilder parameterTypes = new StringBuilder();
+		
+		for (var parameterType : parametersTypes) {
+			parameterTypes.append(parameterType.getTypeName() +",");
+		}
+		
+		if (parameterTypes.length() > 0)
+			parameterTypes.deleteCharAt(parameterTypes.length()-1);	// Removes last comma
+		
+		return parameterTypes.toString();
+	}
+	
 	
 	//-----------------------------------------------------------------------
 	//		Getters
@@ -87,77 +167,5 @@ public class ExecutionFlow
 		}
 		
 		return response; 
-	}
-	
-
-	//-----------------------------------------------------------------------
-	//		Methods
-	//-----------------------------------------------------------------------
-	/**
-	 * Walks the method recording its execution path and save the result in
-	 * {@link #classPaths}.
-	 * 
-	 * @return The instance (to allow chained calls)
-	 * @throws Throwable If an error occurs
-	 */
-	public ExecutionFlow execute() throws Throwable 
-	{
-		List<Integer> methodPath = new ArrayList<>();
-		MethodExecutionFlow mef;
-		
-		for (ClassMethodInfo method : methods) {
-			methodPath = new ArrayList<>();
-			mef = new MethodExecutionFlow(classExecutionFlow, method, cci);
-			
-			methodPath.addAll( mef.execute().getMethodPath() );
-			classPaths.put(extractSignatures(method), methodPath);
-			
-		}
-		return this;
-	}
-	
-	/**
-	 * Show info on display, where info is:
-	 * <li>Method's signature</li>
-	 * <li>Method's execution path</li>
-	 * 
-	 * @implNote This method will be changed to export to a file
-	 */
-	public void export() 
-	{
-		exporter.export();
-	}
-	
-
-	/**
-	 * Extracts test method's signature and method's signature.
-	 * 
-	 * @param cmi Method that signatures will be obtained
-	 * @return {@link SignaturesInfo} with the signatures
-	 */
-	private SignaturesInfo extractSignatures(ClassMethodInfo cmi)
-	{
-		Method m = classExecutionFlow.getMethod(cmi.getSignature());
-		String parameterTypes = extractParameterTypes(m.getParameterTypes());
-		
-		String methodSignature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
-		String testMethodSignature = cmi.getTestMethodSignature();
-		
-		return new SignaturesInfo(methodSignature, testMethodSignature);
-	}
-	
-	
-	private String extractParameterTypes(Class<?>[] parameters)
-	{
-		StringBuilder parameterTypes = new StringBuilder();
-		
-		for (var parameterType : parameters) {
-			parameterTypes.append(parameterType.getTypeName() +",");
-		}
-		
-		if (parameterTypes.length() > 0)
-			parameterTypes.deleteCharAt(parameterTypes.length()-1);	// Remove last comma
-		
-		return parameterTypes.toString();
 	}
 }
