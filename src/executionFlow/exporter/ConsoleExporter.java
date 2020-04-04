@@ -25,6 +25,8 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	 * <li>Test method's signature</li>
 	 * <li>Method's signature</li>
 	 * <li>Method's test path</li>
+	 * 
+	 * @param classPaths Test path of each tested method of a class
 	 */
 	public ConsoleExporter(Map<SignaturesInfo, List<Integer>> classPaths)
 	{
