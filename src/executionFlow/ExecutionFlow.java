@@ -6,13 +6,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.SignaturesInfo;
 
 
 /**
  * Given a class path and specific methods calculate the execution path for each
- * of these methods. This is the main class of execution flow
+ * of these methods. This is the main class of execution flow.
  */
 public class ExecutionFlow 
 {
@@ -20,9 +24,15 @@ public class ExecutionFlow
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private ClassExecutionFlow classExecutionFlow;
-	private Map<ClassMethodInfo, List<Integer>> classPaths = new HashMap<>();
+	//private Map<ClassMethodInfo, List<Integer>> classPaths = new HashMap<>();
+	private Map<SignaturesInfo, List<Integer>> classPaths = new HashMap<>();
 	private ClassConstructorInfo cci;
 	private List<ClassMethodInfo> methods = new ArrayList<>();
+	final ExporterExecutionFlow exporter;
+	
+	{
+		exporter = new ConsoleExporter(classPaths);
+	}
 	
 	
 	//-----------------------------------------------------------------------
@@ -30,7 +40,7 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	/**
 	 * Given a class path and specific methods calculate the execution path for each
-	 * of these methods
+	 * of these methods.
 	 * 
 	 * @param classPath Path of the class, including ".class" in the end
 	 * @param cmi List of {@link ClassMethodInfo methods} to be analyzed
@@ -62,30 +72,18 @@ public class ExecutionFlow
 	//		Getters
 	//-----------------------------------------------------------------------
 	/**
-	 * Give method's execution path
+	 * Returns method's execution path.
 	 * 
-	 * @return Map where key is method's signature and value is method's execution path
+	 * @return Map where key is method's signature and value is method's test path
 	 */
 	public Map<String, List<Integer>> getClassPaths() 
 	{
 		Map<String, List<Integer>> response = new HashMap<>();
 		
-		for (Map.Entry<ClassMethodInfo, List<Integer>> entry : classPaths.entrySet()) {
-			ClassMethodInfo cmi = entry.getKey();
-			Method m = classExecutionFlow.getMethod(cmi.getSignature());
+		for (Map.Entry<SignaturesInfo, List<Integer>> entry : classPaths.entrySet()) {
+			SignaturesInfo signatures = entry.getKey();
 			
-			StringBuilder parameterTypes = new StringBuilder();
-			
-			for (Class<?> parameterType : m.getParameterTypes()) {
-				parameterTypes.append(parameterType.getTypeName() +",");
-			}
-			
-			if (parameterTypes.length() > 0)
-				parameterTypes.deleteCharAt(parameterTypes.length()-1);		// Remove last comma
-			
-			String signature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
-			
-			response.put(signature, entry.getValue());
+			response.put(signatures.getMethodSignature(), entry.getValue());
 		}
 		
 		return response; 
@@ -96,8 +94,8 @@ public class ExecutionFlow
 	//		Methods
 	//-----------------------------------------------------------------------
 	/**
-	 * Walk the method recording its execution path and save the result in
-	 * {@link #classPaths}
+	 * Walks the method recording its execution path and save the result in
+	 * {@link #classPaths}.
 	 * 
 	 * @return The instance (to allow chained calls)
 	 * @throws Throwable If an error occurs
@@ -112,7 +110,7 @@ public class ExecutionFlow
 			mef = new MethodExecutionFlow(classExecutionFlow, method, cci);
 			
 			methodPath.addAll( mef.execute().getMethodPath() );
-			classPaths.put(method, methodPath);
+			classPaths.put(extractSignatures(method), methodPath);
 			
 		}
 		return this;
@@ -122,35 +120,44 @@ public class ExecutionFlow
 	 * Show info on display, where info is:
 	 * <li>Method's signature</li>
 	 * <li>Method's execution path</li>
+	 * 
 	 * @implNote This method will be changed to export to a file
 	 */
 	public void export() 
 	{
-		System.out.println("---------------------------------------------------------------------");
-		System.out.println("                                EXPORT                               ");
-		System.out.println("---------------------------------------------------------------------");
-		for (Map.Entry<ClassMethodInfo, List<Integer>> e : classPaths.entrySet()) {
-			ClassMethodInfo cmi = e.getKey();
-			Method m = classExecutionFlow.getMethod(cmi.getSignature());
-			
-			StringBuilder parameterTypes = new StringBuilder();
-			
-			for (var parameterType : m.getParameterTypes()) {
-				parameterTypes.append(parameterType.getTypeName() +",");
-			}
-			
-			if (parameterTypes.length() > 0)
-				parameterTypes.deleteCharAt(parameterTypes.length()-1);	// Remove last comma
-			
-			String signature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
-			
-			// Test method signature
-			if (cmi.getTestMethodSignature() != null)
-				System.out.println(cmi.getTestMethodSignature());
-			
-			System.out.println(signature);						// Method signature
-			System.out.println(e.getValue());					// Test path
-			System.out.println();
+		exporter.export();
+	}
+	
+
+	/**
+	 * Extracts test method's signature and method's signature.
+	 * 
+	 * @param cmi Method that signatures will be obtained
+	 * @return {@link SignaturesInfo} with the signatures
+	 */
+	private SignaturesInfo extractSignatures(ClassMethodInfo cmi)
+	{
+		Method m = classExecutionFlow.getMethod(cmi.getSignature());
+		String parameterTypes = extractParameterTypes(m.getParameterTypes());
+		
+		String methodSignature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
+		String testMethodSignature = cmi.getTestMethodSignature();
+		
+		return new SignaturesInfo(methodSignature, testMethodSignature);
+	}
+	
+	
+	private String extractParameterTypes(Class<?>[] parameters)
+	{
+		StringBuilder parameterTypes = new StringBuilder();
+		
+		for (var parameterType : parameters) {
+			parameterTypes.append(parameterType.getTypeName() +",");
 		}
+		
+		if (parameterTypes.length() > 0)
+			parameterTypes.deleteCharAt(parameterTypes.length()-1);	// Remove last comma
+		
+		return parameterTypes.toString();
 	}
 }

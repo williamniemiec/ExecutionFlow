@@ -8,7 +8,7 @@ import executionFlow.cheapCoverage.CheapCoverage;
 
 
 /**
- * Manage class manipulation (extract data that {@link ExecutionFlow} will need)
+ * Manage class manipulation (extract data that {@link ExecutionFlow} will need).
  */
 public class ClassExecutionFlow 
 {
@@ -17,6 +17,10 @@ public class ClassExecutionFlow
 	//-----------------------------------------------------------------------
 	private String classSignature;
 	private String classPath;
+	
+	/**
+	 * Stores all method signatures of the class with its {@link java.lang.reflect.Method}.
+	 */
 	private Map<String, Method> classMethods = new HashMap<>();
 	
 	
@@ -51,7 +55,7 @@ public class ClassExecutionFlow
 	
 	/**
 	 * Get {@link java.lang.reflect.Method} of a method if it is in the class
-	 * passed to this object (by class signature)
+	 * passed to this object (by class signature).
 	 * 
 	 * @param methodSignature Signature of the method (without class)
 	 * <br/>Example
@@ -70,7 +74,7 @@ public class ClassExecutionFlow
 	//-----------------------------------------------------------------------
 	/**
 	 * Get all methods belong to the {@link #classSignature} and save in
-	 * {@link #classMethods} 
+	 * {@link #classMethods}.
 	 */
 	private void parseClassMethods(Class<?> parsedClass) 
 	{

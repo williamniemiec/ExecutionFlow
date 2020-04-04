@@ -18,12 +18,15 @@ import executionFlow.info.ClassMethodInfo;
 
 
 /**
- * Responsible for data collection of methods and class builders used in tests<hr />
+ * Responsible for data collection of methods and class builders used in tests.<hr />
+ * 
  * <h2>Requirements</h2>
- * <li>Each test only uses one constructor of the class to be tested (consequently there 
- * will only be one class path per test)</li>
- * <li>Each test only tests methods of a class / constructor</li>
+ * <li>Each test uses only one constructor of the class to be tested (consequently there 
+ * will only be one class path per test method)</li>
+ * <li>Each test tests only methods of a class / constructor</li>
  * <li>Each test must have <code>@Test</code> annotation</li>
+ * 
+ * @implNote It will ignore methods with <code>@SkipCollection</code> annotation
  */
 @SuppressWarnings("unused")
 public aspect RuntimeCollector 
@@ -45,10 +48,10 @@ public aspect RuntimeCollector
 	//		Methods
 	//-----------------------------------------------------------------------
 	/**
-	 * Checks if there is the {@link @SkipCollection} annotation in the class
+	 * Checks if there is the <code>@SkipCollection</code> annotation in the class
 	 * 
 	 * @param c Class to be analyzed
-	 * @return If {@link @SkipCollection} annotation is present in the class;
+	 * @return If <code>@SkipCollection</code> annotation is present in the class;
 	 */
 	public boolean hasSkipCollectionAnnotation(Class<?> c)
 	{
