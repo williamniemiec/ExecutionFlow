@@ -30,12 +30,9 @@ public class ConsoleExporter implements ExporterExecutionFlow
 		for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
 			SignaturesInfo signatures = e.getKey();
 			
-			// Test method signature
-			if (signatures.hasTestMethodSignature())
-				System.out.println(signatures.getTestMethodSignature());
-			
-			System.out.println(signatures.getMethodSignature());	// Method signature
-			System.out.println(e.getValue());						// Test path
+			System.out.println(signatures.getTestMethodSignature());	// Test method signature
+			System.out.println(signatures.getMethodSignature());		// Method signature
+			System.out.println(e.getValue());							// Test path
 			System.out.println();
 		}
 	}
