@@ -17,7 +17,7 @@ Aplicação que exibe o caminho de execução (caminho de teste) de métodos.
 - [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) (não testado com Java 13)
 - [ASM 7 ou superior](https://github.com/williamniemiec/ExecutionFlow/tree/master/lib) (Incluído no projeto)
 
-## Organização do projeto
+## Organização do projeto (desatualizado)
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png)
 
 ##  Arquivos
