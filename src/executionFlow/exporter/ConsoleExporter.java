@@ -21,7 +21,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	//		Constructor
 	//-----------------------------------------------------------------------
 	/** 
-	 * Shows the results on the console in the following format:
+	 * Shows test paths of a method on the console in the following format:
 	 * <li>Test method's signature</li>
 	 * <li>Method's signature</li>
 	 * <li>Method's test path</li>

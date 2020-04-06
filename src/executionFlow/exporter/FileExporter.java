@@ -3,22 +3,15 @@ package executionFlow.exporter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import executionFlow.info.SignaturesInfo;
 
@@ -32,13 +25,17 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private Map<SignaturesInfo, List<Integer>> classPaths;
-	//private String classPath;
 	private static final String DIRNAME = "testPaths";
 
 	
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
+	/**
+	 * Exports test paths of a method to a file.
+	 * 
+	 * @param classPaths All tested test paths of a class
+	 */
 	public FileExporter(Map<SignaturesInfo, List<Integer>> classPaths)
 	{
 		this.classPaths = classPaths;
@@ -104,8 +101,6 @@ public class FileExporter implements ExporterExecutionFlow
 		// Extracts method name with parameters
 		String methodName = signatureFields[signatureFields.length-1];
 		
-		// Ex: TestClass.fibonacci(int)
-		
 		return className+"."+methodName;
 	}
 	
@@ -127,12 +122,13 @@ public class FileExporter implements ExporterExecutionFlow
 		
 		BufferedWriter bfw = new BufferedWriter(new FileWriter(f, true));
 		
+		// If the file does not exist, writes test method signature on it
 		if (!alreadyExists) {
 			bfw.write(testMethodSignature);
 			bfw.newLine();
 		}
 		
-		bfw.write(testPaths.toString());
+		bfw.write(testPaths.toString());		// Writes test path in the file
 		bfw.newLine();
 		bfw.close();
 		
@@ -177,12 +173,9 @@ public class FileExporter implements ExporterExecutionFlow
 			
 			// Gets save path
 			Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
-
-			// Delete files that will be rewritten
-			//Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
 			File dir = savePath.toFile();
 			
-			// If dir does not exist, it is all ready
+			// If the save path does not exist nothing will be overwritten
 			if (!dir.exists()) {
 				return;
 			}
@@ -214,75 +207,48 @@ public class FileExporter implements ExporterExecutionFlow
 	{
 		boolean response = false;
 		
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			String testMethodSignature_file = br.readLine();
-			
-			if (testMethodSignature_file.equals(testMethodSignature)) {
-				response = true;
-				
-			}
-		}
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		String testMethodSignature_file = br.readLine();
+		br.close();
+		
+		// If the file has the same test method signature it will be overwritten
+		if (testMethodSignature_file.equals(testMethodSignature)) {
+			response = true;
+		}		
 		
 		return response;
 	}
 	
 	/**
-	 * Returns the file's name that the test path file should have.
+	 * Returns the file name that the test path file should have.
 	 * 
 	 * @param path Path where the test path files are located
 	 * @return Name that the test path file should have
+	 * @throws IOException If it cannot find file in the provided path
 	 */
-	private String getTestPathName(Path path, String testMethodSignature)
+	private String getTestPathName(Path path, String testMethodSignature) throws IOException
 	{
 		int id = 1;
 		
+		// Starts trying with TP_1.txt
 		File f = new File(path.toFile(), "TP_"+id+".txt");
 		
-		
+		// It the name is already in use, if the file has the same test method signature
 		while (f.exists()) {
-			try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-				String testMethodSignature_file = br.readLine();
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			String testMethodSignature_file = br.readLine();
+			br.close();
 				
-				if (testMethodSignature_file.equals(testMethodSignature)) {
-					return "TP_"+id+".txt";
-				}			
-			} catch(IOException e1) {
-				e1.printStackTrace();
-			}
-			
+			// If the file has the same test method signature, test path will belong to it
+			if (testMethodSignature_file.equals(testMethodSignature)) {
+				return "TP_"+id+".txt";
+			}			
+
+			// Else try to generate another file name 
 			id++;
 			f = new File(path.toFile(), "TP_"+id+".txt");
 		}
 		
 		return "TP_"+id+".txt";
 	}
-	
-	/*
-	public String findClassFilePath(String classSignature)
-	{
-		Path root = Paths.get(System.getProperty("user.dir"));
-		
-		// Extracts class name
-		String[] signatureFields = classSignature.split("\\.");
-		String className = signatureFields[signatureFields.length-2];
-		
-		
-		try {
-			Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
-				@Override
-			    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-			        if (file.toString().endsWith(className+".java")) {
-			        	classPath = file.toString();
-			        }
-			        
-			        return FileVisitResult.CONTINUE;
-			    }
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return classPath;
-	}
-	*/
 }

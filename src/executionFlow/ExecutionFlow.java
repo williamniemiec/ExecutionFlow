@@ -19,6 +19,7 @@ import executionFlow.info.SignaturesInfo;
  * Given a class path and specific methods calculate the execution path for each
  * of these methods. This is the main class of execution flow.
  */
+@SuppressWarnings("unused")
 public class ExecutionFlow 
 {
 	//-----------------------------------------------------------------------
