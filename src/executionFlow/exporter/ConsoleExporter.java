@@ -40,6 +40,9 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	@Override
 	public void export() 
 	{
+		String currentTestMethodSignature = null;
+		boolean firstTime = true;
+		
 		System.out.println("---------------------------------------------------------------------");
 		System.out.println("                                EXPORT                               ");
 		System.out.println("---------------------------------------------------------------------");
@@ -47,10 +50,21 @@ public class ConsoleExporter implements ExporterExecutionFlow
 		for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
 			SignaturesInfo signatures = e.getKey();
 			
-			System.out.println(signatures.getTestMethodSignature());	// Test method signature
-			System.out.println(signatures.getMethodSignature());		// Method signature
-			System.out.println(e.getValue());							// Test path
-			System.out.println();										// New line
+			if (!signatures.getTestMethodSignature().equals(currentTestMethodSignature)) {
+				System.out.println(signatures.getTestMethodSignature());	// Test method signature
+				System.out.println(signatures.getMethodSignature());		// Method signature
+				
+				currentTestMethodSignature = signatures.getTestMethodSignature();
+			}
+			
+			if (firstTime) {
+				currentTestMethodSignature = signatures.getTestMethodSignature();
+				firstTime = false;
+			}
+			
+			System.out.println(e.getValue());	// Test path
 		}
+		
+		System.out.println();				// New line
 	}
 }
