@@ -1,0 +1,2 @@
+executionFlow.runtime.JUnitSimulation.testFactorial()
+[68, 70, 71, 70, 71, 70, 71, 70, 71, 70, 74]
