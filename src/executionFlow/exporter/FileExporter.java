@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ public class FileExporter implements ExporterExecutionFlow
 	private Map<SignaturesInfo, List<Integer>> classPaths;
 	private String classPath;
 	private static final String DIRNAME = "testPaths";
+
+	Map<String, Integer> signatureId = new HashMap<>();
 	
 	
 	//-----------------------------------------------------------------------
@@ -56,7 +59,7 @@ public class FileExporter implements ExporterExecutionFlow
 			// Extracts method name with parameters
 			String methodName = signatureFields[signatureFields.length-1];
 			
-			// TestClass.fibonacci(int)
+			// Ex: TestClass.fibonacci(int)
 			String folderName = className+"."+methodName;
 			
 			// Extracts folder path
@@ -79,7 +82,7 @@ public class FileExporter implements ExporterExecutionFlow
 			
 			try {
 				Files.createDirectories(p);
-				File f = new File(p.toFile(), getTestPathName(p));
+				File f = new File(p.toFile(), getTestPathName(p, signatures));
 				BufferedWriter bfw = new BufferedWriter(new FileWriter(f));
 				bfw.write(signatures.getTestMethodSignature());
 				bfw.newLine();
@@ -103,11 +106,13 @@ public class FileExporter implements ExporterExecutionFlow
 	 * @param path Path where the test path files are located
 	 * @return Name that the test path file should have
 	 */
-	private String getTestPathName(Path path)
+	private String getTestPathName(Path path, SignaturesInfo signatures)
 	{
 		int id = 0;
 		boolean alreadyExists = true;
 		File f;
+		signatures.getTestMethodSignature();
+		signatures.getMethodSignature();
 		
 		while (alreadyExists)
 		{

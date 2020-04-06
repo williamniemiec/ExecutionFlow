@@ -148,4 +148,24 @@ public class TestClass {
 		
 		return Character.toUpperCase(letter);
 	}
+	
+	
+	/**
+	 * Method with three possible paths.
+	 * 
+	 * @param num Number between 1 and 2
+	 * @return Number in text or an empty string if the number is not between 1 and 2
+	 */
+	public String threePaths(int num)
+	{
+		if (num == 1) {
+			return "one";
+		}
+		
+		if (num == 2) {
+			return "two";
+		}
+		
+		return "";
+	}
 }

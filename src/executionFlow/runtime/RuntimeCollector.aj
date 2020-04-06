@@ -34,7 +34,10 @@ public aspect RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	private static Map<String, ClassMethodInfo> methodCollector = new HashMap<>();
+	/**
+	 * Map<Map<method's signature, method's args>, method's info>
+	 */
+	private static Map<Map<String, String>, ClassMethodInfo> methodCollector = new HashMap<>();
 	private static Map<String, ClassConstructorInfo> consCollector = new HashMap<>();
 	private static String classPath;
 	private static ClassConstructorInfo cci;
@@ -191,8 +194,20 @@ public aspect RuntimeCollector
 				e1.printStackTrace();
 			}
 			
+			//System.out.println("!"+signature);
+			//System.out.println("!"+Arrays.toString(thisJoinPoint.getArgs()));
+			Map<String, String> methodInfo = new HashMap<>();
+			methodInfo.put(signature, Arrays.toString(thisJoinPoint.getArgs()));
+			
 			// If the method has not been collected, collect it
-			if (!methodCollector.containsKey(signature)) {
+			//if (!methodCollector.containsKey(signature)) {
+			//System.out.println(methodCollector);
+			//System.out.println(methodInfo);
+			
+			if (!methodCollector.containsKey(methodInfo)) {
+				//System.out.println("ENTROU");
+				//System.out.println("!"+signature);
+				
 				// Gets class package
 				Pattern p = Pattern.compile("([A-z0-9\\-_$]+\\.)+");
 				Matcher m = p.matcher(signature);
@@ -212,11 +227,13 @@ public aspect RuntimeCollector
 				}
 				
 				// Checks if it is an internal call (if it is, ignore it)
-				if (!lastInsertedMethod.contains(classPackage)) {
+				if (lastInsertedMethod.equals(signature) || !lastInsertedMethod.contains(classPackage)) {
 					ClassMethodInfo cmi = new ClassMethodInfo(testMethodSignature, methodName, paramTypes, thisJoinPoint.getArgs());
-					methodCollector.put(signature, cmi);
+					//methodCollector.put(signature, cmi);
+					methodCollector.put(methodInfo, cmi);
 					lastInsertedMethod = signature;
 					
+					//System.out.println(methodCollector+"\n");
 					// -----<DEBUG>-----
 					// System.out.println("put: "+signature);
 				}

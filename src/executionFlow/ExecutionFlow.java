@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.exporter.FileExporter;
 import executionFlow.info.ClassConstructorInfo;
@@ -37,8 +38,8 @@ public class ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		//exporter = new ConsoleExporter(classPaths);
-		exporter = new FileExporter(classPaths);
+		exporter = new ConsoleExporter(classPaths);
+		//exporter = new FileExporter(classPaths);
 	}
 	
 	
