@@ -28,6 +28,22 @@ public class JUnitSimulation
 	}
 	
 	@Test
+	public void testFactorial2() 
+	{
+		System.out.println("#####################################################################");
+		System.out.println("                             testFactorial                           ");
+		System.out.println("#####################################################################");
+		
+		int num = 0;
+		long expectedResult = 1;
+		
+		TestClass tc = new TestClass(4);
+		long res = tc.factorial(num);
+		
+		assertEquals(expectedResult, res);
+	}
+	
+	@Test
 	public void testFibonacci() 
 	{
 		System.out.println("#####################################################################");
