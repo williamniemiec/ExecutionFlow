@@ -3,6 +3,7 @@ package executionFlow.exporter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,17 +32,9 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private Map<SignaturesInfo, List<Integer>> classPaths;
-	private String classPath;
+	//private String classPath;
 	private static final String DIRNAME = "testPaths";
-	
-	
-	
-	// Map<method's signature, id> // Associa a cada assinatura de metodo um id
-	// !!! Deve ser zerado ao trocar o diretorio / nome da classe !!!!
-	//Map<String, Integer> signatureId = new HashMap<>();
-	// Armazena assinatura do metodo e lista de ids (necessario para garantir que mais de um teste possa testar um mesmo metodo)
-	//Map<String, List<Integer>> signatureId = new HashMap<>();
-	
+
 	
 	//-----------------------------------------------------------------------
 	//		Constructor
@@ -55,139 +48,183 @@ public class FileExporter implements ExporterExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
+	/**
+	 * Returns path where are test paths of a method.
+	 * 
+	 * @param methodSignature Signature of the method
+	 * @return Path where are test paths of a method.
+	 */
+	private String getSavePath(String methodSignature)
+	{
+		String[] signatureFields = methodSignature.split("\\.");
+		
+		String folderPath = getFolderPath(signatureFields);
+		String folderName = getFolderName(signatureFields);
+		
+		return DIRNAME+"/"+folderPath+"/"+folderName;
+	}
+	
+	/**
+	 * Generates folder's path based on method's signature.
+	 * 
+	 * @param signatureFields Fields of the signature of the method
+	 * @return Folder's path
+	 */
+	private String getFolderPath(String[] signatureFields)
+	{
+		// Extracts folder path
+		String folderPath = "";
+		
+		StringBuilder sb = new StringBuilder();
+		
+		for (int i=0; i<signatureFields.length-2; i++) {
+			sb.append(signatureFields[i]);
+			sb.append("/");
+		}
+		
+		if (sb.length() > 0) {
+			sb.deleteCharAt(sb.length()-1);	// Removes last slash
+			folderPath = sb.toString();
+		}
+		
+		return folderPath;
+	}
+	
+	/**
+	 * Generates folder's name based on method's signature.
+	 * 
+	 * @param signatureFields Fields of the signature of the method
+	 * @return Folder's name
+	 */
+	private String getFolderName(String[] signatureFields)
+	{
+		// Extracts class name
+		String className = signatureFields[signatureFields.length-2];
+		
+		// Extracts method name with parameters
+		String methodName = signatureFields[signatureFields.length-1];
+		
+		// Ex: TestClass.fibonacci(int)
+		
+		return className+"."+methodName;
+	}
+	
+	/**
+	 * Writes test paths of a method in a file.
+	 * 
+	 * @param testPaths Test paths of the method
+	 * @param savePath Location where the file will be saved
+	 * @param testMethodSignature Signature of the test method the method is in
+	 * @throws IOException If it is not possible to write some test path file
+	 */
+	private void writeFile(List<Integer> testPaths, Path savePath, String testMethodSignature) throws IOException
+	{
+		boolean alreadyExists;
+		
+		Files.createDirectories(savePath);
+		File f = new File(savePath.toFile(), getTestPathName(savePath, testMethodSignature));
+		alreadyExists = f.exists();
+		
+		BufferedWriter bfw = new BufferedWriter(new FileWriter(f, true));
+		
+		if (!alreadyExists) {
+			bfw.write(testMethodSignature);
+			bfw.newLine();
+		}
+		
+		bfw.write(testPaths.toString());
+		bfw.newLine();
+		bfw.close();
+		
+		System.out.println("Writing file "+f.getName()+" in "+f.getAbsolutePath());
+	}
+	
 	@Override
 	public void export() 
 	{
-		//System.out.println(classPaths);
-		// Clear folders that will stores test paths of the methods
-		//prepareExport();
-		prepareExport();
+		try {
+			// Removes test path folders that will be overwritten (avoid creating duplicate files)
+			prepareExport();
 		
-		boolean alreadyExists;
-		for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
-			SignaturesInfo signatures = e.getKey();
-
-			//----------------------------
-			// Extracts class name
-			String[] signatureFields = signatures.getMethodSignature().split("\\.");
-			String className = signatureFields[signatureFields.length-2];
-			
-			// Extracts method name with parameters
-			String methodName = signatureFields[signatureFields.length-1];
-			
-			// Ex: TestClass.fibonacci(int)
-			String folderName = className+"."+methodName;
-			
-			// Extracts folder path
-			String folderPath = "";
-			StringBuilder sb = new StringBuilder();
-			for (int i=0; i<signatureFields.length-2; i++) {
-				sb.append(signatureFields[i]);
-				sb.append("/");
+			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
+				SignaturesInfo signatures = e.getKey();
+	
+				// Gets save path
+				Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
+				
+				// Writes test paths in the file
+				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
 			}
-			if (sb.length() > 0)
-				sb.deleteCharAt(sb.length()-1);	// Removes last slash
 			
-			folderPath = sb.toString();
-			
-			// Create file
-			Path p = Paths.get(DIRNAME+"/"+folderPath+"/"+folderName);
-			
-			try {
-				Files.createDirectories(p);
-				File f = new File(p.toFile(), getTestPathName(p, signatures));
-				alreadyExists = f.exists();
-				
-				BufferedWriter bfw = new BufferedWriter(new FileWriter(f, true));
-				
-				if (!alreadyExists) {
-					bfw.write(signatures.getTestMethodSignature());
-					bfw.newLine();
-				}
-				
-				bfw.write(e.getValue().toString());
-				bfw.newLine();
-				bfw.close();
-				
-				System.out.println("Writing file "+f.getName()+" in "+f.getAbsolutePath());
-			} catch (IOException e1) {
-				System.out.println("Error: "+e1.getMessage());
-			}
+			System.out.println("Test paths have been successfully generated!");
+			System.out.println("Location: "+new File(DIRNAME).getAbsolutePath());
+			System.out.println();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		System.out.println("Test paths have been successfully generated!");
-		System.out.println("Location: "+new File(DIRNAME).getAbsolutePath());
-		System.out.println();
-		
 	}
 	
-	private void prepareExport()
+	
+	/**
+	 * Removes test path folders that will be overwritten.
+	 *  
+	 * @throws IOException If any test path file to be removed is in use
+	 */
+	private void prepareExport() throws IOException
 	{
-		//generateMethodSignaturesIds();
-		
-		boolean alreadyExists;
-		boolean deleteFile = false;
-		
 		for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
-			SignaturesInfo signatures = e.getKey();
+			SignaturesInfo signatures = e.getKey();			
 			
-			String testMethodSignature_testPath = signatures.getTestMethodSignature();
-			//----------------------------
-			// Extracts class name
-			String[] signatureFields = signatures.getMethodSignature().split("\\.");
-			String className = signatureFields[signatureFields.length-2];
-			
-			// Extracts method name with parameters
-			String methodName = signatureFields[signatureFields.length-1];
-			
-			// Ex: TestClass.fibonacci(int)
-			String folderName = className+"."+methodName;
-			
-			// Extracts folder path
-			String folderPath = "";
-			StringBuilder sb = new StringBuilder();
-			for (int i=0; i<signatureFields.length-2; i++) {
-				sb.append(signatureFields[i]);
-				sb.append("/");
-			}
-			if (sb.length() > 0)
-				sb.deleteCharAt(sb.length()-1);	// Removes last slash
-			
-			folderPath = sb.toString();
-			
+			// Gets save path
+			Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
+
 			// Delete files that will be rewritten
-			File dir = new File(DIRNAME+"/"+folderPath+"/"+folderName);
+			//Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
+			File dir = savePath.toFile();
 			
+			// If dir does not exist, it is all ready
 			if (!dir.exists()) {
 				return;
 			}
 			
+			// Else removes files that will be overwritten
 			String[] files = dir.list();
-			File f;
+			File testPathFile;
 			
 			for (String filename : files) {
-				f = new File(dir, filename);
+				testPathFile = new File(dir, filename);
 				
-				try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-					String testMethodSignature_file = br.readLine();
-					
-					if (testMethodSignature_file.equals(testMethodSignature_testPath)) {
-						deleteFile = true;
-						
-					}
-				} catch(IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				if (deleteFile) {
-					deleteFile = false;
-					f.getAbsoluteFile().delete();
+				if (willBeOverwritten(testPathFile, signatures.getTestMethodSignature())) {
+					testPathFile.getAbsoluteFile().delete();
 				}
 			}
-			
 		}
 	}
 	
+	
+	/**
+	 * Checks if a test path file will be overwritten.
+	 * 
+	 * @param file Test path file
+	 * @param testMethodSignature Signature of the test method the method is in
+	 * @return True if the file will be overwritten; otherwise, returns false
+	 * @throws IOException If it is not possible to read the file
+	 */
+	private boolean willBeOverwritten(File file, String testMethodSignature) throws IOException
+	{
+		boolean response = false;
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+			String testMethodSignature_file = br.readLine();
+			
+			if (testMethodSignature_file.equals(testMethodSignature)) {
+				response = true;
+				
+			}
+		}
+		
+		return response;
+	}
 	
 	/**
 	 * Returns the file's name that the test path file should have.
@@ -195,11 +232,10 @@ public class FileExporter implements ExporterExecutionFlow
 	 * @param path Path where the test path files are located
 	 * @return Name that the test path file should have
 	 */
-	private String getTestPathName(Path path, SignaturesInfo signatures)
+	private String getTestPathName(Path path, String testMethodSignature)
 	{
 		int id = 1;
 		
-		String testMethodSignature_testPath = signatures.getTestMethodSignature();
 		File f = new File(path.toFile(), "TP_"+id+".txt");
 		
 		
@@ -207,7 +243,7 @@ public class FileExporter implements ExporterExecutionFlow
 			try (BufferedReader br = new BufferedReader(new FileReader(f))) {
 				String testMethodSignature_file = br.readLine();
 				
-				if (testMethodSignature_file.equals(testMethodSignature_testPath)) {
+				if (testMethodSignature_file.equals(testMethodSignature)) {
 					return "TP_"+id+".txt";
 				}			
 			} catch(IOException e1) {
@@ -222,34 +258,6 @@ public class FileExporter implements ExporterExecutionFlow
 	}
 	
 	/*
-	private void generateMethodSignaturesIds()
-	{
-		int lastInsertedId;
-		List<Integer> ids;
-		
-		for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
-			SignaturesInfo signatures = e.getKey();
-		
-			if (signatureId.containsKey(signatures.getMethodSignature())) {
-				//System.out.println("TEM");
-				
-				ids = signatureId.get(signatures.getMethodSignature());
-				lastInsertedId = ids.get(ids.size()-1); 
-				System.out.println("lastInsertedId "+lastInsertedId);
-				ids.add(lastInsertedId+1);
-				System.out.println(ids);
-				System.out.println(signatureId);
-				System.out.println();
-			} else {
-				//System.out.println("NAO TEM");
-				ids = new ArrayList<>();
-				ids.add(1);
-				signatureId.put(signatures.getMethodSignature(), ids);
-			}
-		}
-		
-	}
-	*/
 	public String findClassFilePath(String classSignature)
 	{
 		Path root = Paths.get(System.getProperty("user.dir"));
@@ -275,32 +283,6 @@ public class FileExporter implements ExporterExecutionFlow
 		}
 		
 		return classPath;
-	}
-	
-	/*
-	private void clearDir(String path)
-	{
-		File dir = new File(path);
-		
-		try {
-			Files.walk(dir.toPath())
-			.sorted(Comparator.reverseOrder())
-			.map(Path::toFile)
-			.forEach(File::delete);
-		} catch (IOException e) { }
-	}
-	
-	private void deleteFile(Path dir, String filename)
-	{
-		//File dir = new File(path);
-		
-		try {
-			Files.walk(dir)
-			.sorted(Comparator.reverseOrder())
-			.map(Path::toFile)
-			.filter(f -> f.getName().equals(filename))
-			.forEach(File::delete);
-		} catch (IOException e) { }
 	}
 	*/
 }

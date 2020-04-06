@@ -28,10 +28,10 @@ public class JUnitSimulation
 	}
 	
 	@Test
-	public void testFactorial2() 
+	public void testFactorial_zero() 
 	{
 		System.out.println("#####################################################################");
-		System.out.println("                             testFactorial                           ");
+		System.out.println("                           testFactorial_zero                       ");
 		System.out.println("#####################################################################");
 		
 		int num = 0;
