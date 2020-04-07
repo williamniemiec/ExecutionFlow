@@ -31,52 +31,44 @@ public aspect MethodCollector extends RuntimeCollector
 	//		Pointcut
 	//-----------------------------------------------------------------------
 	pointcut methodCollector(): (cflow(execution(@Test * *.*(*))) || cflow(call(* *.*(*)))) 
-													 && !within(RuntimeCollector)
-													 && !within(TestMethodCollector)
-													 && !within(MethodCollector)
-													 && !within(ConstructorCollector)
-													 && !within(CollectorExecutionFlow)
-													 && !cflow(call(* executionFlow.info.ClassMethodInfo.*(*)))
-													 && !cflow(call(* executionFlow.info.ClassConstructorInfo.*(*)))
-													 && !cflow(call(* executionFlow.MethodExecutionFlow.*(*)))
-													 && !cflow(call(* executionFlow.ExecutionFlow.*(*)))
-													 && !cflow(call(* executionFlow.ClassExecutionFlow.*(*)))
-													 && !cflow(call(* executionFlow.cheapCoverage.CheapCoverage.*(*)))
-													 && !cflow(call(* executionFlow.cheapCoverage.RT.*(*)))
-													 && !call(* org.junit.runner.JUnitCore.runClasses(*))
-													 && !call(void org.junit.Assert.*(*,*));
+								 && !within(RuntimeCollector)
+								 && !within(TestMethodCollector)
+								 && !within(MethodCollector)
+								 && !within(ConstructorCollector)
+								 && !within(CollectorExecutionFlow)
+								 && !cflow(call(* executionFlow.info.ClassMethodInfo.*(*)))
+								 && !cflow(call(* executionFlow.info.ClassConstructorInfo.*(*)))
+								 && !cflow(call(* executionFlow.MethodExecutionFlow.*(*)))
+								 && !cflow(call(* executionFlow.ExecutionFlow.*(*)))
+								 && !cflow(call(* executionFlow.ClassExecutionFlow.*(*)))
+								 && !cflow(call(* executionFlow.cheapCoverage.CheapCoverage.*(*)))
+								 && !cflow(call(* executionFlow.cheapCoverage.RT.*(*)))
+								 && !call(* org.junit.runner.JUnitCore.runClasses(*))
+								 && !call(void org.junit.Assert.*(*,*));
 	
 	/**
 	 * Executed before the end of each internal call of a method with @Test annotation
 	 */
 	before(): methodCollector()
-	{
+	{	
 		// Ignores if the class has @SkipCollection annotation
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 		
 		String signature = thisJoinPoint.getSignature().toString();
-		
-		// Ignores the external method (with @Test annotation) of the collection
-		if (firstTime) {
-			testClassSignature = CollectorExecutionFlow.extractTestClassSignature(signature);
-			firstTime = false;
-			
-			return; 
-		}
 				
 		// Ignores native java methods
 		if (isNativeMethod(signature)) { return; }
-		
+
 		// Ignores methods in the method test (with @Test) (it will only consider internal calls)
 		if (testClassSignature != null && signature.contains(testClassSignature)) { return; }	
 		
-		// Check if is a method signature
+		// Checks if is a method signature
 		if (!isMethodSignature(signature)) { return; }
 		
-		// Extract the method name
+		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractClassName(signature);
 		
-		// Extract types of method parameters (if there is any)
+		// Extracts types of method parameters (if there is any)
 		Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
 		
 		// Gets class path
@@ -95,7 +87,7 @@ public aspect MethodCollector extends RuntimeCollector
 		// Checks if it is an internal call (if it is, ignore it)
 		if (isInternalCall(signature)) { return; }
 		
-		// Collect the method
+		// Collects the method
 		ClassMethodInfo cmi = new ClassMethodInfo(testMethodSignature, methodName, paramTypes, thisJoinPoint.getArgs());
 		methodCollector.put(methodInfo, cmi);
 		lastInsertedMethod = signature;

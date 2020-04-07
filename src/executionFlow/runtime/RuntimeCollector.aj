@@ -104,7 +104,7 @@ public abstract aspect RuntimeCollector
 	}
 	
 	/**
-	 * Checks if there is the <code>@SkipCollection</code> annotation in the class.
+	 * Checks if there is the <code>@SkipCollection</code> annotation in a class.
 	 * 
 	 * @param c Class to be analyzed
 	 * @return If <code>@SkipCollection</code> annotation is present in the class

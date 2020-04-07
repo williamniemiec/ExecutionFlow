@@ -52,6 +52,7 @@ public class CheapCoverage
 	public static void parseClass(String classPath) throws IOException 
 	{
 		byte[] data;
+		
 		try (var input = Files.newInputStream(Path.of(classPath))) {
 			data = input.readAllBytes();
 		}
