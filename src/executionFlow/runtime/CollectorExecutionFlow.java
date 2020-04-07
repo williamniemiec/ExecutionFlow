@@ -28,7 +28,61 @@ public class CollectorExecutionFlow
 	//		Methods
 	//-----------------------------------------------------------------------
 	/**
-	 * Given the parameters of a method, discover the class of each of these parameters
+	 * Extracts signature of the test method.
+	 * 
+	 * @param signature First signature collected by aspect
+	 * @return Signature of the test method
+	 */
+	public static String extractTestClassSignature(String signature)
+	{
+		String response = "";
+		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.\\<");
+		Matcher m = p.matcher(signature);
+		
+		if (m.find()) {
+			String name = m.group();
+			p = Pattern.compile("[A-z0-9-_$]+");
+			m = p.matcher(name);
+			
+			if (m.find()) {
+				response = m.group();
+			}
+		}
+		
+		return response;
+	}
+	
+	
+	/**
+	 * Extracts package name of a method signature.
+	 * 
+	 * @param signature Signature of the method
+	 * @return Package name
+	 */
+	public static String extractPackageName(String signature)
+	{
+		String response = "";
+		Pattern p = Pattern.compile("([A-z0-9\\-_$]+\\.)+");
+		Matcher m = p.matcher(signature);
+
+		if (m.find()) {
+			String[] tmp = m.group().split("\\.");
+			StringBuilder sb = new StringBuilder();
+			
+			for (int i=0; i<tmp.length-1; i++) {
+				sb.append(tmp[i]);
+				sb.append(".");
+			}
+			
+			sb.deleteCharAt(sb.length()-1);		// Removes last dot
+			response = sb.toString();
+		}
+		
+		return response;
+	}
+	
+	/**
+	 * Given the parameters of a method, discover the class of each of these parameters.
 	 * 
 	 * @param args Parameter values of a method
 	 * @return The classes of these parameter values
@@ -48,7 +102,7 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Extract class name from a signature
+	 * Extracts class name from a signature.
 	 * 
 	 * @param signature Signature of a method or class
 	 * @return Name of this class or method
@@ -72,7 +126,7 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Convert a wrapper class in primitive. If the class is not a
+	 * Converts a wrapper class in primitive. If the class is not a
 	 * wrapper class, returns itself.
 	 * 
 	 * @param c Class to be normalized
@@ -95,7 +149,7 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * When executed will determine the current location of the class executed.
+	 * When executed it will determine the current location of the class executed.
 	 * 
 	 * @implSpec This method was projected to be executed in an AOP file. If
 	 * it will execute in another place the results may be unexpected
