@@ -41,21 +41,6 @@ public class RT
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
-	@SuppressWarnings("unused")
-	private static void probe(String method, int line) 
-	{
-		// Ignores constructor lines
-		if (!method.contains("<init>") && !method.contains("<clinit>") && !method.contains("preClinit") && line != lastAddLine) {	 
-			if (lastAddMethod == null) { lastAddMethod = method; }
-			
-			// Ignores internal calls in test path
-			if (!method.equals(lastAddMethod)) { return; }
-				
-			path.add(line);
-			lastAddLine = line;
-		}
-	}
-
 	public static CallSite bsm(Lookup lookup, String name, MethodType type, String method, int line) 
 	{
 		return new ConstantCallSite(insertArguments(PROBE, 0, method, line));
@@ -70,5 +55,20 @@ public class RT
 		
 		lastAddLine = 0;
 		lastAddMethod = null;
+	}
+	
+	@SuppressWarnings("unused")
+	private static void probe(String method, int line) 
+	{
+		// Ignores constructor lines
+		if (!method.contains("<init>") && !method.contains("<clinit>") && !method.contains("preClinit") && line != lastAddLine) {	 
+			if (lastAddMethod == null) { lastAddMethod = method; }
+			
+			// Ignores internal calls in test path
+			if (!method.equals(lastAddMethod)) { return; }
+				
+			path.add(line);
+			lastAddLine = line;
+		}
 	}
 }

@@ -29,7 +29,7 @@ public class ExecutionFlow
 	private Map<SignaturesInfo, List<Integer>> classPaths = new HashMap<>();
 	private ClassConstructorInfo cci;
 	private List<ClassMethodInfo> methods = new ArrayList<>();
-	final ExporterExecutionFlow exporter;
+	private final ExporterExecutionFlow exporter;
 	
 	
 	//-----------------------------------------------------------------------

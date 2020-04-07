@@ -93,6 +93,10 @@ public aspect MethodCollector extends RuntimeCollector
 		lastInsertedMethod = signature;
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	/**
 	 * Checks if a signature belong to an internal call.
 	 * 

@@ -62,6 +62,17 @@ public class ClassMethodInfo
 
 	
 	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
+	@Override
+	public String toString() 
+	{
+		return "ClassMethodInfo [methodName=" + methodName + ", parameterTypes=" + Arrays.toString(parameterTypes)
+		+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + "]";
+	}	
+	
+	
+	//-----------------------------------------------------------------------
 	//		Getters & Setters
 	//-----------------------------------------------------------------------
 	public String getMethodName() 
@@ -120,15 +131,4 @@ public class ClassMethodInfo
 	{
 		this.testMethodSignature = testMethodSignature;
 	}
-
-	
-	//-----------------------------------------------------------------------
-	//		Methods
-	//-----------------------------------------------------------------------
-	@Override
-	public String toString() 
-	{
-		return "ClassMethodInfo [methodName=" + methodName + ", parameterTypes=" + Arrays.toString(parameterTypes)
-		+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + "]";
-	}	
 }

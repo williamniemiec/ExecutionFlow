@@ -126,29 +126,6 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Converts a wrapper class in primitive. If the class is not a
-	 * wrapper class, returns itself.
-	 * 
-	 * @param c Class to be normalized
-	 * @return Normalized class
-	 */
-	private static Class<?> normalizeClass(Class<?> c)
-	{
-		Class<?> response = c;
-		
-		if 		(c == Boolean.class) 	{ response = boolean.class; }
-		else if	(c == Byte.class) 		{ response = byte.class; }
-		else if	(c == Character.class) 	{ response = char.class; }
-		else if	(c == Short.class) 		{ response = short.class; }
-		else if	(c == Integer.class)	{ response = int.class; }
-		else if	(c == Float.class) 		{ response = float.class; }
-		else if	(c == Long.class) 		{ response = long.class; }
-		else if	(c == Double.class) 	{ response = double.class; }
-		
-		return response;
-	}
-	
-	/**
 	 * When executed it will determine the current location of the class executed.
 	 * 
 	 * @implSpec This method was projected to be executed in an AOP file. If
@@ -187,5 +164,28 @@ public class CollectorExecutionFlow
 		});
 		
 		return classPath;
+	}
+	
+	/**
+	 * Converts a wrapper class in primitive. If the class is not a
+	 * wrapper class, returns itself.
+	 * 
+	 * @param c Class to be normalized
+	 * @return Normalized class
+	 */
+	private static Class<?> normalizeClass(Class<?> c)
+	{
+		Class<?> response = c;
+		
+		if 		(c == Boolean.class) 	{ response = boolean.class; }
+		else if	(c == Byte.class) 		{ response = byte.class; }
+		else if	(c == Character.class) 	{ response = char.class; }
+		else if	(c == Short.class) 		{ response = short.class; }
+		else if	(c == Integer.class)	{ response = int.class; }
+		else if	(c == Float.class) 		{ response = float.class; }
+		else if	(c == Long.class) 		{ response = long.class; }
+		else if	(c == Double.class) 	{ response = double.class; }
+		
+		return response;
 	}
 }

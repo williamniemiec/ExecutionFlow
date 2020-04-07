@@ -47,29 +47,6 @@ public class ClassExecutionFlow
 	
 	
 	//-----------------------------------------------------------------------
-	//		Getters & Setters
-	//-----------------------------------------------------------------------
-	public String getClassSignature() { return this.classSignature; }
-	
-	public String getClassPath() { return classPath; }
-	
-	/**
-	 * Get {@link java.lang.reflect.Method} of a method if it is in the class
-	 * passed to this object (by class signature).
-	 * 
-	 * @param methodSignature Signature of the method (without class)
-	 * <br/>Example
-	 * <li>method: String.concat(String)</li>
-	 * <li>methodSignature: concat(String)</li>
-	 * @return Method or null if it does not exist
-	 */
-	public Method getMethod(String methodSignature) 
-	{
-		return classMethods.get(methodSignature);
-	}
-	
-	
-	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
 	/**
@@ -106,5 +83,28 @@ public class ClassExecutionFlow
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	//-----------------------------------------------------------------------
+	//		Getters & Setters
+	//-----------------------------------------------------------------------
+	public String getClassSignature() { return this.classSignature; }
+	
+	public String getClassPath() { return classPath; }
+	
+	/**
+	 * Get {@link java.lang.reflect.Method} of a method if it is in the class
+	 * passed to this object (by class signature).
+	 * 
+	 * @param methodSignature Signature of the method (without class)
+	 * <br/>Example
+	 * <li>method: String.concat(String)</li>
+	 * <li>methodSignature: concat(String)</li>
+	 * @return Method or null if it does not exist
+	 */
+	public Method getMethod(String methodSignature) 
+	{
+		return classMethods.get(methodSignature);
 	}
 }

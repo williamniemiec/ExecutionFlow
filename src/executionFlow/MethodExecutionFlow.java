@@ -42,29 +42,6 @@ public class MethodExecutionFlow
 		this.classExecutionFlow = classExecutionFlow;
 		this.cci = cci;
 	}
-
-
-	//-----------------------------------------------------------------------
-	//		Getters
-	//-----------------------------------------------------------------------
-	public List<Integer> getMethodPath() 
-	{ 
-		return methodPath; 
-	}
-	
-	/**
-	 * @return Return type and parameter types of the method
-	 */
-	private MethodType getMethodType() 
-	{
-		Method m = classExecutionFlow.getMethod(methodSignature);
-		Class<?>[] params = m.getParameterTypes();
-		
-		if (params.length == 0)
-			return methodType(m.getReturnType());
-		
-		return methodType(m.getReturnType(), params);
-	}
 	
 	
 	//-----------------------------------------------------------------------
@@ -85,5 +62,28 @@ public class MethodExecutionFlow
 		methodPath = CheapCoverage.getExecutionPath(methodName, mt, args, cci);
 		
 		return this;
+	}
+	
+	
+	//-----------------------------------------------------------------------
+	//		Getters
+	//-----------------------------------------------------------------------
+	public List<Integer> getMethodPath() 
+	{ 
+		return methodPath; 
+	}
+	
+	/**
+	 * @return Return type and parameter types of the method
+	 */
+	private MethodType getMethodType() 
+	{
+		Method m = classExecutionFlow.getMethod(methodSignature);
+		Class<?>[] params = m.getParameterTypes();
+		
+		if (params.length == 0)
+			return methodType(m.getReturnType());
+		
+		return methodType(m.getReturnType(), params);
 	}
 }
