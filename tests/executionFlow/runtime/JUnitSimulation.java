@@ -12,6 +12,17 @@ import org.junit.Test;
 public class JUnitSimulation 
 {
 	@Test
+	public void testEmptyTest()
+	{
+		System.out.println("#####################################################################");
+		System.out.println("                             testEmptyTest                           ");
+		System.out.println("#####################################################################");
+		
+		TestClass tc = new TestClass(4);
+		tc.test2();
+	}
+	
+	@Test
 	public void testFactorial() 
 	{
 		System.out.println("#####################################################################");

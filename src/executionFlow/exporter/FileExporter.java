@@ -45,6 +45,31 @@ public class FileExporter implements ExporterExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
+	@Override
+	public void export() 
+	{
+		try {
+			// Removes test path folders that will be overwritten (avoid creating duplicate files)
+			prepareExport();
+		
+			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
+				SignaturesInfo signatures = e.getKey();
+	
+				// Gets save path
+				Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
+				
+				// Writes test paths in the file
+				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
+			}
+			
+			System.out.println("Test paths have been successfully generated!");
+			System.out.println("Location: "+new File(DIRNAME).getAbsolutePath());
+			System.out.println();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Returns path where are test paths of a method.
 	 * 
@@ -134,32 +159,6 @@ public class FileExporter implements ExporterExecutionFlow
 		
 		System.out.println("Writing file "+f.getName()+" in "+f.getAbsolutePath());
 	}
-	
-	@Override
-	public void export() 
-	{
-		try {
-			// Removes test path folders that will be overwritten (avoid creating duplicate files)
-			prepareExport();
-		
-			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
-				SignaturesInfo signatures = e.getKey();
-	
-				// Gets save path
-				Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
-				
-				// Writes test paths in the file
-				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
-			}
-			
-			System.out.println("Test paths have been successfully generated!");
-			System.out.println("Location: "+new File(DIRNAME).getAbsolutePath());
-			System.out.println();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	
 	/**
 	 * Removes test path folders that will be overwritten.
