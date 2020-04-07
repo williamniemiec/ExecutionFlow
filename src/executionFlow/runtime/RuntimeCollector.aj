@@ -47,7 +47,6 @@ public abstract aspect RuntimeCollector
 	
 	protected static Map<String, ClassConstructorInfo> consCollector = new HashMap<>();
 	protected static ClassConstructorInfo cci;
-	protected static boolean firstTime = true;
 	protected static String testClassSignature;
 	protected static String testMethodSignature;
 	protected static String lastInsertedMethod = "";
@@ -97,7 +96,6 @@ public abstract aspect RuntimeCollector
 		methodCollector.clear();
 		consCollector.clear();
 		cci = null;
-		firstTime = true;
 		testClassSignature = null;
 		testMethodSignature = null;
 		lastInsertedMethod = "";
