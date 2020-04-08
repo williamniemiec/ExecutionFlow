@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.aspectj.runtime
+Built-By: default
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Eclipse AspectJ Development Tools
+Export-Package: executionFlow;executionFlow.cheapCoverage;executionFlow.exporter;executionFlow.info;executionFlow.runtime
+Bundle-Name: ExecutionFlow
+Bundle-Version: 1
+Bundle-ClassPath: .
+Eclipse-BundleShape: jar
