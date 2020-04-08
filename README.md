@@ -85,6 +85,12 @@ Os test paths desse método serão postos nesse diretório:
 
 Um exemplo real desse método pode ser encontrado [aqui]().
 
+## Restrições da aplicação
+- 
+- 
+- 
+
+<b>OBS:</b> É possível ver [aqui]() o que ocorre se uma dessas restrições não for respeitada.
 
 ## Requisitos
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)

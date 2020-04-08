@@ -14,10 +14,10 @@ import executionFlow.info.ClassMethodInfo;
  * 
  * <h2>Requirements</h2>
  * <ul>
- * 		<li>Each test uses only one constructor of the class to be tested (consequently there 
+ * 		<li>Each test method uses only one constructor of the class to be tested (consequently there 
  * 		will only be one class path per test method)</li>
- * 		<li>Each test tests only methods of a class / constructor</li>
- * 		<li>Each test must have <code>@Test</code> annotation</li>
+ * 		<li>Each test method tests only methods of a class / object</li>
+ * 		<li>Each test method must have <code>@Test</code> annotation</li>
  * </ul>
  * 
  * @implNote It will ignore methods with <code>@SkipCollection</code> annotation
