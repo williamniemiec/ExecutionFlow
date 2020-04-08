@@ -14,7 +14,7 @@ import executionFlow.ExecutionFlow;
 
 
 /**
- * Helper class used to create a bridge between data collected with AOP and {@link ExecutionFlow}
+ * Helper class used to extract the collected data that will be relevant to {@link ExecutionFlow} class.
  */
 public class CollectorExecutionFlow 
 {

@@ -29,7 +29,7 @@ public class ExecutionFlow
 	private Map<SignaturesInfo, List<Integer>> classPaths = new HashMap<>();
 	private ClassConstructorInfo cci;
 	private List<ClassMethodInfo> methods = new ArrayList<>();
-	private final ExporterExecutionFlow exporter;
+	private ExporterExecutionFlow exporter;
 	
 	
 	//-----------------------------------------------------------------------
@@ -152,7 +152,7 @@ public class ExecutionFlow
 	
 	
 	//-----------------------------------------------------------------------
-	//		Getters
+	//		Getters & Setters
 	//-----------------------------------------------------------------------
 	/**
 	 * Returns method's execution path.
@@ -170,5 +170,12 @@ public class ExecutionFlow
 		}
 		
 		return response; 
+	}
+	
+	public ExecutionFlow setExporter(ExporterExecutionFlow exporter) 
+	{
+		this.exporter = exporter;
+		
+		return this;
 	}
 }

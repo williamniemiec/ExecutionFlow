@@ -25,14 +25,26 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private Map<SignaturesInfo, List<Integer>> classPaths;
-	private static final String DIRNAME = "testPaths";
+	private String dirName = "testPaths";
 
 	
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
 	/**
-	 * Exports test paths of a method to a file.
+	 * Exports test paths of a method to files in the specified directory.
+	 * 
+	 * @param dirName Name of the directory
+	 * @param classPaths All tested test paths of a class
+	 */
+	public FileExporter(String dirName, Map<SignaturesInfo, List<Integer>> classPaths)
+	{
+		this(classPaths);
+		this.dirName = dirName;
+	}
+	
+	/**
+	 * Exports test paths of a method to files in the directory "testPaths".
 	 * 
 	 * @param classPaths All tested test paths of a class
 	 */
@@ -63,7 +75,7 @@ public class FileExporter implements ExporterExecutionFlow
 			}
 			
 			System.out.println("Test paths have been successfully generated!");
-			System.out.println("Location: "+new File(DIRNAME).getAbsolutePath());
+			System.out.println("Location: "+new File(dirName).getAbsolutePath());
 			System.out.println();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -83,7 +95,7 @@ public class FileExporter implements ExporterExecutionFlow
 		String folderPath = getFolderPath(signatureFields);
 		String folderName = getFolderName(signatureFields);
 		
-		return DIRNAME+"/"+folderPath+"/"+folderName;
+		return dirName+"/"+folderPath+"/"+folderName;
 	}
 	
 	/**

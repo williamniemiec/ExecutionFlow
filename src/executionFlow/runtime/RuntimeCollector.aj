@@ -10,7 +10,7 @@ import executionFlow.info.ClassMethodInfo;
 
 
 /**
- * Responsible for data collection of methods and class builders used in tests.
+ * Responsible for data collection of methods and class constructors used in tests.
  * 
  * <h2>Requirements</h2>
  * <ul>
