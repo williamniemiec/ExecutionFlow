@@ -10,12 +10,12 @@ import java.util.regex.Pattern;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.ClassConstructorInfo;
 import org.junit.Test;
-import executionFlow.ClassExecutionFlow;
-import executionFlow.ExecutionFlow;
+import executionFlow.*;
 import executionFlow.cheapCoverage.CheapCoverage;
 import executionFlow.cheapCoverage.RT;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
+import executionFlow.exporter.*;
 
 
 /**
@@ -36,13 +36,15 @@ public aspect MethodCollector extends RuntimeCollector
 								 && !within(MethodCollector)
 								 && !within(ConstructorCollector)
 								 && !within(CollectorExecutionFlow)
-								 && !cflow(call(* executionFlow.info.ClassMethodInfo.*(*)))
-								 && !cflow(call(* executionFlow.info.ClassConstructorInfo.*(*)))
-								 && !cflow(call(* executionFlow.MethodExecutionFlow.*(*)))
-								 && !cflow(call(* executionFlow.ExecutionFlow.*(*)))
-								 && !cflow(call(* executionFlow.ClassExecutionFlow.*(*)))
-								 && !cflow(call(* executionFlow.cheapCoverage.CheapCoverage.*(*)))
-								 && !cflow(call(* executionFlow.cheapCoverage.RT.*(*)))
+								 && !within(ClassMethodInfo)
+								 && !within(ClassConstructorInfo)
+								 && !within(MethodExecutionFlow)
+								 && !within(ClassExecutionFlow)								 
+								 && !within(ExecutionFlow)
+								 && !within(CheapCoverage)
+								 && !within(RT)
+								 && !within(ConsoleExporter)
+								 && !within(FileExporter)
 								 && !call(* org.junit.runner.JUnitCore.runClasses(*))
 								 && !call(void org.junit.Assert.*(*,*));
 	

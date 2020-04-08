@@ -5,6 +5,7 @@ import executionFlow.ClassExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.cheapCoverage.CheapCoverage;
 import executionFlow.cheapCoverage.RT;
+import executionFlow.exporter.*;
 
 
 /**
@@ -21,6 +22,8 @@ public aspect ConstructorCollector extends RuntimeCollector
 																	&& !within(ConstructorCollector)
 																	&& !within(CollectorExecutionFlow) 
 																	&& !within(ExecutionFlow) 
+																	&& !within(ConsoleExporter)
+																	&& !within(FileExporter)
 																	&& !within(ClassExecutionFlow)
 																	&& !within(RT)
 																	&& !within(CheapCoverage)
@@ -36,7 +39,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 		
 		String signature = thisJoinPoint.getSignature().toString();
-		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]+\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
+		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		
 		// Collect constructor data
 		Class<?>[] consParamTypes;		// Constructor parameter types

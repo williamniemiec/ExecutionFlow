@@ -74,7 +74,9 @@ public class CollectorExecutionFlow
 				sb.append(".");
 			}
 			
-			sb.deleteCharAt(sb.length()-1);		// Removes last dot
+			if (sb.length() > 0)
+				sb.deleteCharAt(sb.length()-1);		// Removes last dot
+			
 			response = sb.toString();
 		}
 		

@@ -53,7 +53,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 			
 			if (testMethodSignature != null && !testMethodSignature.equals(currentTestMethodSignature)) {
 				System.out.println(signatures.getTestMethodSignature());	// Test method signature
-				
+				System.out.println(signatures.getMethodSignature());		// Method signature
 				currentTestMethodSignature = signatures.getTestMethodSignature();
 			}
 			
@@ -62,8 +62,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 				firstTime = false;
 			}
 			
-			System.out.println(signatures.getMethodSignature());	// Method signature
-			System.out.println(e.getValue());						// Test path
+			System.out.println(e.getValue());	// Test path
 		}
 		
 		System.out.println();		// New line
