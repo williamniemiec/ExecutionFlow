@@ -86,9 +86,9 @@ Os test paths desse método serão postos nesse diretório:
 Um exemplo real desse método pode ser encontrado [aqui]().
 
 ## Restrições da aplicação
-- 
-- 
-- 
+- Cada método de teste usa apenas um construtor da classe do método a ser testado
+- Cada método de teste testa apenas um método de uma classe / objeto
+- Cada método de teste deve possuir a anotação `@Test`
 
 <b>OBS:</b> É possível ver [aqui]() o que ocorre se uma dessas restrições não for respeitada.
 
@@ -183,10 +183,9 @@ Um exemplo real desse método pode ser encontrado [aqui]().
 ### /tests/executionFlow/runtime
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
+| AgainstRequirements.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação caso não sejam respeitadas as limitações dela|
+| AgainstRequirementsTestClass.java|`Arquivo`|Classe criada para executar os testes do arquivo `AgainstRequirements.java`|
 | JUnitSimulation.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação com testes feitos com o JUnit|
 | MultipleTestPaths.java |`Arquivo`      |Testa a aplicação quando há vários test paths em um único método de teste|
 | SimpleTest.java |`Arquivo`      |Teste simples com apenas 1 método de teste (usado para o exemplo da página inicial)|
 | TestClass.java |`Arquivo`      |Classe criada para executar os testes do arquivo `JUnitSimulation.java`|
-
-## Exemplo de saída
-[ExecutionFlowTest.java](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/ "ExecutionFlowTest.java")

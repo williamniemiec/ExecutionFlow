@@ -3,9 +3,10 @@
 <hr />
 
 ## /tests/executionFlow/runtime
-
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
+| AgainstRequirements.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação caso não sejam respeitadas as limitações dela|
+| AgainstRequirementsTestClass.java|`Arquivo`|Classe criada para executar os testes do arquivo `AgainstRequirements.java`|
 | JUnitSimulation.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação com testes feitos com o JUnit|
 | MultipleTestPaths.java |`Arquivo`      |Testa a aplicação quando há vários test paths em um único método de teste|
 | SimpleTest.java |`Arquivo`      |Teste simples com apenas 1 método de teste (usado para o exemplo da página inicial)|

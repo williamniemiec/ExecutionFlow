@@ -50,10 +50,13 @@ public class AgainstRequirementsTestClass
 	 * Calculates x-th fibonacci term.
 	 * 
 	 * @param x Fibonacci index term
-	 * @return x-th fibonacci term
+	 * @return x-th fibonacci term or -1 if skip is true
 	 */
 	public long fibonacci(int x) 
 	{
+		if (skip)
+			return -1;
+		
 		long response = 1;
 		long last = 1;
 		long aux = 0;
