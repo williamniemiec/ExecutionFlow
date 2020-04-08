@@ -5,9 +5,25 @@ Aplicação que exibe o caminho de execução (caminho de teste) de métodos.
 
 <hr />
 
-## Como usar?
-...
+## Requisitos
+- [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
+- [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
+- [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) (não testado com Java 13)
+- [ASM 7 ou superior](https://github.com/williamniemiec/ExecutionFlow/tree/master/lib) (Incluído no projeto)
+- [JUnit]
 
+## Restrições da aplicação
+- Cada método de teste usa apenas um construtor da classe do método a ser testado
+- Cada método de teste testa apenas um método de uma classe / objeto
+- Cada método de teste deve possuir a anotação `@Test`
+- Cada método de teste deve estar em um pacote
+
+## Como usar?
+1) No eclipse, selecione seu projeto, clique com o botão direito, vá em "configure" e selecione a opção "Convert to AspectJ Project"
+2) Após isso selecione novamente seu projeto, clique com o botão direito, vá em "AspectJ Tools" e selecione "Configure AspectJ Build Path"
+3) Vá na aba "Inpath" e selecione "Add External JARs...". Escolha o arquivo jar da aplicação
+4) Clique em "Apply and Close"
+5) Após isso, ao executar qualquer método de teste (que cumpra as restrições da aplicação) será gerado os test paths
 
 ## Como funciona?
 
@@ -85,19 +101,7 @@ Os test paths desse método serão postos nesse diretório:
 
 Um exemplo real desse método pode ser encontrado [aqui]().
 
-## Restrições da aplicação
-- Cada método de teste usa apenas um construtor da classe do método a ser testado
-- Cada método de teste testa apenas um método de uma classe / objeto
-- Cada método de teste deve possuir a anotação `@Test`
-
 <b>OBS:</b> É possível ver [aqui]() o que ocorre se uma dessas restrições não for respeitada.
-
-## Requisitos
-- [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
-- [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
-- [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) (não testado com Java 13)
-- [ASM 7 ou superior](https://github.com/williamniemiec/ExecutionFlow/tree/master/lib) (Incluído no projeto)
-- [JUnit]
 
 ## Organização do projeto (desatualizado)
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png)
