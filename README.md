@@ -52,7 +52,7 @@ Após o término de um método de teste é executado, pelo aspecto TestMethodCol
 ### Etapa 3
 Com o test path gerado, a classe ExecutionFlow irá exportar os dados salvos. Essa exportação será feita de acordo com o que estiver definido na variável `exporter` da classe ExecutionFlow (por padrão, será exportado para arquivos), no diretório "testPaths".
 
-### [ex - SimpleTest]
+### Exemplo - [SimpleTest](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/runtime/SimpleTest.java)
 Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
 <pre>
 	<code>
@@ -123,8 +123,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 
 ## Classes, Interfaces e Aspectos
 
-- executionFlow
-
+### executionFlow
 
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
@@ -133,7 +132,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |	MethodExecutionFlow	|	`Classe`	|	Gerencia manipulação de métodos (extrai os dados que a classe `ExecutionFlow` irá precisar)	|
 
 
-- executionFlow.cheapCoverage
+### executionFlow.cheapCoverage
 
 
 |        Nome        | Tipo |	Descrição	|
@@ -142,7 +141,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |	RT				|	`Classe`	|	Classe auxiliar da classe `CheapCoverage`	|
 
 
-- executionFlow.exporter
+### executionFlow.exporter
 
 
 |        Nome        | Tipo |	Descrição	|
@@ -153,7 +152,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 
 <b>OBS:</b> Ambas as classes implementam a interface `ExporterExecutionFlow`
 
-- executionFlow.info
+### executionFlow.info
 
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
@@ -161,7 +160,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |	ClassMethodInfo			|	`Classe`	|	Armazena informações sobre um método de uma classe	|
 |	SignaturesInfo			|	`Classe`	|	Armazena a assinatura do método de teste de um método bem como a sua assinatura	|
 
-- executionFlow.runtime
+### executionFlow.runtime
 
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
