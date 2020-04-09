@@ -20,15 +20,24 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 
 ## Como usar?
 ### 1) No eclipse, selecione seu projeto, clique com o botão direito, vá em "configure" e selecione a opção "Convert to AspectJ Project"
-![step1](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step1.png?raw=true)
+
+![step1](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/howToUse/step1.png?raw=true)
+
 ### 2) Após isso selecione novamente seu projeto, clique com o botão direito, vá em "AspectJ Tools" e selecione "Configure AspectJ Build Path"
-![step2](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step2.png?raw=true)
+
+![step2](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/howToUse/step2.png?raw=true)
+
 ### 3) Vá na aba "Inpath" e selecione "Add External JARs...". Escolha o arquivo jar da aplicação
-![step3](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step3.png?raw=true)
+
+![step3](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/howToUse/step3.png?raw=true)
+
 ### 4) Clique em "Apply and Close"
-![step4](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step4.png?raw=true)
+
+![step4](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/howToUse/step4.png?raw=true)
+
 ### 5) Após isso, ao executar qualquer método de teste (que cumpra as restrições da aplicação) será gerado os test paths
-![step5](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step5.png?raw=true)
+
+![step5](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/howToUse/step5.png?raw=true)
 
 <b>OBS:</b> O exemplo utilizado pode ser encontrado na pasta [example](https://github.com/williamniemiec/ExecutionFlow/tree/master/example).
 
@@ -94,7 +103,7 @@ Por padrão há dois tipos de saída: no console ou em arquivo. Ambas as opçõe
 - Test paths do método testado
 
 ### Console
-A saída consiste em exibir um header com o texto "EXPORT" seguido do padrão citado acima. Um exemplo pode ser visto [aqui]().
+A saída consiste em exibir um header com o texto "EXPORT" seguido do padrão citado acima. Um exemplo pode ser visto [aqui](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow).
 
 ### Arquivo
 Em arquivos será criado um diretório (por padrão será "testPaths") e nele serão criados diretórios no seguinte formato:
@@ -106,29 +115,36 @@ Para exemplificar, suponha que será gerado o test path do método com essa assi
 Os test paths desse método serão postos nesse diretório:
 > testPaths/executionFlow/runtime/TestClass.factorial(int)
 
-Um exemplo real desse método pode ser encontrado [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/testPaths/executionFlow/runtime/TestClass.factorial(int).
+Um exemplo real desse método pode ser encontrado [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/testPaths/executionFlow/runtime/TestClass.factorial(int)).
 
 
 ## Organização do projeto (desatualizado)
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png)
 
 ## Classes, Interfaces e Aspectos
+
 - executionFlow
+
+
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
-|	ClassExecutionFlow	|	`Classe`	| 	Gerencia manipulação de classes (extrai os dados que a classe `ExecutionFlow` irá precisar)	|
+|	ClassExecutionFlow	|	`Classe`	| 	Gerencia manipulação de classes (extrai os dados que a classe `ExecutionFlow` irá precisar)
 |	ExecutionFlow		|	`Classe`	|	Dado um class path e um conjunto de métodos ela irá calcular os test paths para cada um desses métodos. Essa é a classe principal da aplicação	|
 |	MethodExecutionFlow	|	`Classe`	|	Gerencia manipulação de métodos (extrai os dados que a classe `ExecutionFlow` irá precisar)	|
 
 
 - executionFlow.cheapCoverage
+
+
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
-|	CheapCoverage	|	`Classe`	|	Classe que irá simular a execução de uma classe e gerar o test path dela	|
+|	CheapCoverage	|	`Classe`	|Classe que irá simular a execução de uma classe e gerar o test path dela
 |	RT				|	`Classe`	|	Classe auxiliar da classe `CheapCoverage`	|
 
 
 - executionFlow.exporter
+
+
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
 |	ConsoleExporter			|	`Classe`	|	Exporta os resultados para o console	|
@@ -138,6 +154,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 <b>OBS:</b> Ambas as classes implementam a interface `ExporterExecutionFlow`
 
 - executionFlow.info
+
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
 |	ClassConstructorInfo	|	`Classe`	|	Armazena informações sobre um construtor de uma classe	|
@@ -145,6 +162,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |	SignaturesInfo			|	`Classe`	|	Armazena a assinatura do método de teste de um método bem como a sua assinatura	|
 
 - executionFlow.runtime
+
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
 |	CollectorExecutionFlow	|	`Classe`			|	Classe auxiliar usada para extrair os dados coletados que serão relevantes para a classe `ExecutionFlow`	|
