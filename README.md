@@ -118,7 +118,7 @@ Os test paths desse método serão postos nesse diretório:
 Um exemplo real desse método pode ser encontrado [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/testPaths/executionFlow/runtime/TestClass.factorial(int)).
 
 
-## Organização do projeto (desatualizado)
+## Organização do projeto
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png)
 
 ## Classes, Interfaces e Aspectos
