@@ -8,7 +8,7 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
 - [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) (não testado com Java 13)
 - [ASM 7 ou superior](https://github.com/williamniemiec/ExecutionFlow/tree/master/lib) (Incluído no projeto)
-- [JUnit 4 ou superior]
+- JUnit 4 ou superior
 
 ## Restrições da aplicação
 - Cada método de teste usa apenas um construtor da classe do método a ser testado
