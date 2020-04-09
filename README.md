@@ -97,10 +97,16 @@ Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
 
 
 ## Como é a saída do programa?
-Por padrão há dois tipos de saída: no console ou em arquivo. Ambas as opções exibirão, nesta ordem:
+Por padrão há dois tipos de saída: no console ou em arquivo. No console será exibido nesta ordem:
 - Assinatura do método de teste
 - Assinatura do método testado
 - Test paths do método testado
+
+Já no arquivo a saída será:
+- Assinatura do método de teste
+- Test paths do método testado
+
+<b>OBS:</b> A assinatura do método testado estará no caminho até os test paths. Ela é explicada logo abaixo.
 
 ### Console
 A saída consiste em exibir um header com o texto "EXPORT" seguido do padrão citado acima. Um exemplo pode ser visto [aqui](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow).
