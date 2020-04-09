@@ -1,7 +1,5 @@
 # Execution flow
-Aplicação que exibe o caminho de execução (caminho de teste) de métodos.
-
-<b>OBS:</b> Esse projeto não está completo, e, portanto, pode apresentar falhas.
+Aplicação que tem por objetivo exibir o caminho de teste (test path) de métodos de teste feitos com o JUnit.
 
 <hr />
 
@@ -10,7 +8,7 @@ Aplicação que exibe o caminho de execução (caminho de teste) de métodos.
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
 - [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) (não testado com Java 13)
 - [ASM 7 ou superior](https://github.com/williamniemiec/ExecutionFlow/tree/master/lib) (Incluído no projeto)
-- [JUnit]
+- [JUnit 4 ou superior]
 
 ## Restrições da aplicação
 - Cada método de teste usa apenas um construtor da classe do método a ser testado
@@ -18,12 +16,21 @@ Aplicação que exibe o caminho de execução (caminho de teste) de métodos.
 - Cada método de teste deve possuir a anotação `@Test`
 - Cada método de teste deve estar em um pacote
 
+<b>OBS:</b> É possível ver [aqui](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow/runtime/AgainstRequirements.java) o que ocorre se uma dessas restrições não for respeitada.
+
 ## Como usar?
-1) No eclipse, selecione seu projeto, clique com o botão direito, vá em "configure" e selecione a opção "Convert to AspectJ Project"
-2) Após isso selecione novamente seu projeto, clique com o botão direito, vá em "AspectJ Tools" e selecione "Configure AspectJ Build Path"
-3) Vá na aba "Inpath" e selecione "Add External JARs...". Escolha o arquivo jar da aplicação
-4) Clique em "Apply and Close"
-5) Após isso, ao executar qualquer método de teste (que cumpra as restrições da aplicação) será gerado os test paths
+### 1) No eclipse, selecione seu projeto, clique com o botão direito, vá em "configure" e selecione a opção "Convert to AspectJ Project"
+![step1](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step1.png?raw=true)
+### 2) Após isso selecione novamente seu projeto, clique com o botão direito, vá em "AspectJ Tools" e selecione "Configure AspectJ Build Path"
+![step2](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step2.png?raw=true)
+### 3) Vá na aba "Inpath" e selecione "Add External JARs...". Escolha o arquivo jar da aplicação
+![step3](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step3.png?raw=true)
+### 4) Clique em "Apply and Close"
+![step4](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step4.png?raw=true)
+### 5) Após isso, ao executar qualquer método de teste (que cumpra as restrições da aplicação) será gerado os test paths
+![step5](https://github.com/williamniemiec/ExecutionFlow/tree/master/media/howToUse/step5.png?raw=true)
+
+<b>OBS:</b> O exemplo utilizado pode ser encontrado na pasta [example](https://github.com/williamniemiec/ExecutionFlow/tree/master/example).
 
 ## Como funciona?
 
@@ -99,9 +106,8 @@ Para exemplificar, suponha que será gerado o test path do método com essa assi
 Os test paths desse método serão postos nesse diretório:
 > testPaths/executionFlow/runtime/TestClass.factorial(int)
 
-Um exemplo real desse método pode ser encontrado [aqui]().
+Um exemplo real desse método pode ser encontrado [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/testPaths/executionFlow/runtime/TestClass.factorial(int).
 
-<b>OBS:</b> É possível ver [aqui]() o que ocorre se uma dessas restrições não for respeitada.
 
 ## Organização do projeto (desatualizado)
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png)
@@ -155,9 +161,12 @@ Um exemplo real desse método pode ser encontrado [aqui]().
 |----------------|-------------------------------|-----------------------------|
 |.settings|`Diretório`|Diretório gerado por IDE (Eclipse)|
 | bin |`Diretório`      |Arquivos binários (.class)|
+|example   |`Diretório`|	Projeto que foi utilizado na exemplificação de como usar a aplicação   |
 |lib   |`Diretório`|Bibliotecas que o projeto depende   |
 |media |`Diretório`|Informações visuais / Diagrama UML|
+|releases |`Diretório`|Versões lançadas da aplicação|
 |src     |`Diretório`| Arquivos fonte|
+|testPaths|`Diretório`|Test paths gerados sobre os testes presentes na pasta [runtime](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/runtime)|
 |tests|`Diretório`|Testes dos arquivos fonte|
 |.class|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
 |.project|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
