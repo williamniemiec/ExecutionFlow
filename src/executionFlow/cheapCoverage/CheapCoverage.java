@@ -6,6 +6,7 @@ import static java.lang.constant.ConstantDescs.CD_MethodType;
 import static java.lang.constant.ConstantDescs.CD_String;
 import static java.lang.constant.ConstantDescs.CD_int;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.lang.invoke.MethodType.methodType;
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.Opcodes.ASM7;
 import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
@@ -24,6 +25,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.ClassMethodInfo;
 
 
 /**
@@ -86,26 +88,30 @@ public class CheapCoverage
 	}
 	
 	
-	public static List<Integer> getExecutionPath(String methodName, MethodType methodTypes, Object[] args, ClassConstructorInfo cci) throws Throwable 
+//	public static List<Integer> getExecutionPath(String methodName, MethodType methodTypes, Object[] args, ClassConstructorInfo cci) throws Throwable 
+	public static List<Integer> getExecutionPath(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo) throws Throwable
 	{
 		RT.clearExecutionPath();
 		
+		MethodType methodTypes = getMethodType(methodInfo.getReturnType(), methodInfo.getParameterTypes());
+		
 		try {						// Try to invoke the method as static
-			MethodHandle mh = lookup().findStatic(parsedClass, methodName, methodTypes);
-			mh.invokeWithArguments(args);
+			MethodHandle mh = lookup().findStatic(parsedClass, methodInfo.getMethodName(), methodTypes);
+			mh.invokeWithArguments(methodInfo.getArgs());
 		} catch(Throwable t) {		// Try to invoke the method as non static
-			MethodHandle mh = lookup().findVirtual(parsedClass, methodName, methodTypes);
+			MethodHandle mh = lookup().findVirtual(parsedClass, methodInfo.getMethodName(), methodTypes);
 			
-			if (cci == null || cci.getConstructorTypes() == null || cci.getConstructorArgs().length == 0) {		// Constructor default (empty)
+			// Checks if it is default constructor (empty)
+			if ( constructorInfo == null || 
+				 constructorInfo.getConstructorTypes() == null || 
+				 constructorInfo.getConstructorArgs().length == 0 ) {
 				mh = mh.bindTo(parsedClass.getConstructor().newInstance());
-//				System.out.println("1");
-			}
-			else {
-				mh = mh.bindTo(parsedClass.getConstructor(cci.getConstructorTypes()).newInstance(cci.getConstructorArgs()));
-//				System.out.println("2");
+			} else {
+				mh = mh.bindTo(parsedClass.getConstructor(constructorInfo.getConstructorTypes())
+										  .newInstance(constructorInfo.getConstructorArgs()));
 			}
 			
-			mh.invokeWithArguments(args);
+			mh.invokeWithArguments(methodInfo.getArgs());
 		}
 		
 		// Remove last line if method has no return (otherwise it considers empty return as a line)
@@ -115,5 +121,18 @@ public class CheapCoverage
 			path.remove(path.size()-1);
 		
 		return path;
+	}
+	
+	/**
+	 * @return Return type and parameter types of the method
+	 */
+	private static MethodType getMethodType(Class<?> returnType, Class<?>[] params) 
+	{
+		//		Method m = classExecutionFlow.getMethod(methodSignature);
+		
+		if (params.length == 0)
+			return methodType(returnType);
+		
+		return methodType(returnType, params);
 	}
 }

@@ -13,11 +13,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Pointcut
 	//-----------------------------------------------------------------------
-	pointcut testMethodCollector(): execution(@Test * *.*()) && !within(TestMethodCollector)
-															 && !within(RuntimeCollector)
-															 && !within(TestMethodCollector)
-															 && !within(MethodCollector)
-															 && !within(ConstructorCollector);
+	pointcut testMethodCollector(): execution(@Test * *.*()) 
+		&& !within(TestMethodCollector)
+		&& !within(RuntimeCollector)
+		&& !within(TestMethodCollector)
+		&& !within(MethodCollector)
+		&& !within(ConstructorCollector);
 	
 	/**
 	 * Executed before each method with <code>@Test</code> annotation.

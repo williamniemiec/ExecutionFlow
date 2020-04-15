@@ -24,13 +24,23 @@ public class ClassMethodInfo
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
-	public ClassMethodInfo(String classPath, String methodSignature, String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
+	private ClassMethodInfo(String classPath, String methodSignature, String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
 	{
 		this(testMethodSignature, methodName, parameterTypes, args);
 		this.classPath = classPath;
 		this.returnType = returnType;
 		this.methodSignature = methodSignature;
 	}
+	
+	
+	
+//	public ClassMethodInfo(String classPath, String methodSignature, String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
+//	{
+//		this(testMethodSignature, methodName, parameterTypes, args);
+//		this.classPath = classPath;
+//		this.returnType = returnType;
+//		this.methodSignature = methodSignature;
+//	}
 	
 	
 	
@@ -74,6 +84,66 @@ public class ClassMethodInfo
 	}
 
 	
+	public static class ClassMethodInfoBuilder
+	{
+		private String classPath;
+		private String methodSignature;
+		private String testMethodSignature;
+		private String methodName;
+		private Class<?>[] parameterTypes;
+		private Object[] args;
+		private Class<?> returnType;
+		
+		
+		public ClassMethodInfoBuilder methodName(String methodName)
+		{
+			this.methodName = methodName;
+			return this;
+		}
+		
+		public ClassMethodInfoBuilder methodSignature(String methodSignature)
+		{
+			this.methodSignature = methodSignature;
+			return this;
+		}
+		
+		public ClassMethodInfoBuilder parameterTypes(Class<?>[] parameterTypes)
+		{
+			this.parameterTypes = parameterTypes;
+			return this;
+		}
+		
+		public ClassMethodInfoBuilder args(Object[] args)
+		{
+			this.args = args;
+			return this;
+		}
+
+		public ClassMethodInfoBuilder classPath(String classPath)
+		{
+			this.classPath = classPath;
+			return this;
+		}
+		
+		public ClassMethodInfoBuilder testMethodSignature(String testMethodSignature)
+		{
+			this.testMethodSignature = testMethodSignature;
+			return this;
+		}
+		
+		public ClassMethodInfoBuilder returnType(Class<?> returnType)
+		{
+			this.returnType = returnType;
+			return this;
+		}
+		
+		public ClassMethodInfo build()
+		{
+			return new ClassMethodInfo(classPath, methodSignature, testMethodSignature, methodName, returnType, parameterTypes, args);
+		}
+	}
+	
+	
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
@@ -86,7 +156,49 @@ public class ClassMethodInfo
 				+ ", methodSignature=" + methodSignature + "]";
 	}
 
-
+	/**
+	 * Extracts test method's signature and method's signature.
+	 * 
+	 * @return {@link SignaturesInfo} with the signatures
+	 */
+	public SignaturesInfo extractSignatures()
+	{
+//		Method m = classExecutionFlow.getMethod(cmi.getSignature());
+		String paramsTypes = extractParameterTypes(parameterTypes);
+//		System.out.println();
+//		System.out.println(cmi.getSignature());
+//		System.out.println();
+		
+		//String methodSignature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
+		String methodSig = methodSignature+"."+methodName+"("+paramsTypes+")";
+		
+		return new SignaturesInfo(methodSig, testMethodSignature);
+	}
+	
+	
+	/**
+	 * Extracts the types of the method parameters.
+	 * 
+	 * @param parametersTypes Types of each method's parameter
+	 * @return String with the name of each type separated by commas
+	 */
+	private String extractParameterTypes(Class<?>[] parametersTypes)
+	{
+		StringBuilder parameterTypes = new StringBuilder();
+		
+		for (var parameterType : parametersTypes) {
+			// Ads only name of the parameter type
+			String[] tmp = parameterType.getTypeName().split("\\."); // Removes signature
+			
+			parameterTypes.append(tmp[tmp.length-1] +",");
+		}
+		
+		if (parameterTypes.length() > 0)
+			parameterTypes.deleteCharAt(parameterTypes.length()-1);	// Removes last comma
+		
+		return parameterTypes.toString();
+	}
+	
 	//-----------------------------------------------------------------------
 	//		Getters & Setters
 	//-----------------------------------------------------------------------
@@ -157,7 +269,7 @@ public class ClassMethodInfo
 		return this.constructor;
 	}
 	
-	public Class<?> getReturnTyoe()
+	public Class<?> getReturnType()
 	{
 		return this.returnType;
 	}

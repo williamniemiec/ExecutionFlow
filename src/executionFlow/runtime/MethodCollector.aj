@@ -9,16 +9,10 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.Test;
 
-import executionFlow.ClassExecutionFlow;
-import executionFlow.ExecutionFlow;
-import executionFlow.MethodExecutionFlow;
-import executionFlow.cheapCoverage.CheapCoverage;
-import executionFlow.cheapCoverage.RT;
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.info.ClassConstructorInfo;
-import executionFlow.info.ClassMethodInfo;
-import executionFlow.info.SignaturesInfo;
+import executionFlow.*;
+import executionFlow.cheapCoverage.*;
+import executionFlow.exporter.*;
+import executionFlow.info.*;
 
 
 /**
@@ -43,7 +37,8 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(ClassMethodInfo)
 		&& !within(ClassConstructorInfo)
 		&& !within(MethodExecutionFlow)
-		&& !within(ClassExecutionFlow)								 
+		&& !within(ClassExecutionFlow)	
+		&& !within(CollectorInfo)
 		&& !within(ExecutionFlow)
 		&& !within(CheapCoverage)
 		&& !within(RT)
@@ -111,15 +106,25 @@ public aspect MethodCollector extends RuntimeCollector
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
 		// Collects the method
-		ClassMethodInfo cmi = new ClassMethodInfo(classPath, methodSignature, testMethodSignature, methodName, returnType, paramTypes, thisJoinPoint.getArgs());
+		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
+				.classPath(classPath)
+				.methodSignature(methodSignature)
+				.testMethodSignature(testMethodSignature)
+				.methodName(methodName)
+				.returnType(returnType)
+				.parameterTypes(paramTypes)
+				.args(thisJoinPoint.getArgs())
+				.build();
+
+		CollectorInfo ci = new CollectorInfo(cmi);
 		
 		// Collects constructor (if method is not static)
 		if (constructor != null) {
-			cmi.setConstructor(consCollector.get(constructor.toString()));
+			ci.setConstructorInfo(consCollector.get(constructor.toString()));
 		}
 		
 		// Stores collected method
-		methodCollector.put(key, cmi);
+		methodCollector.put(key, ci);
 		lastInsertedMethod = signature;
 		
 		//###################################################

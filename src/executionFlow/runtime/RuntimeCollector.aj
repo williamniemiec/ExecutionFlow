@@ -8,6 +8,7 @@ import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.CollectorInfo;
 
 
 /**
@@ -44,7 +45,7 @@ public abstract aspect RuntimeCollector
 	 * 		<li><b>Value:</b> Informations about the method</li>
 	 * </ul>
 	 */
-	protected static Map<String, ClassMethodInfo> methodCollector = new LinkedHashMap<>();
+	protected static Map<String, CollectorInfo> methodCollector = new LinkedHashMap<>();
 	
 	protected static Map<String, ClassConstructorInfo> consCollector = new LinkedHashMap<>();
 	protected static ClassConstructorInfo cci;

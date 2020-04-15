@@ -12,6 +12,7 @@ import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.exporter.FileExporter;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
 
 
@@ -28,8 +29,11 @@ public class ExecutionFlow
 	private ClassExecutionFlow classExecutionFlow;
 	private Map<SignaturesInfo, List<Integer>> classPaths = new HashMap<>();
 	private ClassConstructorInfo cci;
-	private List<ClassMethodInfo> classMethodInfos = new ArrayList<>();
+//	private List<ClassMethodInfo> classMethodInfos = new ArrayList<>();
+	private List<CollectorInfo> collectorInfo = new ArrayList<>();
+	
 	private List<ClassMethodInfo> methods = new ArrayList<>(); // OLD
+	
 	private ExporterExecutionFlow exporter;
 	
 	
@@ -48,9 +52,16 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
-	public ExecutionFlow(Collection<ClassMethodInfo> cmi) 
+	/**
+	 * Given a class path and specific methods calculate the test path for each
+	 * of these methods.
+	 * 
+	 * @param ci List of {@link CollectorInfo methods} to be analyzed
+	 */
+	public ExecutionFlow(Collection<CollectorInfo> ci) 
 	{
-		classMethodInfos.addAll(cmi);
+		collectorInfo.addAll(ci);		// It is necessary to avoid ConcurrentModificationException
+//		classMethodInfos.addAll(cmi);	// It is necessary to avoid ConcurrentModificationException
 	}
 	
 	
@@ -95,12 +106,12 @@ public class ExecutionFlow
 		MethodExecutionFlow mef;
 		
 		// Generates the test path for each method that was provided in the constructor
-		for (ClassMethodInfo method : classMethodInfos) {
+		for (CollectorInfo collector : collectorInfo) {
 			methodPath = new ArrayList<>();
-			mef = new MethodExecutionFlow(method);
+			mef = new MethodExecutionFlow(collector);
 			
-			methodPath.addAll( mef.execute().getMethodPath() );
-			classPaths.put(extractSignatures(method), methodPath);
+			methodPath.addAll(mef.execute().getMethodPath());
+			classPaths.put(collector.getMethodInfo().extractSignatures(), methodPath);
 			
 		}
 		
@@ -142,47 +153,6 @@ public class ExecutionFlow
 	public void export() 
 	{
 		exporter.export();
-	}
-	
-	/**
-	 * Extracts test method's signature and method's signature.
-	 * 
-	 * @param cmi Method that signatures will be obtained
-	 * @return {@link SignaturesInfo} with the signatures
-	 */
-	private SignaturesInfo extractSignatures(ClassMethodInfo cmi)
-	{
-//		Method m = classExecutionFlow.getMethod(cmi.getSignature());
-		String parameterTypes = extractParameterTypes(cmi.getParameterTypes());
-//		System.out.println();
-//		System.out.println(cmi.getSignature());
-//		System.out.println();
-		
-		//String methodSignature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
-		String methodSignature = cmi.getMethodSignature()+"."+cmi.getMethodName()+"("+parameterTypes+")";
-		String testMethodSignature = cmi.getTestMethodSignature();
-		
-		return new SignaturesInfo(methodSignature, testMethodSignature);
-	}
-	
-	/**
-	 * Extracts the types of the method parameters.
-	 * 
-	 * @param parametersTypes Types of each method's parameter
-	 * @return String with the name of each type separated by commas
-	 */
-	private String extractParameterTypes(Class<?>[] parametersTypes)
-	{
-		StringBuilder parameterTypes = new StringBuilder();
-		
-		for (var parameterType : parametersTypes) {
-			parameterTypes.append(parameterType.getTypeName() +",");
-		}
-		
-		if (parameterTypes.length() > 0)
-			parameterTypes.deleteCharAt(parameterTypes.length()-1);	// Removes last comma
-		
-		return parameterTypes.toString();
 	}
 	
 	
