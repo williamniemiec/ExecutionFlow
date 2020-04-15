@@ -8,6 +8,8 @@ import java.util.Arrays;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.Test;
+import org.junit.jupiter.params.*;
+import org.junit.jupiter.api.*;
 
 import executionFlow.*;
 import executionFlow.cheapCoverage.*;
@@ -27,7 +29,13 @@ public aspect MethodCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Pointcut
 	//-----------------------------------------------------------------------
-	pointcut methodCollector(): (cflow(execution(@Test * *.*())) || cflow(call(* *.*(*))) || cflow(call(* *.*()))) 
+	pointcut methodCollector(): 
+		(cflow(execution(@Test * *.*())) || 
+		 cflow(execution(@RepeatedTest * *.*())) ||
+		 cflow(execution(@ParameterizedTest * *.*())) || 
+		 cflow(execution(@TestFactory * *.*())) || 
+		 cflow(call(* *.*(*))) || 
+		 cflow(call(* *.*()))) 
 		&& !within(RuntimeCollector)
 		&& !within(TestMethodCollector)
 		&& !within(MethodCollector)

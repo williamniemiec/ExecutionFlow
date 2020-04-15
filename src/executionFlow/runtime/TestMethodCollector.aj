@@ -2,6 +2,8 @@ package executionFlow.runtime;
 
 import executionFlow.ExecutionFlow;
 import org.junit.Test;
+import org.junit.jupiter.params.*;
+import org.junit.jupiter.api.*;
 
 
 /**
@@ -13,7 +15,11 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Pointcut
 	//-----------------------------------------------------------------------
-	pointcut testMethodCollector(): execution(@Test * *.*()) 
+	pointcut testMethodCollector(): 
+		(execution(@Test * *.*()) || 
+		 execution(@RepeatedTest * *.*()) ||
+		 execution(@ParameterizedTest * *.*()) ||
+		 execution(@TestFactory * *.*())) 
 		&& !within(TestMethodCollector)
 		&& !within(RuntimeCollector)
 		&& !within(TestMethodCollector)

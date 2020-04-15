@@ -163,18 +163,11 @@ public class ClassMethodInfo
 	 */
 	public SignaturesInfo extractSignatures()
 	{
-//		Method m = classExecutionFlow.getMethod(cmi.getSignature());
 		String paramsTypes = extractParameterTypes(parameterTypes);
-//		System.out.println();
-//		System.out.println(cmi.getSignature());
-//		System.out.println();
-		
-		//String methodSignature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
 		String methodSig = methodSignature+"."+methodName+"("+paramsTypes+")";
 		
 		return new SignaturesInfo(methodSig, testMethodSignature);
 	}
-	
 	
 	/**
 	 * Extracts the types of the method parameters.
@@ -198,6 +191,7 @@ public class ClassMethodInfo
 		
 		return parameterTypes.toString();
 	}
+	
 	
 	//-----------------------------------------------------------------------
 	//		Getters & Setters
