@@ -69,4 +69,15 @@ public class AgainstRequirementsTestClass
 		
 		return response;
 	}
+	
+	public static long staticFactorial(int x) 
+	{	
+		long response = 1;
+		
+		for (int i=1; i<=x; i++) {
+			response *= i;
+		}
+		
+		return response;
+	}
 }

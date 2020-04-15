@@ -28,7 +28,8 @@ public class ExecutionFlow
 	private ClassExecutionFlow classExecutionFlow;
 	private Map<SignaturesInfo, List<Integer>> classPaths = new HashMap<>();
 	private ClassConstructorInfo cci;
-	private List<ClassMethodInfo> methods = new ArrayList<>();
+	private List<ClassMethodInfo> classMethodInfos = new ArrayList<>();
+	private List<ClassMethodInfo> methods = new ArrayList<>(); // OLD
 	private ExporterExecutionFlow exporter;
 	
 	
@@ -47,6 +48,14 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
+	public ExecutionFlow(Collection<ClassMethodInfo> cmi) 
+	{
+		classMethodInfos.addAll(cmi);
+	}
+	
+	
+	
+	
 	/**
 	 * Given a class path and specific methods calculate the execution path for each
 	 * of these methods.
@@ -80,22 +89,15 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
-	/**
-	 * Walks the method recording its execution path and save the result in
-	 * {@link #classPaths}.
-	 * 
-	 * @return The instance (to allow chained calls)
-	 * @throws Throwable If an error occurs
-	 */
 	public ExecutionFlow execute() throws Throwable 
 	{
 		List<Integer> methodPath = new ArrayList<>();
 		MethodExecutionFlow mef;
 		
 		// Generates the test path for each method that was provided in the constructor
-		for (ClassMethodInfo method : methods) {
+		for (ClassMethodInfo method : classMethodInfos) {
 			methodPath = new ArrayList<>();
-			mef = new MethodExecutionFlow(classExecutionFlow, method, cci);
+			mef = new MethodExecutionFlow(method);
 			
 			methodPath.addAll( mef.execute().getMethodPath() );
 			classPaths.put(extractSignatures(method), methodPath);
@@ -104,6 +106,35 @@ public class ExecutionFlow
 		
 		return this;
 	}
+	
+	
+	
+	
+	
+	/**
+	 * Walks the method recording its execution path and save the result in
+	 * {@link #classPaths}.
+	 * 
+	 * @return The instance (to allow chained calls)
+	 * @throws Throwable If an error occurs
+	 */
+//	public ExecutionFlow execute() throws Throwable 
+//	{
+//		List<Integer> methodPath = new ArrayList<>();
+//		MethodExecutionFlow mef;
+//		
+//		// Generates the test path for each method that was provided in the constructor
+//		for (ClassMethodInfo method : methods) {
+//			methodPath = new ArrayList<>();
+//			mef = new MethodExecutionFlow(classExecutionFlow, method, cci);
+//			
+//			methodPath.addAll( mef.execute().getMethodPath() );
+//			classPaths.put(extractSignatures(method), methodPath);
+//			
+//		}
+//		
+//		return this;
+//	}
 	
 	/**
 	 * Exports the result.
@@ -121,10 +152,14 @@ public class ExecutionFlow
 	 */
 	private SignaturesInfo extractSignatures(ClassMethodInfo cmi)
 	{
-		Method m = classExecutionFlow.getMethod(cmi.getSignature());
-		String parameterTypes = extractParameterTypes(m.getParameterTypes());
+//		Method m = classExecutionFlow.getMethod(cmi.getSignature());
+		String parameterTypes = extractParameterTypes(cmi.getParameterTypes());
+//		System.out.println();
+//		System.out.println(cmi.getSignature());
+//		System.out.println();
 		
-		String methodSignature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
+		//String methodSignature = classExecutionFlow.getClassSignature()+"."+m.getName()+"("+parameterTypes+")";
+		String methodSignature = cmi.getMethodSignature()+"."+cmi.getMethodName()+"("+parameterTypes+")";
 		String testMethodSignature = cmi.getTestMethodSignature();
 		
 		return new SignaturesInfo(methodSignature, testMethodSignature);

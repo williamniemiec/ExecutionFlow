@@ -49,10 +49,10 @@ public class CheapCoverage
 	public static Class<?> getParsedClass() { return parsedClass; }
 	
 	
-	public static void parseClass(String classPath) throws IOException 
+	public static void loadClass(String classPath) throws IOException 
 	{
 		byte[] data;
-		
+//		System.out.println("loading class: "+classPath);
 		try (var input = Files.newInputStream(Path.of(classPath))) {
 			data = input.readAllBytes();
 		}
@@ -96,10 +96,14 @@ public class CheapCoverage
 		} catch(Throwable t) {		// Try to invoke the method as non static
 			MethodHandle mh = lookup().findVirtual(parsedClass, methodName, methodTypes);
 			
-			if (cci == null)		// Constructor default (empty)
+			if (cci == null || cci.getConstructorTypes() == null || cci.getConstructorArgs().length == 0) {		// Constructor default (empty)
 				mh = mh.bindTo(parsedClass.getConstructor().newInstance());
-			else
+//				System.out.println("1");
+			}
+			else {
 				mh = mh.bindTo(parsedClass.getConstructor(cci.getConstructorTypes()).newInstance(cci.getConstructorArgs()));
+//				System.out.println("2");
+			}
 			
 			mh.invokeWithArguments(args);
 		}

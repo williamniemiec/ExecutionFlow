@@ -61,6 +61,7 @@ public class RT
 	private static void probe(String method, int line) 
 	{
 		// Ignores constructor lines
+//		System.out.println("!"+line);
 		if (!method.contains("<init>") && !method.contains("<clinit>") && !method.contains("preClinit") && line != lastAddLine) {	 
 			if (lastAddMethod == null) { lastAddMethod = method; }
 			

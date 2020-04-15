@@ -24,11 +24,28 @@ public class MethodExecutionFlow
 	private Object[] args;
 	private ClassExecutionFlow classExecutionFlow;
 	private ClassConstructorInfo cci;
+	private String classFilePath;
+	private Class<?>[] typeArgs;
+	private Class<?> returnType;
 	
 
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
+	public MethodExecutionFlow(ClassMethodInfo cmi)
+	{
+		this.methodSignature = cmi.getSignature();
+		this.methodName = cmi.getMethodName();
+		this.typeArgs = cmi.getParameterTypes();
+		this.args = cmi.getArgs();
+		//this.classExecutionFlow = classExecutionFlow;
+		this.cci = cmi.getClassConstructorInfo();
+		this.classFilePath = cmi.getClassPath();
+		this.returnType = cmi.getReturnTyoe();
+	}
+	
+	
+	
 	/**
 	 * @param classExecutionFlow Information about the class that the method belongs
 	 * @param cmi Information about the method
@@ -59,6 +76,8 @@ public class MethodExecutionFlow
 		if (methodName == null) { return this; }
 		
 		MethodType mt = getMethodType();
+		
+		CheapCoverage.loadClass(classFilePath);
 		methodPath = CheapCoverage.getExecutionPath(methodName, mt, args, cci);
 		
 		return this;
@@ -78,12 +97,12 @@ public class MethodExecutionFlow
 	 */
 	private MethodType getMethodType() 
 	{
-		Method m = classExecutionFlow.getMethod(methodSignature);
-		Class<?>[] params = m.getParameterTypes();
+//		Method m = classExecutionFlow.getMethod(methodSignature);
+		Class<?>[] params = typeArgs;
 		
 		if (params.length == 0)
-			return methodType(m.getReturnType());
+			return methodType(returnType);
 		
-		return methodType(m.getReturnType(), params);
+		return methodType(returnType, params);
 	}
 }

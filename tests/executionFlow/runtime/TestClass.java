@@ -4,13 +4,26 @@ package executionFlow.runtime;
 /**
  * Class created for aspect tests
  */
-public class TestClass {
+public class TestClass implements Interface {
+	public String text;
+	private int x;
+	
+	@Override
+	public String test() {
+		return this.text;
+	}
+	
+	public TestClass(String t, int x) 
+	{
+		this.text = t;
+	}
+	
 	/**
 	 * Random constructor.
 	 */
 	public TestClass(int x) 
 	{
-		x = 2;
+		this.x = x;
 	}
 	
 	/**
@@ -101,8 +114,11 @@ public class TestClass {
 	 * @param letters Letters that will be inverted.
 	 * @return Inverted letters
 	 */
-	public static char[] parseLetters_noInternalCall(char[] letters)
+	//public static char[] parseLetters_noInternalCall(char[] letters)
+	//public static char[] parseLetters_noInternalCall(CharSequence cs)
+	public static char[] parseLetters_noInternalCall(CharSequence cs)
 	{
+		/*
 		char[] response = new char[letters.length];
 		
 		for (int i=0; i<letters.length; i++) {
@@ -113,6 +129,8 @@ public class TestClass {
 		}
 		
 		return response;
+		*/
+		return "helloWORLD".toCharArray();
 	}
 	
 	
@@ -168,4 +186,6 @@ public class TestClass {
 		
 		return "";
 	}
+
+	
 }

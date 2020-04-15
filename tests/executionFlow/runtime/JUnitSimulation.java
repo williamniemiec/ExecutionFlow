@@ -2,6 +2,7 @@ package executionFlow.runtime;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 
@@ -11,6 +12,7 @@ import org.junit.Test;
  */
 public class JUnitSimulation 
 {
+	/*
 	@Test
 	public void testEmptyTest()
 	{
@@ -69,20 +71,21 @@ public class JUnitSimulation
 		
 		assertEquals(expectedResult, res);
 	}
-	
-	@Test
-	public void testStaticMethod()
-	{
-		System.out.println("#####################################################################");
-		System.out.println("                          testStaticMethod                           ");
-		System.out.println("#####################################################################");
-		
-		char[] letters = "HELLOworld".toCharArray();
-		char[] parsedLetters = TestClass.parseLetters_noInternalCall(letters);
-		char[] expectedResult = "helloWORLD".toCharArray();
-		
-		assertArrayEquals(expectedResult, parsedLetters);
-	}
+	*/
+//	
+//	@Test
+//	public void testStaticMethod()
+//	{
+//		System.out.println("#####################################################################");
+//		System.out.println("                          testStaticMethod                           ");
+//		System.out.println("#####################################################################");
+//		
+//		char[] letters = "HELLOworld".toCharArray();
+//		char[] parsedLetters = TestClass.parseLetters_noInternalCall(letters);
+//		char[] expectedResult = "helloWORLD".toCharArray();
+//		
+//		assertArrayEquals(expectedResult, parsedLetters);
+//	}
 	
 	@Test
 	public void testInternalCall()
@@ -97,4 +100,33 @@ public class JUnitSimulation
 		
 		assertArrayEquals(expectedResult, parsedLetters);
 	}
+	
+	/*
+	@Test
+	public void testInterface()
+	{
+		System.out.println("#####################################################################");
+		System.out.println("                             testInterface                           ");
+		System.out.println("#####################################################################");
+		ClassInterface ci = new ClassInterface("Hello world");
+		assertEquals("Hello world", ci.test());
+		//TestClass tc = new TestClass(4);
+		//tc.test2();
+	}
+	*/
+	/*
+	@Test
+	public void testStaticMethod()
+	{
+		System.out.println("#####################################################################");
+		System.out.println("                          testStaticMethod                           ");
+		System.out.println("#####################################################################");
+		
+		char[] letters = "HELLOworld".toCharArray();
+		char[] parsedLetters = TestClass.parseLetters_noInternalCall("HELLOworld".subSequence(0, 9));
+		char[] expectedResult = "helloWORLD".toCharArray();
+		
+		assertArrayEquals(expectedResult, parsedLetters);
+	}
+	*/
 }

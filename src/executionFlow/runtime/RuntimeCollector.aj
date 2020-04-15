@@ -1,6 +1,7 @@
 package executionFlow.runtime;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.aspectj.lang.JoinPoint;
@@ -43,13 +44,13 @@ public abstract aspect RuntimeCollector
 	 * 		<li><b>Value:</b> Informations about the method</li>
 	 * </ul>
 	 */
-	protected static Map<Map<String, String>, ClassMethodInfo> methodCollector = new HashMap<>();
+	protected static Map<String, ClassMethodInfo> methodCollector = new LinkedHashMap<>();
 	
-	protected static Map<String, ClassConstructorInfo> consCollector = new HashMap<>();
+	protected static Map<String, ClassConstructorInfo> consCollector = new LinkedHashMap<>();
 	protected static ClassConstructorInfo cci;
-	protected static String testClassSignature;
 	protected static String testMethodSignature;
 	protected static String lastInsertedMethod = "";
+	protected static boolean lastWasInternalCall = false;
 	
 	
 	//-----------------------------------------------------------------------
@@ -96,9 +97,9 @@ public abstract aspect RuntimeCollector
 		methodCollector.clear();
 		consCollector.clear();
 		cci = null;
-		testClassSignature = null;
 		testMethodSignature = null;
 		lastInsertedMethod = "";
+		lastWasInternalCall = false;
 	}
 	
 	/**

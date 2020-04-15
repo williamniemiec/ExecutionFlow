@@ -22,9 +22,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 	/**
 	 * Executed before each method with <code>@Test</code> annotation.
 	 */
+	
 	before(): testMethodCollector()
 	{
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
+		
+		reset();
 		
 		testMethodSignature = thisJoinPoint.getSignature().toString();
 		testMethodSignature = testMethodSignature.substring(5);		// Removes return type
@@ -39,7 +42,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 		
 		// Gets test paths of the collected methods and export them
-		ExecutionFlow ef = new ExecutionFlow(classPath, methodCollector.values(), cci);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector.values());
 		
 		try {
 			ef.execute().export();

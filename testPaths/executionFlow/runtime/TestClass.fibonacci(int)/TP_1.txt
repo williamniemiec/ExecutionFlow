@@ -1,2 +1,0 @@
-executionFlow.runtime.JUnitSimulation.testFibonacci()
-[85, 86, 87, 89, 90, 91, 92, 89, 90, 91, 92, 89, 90, 91, 92, 89, 95]

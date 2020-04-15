@@ -41,6 +41,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	public void export() 
 	{
 		String currentTestMethodSignature = null;
+		String currentMethod = "";
 		boolean firstTime = true;
 		
 		System.out.println("---------------------------------------------------------------------");
@@ -48,21 +49,42 @@ public class ConsoleExporter implements ExporterExecutionFlow
 		System.out.println("---------------------------------------------------------------------");
 		
 		for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
+//			System.out.println();
+//			System.out.println(classPaths);
+//			System.out.println();
+			
+			
 			SignaturesInfo signatures = e.getKey();
 			String testMethodSignature = signatures.getTestMethodSignature();
 			
-			if (testMethodSignature != null && !testMethodSignature.equals(currentTestMethodSignature)) {
+			
+			if (testMethodSignature == null) { testMethodSignature = ""; }
+			
+			// Test path from another test method
+			if (!testMethodSignature.equals(currentTestMethodSignature)) {
 				System.out.println(signatures.getTestMethodSignature());	// Test method signature
 				System.out.println(signatures.getMethodSignature());		// Method signature
 				currentTestMethodSignature = signatures.getTestMethodSignature();
-			}
-			
-			if (firstTime) {
-				currentTestMethodSignature = signatures.getTestMethodSignature();
-				firstTime = false;
+				currentMethod = signatures.getMethodSignature();
+			} else {	// It is the same test method
+				// Checks if the test path belongs to current method
+				if (!signatures.getMethodSignature().equals(currentMethod)) {
+					System.out.println();
+					System.out.println(signatures.getTestMethodSignature());
+					System.out.println(signatures.getMethodSignature());
+					
+					currentMethod = signatures.getMethodSignature();
+				}
 			}
 			
 			System.out.println(e.getValue());	// Test path
+			
+//			if (firstTime) {
+//				currentTestMethodSignature = signatures.getTestMethodSignature();
+//				firstTime = false;
+//			}
+			
+			
 		}
 		
 		System.out.println();		// New line

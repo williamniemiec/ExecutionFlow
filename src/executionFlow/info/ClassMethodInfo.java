@@ -16,11 +16,24 @@ public class ClassMethodInfo
 	private Object[] args;
 	private String classPath;
 	private String testMethodSignature;
+	private ClassConstructorInfo constructor;
+	private Class<?> returnType;
+	private String methodSignature;
 	
 	
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
+	public ClassMethodInfo(String classPath, String methodSignature, String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
+	{
+		this(testMethodSignature, methodName, parameterTypes, args);
+		this.classPath = classPath;
+		this.returnType = returnType;
+		this.methodSignature = methodSignature;
+	}
+	
+	
+	
 	/**
 	 * Create a MethodInfo for a method with arguments and with the signature of the
 	 * test method to which it belongs.
@@ -68,10 +81,12 @@ public class ClassMethodInfo
 	public String toString() 
 	{
 		return "ClassMethodInfo [methodName=" + methodName + ", parameterTypes=" + Arrays.toString(parameterTypes)
-		+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + "]";
-	}	
-	
-	
+				+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + ", testMethodSignature="
+				+ testMethodSignature + ", constructor=" + constructor + ", returnType=" + returnType
+				+ ", methodSignature=" + methodSignature + "]";
+	}
+
+
 	//-----------------------------------------------------------------------
 	//		Getters & Setters
 	//-----------------------------------------------------------------------
@@ -79,7 +94,7 @@ public class ClassMethodInfo
 	{
 		return methodName;
 	}
-	
+
 	public Class<?>[] getParameterTypes() 
 	{
 		return parameterTypes;
@@ -130,5 +145,25 @@ public class ClassMethodInfo
 	public void setTestMethodSignature(String testMethodSignature) 
 	{
 		this.testMethodSignature = testMethodSignature;
+	}
+	
+	public void setConstructor(ClassConstructorInfo constructor)
+	{
+		this.constructor = constructor;
+	}
+	
+	public ClassConstructorInfo getClassConstructorInfo()
+	{
+		return this.constructor;
+	}
+	
+	public Class<?> getReturnTyoe()
+	{
+		return this.returnType;
+	}
+	
+	public String getMethodSignature()
+	{
+		return this.methodSignature;
 	}
 }

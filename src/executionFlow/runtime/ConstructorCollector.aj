@@ -1,11 +1,13 @@
 package executionFlow.runtime;
 
-import executionFlow.info.ClassConstructorInfo;
-import executionFlow.ClassExecutionFlow;
-import executionFlow.ExecutionFlow;
+import java.util.Arrays;
+
+import executionFlow.*;
 import executionFlow.cheapCoverage.CheapCoverage;
 import executionFlow.cheapCoverage.RT;
-import executionFlow.exporter.*;
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.FileExporter;
+import executionFlow.info.ClassConstructorInfo;
 
 
 /**
@@ -16,19 +18,22 @@ public aspect ConstructorCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Pointcut
 	//-----------------------------------------------------------------------
-	pointcut constructorCollector(): preinitialization(*.new(*)) 	&& !within(RuntimeCollector)
-																	&& !within(TestMethodCollector)
-																	&& !within(MethodCollector)
-																	&& !within(ConstructorCollector)
-																	&& !within(CollectorExecutionFlow) 
-																	&& !within(ExecutionFlow) 
-																	&& !within(ConsoleExporter)
-																	&& !within(FileExporter)
-																	&& !within(ClassExecutionFlow)
-																	&& !within(RT)
-																	&& !within(CheapCoverage)
-																	&& !call(* org.junit.runner.JUnitCore.runClasses(*))
-																	&& !call(void org.junit.Assert.*(*,*));
+	pointcut constructorCollector(): (initialization(*.new(*)) || initialization(*.new()))	
+		&& !within(RuntimeCollector)
+		&& !within(TestMethodCollector)
+		&& !within(MethodCollector)
+		&& !within(ConstructorCollector)
+		&& !within(CollectorExecutionFlow) 
+		&& !within(MethodExecutionFlow)
+		&& !within(ClassConstructorInfo)
+		&& !within(ExecutionFlow) 
+		&& !within(ConsoleExporter)
+		&& !within(FileExporter)
+		&& !within(ClassExecutionFlow)
+		&& !within(RT)
+		&& !within(CheapCoverage)
+		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
+		&& !call(void org.junit.Assert.*(*,*));
 	
 	/**
 	 * Executed after instantiating an object.
@@ -45,15 +50,17 @@ public aspect ConstructorCollector extends RuntimeCollector
 		Class<?>[] consParamTypes;		// Constructor parameter types
 		Object[] consParamValues;		// Constructor parameter values
 		
-		// Checks if it is a constructor signature and if it has not been collected yet
-		if (signature.matches(constructorRegex) && !consCollector.containsKey(signature)) {
-			// Extracts constructor data
-			consParamTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
-			consParamValues = thisJoinPoint.getArgs();
-			
-			// Save extracted data
-			consCollector.put(signature, new ClassConstructorInfo(consParamTypes, consParamValues));
-			cci = new ClassConstructorInfo(consParamTypes, consParamValues);
-		}
+		String key = thisJoinPoint.getThis().toString();	
+		
+		// Checks if it is a constructor signature
+		if (!signature.matches(constructorRegex)) { return; }
+		
+		// Extracts constructor data
+		consParamTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
+		consParamValues = thisJoinPoint.getArgs();
+		
+		// Saves extracted data
+		consCollector.put(key, new ClassConstructorInfo(consParamTypes, consParamValues));
+		cci = new ClassConstructorInfo(consParamTypes, consParamValues);
 	}
 }

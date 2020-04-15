@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,6 +98,12 @@ public class CollectorExecutionFlow
 		Class<?>[] paramTypes = new Class<?>[args.length];
 		
 		for (Object o : args) {
+			/*try {
+				System.out.println(Class.forName("java.lang.CharSequence"));
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 			paramTypes[i++] = normalizeClass(o.getClass());
 		}
 		
@@ -168,6 +175,25 @@ public class CollectorExecutionFlow
 		return classPath;
 	}
 	
+	public static String extractMethodSignature(String signature)
+	{
+		signature = signature.split(" ")[1];		// Removes return
+		String[] tmp = signature.split("\\.");
+		StringBuilder response = new StringBuilder();
+		
+		for (int i=0; i<tmp.length-1; i++) {
+			response.append(tmp[i]);
+			response.append(".");
+		}
+		
+		if (response.length() > 0) {
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
+	}
+	
+	
 	/**
 	 * Converts a wrapper class in primitive. If the class is not a
 	 * wrapper class, returns itself.
@@ -190,4 +216,22 @@ public class CollectorExecutionFlow
 		
 		return response;
 	}
+	
+	//---------------------------
+//	public static ClassConstructorInfo extractConstructor(String key, Map<String, ClassConstructorInfo> consCollector)
+//	{
+//		//ClassConstructorInfo constructor = null;
+//		
+//		// Gets first constructor that matches
+////		for (Map.Entry<String, ClassConstructorInfo> e : consCollector.entrySet()) {
+////			String key = e.getKey();
+////			
+////			if (key.contains(className)) {
+////				constructor = consCollector.remove(key);
+////				break;
+////			}
+////		}
+//		
+//		return consCollector.remove(key);
+//	}
 }
