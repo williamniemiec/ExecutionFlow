@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +52,6 @@ public class CollectorExecutionFlow
 		return response;
 	}
 	
-	
 	/**
 	 * Extracts package name of a method signature.
 	 * 
@@ -98,40 +96,10 @@ public class CollectorExecutionFlow
 		Class<?>[] paramTypes = new Class<?>[args.length];
 		
 		for (Object o : args) {
-			/*try {
-				System.out.println(Class.forName("java.lang.CharSequence"));
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
 			paramTypes[i++] = normalizeClass(o.getClass());
 		}
 		
 		return paramTypes;
-	}
-	
-	/**
-	 * Extracts class name from a signature.
-	 * 
-	 * @param signature Signature of a method or class
-	 * @return Name of this class or method
-	 */
-	public static String extractClassName(String signature) 
-	{
-		String methodName = "";
-		
-		Pattern p = Pattern.compile("\\.[A-z0-9-_$]+\\(");
-		Matcher m = p.matcher(signature);
-		
-		if (m.find()) {
-			methodName = m.group();					// ".<methodName>("
-			p = Pattern.compile("[A-z0-9-_$]+");
-			m = p.matcher(methodName);
-			if (m.find())
-				methodName = m.group();				// "<methodName>"
-		}
-		
-		return methodName;
 	}
 	
 	/**
@@ -175,6 +143,12 @@ public class CollectorExecutionFlow
 		return classPath;
 	}
 	
+	/**
+	 * Extracts method's class signature.
+	 * 
+	 * @param signature Signature of the method
+	 * @return Name of the package + name of the class
+	 */
 	public static String extractMethodSignature(String signature)
 	{
 		signature = signature.split(" ")[1];		// Removes return
@@ -187,12 +161,54 @@ public class CollectorExecutionFlow
 		}
 		
 		if (response.length() > 0) {
-			response.deleteCharAt(response.length()-1);
+			response.deleteCharAt(response.length()-1);	// Removes last dot
 		}
 		
 		return response.toString();
 	}
 	
+	/**
+	 * Extracts class name from a signature.
+	 * 
+	 * @param signature Signature of a method or class
+	 * @return Name of this class or method
+	 */
+	public static String extractMethodName(String signature) 
+	{
+		String methodName = "";
+		
+		Pattern p = Pattern.compile("\\.[A-z0-9-_$]+\\(");
+		Matcher m = p.matcher(signature);
+		
+		if (m.find()) {
+			methodName = m.group();					// ".<methodName>("
+			p = Pattern.compile("[A-z0-9-_$]+");
+			m = p.matcher(methodName);
+			if (m.find())
+				methodName = m.group();				// "<methodName>"
+		}
+		
+		return methodName;
+	}
+	
+	/**
+	 * Extracts class name from a method signature.
+	 * 
+	 * @param signature Method signature
+	 * @return Class name
+	 */
+	public static String getClassName(String signature)
+	{
+		String response;
+		String[] tmp = signature.split("\\.");
+		
+		if (tmp.length < 2)
+			response = tmp[0];
+		else
+			response = tmp[tmp.length-2];
+		
+		return response;	
+	}
 	
 	/**
 	 * Converts a wrapper class in primitive. If the class is not a
@@ -216,22 +232,4 @@ public class CollectorExecutionFlow
 		
 		return response;
 	}
-	
-	//---------------------------
-//	public static ClassConstructorInfo extractConstructor(String key, Map<String, ClassConstructorInfo> consCollector)
-//	{
-//		//ClassConstructorInfo constructor = null;
-//		
-//		// Gets first constructor that matches
-////		for (Map.Entry<String, ClassConstructorInfo> e : consCollector.entrySet()) {
-////			String key = e.getKey();
-////			
-////			if (key.contains(className)) {
-////				constructor = consCollector.remove(key);
-////				break;
-////			}
-////		}
-//		
-//		return consCollector.remove(key);
-//	}
 }

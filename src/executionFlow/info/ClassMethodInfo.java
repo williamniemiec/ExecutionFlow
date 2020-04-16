@@ -1,10 +1,13 @@
 package executionFlow.info;
 
+import static java.lang.invoke.MethodType.methodType;
+
+import java.lang.invoke.MethodType;
 import java.util.Arrays;
 
 
 /**
- * Stores information about a class' method.
+ * Stores information about a method.
  */
 public class ClassMethodInfo 
 {
@@ -14,76 +17,42 @@ public class ClassMethodInfo
 	private String methodName;
 	private Class<?>[] parameterTypes;
 	private Object[] args;
+	private Class<?> returnType;
 	private String classPath;
 	private String testMethodSignature;
-	private ClassConstructorInfo constructor;
-	private Class<?> returnType;
 	private String methodSignature;
+	private ClassConstructorInfo constructor;
 	
 	
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
-	private ClassMethodInfo(String classPath, String methodSignature, String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
-	{
-		this(testMethodSignature, methodName, parameterTypes, args);
-		this.classPath = classPath;
-		this.returnType = returnType;
-		this.methodSignature = methodSignature;
-	}
-	
-	
-	
-//	public ClassMethodInfo(String classPath, String methodSignature, String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
-//	{
-//		this(testMethodSignature, methodName, parameterTypes, args);
-//		this.classPath = classPath;
-//		this.returnType = returnType;
-//		this.methodSignature = methodSignature;
-//	}
-	
-	
-	
 	/**
-	 * Create a MethodInfo for a method with arguments and with the signature of the
-	 * test method to which it belongs.
+	 * Stores information about a method.
 	 * 
+	 * @param classPath Method class file path
+	 * @param methodSignature Signature of the method
 	 * @param testMethodSignature Signature of the test method to which the method belongs
 	 * @param methodName Method's name
+	 * @param returnType Return type of the method
 	 * @param parameterTypes Types of method's parameters
-	 * @param args Method's values
+	 * @param args Method's arguments
 	 */
-	public ClassMethodInfo(String testMethodSignature, String methodName, Class<?>[] parameterTypes, Object... args) 
+	private ClassMethodInfo(String classPath, String methodSignature, String testMethodSignature, 
+							String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
 	{
-		this(methodName, parameterTypes, args);
+		this.classPath = classPath;
+		this.methodSignature = methodSignature;
 		this.testMethodSignature = testMethodSignature;
-	}
-	
-	/**
-	 * Create a MethodInfo for a method with arguments.
-	 * 
-	 * @param methodName Method's name
-	 * @param parameterTypes Types of method's parameters
-	 * @param args Method's values
-	 */
-	public ClassMethodInfo(String methodName, Class<?>[] parameterTypes, Object... args) 
-	{
 		this.methodName = methodName;
+		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
 	}
-	
-	/**
-	 * Create a MethodInfo for a method without arguments.
-	 * 
-	 * @param methodName Method's name
-	 */
-	public ClassMethodInfo(String methodName) 
-	{
-		this.methodName = methodName;
-	}
 
-	
+	/**
+	 * Builder of this class.
+	 */
 	public static class ClassMethodInfoBuilder
 	{
 		private String classPath;
@@ -139,7 +108,8 @@ public class ClassMethodInfo
 		
 		public ClassMethodInfo build()
 		{
-			return new ClassMethodInfo(classPath, methodSignature, testMethodSignature, methodName, returnType, parameterTypes, args);
+			return new ClassMethodInfo(	classPath, methodSignature, testMethodSignature, methodName, 
+										returnType, parameterTypes, args);
 		}
 	}
 	
@@ -271,5 +241,16 @@ public class ClassMethodInfo
 	public String getMethodSignature()
 	{
 		return this.methodSignature;
+	}
+	
+	/**
+	 * @return Return type and parameter types of the method
+	 */
+	public MethodType getMethodTypes() 
+	{
+		if (args.length == 0)
+			return methodType(returnType);
+		
+		return methodType(returnType, parameterTypes);
 	}
 }

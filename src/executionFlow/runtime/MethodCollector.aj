@@ -12,7 +12,7 @@ import org.junit.jupiter.params.*;
 import org.junit.jupiter.api.*;
 
 import executionFlow.*;
-import executionFlow.cheapCoverage.*;
+import executionFlow.core.*;
 import executionFlow.exporter.*;
 import executionFlow.info.*;
 
@@ -45,7 +45,6 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(ClassMethodInfo)
 		&& !within(ClassConstructorInfo)
 		&& !within(MethodExecutionFlow)
-		&& !within(ClassExecutionFlow)	
 		&& !within(CollectorInfo)
 		&& !within(ExecutionFlow)
 		&& !within(CheapCoverage)
@@ -75,7 +74,7 @@ public aspect MethodCollector extends RuntimeCollector
 		if (!isMethodSignature(signature)) { return; }
 		
 		// Extracts the method name
-		String methodName = CollectorExecutionFlow.extractClassName(signature);
+		String methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
 		// Extracts types of method parameters (if there is any)
 		Class<?>[] paramTypes = extractParameterTypes(thisJoinPoint);
@@ -87,31 +86,20 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Checks if there is a constructor (if it is a static method or not)
 		if (thisJoinPoint.getThis() != null) {
-//			if (thisJoinPoint.getThis().toString().contains(getClassName(testMethodSignature))) {
-//				return;
-//			}
-			
 			constructor = thisJoinPoint.getThis();
-//			System.out.println("mc-this: "+constructor);
+			
 			// Key: <method_name>+<method_param>+<constructor>
 			key += constructor.toString();
 		}
 		
-		
 		// If the method has already been collected, skip it;
 		if (methodCollector.containsKey(key)) { return; }
-		
-		
-//		System.out.println("be-s: "+signature);
-//		System.out.println("isInternal? "+isInternalCall(signature, testMethodSignature));
-		
 		
 		// Checks if it is an internal call (if it is, ignore it)
 		if (isInternalCall(signature, testMethodSignature)) { return; }		
 		
 		if (constructor != null && !isValidMethodSignature(constructor.toString())) { return; }
 		
-//		System.out.println("af-s: "+signature);
 		// Gets class path
 		try {
 			classPath = CollectorExecutionFlow.findCurrentClassPath();
@@ -143,10 +131,6 @@ public aspect MethodCollector extends RuntimeCollector
 		// Stores collected method
 		methodCollector.put(key, ci);
 		lastInsertedMethod = signature;
-		
-		//###################################################
-//		System.out.println("methodCollector.put($$"+key+"$$,"+cmi+")");
-		//###################################################
 	}
 	
 	//-----------------------------------------------------------------------
@@ -164,7 +148,6 @@ public aspect MethodCollector extends RuntimeCollector
 		// Removes parentheses from the signature of the test method
 		testMethodSignature = testMethodSignature.replaceAll("\\(\\)", "");
 		
-//		System.out.println("lastWasInternalCall: "+lastWasInternalCall);
 		// It is necessary because if it is an internal call, the next will also be
 		if (lastWasInternalCall) {
 			lastWasInternalCall = false;
@@ -172,10 +155,6 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 
 		// Checks the execution stack to see if it is an internal call
-//		System.out.println();
-//		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
-//		System.out.println();
-		
 		if (!Thread.currentThread().getStackTrace()[3].toString().contains(testMethodSignature) && 
 			!Thread.currentThread().getStackTrace()[4].toString().contains(testMethodSignature)) {
 			lastWasInternalCall = true;
@@ -183,25 +162,6 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 		
 		return false;
-	}
-	
-	/**
-	 * Extracts class name from a method signature.
-	 * 
-	 * @param signature Method signature
-	 * @return Class name
-	 */
-	private String getClassName(String signature)
-	{
-		String response;
-		String[] tmp = signature.split("\\.");
-		
-		if (tmp.length < 2)
-			response = tmp[0];
-		else
-			response = tmp[tmp.length-2];
-		
-		return response;	
 	}
 	
 	/**
@@ -229,15 +189,17 @@ public aspect MethodCollector extends RuntimeCollector
 	}
 	
 	/**
-	 * Ignores invalid methods (whose constructor is of the test method).
+	 * Ignores invalid methods (whose constructor is from test method).
 	 * 
 	 * @param constructorSignature Signature of the constructor
-	 * @return
+	 * @return If the signature of the method is valid
 	 */
 	private boolean isValidMethodSignature(String constructorSignature)
 	{
 		if (constructorSignature == null) { return true; }
 		
-		return !constructorSignature.contains(getClassName(testMethodSignature));
+		String testMethodClassName = CollectorExecutionFlow.getClassName(testMethodSignature);
+		
+		return !constructorSignature.contains(testMethodClassName);
 	}
 }

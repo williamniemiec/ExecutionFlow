@@ -1,10 +1,8 @@
 package executionFlow.runtime;
 
-import java.util.Arrays;
-
 import executionFlow.*;
-import executionFlow.cheapCoverage.CheapCoverage;
-import executionFlow.cheapCoverage.RT;
+import executionFlow.core.CheapCoverage;
+import executionFlow.core.RT;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
 import executionFlow.info.ClassConstructorInfo;
@@ -29,7 +27,6 @@ public aspect ConstructorCollector extends RuntimeCollector
 		&& !within(ExecutionFlow) 
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
-		&& !within(ClassExecutionFlow)
 		&& !within(RT)
 		&& !within(CheapCoverage)
 		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
