@@ -147,6 +147,7 @@ public class ClassMethodInfo
 	 */
 	private String extractParameterTypes(Class<?>[] parametersTypes)
 	{
+		if (parametersTypes == null) { return ""; }
 		StringBuilder parameterTypes = new StringBuilder();
 		
 		for (var parameterType : parametersTypes) {
@@ -248,7 +249,7 @@ public class ClassMethodInfo
 	 */
 	public MethodType getMethodTypes() 
 	{
-		if (args.length == 0)
+		if (args == null || args.length == 0)
 			return methodType(returnType);
 		
 		return methodType(returnType, parameterTypes);

@@ -52,6 +52,7 @@ public abstract aspect RuntimeCollector
 	protected static String testMethodSignature;
 	protected static String lastInsertedMethod = "";
 	protected static boolean lastWasInternalCall = false;
+	protected static boolean skipCollection = false;
 	
 	
 	//-----------------------------------------------------------------------
@@ -65,7 +66,11 @@ public abstract aspect RuntimeCollector
 	 */
 	protected boolean hasSkipCollectionAnnotation(JoinPoint jp)
 	{
-		return jp.getThis() != null && hasClassSkipCollectionAnnotation(jp.getThis().getClass());
+		if (jp.getThis() != null && hasClassSkipCollectionAnnotation(jp.getThis().getClass())) {
+			skipCollection = true;
+		}
+		
+		return skipCollection;
 	}
 	
 	/**

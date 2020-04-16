@@ -26,21 +26,23 @@ public class ExecutionFlowTest
 	public void testStaticMethods() throws Throwable 
 	{
 		String classPath = "bin/math/Calculator.class";
-		
 		List<CollectorInfo> collectorInfo = new ArrayList<>();
 		
-		
 		ClassMethodInfo sumMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+				.testMethodSignature("executionFlow.ExecutionFlowTest()")
 				.classPath(classPath)
 				.methodName("sum")
+				.methodSignature("math.Calculator")
 				.returnType(int.class)
 				.parameterTypes(new Class<?>[] {int.class, int.class})
 				.args(2,3)
 				.build();
 		
 		ClassMethodInfo loopMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+				.testMethodSignature("executionFlow.ExecutionFlowTest()")
 				.classPath(classPath)
 				.methodName("loop")
+				.methodSignature("math.Calculator")
 				.build();
 		
 		collectorInfo.add(new CollectorInfo(sumMethod));
@@ -60,21 +62,28 @@ public class ExecutionFlowTest
 		assertEquals(expectedClassPaths, classPathsObtained);
 	}
 	
-	/*
+	
 	@Test
 	public void testNonStaticMethods() throws Throwable 
 	{
 		String classPath = "bin/math/CalculatorNonStatic.class";
-		Map<String, Object[]> methods = new HashMap<>();
-				
-		// ClassMethodInfo init
-		methods.put("sum", Arrays.asList(2,3).toArray());
-		List<ClassMethodInfo> classMethodInfo = new ArrayList<>();
-		classMethodInfo.add(new ClassMethodInfo("sum", new Class<?>[] {int.class, int.class}, 2,3));
+		List<CollectorInfo> collectorInfo = new ArrayList<>();
 		
-		//ClassMethodInfo isn't necessary (constructor default / empty)
+		ClassMethodInfo sumMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+				.testMethodSignature("executionFlow.ExecutionFlowTest()")
+				.classPath(classPath)
+				.methodName("sum")
+				.methodSignature("math.CalculatorNonStatic")
+				.returnType(int.class)
+				.parameterTypes(new Class<?>[] {int.class, int.class})
+				.args(2,3)
+				.build();
 		
-		ExecutionFlow ef = new ExecutionFlow(classPath, classMethodInfo);
+		collectorInfo.add(new CollectorInfo(sumMethod));
+		
+		//ClassConstructorInfo isn't necessary (constructor default / empty)
+		
+		ExecutionFlow ef = new ExecutionFlow(collectorInfo);
 		
 		// Expected result
 		Map<String, List<Integer>> expectedClassPaths = new HashMap<>();
@@ -91,18 +100,21 @@ public class ExecutionFlowTest
 	public void testNonStaticMethodsWithConstructor() throws Throwable 
 	{
 		String classPath = "bin/math/CalculatorNonStaticWithConstructor.class";
-		Map<String, Object[]> methods = new HashMap<>();
-				
-		// ClassMethodInfo init
-		methods.put("loop", null);
-		List<ClassMethodInfo> classMethodInfo = new ArrayList<>();
-		classMethodInfo.add(new ClassMethodInfo("loop"));
+		List<CollectorInfo> collectorInfo = new ArrayList<>();
 		
-		// ClassConstructorInfo init
+		ClassMethodInfo loopMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+				.testMethodSignature("executionFlow.ExecutionFlowTest()")
+				.classPath(classPath)
+				.methodName("loop")
+				.methodSignature("math.CalculatorNonStaticWithConstructor")
+				.build();
+		
 		var constTypes = new Class<?>[] {int.class};
-		ClassConstructorInfo classConstructorInfo = new ClassConstructorInfo(constTypes, 2);
+		ClassConstructorInfo loopCons = new ClassConstructorInfo(constTypes, 2);
 		
-		ExecutionFlow ef = new ExecutionFlow(classPath, classMethodInfo, classConstructorInfo);
+		collectorInfo.add(new CollectorInfo(loopMethod,loopCons));
+		
+		ExecutionFlow ef = new ExecutionFlow(collectorInfo);
 		
 		// Expected result
 		Map<String, List<Integer>> expectedClassPaths = new HashMap<>();
@@ -114,5 +126,5 @@ public class ExecutionFlowTest
 		
 		assertEquals(expectedClassPaths, classPathsObtained);
 	}
-	*/
+	
 }
