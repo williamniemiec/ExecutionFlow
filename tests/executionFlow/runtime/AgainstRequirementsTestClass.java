@@ -32,7 +32,7 @@ public class AgainstRequirementsTestClass
 	 * @param x Number you want to know the factorial
 	 * @return Factorial of the number or -1 if skip is true
 	 */
-	public long factorial(int x) 
+	public long factorial(long x) 
 	{
 		if (skip)
 			return -1;

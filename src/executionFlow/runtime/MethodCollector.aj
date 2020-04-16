@@ -97,12 +97,21 @@ public aspect MethodCollector extends RuntimeCollector
 			key += constructor.toString();
 		}
 		
+		
 		// If the method has already been collected, skip it;
 		if (methodCollector.containsKey(key)) { return; }
+		
+		
+//		System.out.println("be-s: "+signature);
+//		System.out.println("isInternal? "+isInternalCall(signature, testMethodSignature));
+		
 		
 		// Checks if it is an internal call (if it is, ignore it)
 		if (isInternalCall(signature, testMethodSignature)) { return; }		
 		
+		if (!isValidMethodSignature(constructor.toString())) { return; }
+		
+//		System.out.println("af-s: "+signature);
 		// Gets class path
 		try {
 			classPath = CollectorExecutionFlow.findCurrentClassPath();
@@ -155,14 +164,20 @@ public aspect MethodCollector extends RuntimeCollector
 		// Removes parentheses from the signature of the test method
 		testMethodSignature = testMethodSignature.replaceAll("\\(\\)", "");
 		
+//		System.out.println("lastWasInternalCall: "+lastWasInternalCall);
 		// It is necessary because if it is an internal call, the next will also be
 		if (lastWasInternalCall) {
 			lastWasInternalCall = false;
 			return true;
 		}
-		
+
 		// Checks the execution stack to see if it is an internal call
-		if (!Thread.currentThread().getStackTrace()[4].toString().contains(testMethodSignature)) {
+//		System.out.println();
+//		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
+//		System.out.println();
+		
+		if (!Thread.currentThread().getStackTrace()[3].toString().contains(testMethodSignature) && 
+			!Thread.currentThread().getStackTrace()[4].toString().contains(testMethodSignature)) {
 			lastWasInternalCall = true;
 			return true;
 		}
@@ -211,5 +226,18 @@ public aspect MethodCollector extends RuntimeCollector
 	{
 		Method method = ((MethodSignature) jp.getSignature()).getMethod();
 		return method.getParameterTypes();
+	}
+	
+	/**
+	 * Ignores invalid methods (whose constructor is of the test method).
+	 * 
+	 * @param constructorSignature Signature of the constructor
+	 * @return
+	 */
+	private boolean isValidMethodSignature(String constructorSignature)
+	{
+		if (constructorSignature == null) { return true; }
+		
+		return !constructorSignature.contains(getClassName(testMethodSignature));
 	}
 }

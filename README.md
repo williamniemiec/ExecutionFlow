@@ -11,9 +11,9 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 - JUnit 4 ou superior
 
 ## Restrições da aplicação
-- Cada método de teste usa apenas um construtor da classe do método a ser testado
+- ~ Cada método de teste usa apenas um construtor da classe do método a ser testado ~
 - Cada método de teste testa apenas um método de uma classe / objeto
-- Cada método de teste deve possuir uma das seguintes anotações: `@Test`, `@RepeatedTest`, `@ParameterizedTest ` ou `@TestFactory`.
+- Cada método de teste deve possuir uma das seguintes anotações: `@Test`, `@RepeatedTest`, `@ParameterizedTest ` ou `@TestFactory`
 - ~ Cada método de teste deve estar em um pacote ~
 
 <b>OBS:</b> É possível ver [aqui](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow/runtime/AgainstRequirements.java) o que ocorre se uma dessas restrições não for respeitada.
