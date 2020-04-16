@@ -4,14 +4,10 @@ package executionFlow.runtime;
 /**
  * Class created for aspect tests
  */
-public class TestClass implements Interface {
+public class TestClass {
 	public String text;
 	private int x;
 	
-	@Override
-	public String test() {
-		return this.text;
-	}
 	
 	public TestClass(String t, int x) 
 	{
@@ -187,5 +183,13 @@ public class TestClass implements Interface {
 		return "";
 	}
 
+	public int objectHashCode(Object obj)
+	{
+		return obj.hashCode();
+	}
 	
+	public boolean testClassParam(ClassInterface ci)
+	{
+		return true;
+	}
 }

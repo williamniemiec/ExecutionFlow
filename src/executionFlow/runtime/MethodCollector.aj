@@ -109,7 +109,7 @@ public aspect MethodCollector extends RuntimeCollector
 		// Checks if it is an internal call (if it is, ignore it)
 		if (isInternalCall(signature, testMethodSignature)) { return; }		
 		
-		if (!isValidMethodSignature(constructor.toString())) { return; }
+		if (constructor != null && !isValidMethodSignature(constructor.toString())) { return; }
 		
 //		System.out.println("af-s: "+signature);
 		// Gets class path

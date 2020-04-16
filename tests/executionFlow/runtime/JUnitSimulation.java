@@ -2,6 +2,7 @@ package executionFlow.runtime;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -12,7 +13,6 @@ import org.junit.Test;
  */
 public class JUnitSimulation 
 {
-	/*
 	@Test
 	public void testEmptyTest()
 	{
@@ -71,21 +71,6 @@ public class JUnitSimulation
 		
 		assertEquals(expectedResult, res);
 	}
-	*/
-//	
-//	@Test
-//	public void testStaticMethod()
-//	{
-//		System.out.println("#####################################################################");
-//		System.out.println("                          testStaticMethod                           ");
-//		System.out.println("#####################################################################");
-//		
-//		char[] letters = "HELLOworld".toCharArray();
-//		char[] parsedLetters = TestClass.parseLetters_noInternalCall(letters);
-//		char[] expectedResult = "helloWORLD".toCharArray();
-//		
-//		assertArrayEquals(expectedResult, parsedLetters);
-//	}
 	
 	@Test
 	public void testInternalCall()
@@ -101,32 +86,54 @@ public class JUnitSimulation
 		assertArrayEquals(expectedResult, parsedLetters);
 	}
 	
-	/*
 	@Test
 	public void testInterface()
 	{
 		System.out.println("#####################################################################");
 		System.out.println("                             testInterface                           ");
 		System.out.println("#####################################################################");
-		ClassInterface ci = new ClassInterface("Hello world");
+		
+		Interface ci = new ClassInterface("Hello world");
+		
 		assertEquals("Hello world", ci.test());
-		//TestClass tc = new TestClass(4);
-		//tc.test2();
 	}
-	*/
-	/*
+	
 	@Test
-	public void testStaticMethod()
+	public void testStaticMethod_charSequence()
 	{
 		System.out.println("#####################################################################");
-		System.out.println("                          testStaticMethod                           ");
+		System.out.println("                    testStaticMethod_charSequence                    ");
 		System.out.println("#####################################################################");
 		
-		char[] letters = "HELLOworld".toCharArray();
 		char[] parsedLetters = TestClass.parseLetters_noInternalCall("HELLOworld".subSequence(0, 9));
 		char[] expectedResult = "helloWORLD".toCharArray();
 		
 		assertArrayEquals(expectedResult, parsedLetters);
 	}
-	*/
+	
+	@Test
+	public void testParamSignature_object()
+	{
+		System.out.println("#####################################################################");
+		System.out.println("                      testParamSignature_object                      ");
+		System.out.println("#####################################################################");
+		
+		TestClass tc = new TestClass(2);
+		int hashCode = tc.objectHashCode("test");
+		
+		assertEquals(3556498, hashCode);
+	}
+	
+	@Test
+	public void testParamSignature_createdObject()
+	{
+		System.out.println("#####################################################################");
+		System.out.println("                      testParamSignature_createdObject               ");
+		System.out.println("#####################################################################");
+		
+		TestClass tc = new TestClass(2);
+		boolean resp = tc.testClassParam(new ClassInterface(""));
+		
+		assertTrue(resp);
+	}
 }
