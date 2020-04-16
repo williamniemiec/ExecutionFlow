@@ -6,6 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import executionFlow.runtime.testClasses.ClassInterface;
+import executionFlow.runtime.testClasses.Interface;
+import executionFlow.runtime.testClasses.TestClass;
+
 
 /**
  * Class created to show the application working with
@@ -105,7 +109,7 @@ public class JUnitSimulation
 		System.out.println("                    testStaticMethod_charSequence                    ");
 		System.out.println("#####################################################################");
 		
-		char[] parsedLetters = TestClass.parseLetters_noInternalCall("HELLOworld".subSequence(0, 9));
+		char[] parsedLetters = TestClass.parseLetters_noInternalCall("HELLOworld".subSequence(0, 10));
 		char[] expectedResult = "helloWORLD".toCharArray();
 		
 		assertArrayEquals(expectedResult, parsedLetters);
@@ -119,7 +123,7 @@ public class JUnitSimulation
 		System.out.println("#####################################################################");
 		
 		TestClass tc = new TestClass(2);
-		int hashCode = tc.objectHashCode("test");
+		int hashCode = tc.testObjParam("test");
 		
 		assertEquals(3556498, hashCode);
 	}

@@ -61,7 +61,7 @@ public class ClassMethodInfo
 		private String methodName;
 		private Class<?>[] parameterTypes;
 		private Object[] args;
-		private Class<?> returnType;
+		private Class<?> returnType = void.class;
 		
 		
 		public ClassMethodInfoBuilder methodName(String methodName)
@@ -82,7 +82,7 @@ public class ClassMethodInfo
 			return this;
 		}
 		
-		public ClassMethodInfoBuilder args(Object[] args)
+		public ClassMethodInfoBuilder args(Object... args)
 		{
 			this.args = args;
 			return this;

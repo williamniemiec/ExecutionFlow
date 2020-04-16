@@ -3,6 +3,8 @@ package executionFlow.runtime;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
+import executionFlow.runtime.testClasses.TestClass;
+
 
 public class MultipleTestPaths 
 {
