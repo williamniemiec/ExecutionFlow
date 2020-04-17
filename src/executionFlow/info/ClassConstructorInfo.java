@@ -27,8 +27,19 @@ public class ClassConstructorInfo
 		this.constructorTypes = constructorTypes;
 		this.constructorArgs = constructorArgs;
 	}
-	
 
+
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
+	@Override
+	public String toString() 
+	{
+		return "ClassConstructorInfo [initTypes=" + Arrays.toString(constructorTypes) + ", initArgs="
+				+ Arrays.toString(constructorArgs) + "]";
+	}
+	
+	
 	//-----------------------------------------------------------------------
 	//		Getters
 	//-----------------------------------------------------------------------
@@ -40,16 +51,5 @@ public class ClassConstructorInfo
 	public Object[] getConstructorArgs() 
 	{
 		return constructorArgs;
-	}
-
-
-	//-----------------------------------------------------------------------
-	//		Methods
-	//-----------------------------------------------------------------------
-	@Override
-	public String toString() 
-	{
-		return "ClassConstructorInfo [initTypes=" + Arrays.toString(constructorTypes) + ", initArgs="
-				+ Arrays.toString(constructorArgs) + "]";
 	}
 }

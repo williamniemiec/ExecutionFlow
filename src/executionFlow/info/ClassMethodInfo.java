@@ -21,7 +21,6 @@ public class ClassMethodInfo
 	private String classPath;
 	private String testMethodSignature;
 	private String methodSignature;
-	private ClassConstructorInfo constructor;
 	
 	
 	//-----------------------------------------------------------------------
@@ -122,7 +121,7 @@ public class ClassMethodInfo
 	{
 		return "ClassMethodInfo [methodName=" + methodName + ", parameterTypes=" + Arrays.toString(parameterTypes)
 				+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + ", testMethodSignature="
-				+ testMethodSignature + ", constructor=" + constructor + ", returnType=" + returnType
+				+ testMethodSignature + ", returnType=" + returnType
 				+ ", methodSignature=" + methodSignature + "]";
 	}
 
@@ -224,16 +223,6 @@ public class ClassMethodInfo
 		this.testMethodSignature = testMethodSignature;
 	}
 	
-	public void setConstructor(ClassConstructorInfo constructor)
-	{
-		this.constructor = constructor;
-	}
-	
-	public ClassConstructorInfo getClassConstructorInfo()
-	{
-		return this.constructor;
-	}
-	
 	public Class<?> getReturnType()
 	{
 		return this.returnType;
@@ -245,6 +234,8 @@ public class ClassMethodInfo
 	}
 	
 	/**
+	 * Gets parameter types and return type of the method.
+	 * 
 	 * @return Return type and parameter types of the method
 	 */
 	public MethodType getMethodTypes() 
