@@ -1,11 +1,9 @@
 package executionFlow.runtime;
 
 import executionFlow.*;
-import executionFlow.core.CheapCoverage;
-import executionFlow.core.RT;
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.info.ClassConstructorInfo;
+import executionFlow.core.*;
+import executionFlow.exporter.*;
+import executionFlow.info.*;
 
 
 /**
@@ -17,18 +15,21 @@ public aspect ConstructorCollector extends RuntimeCollector
 	//		Pointcut
 	//-----------------------------------------------------------------------
 	pointcut constructorCollector(): (initialization(*.new(*)) || initialization(*.new()))	
-		&& !within(RuntimeCollector)
-		&& !within(TestMethodCollector)
-		&& !within(MethodCollector)
-		&& !within(ConstructorCollector)
-		&& !within(CollectorExecutionFlow) 
+		&& !within(ExecutionFlow)
 		&& !within(MethodExecutionFlow)
-		&& !within(ClassConstructorInfo)
-		&& !within(ExecutionFlow) 
+		&& !within(CheapCoverage)
+		&& !within(RT)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
-		&& !within(RT)
-		&& !within(CheapCoverage)
+		&& !within(ClassConstructorInfo)
+		&& !within(ClassMethodInfo)
+		&& !within(CollectorInfo)
+		&& !within(SignaturesInfo)
+		&& !within(CollectorExecutionFlow)
+		&& !within(ConstructorCollector) 
+		&& !within(MethodCollector)
+		&& !within(RuntimeCollector)
+		&& !within(TestMethodCollector)
 		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
 		&& !call(void org.junit.Assert.*(*,*));
 	

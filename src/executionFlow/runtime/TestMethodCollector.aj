@@ -1,6 +1,9 @@
 package executionFlow.runtime;
 
-import executionFlow.ExecutionFlow;
+import executionFlow.*;
+import executionFlow.core.*;
+import executionFlow.exporter.*;
+import executionFlow.info.*;
 import org.junit.Test;
 import org.junit.jupiter.params.*;
 import org.junit.jupiter.api.*;
@@ -20,11 +23,21 @@ public aspect TestMethodCollector extends RuntimeCollector
 		 execution(@RepeatedTest * *.*()) ||
 		 execution(@ParameterizedTest * *.*()) ||
 		 execution(@TestFactory * *.*())) 
-		&& !within(TestMethodCollector)
-		&& !within(RuntimeCollector)
-		&& !within(TestMethodCollector)
+		&& !within(ExecutionFlow)
+		&& !within(MethodExecutionFlow)
+		&& !within(CheapCoverage)
+		&& !within(RT)
+		&& !within(ConsoleExporter)
+		&& !within(FileExporter)
+		&& !within(ClassConstructorInfo)
+		&& !within(ClassMethodInfo)
+		&& !within(CollectorInfo)
+		&& !within(SignaturesInfo)
+		&& !within(CollectorExecutionFlow)
+		&& !within(ConstructorCollector) 
 		&& !within(MethodCollector)
-		&& !within(ConstructorCollector);
+		&& !within(RuntimeCollector)
+		&& !within(TestMethodCollector);
 	
 	/**
 	 * Executed before each method with <code>@Test</code> annotation.
