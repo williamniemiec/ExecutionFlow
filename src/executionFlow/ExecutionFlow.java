@@ -34,6 +34,8 @@ public class ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
+		classPaths = new HashMap<>();
+		
 		exporter = new ConsoleExporter(classPaths);
 		//exporter = new FileExporter(classPaths);
 	}
@@ -50,7 +52,6 @@ public class ExecutionFlow
 	 */
 	public ExecutionFlow(Collection<CollectorInfo> ci) 
 	{
-		classPaths = new HashMap<>();
 		collectorInfo = new ArrayList<>();
 		collectorInfo.addAll(ci);		// It is necessary to avoid ConcurrentModificationException
 	}
