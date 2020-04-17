@@ -1,6 +1,7 @@
 package executionFlow.runtime;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +10,9 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
 
 import executionFlow.ExecutionFlow;
 
@@ -100,6 +104,18 @@ public class CollectorExecutionFlow
 		}
 		
 		return paramTypes;
+	}
+	
+	/**
+	 * Extracts parameter types of a method.
+	 * 
+	 * @param jp JoinPoint with the method
+	 * @return Classes of parameter types of the method
+	 */
+	public static Class<?>[] extractParamTypes(JoinPoint jp)
+	{
+		Method method = ((MethodSignature) jp.getSignature()).getMethod();
+		return method.getParameterTypes();
 	}
 	
 	/**
@@ -208,6 +224,18 @@ public class CollectorExecutionFlow
 			response = tmp[tmp.length-2];
 		
 		return response;	
+	}
+	
+	/**
+	 * Extracts return type of a method.
+	 * 
+	 * @param jp JoinPoint with the method
+	 * @return Class of return type of the method
+	 */
+	public static Class<?> extractReturnType(JoinPoint jp)
+	{
+		Method method = ((MethodSignature) jp.getSignature()).getMethod();
+		return method.getReturnType();
 	}
 	
 	/**

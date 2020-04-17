@@ -59,6 +59,5 @@ public aspect ConstructorCollector extends RuntimeCollector
 		
 		// Saves extracted data
 		consCollector.put(key, new ClassConstructorInfo(consParamTypes, consParamValues));
-		cci = new ClassConstructorInfo(consParamTypes, consParamValues);
 	}
 }

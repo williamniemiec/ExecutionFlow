@@ -19,10 +19,17 @@ import executionFlow.info.CollectorInfo;
  * 		<li>Each test method uses only one constructor of the class to be tested (consequently there 
  * 		will only be one class path per test method)</li>
  * 		<li>Each test method tests only methods of a class / object</li>
- * 		<li>Each test method must have <code>@Test</code> annotation</li>
+ * 		<li>Each test method must have one of the following annotations:
+ * 			<ul>
+ * 				<li><code>@Test</code></li>
+ * 				<li><code>@RepeatedTest</code></li>
+			 	<li><code>@ParameterizedTest</code></li>
+			 	<li><code>@TestFactory</code></li>
+		 	</ul>
+ * 		</li>
  * </ul>
  * 
- * @implNote It will ignore methods with <code>@SkipCollection</code> annotation
+ * @implNote It will ignore all methods of a class if it has <code>@SkipCollection</code> annotation
  */
 @SuppressWarnings("unused")
 public abstract aspect RuntimeCollector 
@@ -30,25 +37,24 @@ public abstract aspect RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	protected static String classPath;
-	
 	/**
-	 * Stores information about methods.<hr/>
+	 * Stores information about collected methods.<hr/>
 	 * <ul>
-	 * 		<li>
-	 * 			<b>Key:</b> Map with information about signature and parameters of the method
-	 * 			<ul>
-	 * 				<li><b>Key:</b> Signature of the method</li>
-	 * 				<li><b>Value:</b> Parameter's values of the method</li>
-	 * 			</ul>
-	 * 		</li>
-	 * 		<li><b>Value:</b> Informations about the method</li>
+	 * 		<li><b>Key:</b> method_name + method_params + constructor@hashCode (if it has one)</li>
+	 * 		<li><b>Value:</b> Informations about the method and its constructor (if it has one)</li>
 	 * </ul>
 	 */
 	protected static Map<String, CollectorInfo> methodCollector = new LinkedHashMap<>();
 	
+	/**
+	 * Stores information about collected constructor.<hr/>
+	 * <ul>
+	 * 		<li><b>Key:</b> constructor@hashCode</li>
+	 * 		<li><b>Value:</b> Informations about the constructor</li>
+	 * </ul>
+	 */
 	protected static Map<String, ClassConstructorInfo> consCollector = new LinkedHashMap<>();
-	protected static ClassConstructorInfo cci;
+	
 	protected static String testMethodSignature;
 	protected static String lastInsertedMethod = "";
 	protected static boolean lastWasInternalCall = false;
@@ -102,10 +108,53 @@ public abstract aspect RuntimeCollector
 	{
 		methodCollector.clear();
 		consCollector.clear();
-		cci = null;
 		testMethodSignature = null;
 		lastInsertedMethod = "";
 		lastWasInternalCall = false;
+	}
+	
+	/**
+	 * Checks if a signature belongs to an internal call.
+	 * 
+	 * @param signature Signature of the method
+	 * @return If the signature belongs to an internal call
+	 */
+	protected boolean isInternalCall(String signature)
+	{
+		// Removes parentheses from the signature of the test method
+		testMethodSignature = testMethodSignature.replaceAll("\\(\\)", "");
+		
+		// It is necessary because if it is an internal call, the next will also be
+		if (lastWasInternalCall) {
+			lastWasInternalCall = false;
+			return true;
+		}
+
+		// Checks the execution stack to see if it is an internal call
+		if (!Thread.currentThread().getStackTrace()[3].toString().contains(testMethodSignature) && 
+			!Thread.currentThread().getStackTrace()[4].toString().contains(testMethodSignature)) {
+			lastWasInternalCall = true;
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Checks if a signature of a constructor is from a test method constructor.
+	 * 
+	 * @param constructorSignature Signature of the constructor
+	 * @return If the signature of the constructor is from a test method constructor
+	 */
+	protected boolean isTestMethodConstructor(String constructorSignature)
+	{
+		if (constructorSignature == null) { return true; }
+		
+		String testMethodClassName = CollectorExecutionFlow.getClassName(testMethodSignature);
+		String[] tmp = constructorSignature.split("\\@")[0].split("\\.");
+		String methodName = tmp[tmp.length-1];
+		
+		return methodName.equals(testMethodClassName);
 	}
 	
 	/**

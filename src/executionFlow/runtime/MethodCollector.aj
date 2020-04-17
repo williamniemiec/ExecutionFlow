@@ -27,6 +27,12 @@ import executionFlow.info.*;
 public aspect MethodCollector extends RuntimeCollector
 {	
 	//-----------------------------------------------------------------------
+	//		Attributes
+	//-----------------------------------------------------------------------
+	private String classPath;
+	
+	
+	//-----------------------------------------------------------------------
 	//		Pointcut
 	//-----------------------------------------------------------------------
 	pointcut methodCollector(): 
@@ -77,8 +83,8 @@ public aspect MethodCollector extends RuntimeCollector
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
 		// Extracts types of method parameters (if there is any)
-		Class<?>[] paramTypes = extractParameterTypes(thisJoinPoint);
-		Class<?> returnType = extractReturnType(thisJoinPoint);		
+		Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint);
+		Class<?> returnType = CollectorExecutionFlow.extractReturnType(thisJoinPoint);		
 		
 		// Key is method's signature + values of method's parameters
 		String key = signature+Arrays.toString(thisJoinPoint.getArgs());
@@ -88,7 +94,7 @@ public aspect MethodCollector extends RuntimeCollector
 		if (thisJoinPoint.getThis() != null) {
 			constructor = thisJoinPoint.getThis();
 			
-			// Key: <method_name>+<method_param>+<constructor>
+			// Key: <method_name>+<method_params>+<constructor@hashCode>
 			key += constructor.toString();
 		}
 		
@@ -96,7 +102,7 @@ public aspect MethodCollector extends RuntimeCollector
 		if (methodCollector.containsKey(key)) { return; }
 		
 		// Checks if it is an internal call (if it is, ignore it)
-		if (isInternalCall(signature, testMethodSignature)) { return; }		
+		if (isInternalCall(signature)) { return; }		
 		
 		// Checks if the collected constructor is not the constructor of the test method
 		if (constructor != null && isTestMethodConstructor(constructor.toString())) { return; }
@@ -132,77 +138,5 @@ public aspect MethodCollector extends RuntimeCollector
 		// Stores collected method
 		methodCollector.put(key, ci);
 		lastInsertedMethod = signature;
-	}
-	
-	//-----------------------------------------------------------------------
-	//		Methods
-	//-----------------------------------------------------------------------
-	/**
-	 * Checks if a signature belong to an internal call.
-	 * 
-	 * @param signature Signature of the method
-	 * @param testMethodSignature Signature of the test method
-	 * @return If it belong to an internal call
-	 */
-	private boolean isInternalCall(String signature, String testMethodSignature)
-	{
-		// Removes parentheses from the signature of the test method
-		testMethodSignature = testMethodSignature.replaceAll("\\(\\)", "");
-		
-		// It is necessary because if it is an internal call, the next will also be
-		if (lastWasInternalCall) {
-			lastWasInternalCall = false;
-			return true;
-		}
-
-		// Checks the execution stack to see if it is an internal call
-		if (!Thread.currentThread().getStackTrace()[3].toString().contains(testMethodSignature) && 
-			!Thread.currentThread().getStackTrace()[4].toString().contains(testMethodSignature)) {
-			lastWasInternalCall = true;
-			return true;
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Extracts return type of a method.
-	 * 
-	 * @param jp JoinPoint with the method
-	 * @return Class of return type of the method
-	 */
-	private Class<?> extractReturnType(JoinPoint jp)
-	{
-		Method method = ((MethodSignature) jp.getSignature()).getMethod();
-		return method.getReturnType();
-	}
-	
-	/**
-	 * Extracts parameter types of a method.
-	 * 
-	 * @param jp JoinPoint with the method
-	 * @return Classes of parameter types of the method
-	 */
-	private Class<?>[] extractParameterTypes(JoinPoint jp)
-	{
-		Method method = ((MethodSignature) jp.getSignature()).getMethod();
-		return method.getParameterTypes();
-	}
-	
-	/**
-	 * Checks if a signature of a constructor is from a test method constructor.
-	 * 
-	 * @param constructorSignature Signature of the constructor
-	 * @return If the signature of the constructor is from a test method constructor
-	 */
-	private boolean isTestMethodConstructor(String constructorSignature)
-	{
-		if (constructorSignature == null) { return true; }
-		
-		String testMethodClassName = CollectorExecutionFlow.getClassName(testMethodSignature);
-		String[] tmp = constructorSignature.split("\\@")[0].split("\\.");
-		String methodName = tmp[tmp.length-1];
-		
-		return methodName.equals(testMethodClassName);
 	}
 }
