@@ -98,7 +98,8 @@ public aspect MethodCollector extends RuntimeCollector
 		// Checks if it is an internal call (if it is, ignore it)
 		if (isInternalCall(signature, testMethodSignature)) { return; }		
 		
-		if (constructor != null && !isValidMethodSignature(constructor.toString())) { return; }
+		// Checks if the collected constructor is not the constructor of the test method
+		if (constructor != null && isTestMethodConstructor(constructor.toString())) { return; }
 		
 		// Gets class path
 		try {
@@ -189,17 +190,19 @@ public aspect MethodCollector extends RuntimeCollector
 	}
 	
 	/**
-	 * Ignores invalid methods (whose constructor is from test method).
+	 * Checks if a signature of a constructor is from a test method constructor.
 	 * 
 	 * @param constructorSignature Signature of the constructor
-	 * @return If the signature of the method is valid
+	 * @return If the signature of the constructor is from a test method constructor
 	 */
-	private boolean isValidMethodSignature(String constructorSignature)
+	private boolean isTestMethodConstructor(String constructorSignature)
 	{
 		if (constructorSignature == null) { return true; }
 		
 		String testMethodClassName = CollectorExecutionFlow.getClassName(testMethodSignature);
+		String[] tmp = constructorSignature.split("\\@")[0].split("\\.");
+		String methodName = tmp[tmp.length-1];
 		
-		return !constructorSignature.contains(testMethodClassName);
+		return methodName.equals(testMethodClassName);
 	}
 }
