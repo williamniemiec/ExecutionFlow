@@ -25,6 +25,9 @@ public class CollectorExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
+	/**
+	 * Necessary for findCurrentClassPath method;
+	 */
 	private static String classPath;
 
 	
