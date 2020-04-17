@@ -12,11 +12,9 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 
 ## Restrições da aplicação
 - ~ Cada método de teste usa apenas um construtor da classe do método a ser testado ~
-- Cada método de teste testa apenas um método de uma classe / objeto
+- ~ Cada método de teste testa apenas um método de uma classe / objeto ~
 - Cada método de teste deve possuir uma das seguintes anotações: `@Test`, `@RepeatedTest`, `@ParameterizedTest ` ou `@TestFactory`
 - ~ Cada método de teste deve estar em um pacote ~
-
-<b>OBS:</b> É possível ver [aqui](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow/runtime/AgainstRequirements.java) o que ocorre se uma dessas restrições não for respeitada.
 
 ## Como usar?
 ### 1) No eclipse, selecione seu projeto, clique com o botão direito, vá em "configure" e selecione a opção "Convert to AspectJ Project"
@@ -44,13 +42,13 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 ## Como funciona?
 
 ### Etapa 1
-Ao executar um teste JUnit, o aspecto TestMethodCollector irá pegar a assinatura do método de teste. Após isso, se o método que será testado não for estático, o aspecto ConstructorCollector irá pegar os dados do construtor desse método (informações sobre os parâmetros dele). Por fim, o aspecto MethodCollector fará a coleta dos métodos que o método de teste testa e as informações de seus parâmetros.
+Ao executar um teste JUnit, o aspecto TestMethodCollector irá pegar a assinatura do método de teste. Após isso, se o método que será testado não for estático, o aspecto ConstructorCollector irá pegar os dados do construtor desse método (informações sobre os parâmetros dele). Depois, o aspecto MethodCollector fará a coleta dos métodos que o método de teste testa e as informações de seus parâmetros. Por fim, é verificado se o método tem um construtor, isto é, se ele é não estático. Se ele tiver, será armazenado no [CollectorInfo](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/info/CollectorInfo.java) o método com seu construtor. Se ele não tiver construtor, será armazenado no CollectorInfo apenas esse método.
 
 ### Etapa 2
-Após o término de um método de teste é executado, pelo aspecto TestMethodCollector, a classe ExecutionFlow, passando os dados coletados para ela. É essa classe que será a responsável por gerar o test path. Para isso, ela utilizará as classes do pacote `executionFlow.cheapCoverage`. Nessas classes será feita uma simulação da execução do método com base nos dados coletados na etapa 1, e, para cada linha executada, será salva em uma lista. No final da execução, será gerado o test path.
+Após o término de um método de teste é executado, pelo aspecto TestMethodCollector, a classe ExecutionFlow, passando os dados coletados para ela. É essa classe que será a responsável por gerar o test path. Para isso, ela utilizará as classes do pacote `executionFlow.core`. Nessas classes será feita uma simulação da execução do método com base nos dados coletados na etapa 1, e, para cada linha executada, será salva em uma lista. No final da execução, será gerado o test path.
 
 ### Etapa 3
-Com o test path gerado, a classe ExecutionFlow irá exportar os dados salvos. Essa exportação será feita de acordo com o que estiver definido na variável `exporter` da classe ExecutionFlow (por padrão, será exportado para arquivos), no diretório "testPaths".
+Após ser gerado o test path de todos os métodos coletados no método de teste, a classe ExecutionFlow irá exportar os dados salvos. Essa exportação será feita de acordo com o que estiver definido na variável `exporter` da classe ExecutionFlow (por padrão, será exportado para arquivos), no diretório "testPaths".
 
 ### Exemplo - [SimpleTest](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/runtime/SimpleTest.java)
 Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
@@ -89,11 +87,11 @@ Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
 2) Como o método a ser testado não é estático, o aspecto ConstructorCollector irá pegar as informações sobre o construtor do método que está sendo testado (ele irá armazenar informações dos parâmetros). Nesse caso, ele irá armazenar o tipo dos parâmetros (int) e o valor deles (4).
 3) O aspecto MethodCollector fará a coleta das informações relevantes do método testado. Semelhante a coleta do construtor, será pego os tipos dos parâmetors (int), o valor deles (4) e o tipo de retorno do método (long).
 4) Terminado o método de teste `testFactorial()` o aspecto TestMethodColletor irá chamar o método `execute()` da classe ExecutionFlow e logo em seguida o método export da mesma.
-5) A classe ExecutionFlow irá, para cada método coletado no método de teste, calcular o test path do método. Para isso, irá utilizar as classes do pacote executionFlow.cheapCoverage.
-6) As classes do pacote executionFlow.cheapCoverage irão pegar os parâmetros do método que forão passados e irá executar a simulação do método testado (factorial) com esses parâmetros. Caso o método não seja estático, é necessário invocar o construtor da classe ao qual esse método pertence. Para isso, será pego os dados do construtor que forão coletados no passo 2.
+5) A classe ExecutionFlow irá, para cada método coletado no método de teste, calcular o test path do método. Para isso, irá utilizar as classes do pacote `executionFlow.core`.
+6) As classes do pacote `executionFlow.core` irão pegar os parâmetros do método que forão passados e irá executar a simulação do método testado (factorial) com esses parâmetros. Caso o método não seja estático, é necessário invocar o construtor da classe ao qual esse método pertence. Para isso, será pego os dados do construtor que forão coletados no passo 2.
 7) Durante a simulação, para cada linha executada, esta será colocada em uma lista. Ao final da simulação, o test path do método estará gerado e será retornado para a classe ExecutionFlow.
 8) A classe ExecutionFlow irá armazenar o test path com seu respectivo método, e irá verificar se há mais métodos a serem processados. Se houver, volta para o passo 5.
-9) Calculado o test path de todos os métodos, será chamado o método `export()` (feita no passo 4). Esse método chamará o método `export()` da variável exporter e seu comportamento dependerá de qual classe que implementa a interface ExporterExecutionFlow estiver nessa variável. Como nesse caso é a ConsoleExporter, o resultado será exibido no console.
+9) Calculado o test path de todos os métodos, será chamado o método `export()` (feita no passo 4). Esse método chamará o método `export()` da variável exporter e seu comportamento dependerá de qual classe que implementa a interface ExporterExecutionFlow estiver nessa variável. Como nesse caso é a [ConsoleExporter](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/exporter/ConsoleExporter.java), o resultado será exibido no console.
 
 
 ## Como é a saída do programa?
@@ -133,13 +131,11 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
-|	ClassExecutionFlow	|	`Classe`	| 	Gerencia manipulação de classes (extrai os dados que a classe `ExecutionFlow` irá precisar)
 |	ExecutionFlow		|	`Classe`	|	Dado um class path e um conjunto de métodos ela irá calcular os test paths para cada um desses métodos. Essa é a classe principal da aplicação	|
 |	MethodExecutionFlow	|	`Classe`	|	Gerencia manipulação de métodos (extrai os dados que a classe `ExecutionFlow` irá precisar)	|
 
 
-### executionFlow.cheapCoverage
-
+### executionFlow.core
 
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
@@ -148,7 +144,6 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 
 
 ### executionFlow.exporter
-
 
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
@@ -164,6 +159,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |----------------|-------|--------------------------------------------------|
 |	ClassConstructorInfo	|	`Classe`	|	Armazena informações sobre um construtor de uma classe	|
 |	ClassMethodInfo			|	`Classe`	|	Armazena informações sobre um método de uma classe	|
+|	CollectorInfo			|	`Classe`	|	Armazena informações sobre o método de uma classe junto com seu respectivo construtor (se for um método não estático)	|
 |	SignaturesInfo			|	`Classe`	|	Armazena a assinatura do método de teste de um método bem como a sua assinatura	|
 
 ### executionFlow.runtime
@@ -194,17 +190,18 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |.class|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
 |.project|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
 
-### /src/executionFlow/
+### /src/executionFlow
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
-| cheapCoverage|`Diretório`|Classes responsáveis por percorrer e registrar o caminho de execução de um método|
+|core|`Diretório`|Classes responsáveis por percorrer e registrar o caminho de execução de um método|
+|exporter|`Diretório`|Classes responsáveis pela exportação dos test paths gerados|
 |info|`Diretório`| Classes que manipulam métodos e classes  |
 |runtime|`Diretório`|Classe e aspecto que coletam os dados de um método em tempo de execução|
 |ClassExecutionFlow.java|`Arquivo`| Classe usada para manipulação de classes|
 |ExecutionFlow.java|`Arquivo`|Classe principal - responsável pela comunicação com todas as demais classes|
 |MethodExecutionFlow.java|`Arquivo`|Classe usada para manipulação de métodos|
 
-### /tests/
+### /tests
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
 | executionFlow|`Diretório`|Testes relacionados ao pacote `executionFlow`|
@@ -219,9 +216,10 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 ### /tests/executionFlow/runtime
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
-| AgainstRequirements.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação caso não sejam respeitadas as limitações dela|
-| AgainstRequirementsTestClass.java|`Arquivo`|Classe criada para executar os testes do arquivo `AgainstRequirements.java`|
+| againstRequirements|`Diretório`| Testes que não funcionavam na primeira versão da aplicação|
+| controlFlow |`Diretório`|Testes relacionados ao fluxo de controle (if, if-else, try-catch,...)|
+| testClasses |`Diretório`|Classes criadas para a execução dos testes criados|
+| ComplexTests.java |`Arquivo`      |Testes mais sofisticados, como testes realizados dentro de laços |
 | JUnitSimulation.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação com testes feitos com o JUnit|
 | MultipleTestPaths.java |`Arquivo`      |Testa a aplicação quando há vários test paths em um único método de teste|
 | SimpleTest.java |`Arquivo`      |Teste simples com apenas 1 método de teste (usado para o exemplo da página inicial)|
-| TestClass.java |`Arquivo`      |Classe criada para executar os testes do arquivo `JUnitSimulation.java`|

@@ -5,8 +5,8 @@
 ## /tests/executionFlow
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
-| runtime|`Diretório`|Testes relacionados ao pacote `executionFlow`|
-|ExecutionFlowTest.java|`Arquivo`| Testes relacionados com a classe [ExecutionFlow](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/ExecutionFlow.java) |
+| runtime|`Diretório`|Classes responsáveis por percorrer e registrar o caminho de execução de um método|
+|ExecutionFlowTest.java|`Arquivo`| Testes relacionados com a classe [ExecutionFlow](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/ExecutionFlow.java)|
 
 <hr />
 
