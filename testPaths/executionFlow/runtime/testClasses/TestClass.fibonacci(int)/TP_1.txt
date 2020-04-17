@@ -1,0 +1,2 @@
+executionFlow.runtime.JUnitSimulation.testFibonacci()
+[105, 106, 107, 109, 110, 111, 112, 109, 110, 111, 112, 109, 110, 111, 112, 109, 115]
