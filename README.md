@@ -48,7 +48,7 @@ Ao executar um teste JUnit, o aspecto TestMethodCollector irá pegar a assinatur
 Após o término de um método de teste é executado, pelo aspecto TestMethodCollector, a classe ExecutionFlow, passando os dados coletados para ela. É essa classe que será a responsável por gerar o test path. Para isso, ela utilizará as classes do pacote `executionFlow.core`. Nessas classes será feita uma simulação da execução do método com base nos dados coletados na etapa 1, e, para cada linha executada, será salva em uma lista. No final da execução, será gerado o test path.
 
 ### Etapa 3
-Após ser gerado o test path de todos os métodos coletados no método de teste, a classe ExecutionFlow irá exportar os dados salvos. Essa exportação será feita de acordo com o que estiver definido na variável `exporter` da classe ExecutionFlow (por padrão, será exportado para arquivos), no diretório "testPaths".
+Após ser gerado o test path de todos os métodos coletados no método de teste, a classe ExecutionFlow irá exportar os dados salvos. Essa exportação será feita de acordo com o que estiver definido na variável `exporter` da classe ExecutionFlow (o valor dessa variável depende de qual versão você está utilizando - `ExecutionFlow_ConsoleExporter` ou `ExecutionFlow_FileExporter`). Caso vocÊ use a versão `ExecutionFlow_FileExporter`, os arquivos serão gerados no diretório "testPaths".
 
 ### Exemplo - [SimpleTest](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/runtime/SimpleTest.java)
 Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
