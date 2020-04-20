@@ -1,4 +1,5 @@
 # Execution flow
+![](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/logo/logo.jpg?raw=true)
 Aplicação que tem por objetivo exibir o caminho de teste (test path) de métodos de teste feitos com o JUnit.
 
 <hr />
