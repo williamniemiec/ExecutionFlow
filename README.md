@@ -16,6 +16,8 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 - Cada método de teste deve possuir uma das seguintes anotações: `@Test` <s>, `@RepeatedTest`, `@ParameterizedTest ` ou `@TestFactory` </s>
 - <s>Cada método de teste deve estar em um pacote</s>
 
+<b>OBS:</b> não está sendo gerado o test path completo das estruturas de controle de fluxo if-else e switch.
+
 ## Como usar?
 ### 1) No eclipse, selecione seu projeto, clique com o botão direito, vá em "configure" e selecione a opção "Convert to AspectJ Project"
 
