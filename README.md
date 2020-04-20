@@ -14,7 +14,6 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 - <s>Cada método de teste usa apenas um construtor da classe do método a ser testado</s>
 - <s>Cada método de teste testa apenas um método de uma classe / objeto </s>
 - Cada método de teste deve possuir uma das seguintes anotações: `@Test` <s>, `@RepeatedTest`, `@ParameterizedTest ` ou `@TestFactory` </s>
-- <s>Cada método de teste deve estar em um pacote</s>
 
 <b>OBS:</b> não está sendo gerado o test path completo das estruturas de controle de fluxo if-else e switch.
 
