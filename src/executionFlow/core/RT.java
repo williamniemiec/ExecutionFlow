@@ -60,6 +60,8 @@ public class RT
 	@SuppressWarnings("unused")
 	private static void probe(String method, int line) 
 	{
+//		if (line == -1) {System.out.println(lastAddLine); return;};
+		
 		// Ignores constructor lines
 		if (!method.contains("<init>") && !method.contains("<clinit>") && !method.contains("preClinit") && line != lastAddLine) {	 
 			if (lastAddMethod == null) { lastAddMethod = method; }

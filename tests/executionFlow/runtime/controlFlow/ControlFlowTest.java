@@ -30,33 +30,33 @@ public class ControlFlowTest
 		assertEquals(expectedResult, result);
 	}
 	*/
+	@Test
+	public void ifElseTest3() 
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		String result = tccf.ifElseMethod(2);
+		String expectedResult = "Number 2";
+		
+		assertEquals(expectedResult, result);
+	}
+	
+	
+	
 //	@Test
-//	public void ifElseTest3() 
+//	public void tryCatchTest1() 
 //	{
 //		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-//		String result = tccf.ifElseMethod(2);
-//		String expectedResult = "Number 2";
-//		
-//		assertEquals(expectedResult, result);
+//		assertTrue(tccf.tryCatchMethod_try());
+//	}
+	
+//	@Test
+//	public void tryCatchTest2() 
+//	{
+//		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+//		assertFalse(tccf.tryCatchMethod_catch());
 //	}
 	
 	
-	
-	@Test
-	public void tryCatchTest1() 
-	{
-		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-		assertTrue(tccf.tryCatchMethod_try());
-	}
-	
-	@Test
-	public void tryCatchTest2() 
-	{
-		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-		assertFalse(tccf.tryCatchMethod_catch());
-	}
-	
-	/*
 	@Test
 	public void switchCaseTest() 
 	{
@@ -64,5 +64,5 @@ public class ControlFlowTest
 		
 		assertEquals('E', tccf.switchCaseMethod('É'));
 	}
-	*/
+	
 }

@@ -9,6 +9,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.Opcodes.ASM7;
 import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.*;
 
 import java.io.IOException;
 import java.lang.constant.MethodTypeDesc;
@@ -19,12 +20,17 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.ModuleVisitor;
+import org.objectweb.asm.TypePath;
 
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
@@ -64,7 +70,7 @@ public class CheapCoverage
 		}
 		
 		var reader = new ClassReader(data);
-		var writer = new ClassWriter(reader, COMPUTE_FRAMES);
+		var writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
 		
 		reader.accept(new ClassVisitor(ASM7, writer) {
 			@Override
@@ -81,6 +87,8 @@ public class CheapCoverage
 					}
 				};
 			}
+			
+			
 		}, 0);
 
 		var bytecode = writer.toByteArray();

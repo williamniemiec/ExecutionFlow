@@ -11,10 +11,10 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 - JUnit 4 ou superior
 
 ## Restrições da aplicação
-- ~ Cada método de teste usa apenas um construtor da classe do método a ser testado ~
-- ~ Cada método de teste testa apenas um método de uma classe / objeto ~
-- Cada método de teste deve possuir uma das seguintes anotações: `@Test` ~, `@RepeatedTest`, `@ParameterizedTest ` ou `@TestFactory` ~
-- ~ Cada método de teste deve estar em um pacote ~
+- <s>Cada método de teste usa apenas um construtor da classe do método a ser testado</s>
+- <s>Cada método de teste testa apenas um método de uma classe / objeto </s>
+- Cada método de teste deve possuir uma das seguintes anotações: `@Test` <s>, `@RepeatedTest`, `@ParameterizedTest ` ou `@TestFactory` </s>
+- <s>Cada método de teste deve estar em um pacote</s>
 
 ## Como usar?
 ### 1) No eclipse, selecione seu projeto, clique com o botão direito, vá em "configure" e selecione a opção "Convert to AspectJ Project"
