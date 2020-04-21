@@ -36,8 +36,8 @@ public class ExecutionFlow
 	{
 		classPaths = new HashMap<>();
 		
-		//exporter = new ConsoleExporter(classPaths);
-		exporter = new FileExporter(classPaths);
+		exporter = new ConsoleExporter(classPaths);
+		//exporter = new FileExporter(classPaths);
 	}
 	
 	
