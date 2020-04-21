@@ -12,11 +12,11 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 - JUnit 4 ou superior
 
 ## Restrições da aplicação
-- <s>Cada método de teste usa apenas um construtor da classe do método a ser testado</s>
-- <s>Cada método de teste testa apenas um método de uma classe / objeto </s>
-- Cada método de teste deve possuir uma das seguintes anotações: `@Test` <s>, `@RepeatedTest`, `@ParameterizedTest ` ou `@TestFactory` </s>
+- Cada método de teste deve possuir uma das seguintes anotações: `@Test`.
 
-<b>OBS:</b> não está sendo gerado o test path completo das estruturas de controle de fluxo if-else e switch.
+<b>OBS:</b> Em breve será adicionado o suporte a testes com as seguintes anotações: `@RepeatedTest`, `@ParameterizedTest ` e `@TestFactory`.
+
+<b>OBS:</b> Não está sendo gerado o test path completo das estruturas de controle de fluxo if-else e switch.
 
 ## Como usar?
 ### 1) No eclipse, selecione seu projeto, clique com o botão direito, vá em "configure" e selecione a opção "Convert to AspectJ Project"
