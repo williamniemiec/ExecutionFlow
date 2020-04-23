@@ -12,6 +12,5 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/William Niemiec/Downloads/junit-4.13.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/William Niemiec/Documents/IC.local/workspace_ec12/ExecutionFlow/lib/hamcrest-all-1.3.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
