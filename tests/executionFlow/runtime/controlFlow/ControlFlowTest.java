@@ -1,10 +1,8 @@
 package executionFlow.runtime.controlFlow;
 
-import org.junit.Test;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 
 public class ControlFlowTest 
@@ -33,8 +31,8 @@ public class ControlFlowTest
 	@Test
 	public void ifElseTest3() 
 	{
-		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-		String result = tccf.ifElseMethod(2);
+		IfElse ie = new IfElse();
+		String result = ie.ifElseMethod(2);
 		String expectedResult = "Number 2";
 		
 		assertEquals(expectedResult, result);
@@ -57,12 +55,12 @@ public class ControlFlowTest
 //	}
 	
 	
-	@Test
-	public void switchCaseTest() 
-	{
-		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-		
-		assertEquals('E', tccf.switchCaseMethod('É'));
-	}
+//	@Test
+//	public void switchCaseTest() 
+//	{
+//		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+//		
+//		assertEquals('E', tccf.switchCaseMethod('É'));
+//	}
 	
 }

@@ -46,6 +46,7 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(MethodExecutionFlow)
 		&& !within(CheapCoverage)
 		&& !within(RT)
+		&& !within(MethodDebugger)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
 		&& !within(ClassConstructorInfo)
@@ -117,6 +118,9 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
+		// Gets method invocation line
+		int invocationLine = Thread.currentThread().getStackTrace()[3].getLineNumber();
+		
 		// Collects the method
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.classPath(classPath)
@@ -126,6 +130,7 @@ public aspect MethodCollector extends RuntimeCollector
 				.returnType(returnType)
 				.parameterTypes(paramTypes)
 				.args(thisJoinPoint.getArgs())
+				.invocationLine(invocationLine)
 				.build();
 
 		CollectorInfo ci = new CollectorInfo(cmi);

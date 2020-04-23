@@ -21,6 +21,7 @@ public class ClassMethodInfo
 	private String classPath;
 	private String testMethodSignature;
 	private String methodSignature;
+	private int invocationLine;
 	
 	
 	//-----------------------------------------------------------------------
@@ -37,7 +38,7 @@ public class ClassMethodInfo
 	 * @param parameterTypes Types of method's parameters
 	 * @param args Method's arguments
 	 */
-	private ClassMethodInfo(String classPath, String methodSignature, String testMethodSignature, 
+	private ClassMethodInfo(String classPath, int invocationLine, String methodSignature, String testMethodSignature, 
 							String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
 	{
 		this.classPath = classPath;
@@ -47,6 +48,7 @@ public class ClassMethodInfo
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
+		this.invocationLine = invocationLine;
 	}
 
 	/**
@@ -61,7 +63,13 @@ public class ClassMethodInfo
 		private Class<?>[] parameterTypes;
 		private Object[] args;
 		private Class<?> returnType = void.class;
+		private int invocationLine;
 		
+		public ClassMethodInfoBuilder invocationLine(int invocationLine)
+		{
+			this.invocationLine = invocationLine;
+			return this;
+		}
 		
 		public ClassMethodInfoBuilder methodName(String methodName)
 		{
@@ -107,7 +115,7 @@ public class ClassMethodInfo
 		
 		public ClassMethodInfo build()
 		{
-			return new ClassMethodInfo(	classPath, methodSignature, testMethodSignature, methodName, 
+			return new ClassMethodInfo(	classPath, invocationLine, methodSignature, testMethodSignature, methodName, 
 										returnType, parameterTypes, args);
 		}
 	}
@@ -119,7 +127,8 @@ public class ClassMethodInfo
 	@Override
 	public String toString() 
 	{
-		return "ClassMethodInfo [methodName=" + methodName + ", parameterTypes=" + Arrays.toString(parameterTypes)
+		return "ClassMethodInfo [methodName=" + methodName + ", invocationLine=" + invocationLine 
+				+ ", parameterTypes=" + Arrays.toString(parameterTypes)
 				+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + ", testMethodSignature="
 				+ testMethodSignature + ", returnType=" + returnType
 				+ ", methodSignature=" + methodSignature + "]";
@@ -231,6 +240,11 @@ public class ClassMethodInfo
 	public String getMethodSignature()
 	{
 		return this.methodSignature;
+	}
+	
+	public int getInvocationLine()
+	{
+		return this.invocationLine;
 	}
 	
 	/**

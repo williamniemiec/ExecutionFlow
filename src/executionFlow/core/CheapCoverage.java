@@ -6,31 +6,26 @@ import static java.lang.constant.ConstantDescs.CD_MethodType;
 import static java.lang.constant.ConstantDescs.CD_String;
 import static java.lang.constant.ConstantDescs.CD_int;
 import static java.lang.invoke.MethodHandles.lookup;
-import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.Opcodes.ASM7;
 import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.constant.MethodTypeDesc;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.ModuleVisitor;
-import org.objectweb.asm.TypePath;
 
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
@@ -51,6 +46,7 @@ public class CheapCoverage
 					.descriptorString(),
 			false);
 	private static Class<?> parsedClass;
+	private static String classPath;
 	
 	
 	//-----------------------------------------------------------------------
@@ -61,6 +57,12 @@ public class CheapCoverage
 	
 	public static void loadClass(String classPath) throws IOException 
 	{
+		CheapCoverage.classPath = classPath.replace("\\", "/");
+		
+		
+		
+		
+		
 		if (classPath == null) 
 			throw new IllegalArgumentException("Class path cannot be null");
 		
@@ -103,6 +105,24 @@ public class CheapCoverage
 	public static List<Integer> getTestPath(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo) throws Throwable
 	{
 		RT.clearExecutionPath();
+		System.out.println("####");
+		System.out.println("tms: "+methodInfo.getTestMethodSignature());
+		System.out.println("ms: "+methodInfo.getMethodSignature()+"."+methodInfo.getMethodName()+"()");
+		
+		System.out.println("il: "+methodInfo.getInvocationLine());
+		
+		// Extract class path root
+		File f = new File(".");
+		String regex = f.getCanonicalPath().replace("\\", "\\/")+"\\/[^\\/]+\\/";
+		
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(classPath);
+		
+		if (m.find()) {
+			System.out.println( m.group() );
+		}
+		
+		System.out.println("####");
 		MethodType methodTypes = methodInfo.getMethodTypes();
 		
 		try {						// Try to invoke the method as static

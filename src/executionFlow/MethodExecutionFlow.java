@@ -3,6 +3,7 @@ package executionFlow;
 import java.util.List;
 
 import executionFlow.core.CheapCoverage;
+import executionFlow.core.MethodDebugger;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
@@ -48,8 +49,10 @@ public class MethodExecutionFlow
 	{
 		if (methodInfo.getMethodName() == null) { return this; }
 		
-		CheapCoverage.loadClass(methodInfo.getClassPath());
-		methodPath = CheapCoverage.getTestPath(methodInfo, constructorInfo);
+		MethodDebugger.loadClass(methodInfo.getClassPath());
+		MethodDebugger.getTestPath(methodInfo, constructorInfo);
+		//CheapCoverage.loadClass(methodInfo.getClassPath());
+		//methodPath = CheapCoverage.getTestPath(methodInfo, constructorInfo);
 		
 		return this;
 	}
