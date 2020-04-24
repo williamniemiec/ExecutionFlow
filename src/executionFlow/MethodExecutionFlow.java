@@ -49,10 +49,8 @@ public class MethodExecutionFlow
 	{
 		if (methodInfo.getMethodName() == null) { return this; }
 		
-		MethodDebugger.loadClass(methodInfo.getClassPath());
-		methodPath = MethodDebugger.getTestPath(methodInfo, constructorInfo);
-		//CheapCoverage.loadClass(methodInfo.getClassPath());
-		//methodPath = CheapCoverage.getTestPath(methodInfo, constructorInfo);
+		MethodDebugger methodDebugger = new MethodDebugger(methodInfo.getClassPath());
+		methodPath = methodDebugger.getTestPath(methodInfo, constructorInfo);
 		
 		return this;
 	}
