@@ -71,6 +71,7 @@ public class ExecutionFlow
 	{
 		List<Integer> methodPath = new ArrayList<>();
 		MethodExecutionFlow mef;
+		//System.out.println("ci: "+collectorInfo);
 		
 		// Generates the test path for each method that was provided in the constructor
 		for (CollectorInfo collector : collectorInfo) {

@@ -1,6 +1,7 @@
 package executionFlow;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import executionFlow.core.MethodDebugger;
@@ -53,8 +54,11 @@ public class MethodExecutionFlow
 		String appPath = new File(MethodExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
 			    .toURI()).getPath();
 		appPath = new File(appPath+"../").getParent();
+		
+		//System.out.println("// Method name: "+methodInfo.getMethodName()+" //");
 		MethodDebugger methodDebugger = new MethodDebugger(appPath, methodInfo.getClassPath());
 		methodPath = methodDebugger.getTestPath(methodInfo, constructorInfo);
+		//System.out.println("// RETORNOU //");
 		
 		return this;
 	}

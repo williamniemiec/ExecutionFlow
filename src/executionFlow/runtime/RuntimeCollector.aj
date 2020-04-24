@@ -61,7 +61,6 @@ public abstract aspect RuntimeCollector
 	protected static String lastInsertedMethod = "";
 	protected static boolean lastWasInternalCall = false;
 	protected static boolean skipCollection = false;
-	protected static String projectPath = "";
 	
 //	static {
 //		try {
