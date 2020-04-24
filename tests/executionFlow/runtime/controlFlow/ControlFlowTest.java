@@ -55,12 +55,12 @@ public class ControlFlowTest
 //	}
 	
 	
-//	@Test
-//	public void switchCaseTest() 
-//	{
-//		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-//		
-//		assertEquals('E', tccf.switchCaseMethod('É'));
-//	}
+	@Test
+	public void switchCaseTest() 
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		
+		assertEquals('E', tccf.switchCaseMethod('É'));
+	}
 	
 }

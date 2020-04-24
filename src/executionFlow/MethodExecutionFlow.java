@@ -1,8 +1,8 @@
 package executionFlow;
 
+import java.io.File;
 import java.util.List;
 
-import executionFlow.core.CheapCoverage;
 import executionFlow.core.MethodDebugger;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
@@ -20,6 +20,7 @@ public class MethodExecutionFlow
 	private List<Integer> methodPath;
 	private ClassConstructorInfo constructorInfo;
 	private ClassMethodInfo methodInfo;
+	private String projectPath;
 	
 
 	//-----------------------------------------------------------------------
@@ -49,7 +50,10 @@ public class MethodExecutionFlow
 	{
 		if (methodInfo.getMethodName() == null) { return this; }
 		
-		MethodDebugger methodDebugger = new MethodDebugger(methodInfo.getClassPath());
+		String appPath = new File(MethodExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
+			    .toURI()).getPath();
+		appPath = new File(appPath+"../").getParent();
+		MethodDebugger methodDebugger = new MethodDebugger(appPath, methodInfo.getClassPath());
 		methodPath = methodDebugger.getTestPath(methodInfo, constructorInfo);
 		
 		return this;

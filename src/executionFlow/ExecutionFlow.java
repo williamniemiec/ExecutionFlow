@@ -1,5 +1,6 @@
 package executionFlow;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,7 +9,6 @@ import java.util.Map;
 
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
-import executionFlow.exporter.FileExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
 
@@ -75,6 +75,7 @@ public class ExecutionFlow
 		// Generates the test path for each method that was provided in the constructor
 		for (CollectorInfo collector : collectorInfo) {
 			methodPath = new ArrayList<>();
+			
 			mef = new MethodExecutionFlow(collector);
 			
 			methodPath.addAll(mef.execute().getMethodPath());

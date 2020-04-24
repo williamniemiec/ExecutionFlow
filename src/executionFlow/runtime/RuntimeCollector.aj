@@ -1,5 +1,7 @@
 package executionFlow.runtime;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -59,7 +61,16 @@ public abstract aspect RuntimeCollector
 	protected static String lastInsertedMethod = "";
 	protected static boolean lastWasInternalCall = false;
 	protected static boolean skipCollection = false;
+	protected static String projectPath = "";
 	
+//	static {
+//		try {
+//			projectPath = new File(".").getCanonicalPath();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 	//-----------------------------------------------------------------------
 	//		Methods

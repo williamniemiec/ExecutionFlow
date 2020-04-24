@@ -48,6 +48,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		reset();
 		
+		if (projectPath == "") {
+			projectPath = System.getProperty("user.dir");
+		}
+		
 		testMethodSignature = thisJoinPoint.getSignature().toString();
 		testMethodSignature = testMethodSignature.substring(5);		// Removes return type
 	}
@@ -60,6 +64,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// Ignores if the class has @SkipCollection annotation
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 		
+		System.out.println("@@@"+projectPath);
 		// Gets test paths of the collected methods and export them
 		ExecutionFlow ef = new ExecutionFlow(methodCollector.values());
 		
