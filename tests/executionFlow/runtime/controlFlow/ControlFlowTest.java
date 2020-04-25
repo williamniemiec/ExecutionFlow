@@ -1,13 +1,14 @@
 package executionFlow.runtime.controlFlow;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 
 public class ControlFlowTest 
 {
-	/*
 	@Test
 	public void ifElseTest() 
 	{
@@ -27,7 +28,7 @@ public class ControlFlowTest
 		
 		assertEquals(expectedResult, result);
 	}
-	*/
+	
 	@Test
 	public void ifElseTest3() 
 	{
@@ -38,21 +39,19 @@ public class ControlFlowTest
 		assertEquals(expectedResult, result);
 	}
 	
+	@Test
+	public void tryCatchTest1() 
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		assertTrue(tccf.tryCatchMethod_try());
+	}
 	
-	
-//	@Test
-//	public void tryCatchTest1() 
-//	{
-//		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-//		assertTrue(tccf.tryCatchMethod_try());
-//	}
-	
-//	@Test
-//	public void tryCatchTest2() 
-//	{
-//		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-//		assertFalse(tccf.tryCatchMethod_catch());
-//	}
+	@Test
+	public void tryCatchTest2() 
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		assertFalse(tccf.tryCatchMethod_catch());
+	}
 	
 	
 	@Test
