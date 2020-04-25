@@ -3,7 +3,7 @@ package executionFlow;
 import java.io.File;
 import java.util.List;
 
-import executionFlow.core.MethodDebugger;
+import executionFlow.core.TestPath;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
@@ -50,14 +50,12 @@ public class MethodExecutionFlow
 	{
 		if (methodInfo.getMethodName() == null) { return this; }
 		
-		String appPath = new File(MethodExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
-			    .toURI()).getPath();
-		appPath = new File(appPath+"../").getParent();
-		
-		MethodDebugger methodDebugger = new MethodDebugger(appPath, methodInfo.getClassPath());
-		methodPath = methodDebugger.getTestPath(methodInfo, constructorInfo);
-//		CheapCoverage.loadClass(methodInfo.getClassPath());
-//		methodPath = CheapCoverage.getTestPath(methodInfo, constructorInfo);
+		//MethodDebugger methodDebugger = new MethodDebugger(appPath, methodInfo.getClassPath());
+		//methodPath = methodDebugger.getTestPath(methodInfo, constructorInfo);
+		//CheapCoverage.loadClass(methodInfo.getClassPath());
+		//methodPath = CheapCoverage.getTestPath(methodInfo, constructorInfo);
+		TestPath tp = new TestPath();
+		methodPath = tp.getTestPath(methodInfo, constructorInfo);
 		
 		return this;
 	}
