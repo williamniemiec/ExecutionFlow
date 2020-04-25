@@ -46,7 +46,6 @@ public class CheapCoverage
 					.descriptorString(),
 			false);
 	private static Class<?> parsedClass;
-	private static String classPath;
 	
 	
 	//-----------------------------------------------------------------------
@@ -57,12 +56,6 @@ public class CheapCoverage
 	
 	public static void loadClass(String classPath) throws IOException 
 	{
-		CheapCoverage.classPath = classPath.replace("\\", "/");
-		
-		
-		
-		
-		
 		if (classPath == null) 
 			throw new IllegalArgumentException("Class path cannot be null");
 		
@@ -105,24 +98,6 @@ public class CheapCoverage
 	public static List<Integer> getTestPath(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo) throws Throwable
 	{
 		RT.clearExecutionPath();
-		System.out.println("####");
-		System.out.println("tms: "+methodInfo.getTestMethodSignature());
-		System.out.println("ms: "+methodInfo.getMethodSignature()+"."+methodInfo.getMethodName()+"()");
-		
-		System.out.println("il: "+methodInfo.getInvocationLine());
-		
-		// Extract class path root
-		File f = new File(".");
-		String regex = f.getCanonicalPath().replace("\\", "\\/")+"\\/[^\\/]+\\/";
-		
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(classPath);
-		
-		if (m.find()) {
-			System.out.println( m.group() );
-		}
-		
-		System.out.println("####");
 		MethodType methodTypes = methodInfo.getMethodTypes();
 		
 		try {						// Try to invoke the method as static

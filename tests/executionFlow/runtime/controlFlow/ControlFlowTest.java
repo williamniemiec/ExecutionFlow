@@ -9,6 +9,7 @@ import org.junit.Test;
 
 public class ControlFlowTest 
 {
+	/*
 	@Test
 	public void ifElseTest() 
 	{
@@ -28,6 +29,8 @@ public class ControlFlowTest
 		
 		assertEquals(expectedResult, result);
 	}
+	*/
+	
 	
 	@Test
 	public void ifElseTest3() 
@@ -39,27 +42,30 @@ public class ControlFlowTest
 		assertEquals(expectedResult, result);
 	}
 	
-	@Test
-	public void tryCatchTest1() 
-	{
-		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-		assertTrue(tccf.tryCatchMethod_try());
-	}
 	
-	@Test
-	public void tryCatchTest2() 
-	{
-		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-		assertFalse(tccf.tryCatchMethod_catch());
-	}
+//	@Test
+//	public void tryCatchTest1() 
+//	{
+//		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+//		assertTrue(tccf.tryCatchMethod_try());
+//	}
 	
 	
-	@Test
-	public void switchCaseTest() 
-	{
-		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-		
-		assertEquals('E', tccf.switchCaseMethod('É'));
-	}
+//	@Test
+//	public void tryCatchTest2() 
+//	{
+//		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+//		assertFalse(tccf.tryCatchMethod_catch());
+//	}
+	
+	
+	
+//	@Test
+//	public void switchCaseTest() 
+//	{
+//		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+//		
+//		assertEquals('E', tccf.switchCaseMethod('É'));
+//	}
 	
 }

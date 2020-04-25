@@ -59,6 +59,16 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
 		&& !call(void org.junit.Assert.*(*,*));
 	
+	after() returning(): methodCollector()
+	{
+		
+	}
+	
+	after() throwing(): methodCollector()
+	{
+		
+	}
+	
 	/**
 	 * Executed before the end of each internal call of a method with @Test annotation
 	 */
