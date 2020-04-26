@@ -38,59 +38,59 @@ public class ComplexTests
 	/**
 	 * Test methods with more than one constructor.
 	 */
-	@Test
-	public void moreOneConstructor()
-	{
-		System.out.println("#####################################################################");
-		System.out.println("                             moreOneConstructor                      ");
-		System.out.println("#####################################################################");
-		
-		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
-		AgainstRequirementsTestClass artc2 = new AgainstRequirementsTestClass(true);
-		
-		assertEquals(-1, artc2.factorial(4));
-		assertEquals(24, artc.factorial(4));
-	}
+//	@Test
+//	public void moreOneConstructor()
+//	{
+//		System.out.println("#####################################################################");
+//		System.out.println("                             moreOneConstructor                      ");
+//		System.out.println("#####################################################################");
+//		
+//		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
+//		AgainstRequirementsTestClass artc2 = new AgainstRequirementsTestClass(true);
+//		
+//		assertEquals(-1, artc2.factorial(4));
+//		assertEquals(24, artc.factorial(4));
+//	}
 	
 	/**
 	 * Test methods with more than one constructor and method.
 	 */
-	@Test
-	public void moreOneConstructorAndMethod()
-	{
-		System.out.println("#####################################################################");
-		System.out.println("                     moreOneConstructorAndMethod                     ");
-		System.out.println("#####################################################################");
-		
-		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
-		AgainstRequirementsTestClass artc2 = new AgainstRequirementsTestClass(true);
-		
-		assertEquals(-1, artc2.factorial(4));
-		assertEquals(24, artc.factorial(4));
-		
-		assertEquals(24, AgainstRequirementsTestClass.staticFactorial(4));
-	}
+//	@Test
+//	public void moreOneConstructorAndMethod()
+//	{
+//		System.out.println("#####################################################################");
+//		System.out.println("                     moreOneConstructorAndMethod                     ");
+//		System.out.println("#####################################################################");
+//		
+//		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
+//		AgainstRequirementsTestClass artc2 = new AgainstRequirementsTestClass(true);
+//		
+//		assertEquals(-1, artc2.factorial(4));
+//		assertEquals(24, artc.factorial(4));
+//		
+//		assertEquals(24, AgainstRequirementsTestClass.staticFactorial(4));
+//	}
 	
 	/**
 	 * Test methods with auxiliary methods.
 	 */
-	@Test
-	public void testMethodWithAuxMethods() 
-	{
-		System.out.println("#####################################################################");
-		System.out.println("                       testMethodWithAuxMethods                      ");
-		System.out.println("#####################################################################");
-		
-		int num = 4;
-		long expectedResult = 6;
-		
-		// Calculates factorial of n-th fibonacci term
-		TestClass tc = new TestClass(10);
-		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
-		
-		long resp = tc.fibonacci(num);
-		resp = artc.factorial(resp);
-		
-		assertEquals(expectedResult, resp);
-	}
+//	@Test
+//	public void testMethodWithAuxMethods() 
+//	{
+//		System.out.println("#####################################################################");
+//		System.out.println("                       testMethodWithAuxMethods                      ");
+//		System.out.println("#####################################################################");
+//		
+//		int num = 4;
+//		long expectedResult = 6;
+//		
+//		// Calculates factorial of n-th fibonacci term
+//		TestClass tc = new TestClass(10);
+//		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
+//		
+//		long resp = tc.fibonacci(num);
+//		resp = artc.factorial(resp);
+//		
+//		assertEquals(expectedResult, resp);
+//	}
 }

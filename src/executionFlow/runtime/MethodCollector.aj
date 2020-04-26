@@ -3,7 +3,9 @@ package executionFlow.runtime;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -150,6 +152,15 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Stores collected method
 		methodCollector.put(key, ci);
+		
+		if (methodCollector2.containsKey(invocationLine)) {
+			List<CollectorInfo> list = methodCollector2.get(invocationLine);
+			list.add(ci);
+		} else {
+			List<CollectorInfo> list = new ArrayList<>();
+			list.add(ci);
+			methodCollector2.put(invocationLine, list);
+		}
 		lastInsertedMethod = signature;
 	}
 }

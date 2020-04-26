@@ -1,15 +1,12 @@
 package executionFlow.runtime;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.ClassConstructorInfo;
-import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
 
 
@@ -47,6 +44,8 @@ public abstract aspect RuntimeCollector
 	 * </ul>
 	 */
 	protected static Map<String, CollectorInfo> methodCollector = new LinkedHashMap<>();
+	
+	protected static Map<Integer, List<CollectorInfo>> methodCollector2 = new LinkedHashMap<>();
 	
 	/**
 	 * Stores information about collected constructor.<hr/>

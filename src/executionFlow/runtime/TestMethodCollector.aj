@@ -1,10 +1,21 @@
 package executionFlow.runtime;
 
-import executionFlow.*;
-import executionFlow.core.*;
-import executionFlow.exporter.*;
-import executionFlow.info.*;
+import java.util.Arrays;
+
 import org.junit.Test;
+
+import executionFlow.ExecutionFlow;
+import executionFlow.MethodExecutionFlow;
+import executionFlow.core.CheapCoverage;
+import executionFlow.core.MethodDebugger;
+import executionFlow.core.RT;
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.FileExporter;
+import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.CollectorInfo;
+import executionFlow.info.SignaturesInfo;
+import junit.extensions.RepeatedTest;
 
 
 /**
@@ -18,7 +29,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	pointcut testMethodCollector(): 
 		(execution(@Test * *.*()) || 
-		 execution(@RepeatedTest * *.*()) ||
+		 //execution(@RepeatedTest * *.*()) ||
 		 execution(@ParameterizedTest * *.*()) ||
 		 execution(@TestFactory * *.*())) 
 		&& !within(ExecutionFlow)
@@ -63,7 +74,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 		
 		// Gets test paths of the collected methods and export them
-		ExecutionFlow ef = new ExecutionFlow(methodCollector.values());
+		//ExecutionFlow ef = new ExecutionFlow(methodCollector.values());
+		//System.out.println("L:"+ thisJoinPoint.getSourceLocation().getLine());
+		int lastLineMethod = Thread.currentThread().getStackTrace()[2].getLineNumber();
+		ExecutionFlow ef = new ExecutionFlow(methodCollector2);
 		
 		try {
 			ef.execute().export();
