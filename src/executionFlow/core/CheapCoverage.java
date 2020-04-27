@@ -32,7 +32,7 @@ import executionFlow.info.ClassMethodInfo;
 
 
 /**
- * Helper class that will trace a method execution.
+ * Computes test path from class byte code.
  * 
  * Modified from {@link https://github.com/forax/cheapcoverage}
  */

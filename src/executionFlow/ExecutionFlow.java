@@ -26,10 +26,22 @@ public class ExecutionFlow
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private Map<SignaturesInfo, List<Integer>> classPaths;
-	private List<CollectorInfo> collectorInfo;
 	private ExporterExecutionFlow exporter;
-	private Map<Integer, List<CollectorInfo>> mc2;
+	
+	/**
+	 * Collected methods from {@link MethodCollector}.
+	 * <ul>
+	 * 		<li><b>Key:</b> Method invocation line</li>
+	 * 		<li><b>Value:</b> List of methods invoked from this line</li>
+	 * <ul> 
+	 */
+	private Map<Integer, List<CollectorInfo>> collectedMethods;
+	
+	/**
+	 * Last line of the test method where {@link #collectedMethods} are.
+	 */
 	private int lastLineTestMethod;
+	
 	
 	//-----------------------------------------------------------------------
 	//		Initialization block
@@ -47,23 +59,17 @@ public class ExecutionFlow
 	
 	//-----------------------------------------------------------------------
 	//		Constructors
-	//-----------------------------------------------------------------------
+	//-----------------------------------------------------------------------	
 	/**
-	 * Given a class path and specific methods calculate the test path for each
+	 * Given a class path and specific methods computes test path for each
 	 * of these methods.
 	 * 
-	 * @param ci List of {@link CollectorInfo methods} to be analyzed
+	 * @param collectedMethods Collected methods from {@link MethodCollector}
+	 * @param lastLineTestMethod Last line of the test method in which these methods are
 	 */
-	public ExecutionFlow(Collection<CollectorInfo> ci) 
+	public ExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, int lastLineTestMethod)
 	{
-		collectorInfo = new ArrayList<>();
-		collectorInfo.addAll(ci);		// It is necessary to avoid ConcurrentModificationException
-	}
-	
-	
-	public ExecutionFlow(Map<Integer, List<CollectorInfo>> methodCollector2, int lastLineTestMethod)
-	{
-		this.mc2 = methodCollector2;
+		this.collectedMethods = collectedMethods;
 		this.lastLineTestMethod = lastLineTestMethod;
 	}
 	
@@ -71,106 +77,35 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
+	/**
+	 * Walks the method recording its test paths and save the result in
+	 * {@link #classPaths}.
+	 * 
+	 * @return Itself (to allow chained calls)
+	 * @throws Throwable If an error occurs
+	 */
 	public ExecutionFlow execute() throws Throwable
 	{
 		TestPathManager testPathManager = new TestPathManager();
 		List<List<Integer>> tp_cc, tp_jdb, testPaths;
 		
-		for(List<CollectorInfo> collectors : mc2.values()) {
+		// Generates test path for each collected method
+		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			CollectorInfo collector = collectors.get(0);
 			
+			// Computes test path from CheapCoverage
 			tp_cc = testPathManager.testPath_cc(collectors);
+			
+			// Computes test path from JDB
 			tp_jdb = testPathManager.testPath_jdb(collector, lastLineTestMethod);
 			
-			// Merges tp_cc with tp_jdb
+			// Merges test paths obtained from CheapCoverange and JDB
 			testPaths = testPathManager.merge_cc_jdb(tp_cc, tp_jdb);
 			
+			// Stores each computed test path
 			for (List<Integer> testPath : testPaths) {
 				classPaths.put(collector.getMethodInfo().extractSignatures(), testPath);
 			}
-		}
-		
-		return this;
-	}
-	
-	
-	public ExecutionFlow old2_execute() throws Throwable 
-	{
-		List<Integer> methodPath;
-		MethodExecutionFlow mef;
-		List<List<Integer>> tp_cc = new ArrayList<>();
-		List<List<Integer>> tp_jdb;
-		
-		for(Map.Entry<Integer, List<CollectorInfo>> entry : mc2.entrySet())
-		{
-			methodPath = new ArrayList<>();
-			// Call cc for each element of the list
-			for (CollectorInfo collector : entry.getValue()) {
-				
-				CheapCoverage.loadClass(collector.getMethodInfo().getClassPath());
-				tp_cc.add(CheapCoverage.getTestPath(collector.getMethodInfo(), collector.getConstructorInfo()));
-			}
-			
-			// call jdb getting one method of this list
-			CollectorInfo collector = entry.getValue().get(0);
-			ClassMethodInfo mi = collector.getMethodInfo();
-			JDB md = new JDB(mi.getClassPath(), lastLineMethod);
-			
-			tp_jdb = md.getTestPaths(mi);
-			System.out.println("return to ExecutionFlow");
-			System.out.println("tp_jdb: "+tp_jdb);
-			System.out.println("tp_cc: "+tp_cc);
-			
-			// Merges tp_cc with tp_jdb
-			// Only needs to compare the end of each test path
-			for (int i=0; i<tp_jdb.size(); i++) {
-				List<Integer> tp_jdb_merge = tp_jdb.get(i);
-				List<Integer> tp_cc_merge = tp_cc.get(i);
-				
-				if (tp_jdb_merge.size() > 0) {
-					Integer jdb_last = tp_jdb_merge.get(tp_jdb_merge.size()-1);
-					Integer cc_last = tp_cc_merge.get(tp_cc_merge.size()-1);
-					
-					if (jdb_last != cc_last) {
-						tp_jdb_merge.remove(tp_jdb_merge.size()-1);	// Removes last element
-					}
-				}
-				
-				// Saves result
-				classPaths.put(collector.getMethodInfo().extractSignatures(), tp_jdb_merge);
-			}
-		}
-		
-		return this;
-	}
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * Walks the method recording its execution path and save the result in
-	 * {@link #classPaths}.
-	 * 
-	 * @return The instance (to allow chained calls)
-	 * @throws Throwable If an error occurs
-	 */
-	public ExecutionFlow old_execute() throws Throwable 
-	{
-		List<Integer> methodPath = new ArrayList<>();
-		MethodExecutionFlow mef;
-		//System.out.println("ci: "+collectorInfo);
-		
-		// Generates the test path for each method that was provided in the constructor
-		for (CollectorInfo collector : collectorInfo) {
-			methodPath = new ArrayList<>();
-			
-			mef = new MethodExecutionFlow(collector);
-			
-			methodPath.addAll(mef.execute().getMethodPath());
-			classPaths.put(collector.getMethodInfo().extractSignatures(), methodPath);
 		}
 		
 		return this;
