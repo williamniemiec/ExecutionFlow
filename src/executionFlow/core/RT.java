@@ -51,7 +51,7 @@ public class RT
 	public static void clearExecutionPath() 
 	{
 		if (path != null)
-			path.clear(); 
+			path = new ArrayList<>(); 
 		
 		lastAddLine = 0;
 		lastAddMethod = null;

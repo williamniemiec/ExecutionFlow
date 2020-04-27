@@ -31,6 +31,8 @@ public class TestClass2
 	 */
 	public long factorial() 
 	{
+		if (num <= 1) { return 1;  }
+		
 		long response = 1;
 		
 		for (int i=1; i<=num; i++) {

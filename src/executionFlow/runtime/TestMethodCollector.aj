@@ -76,8 +76,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// Gets test paths of the collected methods and export them
 		//ExecutionFlow ef = new ExecutionFlow(methodCollector.values());
 		//System.out.println("L:"+ thisJoinPoint.getSourceLocation().getLine());
-		int lastLineMethod = Thread.currentThread().getStackTrace()[2].getLineNumber();
-		ExecutionFlow ef = new ExecutionFlow(methodCollector2);
+		int lastLineTestMethod = Thread.currentThread().getStackTrace()[2].getLineNumber();
+		ExecutionFlow ef = new ExecutionFlow(methodCollector2, lastLineTestMethod);
 		
 		try {
 			ef.execute().export();

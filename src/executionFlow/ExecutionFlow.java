@@ -28,6 +28,7 @@ public class ExecutionFlow
 	private List<CollectorInfo> collectorInfo;
 	private ExporterExecutionFlow exporter;
 	private Map<Integer, List<CollectorInfo>> mc2;
+	private int lastLineMethod;
 	
 	//-----------------------------------------------------------------------
 	//		Initialization block
@@ -59,9 +60,10 @@ public class ExecutionFlow
 	}
 	
 	
-	public ExecutionFlow(Map<Integer, List<CollectorInfo>> methodCollector2)
+	public ExecutionFlow(Map<Integer, List<CollectorInfo>> methodCollector2, int lastLineMethod)
 	{
 		this.mc2 = methodCollector2;
+		this.lastLineMethod = lastLineMethod;
 	}
 	
 
@@ -79,7 +81,6 @@ public class ExecutionFlow
 		for(Map.Entry<Integer, List<CollectorInfo>> entry : mc2.entrySet())
 		{
 			methodPath = new ArrayList<>();
-			
 			// Call cc for each element of the list
 			for (CollectorInfo collector : entry.getValue()) {
 				
@@ -90,11 +91,12 @@ public class ExecutionFlow
 			// call jdb getting one method of this list
 			CollectorInfo collector = entry.getValue().get(0);
 			ClassMethodInfo mi = collector.getMethodInfo();
-			MethodDebugger md = new MethodDebugger(mi.getClassPath());
+			MethodDebugger md = new MethodDebugger(mi.getClassPath(), lastLineMethod);
 			
 			tp_jdb = md.getTestPaths(mi);
 			System.out.println("return to ExecutionFlow");
-			System.out.println("res: "+tp_jdb);
+			System.out.println("tp_jdb: "+tp_jdb);
+			System.out.println("tp_cc: "+tp_cc);
 			
 			// Merges tp_cc with tp_jdb
 			// Only needs to compare the end of each test path

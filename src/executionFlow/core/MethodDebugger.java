@@ -37,6 +37,8 @@ public class MethodDebugger
 	private boolean exitMethod;
 	private Process process;
 	boolean inputProcessing = false;
+	boolean inputReady = false;
+	private int lastLineMethod;
 	
 	public MethodDebugger(String projectPath, String classPath)
 	{
@@ -51,8 +53,9 @@ public class MethodDebugger
 		}
 	}
 	
-	public MethodDebugger(String classPath)
+	public MethodDebugger(String classPath, int lastLineMethod)
 	{
+		this.lastLineMethod = lastLineMethod;
 		String projectPath;
 		try {
 			projectPath = new File(MethodExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
@@ -94,17 +97,7 @@ public class MethodDebugger
 			sb.deleteCharAt(sb.length()-1);	// Removes last dot
 		}
 		final String classInvocationSignature = sb.toString();
-		
-		Thread t = new Thread(() -> {
-			try {
-				jdb_methodVisitor(classInvocationSignature, methodSignature, methodInfo.getInvocationLine());
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-			}
-		});
-		t.start();
-		t.join();
-		//jdb_methodVisitor(classInvocationSignature, methodSignature, methodInfo.getInvocationLine());
+		jdb_methodVisitor(classInvocationSignature, methodSignature, methodInfo.getInvocationLine());
 		
 		return testPathes;
 	}
@@ -112,7 +105,7 @@ public class MethodDebugger
 	
 	private void jdb_methodVisitor(String classInvocationSignature, String methodSignature, int methodInvocationLine) throws IOException, InterruptedException 
 	{
-		int lastLineMethod = 36;
+		//lastLineMethod = 36;
 		
 		// Shell initialization
 		String lib_aspectj = new File("../lib/aspectjrt-1.9.2.jar").getPath();
@@ -147,7 +140,7 @@ public class MethodDebugger
 //                	System.out.println("output");
 //                	System.out.println("endOfMethod: "+endOfMethod);
 //                	System.out.println();
-                	//while (inputProcessing) {Thread.sleep(1);}
+                	while (!inputReady) {Thread.sleep(1);}
                 	
                 	if (bre.ready()) {
                 		System.out.println("ERROR: "+bre.readLine());
@@ -163,14 +156,23 @@ public class MethodDebugger
                 		break;
                 	}
                 	
-                	newIteration = line.contains("Breakpoint hit");
-                	System.out.println("NEW IT! "+newIteration);
-                	Thread.sleep(1);
                 	
                 	
                 	// Checks if JDB has started and is ready to receive debug commands
             		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
             			readyToDebug = true;
+            			newIteration = line.contains("Breakpoint hit");
+                    	System.out.println("NEW IT! "+newIteration);
+//                    	while(!inputReady) {
+//                    		while (br.ready()) {
+//                    			line = br.readLine();
+//                    			System.out.println(line);
+//                    			if (line.contains("Breakpoint hit") || line.contains("Step completed")) 
+//        							readyToDebug = true;
+//                    		}
+//                    		Thread.sleep(1);
+//                    	}
+//                    	inputReady = false;
             			
             			// Checks if entered the method
             			if (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature)) {
@@ -216,6 +218,7 @@ public class MethodDebugger
 		
 		// Executes while inside the method
 		while (!endOfMethod) {
+			inputReady = false;
 			System.out.println("while");
 			if (newIteration) {
 				//inputProcessing = true;
@@ -225,6 +228,8 @@ public class MethodDebugger
 				jdb_sendCommand(pw, "step into");
 				//inputProcessing = false;
 				newIteration = false;
+				inputReady = true;
+				Thread.sleep(1);
 			}
 			else if (exitMethod) {
 				//inputProcessing = true;
@@ -242,11 +247,15 @@ public class MethodDebugger
 				//inputProcessing = false;
 				jdb_sendCommand(pw, "cont");
 				exitMethod = false;
+				inputReady = true;
+				Thread.sleep(1);
 				
 			} else if (!endOfMethod) {
 				//inputProcessing = true;
 				jdb_sendCommand(pw, "next");
 				//inputProcessing = false;
+				inputReady = true;
+				Thread.sleep(1);
 			}
 			
 		}
@@ -322,10 +331,8 @@ public class MethodDebugger
 	{
 		System.out.println("COMMAND: "+command);
 		try {
-			
 			pw.println(command);
 			pw.flush();
-			Thread.sleep(1);
 			waitForShell();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -340,6 +347,8 @@ public class MethodDebugger
 	 */
 	private void waitForShell() throws InterruptedException
 	{
+		inputReady = true;
+		
 		while (!readyToDebug) {
 			Thread.sleep(1);
 		}
