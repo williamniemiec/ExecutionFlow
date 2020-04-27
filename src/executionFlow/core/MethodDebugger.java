@@ -53,34 +53,11 @@ public class MethodDebugger
 		}
 	}
 	
-	public MethodDebugger(String classPath, int lastLineMethod)
+	public MethodDebugger(String projectPath, String classPath, int lastLineMethod)
 	{
 		this.lastLineMethod = lastLineMethod;
-		String projectPath;
-		try {
-			projectPath = new File(MethodExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
-				    .toURI()).getPath();
-			projectPath = new File(projectPath+"../").getParent();
-			
-			classPath = classPath.replace("\\", "/");
-			// Extract class path root
-			String regex = projectPath.replace("\\", "\\/")+"\\/[^\\/]+\\/";
-			Pattern p = Pattern.compile(regex);
-			Matcher m = p.matcher(classPath);
-			
-			if (m.find()) {
-				classPathRoot = m.group();
-			}
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		
+		this.classPathRoot = extractClassPathRoot(projectPath, classPath);
 	}
-	
-//	public List<Integer> getTestPath(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo) throws Throwable
-//	{
-//		return getTestPaths(methodInfo);
-//	}
 	
 	public List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
 	{
@@ -354,5 +331,23 @@ public class MethodDebugger
 		}
 		
 		readyToDebug = false;
+	}
+	
+	private String extractClassPathRoot(String projectPath, String classPath)
+	{
+		String response = "";
+		
+		classPath = classPath.replace("\\", "/");
+		
+		// Extract class path root
+		String regex = projectPath.replace("\\", "\\/")+"\\/[^\\/]+\\/";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(classPath);
+		
+		if (m.find()) {
+			response = m.group();
+		}
+		
+		return response;
 	}
 }

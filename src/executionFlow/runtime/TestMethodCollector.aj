@@ -37,6 +37,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		&& !within(CheapCoverage)
 		&& !within(RT)
 		&& !within(MethodDebugger)
+		&& !within(TestPathManager)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
 		&& !within(ClassConstructorInfo)

@@ -3,7 +3,7 @@ package executionFlow;
 import java.io.File;
 import java.util.List;
 
-import executionFlow.core.TestPath;
+import executionFlow.core.TestPathManager;
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
@@ -54,7 +54,7 @@ public class MethodExecutionFlow
 		//methodPath = methodDebugger.getTestPath(methodInfo, constructorInfo);
 		//CheapCoverage.loadClass(methodInfo.getClassPath());
 		//methodPath = CheapCoverage.getTestPath(methodInfo, constructorInfo);
-		TestPath tp = new TestPath();
+		TestPathManager tp = new TestPathManager();
 		methodPath = tp.getTestPath(methodInfo, constructorInfo);
 		
 		return this;

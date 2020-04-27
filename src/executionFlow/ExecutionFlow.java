@@ -8,6 +8,7 @@ import java.util.Map;
 
 import executionFlow.core.CheapCoverage;
 import executionFlow.core.MethodDebugger;
+import executionFlow.core.TestPathManager;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.info.ClassMethodInfo;
@@ -70,11 +71,33 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
-	public ExecutionFlow execute() throws Throwable 
+	public ExecutionFlow execute() throws Throwable
+	{
+		TestPathManager testPathManager = new TestPathManager(lastLineMethod);
+		List<List<Integer>> tp_cc, tp_jdb, testPaths;
+		
+		for(List<CollectorInfo> collectors : mc2.values()) {
+			CollectorInfo collector = collectors.get(0);
+			
+			tp_cc = testPathManager.testPath_cc(collectors);
+			tp_jdb = testPathManager.testPath_jdb(collector);
+			
+			// Merges tp_cc with tp_jdb
+			testPaths = testPathManager.merge_cc_jdb(tp_cc, tp_jdb);
+			
+			for (List<Integer> testPath : testPaths) {
+				classPaths.put(collector.getMethodInfo().extractSignatures(), testPath);
+			}
+		}
+		
+		return this;
+	}
+	
+	
+	public ExecutionFlow old2_execute() throws Throwable 
 	{
 		List<Integer> methodPath;
 		MethodExecutionFlow mef;
-		//System.out.println("ci: "+collectorInfo);
 		List<List<Integer>> tp_cc = new ArrayList<>();
 		List<List<Integer>> tp_jdb;
 		
