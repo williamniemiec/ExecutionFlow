@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.core.CheapCoverage;
-import executionFlow.core.MethodDebugger;
+import executionFlow.core.JDB;
 import executionFlow.core.TestPathManager;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
@@ -29,7 +29,7 @@ public class ExecutionFlow
 	private List<CollectorInfo> collectorInfo;
 	private ExporterExecutionFlow exporter;
 	private Map<Integer, List<CollectorInfo>> mc2;
-	private int lastLineMethod;
+	private int lastLineTestMethod;
 	
 	//-----------------------------------------------------------------------
 	//		Initialization block
@@ -61,10 +61,10 @@ public class ExecutionFlow
 	}
 	
 	
-	public ExecutionFlow(Map<Integer, List<CollectorInfo>> methodCollector2, int lastLineMethod)
+	public ExecutionFlow(Map<Integer, List<CollectorInfo>> methodCollector2, int lastLineTestMethod)
 	{
 		this.mc2 = methodCollector2;
-		this.lastLineMethod = lastLineMethod;
+		this.lastLineTestMethod = lastLineTestMethod;
 	}
 	
 
@@ -73,14 +73,14 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	public ExecutionFlow execute() throws Throwable
 	{
-		TestPathManager testPathManager = new TestPathManager(lastLineMethod);
+		TestPathManager testPathManager = new TestPathManager();
 		List<List<Integer>> tp_cc, tp_jdb, testPaths;
 		
 		for(List<CollectorInfo> collectors : mc2.values()) {
 			CollectorInfo collector = collectors.get(0);
 			
 			tp_cc = testPathManager.testPath_cc(collectors);
-			tp_jdb = testPathManager.testPath_jdb(collector);
+			tp_jdb = testPathManager.testPath_jdb(collector, lastLineTestMethod);
 			
 			// Merges tp_cc with tp_jdb
 			testPaths = testPathManager.merge_cc_jdb(tp_cc, tp_jdb);
@@ -114,7 +114,7 @@ public class ExecutionFlow
 			// call jdb getting one method of this list
 			CollectorInfo collector = entry.getValue().get(0);
 			ClassMethodInfo mi = collector.getMethodInfo();
-			MethodDebugger md = new MethodDebugger(mi.getClassPath(), lastLineMethod);
+			JDB md = new JDB(mi.getClassPath(), lastLineMethod);
 			
 			tp_jdb = md.getTestPaths(mi);
 			System.out.println("return to ExecutionFlow");

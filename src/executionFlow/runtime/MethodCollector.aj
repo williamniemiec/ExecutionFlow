@@ -47,7 +47,7 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(CheapCoverage)
 		&& !within(RT)
 		&& !within(TestPathManager)
-		&& !within(MethodDebugger)
+		&& !within(JDB)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
 		&& !within(ClassConstructorInfo)

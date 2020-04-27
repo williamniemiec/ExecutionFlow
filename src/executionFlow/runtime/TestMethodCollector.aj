@@ -6,9 +6,7 @@ import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.core.CheapCoverage;
-import executionFlow.core.MethodDebugger;
-import executionFlow.core.RT;
+import executionFlow.core.*;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
 import executionFlow.info.ClassConstructorInfo;
@@ -36,7 +34,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		&& !within(MethodExecutionFlow)
 		&& !within(CheapCoverage)
 		&& !within(RT)
-		&& !within(MethodDebugger)
+		&& !within(JDB)
 		&& !within(TestPathManager)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
