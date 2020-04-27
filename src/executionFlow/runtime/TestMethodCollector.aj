@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.MethodExecutionFlow;
 import executionFlow.core.*;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
@@ -31,7 +30,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		 execution(@ParameterizedTest * *.*()) ||
 		 execution(@TestFactory * *.*())) 
 		&& !within(ExecutionFlow)
-		&& !within(MethodExecutionFlow)
 		&& !within(CheapCoverage)
 		&& !within(RT)
 		&& !within(JDB)
