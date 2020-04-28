@@ -45,6 +45,13 @@ public abstract aspect RuntimeCollector
 	 */
 	protected static Map<String, CollectorInfo> methodCollector = new LinkedHashMap<>();
 	
+	/**
+	 * Stores information about collected methods.<hr/>
+	 * <ul>
+	 * 		<li><b>Key:</b> Method invocation line</li>
+	 * 		<li><b>Value:</b> List of methods invoked from this line</li>
+	 * </ul>
+	 */
 	protected static Map<Integer, List<CollectorInfo>> methodCollector2 = new LinkedHashMap<>();
 	
 	/**
