@@ -44,7 +44,8 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 ## Como funciona?
 
 ### Etapa 1
-Ao executar um teste JUnit, o aspecto TestMethodCollector irá pegar a assinatura do método de teste. Após isso, se o método que será testado não for estático, o aspecto ConstructorCollector irá pegar os dados do construtor desse método (informações sobre os parâmetros dele). Depois, o aspecto MethodCollector fará a coleta dos métodos que o método de teste testa e as informações de seus parâmetros. Por fim, é verificado se o método tem um construtor, isto é, se ele é não estático. Se ele tiver, será armazenado no [CollectorInfo](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/info/CollectorInfo.java) o método com seu construtor. Se ele não tiver construtor, será armazenado no CollectorInfo apenas esse método.
+Ao executar um teste JUnit, o aspecto TestMethodCollector irá pegar a assinatura do método de teste. Após isso, se o método que será testado não for estático, o aspecto ConstructorCollector irá pegar os dados do construtor desse método (informações sobre os parâmetros dele). Depois, o aspecto MethodCollector fará a coleta dos métodos que o método de teste testa e as informações de seus parâmetros. Por fim, é verificado se o método tem um construtor, isto é, se ele é não estático. Se ele tiver, será armazenado no [CollectorInfo](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/info/CollectorInfo.java) o método com seu construtor. Se ele não tiver construtor, será armazenado no CollectorInfo apenas esse método. Essas informações serão agrupadas de acordo com o número da linha em que o método é invocado. Por exemplo, se um método for invocado na linha x e estiver em um loop, ele será invocado x vezes. Supondo que ele seja invocado novamente fora do loop na linha y, será armazenado uma lista com todas as invocações desse método feitas a partir da linha x e suas invocações a partir da linha y. Isso permite que sejam coletados métodos que são invocados várias vezes em um método de teste. 
+![]()
 
 ### Etapa 2
 Após o término de um método de teste é executado, pelo aspecto TestMethodCollector, a classe ExecutionFlow, passando os dados coletados para ela. É essa classe que será a responsável por gerar o test path. Para isso, ela utilizará as classes do pacote `executionFlow.core`. Nessas classes será feita uma simulação da execução do método com base nos dados coletados na etapa 1, e, para cada linha executada, será salva em uma lista. No final da execução, será gerado o test path.
@@ -87,14 +88,21 @@ Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
 #### O que foi feito?
 1) O aspecto TestMethodColletor pega a assinatura do metodo de teste (nesse caso, `executionFlow.runtime.SimpleTest.testFactorial()`)
 2) Como o método a ser testado não é estático, o aspecto ConstructorCollector irá pegar as informações sobre o construtor do método que está sendo testado (ele irá armazenar informações dos parâmetros). Nesse caso, ele irá armazenar o tipo dos parâmetros (int) e o valor deles (4).
-3) O aspecto MethodCollector fará a coleta das informações relevantes do método testado. Semelhante a coleta do construtor, será pego os tipos dos parâmetors (int), o valor deles (4) e o tipo de retorno do método (long).
+3) O aspecto MethodCollector fará a coleta das informações relevantes do método testado. Semelhante a coleta do construtor, será pego os tipos dos parâmetors (int), o valor deles (4) e o tipo de retorno do método (long). Além disso, para a futura utilização do [JDB](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/JDB.java) será armazenado o número da linha em que o método é invocado.
 4) Terminado o método de teste `testFactorial()` o aspecto TestMethodColletor irá chamar o método `execute()` da classe ExecutionFlow e logo em seguida o método export da mesma.
-5) A classe ExecutionFlow irá, para cada método coletado no método de teste, calcular o test path do método. Para isso, irá utilizar as classes do pacote `executionFlow.core`.
-6) As classes do pacote `executionFlow.core` irão pegar os parâmetros do método que forão passados e irá executar a simulação do método testado (factorial) com esses parâmetros. Caso o método não seja estático, é necessário invocar o construtor da classe ao qual esse método pertence. Para isso, será pego os dados do construtor que forão coletados no passo 2.
+5) A classe ExecutionFlow irá, para cada método coletado no método de teste, calcular o test path do método. Para isso, irá utilizar as classes do pacote `executionFlow.core`. A classe ExecutionFlow não utilizará diretamente as classes desse pacote, e sim apenas o gerenciador dessas classes ([TestPathManager](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/TestPathManager.java)), o qual computará os test paths.
+6) As classes do pacote `executionFlow.core` irão pegar os parâmetros do método que forão passados e irá executar a simulação do método testado (factorial) com esses parâmetros. Caso o método não seja estático, é necessário invocar o construtor da classe ao qual esse método pertence. Para isso, será pego os dados do construtor que forão coletados no passo 2. Vale ressaltar que será usado duas abordagens diferentes para calcular o test path: via debugging (JDB) e via análise do byte code da classe (CheapCoverage).
 7) Durante a simulação, para cada linha executada, esta será colocada em uma lista. Ao final da simulação, o test path do método estará gerado e será retornado para a classe ExecutionFlow.
 8) A classe ExecutionFlow irá armazenar o test path com seu respectivo método, e irá verificar se há mais métodos a serem processados. Se houver, volta para o passo 5.
 9) Calculado o test path de todos os métodos, será chamado o método `export()` (feita no passo 4). Esse método chamará o método `export()` da variável exporter e seu comportamento dependerá de qual classe que implementa a interface ExporterExecutionFlow estiver nessa variável. Como nesse caso é a [ConsoleExporter](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/exporter/ConsoleExporter.java), o resultado será exibido no console.
 
+## Como é computado o test path?
+Infelizmente, não consegui desenvolver um método que compute com 100% de precisão o test path. A abordagem utilizada não computa test paths errados, mas omite algumas linhas que deveriam aparecer. Essas omissões ocorrem com maior frequência em switches, if-else's e try-catches. Além disso, a aplicação não considera linhas em que são declarados variáveis sem inicializá-las.
+Para a computação do test path são utilizadas duas abordagens:
+- Via debugging ([JDB](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/JDB.java))
+Essa técnica basicamente consiste em adicionar um breakpoint na linha de invocação do método em que se deseja obter o test path, realizar um 'step into' e, enquanto estiver dentro do método, realizar 'step over', coletando a linha executada após cada 'step over'. Quando sair do método, é executado 'cont' para abranger métodos que são invocados dentro de um laço de repetição.
+
+- Via análise do bytecode da classe ([CheapCoverage](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/CheapCoverage.java))
 
 ## Como é a saída do programa?
 Por padrão há dois tipos de saída: no console ou em arquivo. No console será exibido nesta ordem:
@@ -122,6 +130,12 @@ Os test paths desse método serão postos nesse diretório:
 > testPaths/executionFlow/runtime/TestClass.factorial(int)
 
 Um exemplo real desse método pode ser encontrado [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/testPaths/executionFlow/runtime/TestClass.factorial(int)).
+
+## Pontos importantes
+### If-else
+
+
+### Switch case
 
 
 ## Organização do projeto
