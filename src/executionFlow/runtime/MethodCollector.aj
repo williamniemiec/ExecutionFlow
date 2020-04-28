@@ -62,16 +62,6 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
 		&& !call(void org.junit.Assert.*(*,*));
 	
-	after() returning(): methodCollector()
-	{
-		
-	}
-	
-	after() throwing(): methodCollector()
-	{
-		
-	}
-	
 	/**
 	 * Executed before the end of each internal call of a method with @Test annotation
 	 */
@@ -111,7 +101,7 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 		
 		// If the method has already been collected, skip it;
-		if (methodCollector.containsKey(key)) { return; }
+		if (collectedMethods.contains(key)) { return; }
 		
 		// Checks if it is an internal call (if it is, ignore it)
 		if (isInternalCall(signature)) { return; }		
@@ -152,15 +142,16 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 		
 		// Stores collected method
-		methodCollector.put(key, ci);
+		collectedMethods.add(key);
 		
-		if (methodCollector2.containsKey(invocationLine)) {
-			List<CollectorInfo> list = methodCollector2.get(invocationLine);
+		// If the method is called in a loop, stores this method in a list with its arguments and constructor
+		if (methodCollector.containsKey(invocationLine)) {
+			List<CollectorInfo> list = methodCollector.get(invocationLine);
 			list.add(ci);
-		} else {
+		} else {	// Else stores the method with its arguments and constructor
 			List<CollectorInfo> list = new ArrayList<>();
 			list.add(ci);
-			methodCollector2.put(invocationLine, list);
+			methodCollector.put(invocationLine, list);
 		}
 		lastInsertedMethod = signature;
 	}

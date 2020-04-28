@@ -74,7 +74,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		//ExecutionFlow ef = new ExecutionFlow(methodCollector.values());
 		//System.out.println("L:"+ thisJoinPoint.getSourceLocation().getLine());
 		int lastLineTestMethod = Thread.currentThread().getStackTrace()[2].getLineNumber();
-		ExecutionFlow ef = new ExecutionFlow(methodCollector2, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
 		
 		try {
 			ef.execute().export();

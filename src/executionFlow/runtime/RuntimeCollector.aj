@@ -1,5 +1,6 @@
 package executionFlow.runtime;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,13 +38,10 @@ public abstract aspect RuntimeCollector
 	//		Attributes
 	//-----------------------------------------------------------------------
 	/**
-	 * Stores information about collected methods.<hr/>
-	 * <ul>
-	 * 		<li><b>Key:</b> method_name + method_params + constructor@hashCode (if it has one)</li>
-	 * 		<li><b>Value:</b> Informations about the method and its constructor (if it has one)</li>
-	 * </ul>
+	 * Stores signature of collected methods.<hr/>
+	 * <b>Format: </b><code>method_name + method_arguments + constructor@hashCode (if it has one)</code>
 	 */
-	protected static Map<String, CollectorInfo> methodCollector = new LinkedHashMap<>();
+	protected static List<String> collectedMethods = new ArrayList<>();
 	
 	/**
 	 * Stores information about collected methods.<hr/>
@@ -52,7 +50,7 @@ public abstract aspect RuntimeCollector
 	 * 		<li><b>Value:</b> List of methods invoked from this line</li>
 	 * </ul>
 	 */
-	protected static Map<Integer, List<CollectorInfo>> methodCollector2 = new LinkedHashMap<>();
+	protected static Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 	
 	/**
 	 * Stores information about collected constructor.<hr/>
@@ -68,14 +66,6 @@ public abstract aspect RuntimeCollector
 	protected static boolean lastWasInternalCall = false;
 	protected static boolean skipCollection = false;
 	
-//	static {
-//		try {
-//			projectPath = new File(".").getCanonicalPath();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 	
 	//-----------------------------------------------------------------------
 	//		Methods
