@@ -31,7 +31,6 @@ import executionFlow.info.CollectorInfo;
  * 
  * @implNote It will ignore all methods of a class if it has <code>@SkipCollection</code> annotation
  */
-@SuppressWarnings("unused")
 public abstract aspect RuntimeCollector 
 {
 	//-----------------------------------------------------------------------

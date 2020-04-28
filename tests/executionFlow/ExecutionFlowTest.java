@@ -1,5 +1,6 @@
 package executionFlow;
 
+/*
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -14,13 +15,13 @@ import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
 import executionFlow.runtime.SkipCollection;
-
+*/
 
 /**
  * Test whether the program is working after the collection has been made.
  */
 
-@SkipCollection
+//@SkipCollection
 public class ExecutionFlowTest 
 {
 	/*

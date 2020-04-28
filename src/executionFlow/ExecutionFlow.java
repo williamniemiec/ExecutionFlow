@@ -1,17 +1,12 @@
 package executionFlow;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.core.CheapCoverage;
-import executionFlow.core.JDB;
 import executionFlow.core.TestPathManager;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
-import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
 

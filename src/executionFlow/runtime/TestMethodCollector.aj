@@ -1,7 +1,5 @@
 package executionFlow.runtime;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
@@ -12,7 +10,7 @@ import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
-import junit.extensions.RepeatedTest;
+//import junit.extensions.RepeatedTest;
 
 
 /**

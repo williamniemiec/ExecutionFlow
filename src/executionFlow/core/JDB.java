@@ -9,6 +9,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,9 +45,13 @@ public class JDB
 	private String classInvocationSignature;
 	private int methodInvocationLine;
 	private boolean isInternalCommand = false;
-	private final boolean DEBUG = false; 
+	private final boolean DEBUG; 
 	private String methodClassSignature;
+	Path libPath;
 	
+	{
+		DEBUG = false;
+	}
 	
 	//-----------------------------------------------------------------------
 	//		Constructor
@@ -82,19 +92,48 @@ public class JDB
 		return testPaths;
 	}
 	
+	//--------------------
+	private void findLibs(Path currentPath) throws IOException
+	{
+		//final File response;
+		currentPath = currentPath.getParent();
+		Files.walkFileTree(currentPath, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+			{
+				//System.out.println("analisando "+file);
+				if (file.endsWith("aspectjrt-1.9.2.jar")) {
+//					System.out.println("ACHOU!");
+//					System.out.println(file.toFile().getAbsolutePath());
+//					System.out.println(file.getParent().toFile().getAbsolutePath());
+					libPath = file.getParent();
+					
+					return FileVisitResult.TERMINATE;
+				}
+				
+				return FileVisitResult.CONTINUE;
+			}
+		});
+		
+		//return response.getAbsolutePath();
+	}
+	//--------------------
+	
 	/**
 	 * Initializes JDB and prepare it for executing methods within test methods.
 	 * 
 	 * @return Process running JDB
 	 * @throws IOException If the process cannot be created
 	 */
-	private Process jdb_start() throws IOException
+	private synchronized Process jdb_start() throws IOException
 	{
-		String lib_aspectj = new File("../lib/aspectjrt-1.9.2.jar").getPath();
-		String lib_junit = new File("../lib/junit-4.13.jar").getPath();
-		String lib_hamcrest = new File("../lib/hamcrest-all-1.3.jar").getPath();
-		String lib_asm1 = new File("../lib/org.objectweb.asm_7.2.0.v20191010-1910.jar").getPath();
-		String lib_asm2 = new File("../lib/org.objectweb.asm.tree_7.2.0.v20191010-1910.jar").getPath();
+		findLibs(Path.of(classPathRoot));
+		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
+		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
+		String lib_junit = libPath_relative+"junit-4.13.jar";
+		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
+		String lib_asm1 = libPath_relative+"org.objectweb.asm_7.2.0.v20191010-1910.jar";
+		String lib_asm2 = libPath_relative+"org.objectweb.asm.tree_7.2.0.v20191010-1910.jar";
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest+";"+lib_asm1+";"+lib_asm2;
 		String jdb_classPath = "jdb -classpath .;"+libs;
 		
@@ -111,7 +150,7 @@ public class JDB
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	private void jdb_methodVisitor(String methodSignature) throws IOException, InterruptedException 
+	private synchronized void jdb_methodVisitor(String methodSignature) throws IOException, InterruptedException 
 	{
 		Process process = jdb_start();
         
@@ -131,7 +170,7 @@ public class JDB
 		t.join();
 	}
 	
-	private void jdb_init_input(Process process, OutputStream os) throws InterruptedException
+	private synchronized void jdb_init_input(Process process, OutputStream os) throws InterruptedException
 	{
 		pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
 
