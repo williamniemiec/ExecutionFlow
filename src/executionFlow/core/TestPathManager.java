@@ -106,7 +106,7 @@ public class TestPathManager
 				Integer jdb_last = tp_jdb_merge.get(tp_jdb_merge.size()-1);
 				Integer cc_last = tp_cc_merge.get(tp_cc_merge.size()-1);
 				
-				if (jdb_last != cc_last) {
+				if (!jdb_last.equals(cc_last)) {
 					tp_jdb_merge.remove(tp_jdb_merge.size()-1);	// Removes last element
 				}
 			}

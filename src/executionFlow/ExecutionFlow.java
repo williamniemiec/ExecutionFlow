@@ -99,6 +99,9 @@ public class ExecutionFlow
 			// Computes test path from JDB
 			tp_jdb = testPathManager.testPath_jdb(collector, lastLineTestMethod);
 			
+//			System.out.println("tp_cc: "+tp_cc);
+//			System.out.println("tp_jdb: "+tp_jdb);
+			
 			// Merges test paths obtained from CheapCoverange and JDB
 			testPaths = testPathManager.merge_cc_jdb(tp_cc, tp_jdb);
 			
