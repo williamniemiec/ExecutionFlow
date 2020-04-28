@@ -17,6 +17,7 @@ import executionFlow.runtime.testClasses.TestClass;
  */
 public class JUnitSimulation 
 {
+	/*
 	@Test
 	public void testEmptyTest()
 	{
@@ -101,6 +102,7 @@ public class JUnitSimulation
 		
 		assertEquals("Hello world", ci.test());
 	}
+	*/
 	
 	@Test
 	public void testStaticMethod_charSequence()
@@ -115,6 +117,7 @@ public class JUnitSimulation
 		assertArrayEquals(expectedResult, parsedLetters);
 	}
 	
+	/*
 	@Test
 	public void testParamSignature_object()
 	{
@@ -140,4 +143,5 @@ public class JUnitSimulation
 		
 		assertTrue(resp);
 	}
+	*/
 }

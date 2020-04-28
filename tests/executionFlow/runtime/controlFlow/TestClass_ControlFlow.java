@@ -8,6 +8,10 @@ public class TestClass_ControlFlow
 {
 	public String ifElseMethod(int num)
 	{
+		if (num < 0) {
+			return "";
+		}
+		
 		String response = "";
 		
 		if (num == 0) {

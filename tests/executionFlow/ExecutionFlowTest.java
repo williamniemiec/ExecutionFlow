@@ -19,9 +19,11 @@ import executionFlow.runtime.SkipCollection;
 /**
  * Test whether the program is working after the collection has been made.
  */
+
 @SkipCollection
 public class ExecutionFlowTest 
 {
+	/*
 	@Test
 	public void testStaticMethods() throws Throwable 
 	{
@@ -126,5 +128,5 @@ public class ExecutionFlowTest
 		
 		assertEquals(expectedClassPaths, classPathsObtained);
 	}
-	
+	*/
 }

@@ -102,17 +102,21 @@ public class TestPathManager
 			List<Integer> tp_jdb_merge = tp_jdb.get(i);
 			List<Integer> tp_cc_merge = tp_cc.get(i);
 			
-			if (tp_jdb_merge.size() > 0) {
+			if (tp_cc_merge.size() == 0) {
+				// Saves result
+				testPaths.add(tp_cc_merge);
+			} else if (tp_jdb_merge.size() > 0) {
 				Integer jdb_last = tp_jdb_merge.get(tp_jdb_merge.size()-1);
 				Integer cc_last = tp_cc_merge.get(tp_cc_merge.size()-1);
 				
 				if (!jdb_last.equals(cc_last)) {
 					tp_jdb_merge.remove(tp_jdb_merge.size()-1);	// Removes last element
 				}
+				
+				// Saves result
+				testPaths.add(tp_jdb_merge);
 			}
 			
-			// Saves result
-			testPaths.add(tp_jdb_merge);
 		}
 		
 		return testPaths;

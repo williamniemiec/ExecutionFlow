@@ -10,6 +10,16 @@ import org.junit.Test;
 public class ControlFlowTest 
 {
 	@Test
+	public void ifElseTest_earlyReturn() 
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		String result = tccf.ifElseMethod(-1);
+		String expectedResult = "";
+		
+		assertEquals(expectedResult, result);
+	}
+	
+	@Test
 	public void ifElseTest() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();

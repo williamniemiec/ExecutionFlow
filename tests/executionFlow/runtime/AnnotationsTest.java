@@ -1,16 +1,15 @@
 package executionFlow.runtime;
 
+/*
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.Test;
 import org.junit.jupiter.api.RepeatedTest;
-
 import org.junit.jupiter.api.TestFactory;
-
+*/
 import executionFlow.runtime.testClasses.TestClass;
 
 public class AnnotationsTest 
 {
+	/*
 	@Test
 	public void testAnotation()
 	{
@@ -43,4 +42,5 @@ public class AnnotationsTest
 		TestClass tc = new TestClass(4);
 		assertEquals(24, tc.factorial(4));
 	}
+	*/
 }

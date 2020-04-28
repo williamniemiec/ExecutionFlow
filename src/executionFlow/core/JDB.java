@@ -38,7 +38,9 @@ public class JDB
 	private int lastLineTestMethod;
 	private String classInvocationSignature;
 	private int methodInvocationLine;
+	private boolean isInternalCommand = false;
 	private final boolean DEBUG = false; 
+	private String methodClassSignature;
 	
 	
 	//-----------------------------------------------------------------------
@@ -68,8 +70,9 @@ public class JDB
 	 * @return Test paths of this method
 	 * @throws Throwable If an error occurs
 	 */
-	public List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
+	public synchronized List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
 	{
+		methodClassSignature = methodInfo.getMethodSignature();
 		String methodSignature = methodInfo.getMethodSignature()+"."+methodInfo.getMethodName()+"()";
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
 		methodInvocationLine = methodInfo.getInvocationLine();
@@ -141,12 +144,16 @@ public class JDB
 			if (newIteration) {
 				// Enters the method, ignoring aspectJ
 				jdb_sendCommand("step into");
-				jdb_sendCommand("next");
-				jdb_sendCommand("next");
+				
+				while (isInternalCommand) {
+					jdb_sendCommand("next");
+					inputReady = true;
+					Thread.sleep(1);
+				}
+				//jdb_sendCommand("next");
 				jdb_sendCommand("step into");
 				newIteration = false;
 				inputReady = true;
-				Thread.sleep(1);
 			}
 			else if (exitMethod) {
 				// Saves test path
@@ -184,25 +191,34 @@ public class JDB
                 System.out.println("Generating test path...");
                 
                 while ((line = br.readLine()) != null) {
-                	while (!inputReady) {Thread.sleep(1);}
+                	while (!inputReady) { Thread.sleep(1); }
                 	
+                	if (line.equals("\n") || line.equals("") || line.equals(" ")) continue;
+
                 	// -----{ DEBUG }-----
                 	if (DEBUG)
                 		System.out.println(line);
             		// -----{ END DEBUG }-----
             		
                 	endOfMethod = line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod);
+                	isInternalCommand = !line.contains(methodClassSignature) && !line.contains(classInvocationSignature);//line.contains("aspectj") || line.contains("aspectOf");
                 	
                 	if (endOfMethod) {
                 		readyToDebug = true;
                 		break;
                 	}
-                	
+
                 	// Checks if JDB has started and is ready to receive debug commands
             		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
             			readyToDebug = true;
-            			newIteration = line.contains("Breakpoint hit");
+            			newIteration = line.contains("Breakpoint hit") || (line.contains("line="+methodInvocationLine) && line.contains(classInvocationSignature));
             			
+            			if (isInternalCommand) {
+            				inMethod = false;
+            				Thread.sleep(1);
+            				continue;
+            			}
+
             			// Checks if entered the method
             			if (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature)) {
                 			inMethod = true;
@@ -210,17 +226,16 @@ public class JDB
             			else if (inMethod) { 	
             				int lineNumber = jdb_getLine(line);
             				
-            				if (line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
+            				// Checks if returned from the method
+            				if (line.contains(classInvocationSignature) && line.contains("line="+methodInvocationLine)) {
+            					exitMethod = true;
+            					newIteration = false;
+            					inMethod = false;
+            					endOfMethod = !process.isAlive();
+            				} else if (line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
             					testPath.add(lineNumber);
             					lastLineAdded = lineNumber;
             				}
-            				// Checks if returned from the method
-            				else if (line.contains(classInvocationSignature)) {
-            					exitMethod = true;
-            					inMethod = false;
-            					endOfMethod = !process.isAlive();
-            				}
-            				
                 		}
             		}
             		// Checks if there are input commands

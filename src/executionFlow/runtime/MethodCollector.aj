@@ -37,13 +37,12 @@ public aspect MethodCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	pointcut methodCollector(): 
 		(cflow(execution(@Test * *.*())) || 
-		 cflow(execution(@RepeatedTest * *.*())) ||
-		 cflow(execution(@ParameterizedTest * *.*())) || 
-		 cflow(execution(@TestFactory * *.*())) || 
+//		 cflow(execution(@RepeatedTest * *.*())) ||
+//		 cflow(execution(@ParameterizedTest * *.*())) || 
+//		 cflow(execution(@TestFactory * *.*())) || 
 		 cflow(call(* *.*(*))) || 
 		 cflow(call(* *.*()))) 
 		&& !within(ExecutionFlow)
-		&& !within(MethodExecutionFlow)
 		&& !within(CheapCoverage)
 		&& !within(RT)
 		&& !within(TestPathManager)

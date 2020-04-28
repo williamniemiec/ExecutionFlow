@@ -24,11 +24,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Pointcut
 	//-----------------------------------------------------------------------
-	pointcut testMethodCollector(): 
-		(execution(@Test * *.*()) || 
+	pointcut testMethodCollector():
+		execution(@Test * *.*())
+//		(execution(@Test * *.*()) || 
 		 //execution(@RepeatedTest * *.*()) ||
-		 execution(@ParameterizedTest * *.*()) ||
-		 execution(@TestFactory * *.*())) 
+//		 execution(@ParameterizedTest * *.*()) ||
+//		 execution(@TestFactory * *.*())) 
 		&& !within(ExecutionFlow)
 		&& !within(CheapCoverage)
 		&& !within(RT)

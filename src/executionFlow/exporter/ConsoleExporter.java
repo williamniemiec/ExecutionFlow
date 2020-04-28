@@ -14,6 +14,19 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
+	/**
+	 * Stores computed test paths from a class.<br />
+	 * <ul>
+	 * 		<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
+	 * 		<li>
+	 * 			<b>Value:</b> 
+	 * 			<ul>
+	 * 				<li><b>Key:</b> Test method signature and method signature</li>
+	 * 				<li><b>Value:</b> Test path</li>
+	 * 			</ul>
+	 * 		</li>
+	 * </ul>
+	 */
 	private Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 	
 	
