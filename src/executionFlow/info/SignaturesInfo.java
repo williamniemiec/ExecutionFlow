@@ -55,6 +55,6 @@ public class SignaturesInfo
 	
 	public String getTestMethodSignature() 
 	{
-		return testMethodSignature;
+		return testMethodSignature+"()";
 	}
 }

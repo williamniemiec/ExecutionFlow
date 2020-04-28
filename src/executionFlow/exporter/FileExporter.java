@@ -24,7 +24,7 @@ public class FileExporter implements ExporterExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	private Map<SignaturesInfo, List<Integer>> classPaths;
+	private Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 	private String dirName = "testPaths";
 
 	
@@ -37,7 +37,7 @@ public class FileExporter implements ExporterExecutionFlow
 	 * @param dirName Name of the directory
 	 * @param classPaths All tested test paths of a class
 	 */
-	public FileExporter(String dirName, Map<SignaturesInfo, List<Integer>> classPaths)
+	public FileExporter(String dirName, Map<String, Map<SignaturesInfo, List<Integer>>> classPaths)
 	{
 		this(classPaths);
 		this.dirName = dirName;
@@ -48,7 +48,7 @@ public class FileExporter implements ExporterExecutionFlow
 	 * 
 	 * @param classPaths All tested test paths of a class
 	 */
-	public FileExporter(Map<SignaturesInfo, List<Integer>> classPaths)
+	public FileExporter(Map<String, Map<SignaturesInfo, List<Integer>>> classPaths)
 	{
 		this.classPaths = classPaths;
 	}
@@ -64,14 +64,16 @@ public class FileExporter implements ExporterExecutionFlow
 			// Removes test path folders that will be overwritten (avoid creating duplicate files)
 			prepareExport();
 		
-			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
-				SignaturesInfo signatures = e.getKey();
-	
-				// Gets save path
-				Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
-				
-				// Writes test paths in the file
-				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
+			for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classPaths.values()) {
+				for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathsInfo.entrySet()) {
+					SignaturesInfo signatures = e.getKey();
+		
+					// Gets save path
+					Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
+					
+					// Writes test paths in the file
+					writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
+				}
 			}
 			
 			System.out.println("Test paths have been successfully generated!");
@@ -179,27 +181,29 @@ public class FileExporter implements ExporterExecutionFlow
 	 */
 	private void prepareExport() throws IOException
 	{
-		for (Map.Entry<SignaturesInfo, List<Integer>> e : classPaths.entrySet()) {
-			SignaturesInfo signatures = e.getKey();			
-			
-			// Gets save path
-			Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
-			File dir = savePath.toFile();
-			
-			// If the save path does not exist nothing will be overwritten
-			if (!dir.exists()) {
-				return;
-			}
-			
-			// Else removes files that will be overwritten
-			String[] files = dir.list();
-			File testPathFile;
-			
-			for (String filename : files) {
-				testPathFile = new File(dir, filename);
+		for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classPaths.values()) {
+			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathsInfo.entrySet()) {
+				SignaturesInfo signatures = e.getKey();			
 				
-				if (willBeOverwritten(testPathFile, signatures.getTestMethodSignature())) {
-					testPathFile.getAbsoluteFile().delete();
+				// Gets save path
+				Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
+				File dir = savePath.toFile();
+				
+				// If the save path does not exist nothing will be overwritten
+				if (!dir.exists()) {
+					return;
+				}
+				
+				// Else removes files that will be overwritten
+				String[] files = dir.list();
+				File testPathFile;
+				
+				for (String filename : files) {
+					testPathFile = new File(dir, filename);
+					
+					if (willBeOverwritten(testPathFile, signatures.getTestMethodSignature())) {
+						testPathFile.getAbsoluteFile().delete();
+					}
 				}
 			}
 		}

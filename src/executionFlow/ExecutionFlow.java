@@ -7,6 +7,7 @@ import java.util.Map;
 import executionFlow.core.TestPathManager;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
+import executionFlow.exporter.FileExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
 
