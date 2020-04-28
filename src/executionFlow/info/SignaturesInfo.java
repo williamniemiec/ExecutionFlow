@@ -32,6 +32,20 @@ public class SignaturesInfo
 	
 	
 	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
+	/**
+	 * Returns test method signature and method signature in the following format:<br />
+	 * <code>test_method_signature + '$' + method_signature</code>
+	 */
+	@Override
+	public String toString()
+	{
+		return testMethodSignature+"$"+methodSignature;
+	}
+	
+	
+	//-----------------------------------------------------------------------
 	//		Getters
 	//-----------------------------------------------------------------------
 	public String getMethodSignature() 

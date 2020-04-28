@@ -25,7 +25,21 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	private Map<SignaturesInfo, List<Integer>> classPaths;
+	/**
+	 * Stores computed test paths from a class.<br />
+	 * <ul>
+	 * 		<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
+	 * 		<li>
+	 * 			<b>Value:</b> 
+	 * 			<ul>
+	 * 				<li><b>Key:</b> Test method signature and method signature</li>
+	 * 				<li><b>Value:</b> Test path</li>
+	 * 			</ul>
+	 * 		</li>
+	 * </ul>
+	 */
+	private Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
+	
 	private ExporterExecutionFlow exporter;
 	
 	/**
@@ -88,6 +102,7 @@ public class ExecutionFlow
 	{
 		TestPathManager testPathManager = new TestPathManager();
 		List<List<Integer>> tp_cc, tp_jdb, testPaths;
+		Map<SignaturesInfo, List<Integer>> classPathInfo;
 		
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
@@ -99,15 +114,22 @@ public class ExecutionFlow
 			// Computes test path from JDB
 			tp_jdb = testPathManager.testPath_jdb(collector, lastLineTestMethod);
 			
-//			System.out.println("tp_cc: "+tp_cc);
-//			System.out.println("tp_jdb: "+tp_jdb);
-			
 			// Merges test paths obtained from CheapCoverange and JDB
 			testPaths = testPathManager.merge_cc_jdb(tp_cc, tp_jdb);
 			
 			// Stores each computed test path
 			for (List<Integer> testPath : testPaths) {
-				classPaths.put(collector.getMethodInfo().extractSignatures(), testPath);
+				String key = collector.getMethodInfo().extractSignatures().toString();
+				
+				// Checks if test path belongs to a stored test method and method
+				if (classPaths.containsKey(key)) {
+					classPathInfo = classPaths.get(key);
+					classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
+				} else {	// Else, stores test path with its test method and method
+					classPathInfo = new HashMap<>();
+					classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
+					classPaths.put(key, classPathInfo);
+				}
 			}
 		}
 		
@@ -131,18 +153,18 @@ public class ExecutionFlow
 	 * 
 	 * @return Map where key is method's signature and value is method's test path
 	 */
-	public Map<String, List<Integer>> getClassPaths() 
-	{
-		Map<String, List<Integer>> response = new HashMap<>();
-		
-		for (Map.Entry<SignaturesInfo, List<Integer>> entry : classPaths.entrySet()) {
-			SignaturesInfo signatures = entry.getKey();
-			
-			response.put(signatures.getMethodSignature(), entry.getValue());
-		}
-		
-		return response; 
-	}
+//	public Map<String, List<Integer>> getClassPaths() 
+//	{
+//		Map<String, List<Integer>> response = new HashMap<>();
+//		
+//		for (Map.Entry<SignaturesInfo, List<Integer>> entry : classPaths.entrySet()) {
+//			SignaturesInfo signatures = entry.getKey();
+//			
+//			response.put(signatures.getMethodSignature(), entry.getValue());
+//		}
+//		
+//		return response; 
+//	}
 	
 	public ExecutionFlow setExporter(ExporterExecutionFlow exporter) 
 	{
