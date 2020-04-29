@@ -16,9 +16,6 @@ import executionFlow.info.CollectorInfo;
  * 
  * <h2>Requirements</h2>
  * <ul>
- * 		<li>Each test method uses only one constructor of the class to be tested (consequently there 
- * 		will only be one class path per test method)</li>
- * 		<li>Each test method tests only methods of a class / object</li>
  * 		<li>Each test method must have one of the following annotations:
  * 			<ul>
  * 				<li><code>@Test</code></li>
