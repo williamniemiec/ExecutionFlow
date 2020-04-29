@@ -62,8 +62,8 @@ public abstract aspect RuntimeCollector
 	
 	protected static String testMethodSignature;
 	protected static String lastInsertedMethod = "";
-	protected static boolean lastWasInternalCall = false;
-	protected static boolean skipCollection = false;
+	protected static boolean lastWasInternalCall;
+	protected static boolean skipCollection;
 	
 	
 	//-----------------------------------------------------------------------

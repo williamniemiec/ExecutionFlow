@@ -52,6 +52,7 @@ public class ExecutionFlow
 	 * Last line of the test method where {@link #collectedMethods} are.
 	 */
 	private int lastLineTestMethod;
+	
 	private final boolean DEBUG;
 	
 	

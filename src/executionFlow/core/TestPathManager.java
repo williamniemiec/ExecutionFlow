@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
 
 
@@ -76,10 +75,9 @@ public class TestPathManager
 	{
 		List<List<Integer>> tp_jdb = new ArrayList<>();
 		
-		ClassMethodInfo cmi = collector.getMethodInfo();
-		JDB md = new JDB(appPath, cmi.getClassPath(), lastLineTestMethod);
+		JDB md = new JDB(appPath, collector.getMethodInfo().getClassPath(), lastLineTestMethod);
 		
-		tp_jdb = md.getTestPaths(cmi);
+		tp_jdb = md.getTestPaths(collector.getMethodInfo());
 		
 		return tp_jdb;
 	}
