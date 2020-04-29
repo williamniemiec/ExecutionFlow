@@ -86,7 +86,7 @@ public class TestPathManager
 	
 	/**
 	 * Merges test paths obtained from {@link CheapCoverage} and {@link JDB}. This 
-	 * method is used to ensure that the test path obtained from jdb contains the 
+	 * method is used to ensure that the test path obtained from JDB contains the 
 	 * correct ending. 
 	 * 
 	 * @param tp_cc Test path obtained from {@link CheapCoverage}

@@ -16,6 +16,7 @@ import executionFlow.info.SignaturesInfo;
  * Given a class path and specific methods calculate the execution path for each
  * of these methods. This is the main class of execution flow.
  */
+@SuppressWarnings("unused")
 public class ExecutionFlow 
 {
 	//-----------------------------------------------------------------------
@@ -51,15 +52,17 @@ public class ExecutionFlow
 	 * Last line of the test method where {@link #collectedMethods} are.
 	 */
 	private int lastLineTestMethod;
+	private final boolean DEBUG;
 	
 	
 	//-----------------------------------------------------------------------
 	//		Initialization block
 	//-----------------------------------------------------------------------
 	/**
-	 * Defines how the export will be done.
+	 * Defines how the export will be done and debug configuration.
 	 */
 	{
+		DEBUG = false;
 		classPaths = new HashMap<>();
 		
 		exporter = new ConsoleExporter(classPaths);
@@ -98,8 +101,7 @@ public class ExecutionFlow
 	{
 		TestPathManager testPathManager = new TestPathManager();
 		List<List<Integer>> tp_cc, tp_jdb, testPaths;
-		Map<SignaturesInfo, List<Integer>> classPathInfo;
-		
+
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			CollectorInfo collector = collectors.get(0);
@@ -111,27 +113,17 @@ public class ExecutionFlow
 			tp_jdb = testPathManager.testPath_jdb(collector, lastLineTestMethod);
 			
 			// -----{ DEBUG }-----
-			System.out.println("CheapCoverage: "+tp_cc);
-			System.out.println("JDB: "+tp_jdb);
+			if (DEBUG) {
+				System.out.println("CheapCoverage: "+tp_cc);
+				System.out.println("JDB: "+tp_jdb);
+			}
 			// -----{ END DEBUG }-----
 			
 			// Merges test paths obtained from CheapCoverange and JDB
 			testPaths = testPathManager.merge_cc_jdb(tp_cc, tp_jdb);
 			
 			// Stores each computed test path
-			for (List<Integer> testPath : testPaths) {
-				String key = collector.getMethodInfo().extractSignatures().toString();
-				
-				// Checks if test path belongs to a stored test method and method
-				if (classPaths.containsKey(key)) {
-					classPathInfo = classPaths.get(key);
-					classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
-				} else {	// Else, stores test path with its test method and method
-					classPathInfo = new HashMap<>();
-					classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
-					classPaths.put(key, classPathInfo);
-				}
-			}
+			storeTestPath(testPaths, collector);
 		}
 		
 		return this;
@@ -145,6 +137,30 @@ public class ExecutionFlow
 		exporter.export();
 	}
 	
+	/**
+	 * Stores test paths for a method.
+	 * 
+	 * @param testPaths Test paths of this method
+	 * @param collector Informations about this method
+	 */
+	private void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
+	{
+		Map<SignaturesInfo, List<Integer>> classPathInfo;
+		
+		for (List<Integer> testPath : testPaths) {
+			String key = collector.getMethodInfo().extractSignatures().toString();
+			
+			// Checks if test path belongs to a stored test method and method
+			if (classPaths.containsKey(key)) {
+				classPathInfo = classPaths.get(key);
+				classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
+			} else {	// Else, stores test path with its test method and method
+				classPathInfo = new HashMap<>();
+				classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
+				classPaths.put(key, classPathInfo);
+			}
+		}
+	}
 	
 	//-----------------------------------------------------------------------
 	//		Getters & Setters
