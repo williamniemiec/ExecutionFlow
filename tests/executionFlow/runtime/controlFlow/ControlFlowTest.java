@@ -42,8 +42,8 @@ public class ControlFlowTest
 	@Test
 	public void ifElseTest3() 
 	{
-		IfElse ie = new IfElse();
-		String result = ie.ifElseMethod(2);
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		String result = tccf.ifElseMethod(2);
 		String expectedResult = "Number 2";
 		
 		assertEquals(expectedResult, result);

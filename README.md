@@ -92,17 +92,30 @@ Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
 4) Terminado o método de teste `testFactorial()` o aspecto TestMethodColletor irá chamar o método `execute()` da classe ExecutionFlow e logo em seguida o método export da mesma.
 5) A classe ExecutionFlow irá, para cada método coletado no método de teste, calcular o test path do método. Para isso, irá utilizar as classes do pacote `executionFlow.core`. A classe ExecutionFlow não utilizará diretamente as classes desse pacote, e sim apenas o gerenciador dessas classes ([TestPathManager](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/TestPathManager.java)), o qual computará os test paths.
 6) As classes do pacote `executionFlow.core` irão pegar os parâmetros do método que forão passados e irá executar a simulação do método testado (factorial) com esses parâmetros. Caso o método não seja estático, é necessário invocar o construtor da classe ao qual esse método pertence. Para isso, será pego os dados do construtor que forão coletados no passo 2. Vale ressaltar que será usado duas abordagens diferentes para calcular o test path: via debugging (JDB) e via análise do byte code da classe (CheapCoverage).
-7) Durante a simulação, para cada linha executada, esta será colocada em uma lista. Ao final da simulação, o test path do método estará gerado e será retornado para a classe ExecutionFlow.
+7) A classe [TestPathManager](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/TestPathManager.java) é então instanciada. A partir dela, será calculado o test path através da técnica de análise do bytecode da classe e através do debugging. Após obtido o test path por essas abordagens, será feito o merge deles e este será salvo como o test path do método.
 8) A classe ExecutionFlow irá armazenar o test path com seu respectivo método, e irá verificar se há mais métodos a serem processados. Se houver, volta para o passo 5.
 9) Calculado o test path de todos os métodos, será chamado o método `export()` (feita no passo 4). Esse método chamará o método `export()` da variável exporter e seu comportamento dependerá de qual classe que implementa a interface ExporterExecutionFlow estiver nessa variável. Como nesse caso é a [ConsoleExporter](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/exporter/ConsoleExporter.java), o resultado será exibido no console.
 
 ## Como é computado o test path?
 Infelizmente, não consegui desenvolver um método que compute com 100% de precisão o test path. A abordagem utilizada não computa test paths errados, mas omite algumas linhas que deveriam aparecer. Essas omissões ocorrem com maior frequência em switches, if-else's e try-catches. Além disso, a aplicação não considera linhas em que são declarados variáveis sem inicializá-las.
 Para a computação do test path são utilizadas duas abordagens:
+
 - Via debugging ([JDB](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/JDB.java))
+
 Essa técnica basicamente consiste em adicionar um breakpoint na linha de invocação do método em que se deseja obter o test path, realizar um 'step into' e, enquanto estiver dentro do método, realizar 'step over', coletando a linha executada após cada 'step over'. Quando sair do método, é executado 'cont' para abranger métodos que são invocados dentro de um laço de repetição.
 
 - Via análise do bytecode da classe ([CheapCoverage](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/CheapCoverage.java))
+
+Essa técnica analisa o bytecode da classe e irá simular a execução da classe invocando os métodos coletados pelos aspectos e, para cada linha desses métodos executada, esta será salva em uma lista. Após o término da execução, estará gerado o test path do método, bastando salvá-lo e executar os mesmos procedimentos para o próximo método (se houver).
+
+Foram utilizadas duas técnicas porque elas se complementam. A técnica da análise do bytecode da classe é muito rápida, mas omite diversas linhas na computação do test path. Já a técnica do debugging abrange bem mais linhas, mas ela sempre considera a última linha do método como executada, mesmo que seja executado um 'return' antes do final do método (imagem abaixo), enquando que a abordagem anterior não. Além disso, ela é mais lenta para o cálculo do test path. 
+
+Por fim, ao utilizar as duas abordagens, computa-se com maior precisão o test path. Porém, ainda há linhas que são omitidas, principalmente em estruturas if-else e switch. Acredito que não há uma maneira direta de obter essas linhas, pois como o código é convertido em assembler antes de ser executado, essa conversão não é fiél ao formato do código. Em outras palavras, um switch possui uma conversão em assembler diferente da implementação do código. A mesma coisa ocorre com a estrutura if-else (na verdade não existirá no código assembler um 'if-else'). Para ficar mais claro, a imagem abaixo exibe um código com if-else e ao lado seu código em assembler (na verdade em bytecode - que é próximo ao assembler - obtido utilizando `javap -verbose`). Percebe-se que o if-else foi convertido para if's. Essa conversão não mudará o comportamento do programa, isto é, o resultado final que ele gera; porém, ela influência diretamente o cálculo do test path, pois este é sensível as linhas de execução do programa.
+### Código fonte
+![sourceFile](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/examples/controlFlow/if-else_noAsm.png?raw=true)
+
+### Código assembler - bytecode
+![asmFile](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/examples/controlFlow/if-else_asm.png?raw=true)
 
 ## Como é a saída do programa?
 Por padrão há dois tipos de saída: no console ou em arquivo. No console será exibido nesta ordem:
@@ -132,14 +145,41 @@ Os test paths desse método serão postos nesse diretório:
 Um exemplo real desse método pode ser encontrado [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/testPaths/executionFlow/runtime/TestClass.factorial(int)).
 
 ## Pontos importantes
+Como ja dito anteriormente, as estruturas if-else, switch e try-catch possuem algumas linhas omitidas no test path. Segue abaixo um exemplo claro da omissão de cada uma dessas estruturas.
+
 ### If-else
+Considere o código abaixo:
+![if-else](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/example/controlFlow/if-else.png?raw=true)
+
+| Test path esperado | Test path gerado |
+|--------------------|------------------|
+|	[11, 15, 17, 19, <b>21</b>, 22, 25]	|	[11, 15, 17, 19, 22, 25]	|
 
 
-### Switch case
+### Switch
+Considere o código abaixo:
+![switch](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/example/controlFlow/switch.png?raw=true)
 
+| Test path esperado | Test path gerado |
+|--------------------|------------------|
+|	[64, 66, <b>67</b>, <b>68</b>, <b>69</b>, <b>70</b>, <b>73</b>, 76, 77, 96]	|	[64, 66, 76, 77, 96]	|
+
+### Try-catch - try
+![try-catch_try](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/example/controlFlow/try-catch_try.png?raw=true)
+
+| Test path esperado | Test path gerado |
+|--------------------|------------------|
+|	[30, <b>32</b>, <b>33</b>, 34, 35, 36, 37, 38, 42]	|	[30, 34, 35, 36, 37, 38, 42]	|
+
+### Try-catch - catch
+![try-catch_catch](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/example/controlFlow/try-catch_catch.png?raw=true)
+
+| Test path esperado | Test path gerado |
+|--------------------|------------------|
+|	[47, <b>49</b>, <b>50</b>, 51, 52, 53]	|	[47, 51, 52, 53]	|
 
 ## Organização do projeto
-![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png)
+![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png?raw=true)
 
 ## Classes, Interfaces e Aspectos
 
@@ -148,15 +188,16 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
 |	ExecutionFlow		|	`Classe`	|	Dado um class path e um conjunto de métodos ela irá calcular os test paths para cada um desses métodos. Essa é a classe principal da aplicação	|
-|	MethodExecutionFlow	|	`Classe`	|	Gerencia manipulação de métodos (extrai os dados que a classe `ExecutionFlow` irá precisar)	|
 
 
 ### executionFlow.core
 
 |        Nome        | Tipo |	Descrição	|
 |----------------|-------|--------------------------------------------------|
-|	CheapCoverage	|	`Classe`	|Classe que irá simular a execução de uma classe e gerar o test path dela
+|	CheapCoverage	|	`Classe`	|	Computa test path via análise de bytecode |
+|	JDB				|	`Classe`	|	Computa test path via debugging	|
 |	RT				|	`Classe`	|	Classe auxiliar da classe `CheapCoverage`	|
+|	TestPathManager	|	`Classe`	|	Computa test path a partir das técnicas disponíveis (CheapCoverage ou JDB)	|
 
 
 ### executionFlow.exporter
@@ -205,6 +246,8 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |tests|`Diretório`|Testes dos arquivos fonte|
 |.class|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
 |.project|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
+|.build.ajproperties|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
+|.manifest.mf|`Arquivo`|Arquivo responsável por gerar .jar (útil para releases)|
 
 ### /src/executionFlow
 |        Nome        |Tipo|Descrição|
@@ -213,9 +256,7 @@ Um exemplo real desse método pode ser encontrado [aqui](https://github.com/will
 |exporter|`Diretório`|Classes responsáveis pela exportação dos test paths gerados|
 |info|`Diretório`| Classes que manipulam métodos e classes  |
 |runtime|`Diretório`|Classe e aspecto que coletam os dados de um método em tempo de execução|
-|ClassExecutionFlow.java|`Arquivo`| Classe usada para manipulação de classes|
 |ExecutionFlow.java|`Arquivo`|Classe principal - responsável pela comunicação com todas as demais classes|
-|MethodExecutionFlow.java|`Arquivo`|Classe usada para manipulação de métodos|
 
 ### /tests
 |        Nome        |Tipo|Descrição|
