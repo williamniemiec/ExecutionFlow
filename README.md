@@ -130,7 +130,7 @@ Já no arquivo a saída será:
 <b>OBS:</b> A assinatura do método testado estará no caminho até os test paths. Ela é explicada logo abaixo.
 
 ### Console
-A saída consiste em exibir um header com o texto "EXPORT" seguido do padrão citado acima. Um exemplo pode ser visto [aqui](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow).
+A saída consiste em exibir um header com o texto "EXPORT" seguido do padrão citado acima. Um exemplo pode ser visto [aqui](https://github.com/williamniemiec/ExecutionFlow/tree/master/examples#Exemplo).
 
 ### Arquivo
 Em arquivos será criado um diretório (por padrão será "testPaths") e nele serão criados diretórios no seguinte formato:
@@ -142,7 +142,7 @@ Para exemplificar, suponha que será gerado o test path do método com essa assi
 Os test paths desse método serão postos nesse diretório:
 > testPaths/executionFlow/runtime/TestClass.factorial(int)
 
-Um exemplo real desse método pode ser encontrado [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/testPaths/executionFlow/runtime/TestClass.factorial(int)).
+Um exemplo real desse método pode ser encontrado [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/testPaths/executionFlow/runtime/testClasses/TestClass.factorial(int)).
 
 ## Pontos importantes
 Como ja dito anteriormente, as estruturas if-else, switch e try-catch possuem algumas linhas omitidas no test path. Segue abaixo um exemplo claro da omissão de cada uma dessas estruturas.
@@ -264,7 +264,7 @@ Contém alguns testes relativos ao pacote `executionFlow.core` sem simular a col
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
 | executionFlow|`Diretório`|Testes relacionados ao pacote `executionFlow.core`|
-|math|`Diretório`| Classes criadas para executar os [testes relativos ao pacote `executionFlow.core`](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow/core)|
+|math|`Diretório`| Classes criadas para executar os [testes relativos ao pacote `executionFlow.core`](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow/core). Essas classes só foram criadas para testar as classes da aplicação, e não fazem parte da aplicação|
 
 ### /tests/executionFlow/core
 |        Nome        |Tipo|Descrição|
