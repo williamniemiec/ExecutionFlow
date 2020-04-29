@@ -259,24 +259,28 @@ Considere o código abaixo:
 |ExecutionFlow.java|`Arquivo`|Classe principal - responsável pela comunicação com todas as demais classes|
 
 ### /tests
-|        Nome        |Tipo|Descrição|
-|----------------|-------------------------------|-----------------------------|
-| executionFlow|`Diretório`|Testes relacionados ao pacote `executionFlow`|
-|math|`Diretório`| Classes usadas pelo teste [ExecutionFlowTest.java](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/ExecutionFlowTest.java) |
+Contém alguns testes relativos ao pacote `executionFlow.core` sem simular a coleta de dados pelos aspectos. Exemplos de testes mais complexos podem ser encontrados na pasta [examples](https://github.com/williamniemiec/ExecutionFlow/tree/examples), onde a coleta será feita pelos aspectos.
 
-### /tests/executionFlow
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
-| runtime|`Diretório`|Classes responsáveis por percorrer e registrar o caminho de execução de um método|
-|ExecutionFlowTest.java|`Arquivo`| Testes relacionados com a classe [ExecutionFlow](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/ExecutionFlow.java)|
+| executionFlow|`Diretório`|Testes relacionados ao pacote `executionFlow.core`|
+|math|`Diretório`| Classes criadas para executar os [testes relativos ao pacote `executionFlow.core`](https://github.com/williamniemiec/ExecutionFlow/tree/master/tests/executionFlow/core)|
 
-### /tests/executionFlow/runtime
+### /tests/executionFlow/core
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
-| againstRequirements|`Diretório`| Testes que não funcionavam na primeira versão da aplicação|
-| controlFlow |`Diretório`|Testes relacionados ao fluxo de controle (if, if-else, try-catch,...)|
-| testClasses |`Diretório`|Classes criadas para a execução dos testes criados|
-| ComplexTests.java |`Arquivo`      |Testes mais sofisticados, como testes realizados dentro de laços |
-| JUnitSimulation.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação com testes feitos com o JUnit|
-| MultipleTestPaths.java |`Arquivo`      |Testa a aplicação quando há vários test paths em um único método de teste|
-| SimpleTest.java |`Arquivo`      |Teste simples com apenas 1 método de teste (usado para o exemplo da página inicial)|
+| CheapCoverageTest.java|`Arquivo`|Testes relativo a classe [CheapCoverage](https://github.com/williamniemiec/ExecutionFlow/blog/master/src/executionFlow/core/CheapCoverage.java)|
+|ExecutionFlowTest.java|`Arquivo`| Contém testes JUnit que utilizam as classes do diretório [math](). Utilizado para testar se as classes do pacote `executionFlow.core` estão computando o test path corretamente caso os dados dos métodos sejam coletados corretamente.|
+| JDBTest.java|`Arquivo`|Testes relativo a classe [CheapCoverage](https://github.com/williamniemiec/ExecutionFlow/blog/master/src/executionFlow/core/CheapCoverage.java)|
+
+
+### /examples
+|        Nome        |Tipo|Descrição|
+|----------------|-------------------------------|-----------------------------|
+| againstRequirements	|`Diretório`	| Testes que não funcionavam na primeira versão da aplicação|
+| controlFlow 			|`Diretório`	|Testes relacionados ao fluxo de controle (if, if-else, try-catch,...)|
+| testClasses 			|`Diretório`	|Classes criadas para a execução dos testes criados|
+| ComplexTests.java 	|`Arquivo`      |Testes mais sofisticados, como testes realizados dentro de laços |
+| JUnitSimulation.java 	|`Arquivo`		|Testes relacionados ao funcionamento da aplicação com testes feitos com o JUnit|
+| MultipleTestPaths.java |`Arquivo`     |Testa a aplicação quando há vários test paths em um único método de teste|
+| SimpleTest.java 		|`Arquivo`      |Teste simples com apenas 1 método de teste (usado para o exemplo da página inicial)|
