@@ -63,7 +63,7 @@ public class ExecutionFlow
 	 * Defines how the export will be done and debug configuration.
 	 */
 	{
-		DEBUG = false;
+		DEBUG = true;
 		classPaths = new HashMap<>();
 		
 		exporter = new ConsoleExporter(classPaths);

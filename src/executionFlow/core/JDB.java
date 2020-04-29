@@ -165,7 +165,7 @@ public class JDB
 		
 		ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c",jdb_classPath,"org.junit.runner.JUnitCore",classInvocationSignature);
 		pb.directory(new File(classPathRoot));
-		
+
 		return pb.start();
 	}
 	

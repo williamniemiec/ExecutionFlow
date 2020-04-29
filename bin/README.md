@@ -23,102 +23,114 @@
 	#####################################################################
 	                      testParamSignature_object                      
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testParamSignature_object()
-	executionFlow.runtime.testClasses.TestClass.testObjParam(Object)
+	JUnitSimulation.testParamSignature_object()
+	testClasses.TestClass.testObjParam(Object)
 	[194]
 
 	#####################################################################
 	                             testEmptyTest                           
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testEmptyTest()
-	executionFlow.runtime.testClasses.TestClass.test2()
+	JUnitSimulation.testEmptyTest()
+	testClasses.TestClass.test2()
 	[]
 
 	#####################################################################
 	                             testFactorial                           
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testFactorial()
-	executionFlow.runtime.testClasses.TestClass.factorial(int)
+	JUnitSimulation.testFactorial()
+	testClasses.TestClass.factorial(int)
 	[88, 90, 91, 90, 91, 90, 91, 90, 91, 90, 94]
 
 	#####################################################################
 	                            testFibonacci                            
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testFibonacci()
-	executionFlow.runtime.testClasses.TestClass.fibonacci(int)
+	JUnitSimulation.testFibonacci()
+	testClasses.TestClass.fibonacci(int)
 	[105, 106, 107, 109, 110, 111, 112, 109, 110, 111, 112, 109, 110, 111, 112, 109, 115]
 
 	#####################################################################
 	                    testStaticMethod_charSequence                    
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testStaticMethod_charSequence()
-	executionFlow.runtime.testClasses.TestClass.parseLetters_noInternalCall(CharSequence)
+	JUnitSimulation.testStaticMethod_charSequence()
+	testClasses.TestClass.parseLetters_noInternalCall(CharSequence)
 	[126, 127, 129, 130, 131, 129, 130, 131, 129, 130, 131, 129, 130, 131, 129, 130, 131, 129, 130, 133, 129, 130, 133, 129, 130, 133, 129, 130, 133, 129, 130, 133, 129, 136]
 
 	#####################################################################
 	                           testFactorial_zero                       
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testFactorial_zero()
-	executionFlow.runtime.testClasses.TestClass.factorial(int)
+	JUnitSimulation.testFactorial_zero()
+	testClasses.TestClass.factorial(int)
 	[88, 90, 94]
 
 	#####################################################################
 	                      testParamSignature_createdObject               
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testParamSignature_createdObject()
-	executionFlow.runtime.testClasses.TestClass.testClassParam(ClassInterface)
+	JUnitSimulation.testParamSignature_createdObject()
+	testClasses.TestClass.testClassParam(ClassInterface)
 	[199]
 
 	#####################################################################
 	                          testInternalCall                           
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testInternalCall()
-	executionFlow.runtime.testClasses.TestClass.parseLetters_withInternalCall(char[])
+	JUnitSimulation.testInternalCall()
+	testClasses.TestClass.parseLetters_withInternalCall(char[])
 	[148, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 155]
 
 	#####################################################################
 	                             testInterface                           
 	#####################################################################
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.JUnitSimulation.testInterface()
-	executionFlow.runtime.testClasses.ClassInterface.test()
+	JUnitSimulation.testInterface()
+	testClasses.ClassInterface.test()
 	[30, 31]
 </code>
 
 - MultipleTestPaths.java - output no console
 <code>
+	Generating test path...
+	Generating test path...
+	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
-	executionFlow.runtime.MultipleTestPaths.ThreeTestPathsTest()
-	executionFlow.runtime.testClasses.TestClass.threePaths(int)
-	[181, 185, 189]
+	MultipleTestPaths.ThreeTestPathsTest()
+	testClasses.TestClass.threePaths(int)
 	[181, 185, 186]
+	[181, 185, 189]
 	[181, 182]
 </code>

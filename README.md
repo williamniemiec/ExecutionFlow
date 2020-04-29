@@ -49,6 +49,18 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 Ao executar um teste JUnit, o aspecto TestMethodCollector irá pegar a assinatura do método de teste. Após isso, se o método que será testado não for estático, o aspecto ConstructorCollector irá pegar os dados do construtor desse método (informações sobre os parâmetros dele). Depois, o aspecto MethodCollector fará a coleta dos métodos que o método de teste testa e as informações de seus parâmetros. Por fim, é verificado se o método tem um construtor, isto é, se ele é não estático. Se ele tiver, será armazenado no [CollectorInfo](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/info/CollectorInfo.java) o método com seu construtor. Se ele não tiver construtor, será armazenado no CollectorInfo apenas esse método. Essas informações serão agrupadas de acordo com o número da linha em que o método é invocado. Por exemplo, se um método for invocado na linha x e estiver em um loop, ele será invocado x vezes. Supondo que ele seja invocado novamente fora do loop na linha y, será armazenado uma lista com todas as invocações desse método feitas a partir da linha x e suas invocações a partir da linha y. Isso permite que sejam coletados métodos que são invocados várias vezes em um método de teste. 
 ![]()
 
+
+
+
+
+
+
+
+
+
+
+
+
 ### Etapa 2
 Após o término de um método de teste é executado, pelo aspecto TestMethodCollector, a classe ExecutionFlow, passando os dados coletados para ela. É essa classe que será a responsável por gerar o test path. Para isso, ela utilizará as classes do pacote `executionFlow.core`. Nessas classes será feita uma simulação da execução do método com base nos dados coletados na etapa 1, e, para cada linha executada, será salva em uma lista. No final da execução, será gerado o test path.
 
@@ -68,7 +80,7 @@ Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
 				long expectedResult = 24;
 				
 				TestClass tc = new TestClass(4);
-				long res = tc.factorial(num);	COLOCAR LINK PARA O METODO
+				long res = tc.factorial(num);
 				
 				assertEquals(expectedResult, res);
 			}
@@ -111,8 +123,11 @@ Essa técnica basicamente consiste em adicionar um breakpoint na linha de invoca
 Essa técnica analisa o bytecode da classe e irá simular a execução da classe invocando os métodos coletados pelos aspectos e, para cada linha desses métodos executada, esta será salva em uma lista. Após o término da execução, estará gerado o test path do método, bastando salvá-lo e executar os mesmos procedimentos para o próximo método (se houver).
 
 Foram utilizadas duas técnicas porque elas se complementam. A técnica da análise do bytecode da classe é muito rápida, mas omite diversas linhas na computação do test path. Já a técnica do debugging abrange bem mais linhas, mas ela sempre considera a última linha do método como executada, mesmo que seja executado um 'return' antes do final do método (imagem abaixo), enquando que a abordagem anterior não. Além disso, ela é mais lenta para o cálculo do test path. 
+![jdb_endMethod](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/example/jdb_endMethod.png?raw=true)
+
 
 Por fim, ao utilizar as duas abordagens, computa-se com maior precisão o test path. Porém, ainda há linhas que são omitidas, principalmente em estruturas if-else e switch. Acredito que não há uma maneira direta de obter essas linhas, pois como o código é convertido em assembler antes de ser executado, essa conversão não é fiél ao formato do código. Em outras palavras, um switch possui uma conversão em assembler diferente da implementação do código. A mesma coisa ocorre com a estrutura if-else (na verdade não existirá no código assembler um 'if-else'). Para ficar mais claro, a imagem abaixo exibe um código com if-else e ao lado seu código em assembler (na verdade em bytecode - que é próximo ao assembler - obtido utilizando `javap -verbose`). Percebe-se que o if-else foi convertido para if's. Essa conversão não mudará o comportamento do programa, isto é, o resultado final que ele gera; porém, ela influência diretamente o cálculo do test path, pois este é sensível as linhas de execução do programa.
+
 ### Código fonte
 ![sourceFile](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/examples/controlFlow/if-else_noAsm.png?raw=true)
 
@@ -179,6 +194,13 @@ Considere o código abaixo:
 | Test path esperado | Test path gerado |
 |--------------------|------------------|
 |	[47, <b>49</b>, <b>50</b>, 51, 52, 53]	|	[47, 51, 52, 53]	|
+
+Além disso, ambas as abordagens não consideram linhas em que só são declaradas variáveis, sem inicializá-las.
+### Declaração de variaveis sem inicialização
+![var_noInit](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/examples/variables/var_noInit.png?raw=true)
+
+### Declaração de variaveis com inicialização
+![var_withInit](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/examples/variables/var_withInit.png?raw=true)
 
 ## Organização do projeto
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/uml/UML.png?raw=true)
