@@ -166,23 +166,10 @@ public class ExecutionFlow
 	//-----------------------------------------------------------------------
 	//		Getters & Setters
 	//-----------------------------------------------------------------------
-	/**
-	 * Returns method's execution path.
-	 * 
-	 * @return Map where key is method's signature and value is method's test path
-	 */
-//	public Map<String, List<Integer>> getClassPaths() 
-//	{
-//		Map<String, List<Integer>> response = new HashMap<>();
-//		
-//		for (Map.Entry<SignaturesInfo, List<Integer>> entry : classPaths.entrySet()) {
-//			SignaturesInfo signatures = entry.getKey();
-//			
-//			response.put(signatures.getMethodSignature(), entry.getValue());
-//		}
-//		
-//		return response; 
-//	}
+	public Map<String, Map<SignaturesInfo, List<Integer>>> getClassPaths()
+	{
+		return classPaths;
+	}
 	
 	public ExecutionFlow setExporter(ExporterExecutionFlow exporter) 
 	{
