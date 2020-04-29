@@ -39,7 +39,9 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 
 ![step5](https://github.com/williamniemiec/ExecutionFlow/blob/master/media/howToUse/step5.png?raw=true)
 
-<b>OBS:</b> O exemplo utilizado pode ser encontrado na pasta [example](https://github.com/williamniemiec/ExecutionFlow/tree/master/example).
+<b>OBS:</b> O exemplo utilizado pode ser encontrado na pasta [examples](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/JUnitSimulation.java).
+
+<b>OBS:</b> Mantenha a janela do eclipse ativa durante a computação do test path; caso contrário, a computação pode levar mais tempo do que o previsto.
 
 ## Como funciona?
 
@@ -53,7 +55,7 @@ Após o término de um método de teste é executado, pelo aspecto TestMethodCol
 ### Etapa 3
 Após ser gerado o test path de todos os métodos coletados no método de teste, a classe ExecutionFlow irá exportar os dados salvos. Essa exportação será feita de acordo com o que estiver definido na variável `exporter` da classe ExecutionFlow (o valor dessa variável depende de qual versão você está utilizando - `ExecutionFlow_ConsoleExporter` ou `ExecutionFlow_FileExporter`). Caso vocÊ use a versão `ExecutionFlow_FileExporter`, os arquivos serão gerados no diretório "testPaths".
 
-### Exemplo - [SimpleTest](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/runtime/SimpleTest.java)
+### Exemplo - [SimpleTest](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/SimpleTest.java)
 Ex com um teste apenas para simplificar, sendo que exporter é consoleExporter:
 <pre>
 	<code>
