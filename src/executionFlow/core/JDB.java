@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +22,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
+import executionFlow.ExecutionFlow;
 import executionFlow.info.ClassMethodInfo;
 
 
@@ -35,11 +39,12 @@ public class JDB
 	private String classPathRoot;
 	private String methodClassSignature;
 	private String classInvocationSignature;
+	private static String appPath;
 	private int lastLineTestMethod;
 	private int methodInvocationLine;
 	private List<Integer> testPath;
 	private List<List<Integer>> testPaths;
-	private Path libPath;
+	private static Path libPath;
 	private PrintWriter pw;
 	private boolean readyToDebug;
 	private boolean endOfMethod;
@@ -47,6 +52,7 @@ public class JDB
 	private boolean exitMethod;
 	private boolean inputReady;
 	private boolean isInternalCommand;
+	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
 	
 	
@@ -55,12 +61,28 @@ public class JDB
 	//-----------------------------------------------------------------------
 	/**
 	 * Enables or disables debug. If activated, shows shell output during JDB execution.
+	 * Also, 
 	 * 
-	 * <b>Note:</b> If it is enabled and there are multiple method tests, the
+	 * <b>Note:</b> If debug is enabled and there are multiple method tests, the
 	 * computation of test path is not guaranteed.
 	 */
 	{
 		DEBUG = false;
+	}
+	
+	/**
+	 * Computes and stores application root path, based on class {@link ExecutionFlow} location.
+	 */
+	static {
+		try {
+			appPath = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
+				    .toURI()).getPath();
+			appPath = new File(appPath+"../").getParent();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		findLibs();
 	}
 	
 	
@@ -68,14 +90,35 @@ public class JDB
 	//		Constructor
 	//-----------------------------------------------------------------------
 	/**
-	 * Computes test path from code debugging.
+	 * Computes test path from code debugging. Use this constructor if this class
+	 * will be used within the context of aspects.
 	 * 
-	 * @param appPath Path of this application
 	 * @param classPath Path of test method class
 	 * @param lastLineTestMethod Test method end line
 	 */
-	public JDB(String appPath, String testMethodclassPath, int lastLineMethod)
+	public JDB(String testMethodclassPath, int lastLineMethod)
 	{
+		this.lastLineTestMethod = lastLineMethod;
+		this.classPathRoot = extractClassPathDirectory(appPath, testMethodclassPath);
+		this.USING_ASPECTJ = true;
+		
+		testPath = new ArrayList<>();
+		testPaths = new ArrayList<>();
+	}
+	
+	/**
+	 * Computes test path from code debugging. If this class will be used
+	 * outside the context of aspects, you must pass 'true' for 'usingAspectJ'
+	 * parameter.
+	 * 
+	 * @param classPath Path of test method class
+	 * @param lastLineTestMethod Test method end line
+	 * @param usingAspectJ If this class will be used within the context of
+	 * aspects 
+	 */
+	public JDB(String testMethodclassPath, int lastLineMethod, boolean usingAspectJ)
+	{
+		this.USING_ASPECTJ = usingAspectJ;
 		this.lastLineTestMethod = lastLineMethod;
 		this.classPathRoot = extractClassPathDirectory(appPath, testMethodclassPath);
 		
@@ -102,7 +145,6 @@ public class JDB
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
 		jdb_methodVisitor(methodSignature);
-		
 		return testPaths;
 	}
 	
@@ -114,7 +156,6 @@ public class JDB
 	 */
 	private synchronized Process jdb_start() throws IOException
 	{
-		findLibs(Path.of(classPathRoot));
 		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
 		String lib_junit = libPath_relative+"junit-4.13.jar";
@@ -171,15 +212,16 @@ public class JDB
 			if (newIteration) {
 				// Enters the method, ignoring aspectJ
 				jdb_sendCommand("step into");
-				
 				while (isInternalCommand) {
 					jdb_sendCommand("next");
 					jdb_checkOutput();
 				}
 
-				jdb_sendCommand("step into");
-				newIteration = false;
-				jdb_checkOutput();
+				if (USING_ASPECTJ) {
+					jdb_sendCommand("step into");
+					newIteration = false;
+					jdb_checkOutput();
+				}
 			}
 			else if (exitMethod) {
 				// Saves test path
@@ -198,6 +240,7 @@ public class JDB
 				jdb_sendCommand("next");
 				jdb_checkOutput();
 			}
+
 		}
 	}
 	
@@ -215,9 +258,7 @@ public class JDB
                 // Shell output
                 System.out.println("Generating test path...");
                 
-                while ((line = br.readLine()) != null) {
-                	while (!inputReady) { Thread.sleep(1); }
-                	
+                while (!endOfMethod && (line = br.readLine()) != null) {
                 	if (line.equals("\n") || line.equals("") || line.equals(" ")) continue;
 
                 	// -----{ DEBUG }-----
@@ -236,8 +277,8 @@ public class JDB
                 	// Checks if JDB has started and is ready to receive debug commands
             		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
             			readyToDebug = true;
-            			newIteration = line.contains("Breakpoint hit") || (line.contains("line="+methodInvocationLine) && line.contains(classInvocationSignature));
-            			
+            			newIteration = !inMethod && (line.contains("Breakpoint hit") || (line.contains("line="+methodInvocationLine) && line.contains(classInvocationSignature)));
+
             			if (isInternalCommand) {
             				inMethod = false;
             				Thread.sleep(1);
@@ -245,7 +286,7 @@ public class JDB
             			}
 
             			// Checks if entered the method
-            			if (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature)) {
+            			if (newIteration || (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature))) {
                 			inMethod = true;
                 		} 
             			else if (inMethod) { 	
@@ -263,9 +304,16 @@ public class JDB
             				}
                 		}
             		}
+            		
+            		endOfMethod = line.contains("The application exited");
+
+            		if (endOfMethod) {
+            			readyToDebug = true;
+            			break;
+            		}
+            		
             		// Checks if there are input commands
-                    try { Thread.sleep(1); } 
-                    catch (InterruptedException e) {}
+            		while (!inputReady) { Thread.sleep(1); }
                 }
                 br.close();
             } catch (java.io.IOException | InterruptedException e) { }
@@ -336,7 +384,6 @@ public class JDB
 		args.add("clear");
 		args.add("stop at "+classInvocationSignature+":"+methodInvocationLine);
 		args.add("stop at "+classInvocationSignature+":"+lastLineTestMethod);
-		args.add("threads");
         args.add("run");
         
 		for (String arg : args) {
@@ -420,7 +467,7 @@ public class JDB
 		String response = "";
 		
 		classPath = classPath.replace("\\", "/");
-		
+
 		// Extracts classes path directory
 		String regex = appPath.replace("\\", "\\/")+"\\/[^\\/]+\\/";
 		Pattern p = Pattern.compile(regex);
@@ -438,12 +485,10 @@ public class JDB
 	 * 
 	 * @param binPath Location of binary files (.class)
 	 */
-	private void findLibs(Path binPath)
+	private static void findLibs()
 	{
-		binPath = binPath.getParent();
-		
 		try {
-			Files.walkFileTree(binPath, new SimpleFileVisitor<Path>() {
+			Files.walkFileTree(Path.of(appPath), new SimpleFileVisitor<Path>() {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
 				{

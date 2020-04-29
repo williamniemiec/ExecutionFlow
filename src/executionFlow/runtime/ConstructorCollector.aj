@@ -1,6 +1,5 @@
 package executionFlow.runtime;
 
-import executionFlow.*;
 import executionFlow.core.*;
 import executionFlow.exporter.*;
 import executionFlow.info.*;

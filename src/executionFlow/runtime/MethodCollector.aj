@@ -11,7 +11,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.Test;
 
-import executionFlow.*;
 import executionFlow.core.*;
 import executionFlow.exporter.*;
 import executionFlow.info.*;

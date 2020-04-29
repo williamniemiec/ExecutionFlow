@@ -1,11 +1,8 @@
 package executionFlow.core;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import executionFlow.ExecutionFlow;
 import executionFlow.info.CollectorInfo;
 
 
@@ -19,29 +16,6 @@ import executionFlow.info.CollectorInfo;
  */
 public class TestPathManager 
 {
-	//-----------------------------------------------------------------------
-	//		Attributes
-	//-----------------------------------------------------------------------
-	private String appPath;
-	
-	
-	//-----------------------------------------------------------------------
-	//		Constructor
-	//-----------------------------------------------------------------------
-	/**
-	 * Computes test path from the available techniques.<br/>
-	 * <h1>Available techniques</h1>
-	 * <ul>
-	 * 		<li>CheapCoverage - Analyzing via class byte code</li>
-	 * 		<li>JDB - Analyzing code via debugging</li>
-	 * </ul>
-	 */
-	public TestPathManager()
-	{
-		this.appPath = getProjectPath();
-	}
-	
-	
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
@@ -75,7 +49,7 @@ public class TestPathManager
 	{
 		List<List<Integer>> tp_jdb = new ArrayList<>();
 		
-		JDB md = new JDB(appPath, collector.getMethodInfo().getClassPath(), lastLineTestMethod);
+		JDB md = new JDB(collector.getMethodInfo().getClassPath(), lastLineTestMethod);
 		
 		tp_jdb = md.getTestPaths(collector.getMethodInfo());
 		
@@ -118,25 +92,5 @@ public class TestPathManager
 		}
 		
 		return testPaths;
-	}
-	
-	/**
-	 * Returns project root path, based on class {@link ExecutionFlow} location.
-	 * 
-	 * @return Project root path
-	 */
-	private String getProjectPath()
-	{
-		String projectPath = "";
-		
-		try {
-			projectPath = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
-				    .toURI()).getPath();
-			projectPath = new File(projectPath+"../").getParent();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		
-		return projectPath;
 	}
 }
