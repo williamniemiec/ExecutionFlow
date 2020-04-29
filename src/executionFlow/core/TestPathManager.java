@@ -11,7 +11,7 @@ import executionFlow.info.CollectorInfo;
 
 
 /**
- * Computes test path from the available techniques.<br/>
+ * Computes test path from the available techniques.<br />
  * <h1>Available techniques</h1>
  * <ul>
  * 		<li>CheapCoverage - Analyzing via class byte code</li>

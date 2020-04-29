@@ -33,25 +33,36 @@ public class JDB
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private String classPathRoot;
-	private boolean readyToDebug = false;
-	private boolean endOfMethod = false;
-	private List<Integer> testPath = new ArrayList<>();
-	private List<List<Integer>> testPaths = new ArrayList<>();
+	private String methodClassSignature;
+	private String classInvocationSignature;
+	private int lastLineTestMethod;
+	private int methodInvocationLine;
+	private List<Integer> testPath;
+	private List<List<Integer>> testPaths;
+	private Path libPath;
 	private PrintWriter pw;
+	private boolean readyToDebug;
+	private boolean endOfMethod;
 	private boolean newIteration;
 	private boolean exitMethod;
-	private boolean inputReady = false;
-	private int lastLineTestMethod;
-	private String classInvocationSignature;
-	private int methodInvocationLine;
-	private boolean isInternalCommand = false;
+	private boolean inputReady;
+	private boolean isInternalCommand;
 	private final boolean DEBUG; 
-	private String methodClassSignature;
-	Path libPath;
 	
+	
+	//-----------------------------------------------------------------------
+	//		Initialization block
+	//-----------------------------------------------------------------------
+	/**
+	 * Enables or disables debug. If activated, shows shell output during JDB execution.
+	 * 
+	 * <b>Note:</b> If it is enabled and there are multiple method tests, the
+	 * computation of test path is not guaranteed.
+	 */
 	{
 		DEBUG = false;
 	}
+	
 	
 	//-----------------------------------------------------------------------
 	//		Constructor
@@ -67,6 +78,9 @@ public class JDB
 	{
 		this.lastLineTestMethod = lastLineMethod;
 		this.classPathRoot = extractClassPathDirectory(appPath, testMethodclassPath);
+		
+		testPath = new ArrayList<>();
+		testPaths = new ArrayList<>();
 	}
 	
 	
@@ -91,33 +105,6 @@ public class JDB
 		
 		return testPaths;
 	}
-	
-	//--------------------
-	private void findLibs(Path currentPath) throws IOException
-	{
-		//final File response;
-		currentPath = currentPath.getParent();
-		Files.walkFileTree(currentPath, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-			{
-				//System.out.println("analisando "+file);
-				if (file.endsWith("aspectjrt-1.9.2.jar")) {
-//					System.out.println("ACHOU!");
-//					System.out.println(file.toFile().getAbsolutePath());
-//					System.out.println(file.getParent().toFile().getAbsolutePath());
-					libPath = file.getParent();
-					
-					return FileVisitResult.TERMINATE;
-				}
-				
-				return FileVisitResult.CONTINUE;
-			}
-		});
-		
-		//return response.getAbsolutePath();
-	}
-	//--------------------
 	
 	/**
 	 * Initializes JDB and prepare it for executing methods within test methods.
@@ -155,11 +142,11 @@ public class JDB
 		Process process = jdb_start();
         
         // Output
-		Thread t = jdb_init_output(process, methodSignature);
+		Thread t = jdb_output(process, methodSignature);
 
         // Input
 		OutputStream os = process.getOutputStream();
-		jdb_init_input(process, os);
+		jdb_input(process, os);
 		
 		// Exits JDB
 		jdb_end();
@@ -170,7 +157,7 @@ public class JDB
 		t.join();
 	}
 	
-	private synchronized void jdb_init_input(Process process, OutputStream os) throws InterruptedException
+	private synchronized void jdb_input(Process process, OutputStream os) throws InterruptedException
 	{
 		pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
 
@@ -180,19 +167,19 @@ public class JDB
 		// Executes while inside the method
 		while (!endOfMethod) {
 			inputReady = false;
+			
 			if (newIteration) {
 				// Enters the method, ignoring aspectJ
 				jdb_sendCommand("step into");
 				
 				while (isInternalCommand) {
 					jdb_sendCommand("next");
-					inputReady = true;
-					Thread.sleep(1);
+					jdb_checkOutput();
 				}
-				//jdb_sendCommand("next");
+
 				jdb_sendCommand("step into");
 				newIteration = false;
-				inputReady = true;
+				jdb_checkOutput();
 			}
 			else if (exitMethod) {
 				// Saves test path
@@ -201,21 +188,20 @@ public class JDB
 				// Prepare for next test path
 				testPath = new ArrayList<>();
 				
-				// Check output
+				// Checks if method is in a loop
 				jdb_sendCommand("cont");
-				exitMethod = false;
-				inputReady = true;
-				Thread.sleep(1);
 				
+				// Check output
+				exitMethod = false;
+				jdb_checkOutput();
 			} else if (!endOfMethod) {
 				jdb_sendCommand("next");
-				inputReady = true;
-				Thread.sleep(1);
+				jdb_checkOutput();
 			}
 		}
 	}
 	
-	private Thread jdb_init_output(Process process, String methodSignature)
+	private Thread jdb_output(Process process, String methodSignature)
 	{
 		InputStream is = process.getInputStream();
         
@@ -287,6 +273,21 @@ public class JDB
         t.start();
         
         return t;
+	}
+	
+	/**
+	 * Checks if there are outputs that have to be processed. For this, it will 
+	 * use the thread defined in the method 'jdb_output'.
+	 */
+	private void jdb_checkOutput()
+	{
+		inputReady = true;
+		
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -430,5 +431,33 @@ public class JDB
 		}
 		
 		return response;
+	}
+	
+	/**
+	 * Finds directory of application libraries and stores it in {@link #libPath}.
+	 * 
+	 * @param binPath Location of binary files (.class)
+	 */
+	private void findLibs(Path binPath)
+	{
+		binPath = binPath.getParent();
+		
+		try {
+			Files.walkFileTree(binPath, new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+				{
+					if (file.endsWith("aspectjrt-1.9.2.jar")) {
+						libPath = file.getParent();
+						
+						return FileVisitResult.TERMINATE;
+					}
+					
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
