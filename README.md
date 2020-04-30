@@ -4,16 +4,13 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 
 <hr />
 
-## Ultimas atualizações
-- Problema com performance para a execução de vários métodos de teste
 
 ## Requisitos
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
-- [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) (não testado com Java 13)
+- [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior
 - [ASM 7 ou superior](https://github.com/williamniemiec/ExecutionFlow/tree/master/lib) (Incluído no projeto)
-- JUnit 4 ou superior
-
+- JUnit 4
 
 ## Exemplo de saída - [SimpleTest](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/SimpleTest.java)
 <pre><code>
@@ -26,9 +23,10 @@ testClasses.TestClass.factorial(int)
 </code></pre>
 
 
-## Técnicas utilizadas para computar o test path
-- Via debugging ([JDB](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/JDB.java))
-- Via análise do bytecode da classe ([CheapCoverage](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/core/CheapCoverage.java))
+## Técnica utilizada para computar o test path
+O test path é computado via debugging do código. Além dessa técnica, há outras disponíveis:
+- Via análise do bytecode da classe ([branch core_asm](https://github.com/williamniemiec/ExecutionFlow/tree/core_asm))
+- Via debugging & análise do bytecode da classe ([branch_hybrid](https://github.com/williamniemiec/ExecutionFlow/tree/core_hybrid))
 
 [Veja mais detalhes](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-%C3%A9-computado-o-test-path).
 
