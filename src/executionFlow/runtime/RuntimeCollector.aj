@@ -19,9 +19,9 @@ import executionFlow.info.CollectorInfo;
  * 		<li>Each test method must have one of the following annotations:
  * 			<ul>
  * 				<li><code>@Test</code></li>
- * 				<li><code>@RepeatedTest</code></li>
-			 	<li><code>@ParameterizedTest</code></li>
-			 	<li><code>@TestFactory</code></li>
+ * 				<li><strike><code>@RepeatedTest</code></strike></li>
+			 	<li><strike><code>@ParameterizedTest</strike></code></li>
+			 	<li><strike><code>@TestFactory</code></strike></li>
 		 	</ul>
  * 		</li>
  * </ul>
