@@ -16,10 +16,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	pointcut constructorCollector(): (initialization(*.new(*)) || initialization(*.new()))	
 		&& !within(ExecutionFlow)
-		&& !within(CheapCoverage)
-		&& !within(RT)
 		&& !within(JDB)
-		&& !within(TestPathManager)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
 		&& !within(ClassConstructorInfo)

@@ -19,12 +19,6 @@ public class ControlFlowTest
 		assertEquals(expectedResult, result);
 	}
 	
-	
-	
-	
-	
-	
-	/*
 	@Test
 	public void ifElseTest() 
 	{
@@ -76,5 +70,4 @@ public class ControlFlowTest
 		
 		assertEquals('E', tccf.switchCaseMethod('É'));
 	}
-	*/
 }

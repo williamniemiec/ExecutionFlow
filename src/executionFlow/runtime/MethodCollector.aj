@@ -43,9 +43,6 @@ public aspect MethodCollector extends RuntimeCollector
 		 cflow(call(* *.*(*))) || 
 		 cflow(call(* *.*()))) 
 		&& !within(ExecutionFlow)
-		&& !within(CheapCoverage)
-		&& !within(RT)
-		&& !within(TestPathManager)
 		&& !within(JDB)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
