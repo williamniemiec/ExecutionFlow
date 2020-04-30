@@ -49,8 +49,7 @@ public class TestPathManager
 	{
 		List<List<Integer>> tp_jdb = new ArrayList<>();
 		
-		JDB md = new JDB(collector.getMethodInfo().getClassPath(), lastLineTestMethod);
-		
+		JDB md = new JDB(lastLineTestMethod);
 		tp_jdb = md.getTestPaths(collector.getMethodInfo());
 		
 		return tp_jdb;

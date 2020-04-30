@@ -59,7 +59,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 		System.out.println("---------------------------------------------------------------------");
 		System.out.println("                                EXPORT                               ");
 		System.out.println("---------------------------------------------------------------------");
-		
+		//System.out.println(classPaths);
 		for (Map<SignaturesInfo, List<Integer>> classPathInfo : classPaths.values()) {
 			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathInfo.entrySet()) {
 				SignaturesInfo signatures = e.getKey();

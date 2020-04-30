@@ -38,7 +38,7 @@ public class JDBTest
 				.invocationLine(26)
 				.build();
 		
-		JDB md = new JDB(sumMethod.getClassPath(), 29, false);
+		JDB md = new JDB(29, false);
 		testPath_sum = md.getTestPaths(sumMethod);
 		
 		ClassMethodInfo loopMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
@@ -49,7 +49,7 @@ public class JDBTest
 				.invocationLine(34)
 				.build();
 		
-		md = new JDB(loopMethod.getClassPath(), 36, false);
+		md = new JDB(36, false);
 		testPath_loop = md.getTestPaths(loopMethod);
 		
 		assertEquals(Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14), testPath_sum.get(0));
@@ -76,7 +76,7 @@ public class JDBTest
 				.invocationLine(27)
 				.build();
 		
-		JDB md = new JDB(sumMethod.getClassPath(), 29, false);
+		JDB md = new JDB(29, false);
 		testPath_sum = md.getTestPaths(sumMethod);
 		
 		assertEquals(Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14), testPath_sum.get(0));
@@ -102,7 +102,7 @@ public class JDBTest
 		
 		collectorInfo.add(new CollectorInfo(sumMethod,loopCons));
 		
-		JDB md = new JDB(sumMethod.getClassPath(), 29, false);
+		JDB md = new JDB(29, false);
 		testPath_loop = md.getTestPaths(sumMethod);
 		
 		assertEquals(Arrays.asList(16,18,19,18,19,18,19,18,22), testPath_loop.get(0));

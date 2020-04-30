@@ -125,6 +125,8 @@ public class ExecutionFlow
 			
 			// Stores each computed test path
 			storeTestPath(testPaths, collector);
+			
+			//storeTestPath(testPathManager.testPath_jdb(collector, lastLineTestMethod), collector);
 		}
 		
 		return this;

@@ -91,13 +91,11 @@ public class JDB
 	 * Computes test path from code debugging. Use this constructor if this class
 	 * will be used within the context of aspects.
 	 * 
-	 * @param classPath Path of test method class
 	 * @param lastLineTestMethod Test method end line
 	 */
-	public JDB(String testMethodclassPath, int lastLineMethod)
+	public JDB(int lastLineMethod)
 	{
 		this.lastLineTestMethod = lastLineMethod;
-		this.classPathRoot = extractClassPathDirectory(appPath, testMethodclassPath);
 		this.USING_ASPECTJ = true;
 		
 		testPath = new ArrayList<>();
@@ -109,16 +107,14 @@ public class JDB
 	 * outside the context of aspects, you must pass 'true' for 'usingAspectJ'
 	 * parameter.
 	 * 
-	 * @param classPath Path of test method class
 	 * @param lastLineTestMethod Test method end line
 	 * @param usingAspectJ If this class will be used within the context of
 	 * aspects 
 	 */
-	public JDB(String testMethodclassPath, int lastLineMethod, boolean usingAspectJ)
+	public JDB(int lastLineMethod, boolean usingAspectJ)
 	{
 		this.USING_ASPECTJ = usingAspectJ;
 		this.lastLineTestMethod = lastLineMethod;
-		this.classPathRoot = extractClassPathDirectory(appPath, testMethodclassPath);
 		
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
@@ -142,7 +138,10 @@ public class JDB
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
+		extractClassPathDirectory(methodInfo);
+		
 		jdb_methodVisitor(methodSignature);
+		
 		return testPaths;
 	}
 	
@@ -238,7 +237,6 @@ public class JDB
 				jdb_sendCommand("next");
 				jdb_checkOutput();
 			}
-
 		}
 	}
 	
@@ -454,28 +452,44 @@ public class JDB
 	}
 	
 	/**
-	 * Extracts directory where a class is.
+	 * Extracts directory where classes are. This directory is the first before 
+	 * package directories.
 	 * 
-	 * @param appPath Location of this application
-	 * @param classPath Path of a class
-	 * @return Directory where this class is
+	 * @param methodInfo Information about a method
+	 * @return Directory where classes are
 	 */
-	private String extractClassPathDirectory(String appPath, String classPath)
+	private void extractClassPathDirectory(ClassMethodInfo methodInfo)
 	{
-		String response = "";
-		
-		classPath = classPath.replace("\\", "/");
+		String classPath = methodInfo.getClassPath();
+		String[] tmp = classPath.split("\\\\");
+		String classFileName = tmp[tmp.length-1];
 
-		// Extracts classes path directory
-		String regex = appPath.replace("\\", "\\/")+"\\/[^\\/]+\\/";
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(classPath);
-		
-		if (m.find()) {
-			response = m.group();
+		try {
+			Files.walkFileTree(Path.of(appPath), new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+				{
+					if (file.endsWith(classFileName)) {
+						file = file.getParent();
+
+						// -1 not to consider method name
+						int packageFolders = methodInfo.getSignature().split("\\(")[0].split("\\.").length - 1;
+						
+						for (int i=0; i<=packageFolders; i++) {
+							file = file.getParent();
+						}
+						
+						classPathRoot = file.toString();
+						
+						return FileVisitResult.TERMINATE;
+					}
+					
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		return response;
 	}
 	
 	/**
