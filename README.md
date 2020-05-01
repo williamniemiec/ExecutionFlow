@@ -24,7 +24,9 @@ testClasses.TestClass.factorial(int)
 
 
 ## Técnica utilizada para computar o test path
+
 O test path é computado via debugging do código. Além dessa técnica, há outras disponíveis:
+
 - Via análise do bytecode da classe ([branch core_asm](https://github.com/williamniemiec/ExecutionFlow/tree/core_asm))
 - Via debugging & análise do bytecode da classe ([branch core_hybrid](https://github.com/williamniemiec/ExecutionFlow/tree/core_hybrid))
 
@@ -47,7 +49,7 @@ Veja a descrição de cada classe do projeto [aqui](https://github.com/williamni
 |media |`Diretório`|Informações visuais / Diagrama UML|
 |releases |`Diretório`|Versões lançadas da aplicação|
 |src     |`Diretório`| Arquivos fonte|
-|testPaths|`Diretório`|Test paths gerados sobre os testes presentes na pasta [runtime](https://github.com/williamniemiec/ExecutionFlow/blob/master/tests/executionFlow/runtime)|
+|testPaths|`Diretório`|Test paths gerados sobre os testes presentes na pasta [examples](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples)|
 |tests|`Diretório`|Testes dos arquivos fonte|
 |.class|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
 |.project|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
