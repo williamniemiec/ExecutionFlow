@@ -67,8 +67,8 @@ public class ExecutionFlow
 		DEBUG = false;
 		classPaths = new HashMap<>();
 		
-		exporter = new ConsoleExporter(classPaths);
-		//exporter = new FileExporter(classPaths);
+		//exporter = new ConsoleExporter(classPaths);
+		exporter = new FileExporter(classPaths);
 	}
 	
 	
