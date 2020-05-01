@@ -1,0 +1,2 @@
+JUnitSimulation.testFactorial_zero()
+[88, 90, 94]
