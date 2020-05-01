@@ -44,12 +44,12 @@ Veja a descrição de cada classe do projeto [aqui](https://github.com/williamni
 |----------------|-------------------------------|-----------------------------|
 |.settings|`Diretório`|Diretório gerado por IDE (Eclipse)|
 | bin |`Diretório`      |Arquivos binários (.class)|
-|example   |`Diretório`|	Projeto que foi utilizado na exemplificação de como usar a aplicação   |
+|examples   |`Diretório`|	Exemplos de testes JUnit para ver o funcionamento da aplicação   |
 |lib   |`Diretório`|Bibliotecas que o projeto depende   |
 |media |`Diretório`|Informações visuais / Diagrama UML|
 |releases |`Diretório`|Versões lançadas da aplicação|
 |src     |`Diretório`| Arquivos fonte|
-|testPaths|`Diretório`|Test paths gerados sobre os testes presentes na pasta [examples](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples)|
+|testPaths|`Diretório`|Test paths gerados sobre alguns testes presentes na pasta [examples](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples)|
 |tests|`Diretório`|Testes dos arquivos fonte|
 |.class|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
 |.project|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
