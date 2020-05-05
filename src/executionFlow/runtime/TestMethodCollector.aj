@@ -30,6 +30,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 //		 execution(@TestFactory * *.*())) 
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
+		&& !within(FileCompiler)
 		&& !within(FileParser)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)

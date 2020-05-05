@@ -7,12 +7,14 @@ public class TestClass_ControlFlow
 		}
 		
 		String response = "";
-		
+		int w;int x=7;
+        int k;x=7;
+
 		if (num == 0) {
 			response = "Number zero";
 		} else if (num == 1) {
 			response = "Number one";
-		} else {int x = 7;
+		} else {
 			response = "Number "+num;
 		}
 		
