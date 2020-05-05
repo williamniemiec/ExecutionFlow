@@ -109,8 +109,8 @@ public class ExecutionFlow
 			CollectorInfo collector = collectors.get(0);
 			
 			// Parses file
-			//FileManager fm = new FileManager(collector.getMethodInfo().getSrcPath());
-			//fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory());
+			FileManager fm = new FileManager(collector.getMethodInfo().getSrcPath());
+			fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory());
 //			System.out.println(collector.getMethodInfo().getClassPath());
 //			System.out.println(collector.getMethodInfo().getClassDirectory());
 //			System.out.println(collector.getMethodInfo().getSrcPath());
@@ -123,7 +123,7 @@ public class ExecutionFlow
 			storeTestPath(tp_jdb, collector);
 			
 			// Reverts parsed file to its original state
-			//fm.revert();
+			fm.revert();
 		}
 		
 		return this;
