@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 
 public class FileParserTest {
 	@Test
-	public void testFile()
+	public void testFile() throws NoSuchAlgorithmException
 	{
 		String filename = "test_else.java";
 		File f = new File(filename);

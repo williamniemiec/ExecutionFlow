@@ -6,9 +6,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class FileParser 
 {
@@ -20,7 +25,8 @@ public class FileParser
 	private Stack<Character> curlyBraces;
 	
 	static {
-		VAR_NAME="x";
+		Date now = new Date();
+		VAR_NAME = "_"+md5(String.valueOf(now.getTime()));
 	}
 	
 	public FileParser(String filename, String outputDir, String outputName)
@@ -233,5 +239,20 @@ public class FileParser
 			sb.append(line.substring(m.end()));
 			parsedLine = sb.toString();
 		}*/
+	}
+	
+	private static String md5(String text)
+	{
+		String response;
+		
+		try {
+			MessageDigest m = MessageDigest.getInstance("MD5");
+			m.update(text.getBytes(),0,text.length());
+			response = new BigInteger(1,m.digest()).toString(16);
+		} catch (NoSuchAlgorithmException e) {
+			response = text;
+		}
+		
+		return response;
 	}
 }
