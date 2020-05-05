@@ -22,6 +22,7 @@ public class ClassMethodInfo
 	private String testMethodSignature;
 	private String methodSignature;
 	private int invocationLine;
+	private String srcPath;
 	
 	
 	//-----------------------------------------------------------------------
@@ -31,6 +32,7 @@ public class ClassMethodInfo
 	 * Stores information about a method.
 	 * 
 	 * @param classPath Method class file path
+	 * @param srcPath
 	 * @param methodSignature Signature of the method
 	 * @param testMethodSignature Signature of the test method to which the method belongs
 	 * @param methodName Method's name
@@ -38,10 +40,11 @@ public class ClassMethodInfo
 	 * @param parameterTypes Types of method's parameters
 	 * @param args Method's arguments
 	 */
-	private ClassMethodInfo(String classPath, int invocationLine, String methodSignature, String testMethodSignature, 
-							String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
+	private ClassMethodInfo(String classPath, String srcPath, int invocationLine, String methodSignature, 
+			String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
 	{
 		this.classPath = classPath;
+		this.srcPath = srcPath;
 		this.methodSignature = methodSignature;
 		this.testMethodSignature = testMethodSignature;
 		this.methodName = methodName;
@@ -64,6 +67,7 @@ public class ClassMethodInfo
 		private Object[] args;
 		private Class<?> returnType = void.class;
 		private int invocationLine;
+		private String srcPath;
 		
 		public ClassMethodInfoBuilder invocationLine(int invocationLine)
 		{
@@ -113,10 +117,18 @@ public class ClassMethodInfo
 			return this;
 		}
 		
+		public ClassMethodInfoBuilder srcPath(String srcPath)
+		{
+			this.srcPath = srcPath;
+			return this;
+		}
+		
 		public ClassMethodInfo build()
 		{
-			return new ClassMethodInfo(	classPath, invocationLine, methodSignature, testMethodSignature, methodName, 
-										returnType, parameterTypes, args);
+			return new ClassMethodInfo(
+				classPath, srcPath, invocationLine, methodSignature, testMethodSignature, methodName, 
+				returnType, parameterTypes, args
+			);
 		}
 	}
 	
@@ -129,8 +141,8 @@ public class ClassMethodInfo
 	{
 		return "ClassMethodInfo [methodName=" + methodName + ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes)
-				+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + ", testMethodSignature="
-				+ testMethodSignature + ", returnType=" + returnType
+				+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + ", srcPath=" + srcPath 
+				+ ", testMethodSignature=" + testMethodSignature + ", returnType=" + returnType
 				+ ", methodSignature=" + methodSignature + "]";
 	}
 
@@ -247,6 +259,11 @@ public class ClassMethodInfo
 		return this.invocationLine;
 	}
 	
+	public String getSrcPath()
+	{
+		return this.srcPath;
+	}
+	
 	/**
 	 * Gets parameter types and return type of the method.
 	 * 
@@ -258,5 +275,22 @@ public class ClassMethodInfo
 			return methodType(returnType);
 		
 		return methodType(returnType, parameterTypes);
+	}
+	
+	public String getClassDirectory()
+	{
+		StringBuilder response = new StringBuilder();
+		String[] terms = classPath.split("\\\\");
+		
+		for (int i=0; i<terms.length-1; i++) {
+			response.append(terms[i]);
+			response.append("\\");
+		}
+		
+		if (response.length() > 0) {
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
 	}
 }

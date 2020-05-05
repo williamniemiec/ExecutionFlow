@@ -1,20 +1,23 @@
 package executionFlow.runtime;
 
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.core.*;
-import executionFlow.exporter.*;
-import executionFlow.info.*;
+import executionFlow.core.FileCompiler;
+import executionFlow.core.FileParser;
+import executionFlow.core.JDB;
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.FileExporter;
+import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.CollectorInfo;
+import executionFlow.info.SignaturesInfo;
 
 
 /**
@@ -30,6 +33,7 @@ public aspect MethodCollector extends RuntimeCollector
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private String classPath;
+	private String srcPath;
 	
 	
 	//-----------------------------------------------------------------------
@@ -114,6 +118,13 @@ public aspect MethodCollector extends RuntimeCollector
 			e1.printStackTrace();
 		}
 		
+		// Gets source path
+		try {
+			srcPath = CollectorExecutionFlow.findCurrentSrcPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
@@ -130,6 +141,7 @@ public aspect MethodCollector extends RuntimeCollector
 				.parameterTypes(paramTypes)
 				.args(thisJoinPoint.getArgs())
 				.invocationLine(invocationLine)
+				.srcPath(srcPath)
 				.build();
 
 		CollectorInfo ci = new CollectorInfo(cmi);

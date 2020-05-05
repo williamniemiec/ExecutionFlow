@@ -29,6 +29,8 @@ public class CollectorExecutionFlow
 	 * Necessary for findCurrentClassPath method;
 	 */
 	private static String classPath;
+	
+	private static String srcPath;
 
 	
 	//-----------------------------------------------------------------------
@@ -160,6 +162,47 @@ public class CollectorExecutionFlow
 		});
 		
 		return classPath;
+	}
+	
+	/**
+	 * When executed it will determine the current location of the class executed.
+	 * 
+	 * @implSpec This method was projected to be executed in an AOP file. If
+	 * it will execute in another place the results may be unexpected
+	 * @return Absolute path of current execution class
+	 * @throws IOException If class does not exist
+	 */
+	public static String findCurrentSrcPath() throws IOException 
+	{
+		Path rootPath = Paths.get(System.getProperty("user.dir"));
+		String aux = Thread.currentThread().getStackTrace()[3].getFileName();
+		
+		// <className>.java => <className>
+		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.");
+		Matcher m = p.matcher(aux);
+		
+		if (m.find()) {				// <className>.java
+			p = Pattern.compile("[A-z0-9-_$]+");
+			m = p.matcher(m.group());
+			
+			if (m.find())
+				aux = m.group();	// <className>
+		}
+		
+		final String className = aux;
+		
+		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
+			@Override
+		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+		        if (file.toString().endsWith(className+".java")) {
+		        	srcPath = file.toString();
+		        }
+		        
+		        return FileVisitResult.CONTINUE;
+		    }
+		});
+		
+		return srcPath;
 	}
 	
 	/**

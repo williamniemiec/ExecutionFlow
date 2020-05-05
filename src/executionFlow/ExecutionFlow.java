@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import executionFlow.core.FileManager;
 import executionFlow.core.JDB;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
@@ -107,13 +108,22 @@ public class ExecutionFlow
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			CollectorInfo collector = collectors.get(0);
 			
-			JDB md = new JDB(lastLineTestMethod);
+			// Parses file
+			//FileManager fm = new FileManager(collector.getMethodInfo().getSrcPath());
+			//fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory());
+//			System.out.println(collector.getMethodInfo().getClassPath());
+//			System.out.println(collector.getMethodInfo().getClassDirectory());
+//			System.out.println(collector.getMethodInfo().getSrcPath());
+			JDB jdb = new JDB(lastLineTestMethod);
 			
 			// Computes test path from JDB
-			tp_jdb = md.getTestPaths(collector.getMethodInfo());
+			tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
 			
 			// Stores each computed test path
 			storeTestPath(tp_jdb, collector);
+			
+			// Reverts parsed file to its original state
+			//fm.revert();
 		}
 		
 		return this;

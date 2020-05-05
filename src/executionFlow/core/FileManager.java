@@ -12,9 +12,9 @@ public class FileManager
 	private File originalFile; 
 	
 	
-	public FileManager(String filename)
+	public FileManager(String srcFilename)
 	{
-		this.filename = filename;
+		this.filename = srcFilename.split("\\.")[0];
 		inputFile = new File(filename);
 		originalFile = new File(filename+".original"); 
 	}
@@ -31,7 +31,7 @@ public class FileManager
 	public FileManager parseFile()
 	{
 		// Parses file
-		FileParser fp = new FileParser("test_else.java", null, "test_else_parsed");
+		FileParser fp = new FileParser(inputFile.getAbsolutePath(), null, filename+"_parsed");
 		File out = new File(fp.parseFile());
 		
 		// Changes parsed file name to the same as received filename
