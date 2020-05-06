@@ -11,7 +11,9 @@ import org.junit.Test;
 import executionFlow.runtime.SkipCollection;
 
 @SkipCollection
-public class FileParserTest {
+public class FileParserTest
+{
+	/*
 	@Test
 	public void testParseElse()
 	{
@@ -66,7 +68,7 @@ public class FileParserTest {
 		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
 	}
-	
+	*/
 	//--------------------------------------------------------------------------------------
 	@Test
 	public void testParseElse2()
@@ -122,4 +124,5 @@ public class FileParserTest {
 		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
 	}
+	
 }

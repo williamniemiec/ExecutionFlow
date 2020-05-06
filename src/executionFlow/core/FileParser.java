@@ -87,7 +87,7 @@ public class FileParser
 				
 				
 				if (tryPattern.matcher(line).find() && tryPattern.matcher(line).find()) {	// Try
-					if (nextLine.equals("{")) {
+					if (nextLine.contains("{")) {
 						line = line + " {";
 						skipNextLine = true;
 					}
@@ -99,21 +99,21 @@ public class FileParser
 					//System.out.println("var");
 					parsedLine = parse_varDeclaration(line);
 				} else if (!line.contains("if") && elsePattern.matcher(line).find()) {		// Else
-					if (nextLine.equals("{")) {
+					if (nextLine.contains("{")) {
 						line = line + " {";
 						skipNextLine = true;
 					}
 					
 					parsedLine = parse_else(line);
 				} else if (doPattern.matcher(line).find()) {								// Do while
-					if (nextLine.equals("{")) {
+					if (nextLine.contains("{")) {
 						line = line + " {";
 						skipNextLine = true;
 					}
 					
 					parsedLine = parse_do(line);
 				}  else if (switchPattern.matcher(line).find()) {							// Switch
-					if (nextLine.equals("{")) {
+					if (nextLine.contains("{")) {
 						line = line + " {";
 						skipNextLine = true;
 					}
@@ -159,6 +159,7 @@ public class FileParser
 	
 	private String parse_else(String line)
 	{
+//		System.out.println(line);
 		StringBuilder sb = new StringBuilder();
 		//System.out.println(line);
 		// Checks if block has curly braces
