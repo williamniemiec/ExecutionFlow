@@ -48,6 +48,7 @@ public class FileParser
 		//String[] filename = file.getName().split("\\.");
 		//File outputFile = new File(filename[0]+"_tmp.java");
 		File outputFile;
+		boolean skipNextLine = false;
 		
 		if (outputDir != null)
 			outputFile = new File(outputDir, outputName+".java");
@@ -71,24 +72,52 @@ public class FileParser
 			//int c=0;
 			while ((line = br.readLine()) != null) {
 				nextLine = br2.readLine();
+				
+				if (skipNextLine) {
+					skipNextLine = false;
+					bw.newLine();	// It is necessary to keep line numbers equals to original file 
+					continue;
+				}
 				// Parses file line by line
 				//System.out.println(line);
 				//System.out.println(++c);
 				// Try
 				// Problem: try without curly braces
 				//Matcher m = rTryBlock.matcher(line);
-				if (tryPattern.matcher(line).find() && tryPattern.matcher(line).find()) {
-					parsedLine = parse_try(line, nextLine);
-				} else if (	!line.contains("return ") && !line.contains("return(") && 
+				
+				
+				if (tryPattern.matcher(line).find() && tryPattern.matcher(line).find()) {	// Try
+					if (nextLine.equals("{")) {
+						line = line + " {";
+						skipNextLine = true;
+					}
+					
+					parsedLine = parse_try(line);
+				} else if (	!line.contains("return ") && !line.contains("return(") && 		// Var declaration
 							!line.contains("package ") && !line.contains("class ") && 
 							line.matches(rVarDeclarationWithoutInitialization)) {
 					//System.out.println("var");
 					parsedLine = parse_varDeclaration(line);
-				} else if (!line.contains("if") && elsePattern.matcher(line).find()) {
-					parsedLine = parse_else(line, nextLine);
-				} else if (doPattern.matcher(line).find()) {
-					parsedLine = parse_do(line, nextLine);
-				}  else if (switchPattern.matcher(line).find()) {
+				} else if (!line.contains("if") && elsePattern.matcher(line).find()) {		// Else
+					if (nextLine.equals("{")) {
+						line = line + " {";
+						skipNextLine = true;
+					}
+					
+					parsedLine = parse_else(line);
+				} else if (doPattern.matcher(line).find()) {								// Do while
+					if (nextLine.equals("{")) {
+						line = line + " {";
+						skipNextLine = true;
+					}
+					
+					parsedLine = parse_do(line);
+				}  else if (switchPattern.matcher(line).find()) {							// Switch
+					if (nextLine.equals("{")) {
+						line = line + " {";
+						skipNextLine = true;
+					}
+					
 					parsedLine = parse_switch(line);
 				} else {
 					parsedLine = line;
@@ -104,7 +133,7 @@ public class FileParser
 		return outputFile.getAbsolutePath();
 	}
 	
-	private String parse_do(String line, String nextLine)
+	private String parse_do(String line)
 	{
 		StringBuilder sb = new StringBuilder();
 
@@ -121,18 +150,6 @@ public class FileParser
 			}
 			
 			sb.append(line.substring(curlyBraceIndex+1));
-		} else if (nextLine.contains("{")) {
-			int curlyBraceIndex = nextLine.indexOf('{');
-			sb.append(nextLine.substring(0, curlyBraceIndex+1));
-			
-			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=7;");
-			else {
-				sb.append("int "+VAR_NAME+"=7;");
-				alreadyDeclared = true;
-			}
-			
-			sb.append(nextLine.substring(curlyBraceIndex+1));
 		} else {
 			throw new IllegalStateException("Code block must be enclosed in curly braces");
 		}
@@ -140,7 +157,7 @@ public class FileParser
 		return sb.toString();
 	}
 	
-	private String parse_else(String line, String nextLine)
+	private String parse_else(String line)
 	{
 		StringBuilder sb = new StringBuilder();
 		//System.out.println(line);
@@ -157,18 +174,6 @@ public class FileParser
 			}
 			
 			sb.append(line.substring(curlyBraceIndex+1));
-		} else if (nextLine.contains("{")) {
-			int curlyBraceIndex = nextLine.indexOf('{');
-			sb.append(nextLine.substring(0, curlyBraceIndex+1));
-			
-			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=7;");
-			else {
-				sb.append("int "+VAR_NAME+"=7;");
-				alreadyDeclared = true;
-			}
-			
-			sb.append(nextLine.substring(curlyBraceIndex+1));
 		} else {
 			throw new IllegalStateException("Code block must be enclosed in curly braces");
 		}
@@ -176,7 +181,7 @@ public class FileParser
 		return sb.toString();
 	}
 	
-	private String parse_try(String line, String nextLine)
+	private String parse_try(String line)
 	{
 		StringBuilder sb = new StringBuilder();
 //		System.out.println(line);
@@ -198,18 +203,6 @@ public class FileParser
 			}
 			
 			sb.append(line.substring(curlyBraceIndex+1));
-		} else if (nextLine.contains("{")) {
-			int curlyBraceIndex = nextLine.indexOf('{');
-			sb.append(nextLine.substring(0, curlyBraceIndex+1));
-			
-			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=7;");
-			else {
-				sb.append("int "+VAR_NAME+"=7;");
-				alreadyDeclared = true;
-			}
-			
-			sb.append(nextLine.substring(curlyBraceIndex+1));
 		} else {
 			throw new IllegalStateException("Code block must be enclosed in curly braces");
 		}

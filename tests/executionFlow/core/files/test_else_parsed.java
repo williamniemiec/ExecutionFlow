@@ -7,14 +7,14 @@ public class test_else
 		}
 		
 		String response = "";
-		int w;int _cff7f733447dc88ab641587be2ebb164=7;
-        int k;_cff7f733447dc88ab641587be2ebb164=7;
+		int w;int _8f3728f8e712564b0f64928d936479a9=7;
+        int k;_8f3728f8e712564b0f64928d936479a9=7;
 
 		if (num == 0) {
 			response = "Number zero";
 		} else if (num == 1) {
 			response = "Number one";
-		} else {_cff7f733447dc88ab641587be2ebb164=7;
+		} else {_8f3728f8e712564b0f64928d936479a9=7;
 			response = "Number "+num;
 		}
 		

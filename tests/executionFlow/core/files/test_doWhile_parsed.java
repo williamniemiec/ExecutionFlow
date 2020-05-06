@@ -4,11 +4,11 @@ import java.io.IOException;
 
 public class test_doWhile
 {
-	public boolean doWhile(int num)
+	public void doWhile(int num)
 	{
 		int i = 0, k = 0;
 
-		do {int _cff7f733447dc88ab641587be2ebb164=7;
+		do {int _8f3728f8e712564b0f64928d936479a9=7;
 			k++;
 		} while (i < num);
 	}

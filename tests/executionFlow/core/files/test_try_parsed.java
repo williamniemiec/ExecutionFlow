@@ -8,8 +8,8 @@ public class test_try
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;int _cff7f733447dc88ab641587be2ebb164=7;
-		try {_cff7f733447dc88ab641587be2ebb164=7;
+		FileWriter fw;int _8f3728f8e712564b0f64928d936479a9=7;
+		try {_8f3728f8e712564b0f64928d936479a9=7;
 			fw = new FileWriter(f);
 			fw.write('x');
 			fw.close();

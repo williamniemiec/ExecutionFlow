@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class test_doWhile
 {
-	public boolean doWhile(int num)
+	public void doWhile(int num)
 	{
 		int i = 0, k = 0;
 
