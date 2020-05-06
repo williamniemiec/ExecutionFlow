@@ -45,7 +45,7 @@ public class FileParser
 	{
 		if (file == null) { return ""; }
 		
-		String[] filename = file.getName().split("\\.");
+		//String[] filename = file.getName().split("\\.");
 		//File outputFile = new File(filename[0]+"_tmp.java");
 		File outputFile;
 		
@@ -78,7 +78,9 @@ public class FileParser
 				//Matcher m = rTryBlock.matcher(line);
 				if (tryPattern.matcher(line).find() && line.matches(rTryBlock)) {
 					parsedLine = parse_try(line, nextLine);
-				} else if (!line.contains("return ") && !line.contains("return(") && line.matches(rVarDeclarationWithoutInitialization)) {
+				} else if (	!line.contains("return ") && !line.contains("return(") && 
+							!line.contains("package ") && !line.contains("class ") && 
+							line.matches(rVarDeclarationWithoutInitialization)) {
 					//System.out.println("var");
 					parsedLine = parse_varDeclaration(line);
 				} else if (!line.contains("if") && elsePattern.matcher(line).find()) {
@@ -95,14 +97,14 @@ public class FileParser
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return outputFile.getAbsolutePath();
 	}
 	
 	private String parse_do(String line, String nextLine)
 	{
 		StringBuilder sb = new StringBuilder();
-		
+
 		// Checks if block has curly braces
 		if (line.contains("{")) {
 			int curlyBraceIndex = line.indexOf('{');
@@ -138,7 +140,7 @@ public class FileParser
 	private String parse_else(String line, String nextLine)
 	{
 		StringBuilder sb = new StringBuilder();
-		
+		//System.out.println(line);
 		// Checks if block has curly braces
 		if (line.contains("{")) {
 			int curlyBraceIndex = line.indexOf('{');
@@ -214,6 +216,7 @@ public class FileParser
 	private String parse_varDeclaration(String line)
 	{
 		//System.out.println("var");
+		
 		
 		if (alreadyDeclared)
 			return line+VAR_NAME+"=7;";

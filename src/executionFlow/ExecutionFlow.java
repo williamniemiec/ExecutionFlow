@@ -109,13 +109,15 @@ public class ExecutionFlow
 			CollectorInfo collector = collectors.get(0);
 			
 			// Parses file
+			//System.out.println("sig: "+collector.getMethodInfo().getPackage());
 			FileManager fm = new FileManager(collector.getMethodInfo().getSrcPath());
-			fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory());
+			fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory(), collector.getMethodInfo().getPackage());
+			//fm.parseFile();
+			//System.out.println(collector.getMethodInfo());
 //			System.out.println(collector.getMethodInfo().getClassPath());
 //			System.out.println(collector.getMethodInfo().getClassDirectory());
 //			System.out.println(collector.getMethodInfo().getSrcPath());
 			JDB jdb = new JDB(lastLineTestMethod);
-			
 			// Computes test path from JDB
 			tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
 			

@@ -264,6 +264,25 @@ public class ClassMethodInfo
 		return this.srcPath;
 	}
 	
+	public String getPackage()
+	{
+		if (methodSignature == null) { return ""; }
+		
+		String[] tmp = methodSignature.split("\\.");
+		StringBuilder sb = new StringBuilder();
+		
+		for (int i=0; i<tmp.length-1; i++) {
+			sb.append(tmp[i]);
+			sb.append(".");
+		}
+		
+		if (sb.length() > 0) {
+			sb.deleteCharAt(sb.length()-1);
+		}
+		
+		return sb.toString();
+	}
+	
 	/**
 	 * Gets parameter types and return type of the method.
 	 * 

@@ -17,6 +17,10 @@ public class FileManager
 		inputFile = new File(srcFilename);
 		originalFile = new File(srcFilename+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
+		
+//		System.out.println("inputFile: "+inputFile);
+//		System.out.println("originalFile: "+originalFile);
+//		System.out.println("filename: "+filename);
 	}
 	
 	
@@ -34,18 +38,23 @@ public class FileManager
 		// Parses file
 		FileParser fp = new FileParser(inputFile.getAbsolutePath(), inputFile.getParent(), filename+"_parsed");
 		File out = new File(fp.parseFile());
-		
+		//inputFile =  new File(fp.parseFile());
 		// Changes parsed file name to the same as received filename
-		//inputFile.delete();
-		//out.renameTo(inputFile);
+		createBackupFile();
+		inputFile.delete();
+		out.renameTo(inputFile);
 		
 		return this;
 	}
 	
-	public FileManager compileFile(String classOutput)
+	public FileManager compileFile(String classOutput, String classPackage)
 	{
+		System.out.println("Compile "+inputFile.getAbsolutePath());
+		
+		classOutput = classOutput + "\\" + classPackage.replace(".", "\\");
+		
 		// Compiles parsed file
-		FileCompiler.compile(filename, classOutput);
+		FileCompiler.compile(inputFile.getAbsolutePath(), classOutput);
 		
 		return this;
 	}

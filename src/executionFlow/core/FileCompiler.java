@@ -14,11 +14,19 @@ public class FileCompiler
 	
 	public FileCompiler(String filepath)
 	{
+		System.out.println("FP: "+filepath);
 		//this.file = new File(filepath);
 	}
 	
+	/**
+	 * 
+	 * @param fileToCompile Absolute path of source file to be compiled
+	 * @param outputDir
+	 * @return
+	 */
 	public static String compile(String fileToCompile, String outputDir)
 	{
+		//System.out.println("output: "+outputDir);
 		//String fileToCompile = "test_else.java";
 		//String[] args = new String[3];
 		/*
