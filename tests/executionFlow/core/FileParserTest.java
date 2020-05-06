@@ -8,27 +8,62 @@ import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 
+import executionFlow.runtime.SkipCollection;
+
+@SkipCollection
 public class FileParserTest {
 	@Test
-	public void testFile() throws NoSuchAlgorithmException
+	public void testParseElse()
 	{
-		String filename = "test_else.java";
-		File f = new File(filename);
-		try {
-			Files.copy(
-				f.toPath(), 
-				new File(filename+".original").toPath(), 
-				StandardCopyOption.REPLACE_EXISTING,
-				StandardCopyOption.COPY_ATTRIBUTES
-			);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String currentDir = new File("tests\\executionFlow\\core\\files").getAbsolutePath();
+		String filename = "test_else";
+		File f = new File(currentDir, filename+".java");
 		
-		FileParser fp = new FileParser("test_else.java", null, "test_else_parsed");
-		File out = new File(fp.parseFile());
-		f.delete();
-		out.renameTo(f);
+		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		fp.parseFile();
+	}
+	
+	@Test
+	public void testParseTry()
+	{
+		String currentDir = new File("tests\\executionFlow\\core\\files").getAbsolutePath();
+		String filename = "test_try";
+		File f = new File(currentDir, filename+".java");
+		
+		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		fp.parseFile();
+	}
+	
+	@Test
+	public void testParseCatch()
+	{
+		String currentDir = new File("tests\\executionFlow\\core\\files").getAbsolutePath();
+		String filename = "test_catch";
+		File f = new File(currentDir, filename+".java");
+		
+		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		fp.parseFile();
+	}
+	
+	@Test
+	public void testParseSwitch()
+	{
+		String currentDir = new File("tests\\executionFlow\\core\\files").getAbsolutePath();
+		String filename = "test_switch";
+		File f = new File(currentDir, filename+".java");
+		
+		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		fp.parseFile();
+	}
+	
+	@Test
+	public void testDoWhile()
+	{
+		String currentDir = new File("tests\\executionFlow\\core\\files").getAbsolutePath();
+		String filename = "test_doWhile";
+		File f = new File(currentDir, filename+".java");
+		
+		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		fp.parseFile();
 	}
 }

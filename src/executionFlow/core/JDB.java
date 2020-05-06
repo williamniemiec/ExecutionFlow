@@ -65,7 +65,7 @@ public class JDB
 	 * computation of test path is not guaranteed.
 	 */
 	{
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	/**
@@ -162,8 +162,9 @@ public class JDB
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest+";"+lib_asm1+";"+lib_asm2;
 		String jdb_classPath = "jdb -classpath .;"+libs;
 		
-		System.out.println("jdb classpath: "+jdb_classPath);
-		System.out.println("CPR: "+classPathRoot);
+//		System.out.println("jdb classpath: "+jdb_classPath);
+//		System.out.println("CPR: "+classPathRoot);
+//		System.out.println("cis: "+classInvocationSignature);
 		ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c",jdb_classPath,"org.junit.runner.JUnitCore",classInvocationSignature);
 		pb.directory(new File(classPathRoot));
 
@@ -483,8 +484,8 @@ public class JDB
 							}
 						}
 						
-						System.out.println("packageFolders: "+packageFolders);
-						System.out.println("FILE: "+file);
+//						System.out.println("packageFolders: "+packageFolders);
+//						System.out.println("FILE: "+file);
 						classPathRoot = file.toString();
 						
 						return FileVisitResult.TERMINATE;

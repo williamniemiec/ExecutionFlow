@@ -26,7 +26,7 @@ public class FileCompiler
 	 */
 	public static String compile(String fileToCompile, String outputDir)
 	{
-		//System.out.println("output: "+outputDir);
+//		System.out.println("output: "+outputDir);
 		//String fileToCompile = "test_else.java";
 		//String[] args = new String[3];
 		/*

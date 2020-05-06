@@ -59,7 +59,11 @@ public class FileParser
 			 BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
 			String line, nextLine;
 			String rVarDeclarationWithoutInitialization = "( |\\t)*[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
-			String rTryBlock = "try(\\s|\\t)?\\{";
+			//String rTryBlock = "try(\\s|\\t)?\\{";
+			Pattern elsePattern = Pattern.compile("[\\s\\}]else[\\s\\{]");
+			Pattern doPattern = Pattern.compile("(\\t|\\ )+do[\\s\\{]");
+			Pattern tryPattern = Pattern.compile("(\\t|\\ )+try[\\s\\{]");
+			Pattern switchPattern = Pattern.compile("(\\t|\\ )+case");
 			//Pattern pVarDeclarationWithoutInitialization = Pattern.compile("[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+;");
 			//Pattern pTryBlock = Pattern.compile("try(\\s|\\t)?\\{");
 			String parsedLine = null;
@@ -70,13 +74,10 @@ public class FileParser
 				// Parses file line by line
 				//System.out.println(line);
 				//System.out.println(++c);
-				Pattern elsePattern = Pattern.compile("[\\s\\}]else[\\s\\{]");
-				Pattern doPattern = Pattern.compile("do[\\s\\{]");
-				Pattern tryPattern = Pattern.compile("try[\\s\\{]");
 				// Try
 				// Problem: try without curly braces
 				//Matcher m = rTryBlock.matcher(line);
-				if (tryPattern.matcher(line).find() && line.matches(rTryBlock)) {
+				if (tryPattern.matcher(line).find() && tryPattern.matcher(line).find()) {
 					parsedLine = parse_try(line, nextLine);
 				} else if (	!line.contains("return ") && !line.contains("return(") && 
 							!line.contains("package ") && !line.contains("class ") && 
@@ -87,6 +88,8 @@ public class FileParser
 					parsedLine = parse_else(line, nextLine);
 				} else if (doPattern.matcher(line).find()) {
 					parsedLine = parse_do(line, nextLine);
+				}  else if (switchPattern.matcher(line).find()) {
+					parsedLine = parse_switch(line);
 				} else {
 					parsedLine = line;
 				}
@@ -176,10 +179,11 @@ public class FileParser
 	private String parse_try(String line, String nextLine)
 	{
 		StringBuilder sb = new StringBuilder();
-		Pattern pTryBlock = Pattern.compile("try(\\s|\\t)?\\{");
+//		System.out.println(line);
+		Pattern pTryBlock = Pattern.compile("(\\t| )+try(\\s|\\t)?\\{");
 		Matcher m = pTryBlock.matcher(line);
-		
-		sb.append(line.substring(0, m.end()));
+		m.find();
+		//sb.append(line.substring(0, m.end()));
 		// try{int VAR_NAME=7;
 		//---
 		if (line.contains("{")) {
@@ -242,6 +246,30 @@ public class FileParser
 			sb.append(line.substring(m.end()));
 			parsedLine = sb.toString();
 		}*/
+	}
+	
+	private String parse_switch(String line)
+	{
+		StringBuilder sb = new StringBuilder();
+//		System.out.println(line);
+		Pattern p = Pattern.compile(":");
+		Matcher m = p.matcher(line);
+		m.find();
+		//sb.append(line.substring(0, m.end()));
+		// try{int VAR_NAME=7;
+		//---
+		sb.append(line.substring(0, m.start()+1));
+		
+		if (alreadyDeclared)
+			sb.append(VAR_NAME+"=7;");
+		else {
+			sb.append("int "+VAR_NAME+"=7;");
+			alreadyDeclared = true;
+		}
+		
+		sb.append(line.substring(m.start()+1));
+
+		return sb.toString();
 	}
 	
 	private static String md5(String text)
