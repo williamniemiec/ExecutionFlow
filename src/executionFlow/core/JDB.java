@@ -306,17 +306,10 @@ public class JDB
             					inMethod = false;
             					endOfMethod = !process.isAlive();
             				} else if (line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
-            					if (commandLine.contains(";")) {
+            					if (!commandLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)")) {
             						testPath.add(lineNumber);
             						lastLineAdded = lineNumber;
             					}
-            					//============
-            					/*if (lineNumber == 40) {
-            						pw.println("list");
-            						pw.flush();
-            						inputReady = true;
-            					}*/
-        						//===============
             				}
                 		}
             		}

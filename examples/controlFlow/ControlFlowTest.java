@@ -58,7 +58,7 @@ public class ControlFlowTest
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		assertTrue(tccf.tryCatchMethod_try());
 	}
-	
+	/*
 	@Test
 	public void tryCatchTest2() 
 	{
@@ -73,5 +73,5 @@ public class ControlFlowTest
 		
 		assertEquals('E', tccf.switchCaseMethod('É'));
 	}
-
+*/
 }
