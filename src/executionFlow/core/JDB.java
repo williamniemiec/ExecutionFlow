@@ -489,14 +489,25 @@ public class JDB
 					if (file.endsWith(classFileName)) {
 						file = file.getParent();
 
+//						System.out.println("FILE: "+file);
+//						System.out.println("CLASSFILENAME "+classFileName);
 						// -1 not to consider method name
 						//int packageFolders = methodInfo.getSignature().split("\\(")[0].split("\\.").length - 1;
-						int packageFolders = classInvocationSignature.split("\\.").length-1;
-						
+						//int packageFolders = classInvocationSignature.split("\\.").length-1;
+						int packageFolders = methodInfo.getMethodSignature().split("\\.").length-1;
+//						System.out.println("@@");
+//						System.out.println(classInvocationSignature);
+//						System.out.println(packageFolders);
+//						System.out.println(file);
+//						System.out.println("ms: "+methodInfo.getMethodSignature());
+//						System.out.println(methodInfo);
+//						System.out.println(packageFolders);
+//						System.out.println("@@");
 						for (int i=0; i<packageFolders; i++) {
 							file = file.getParent();
 						}
 						
+//						System.out.println("FINAL: "+file);
 //						System.out.println("packageFolders: "+packageFolders);
 //						System.out.println("methodSig: "+methodInfo.getSignature());
 //						System.out.println("FILE: "+file);

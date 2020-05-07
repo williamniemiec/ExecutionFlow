@@ -114,6 +114,7 @@ public class ExecutionFlow
 			FileManager fm = new FileManager(collector.getMethodInfo().getSrcPath());
 			
 			try {
+				//System.out.println("CLASSDIR "+collector.getMethodInfo().getClassDirectory());
 				fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory(), collector.getMethodInfo().getPackage());
 				System.out.println("Processing completed");
 				JDB jdb = new JDB(lastLineTestMethod);

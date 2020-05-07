@@ -25,7 +25,7 @@ public class FileCompiler
 	 * @return
 	 * @throws Exception 
 	 */
-	public static String compile(String fileToCompile, String outputDir) throws Exception
+	public static String compile(File fileToCompile, String outputDir) throws Exception
 	{
 //		System.out.println("output: "+outputDir);
 		//String fileToCompile = "test_else.java";
@@ -41,11 +41,13 @@ public class FileCompiler
 		*/
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		int compilationResult =	compiler.run(null, null, null, new String[] {"-d", outputDir, fileToCompile});
+		int compilationResult =	compiler.run(null, null, null, new String[] {"-d", outputDir, fileToCompile.getAbsolutePath()});
 		if(compilationResult != 0) {
 			throw new Exception("Compilation Failed");
 		}
+		//System.out.println("FILE TO COMPILE: "+fileToCompile);
+//		System.out.println("COMPILED "+outputDir+"\\"+fileToCompile.getName().split("\\.")[0]+".class");
 		
-		return outputDir+"/"+fileToCompile.split("\\.")[0]+".class";
+		return outputDir+"\\"+fileToCompile.getName().split("\\.")[0]+".class";
 	}
 }

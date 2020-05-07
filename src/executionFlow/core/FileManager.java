@@ -3,6 +3,8 @@ package executionFlow.core;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class FileManager 
@@ -52,12 +54,19 @@ public class FileManager
 	
 	public FileManager compileFile(String classOutput, String classPackage) throws Exception
 	{
+		//System.out.println("!!!!"+classPackage);
+		int packageFolders = classPackage.split("\\.").length;
+		Path file = Paths.get(classOutput);
+		for (int i=0; i<packageFolders; i++) {
+			file = file.getParent();
+		}
+		
 //		System.out.println("Compile "+inputFile.getAbsolutePath());
 		
 		//classOutput = classOutput + "\\" + classPackage.replace(".", "\\");
 		
 		// Compiles parsed file
-		FileCompiler.compile(inputFile.getAbsolutePath(), classOutput);
+		FileCompiler.compile(inputFile, file.toString());
 		
 		return this;
 	}

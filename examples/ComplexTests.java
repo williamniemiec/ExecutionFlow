@@ -17,6 +17,7 @@ public class ComplexTests
 	/**
 	 * Test method with the creation of constructors in a for loop.
 	 */
+	/*
 	@Test
 	public void testForConstructor()
 	{
@@ -32,10 +33,11 @@ public class ComplexTests
 			before = tc.factorial();
 		}
 	}
-	
+	*/
 	/**
 	 * Test methods with more than one constructor.
 	 */
+	
 	@Test
 	public void moreOneConstructor()
 	{
@@ -53,6 +55,7 @@ public class ComplexTests
 	/**
 	 * Test methods with more than one constructor and method.
 	 */
+	/*
 	@Test
 	public void moreOneConstructorAndMethod()
 	{
@@ -68,10 +71,11 @@ public class ComplexTests
 		
 		assertEquals(24, AgainstRequirementsTestClass.staticFactorial(4));
 	}
-	
+	*/
 	/**
 	 * Test methods with auxiliary methods.
 	 */
+	
 	@Test
 	public void testMethodWithAuxMethods() 
 	{
@@ -91,4 +95,5 @@ public class ComplexTests
 		
 		assertEquals(expectedResult, resp);
 	}
+	
 }
