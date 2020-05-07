@@ -66,7 +66,7 @@ public class JDB
 	 * computation of test path is not guaranteed.
 	 */
 	{
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	/**

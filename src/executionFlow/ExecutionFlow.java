@@ -103,7 +103,9 @@ public class ExecutionFlow
 	public ExecutionFlow execute() throws Throwable
 	{
 		List<List<Integer>> tp_jdb;
-
+//		System.out.println();
+//		System.out.println(collectedMethods.values());
+//		System.out.println();
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			CollectorInfo collector = collectors.get(0);
@@ -114,7 +116,7 @@ public class ExecutionFlow
 			FileManager fm = new FileManager(collector.getMethodInfo().getSrcPath());
 			
 			try {
-				//System.out.println("CLASSDIR "+collector.getMethodInfo().getClassDirectory());
+//				System.out.println("CLASSDIR "+collector.getMethodInfo().getClassDirectory());
 				fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory(), collector.getMethodInfo().getPackage());
 				System.out.println("Processing completed");
 				JDB jdb = new JDB(lastLineTestMethod);

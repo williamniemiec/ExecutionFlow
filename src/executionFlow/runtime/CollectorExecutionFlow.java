@@ -136,6 +136,22 @@ public class CollectorExecutionFlow
 	{
 		Path rootPath = Paths.get(System.getProperty("user.dir"));
 		String aux = Thread.currentThread().getStackTrace()[3].getFileName();
+//		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
+		
+		// Gets folder where .class is
+		String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
+		StringBuilder sb = new StringBuilder();
+		
+		for (int i=0; i<terms.length-1; i++) {
+			sb.append(terms[i]);
+			sb.append("\\");
+		}
+		
+		String path = sb.toString();
+		
+//		System.out.println(Thread.currentThread().getStackTrace()[3].getClassName());
+//		System.out.println(Thread.currentThread().getStackTrace()[3].getClass().getPackageName());
+//		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
 		
 		// <className>.java => <className>
 		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.");
@@ -154,7 +170,7 @@ public class CollectorExecutionFlow
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith(className+".class")) {
+		        if (file.toString().endsWith(path+className+".class")) {
 		        	classPath = file.toString();
 		        }
 		        
@@ -190,12 +206,23 @@ public class CollectorExecutionFlow
 				aux = m.group();	// <className>
 		}
 		
+		// Gets folder where .java is
+		String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
+		StringBuilder sb = new StringBuilder();
+		
+		for (int i=0; i<terms.length-1; i++) {
+			sb.append(terms[i]);
+			sb.append("\\");
+		}
+		
+		String path = sb.toString();
+		
 		final String className = aux;
 		
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith("\\"+className+".java")) {
+		        if (file.toString().endsWith(path+className+".java")) {
 		        	srcPath = file.toString();
 		        	
 		        	return FileVisitResult.TERMINATE;

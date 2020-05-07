@@ -299,7 +299,9 @@ public class ClassMethodInfo
 	public String getClassDirectory()
 	{
 		StringBuilder response = new StringBuilder();
+//		System.out.println("cp:"+classPath);
 		String[] terms = classPath.split("\\\\");
+		//System.out.println(classPath);
 		
 		for (int i=0; i<terms.length-1; i++) {
 			response.append(terms[i]);

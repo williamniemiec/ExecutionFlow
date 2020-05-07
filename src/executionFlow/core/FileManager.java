@@ -54,8 +54,10 @@ public class FileManager
 	
 	public FileManager compileFile(String classOutput, String classPackage) throws Exception
 	{
-		//System.out.println("!!!!"+classPackage);
+//		System.out.println(classOutput);
+//		System.out.println("!!!!"+classPackage);
 		int packageFolders = classPackage.split("\\.").length;
+//		System.out.println(packageFolders);
 		Path file = Paths.get(classOutput);
 		for (int i=0; i<packageFolders; i++) {
 			file = file.getParent();
@@ -64,7 +66,8 @@ public class FileManager
 //		System.out.println("Compile "+inputFile.getAbsolutePath());
 		
 		//classOutput = classOutput + "\\" + classPackage.replace(".", "\\");
-		
+//		System.out.println("FileToCompile: "+inputFile);
+//		System.out.println("OutputDir: "+file.toString());
 		// Compiles parsed file
 		FileCompiler.compile(inputFile, file.toString());
 		
