@@ -9,7 +9,7 @@ public class TestClass_ControlFlow
 	public String ifElseMethod(int num)
 	{
 		if (num < 0) {
-			return "Negative value";
+			return "";
 		}
 		
 		String response = "";
@@ -18,7 +18,7 @@ public class TestClass_ControlFlow
 			response = "Number zero";
 		} else if (num == 1) {
 			response = "Number one";
-		} else {int x = 7;
+		} else {
 			response = "Number "+num;
 		}
 		
@@ -29,8 +29,8 @@ public class TestClass_ControlFlow
 	{
 		File f = new File("tmp");
 		
-		int x=7;FileWriter fw;
-		try {x=7;
+		FileWriter fw;
+		try {
 			fw = new FileWriter(f);
 			fw.write('x');
 			fw.close();
@@ -63,32 +63,32 @@ public class TestClass_ControlFlow
 	{ 
 		letter = Character.toUpperCase(letter);
 				
-		int x;switch (letter) {
-			case 'Á':x=2;
-			case 'À':x=2;
-			case 'Ã':x=2;
-			case 'Â':x=2;
+		switch (letter) {
+			case 'Á':
+			case 'À':
+			case 'Ã':
+			case 'Â':
 				letter = 'A';
 				break;
-			case 'É':x=2;
-			case 'È':x=2;
-			case 'Ê':x=2;
+			case 'É':
+			case 'È':
+			case 'Ê':
 				letter = 'E';
 				break;
-			case 'Ì':x=2;
-			case 'Í':x=2;
-			case 'Î':x=2;
+			case 'Ì':
+			case 'Í':
+			case 'Î':
 				letter = 'I';
 				break;
-			case 'Ò':x=2;
-			case 'Ó':x=2;
-			case 'Ô':x=2;
-			case 'Õ':x=2;
+			case 'Ò':
+			case 'Ó':
+			case 'Ô':
+			case 'Õ':
 				letter = 'O';
 				break;
-			case 'Ú':x=2;
-			case 'Ù':x=2;
-			case 'Û':x=2;
+			case 'Ú':
+			case 'Ù':
+			case 'Û':
 				letter = 'U';
 				break;
 		}

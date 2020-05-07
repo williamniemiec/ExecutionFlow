@@ -65,6 +65,7 @@ public class FileParser
 			Pattern doPattern = Pattern.compile("(\\t|\\ )+do[\\s\\{]");
 			Pattern tryPattern = Pattern.compile("(\\t|\\ )+try[\\s\\{]");
 			Pattern switchPattern = Pattern.compile("(\\t|\\ )+case");
+			Pattern methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,\\s])*\\)(\\{|(\\s\\{))?");
 			//Pattern pVarDeclarationWithoutInitialization = Pattern.compile("[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+;");
 			//Pattern pTryBlock = Pattern.compile("try(\\s|\\t)?\\{");
 			String parsedLine = null;
@@ -76,8 +77,19 @@ public class FileParser
 				if (skipNextLine) {
 					skipNextLine = false;
 					bw.newLine();	// It is necessary to keep line numbers equals to original file 
+//					System.out.println();
 					continue;
 				}
+				
+				// Checks if it is a method declaration
+				if (methodDeclaration.matcher(line).find()) {
+					alreadyDeclared = false;
+					bw.write(line);
+					bw.newLine();
+//					System.out.println(line);
+					continue;
+				}
+				
 				// Parses file line by line
 				//System.out.println(line);
 				//System.out.println(++c);
@@ -125,6 +137,7 @@ public class FileParser
 				
 				bw.write(parsedLine);
 				bw.newLine();
+//				System.out.println(parsedLine);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

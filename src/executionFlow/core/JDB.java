@@ -52,7 +52,7 @@ public class JDB
 	private boolean isInternalCommand;
 	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
-	
+	String srcPath;
 	
 	//-----------------------------------------------------------------------
 	//		Initialization block
@@ -133,12 +133,15 @@ public class JDB
 	 */
 	public synchronized List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
 	{
+		System.out.println("####"+methodInfo);
+		
 		methodClassSignature = methodInfo.getMethodSignature();
 		String methodSignature = methodInfo.getMethodSignature()+"."+methodInfo.getMethodName()+"()";
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
 		extractClassPathDirectory(methodInfo);
+		srcPath = extractSrcPathDirectory(methodInfo);
 		
 		jdb_methodVisitor(methodSignature);
 		
@@ -160,12 +163,16 @@ public class JDB
 		String lib_asm1 = libPath_relative+"org.objectweb.asm_7.2.0.v20191010-1910.jar";
 		String lib_asm2 = libPath_relative+"org.objectweb.asm.tree_7.2.0.v20191010-1910.jar";
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest+";"+lib_asm1+";"+lib_asm2;
-		String jdb_classPath = "jdb -classpath .;"+libs;
+		String jdb_classPath = "-classpath .;"+libs;
+		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
+		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
 		
+		System.out.println(jdb_paths);
+		//System.out.println(new File(".").getCanonicalPath());
 //		System.out.println("jdb classpath: "+jdb_classPath);
 //		System.out.println("CPR: "+classPathRoot);
 //		System.out.println("cis: "+classInvocationSignature);
-		ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c",jdb_classPath,"org.junit.runner.JUnitCore",classInvocationSignature);
+		ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c","jdb "+jdb_paths,"org.junit.runner.JUnitCore",classInvocationSignature);
 		pb.directory(new File(classPathRoot));
 
 		return pb.start();
@@ -256,10 +263,10 @@ public class JDB
                 String line;
                 // Shell output
                 System.out.println("Generating test path...");
-                
+                String commandLine = null;
                 while (!endOfMethod && (line = br.readLine()) != null) {
                 	if (line.equals("\n") || line.equals("") || line.equals(" ")) continue;
-
+                	
                 	// -----{ DEBUG }-----
                 	if (DEBUG)
                 		System.out.println(line);
@@ -277,7 +284,8 @@ public class JDB
             		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
             			readyToDebug = true;
             			newIteration = !inMethod && (line.contains("Breakpoint hit") || (line.contains("line="+methodInvocationLine) && line.contains(classInvocationSignature)));
-
+            			commandLine = br.readLine();
+            			
             			if (isInternalCommand) {
             				inMethod = false;
             				Thread.sleep(1);
@@ -298,8 +306,17 @@ public class JDB
             					inMethod = false;
             					endOfMethod = !process.isAlive();
             				} else if (line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
-            					testPath.add(lineNumber);
-            					lastLineAdded = lineNumber;
+            					if (commandLine.contains(";")) {
+            						testPath.add(lineNumber);
+            						lastLineAdded = lineNumber;
+            					}
+            					//============
+            					/*if (lineNumber == 40) {
+            						pw.println("list");
+            						pw.flush();
+            						inputReady = true;
+            					}*/
+        						//===============
             				}
                 		}
             		}
@@ -313,6 +330,11 @@ public class JDB
             		
             		// Checks if there are input commands
             		while (!inputReady) { Thread.sleep(1); }
+            		
+            		// -----{ DEBUG }-----
+                	if (DEBUG && commandLine != null)
+                		System.out.println(commandLine);
+            		// -----{ END DEBUG }-----
                 }
                 br.close();
             } catch (java.io.IOException | InterruptedException e) { }
@@ -476,15 +498,15 @@ public class JDB
 						file = file.getParent();
 
 						// -1 not to consider method name
-						int packageFolders = methodInfo.getSignature().split("\\(")[0].split("\\.").length - 1;
+						//int packageFolders = methodInfo.getSignature().split("\\(")[0].split("\\.").length - 1;
+						int packageFolders = classInvocationSignature.split("\\.").length-1;
 						
-						if (packageFolders != 0) {
-							for (int i=0; i<=packageFolders; i++) {
-								file = file.getParent();
-							}
+						for (int i=0; i<packageFolders; i++) {
+							file = file.getParent();
 						}
 						
 //						System.out.println("packageFolders: "+packageFolders);
+//						System.out.println("methodSig: "+methodInfo.getSignature());
 //						System.out.println("FILE: "+file);
 						classPathRoot = file.toString();
 						
@@ -497,6 +519,20 @@ public class JDB
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private String extractSrcPathDirectory(ClassMethodInfo methodInfo)
+	{
+		int packageFolders = methodInfo.getMethodSignature().split("\\.").length-1;
+		Path file = new File(methodInfo.getSrcPath()).toPath();
+		
+		file = file.getParent();
+		
+		for (int i=0; i<packageFolders; i++) {
+			file = file.getParent();
+		}
+		
+		return file.toString();
 	}
 	
 	/**

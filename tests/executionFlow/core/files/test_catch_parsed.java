@@ -8,8 +8,8 @@ public class test_catch
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;int _8f3728f8e712564b0f64928d936479a9=7;
-		try {_8f3728f8e712564b0f64928d936479a9=7;
+		FileWriter fw;int _a1a88a88fcd95129f368049b1ebe11b9=7;
+		try {_a1a88a88fcd95129f368049b1ebe11b9=7;
 			throw new IOException();
 		} catch (IOException e) {
 			return false;

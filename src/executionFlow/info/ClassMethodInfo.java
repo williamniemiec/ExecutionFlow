@@ -312,4 +312,21 @@ public class ClassMethodInfo
 		
 		return response.toString();
 	}
+	
+	public String getSrcDirectory()
+	{
+		StringBuilder response = new StringBuilder();
+		String[] terms = srcPath.split("\\\\");
+		
+		for (int i=0; i<terms.length-1; i++) {
+			response.append(terms[i]);
+			response.append("\\");
+		}
+		
+		if (response.length() > 0) {
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
+	}
 }

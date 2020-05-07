@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class ControlFlowTest 
 {
-	
+	/*
 	@Test
 	public void ifElseTest_earlyReturn() 
 	{
@@ -18,7 +18,7 @@ public class ControlFlowTest
 		String expectedResult = "Negative value";
 		
 		assertEquals(expectedResult, result);
-	}
+	}*/
 	
 	/*
 	@Test
@@ -51,7 +51,7 @@ public class ControlFlowTest
 		
 		assertEquals(expectedResult, result);
 	}
-	
+	*/
 	@Test
 	public void tryCatchTest1() 
 	{
@@ -73,5 +73,5 @@ public class ControlFlowTest
 		
 		assertEquals('E', tccf.switchCaseMethod('É'));
 	}
-	*/
+
 }
