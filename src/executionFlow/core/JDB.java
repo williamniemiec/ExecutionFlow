@@ -66,7 +66,7 @@ public class JDB
 	 * computation of test path is not guaranteed.
 	 */
 	{
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	/**
@@ -304,6 +304,7 @@ public class JDB
             					newIteration = false;
             					inMethod = false;
             					endOfMethod = !process.isAlive();
+            					lastLineAdded = -1;
             				} else if (line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
             					if (!commandLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)")) {
             						testPath.add(lineNumber);
