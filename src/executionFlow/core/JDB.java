@@ -52,7 +52,8 @@ public class JDB
 	private boolean isInternalCommand;
 	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
-	String srcPath;
+	private String srcPath;
+	
 	
 	//-----------------------------------------------------------------------
 	//		Initialization block
@@ -133,8 +134,6 @@ public class JDB
 	 */
 	public synchronized List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
 	{
-		System.out.println("####"+methodInfo);
-		
 		methodClassSignature = methodInfo.getMethodSignature();
 		String methodSignature = methodInfo.getMethodSignature()+"."+methodInfo.getMethodName()+"()";
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
@@ -167,7 +166,7 @@ public class JDB
 		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
 		
-		System.out.println(jdb_paths);
+//		System.out.println(jdb_paths);
 		//System.out.println(new File(".").getCanonicalPath());
 //		System.out.println("jdb classpath: "+jdb_classPath);
 //		System.out.println("CPR: "+classPathRoot);

@@ -112,17 +112,23 @@ public class ExecutionFlow
 			//System.out.println("sig: "+collector.getMethodInfo().getPackage());
 			System.out.println("Processing source file...");
 			FileManager fm = new FileManager(collector.getMethodInfo().getSrcPath());
-			fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory(), collector.getMethodInfo().getPackage());
 			
-			JDB jdb = new JDB(lastLineTestMethod);
-			// Computes test path from JDB
-			tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
-			
-			// Stores each computed test path
-			storeTestPath(tp_jdb, collector);
-			
-			// Reverts parsed file to its original state
-			fm.revert();
+			try {
+				fm.parseFile().compileFile(collector.getMethodInfo().getClassDirectory(), collector.getMethodInfo().getPackage());
+				System.out.println("Processing completed");
+				JDB jdb = new JDB(lastLineTestMethod);
+				
+				// Computes test path from JDB
+				tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
+				
+				// Stores each computed test path
+				storeTestPath(tp_jdb, collector);
+				
+				// Reverts parsed file to its original state
+				fm.revert();
+			} catch (Exception e) {
+				System.out.println("Processing error");
+			}
 		}
 		
 		return this;

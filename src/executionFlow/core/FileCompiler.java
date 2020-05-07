@@ -23,8 +23,9 @@ public class FileCompiler
 	 * @param fileToCompile Absolute path of source file to be compiled
 	 * @param outputDir
 	 * @return
+	 * @throws Exception 
 	 */
-	public static String compile(String fileToCompile, String outputDir)
+	public static String compile(String fileToCompile, String outputDir) throws Exception
 	{
 //		System.out.println("output: "+outputDir);
 		//String fileToCompile = "test_else.java";
@@ -41,19 +42,10 @@ public class FileCompiler
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		int compilationResult =	compiler.run(null, null, null, new String[] {"-d", outputDir, fileToCompile});
-		if(compilationResult == 0){
-			System.out.println("Compilation is successful");
-		}else{
-			System.out.println("Compilation Failed");
+		if(compilationResult != 0) {
+			throw new Exception("Compilation Failed");
 		}
 		
 		return outputDir+"/"+fileToCompile.split("\\.")[0]+".class";
-	}
-	
-	public static void main(String[] args) 
-	{
-		//FileCompiler fc = new FileCompiler("test_else.java");
-		//FileCompiler.compile("src\\executionFlow\\ExecutionFlow.java");
-		FileCompiler.compile("test_else.java", null);
 	}
 }

@@ -50,7 +50,7 @@ public class FileManager
 		return this;
 	}
 	
-	public FileManager compileFile(String classOutput, String classPackage)
+	public FileManager compileFile(String classOutput, String classPackage) throws Exception
 	{
 //		System.out.println("Compile "+inputFile.getAbsolutePath());
 		

@@ -37,7 +37,6 @@ public class FileParserTest
 		fp.parseFile();
 	}
 	
-	/*
 	@Test
 	public void testParseCatch()
 	{
@@ -70,7 +69,7 @@ public class FileParserTest
 		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
 	}
-	*/
+	
 	//--------------------------------------------------------------------------------------
 	/*
 	@Test
