@@ -26,6 +26,7 @@ public class FileParserTest
 	}
 	
 	 */
+	/*
 	@Test
 	public void testParseTry()
 	{
@@ -69,7 +70,7 @@ public class FileParserTest
 		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
 	}
-	
+	*/
 	//--------------------------------------------------------------------------------------
 	/*
 	@Test
@@ -127,4 +128,15 @@ public class FileParserTest
 		fp.parseFile();
 	}
 	*/
+	
+	@Test
+	public void testElseNoCurlyBrackets()
+	{
+		String currentDir = new File("tests\\executionFlow\\core\\files\\noCurlyBraces").getAbsolutePath();
+		String filename = "test_else_noCurlyBraces";
+		File f = new File(currentDir, filename+".java");
+		
+		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		fp.parseFile();
+	}
 }

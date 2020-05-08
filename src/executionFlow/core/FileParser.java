@@ -74,7 +74,10 @@ public class FileParser
 			Pattern closedCurlyBracketsPattern = Pattern.compile("\\}");
 			String parsedLine = null;
 			br2.readLine();
-			//int c=0;
+			
+			boolean inLoop = false;
+			
+			// Parses file line by line
 			while ((line = br.readLine()) != null) {
 				nextLine = br2.readLine();
 				
@@ -122,30 +125,34 @@ public class FileParser
 								}
 							}
 						} else if (!nextLine.contains("catch")){
-							parsedLine = line + "}";
-							elseNoCurlyBrackets = false;
-							
-							if (inNestedStructWithoutCurlyBrackets) {	// In block code without curly brackets
-								inNestedStructWithoutCurlyBrackets = false;
+							if (!inNestedStructWithoutCurlyBrackets) {	// In block code with curly brackets
+								parsedLine = line + "}";
+								elseNoCurlyBrackets = false;
+							} else {	// In block code without curly brackets
+								if (line.contains("for") || line.contains("while")) {	
+									inLoop = true;
+									parsedLine = line;
+//									System.out.println(line);
+//									System.out.println("IN LOOP");
+								} else if (inLoop && !nextLine.contains("for") && !nextLine.contains("while")) {
+									inNestedStructWithoutCurlyBrackets = false;
+									inLoop = false;
+									
+									if (!nextLine.contains("try")) {
+										elseNoCurlyBrackets = false;
+										parsedLine = line + "}";
+									} else {
+										parsedLine = line;
+									}
+								}
 							}
 						}
 						
-						bw.write(parsedLine);
-						bw.newLine();
-						continue;
+//						bw.write(parsedLine);
+//						bw.newLine();
+//						continue;
 					}
-				}
-				
-				
-				// Parses file line by line
-				//System.out.println(line);
-				//System.out.println(++c);
-				// Try
-				// Problem: try without curly brackets
-				//Matcher m = rTryBlock.matcher(line);
-				
-				
-				if (tryFinallyPattern.matcher(line).find() && tryFinallyPattern.matcher(line).find()) {	// Try or finally
+				} else if (tryFinallyPattern.matcher(line).find() && tryFinallyPattern.matcher(line).find()) {	// Try or finally
 					if (nextLine.matches("^(\\s|\\t)+\\{(\\s|\\t)*$")) {
 						line = line + " {";
 						skipNextLine = true;
@@ -169,10 +176,13 @@ public class FileParser
 						// If it is, put } at the end
 						// Else put } at the end of line
 						
-						if (!nextLine.matches("^(\\s|\\t)+\\{(\\s|\\t)*$")) {
+						//if (!nextLine.matches("^(\\s|\\t)+\\{(\\s|\\t)*$")) {
 							if (!nextLine.contains("{")) {	// If there are not curly brackets in else nor next line
 								// Checks if it is an one line command
-								if (nextLine.contains(";")) { // One line command
+								if (nextLine.matches(";$")) { // One line command
+//									System.out.println("MATCHED!");
+//									System.out.println(parsedLine);
+//									System.out.println(nextLine +"}");
 									bw.write(parsedLine);
 									bw.newLine();
 									
@@ -184,7 +194,7 @@ public class FileParser
 									inNestedStructWithoutCurlyBrackets = true;
 								}
 							}
-						}
+						//}
 					}
 					
 				} else if (doPattern.matcher(line).find()) {								// Do while
@@ -209,11 +219,10 @@ public class FileParser
 //					bw.newLine();
 				} else {
 					parsedLine = line;
-					
 //					bw.write(parsedLine);
 //					bw.newLine();
 				}
-				
+				System.out.println(parsedLine);
 				bw.write(parsedLine);
 				bw.newLine();
 //				System.out.println(parsedLine);
