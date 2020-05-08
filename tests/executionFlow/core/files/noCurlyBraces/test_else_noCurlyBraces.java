@@ -19,6 +19,8 @@ public class test_else_noCurlyBraces
 			else if (false) w++;
 			else 
 				for(;;)
+					while (w == 0) 
+						w++;
 					for(;;)
 						w++;
 		}

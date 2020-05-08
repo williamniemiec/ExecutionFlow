@@ -151,8 +151,10 @@ public class FileParser
 						}
 					}
 					
-					if (curlyBrackets.empty()) {							
+					if (curlyBrackets.empty()) {
+//						System.out.println(line);
 						if (line.matches(regex_catch)) {
+							
 							if (line.contains("{") && !line.contains("}")) {
 								curlyBrackets.push('{');
 							} else if (line.contains("{") && line.contains("}")) {
@@ -164,20 +166,28 @@ public class FileParser
 								}
 							}
 						} else if (!nextLine.matches(regex_catch)){
+//							System.out.println("noCatch");
+//							System.out.println("INLOOP? "+inLoop);
+//							System.out.println("inNestedStructWithoutCurlyBrackets: "+inNestedStructWithoutCurlyBrackets);
 							if (!inNestedStructWithoutCurlyBrackets) {	// In block code with curly brackets
 								line += "}";
 								elseNoCurlyBrackets = false;
+//								System.out.println("OUTELSE");
 							} else {	// In block code without curly brackets
 								if (line.matches(regex_for) || line.matches(regex_while)) {	
 									inLoop = true;
-								} else if (inLoop && !nextLine.matches(regex_for) && !nextLine.matches(regex_while)) {
+
+								} 
+								
+								if (inLoop && !nextLine.matches(regex_for) && !nextLine.matches(regex_while) && !nextLine.matches(regex_try)) {
 									inNestedStructWithoutCurlyBrackets = false;
 									inLoop = false;
-									
-									if (!nextLine.matches(regex_try)) {
-										elseNoCurlyBrackets = false;
-										line += "}";
-									}
+//									System.out.println("outLoop");
+
+//									if (!nextLine.matches(regex_try)) {
+//										elseNoCurlyBrackets = false;
+//										line += "}";
+//									}
 								}
 							}
 						}

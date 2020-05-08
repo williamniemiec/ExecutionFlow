@@ -6,21 +6,23 @@ public class test_else_noCurlyBraces
 			return "";
 		
 		String response = "";
-		int w;int _b100f06c277acb9f2130e312af63bd1c=7;
+		int w;int _a6b95619d55a89d3129adb62de5f4b46=7;
 		w = 0;
 
 		if (num == 0)
 			response = "Number zero";
 		else if (num == 1)
 			response = "Number one";
-		else {_b100f06c277acb9f2130e312af63bd1c=7;
+		else {_a6b95619d55a89d3129adb62de5f4b46=7;
 			if (false)
 				w++;
 			else if (false) w++;
-			else {_b100f06c277acb9f2130e312af63bd1c=7;
+			else {_a6b95619d55a89d3129adb62de5f4b46=7;
 				for(;;)
-					for(;;)
+					while (w == 0) 
 						w++;}
+					for(;;)
+						w++;
 		}
 		
 		return response;
