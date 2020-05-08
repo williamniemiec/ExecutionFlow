@@ -28,11 +28,25 @@ public class FileParser
 	private Stack<Character> curlyBrackets;
 	boolean elseNoCurlyBrackets;
 	boolean inNestedStructWithoutCurlyBrackets;
+	boolean skipNextLine;
+	private static final String regex_onlyOpenCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
+	private static final String regex_varDeclarationWithoutInitialization = "( |\\t)*[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
+	private static final String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+	private static final String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+	private static final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+	private static final String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
+	private static final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
+	private static final Pattern pattern_else = Pattern.compile("[\\s\\}]else[\\s\\{]");
+	private static final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
+	private static final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+case");
+	private static final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,\\s])*\\)(\\{|(\\s\\{)||\\/)*");
+	private static final Pattern pattern_openCurlyBrackets = Pattern.compile("\\{");
+	private static final Pattern pattern_closedCurlyBrackets = Pattern.compile("\\}");
 	
 	/**
 	 * If true, displays processed lines.
 	 */
-	private final boolean DEBUG;
+	private static final boolean DEBUG;
 	
 	
 	//-----------------------------------------------------------------------
@@ -50,7 +64,7 @@ public class FileParser
 	/**
 	 * Configures environment. If {@link DEBUG} is true, displays processed lines.
 	 */
-	{
+	static {
 		DEBUG = false;
 	}
 	
@@ -79,7 +93,7 @@ public class FileParser
 		if (file == null) { return ""; }
 
 		File outputFile;
-		boolean skipNextLine = false;
+		//boolean skipNextLine = false;
 		
 		if (outputDir != null)
 			outputFile = new File(outputDir, outputName+".java");
@@ -90,19 +104,7 @@ public class FileParser
 			 BufferedReader br2 = new BufferedReader(new FileReader(file));
 			 BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
 			String line, nextLine;
-			String regex_varDeclarationWithoutInitialization = "( |\\t)*[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
-			Pattern pattern_else = Pattern.compile("[\\s\\}]else[\\s\\{]");
-			Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
-			Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
-			Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+case");
-			Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,\\s])*\\)(\\{|(\\s\\{))?");
-			Pattern pattern_openCurlyBrackets = Pattern.compile("\\{");
-			Pattern pattern_closedCurlyBrackets = Pattern.compile("\\}");
-			String regex_onlyOpenCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t)*$";
-			String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-			String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-			String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-			String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
+
 			String parsedLine = null;
 			br2.readLine();
 			
@@ -183,10 +185,7 @@ public class FileParser
 				} 
 				
 				if (pattern_tryFinally.matcher(line).find() && pattern_tryFinally.matcher(line).find()) {	// Try or finally
-					if (nextLine.matches(regex_onlyOpenCurlyBracket)) {
-						line = line + " {";
-						skipNextLine = true;
-					}
+					checkCurlyBracketNewLine(line, nextLine);
 					
 					parsedLine = parse_try_finally(line);
 				} else if (	!line.contains("return ") && !line.contains("return(") && 		// Var declaration
@@ -194,10 +193,7 @@ public class FileParser
 							line.matches(regex_varDeclarationWithoutInitialization)) {
 					parsedLine = parse_varDeclaration(line);
 				} else if (!line.contains("if") && pattern_else.matcher(line).find()) {		// Else
-					if (nextLine.matches(regex_onlyOpenCurlyBracket)) {
-						line = line + " {";
-						skipNextLine = true;
-					}
+					checkCurlyBracketNewLine(line, nextLine);
 					
 					parsedLine = parse_else(line);
 					if (elseNoCurlyBrackets) {
@@ -225,21 +221,13 @@ public class FileParser
 					}
 					
 				} else if (pattern_do.matcher(line).find()) {								// Do while
-					if (nextLine.matches(regex_onlyOpenCurlyBracket)) {
-						line = line + " {";
-						skipNextLine = true;
-					}
-					
+					checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_do(line);
 					
 //					bw.write(parsedLine);
 //					bw.newLine();
 				}  else if (pattern_switch.matcher(line).find()) {							// Switch
-					if (nextLine.matches(regex_onlyOpenCurlyBracket)) {
-						line = line + " {";
-						skipNextLine = true;
-					}
-					
+					checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_switch(line);
 					
 				} else {
@@ -330,8 +318,9 @@ public class FileParser
 	{
 		StringBuilder sb = new StringBuilder();
 //		System.out.println(line);
-		Pattern pTryBlock = Pattern.compile("(\\t| )+try(\\s|\\t)?\\{");
-		Matcher m = pTryBlock.matcher(line);
+		//Pattern pTryBlock = Pattern.compile("(\\t| )+try(\\s|\\t)?\\{");
+		//Matcher m = pTryBlock.matcher(line);
+		Matcher m = pattern_tryFinally.matcher(line);
 		m.find();
 		//sb.append(line.substring(0, m.end()));
 		// try{int VAR_NAME=7;
@@ -408,6 +397,14 @@ public class FileParser
 		sb.append(line.substring(m.start()+1));
 
 		return sb.toString();
+	}
+	
+	private void checkCurlyBracketNewLine(String line, String nextLine)
+	{
+		if (nextLine.matches(regex_onlyOpenCurlyBracket)) {
+			line = line + " {";
+			skipNextLine = true;
+		}
 	}
 	
 	private static String md5(String text)
