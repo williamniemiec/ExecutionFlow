@@ -117,7 +117,7 @@ public class FileParser
 							if (line.contains("{") && !line.contains("}")) {
 								curlyBrackets.push('{');
 							} else if (line.contains("{") && line.contains("}")) {
-								parsedLine = line + "}";
+								line += "}";
 								elseNoCurlyBrackets = false;
 								
 								if (inNestedStructWithoutCurlyBrackets) {	// In block code without curly brackets
@@ -126,12 +126,12 @@ public class FileParser
 							}
 						} else if (!nextLine.contains("catch")){
 							if (!inNestedStructWithoutCurlyBrackets) {	// In block code with curly brackets
-								parsedLine = line + "}";
+								line += "}";
 								elseNoCurlyBrackets = false;
 							} else {	// In block code without curly brackets
 								if (line.contains("for") || line.contains("while")) {	
 									inLoop = true;
-									parsedLine = line;
+									//parsedLine = line;
 //									System.out.println(line);
 //									System.out.println("IN LOOP");
 								} else if (inLoop && !nextLine.contains("for") && !nextLine.contains("while")) {
@@ -140,9 +140,7 @@ public class FileParser
 									
 									if (!nextLine.contains("try")) {
 										elseNoCurlyBrackets = false;
-										parsedLine = line + "}";
-									} else {
-										parsedLine = line;
+										line += "}";
 									}
 								}
 							}
@@ -152,7 +150,9 @@ public class FileParser
 //						bw.newLine();
 //						continue;
 					}
-				} else if (tryFinallyPattern.matcher(line).find() && tryFinallyPattern.matcher(line).find()) {	// Try or finally
+				} 
+				
+				if (tryFinallyPattern.matcher(line).find() && tryFinallyPattern.matcher(line).find()) {	// Try or finally
 					if (nextLine.matches("^(\\s|\\t)+\\{(\\s|\\t)*$")) {
 						line = line + " {";
 						skipNextLine = true;
@@ -222,7 +222,7 @@ public class FileParser
 //					bw.write(parsedLine);
 //					bw.newLine();
 				}
-				System.out.println(parsedLine);
+				//System.out.println(parsedLine);
 				bw.write(parsedLine);
 				bw.newLine();
 //				System.out.println(parsedLine);
@@ -281,7 +281,13 @@ public class FileParser
 			
 			int indexAfterElse = line.indexOf("else")+4; 
 			sb.append(line.substring(0, indexAfterElse));
-			sb.append(" {");
+			
+			if (alreadyDeclared)
+				sb.append(" {"+VAR_NAME+"=7;");
+			else {
+				sb.append(" {"+"int "+VAR_NAME+"=7;");
+				alreadyDeclared = true;
+			}
 			
 			String afterElse = line.substring(indexAfterElse);
 			if (!afterElse.matches("^(\\s|\\t)+$")) {	// Command in same line
