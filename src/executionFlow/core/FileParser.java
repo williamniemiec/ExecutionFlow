@@ -17,6 +17,9 @@ import java.util.regex.Pattern;
 
 public class FileParser 
 {
+	//-----------------------------------------------------------------------
+	//		Attributes
+	//-----------------------------------------------------------------------
 	private File file;
 	private static final String VAR_NAME;
 	private boolean alreadyDeclared;
@@ -26,7 +29,15 @@ public class FileParser
 	boolean elseNoCurlyBrackets;
 	boolean inNestedStructWithoutCurlyBrackets;
 	
+	/**
+	 * If true, displays processed lines.
+	 */
+	private final boolean DEBUG;
 	
+	
+	//-----------------------------------------------------------------------
+	//		Initialization blocks
+	//-----------------------------------------------------------------------
 	/**
 	 * Generates variable name. It will be current time encrypted in MD5 to
 	 * avoid conflict with variables already declared.
@@ -36,6 +47,17 @@ public class FileParser
 		VAR_NAME = "_"+md5(String.valueOf(now.getTime()));
 	}
 	
+	/**
+	 * Configures environment. If {@link DEBUG} is true, displays processed lines.
+	 */
+	{
+		DEBUG = false;
+	}
+	
+	
+	//-----------------------------------------------------------------------
+	//		Constructor
+	//-----------------------------------------------------------------------
 	public FileParser(String filename, String outputDir, String outputName)
 	{
 		file = new File(filename);
@@ -45,15 +67,17 @@ public class FileParser
 		curlyBrackets = new Stack<>();
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	// Open .java, 
 	// parse file 
 	// saves parsed file with its original name + _tmp.java
 	public String parseFile()
 	{
 		if (file == null) { return ""; }
-		
-		//String[] filename = file.getName().split("\\.");
-		//File outputFile = new File(filename[0]+"_tmp.java");
+
 		File outputFile;
 		boolean skipNextLine = false;
 		
@@ -66,15 +90,19 @@ public class FileParser
 			 BufferedReader br2 = new BufferedReader(new FileReader(file));
 			 BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
 			String line, nextLine;
-			String rVarDeclarationWithoutInitialization = "( |\\t)*[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
+			String regex_varDeclarationWithoutInitialization = "( |\\t)*[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
 			Pattern pattern_else = Pattern.compile("[\\s\\}]else[\\s\\{]");
-			Pattern pattern_do = Pattern.compile("(\\t|\\ )+do[\\s\\{]");
-			Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ )+(try|finally)[\\s\\{]");
-			Pattern pattern_switch = Pattern.compile("(\\t|\\ )+case");
+			Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
+			Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
+			Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+case");
 			Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,\\s])*\\)(\\{|(\\s\\{))?");
 			Pattern pattern_openCurlyBrackets = Pattern.compile("\\{");
 			Pattern pattern_closedCurlyBrackets = Pattern.compile("\\}");
 			String regex_onlyOpenCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t)*$";
+			String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+			String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+			String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+			String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
 			String parsedLine = null;
 			br2.readLine();
 			
@@ -87,7 +115,10 @@ public class FileParser
 				if (skipNextLine) {
 					skipNextLine = false;
 					bw.newLine();	// It is necessary to keep line numbers equals to original file 
-//					System.out.println();
+					
+					if (DEBUG)
+						System.out.println();
+					
 					continue;
 				}
 				
@@ -96,7 +127,10 @@ public class FileParser
 					alreadyDeclared = false;
 					bw.write(line);
 					bw.newLine();
-//					System.out.println(line);
+					
+					if (DEBUG)
+						System.out.println(line);
+					
 					continue;
 				}
 				
@@ -116,7 +150,7 @@ public class FileParser
 					}
 					
 					if (curlyBrackets.empty()) {							
-						if (line.contains("catch")) {
+						if (line.matches(regex_catch)) {
 							if (line.contains("{") && !line.contains("}")) {
 								curlyBrackets.push('{');
 							} else if (line.contains("{") && line.contains("}")) {
@@ -127,18 +161,18 @@ public class FileParser
 									inNestedStructWithoutCurlyBrackets = false;
 								}
 							}
-						} else if (!nextLine.contains("catch")){
+						} else if (!nextLine.matches(regex_catch)){
 							if (!inNestedStructWithoutCurlyBrackets) {	// In block code with curly brackets
 								line += "}";
 								elseNoCurlyBrackets = false;
 							} else {	// In block code without curly brackets
-								if (line.contains("for") || line.contains("while")) {	
+								if (line.matches(regex_for) || line.matches(regex_while)) {	
 									inLoop = true;
-								} else if (inLoop && !nextLine.contains("for") && !nextLine.contains("while")) {
+								} else if (inLoop && !nextLine.matches(regex_for) && !nextLine.matches(regex_while)) {
 									inNestedStructWithoutCurlyBrackets = false;
 									inLoop = false;
 									
-									if (!nextLine.contains("try")) {
+									if (!nextLine.matches(regex_try)) {
 										elseNoCurlyBrackets = false;
 										line += "}";
 									}
@@ -157,7 +191,7 @@ public class FileParser
 					parsedLine = parse_try_finally(line);
 				} else if (	!line.contains("return ") && !line.contains("return(") && 		// Var declaration
 							!line.contains("package ") && !line.contains("class ") && 
-							line.matches(rVarDeclarationWithoutInitialization)) {
+							line.matches(regex_varDeclarationWithoutInitialization)) {
 					parsedLine = parse_varDeclaration(line);
 				} else if (!line.contains("if") && pattern_else.matcher(line).find()) {		// Else
 					if (nextLine.matches(regex_onlyOpenCurlyBracket)) {
@@ -176,6 +210,9 @@ public class FileParser
 							if (nextLine.matches(";$")) { // One line command
 								bw.write(parsedLine);
 								bw.newLine();
+								
+								if (DEBUG)
+									System.out.println(parsedLine);
 								
 								nextLine = br2.readLine();
 								line = br.readLine();
@@ -205,17 +242,15 @@ public class FileParser
 					
 					parsedLine = parse_switch(line);
 					
-//					bw.write(parsedLine);
-//					bw.newLine();
 				} else {
 					parsedLine = line;
-//					bw.write(parsedLine);
-//					bw.newLine();
 				}
-				//System.out.println(parsedLine);
+				
+				if (DEBUG)
+					System.out.println(parsedLine);
+					
 				bw.write(parsedLine);
 				bw.newLine();
-//				System.out.println(parsedLine);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
