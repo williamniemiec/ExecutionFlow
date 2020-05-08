@@ -1,4 +1,4 @@
-public class TestClass_ControlFlow 
+public class test_else_noCurlyBraces 
 {
 	public String ifElseMethod(int num)
 	{
@@ -7,23 +7,21 @@ public class TestClass_ControlFlow
 		
 		String response = "";
 		int w;
-        int k;
+		w = 0;
 
 		if (num == 0)
 			response = "Number zero";
 		else if (num == 1)
 			response = "Number one";
-		else 
-			if (k)
-				k++;
-			else if (y) y++
-			else
-				if (true) {
-					k++;
-					y++;
-				}
-				else
-					false;
+		else {
+			if (false)
+				w++;
+			else if (false) w++;
+			else 
+				for(;;)
+					for(;;)
+						w++;
+		}
 		
 		return response;
 	}

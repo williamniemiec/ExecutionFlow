@@ -18,7 +18,7 @@ public class ControlFlowTest
 		
 		assertEquals(expectedResult, result);
 	}
-/*
+
 	@Test
 	public void ifElseTest() 
 	{
@@ -62,7 +62,6 @@ public class ControlFlowTest
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		assertFalse(tccf.tryCatchMethod_catch());
 	}
-	*/
 	
 	@Test
 	public void switchCaseTest() 
