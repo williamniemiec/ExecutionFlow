@@ -39,6 +39,10 @@ public class FileParser
 	 */
 	Map<Integer, Integer> elseBlock = new HashMap<>();
 	
+	/**
+	 * Key:else nesting level
+	 * Value: If curly brackets balance ever exceeded 2
+	 */
 	Map<Integer, Boolean> elseBlock_moreTwo = new HashMap<>();
 	
 	
