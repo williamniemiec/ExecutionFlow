@@ -539,30 +539,30 @@ public class HelpFormatter
                           final String header, final Options options, final int leftPad,
                           final int descPad, final String footer, final boolean autoUsage)
     {
-        System.out.printf("[14,2,"); if (cmdLineSyntax == null || cmdLineSyntax.length() == 0)
+        if (cmdLineSyntax == null || cmdLineSyntax.length() == 0)
         {
-            System.out.printf("3,15]\n"); throw new IllegalArgumentException("cmdLineSyntax not provided");
+            throw new IllegalArgumentException("cmdLineSyntax not provided");
         }
 
-        System.out.printf("4,"); if (autoUsage)
+        if (autoUsage)
         {
-            System.out.printf("5,"); printUsage(pw, width, cmdLineSyntax, options);
+            printUsage(pw, width, cmdLineSyntax, options);
         }
-        else {int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+        else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
 
-            System.out.printf("7,"); printUsage(pw, width, cmdLineSyntax);
-        }
-
-        System.out.printf("8,"); if (header != null && header.trim().length() > 0)
-        {
-            System.out.printf("9,"); printWrapped(pw, width, header);
+            printUsage(pw, width, cmdLineSyntax);
         }
 
-        System.out.printf("10,"); printOptions(pw, width, options, leftPad, descPad);
-
-        System.out.printf("11,"); if (footer != null && footer.trim().length() > 0)
+        if (header != null && header.trim().length() > 0)
         {
-            System.out.printf("12,15]\n"); printWrapped(pw, width, footer);
+            printWrapped(pw, width, header);
+        }
+
+        printOptions(pw, width, options, leftPad, descPad);
+
+        if (footer != null && footer.trim().length() > 0)
+        {
+            printWrapped(pw, width, footer);
         }
     }
 
@@ -577,37 +577,37 @@ public class HelpFormatter
     public void printUsage(final PrintWriter pw, final int width, final String app, final Options options)
     {
         // initialise the string buffer
-        System.out.printf("[20,2,"); final StringBuffer buff = new StringBuffer(getSyntaxPrefix()).append(app).append(" ");
+        final StringBuffer buff = new StringBuffer(getSyntaxPrefix()).append(app).append(" ");
 
         // create a list for processed option groups
-        System.out.printf("3,"); final Collection<OptionGroup> processedGroups = new ArrayList<OptionGroup>();
+        final Collection<OptionGroup> processedGroups = new ArrayList<OptionGroup>();
 
-        System.out.printf("4,"); final List<Option> optList = new ArrayList<Option>(options.getOptions());
-        System.out.printf("5,"); if (getOptionComparator() != null)
+        final List<Option> optList = new ArrayList<Option>(options.getOptions());
+        if (getOptionComparator() != null)
         {
-            System.out.printf("6,"); Collections.sort(optList, getOptionComparator());
+            Collections.sort(optList, getOptionComparator());
         }
         // iterate over the options
-        System.out.printf("7,"); for (final Iterator<Option> it = optList.iterator(); it.hasNext();)
+        for (final Iterator<Option> it = optList.iterator(); it.hasNext();)
         {
             // get the next Option
-            System.out.printf("8,"); final Option option = it.next();
+            final Option option = it.next();
 
             // check if the option is part of an OptionGroup
-            System.out.printf("9,"); final OptionGroup group = options.getOptionGroup(option);
+            final OptionGroup group = options.getOptionGroup(option);
 
             // if the option is part of a group
-            System.out.printf("10,"); if (group != null)
+            if (group != null)
             {
                 // and if the group has not already been processed
-                System.out.printf("11,"); if (!processedGroups.contains(group))
+                if (!processedGroups.contains(group))
                 {
                     // add the group to the processed list
-                    System.out.printf("12,"); processedGroups.add(group);
+                    processedGroups.add(group);
 
 
                     // add the usage clause
-                    System.out.printf("13,"); appendOptionGroup(buff, group);
+                    appendOptionGroup(buff, group);
                 }
 
                 // otherwise the option was displayed in the group
@@ -615,20 +615,20 @@ public class HelpFormatter
             }
 
             // if the Option is not part of an OptionGroup
-            else {int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+            else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
 
-                System.out.printf("15,"); appendOption(buff, option, option.isRequired());
+                appendOption(buff, option, option.isRequired());
             }
 
-            System.out.printf("16,"); if (it.hasNext())
+            if (it.hasNext())
             {
-                System.out.printf("17,"); buff.append(" ");
-            }System.out.printf("7,");
+                buff.append(" ");
+            }
         }
 
 
         // call printWrapped
-        System.out.printf("18,21]\n"); printWrapped(pw, width, buff.toString().indexOf(' ') + 1, buff.toString());
+        printWrapped(pw, width, buff.toString().indexOf(' ') + 1, buff.toString());
     }
 
     /**
@@ -687,7 +687,7 @@ public class HelpFormatter
         {
             buff.append("-").append(option.getOpt());
         }
-        else {int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+        else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
 
             buff.append("--").append(option.getLongOpt());
         }
@@ -813,7 +813,7 @@ public class HelpFormatter
             {
                 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
             }
-            else {int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+            else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
 
                 optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());
 
@@ -831,7 +831,7 @@ public class HelpFormatter
                     // if the option has a blank argname
                     optBuf.append(' ');
                 }
-                else {_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                else {_39d1184bb15bbf79b2fe585e27e0f905=0;
 
                     optBuf.append(option.hasLongOpt() ? longOptSeparator : " ");
                     optBuf.append("<").append(argName != null ? option.getArgName() : getArgName()).append(">");
@@ -942,7 +942,7 @@ public class HelpFormatter
         try
         {
             final BufferedReader in = new BufferedReader(new StringReader(text));
-            String line;int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+            String line;
             boolean firstLine = true;
             while ((line = in.readLine()) != null)
             {
@@ -950,7 +950,7 @@ public class HelpFormatter
                 {
                     sb.append(getNewLine());
                 }
-                else {_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
 
                     firstLine = false;
                 }

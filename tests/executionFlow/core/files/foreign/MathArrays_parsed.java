@@ -323,27 +323,27 @@ public class MathArrays {
         T previous = val[0];
         final int max = val.length;
         for (int i = 1; i < max; i++) {
-            final int comp;
+            final int comp;int _39d1184bb15bbf79b2fe585e27e0f905=0;
             switch (dir) {
-            case INCREASING:int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+            case INCREASING:_39d1184bb15bbf79b2fe585e27e0f905=0;
                 comp = previous.compareTo(val[i]);
                 if (strict) {
                     if (comp >= 0) {
                         return false;
                     }
-                } else {_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                } else {_39d1184bb15bbf79b2fe585e27e0f905=0;
                     if (comp > 0) {
                         return false;
                     }
                 }
                 break;
-            case DECREASING:_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+            case DECREASING:_39d1184bb15bbf79b2fe585e27e0f905=0;
                 comp = val[i].compareTo(previous);
                 if (strict) {
                     if (comp >= 0) {
                         return false;
                     }
-                } else {_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                } else {_39d1184bb15bbf79b2fe585e27e0f905=0;
                     if (comp > 0) {
                        return false;
                     }
@@ -387,7 +387,7 @@ public class MathArrays {
                                            boolean abort) {
         if (a.length == b.length) {
             return true;
-        } else {int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+        } else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
             if (abort) {
                 throw new DimensionMismatchException(a.length, b.length);
             }
@@ -425,7 +425,7 @@ public class MathArrays {
                                            boolean abort) {
         if (a.length == b.length) {
             return true;
-        } else {_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+        } else {_39d1184bb15bbf79b2fe585e27e0f905=0;
             if (abort) {
                 throw new DimensionMismatchException(a.length, b.length);
             }
@@ -463,29 +463,29 @@ public class MathArrays {
         double previous = val[0];
         final int max = val.length;
 
-        int index;_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+        int index;_39d1184bb15bbf79b2fe585e27e0f905=0;
         ITEM:
         for (index = 1; index < max; index++) {
             switch (dir) {
-            case INCREASING:_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+            case INCREASING:_39d1184bb15bbf79b2fe585e27e0f905=0;
                 if (strict) {
                     if (val[index] <= previous) {
-                        break ITEM;_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                        break ITEM;_39d1184bb15bbf79b2fe585e27e0f905=0;
                     }
-                } else {_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                } else {_39d1184bb15bbf79b2fe585e27e0f905=0;
                     if (val[index] < previous) {
-                        break ITEM;_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                        break ITEM;_39d1184bb15bbf79b2fe585e27e0f905=0;
                     }
                 }
                 break;
-            case DECREASING:_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+            case DECREASING:_39d1184bb15bbf79b2fe585e27e0f905=0;
                 if (strict) {
                     if (val[index] >= previous) {
-                        break ITEM;_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                        break ITEM;_39d1184bb15bbf79b2fe585e27e0f905=0;
                     }
-                } else {_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                } else {_39d1184bb15bbf79b2fe585e27e0f905=0;
                     if (val[index] > previous) {
-                        break ITEM;_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+                        break ITEM;_39d1184bb15bbf79b2fe585e27e0f905=0;
                     }
                 }
                 break;
@@ -505,7 +505,7 @@ public class MathArrays {
         // Loop early exit means wrong ordering.
         if (abort) {
             throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);
-        } else {int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+        } else {
             return false;
         }
     }
@@ -766,71 +766,6 @@ public class MathArrays {
     }
 
     /**
-     * Creates a copy of the {@code source} array.
-     *
-     * @param source Array to be copied.
-     * @return the copied array.
-     */
-     public static int[] copyOf(int[] source) {
-         return copyOf(source, source.length);
-     }
-
-    /**
-     * Creates a copy of the {@code source} array.
-     *
-     * @param source Array to be copied.
-     * @return the copied array.
-     */
-     public static double[] copyOf(double[] source) {
-         return copyOf(source, source.length);
-     }
-
-    /**
-     * Creates a copy of the {@code source} array.
-     *
-     * @param source Array to be copied.
-     * @param len Number of entries to copy. If smaller then the source
-     * length, the copy will be truncated, if larger it will padded with
-     * zeroes.
-     * @return the copied array.
-     */
-    public static int[] copyOf(int[] source, int len) {
-         final int[] output = new int[len];
-         System.arraycopy(source, 0, output, 0, FastMath.min(len, source.length));
-         return output;
-     }
-
-    /**
-     * Creates a copy of the {@code source} array.
-     *
-     * @param source Array to be copied.
-     * @param len Number of entries to copy. If smaller then the source
-     * length, the copy will be truncated, if larger it will padded with
-     * zeroes.
-     * @return the copied array.
-     */
-    public static double[] copyOf(double[] source, int len) {
-         final double[] output = new double[len];
-         System.arraycopy(source, 0, output, 0, FastMath.min(len, source.length));
-         return output;
-     }
-
-    /**
-     * Creates a copy of the {@code source} array.
-     *
-     * @param source Array to be copied.
-     * @param from Initial index of the range to be copied, inclusive.
-     * @param to Final index of the range to be copied, exclusive. (This index may lie outside the array.)
-     * @return the copied array.
-     */
-    public static double[] copyOfRange(double[] source, int from, int to) {
-        final int len = to - from;
-        final double[] output = new double[len];
-        System.arraycopy(source, from, output, 0, FastMath.min(len, source.length - from));
-        return output;
-     }
-
-    /**
      * Returns true iff both arguments are null or have same dimensions and all
      * their elements are equal as defined by
      * {@link Precision#equals(float,float)}.
@@ -980,7 +915,7 @@ public class MathArrays {
         for (int i = 0; i < len; i++) {
             if (Double.isNaN(values[i])) {
                 out[i] = Double.NaN;
-            } else {int _2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+            } else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
                 out[i] = values[i] * normalizedSum / sum;
             }
         }
@@ -1018,11 +953,11 @@ public class MathArrays {
      */
     @SuppressWarnings("unchecked")
     public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-        final T[][] array;
+        final T[][] array;_39d1184bb15bbf79b2fe585e27e0f905=0;
         if (columns < 0) {
             T[] dummyRow = buildArray(field, 0);
             array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
-        } else {_2fcbe77e0b57654e2bb9fdb6d66c2d26=0;
+        } else {_39d1184bb15bbf79b2fe585e27e0f905=0;
             array = (T[][]) Array.newInstance(field.getRuntimeClass(),
                                               new int[] {
                                                   rows, columns

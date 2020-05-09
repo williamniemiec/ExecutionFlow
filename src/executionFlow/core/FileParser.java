@@ -43,7 +43,7 @@ public class FileParser
 	
 	
 	private static final String regex_onlyOpenCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
-	private static final String regex_varDeclarationWithoutInitialization = "( |\\t)*[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
+	private static final String regex_varDeclarationWithoutInitialization = "( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
 	private static final String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 	private static final String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 	private static final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
@@ -142,9 +142,11 @@ public class FileParser
 					bw.write(line);
 					bw.newLine();
 					continue;
-				}
-								
-				if (line.contains("/*") && !line.contains("*/")) {
+				} else if (line.contains("/*") && line.contains("*/")) {
+					bw.write(line);
+					bw.newLine();
+					continue;
+				} else if (line.contains("/*") && !line.contains("*/")) {
 					inComment = true;
 					bw.write(line);
 					bw.newLine();
@@ -155,6 +157,8 @@ public class FileParser
 					if (line.contains("{")) {
 						inMethod = false;
 					}
+					bw.write(line);
+					bw.newLine();
 					
 					continue;
 				}
