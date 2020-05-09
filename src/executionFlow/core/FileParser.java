@@ -122,17 +122,49 @@ public class FileParser
 			br2.readLine();
 			
 			boolean inLoop = false;
+			boolean inComment = false;
+			boolean inMethod = false;
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
 				nextLine = br2.readLine();
+				
+				if (line.contains("//")) {
+					bw.write(line);
+					bw.newLine();
+					continue;
+				}
+				
+				if (inComment) {
+					if (line.contains("*/"))
+						inComment = false;
+					
+					bw.write(line);
+					bw.newLine();
+					continue;
+				}
+								
+				if (line.contains("/*") && !line.contains("*/")) {
+					inComment = true;
+					bw.write(line);
+					bw.newLine();
+					continue;
+				}
+				
+				if (inMethod) {
+					if (line.contains("{")) {
+						inMethod = false;
+					}
+					
+					continue;
+				}
+				
 				if (nextLine == null)
 					nextLine = "";
-				
-				System.out.println("SIZE: "+elseBlock.size());
-				System.out.println("elseNoCurlyBrackets: "+elseNoCurlyBrackets);
-				System.out.println(elseBlock);
-				System.out.println(line);
+//				System.out.println("SIZE: "+elseBlock.size());
+//				System.out.println("elseNoCurlyBrackets: "+elseNoCurlyBrackets);
+//				System.out.println(elseBlock);
+//				System.out.println(line);
 				
 				if (skipNextLine) {
 					skipNextLine = false;
@@ -153,6 +185,8 @@ public class FileParser
 					if (DEBUG)
 						System.out.println(line);
 					
+					inMethod = true;
+				
 					continue;
 				}
 				
@@ -184,7 +218,6 @@ public class FileParser
 					}
 					if (getElseBlockBalance(elseBlock) == 0) {
 //						System.out.println(line);
-						System.out.println("vazio");
 						if (line.matches(regex_catch)) {
 							
 							if (line.contains("{") && !line.contains("}")) {
@@ -204,7 +237,7 @@ public class FileParser
 								}
 							}
 						} else if (!nextLine.matches(regex_catch)){
-							System.out.println("noCatch");
+//							System.out.println("noCatch");
 //							System.out.println("INLOOP? "+inLoop);
 //							System.out.println("inNestedStructWithoutCurlyBrackets: "+inNestedStructWithoutCurlyBrackets);
 							//if (!inNestedStructWithoutCurlyBrackets) {	// In block code with curly brackets
@@ -227,37 +260,22 @@ public class FileParser
 								if (inLoop && !nextLine.matches(regex_for) && !nextLine.matches(regex_while) && !nextLine.matches(regex_try)) {
 									inNestedStructWithoutCurlyBrackets = false;
 									inLoop = false;
-//									System.out.println("outLoop");
-
-//									if (!nextLine.matches(regex_try)) {
-//										elseNoCurlyBrackets = false;
-//										line += "}";
-//									}
 								}
-							//}
 						}
 					}
-				} 
-				
-				//int i = numberOfElses;
-				//if (numberOfElses > 0) {
-//					System.out.println("DENTRO IF");
-//					System.out.println("numberOfElses: "+numberOfElses);
-//					System.out.println(elseBlock);
-//					System.out.println(elseBlock_moreTwo);
-					while (numberOfElses > 0 && elseBlock.get(numberOfElses) == 1 && elseBlock_moreTwo.get(numberOfElses)) {
-						System.out.println("remove");
-						line += "}";
-						elseBlock.remove(numberOfElses);
-						elseBlock_moreTwo.remove(numberOfElses);
-						
-						numberOfElses--;
-					}
+				}
+				while (numberOfElses > 0 && elseBlock.get(numberOfElses) == 1 && elseBlock_moreTwo.get(numberOfElses)) {
+//					System.out.println("remove");
+					line += "}";
+					elseBlock.remove(numberOfElses);
+					elseBlock_moreTwo.remove(numberOfElses);
 					
-					if (numberOfElses == 0) {
-						elseNoCurlyBrackets = false;
-					}
-				//}
+					numberOfElses--;
+				}
+				
+				if (numberOfElses == 0) {
+					elseNoCurlyBrackets = false;
+				}
 				
 				if (pattern_tryFinally.matcher(line).find() && pattern_tryFinally.matcher(line).find()) {	// Try or finally
 					line = checkCurlyBracketNewLine(line, nextLine);
@@ -352,9 +370,9 @@ public class FileParser
 			sb.append(line.substring(0, curlyBracketsIndex+1));
 			
 			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=7;");
+				sb.append(VAR_NAME+"=0;");
 			else {
-				sb.append("int "+VAR_NAME+"=7;");
+				sb.append("int "+VAR_NAME+"=0;");
 				alreadyDeclared = true;
 			}
 			
@@ -377,9 +395,9 @@ public class FileParser
 			sb.append(line.substring(0, curlyBracketsIndex+1));
 			
 			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=7;");
+				sb.append(VAR_NAME+"=0;");
 			else {
-				sb.append("int "+VAR_NAME+"=7;");
+				sb.append("int "+VAR_NAME+"=0;");
 				alreadyDeclared = true;
 			}
 			
@@ -392,9 +410,9 @@ public class FileParser
 			sb.append(line.substring(0, indexAfterElse));
 			
 			if (alreadyDeclared)
-				sb.append(" {"+VAR_NAME+"=7;");
+				sb.append(" {"+VAR_NAME+"=0;");
 			else {
-				sb.append(" {"+"int "+VAR_NAME+"=7;");
+				sb.append(" {"+"int "+VAR_NAME+"=0;");
 				alreadyDeclared = true;
 			}
 			//sb.append(line.substring(indexAfterElse));
@@ -432,9 +450,9 @@ public class FileParser
 			sb.append(line.substring(0, curlyBracketsIndex+1));
 			
 			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=7;");
+				sb.append(VAR_NAME+"=0;");
 			else {
-				sb.append("int "+VAR_NAME+"=7;");
+				sb.append("int "+VAR_NAME+"=0;");
 				alreadyDeclared = true;
 			}
 			
@@ -452,13 +470,13 @@ public class FileParser
 		
 		
 		if (alreadyDeclared)
-			return line+VAR_NAME+"=7;";
+			return line+VAR_NAME+"=0;";
 		else {
 			alreadyDeclared = true;
-			return line+"int "+VAR_NAME+"=7;";
+			return line+"int "+VAR_NAME+"=0;";
 		}
 		
-		//line = VAR_NAME+"=7;"+line;
+		//line = VAR_NAME+"=0;"+line;
 		/*
 		Matcher m = rVarDeclarationWithoutInitialization.matcher(line);
 		if (m.find()) {
@@ -466,9 +484,9 @@ public class FileParser
 			sb.append(line.substring(0, m.end()));
 			// int x,y;{int VAR_NAME=7;
 			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=7;");
+				sb.append(VAR_NAME+"=0;");
 			else {
-				sb.append("int "+VAR_NAME+"=7;");
+				sb.append("int "+VAR_NAME+"=0;");
 				alreadyDeclared = true;
 			}
 			
@@ -487,12 +505,13 @@ public class FileParser
 		//sb.append(line.substring(0, m.end()));
 		// try{int VAR_NAME=7;
 		//---
+		//System.out.println(line);
 		sb.append(line.substring(0, m.start()+1));
 		
 		if (alreadyDeclared)
-			sb.append(VAR_NAME+"=7;");
+			sb.append(VAR_NAME+"=0;");
 		else {
-			sb.append("int "+VAR_NAME+"=7;");
+			sb.append("int "+VAR_NAME+"=0;");
 			alreadyDeclared = true;
 		}
 		

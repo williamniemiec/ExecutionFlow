@@ -6,31 +6,31 @@ public class test_switch
 				
 		switch (letter) 
 		{
-			case 'Á':int _3484944859822f01de95018843b1ed2e=7;
-			case 'À':_3484944859822f01de95018843b1ed2e=7;
-			case 'Ã':_3484944859822f01de95018843b1ed2e=7;
-			case 'Â':_3484944859822f01de95018843b1ed2e=7;
+			case 'Á':int _db04ee2473693b92ea40dc8836c5e892=0;
+			case 'À':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Ã':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Â':_db04ee2473693b92ea40dc8836c5e892=0;
 				letter = 'A';
 				break;
-			case 'É':_3484944859822f01de95018843b1ed2e=7;
-			case 'È':_3484944859822f01de95018843b1ed2e=7;
-			case 'Ê':_3484944859822f01de95018843b1ed2e=7;
+			case 'É':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'È':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Ê':_db04ee2473693b92ea40dc8836c5e892=0;
 				letter = 'E';
 				break;
-			case 'Ì':_3484944859822f01de95018843b1ed2e=7;
-			case 'Í':_3484944859822f01de95018843b1ed2e=7;
-			case 'Î':_3484944859822f01de95018843b1ed2e=7;
+			case 'Ì':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Í':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Î':_db04ee2473693b92ea40dc8836c5e892=0;
 				letter = 'I';
 				break;
-			case 'Ò':_3484944859822f01de95018843b1ed2e=7;
-			case 'Ó':_3484944859822f01de95018843b1ed2e=7;
-			case 'Ô':_3484944859822f01de95018843b1ed2e=7;
-			case 'Õ':_3484944859822f01de95018843b1ed2e=7;
+			case 'Ò':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Ó':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Ô':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Õ':_db04ee2473693b92ea40dc8836c5e892=0;
 				letter = 'O';
 				break;
-			case 'Ú':_3484944859822f01de95018843b1ed2e=7;
-			case 'Ù':_3484944859822f01de95018843b1ed2e=7;
-			case 'Û':_3484944859822f01de95018843b1ed2e=7;
+			case 'Ú':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Ù':_db04ee2473693b92ea40dc8836c5e892=0;
+			case 'Û':_db04ee2473693b92ea40dc8836c5e892=0;
 				letter = 'U';
 				break;
 		}

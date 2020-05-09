@@ -8,8 +8,8 @@ public class test_try
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;int _3484944859822f01de95018843b1ed2e=7;
-		try  {_3484944859822f01de95018843b1ed2e=7;
+		FileWriter fw;int _db04ee2473693b92ea40dc8836c5e892=0;
+		try  {_db04ee2473693b92ea40dc8836c5e892=0;
 
 			fw = new FileWriter(f);
 			fw.write('x');
@@ -27,8 +27,8 @@ public class test_try
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;_3484944859822f01de95018843b1ed2e=7;
-		try  {_3484944859822f01de95018843b1ed2e=7;
+		FileWriter fw;int _db04ee2473693b92ea40dc8836c5e892=0;
+		try  {_db04ee2473693b92ea40dc8836c5e892=0;
 
 			fw = new FileWriter(f);
 			fw.write('x');
