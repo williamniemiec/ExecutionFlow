@@ -2,29 +2,22 @@ public class test_else_noCurlyBraces
 {
 	public String ifElseMethod(int num)
 	{
-		if (num < 0)
-			return "";
-		
-		String response = "";
-		int w;int _a6b95619d55a89d3129adb62de5f4b46=7;
-		w = 0;
-
-		if (num == 0)
-			response = "Number zero";
-		else if (num == 1)
-			response = "Number one";
-		else {_a6b95619d55a89d3129adb62de5f4b46=7;
-			if (false)
-				w++;
-			else if (false) w++;
-			else {_a6b95619d55a89d3129adb62de5f4b46=7;
+		if (false)	w++;
+		else {int _e7e446bbac712634d70d299a5c7dc186=7;
+			for(;;)
+				while (w == 0) {
+					if (false) w++;
+					else {_e7e446bbac712634d70d299a5c7dc186=7;
+						try {_e7e446bbac712634d70d299a5c7dc186=7;
+							w++;
+						} catch(Exception e) {
+							w--;
+						}
+				}
 				for(;;)
-					while (w == 0) 
-						w++;}
-					for(;;)
-						w++;
-		}
-		
+					w++;
+
+
 		return response;
 	}
 }

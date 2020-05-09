@@ -36,7 +36,7 @@ public class FileParser
 	private static final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 	private static final String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
 	private static final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
-	private static final Pattern pattern_else = Pattern.compile("[\\s\\}]else[\\s\\{]");
+	private static final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
 	private static final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
 	private static final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+case");
 	private static final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,\\s])*\\)(\\{|(\\s\\{)||\\/)*");
@@ -113,6 +113,8 @@ public class FileParser
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
 				nextLine = br2.readLine();
+				if (nextLine == null)
+					nextLine = "";
 				
 				if (skipNextLine) {
 					skipNextLine = false;
@@ -150,9 +152,9 @@ public class FileParser
 							curlyBrackets.pop();
 						}
 					}
-					
 					if (curlyBrackets.empty()) {
 //						System.out.println(line);
+//						System.out.println("vazio");
 						if (line.matches(regex_catch)) {
 							
 							if (line.contains("{") && !line.contains("}")) {
@@ -198,10 +200,6 @@ public class FileParser
 					checkCurlyBracketNewLine(line, nextLine);
 					
 					parsedLine = parse_try_finally(line);
-				} else if (	!line.contains("return ") && !line.contains("return(") && 		// Var declaration
-							!line.contains("package ") && !line.contains("class ") && 
-							line.matches(regex_varDeclarationWithoutInitialization)) {
-					parsedLine = parse_varDeclaration(line);
 				} else if (!line.contains("if") && pattern_else.matcher(line).find()) {		// Else
 					checkCurlyBracketNewLine(line, nextLine);
 					
@@ -213,7 +211,7 @@ public class FileParser
 						
 						if (!nextLine.contains("{")) {	// If there are not curly brackets in else nor next line
 							// Checks if it is an one line command
-							if (nextLine.matches(";$")) { // One line command
+							if (nextLine.matches(".+;$")) { // One line command
 								bw.write(parsedLine);
 								bw.newLine();
 								
@@ -240,6 +238,10 @@ public class FileParser
 					checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_switch(line);
 					
+				} else if (	!line.contains("return ") && !line.contains("return(") && 		// Var declaration
+						!line.contains("package ") && !line.contains("class ") && 
+						line.matches(regex_varDeclarationWithoutInitialization)) {
+				parsedLine = parse_varDeclaration(line);
 				} else {
 					parsedLine = line;
 				}
@@ -299,9 +301,10 @@ public class FileParser
 			}
 			
 			sb.append(line.substring(curlyBracketsIndex+1));
+			
+			curlyBrackets.push('{');
 		} else {
 			//throw new IllegalStateException("Code block must be enclosed in curly brackets");
-			
 			int indexAfterElse = line.indexOf("else")+4; 
 			sb.append(line.substring(0, indexAfterElse));
 			
@@ -311,11 +314,15 @@ public class FileParser
 				sb.append(" {"+"int "+VAR_NAME+"=7;");
 				alreadyDeclared = true;
 			}
+			//sb.append(line.substring(indexAfterElse));
+			curlyBrackets.push('{');
 			
 			String afterElse = line.substring(indexAfterElse);
-			if (!afterElse.matches("^(\\s|\\t)+$")) {	// Command in same line
+			
+			if (!afterElse.isEmpty() && !afterElse.matches("^(\\s|\\t)+$")) {	// Command in same line
 				sb.append(afterElse);
 				sb.append("}");
+				curlyBrackets.pop();
 			} else {
 				elseNoCurlyBrackets = true;
 			}
