@@ -32,6 +32,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		&& !within(JDB)
 		&& !within(FileCompiler)
 		&& !within(FileParser)
+		&& !within(FileManager)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
 		&& !within(ClassConstructorInfo)

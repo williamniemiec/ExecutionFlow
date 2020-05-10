@@ -9,9 +9,7 @@ import java.util.List;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.core.FileCompiler;
-import executionFlow.core.FileParser;
-import executionFlow.core.JDB;
+import executionFlow.core.*;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
 import executionFlow.info.ClassConstructorInfo;
@@ -50,6 +48,7 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(JDB)
 		&& !within(FileCompiler)
 		&& !within(FileParser)
+		&& !within(FileManager)
 		&& !within(ConsoleExporter)
 		&& !within(FileExporter)
 		&& !within(ClassConstructorInfo)
