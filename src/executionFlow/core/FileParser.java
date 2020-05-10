@@ -26,8 +26,8 @@ public class FileParser
 	private static final String VAR_NAME;
 	private boolean alreadyDeclared;
 	private File outputDir;
-	private String outputName;
-	private Stack<Character> curlyBrackets;
+	private String outputFilename;
+	//private Stack<Character> curlyBrackets;
 	boolean elseNoCurlyBrackets;
 	boolean inNestedStructWithoutCurlyBrackets;
 	boolean skipNextLine;
@@ -89,13 +89,34 @@ public class FileParser
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
-	public FileParser(String filename, String outputDir, String outputName)
+	/**
+	 * Adds instructions in places in the code that do not exist when converting
+	 * it to bytecode.
+	 * 
+	 * @param filename Path of the file to be parsed
+	 * @param outputDir Directory where parsed file will be saved
+	 * @param outputFilename Name of the parsed file
+	 */ 
+	public FileParser(String filepath, String outputDir, String outputFilename)
 	{
-		file = new File(filename);
+		this.file = new File(filepath);
+		
 		if (outputDir != null)
 			this.outputDir = new File(outputDir);
-		this.outputName = outputName;
-		curlyBrackets = new Stack<>();
+		
+		this.outputFilename = outputFilename;
+	}
+	
+	/**
+	 * Adds instructions in places in the code that do not exist when converting
+	 * it to bytecode.
+	 * 
+	 * @param filename Path of the file to be parsed
+	 * @param outputFilename Name of the parsed file
+	 */ 
+	public FileParser(String filepath, String outputFilename)
+	{
+		this(filepath, null, outputFilename);
 	}
 	
 	
@@ -105,33 +126,37 @@ public class FileParser
 	// Open .java, 
 	// parse file 
 	// saves parsed file with its original name + _tmp.java
+	/**
+	 * Parses file adding instructions in places in the code that do not exist 
+	 * when converting it to bytecode.
+	 */
 	public String parseFile()
 	{
 		if (file == null) { return ""; }
 
+		String parsedLine = null;
+		String line, nextLine;
 		File outputFile;
-		//boolean skipNextLine = false;
+		boolean inLoop = false;
+		boolean inComment = false;
+		boolean inMethod = false;
 		
+		
+		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
-			outputFile = new File(outputDir, outputName+".java");
-		else
-			outputFile = new File(outputName+".java");
+			outputFile = new File(outputDir, outputFilename+".java");
+		else	// Else processed file will be saved in current directory
+			outputFile = new File(outputFilename+".java");
 		
+		// Opens file streams (file to be parsed and output file / processed file)
 		try (BufferedReader br = new BufferedReader(new FileReader(file));
-			 BufferedReader br2 = new BufferedReader(new FileReader(file));
+			 BufferedReader br_forward = new BufferedReader(new FileReader(file));
 			 BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
-			String line, nextLine;
-
-			String parsedLine = null;
-			br2.readLine();
-			
-			boolean inLoop = false;
-			boolean inComment = false;
-			boolean inMethod = false;
+			br_forward.readLine();
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
-				nextLine = br2.readLine();
+				nextLine = br_forward.readLine();
 				
 				if (line.contains("//")) {
 					bw.write(line);
@@ -314,7 +339,7 @@ public class FileParser
 								if (DEBUG)
 									System.out.println(parsedLine);
 								
-								nextLine = br2.readLine();
+								nextLine = br_forward.readLine();
 								line = br.readLine();
 								parsedLine = line +"}";
 								//elseNoCurlyBrackets = false;
