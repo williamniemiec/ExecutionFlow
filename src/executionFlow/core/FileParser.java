@@ -19,9 +19,9 @@ import java.util.regex.Pattern;
 
 public class FileParser 
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Attributes
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	private File file;
 	private static final String VAR_NAME;
 	private boolean alreadyDeclared;
@@ -50,9 +50,9 @@ public class FileParser
 	private static final boolean DEBUG;
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Initialization blocks
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Generates variable name. It will be current time encrypted in MD5 to
 	 * avoid conflict with variables already declared.
@@ -70,9 +70,9 @@ public class FileParser
 	}
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Constructor
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Adds instructions in places in the code that do not exist when converting
 	 * it to bytecode.
@@ -104,9 +104,9 @@ public class FileParser
 	}
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Methods
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Parses file adding instructions in places in the code that do not exist 
 	 * when converting it to bytecode.
@@ -511,6 +511,10 @@ public class FileParser
 		return response;
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Inner classes
+	//-------------------------------------------------------------------------
 	/**
 	 * Responsible for managing an else block. It is used only for else blocks
 	 * without curly brackets, because its usefulness is add curly brackets in
@@ -518,6 +522,9 @@ public class FileParser
 	 */
 	class ElseBlock
 	{
+		//---------------------------------------------------------------------
+		//		Attributes
+		//---------------------------------------------------------------------
 		/**
 		 * Balance of curly brackets. It is always positive or zero.
 		 */
@@ -528,10 +535,14 @@ public class FileParser
 		 */
 		private boolean balancePassedTwo;
 		
+		
+		//---------------------------------------------------------------------
+		//		Methods
+		//---------------------------------------------------------------------
 		/**
 		 * Increments balance.
 		 * 
-		 * @apiNote Must be called when an open curly bracket is found
+		 * @apiNote Must be called only when an open curly bracket is found
 		 */
 		public void increaseBalance()
 		{
@@ -545,7 +556,7 @@ public class FileParser
 		/**
 		 * Decrements balance.
 		 * 
-		 * @apiNote Must be called when a closed curly bracket is found
+		 * @apiNote Must be called only when a closed curly bracket is found
 		 */
 		public void decreaseBalance()
 		{
@@ -588,21 +599,47 @@ public class FileParser
 	 */
 	class ElseBlockManager
 	{
+		//---------------------------------------------------------------------
+		//		Attributes
+		//---------------------------------------------------------------------
+		/**
+		 * Stores current nesting level of else block.
+		 */
 		private int currentNestingLevel;
+		
+		/**
+		 * Stores else block for each nesting level.
+		 */
 		private Stack<ElseBlock> elseBlocks;
 		
 		
-		public ElseBlockManager()
+		//---------------------------------------------------------------------
+		//		Initialization block
+		//---------------------------------------------------------------------
 		{
 			elseBlocks = new Stack<>();
 		}
 		
+		
+		//---------------------------------------------------------------------
+		//		Methods
+		//---------------------------------------------------------------------
+		/**
+		 * Creates a new else block, storing it at the 
+		 * {@link #elseBlocks else blocks stack}. It will also increment 
+		 * {@link #currentNestingLevel current nesting level}.
+		 */
 		public void createNewElseBlock()
 		{
 			currentNestingLevel++;
 			elseBlocks.push(new ElseBlock());
 		}
 		
+		/**
+		 * Removes else block of {@link #currentNestingLevel current nesting level} 
+		 * from the {@link #elseBlocks else blocks stack}. If stack is empty, do 
+		 * not do anything.
+		 */
 		public void removeCurrentElseBlock()
 		{
 			if (elseBlocks.size() > 0) {
@@ -611,33 +648,79 @@ public class FileParser
 			}
 		}
 		
+		/**
+		 * Gets {@link #currentNestingLevel current nesting level}.
+		 * 
+		 * @return Current nesting level
+		 */
 		public int getCurrentNestingLevel()
 		{
 			return currentNestingLevel;
 		}
 		
+		/**
+		 * Increments balance of else block associated with 
+		 * {@link #currentNestingLevel current nesting level}. If nesting level
+		 * is zero, do not do anything.
+		 * 
+		 * @apiNote Must be called only when an open curly bracket is found
+		 */
 		public void incrementBalance()
 		{
-			elseBlocks.peek().increaseBalance();
+			if (currentNestingLevel != 0)
+				elseBlocks.peek().increaseBalance();
 		}
 		
+		/**
+		 * Decrements balance of else block associated with 
+		 * {@link #currentNestingLevel current nesting level}. If nesting level
+		 * is zero, do not do anything.
+		 * 
+		 * @apiNote Must be called only when a closed curly bracket is found
+		 */
 		public void decreaseBalance()
 		{
-			elseBlocks.peek().decreaseBalance();
+			if (currentNestingLevel != 0)
+				elseBlocks.peek().decreaseBalance();
 		}
 		
+		/**
+		 * Returns balance of else block associated with 
+		 * {@link #currentNestingLevel current nesting level}. If nesting level
+		 * is zero, do not do anything.
+		 * 
+		 * @return Current balance or -1 if nesting level is zero
+		 */
 		public int getCurrentBalance()
 		{
+			if (currentNestingLevel == 0) { return -1; }
+			
 			return elseBlocks.peek().getBalance();
 		}
 		
+		/**
+		 * Checks if balance of else block associated with 
+		 * {@link #currentNestingLevel current nesting level} is empty.
+		 * 
+		 * @return If balance is zero
+		 */
 		public boolean isCurrentBalanceEmpty()
 		{
+			if (currentNestingLevel == 0) { return true; }
+			
 			return elseBlocks.peek().isBalanceEmpty();
 		}
 		
+		/**
+		 * Checks if at any time the balance of else block associated with 
+		 * {@link #currentNestingLevel current nesting level} was equal to 2.
+		 * 
+		 * @return If at any time the balance was equal to 2
+		 */
 		private boolean hasBalanceAlreadyPassedTwo()
 		{
+			if (currentNestingLevel == 0) { return false; }
+			
 			return elseBlocks.peek().hasBalanceAlreadyPassedTwo();
 		}
 	}
