@@ -7,25 +7,45 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+
+/**
+ * Responsible for managing file parser and compiler.
+ */
 public class FileManager 
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private String filename;
 	private File inputFile;
 	private File originalFile; 
 	
 	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	/**
+	 * Manages file analyzer and compiler.
+	 * 
+	 * @param srcFilename Name of java file
+	 */
 	public FileManager(String srcFilename)
 	{
 		inputFile = new File(srcFilename);
 		originalFile = new File(srcFilename+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
-		
-//		System.out.println("inputFile: "+inputFile);
-//		System.out.println("originalFile: "+originalFile);
-//		System.out.println("filename: "+filename);
 	}
 	
 	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	/**
+	 * Deletes modified file and restores original file. This function does not
+	 * delete .class file of modified file, only .java file.
+	 * 
+	 * @return This object to allow chained calls
+	 */
 	public FileManager revert()
 	{
 		inputFile.delete();
@@ -34,46 +54,63 @@ public class FileManager
 		return this;
 	}
 	
+	/**
+	 * Parses and process file, saving modified file in the same file passed 
+	 * to constructor.
+	 * 
+	 * @return This object to allow chained calls
+	 * 
+	 * @implNote This function overwrite file passed to the constructor! To
+	 * restore the original file, call {@link #revert()} function.
+	 */
 	public FileManager parseFile()
 	{
-//		System.out.println(inputFile.getAbsolutePath());
-		
+		// Saves .java file to allow to restore it after
 		createBackupFile();
 		
 		// Parses file
 		FileParser fp = new FileParser(inputFile.getAbsolutePath(), inputFile.getParent(), filename+"_parsed");
 		File out = new File(fp.parseFile());
-		//inputFile =  new File(fp.parseFile());
-		// Changes parsed file name to the same as received filename
 		
+		// Changes parsed file name to the same as received filename
 		inputFile.delete();
 		out.renameTo(inputFile);
 		
 		return this;
 	}
 	
+	/**
+	 * Compiles processed file.
+	 * 
+	 * @param classOutput Directory where .class of file passed to the 
+	 * constructor is
+	 * @param classPackage Package of the class of the file passed to the constructor 
+	 * @return This object to allow chained calls
+	 * @throws Exception If an error occurs
+	 */
 	public FileManager compileFile(String classOutput, String classPackage) throws Exception
 	{
-//		System.out.println(classOutput);
-//		System.out.println("!!!!"+classPackage);
 		int packageFolders = classPackage.split("\\.").length;
-//		System.out.println(packageFolders);
 		Path file = Paths.get(classOutput);
+		
+		// Sets path to the compiler
 		for (int i=0; i<packageFolders; i++) {
 			file = file.getParent();
 		}
 		
-//		System.out.println("Compile "+inputFile.getAbsolutePath());
-		
-		//classOutput = classOutput + "\\" + classPackage.replace(".", "\\");
-//		System.out.println("FileToCompile: "+inputFile);
-//		System.out.println("OutputDir: "+file.toString());
 		// Compiles parsed file
 		FileCompiler.compile(inputFile, file.toString());
 		
 		return this;
 	}
 	
+	/**
+	 * Creates a copy of file passed to the constructor to allow to restore 
+	 * it after.
+	 * 
+	 * @implNote Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
+	 * It will be saved in the same directory of original file
+	 */
 	private void createBackupFile()
 	{
 		try {
