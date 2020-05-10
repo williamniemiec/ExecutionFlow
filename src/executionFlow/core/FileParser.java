@@ -116,7 +116,7 @@ public class FileParser
 		final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
 		final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
 		final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
-		final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+case");
+		final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+(case|default)");
 		final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
 		String parsedLine = null;
 		String line, nextLine;
@@ -397,34 +397,55 @@ public class FileParser
 		return sb.toString();
 	}
 	
+	/**
+	 * Parses variable declaration line without initialization.
+	 * 
+	 * @param Line with variable declaration line without initialization
+	 * @return Processed line (line + variable assignment command)
+	 */
 	private String parse_varDeclaration(String line)
 	{
-		if (alreadyDeclared)
-			return line+VAR_NAME+"=0;";
+		String response = line;
+		
+		// Appends in response variable assignment command
+		if (alreadyDeclared) 
+			response += VAR_NAME+"=0;";
 		else {
 			alreadyDeclared = true;
-			return line+"int "+VAR_NAME+"=0;";
+			response += "int "+VAR_NAME+"=0;";
 		}
+		
+		return response;
 	}
 	
+	/**
+	 * Parses switch block code (most specifically, case's line or default).
+	 * 
+	 * @param Line to be analyzed
+	 * @return Processed line (line + variable assignment command)
+	 */
 	private String parse_switch(String line)
 	{
-		StringBuilder sb = new StringBuilder();
+		StringBuilder response = new StringBuilder();
 		Pattern p = Pattern.compile(":");
 		Matcher m = p.matcher(line);
-		m.find();
-		sb.append(line.substring(0, m.start()+1));
 		
+		// Appends in response everything before ':' (including it) 
+		m.find();
+		response.append(line.substring(0, m.start()+1));
+		
+		// Appends in response variable assignment command
 		if (alreadyDeclared)
-			sb.append(VAR_NAME+"=0;");
+			response.append(VAR_NAME+"=0;");
 		else {
-			sb.append("int "+VAR_NAME+"=0;");
+			response.append("int "+VAR_NAME+"=0;");
 			alreadyDeclared = true;
 		}
 		
-		sb.append(line.substring(m.start()+1));
+		// Appends in response everything after ':' (including it)
+		response.append(line.substring(m.start()+1));
 
-		return sb.toString();
+		return response.toString();
 	}
 	
 	/**
@@ -447,17 +468,24 @@ public class FileParser
 		return line;
 	}
 	
+	/**
+	 * Checks if a line is a comment line.
+	 * 
+	 * @param line Line to be analyzed
+	 * @return If line is a comment line
+	 */
 	private boolean isComment(String line)
 	{
 		boolean response = false;
 		
+		// Checks if parser is in a comment block
 		if (inComment) {
 			if (line.contains("*/"))
 				inComment = false;
 			
 			response = true;
 		} else if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
+			inComment = true;	// Parser is in a comment block
 			
 			response = true;
 		} else if (line.contains("//") || (line.contains("/*") && line.contains("*/"))) {
@@ -467,20 +495,33 @@ public class FileParser
 		return response;
 	}
 	
-	private int countOpenCurlyBrackets(String line)
+	/**
+	 * Counts how many open curly brackets are in a text.
+	 * 
+	 * @param text Text to be analyzed
+	 * @return Amount of open curly brackets in the text
+	 */
+	private int countOpenCurlyBrackets(String text)
 	{
 		final Pattern pattern_openCurlyBrackets = Pattern.compile("\\{");
-		Matcher openCBMatcher = pattern_openCurlyBrackets.matcher(line);
+		Matcher openCBMatcher = pattern_openCurlyBrackets.matcher(text);
+		
 		int size;
 		for (size = 0; openCBMatcher.find(); size++);
 		
 		return size;
 	}
 	
-	private int countClosedCurlyBrackets(String line)
+	/**
+	 * Counts how many closed curly brackets are in a text.
+	 * 
+	 * @param text Text to be analyzed
+	 * @return Amount of closed curly brackets in the text
+	 */
+	private int countClosedCurlyBrackets(String text)
 	{
 		final Pattern pattern_closedCurlyBrackets = Pattern.compile("\\}");
-		Matcher openCBMatcher = pattern_closedCurlyBrackets.matcher(line);
+		Matcher openCBMatcher = pattern_closedCurlyBrackets.matcher(text);
 		
 		int size;
 		for (size = 0; openCBMatcher.find(); size++);
@@ -488,6 +529,12 @@ public class FileParser
 		return size;
 	}
 	
+	/**
+	 * Encrypts a text in MD5.
+	 * 
+	 * @param text Text to be encrypted
+	 * @return Encrypted text or the text if an error occurs
+	 */
 	private static String md5(String text)
 	{
 		String response;
