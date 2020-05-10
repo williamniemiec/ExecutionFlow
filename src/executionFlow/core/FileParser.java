@@ -34,18 +34,6 @@ public class FileParser
 	boolean elseNoCurlyBrackets;
 	boolean skipNextLine;
 	boolean inComment;
-
-	private static final String regex_varDeclarationWithoutInitialization = "( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
-	private static final String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-	private static final String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-	private static final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-	private static final String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
-	private static final String regex_new = "(\\ |\\t)+new(\\ |\\t)*";
-	private static final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
-	private static final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
-	private static final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
-	private static final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+case");
-	private static final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
 	
 	/**
 	 * If true, displays processed lines.
@@ -118,6 +106,18 @@ public class FileParser
 	{
 		if (file == null) { return ""; }
 
+		// Initialization of variables
+		final String regex_varDeclarationWithoutInitialization = "( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
+		final String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+		final String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+		final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+		final String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
+		final String regex_new = "(\\ |\\t)+new(\\ |\\t)*";
+		final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
+		final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
+		final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
+		final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+case");
+		final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
 		String parsedLine = null;
 		String line, nextLine;
 		File outputFile;
@@ -377,9 +377,6 @@ public class FileParser
 	private String parse_try_finally(String line)
 	{
 		StringBuilder sb = new StringBuilder();
-
-		Matcher m = pattern_tryFinally.matcher(line);
-		m.find();
 
 		if (line.contains("{")) {
 			int curlyBracketsIndex = line.indexOf('{');
