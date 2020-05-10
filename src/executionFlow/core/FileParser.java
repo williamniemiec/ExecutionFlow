@@ -10,8 +10,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -108,10 +106,7 @@ public class FileParser
 
 		// Initialization of variables
 		final String regex_varDeclarationWithoutInitialization = "( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
-//		final String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-//		final String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 		final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-//		final String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
 		final String regex_new = "(\\ |\\t)+new(\\ |\\t)*";
 		final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
 		final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
@@ -121,7 +116,6 @@ public class FileParser
 		String parsedLine = null;
 		String line, nextLine;
 		File outputFile;
-//		boolean inLoop = false;
 		boolean inMethod = false;
 		ElseBlockManager elseBlockManager = new ElseBlockManager();
 		
@@ -225,17 +219,6 @@ public class FileParser
 							
 							if (elseBlockManager.getCurrentNestingLevel() == 0)
 								elseNoCurlyBrackets = false;
-						 
-//							// Checks if parser is within a loop
-//							if (line.matches(regex_for) || line.matches(regex_while)) {	
-//								inLoop = true;
-//							} 
-//							
-//							if	( inLoop && !nextLine.matches(regex_for) && 
-//								  !nextLine.matches(regex_while) && 
-//								  !nextLine.matches(regex_try) ) {
-//								inLoop = false;
-//							}
 						}
 					}
 				}
