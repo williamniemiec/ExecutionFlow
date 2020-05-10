@@ -17,6 +17,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+/**
+ * Parses java file adding instructions in places in the code that do not exist 
+ * when converting it to bytecode.
+ */
 public class FileParser 
 {
 	//-------------------------------------------------------------------------
@@ -28,7 +32,6 @@ public class FileParser
 	private File outputDir;
 	private String outputFilename;
 	boolean elseNoCurlyBrackets;
-	//boolean inNestedStructWithoutCurlyBrackets;
 	boolean skipNextLine;
 	boolean inComment;
 
@@ -210,10 +213,6 @@ public class FileParser
 								
 								if (elseBlockManager.getCurrentNestingLevel() == 0)
 									elseNoCurlyBrackets = false;
-								
-//								if (inNestedStructWithoutCurlyBrackets) {	// In block code without curly brackets
-//									inNestedStructWithoutCurlyBrackets = false;
-//								}
 							}
 						} else if (!nextLine.matches(regex_catch)){
 							line += "}";
@@ -229,7 +228,6 @@ public class FileParser
 							if	( inLoop && !nextLine.matches(regex_for) && 
 								  !nextLine.matches(regex_while) && 
 								  !nextLine.matches(regex_try) ) {
-								//inNestedStructWithoutCurlyBrackets = false;
 								inLoop = false;
 							}
 						}
@@ -258,9 +256,6 @@ public class FileParser
 					// Checks if parsed else is an else without curly brackets
 					if (elseNoCurlyBrackets) {
 						elseBlockManager.createNewElseBlock();
-						// Checks if next line is a block code
-						// If it is, put } at the end
-						// Else put } at the end of line
 						
 						if (!nextLine.contains("{")) {	// If there are not curly brackets in else nor next line
 							// Checks if it is an one line command
