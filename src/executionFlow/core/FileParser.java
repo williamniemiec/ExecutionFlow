@@ -108,10 +108,10 @@ public class FileParser
 
 		// Initialization of variables
 		final String regex_varDeclarationWithoutInitialization = "( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
-		final String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-		final String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+//		final String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+//		final String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 		final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-		final String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
+//		final String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
 		final String regex_new = "(\\ |\\t)+new(\\ |\\t)*";
 		final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
 		final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
@@ -121,7 +121,7 @@ public class FileParser
 		String parsedLine = null;
 		String line, nextLine;
 		File outputFile;
-		boolean inLoop = false;
+//		boolean inLoop = false;
 		boolean inMethod = false;
 		ElseBlockManager elseBlockManager = new ElseBlockManager();
 		
@@ -142,12 +142,14 @@ public class FileParser
 			while ((line = br.readLine()) != null) {
 				nextLine = br_forward.readLine();
 				
+				// Checks if it is a comment line
 				if (isComment(line)) {
 					bw.write(line);
 					bw.newLine();
 					continue;
 				}
 				
+				// Checks if it is within a method declaration line
 				if (inMethod) {
 					if (line.contains("{")) {
 						inMethod = false;
@@ -161,6 +163,7 @@ public class FileParser
 				if (nextLine == null)
 					nextLine = "";
 				
+				// Checks if current line has to be skipped
 				if (skipNextLine) {
 					skipNextLine = false;
 					bw.newLine();	// It is necessary to keep line numbers equals to original file 
@@ -184,7 +187,7 @@ public class FileParser
 					continue;
 				}
 				
-				// Checks if parser is in else block without curly brackets
+				// Checks if parser is within a else block without curly brackets
 				if (elseNoCurlyBrackets) {
 					int amountOpenCurlyBrackets = countOpenCurlyBrackets(line);
 					int amountClosedCurlyBrackets = countClosedCurlyBrackets(line);
@@ -204,7 +207,9 @@ public class FileParser
 					
 					// Checks if else block balance is empty
 					if (elseBlockManager.isCurrentBalanceEmpty()) {
+						// Checks if it is a line with 'catch' keyword
 						if (line.matches(regex_catch)) {
+							// Updates else block balance
 							if (line.contains("{") && !line.contains("}")) {
 								elseBlockManager.incrementBalance();
 							} else if (line.contains("{") && line.contains("}")) {
@@ -214,26 +219,30 @@ public class FileParser
 								if (elseBlockManager.getCurrentNestingLevel() == 0)
 									elseNoCurlyBrackets = false;
 							}
-						} else if (!nextLine.matches(regex_catch)){
+						} else if (!nextLine.matches(regex_catch)) {	// Checks if next line does not have 'catch' keyword
 							line += "}";
 							elseBlockManager.removeCurrentElseBlock();
 							
 							if (elseBlockManager.getCurrentNestingLevel() == 0)
 								elseNoCurlyBrackets = false;
 						 
-							if (line.matches(regex_for) || line.matches(regex_while)) {	
-								inLoop = true;
-							} 
-							
-							if	( inLoop && !nextLine.matches(regex_for) && 
-								  !nextLine.matches(regex_while) && 
-								  !nextLine.matches(regex_try) ) {
-								inLoop = false;
-							}
+//							// Checks if parser is within a loop
+//							if (line.matches(regex_for) || line.matches(regex_while)) {	
+//								inLoop = true;
+//							} 
+//							
+//							if	( inLoop && !nextLine.matches(regex_for) && 
+//								  !nextLine.matches(regex_while) && 
+//								  !nextLine.matches(regex_try) ) {
+//								inLoop = false;
+//							}
 						}
 					}
 				}
 				
+				// Checks if any else blocks have reached at the end. If yes,
+				// append '}' in the line, removes this else block and check
+				// other else blocks (if there is another)
 				while (	elseBlockManager.getCurrentNestingLevel() > 0 && 
 						elseBlockManager.getCurrentBalance() == 1 && 
 						elseBlockManager.hasBalanceAlreadyPassedTwo()) {
@@ -241,11 +250,13 @@ public class FileParser
 					elseBlockManager.removeCurrentElseBlock();
 				}
 				
+				// If there are not else blocks, it means that parser left else
+				// code block
 				if (elseBlockManager.getCurrentNestingLevel() == 0) {
 					elseNoCurlyBrackets = false;
 				}
 				
-				// Analyzes code
+				// Parses code
 				if (pattern_tryFinally.matcher(line).find() && pattern_tryFinally.matcher(line).find()) {	// Try or finally
 					line = checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_try_finally(line);
@@ -257,7 +268,7 @@ public class FileParser
 					if (elseNoCurlyBrackets) {
 						elseBlockManager.createNewElseBlock();
 						
-						if (!nextLine.contains("{")) {	// If there are not curly brackets in else nor next line
+						if (!nextLine.contains("{")) {	// Checks if there are not curly brackets in else nor next line
 							// Checks if it is an one line command
 							if (nextLine.matches(".+;$")) { // One line command
 								bw.write(parsedLine);
