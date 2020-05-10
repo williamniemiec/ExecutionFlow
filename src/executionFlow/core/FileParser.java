@@ -309,30 +309,45 @@ public class FileParser
 		return outputFile.getAbsolutePath();
 	}
 	
+	/**
+	 * Parses line with 'do' keyword.
+	 * 
+	 * @param Line with 'do' keyword
+	 * @return Processed line (line + variable assignment command)
+	 */
 	private String parse_do(String line)
 	{
-		StringBuilder sb = new StringBuilder();
+		StringBuilder response = new StringBuilder();
 
-		// Checks if block has curly brackets
 		if (line.contains("{")) {
 			int curlyBracketsIndex = line.indexOf('{');
-			sb.append(line.substring(0, curlyBracketsIndex+1));
 			
+			// Appends in response everything before '{' (including it) 
+			response.append(line.substring(0, curlyBracketsIndex+1));
+			
+			// Appends in response variable assignment command
 			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=0;");
+				response.append(VAR_NAME+"=0;");
 			else {
-				sb.append("int "+VAR_NAME+"=0;");
+				response.append("int "+VAR_NAME+"=0;");
 				alreadyDeclared = true;
 			}
 			
-			sb.append(line.substring(curlyBracketsIndex+1));
+			// Appends in response everything after '{' 
+			response.append(line.substring(curlyBracketsIndex+1));
 		} else {
 			throw new IllegalStateException("Code block must be enclosed in curly brackets");
 		}
 		
-		return sb.toString();
+		return response.toString();
 	}
 	
+	/**
+	 * Parses line with 'else' keyword.
+	 * 
+	 * @param Line with else keyword
+	 * @return Processed line (line + variable assignment command)
+	 */
 	private String parse_else(String line)
 	{
 		StringBuilder sb = new StringBuilder();
@@ -340,8 +355,11 @@ public class FileParser
 		// Checks if block has curly brackets
 		if (line.contains("{")) {
 			int curlyBracketsIndex = line.indexOf('{');
+			
+			// Appends in response everything before '{' (including it) 
 			sb.append(line.substring(0, curlyBracketsIndex+1));
 			
+			// Appends in response variable assignment command
 			if (alreadyDeclared)
 				sb.append(VAR_NAME+"=0;");
 			else {
@@ -349,11 +367,15 @@ public class FileParser
 				alreadyDeclared = true;
 			}
 			
+			// Appends in response everything after '{' 
 			sb.append(line.substring(curlyBracketsIndex+1));
-		} else {
+		} else {	// Else code block without curly brackets
 			int indexAfterElse = line.indexOf("else")+4; 
+			
+			// Appends in response everything before 'else' keyword (including it) 
 			sb.append(line.substring(0, indexAfterElse));
 			
+			// Appends in response variable assignment command
 			if (alreadyDeclared)
 				sb.append(" {"+VAR_NAME+"=0;");
 			else {
@@ -363,42 +385,53 @@ public class FileParser
 			
 			String afterElse = line.substring(indexAfterElse);
 			
-			if (!afterElse.isEmpty() && !afterElse.matches("^(\\s|\\t)+$")) {	// Command in same line
-				sb.append(afterElse);
-				sb.append("}");
+			// Checks if there is a command after 'else' keyword
+			if (!afterElse.isEmpty() && !afterElse.matches("^(\\s|\\t)+$")) {
+				sb.append(afterElse);	// If there is one, it its an in line else code block
+				sb.append("}");			// Appends in response this command and a closed curly bracket
 			} else {
-				elseNoCurlyBrackets = true;
+				elseNoCurlyBrackets = true;	// Else it is a else code block with more than one line
 			}
 		}
 		
 		return sb.toString();
 	}
 	
+	/**
+	 * Parses line with 'try' or 'finally' keywords.
+	 * 
+	 * @param Line with try or finally keyword
+	 * @return Processed line (line + variable assignment command)
+	 */
 	private String parse_try_finally(String line)
 	{
-		StringBuilder sb = new StringBuilder();
+		StringBuilder response = new StringBuilder();
 
 		if (line.contains("{")) {
 			int curlyBracketsIndex = line.indexOf('{');
-			sb.append(line.substring(0, curlyBracketsIndex+1));
 			
+			// Appends in response everything before '{' (including it) 
+			response.append(line.substring(0, curlyBracketsIndex+1));
+			
+			// Appends in response variable assignment command
 			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=0;");
+				response.append(VAR_NAME+"=0;");
 			else {
-				sb.append("int "+VAR_NAME+"=0;");
+				response.append("int "+VAR_NAME+"=0;");
 				alreadyDeclared = true;
 			}
 			
-			sb.append(line.substring(curlyBracketsIndex+1));
+			// Appends in response everything after '{'
+			response.append(line.substring(curlyBracketsIndex+1));
 		} else {
 			throw new IllegalStateException("Code block must be enclosed in curly brackets");
 		}
 
-		return sb.toString();
+		return response.toString();
 	}
 	
 	/**
-	 * Parses variable declaration line without initialization.
+	 * Parses line with variable declaration without initialization.
 	 * 
 	 * @param Line with variable declaration line without initialization
 	 * @return Processed line (line + variable assignment command)
@@ -419,9 +452,10 @@ public class FileParser
 	}
 	
 	/**
-	 * Parses switch block code (most specifically, case's line or default).
+	 * Parses 'switch' code block (most specifically, line with 'case' or 
+	 * 'default' keyword).
 	 * 
-	 * @param Line to be analyzed
+	 * @param Line with 'case' or 'default' keyword (inside a switch block)
 	 * @return Processed line (line + variable assignment command)
 	 */
 	private String parse_switch(String line)
@@ -442,7 +476,7 @@ public class FileParser
 			alreadyDeclared = true;
 		}
 		
-		// Appends in response everything after ':' (including it)
+		// Appends in response everything after ':'
 		response.append(line.substring(m.start()+1));
 
 		return response.toString();
