@@ -27,38 +27,22 @@ public class FileParser
 	private boolean alreadyDeclared;
 	private File outputDir;
 	private String outputFilename;
-	//private Stack<Character> curlyBrackets;
 	boolean elseNoCurlyBrackets;
-	boolean inNestedStructWithoutCurlyBrackets;
+	//boolean inNestedStructWithoutCurlyBrackets;
 	boolean skipNextLine;
-	int numberOfElses;
-	
-	/**
-	 * key: else nesting level
-	 * value: curly brackets balance
-	 */
-	Map<Integer, Integer> elseBlock = new HashMap<>();
-	
-	/**
-	 * Key:else nesting level
-	 * Value: If curly brackets balance ever exceeded 2
-	 */
-	Map<Integer, Boolean> elseBlock_moreTwo = new HashMap<>();
-	
-	
-	private static final String regex_onlyOpenCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
+	boolean inComment;
+
 	private static final String regex_varDeclarationWithoutInitialization = "( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
 	private static final String regex_for = "(\\ |\\t|\\})+for(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 	private static final String regex_while = "(\\ |\\t|\\})+while(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 	private static final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 	private static final String regex_try = "(\\ |\\t|\\})+try(\\ |\\t)*";
+	private static final String regex_new = "(\\ |\\t)+new(\\ |\\t)*";
 	private static final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
 	private static final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
 	private static final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
 	private static final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+case");
-	private static final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,\\s])*\\)(\\{|(\\s\\{)||\\/)*");
-	private static final Pattern pattern_openCurlyBrackets = Pattern.compile("\\{");
-	private static final Pattern pattern_closedCurlyBrackets = Pattern.compile("\\}");
+	private static final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
 	
 	/**
 	 * If true, displays processed lines.
@@ -123,9 +107,6 @@ public class FileParser
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
-	// Open .java, 
-	// parse file 
-	// saves parsed file with its original name + _tmp.java
 	/**
 	 * Parses file adding instructions in places in the code that do not exist 
 	 * when converting it to bytecode.
@@ -138,8 +119,8 @@ public class FileParser
 		String line, nextLine;
 		File outputFile;
 		boolean inLoop = false;
-		boolean inComment = false;
 		boolean inMethod = false;
+		ElseBlockManager elseBlockManager = new ElseBlockManager();
 		
 		
 		// If an output directory is specified, processed file will be saved to it
@@ -158,25 +139,7 @@ public class FileParser
 			while ((line = br.readLine()) != null) {
 				nextLine = br_forward.readLine();
 				
-				if (line.contains("//")) {
-					bw.write(line);
-					bw.newLine();
-					continue;
-				}
-				
-				if (inComment) {
-					if (line.contains("*/"))
-						inComment = false;
-					
-					bw.write(line);
-					bw.newLine();
-					continue;
-				} else if (line.contains("/*") && line.contains("*/")) {
-					bw.write(line);
-					bw.newLine();
-					continue;
-				} else if (line.contains("/*") && !line.contains("*/")) {
-					inComment = true;
+				if (isComment(line)) {
 					bw.write(line);
 					bw.newLine();
 					continue;
@@ -186,18 +149,14 @@ public class FileParser
 					if (line.contains("{")) {
 						inMethod = false;
 					}
+					
 					bw.write(line);
 					bw.newLine();
-					
 					continue;
 				}
 				
 				if (nextLine == null)
 					nextLine = "";
-//				System.out.println("SIZE: "+elseBlock.size());
-//				System.out.println("elseNoCurlyBrackets: "+elseNoCurlyBrackets);
-//				System.out.println(elseBlock);
-//				System.out.println(line);
 				
 				if (skipNextLine) {
 					skipNextLine = false;
@@ -210,7 +169,7 @@ public class FileParser
 				}
 				
 				// Checks if it is a method declaration
-				if (pattern_methodDeclaration.matcher(line).find()) {
+				if (!line.matches(regex_new) && pattern_methodDeclaration.matcher(line).find()) {
 					alreadyDeclared = false;
 					bw.write(line);
 					bw.newLine();
@@ -219,116 +178,89 @@ public class FileParser
 						System.out.println(line);
 					
 					inMethod = true;
-				
 					continue;
 				}
 				
+				// Checks if parser is in else block without curly brackets
 				if (elseNoCurlyBrackets) {
+					int amountOpenCurlyBrackets = countOpenCurlyBrackets(line);
+					int amountClosedCurlyBrackets = countClosedCurlyBrackets(line);
 					
-					Matcher openCBMatcher = pattern_openCurlyBrackets.matcher(line);
-					//System.out.println(openCBMatcher.find());
-					//System.out.println(openCBMatcher.);
-					int size;
-					for (size = 0; openCBMatcher.find(); size++);
-					
-					if (size > 0) {
-						//for (int i=0; i<openCBMatcher.groupCount(); i++) {
-						for (int i=0; i<size; i++) {
-							//curlyBrackets.push('{');
-							increaseElseBlockBalance(elseBlock);
+					// Updates curly brackets balance
+					if (amountOpenCurlyBrackets > 0) {
+						for (int i=0; i<amountOpenCurlyBrackets; i++) {
+							elseBlockManager.incrementBalance();
+						}
+					}
+
+					if (amountClosedCurlyBrackets > 0) {
+						for (int i=0; i<amountClosedCurlyBrackets; i++) {
+							elseBlockManager.decreaseBalance();
 						}
 					}
 					
-					Matcher closedCBMatcher = pattern_closedCurlyBrackets.matcher(line);
-					
-					for (size = 0; closedCBMatcher.find(); size++);
-					
-					if (size > 0) {
-						for (int i=0; i<size; i++) {
-							//curlyBrackets.pop();
-							decreaseElseBlockBalance(elseBlock);
-						}
-					}
-					if (getElseBlockBalance(elseBlock) == 0) {
-//						System.out.println(line);
+					// Checks if else block balance is empty
+					if (elseBlockManager.isCurrentBalanceEmpty()) {
 						if (line.matches(regex_catch)) {
-							
 							if (line.contains("{") && !line.contains("}")) {
-								increaseElseBlockBalance(elseBlock);
+								elseBlockManager.incrementBalance();
 							} else if (line.contains("{") && line.contains("}")) {
 								line += "}";
-								decreaseElseBlockBalance(elseBlock);
+								elseBlockManager.removeCurrentElseBlock();
 								
-								if (getElseBlockBalance(elseBlock) == 0)
-									elseBlock.remove(numberOfElses--);
-								
-								if (numberOfElses == 0)
+								if (elseBlockManager.getCurrentNestingLevel() == 0)
 									elseNoCurlyBrackets = false;
 								
-								if (inNestedStructWithoutCurlyBrackets) {	// In block code without curly brackets
-									inNestedStructWithoutCurlyBrackets = false;
-								}
+//								if (inNestedStructWithoutCurlyBrackets) {	// In block code without curly brackets
+//									inNestedStructWithoutCurlyBrackets = false;
+//								}
 							}
 						} else if (!nextLine.matches(regex_catch)){
-//							System.out.println("noCatch");
-//							System.out.println("INLOOP? "+inLoop);
-//							System.out.println("inNestedStructWithoutCurlyBrackets: "+inNestedStructWithoutCurlyBrackets);
-							//if (!inNestedStructWithoutCurlyBrackets) {	// In block code with curly brackets
-							if (true) {
-								line += "}";
-								//decreaseElseBlockBalance(elseBlock);
-								
-								//if (getElseBlockBalance(elseBlock) == 0)
-								elseBlock.remove(numberOfElses--);
-								//elseNoCurlyBrackets = false;
-								if (numberOfElses == 0)
-									elseNoCurlyBrackets = false;
-//								System.out.println("OUTELSE");
-							} //else {	// In block code without curly brackets
-								if (line.matches(regex_for) || line.matches(regex_while)) {	
-									inLoop = true;
-
-								} 
-								
-								if (inLoop && !nextLine.matches(regex_for) && !nextLine.matches(regex_while) && !nextLine.matches(regex_try)) {
-									inNestedStructWithoutCurlyBrackets = false;
-									inLoop = false;
-								}
+							line += "}";
+							elseBlockManager.removeCurrentElseBlock();
+							
+							if (elseBlockManager.getCurrentNestingLevel() == 0)
+								elseNoCurlyBrackets = false;
+						 
+							if (line.matches(regex_for) || line.matches(regex_while)) {	
+								inLoop = true;
+							} 
+							
+							if	( inLoop && !nextLine.matches(regex_for) && 
+								  !nextLine.matches(regex_while) && 
+								  !nextLine.matches(regex_try) ) {
+								//inNestedStructWithoutCurlyBrackets = false;
+								inLoop = false;
+							}
 						}
 					}
 				}
-				while (numberOfElses > 0 && elseBlock.get(numberOfElses) == 1 && elseBlock_moreTwo.get(numberOfElses)) {
-//					System.out.println("remove");
+				
+				while (	elseBlockManager.getCurrentNestingLevel() > 0 && 
+						elseBlockManager.getCurrentBalance() == 1 && 
+						elseBlockManager.hasBalanceAlreadyPassedTwo()) {
 					line += "}";
-					elseBlock.remove(numberOfElses);
-					elseBlock_moreTwo.remove(numberOfElses);
-					
-					numberOfElses--;
+					elseBlockManager.removeCurrentElseBlock();
 				}
 				
-				if (numberOfElses == 0) {
+				if (elseBlockManager.getCurrentNestingLevel() == 0) {
 					elseNoCurlyBrackets = false;
 				}
 				
+				// Analyzes code
 				if (pattern_tryFinally.matcher(line).find() && pattern_tryFinally.matcher(line).find()) {	// Try or finally
 					line = checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_try_finally(line);
 				} else if (!line.contains("if") && pattern_else.matcher(line).find()) {		// Else
 					line = checkCurlyBracketNewLine(line, nextLine);
-					
 					parsedLine = parse_else(line);
+					
+					// Checks if parsed else is an else without curly brackets
 					if (elseNoCurlyBrackets) {
-						numberOfElses++;
-						elseBlock.put(numberOfElses, 1);
-						elseBlock_moreTwo.put(numberOfElses, false);
-						//System.out.println("NUM_ELSES: "+numberOfElses);
-						
-						
+						elseBlockManager.createNewElseBlock();
 						// Checks if next line is a block code
 						// If it is, put } at the end
 						// Else put } at the end of line
-						
-						
 						
 						if (!nextLine.contains("{")) {	// If there are not curly brackets in else nor next line
 							// Checks if it is an one line command
@@ -342,22 +274,15 @@ public class FileParser
 								nextLine = br_forward.readLine();
 								line = br.readLine();
 								parsedLine = line +"}";
-								//elseNoCurlyBrackets = false;
-								//curlyBrackets.pop();
-								//elseBlock.remove(numberOfElses--);
-								decreaseElseBlockBalance(elseBlock);
+								elseBlockManager.decreaseBalance();
 								
-								if (getElseBlockBalance(elseBlock) == 0) {
-									elseBlock.remove(numberOfElses);
-									elseBlock_moreTwo.remove(numberOfElses--);
+								if (elseBlockManager.isCurrentBalanceEmpty()) {
+									elseBlockManager.removeCurrentElseBlock();
 								}
 								
-								if (numberOfElses == 0) {
+								if (elseBlockManager.getCurrentNestingLevel() == 0) {
 									elseNoCurlyBrackets = false;
 								}
-								
-							} else { // Checks if it is a block code
-								inNestedStructWithoutCurlyBrackets = true;
 							}
 						}
 					}
@@ -365,13 +290,9 @@ public class FileParser
 				} else if (pattern_do.matcher(line).find()) {								// Do while
 					line = checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_do(line);
-					
-//					bw.write(parsedLine);
-//					bw.newLine();
 				}  else if (pattern_switch.matcher(line).find()) {							// Switch
 					line = checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_switch(line);
-					
 				} else if (	!line.contains("return ") && !line.contains("return(") && 		// Var declaration
 						!line.contains("package ") && !line.contains("class ") && 
 						line.matches(regex_varDeclarationWithoutInitialization)) {
@@ -419,9 +340,8 @@ public class FileParser
 	
 	private String parse_else(String line)
 	{
-//		System.out.println(line);
 		StringBuilder sb = new StringBuilder();
-		//System.out.println(line);
+		
 		// Checks if block has curly brackets
 		if (line.contains("{")) {
 			int curlyBracketsIndex = line.indexOf('{');
@@ -435,10 +355,7 @@ public class FileParser
 			}
 			
 			sb.append(line.substring(curlyBracketsIndex+1));
-			
-			//curlyBrackets.push('{');
 		} else {
-			//throw new IllegalStateException("Code block must be enclosed in curly brackets");
 			int indexAfterElse = line.indexOf("else")+4; 
 			sb.append(line.substring(0, indexAfterElse));
 			
@@ -448,17 +365,12 @@ public class FileParser
 				sb.append(" {"+"int "+VAR_NAME+"=0;");
 				alreadyDeclared = true;
 			}
-			//sb.append(line.substring(indexAfterElse));
-			//curlyBrackets.push('{');
-			//increaseElseBlockBalance(elseBlock);
 			
 			String afterElse = line.substring(indexAfterElse);
 			
 			if (!afterElse.isEmpty() && !afterElse.matches("^(\\s|\\t)+$")) {	// Command in same line
 				sb.append(afterElse);
 				sb.append("}");
-				//curlyBrackets.pop();
-				//elseBlock.remove(numberOfElses);
 			} else {
 				elseNoCurlyBrackets = true;
 			}
@@ -470,14 +382,10 @@ public class FileParser
 	private String parse_try_finally(String line)
 	{
 		StringBuilder sb = new StringBuilder();
-//		System.out.println(line);
-		//Pattern pTryBlock = Pattern.compile("(\\t| )+try(\\s|\\t)?\\{");
-		//Matcher m = pTryBlock.matcher(line);
+
 		Matcher m = pattern_tryFinally.matcher(line);
 		m.find();
-		//sb.append(line.substring(0, m.end()));
-		// try{int VAR_NAME=7;
-		//---
+
 		if (line.contains("{")) {
 			int curlyBracketsIndex = line.indexOf('{');
 			sb.append(line.substring(0, curlyBracketsIndex+1));
@@ -493,52 +401,26 @@ public class FileParser
 		} else {
 			throw new IllegalStateException("Code block must be enclosed in curly brackets");
 		}
-		//---
+
 		return sb.toString();
 	}
 	
 	private String parse_varDeclaration(String line)
 	{
-		//System.out.println("var");
-		
-		
 		if (alreadyDeclared)
 			return line+VAR_NAME+"=0;";
 		else {
 			alreadyDeclared = true;
 			return line+"int "+VAR_NAME+"=0;";
 		}
-		
-		//line = VAR_NAME+"=0;"+line;
-		/*
-		Matcher m = rVarDeclarationWithoutInitialization.matcher(line);
-		if (m.find()) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(line.substring(0, m.end()));
-			// int x,y;{int VAR_NAME=7;
-			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=0;");
-			else {
-				sb.append("int "+VAR_NAME+"=0;");
-				alreadyDeclared = true;
-			}
-			
-			sb.append(line.substring(m.end()));
-			parsedLine = sb.toString();
-		}*/
 	}
 	
 	private String parse_switch(String line)
 	{
 		StringBuilder sb = new StringBuilder();
-//		System.out.println(line);
 		Pattern p = Pattern.compile(":");
 		Matcher m = p.matcher(line);
 		m.find();
-		//sb.append(line.substring(0, m.end()));
-		// try{int VAR_NAME=7;
-		//---
-		//System.out.println(line);
 		sb.append(line.substring(0, m.start()+1));
 		
 		if (alreadyDeclared)
@@ -553,8 +435,18 @@ public class FileParser
 		return sb.toString();
 	}
 	
+	/**
+	 * Checks if open curly bracket is in next line. If it is, moves it to
+	 * the end of current line.
+	 * 
+	 * @param line Current line
+	 * @param nextLine Line following the current line
+	 * @return Current line with open curly bracket at the end
+	 */
 	private String checkCurlyBracketNewLine(String line, String nextLine)
 	{
+		final String regex_onlyOpenCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
+		
 		if (nextLine.matches(regex_onlyOpenCurlyBracket)) {
 			line = line + " {";
 			skipNextLine = true;
@@ -563,27 +455,45 @@ public class FileParser
 		return line;
 	}
 	
-	private void increaseElseBlockBalance(Map<Integer, Integer> elseBlock)
+	private boolean isComment(String line)
 	{
-		Integer balance = elseBlock.get(numberOfElses);
-		balance++;
-		elseBlock.put(numberOfElses, balance);
+		boolean response = false;
 		
-		if (balance >= 2) {
-			elseBlock_moreTwo.put(numberOfElses, true);
+		if (inComment) {
+			if (line.contains("*/"))
+				inComment = false;
+			
+			response = true;
+		} else if (line.contains("/*") && !line.contains("*/")) {
+			inComment = true;
+			
+			response = true;
+		} else if (line.contains("//") || (line.contains("/*") && line.contains("*/"))) {
+			response = true;
 		}
+		
+		return response;
 	}
 	
-	private void decreaseElseBlockBalance(Map<Integer, Integer> elseBlock)
+	private int countOpenCurlyBrackets(String line)
 	{
-		Integer balance = elseBlock.get(numberOfElses);
-		balance--;
-		elseBlock.put(numberOfElses, balance);
+		final Pattern pattern_openCurlyBrackets = Pattern.compile("\\{");
+		Matcher openCBMatcher = pattern_openCurlyBrackets.matcher(line);
+		int size;
+		for (size = 0; openCBMatcher.find(); size++);
+		
+		return size;
 	}
 	
-	private int getElseBlockBalance(Map<Integer, Integer> elseBlock)
+	private int countClosedCurlyBrackets(String line)
 	{
-		return elseBlock.get(numberOfElses).intValue();
+		final Pattern pattern_closedCurlyBrackets = Pattern.compile("\\}");
+		Matcher openCBMatcher = pattern_closedCurlyBrackets.matcher(line);
+		
+		int size;
+		for (size = 0; openCBMatcher.find(); size++);
+		
+		return size;
 	}
 	
 	private static String md5(String text)
@@ -599,5 +509,136 @@ public class FileParser
 		}
 		
 		return response;
+	}
+	
+	/**
+	 * Responsible for managing an else block. It is used only for else blocks
+	 * without curly brackets, because its usefulness is add curly brackets in
+	 * these blocks.
+	 */
+	class ElseBlock
+	{
+		/**
+		 * Balance of curly brackets. It is always positive or zero.
+		 */
+		private int curlyBracketsBalance;
+		
+		/**
+		 * Flag used to control if balance at any time was equal to 2.
+		 */
+		private boolean balancePassedTwo;
+		
+		/**
+		 * Increments balance.
+		 * 
+		 * @apiNote Must be called when an open curly bracket is found
+		 */
+		public void increaseBalance()
+		{
+			curlyBracketsBalance += 1;
+			
+			if (curlyBracketsBalance >= 2) {
+				balancePassedTwo = true;
+			}
+		}
+		
+		/**
+		 * Decrements balance.
+		 * 
+		 * @apiNote Must be called when a closed curly bracket is found
+		 */
+		public void decreaseBalance()
+		{
+			curlyBracketsBalance -= 1;
+		}
+		
+		/**
+		 * Returns balance.
+		 * 
+		 * @return Current balance
+		 */
+		public int getBalance()
+		{
+			return curlyBracketsBalance;
+		}
+		
+		/**
+		 * Checks if balance is empty
+		 * 
+		 * @return If balance is zero
+		 */
+		public boolean isBalanceEmpty()
+		{
+			return curlyBracketsBalance == 0;
+		}
+		
+		/**
+		 * Checks if at any time the balance was equal to 2.
+		 * 
+		 * @return If at any time the balance was equal to 2
+		 */
+		public boolean hasBalanceAlreadyPassedTwo()
+		{
+			return balancePassedTwo;
+		}
+	}
+	
+	/**
+	 * Manages else blocks according to its nesting levels.
+	 */
+	class ElseBlockManager
+	{
+		private int currentNestingLevel;
+		private Stack<ElseBlock> elseBlocks;
+		
+		
+		public ElseBlockManager()
+		{
+			elseBlocks = new Stack<>();
+		}
+		
+		public void createNewElseBlock()
+		{
+			currentNestingLevel++;
+			elseBlocks.push(new ElseBlock());
+		}
+		
+		public void removeCurrentElseBlock()
+		{
+			if (elseBlocks.size() > 0) {
+				elseBlocks.pop();
+				currentNestingLevel--;
+			}
+		}
+		
+		public int getCurrentNestingLevel()
+		{
+			return currentNestingLevel;
+		}
+		
+		public void incrementBalance()
+		{
+			elseBlocks.peek().increaseBalance();
+		}
+		
+		public void decreaseBalance()
+		{
+			elseBlocks.peek().decreaseBalance();
+		}
+		
+		public int getCurrentBalance()
+		{
+			return elseBlocks.peek().getBalance();
+		}
+		
+		public boolean isCurrentBalanceEmpty()
+		{
+			return elseBlocks.peek().isBalanceEmpty();
+		}
+		
+		private boolean hasBalanceAlreadyPassedTwo()
+		{
+			return elseBlocks.peek().hasBalanceAlreadyPassedTwo();
+		}
 	}
 }

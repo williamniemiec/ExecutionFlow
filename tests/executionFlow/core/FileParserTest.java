@@ -145,6 +145,8 @@ public class FileParserTest
 		//assertEquals(expectedResult, result);
 	}
 	*/
+	
+	/*
 	@Test
 	public void testForeighCode1()
 	{
@@ -155,6 +157,7 @@ public class FileParserTest
 		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
 	}
+	*/
 	
 	@Test
 	public void testForeighCode2()
