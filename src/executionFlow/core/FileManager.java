@@ -19,6 +19,8 @@ public class FileManager
 	private String filename;
 	private File inputFile;
 	private File originalFile; 
+	private String classOutput;
+	private String classPackage;
 	
 	
 	//-------------------------------------------------------------------------
@@ -27,12 +29,16 @@ public class FileManager
 	/**
 	 * Manages file analyzer and compiler.
 	 * 
-	 * @param srcFilename Name of java file
+	 * @param srcFilePath Path of java file
+	 * @param classOutput Directory where .class of java file is
+	 * @param classPackage Package of the class of the java file 
 	 */
-	public FileManager(String srcFilename)
+	public FileManager(String srcFilePath, String classOutput, String classPackage)
 	{
-		inputFile = new File(srcFilename);
-		originalFile = new File(srcFilename+".original"); 
+		this.classOutput = classOutput;
+		this.classPackage = classPackage;
+		this.inputFile = new File(srcFilePath);
+		this.originalFile = new File(srcFilePath+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
 	}
 	
@@ -81,14 +87,11 @@ public class FileManager
 	
 	/**
 	 * Compiles processed file.
-	 * 
-	 * @param classOutput Directory where .class of file passed to the 
-	 * constructor is
-	 * @param classPackage Package of the class of the file passed to the constructor 
-	 * @return This object to allow chained calls
+	 *  
+	 * @return Path of compiled file
 	 * @throws Exception If an error occurs
 	 */
-	public FileManager compileFile(String classOutput, String classPackage) throws Exception
+	public String compileFile() throws Exception
 	{
 		int packageFolders = classPackage.split("\\.").length;
 		Path file = Paths.get(classOutput);
@@ -99,9 +102,7 @@ public class FileManager
 		}
 		
 		// Compiles parsed file
-		FileCompiler.compile(inputFile, file.toString());
-		
-		return this;
+		return FileCompiler.compile(inputFile, file.toString());
 	}
 	
 	/**

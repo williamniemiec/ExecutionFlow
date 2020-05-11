@@ -18,7 +18,7 @@ import executionFlow.runtime.SkipCollection;
 public class JDBwithFileParserTest 
 {
 	@Test
-	public void parseAndDebugTest() throws IOException
+	public void parseAndDebugTest() throws Exception
 	{
 		String filename = "test_else.java";
 		File inputFile = new File(filename);
@@ -34,7 +34,7 @@ public class JDBwithFileParserTest
 		);
 		
 		// Parses file
-		FileParser fp = new FileParser("test_else.java", null, "test_else_parsed");
+		//FileParser fp = new FileParser("test_else.java", null, "test_else_parsed");
 		File out = new File(fp.parseFile());
 		
 		// Changes parsed file name to the same as received filename
@@ -42,7 +42,7 @@ public class JDBwithFileParserTest
 		out.renameTo(inputFile);
 		
 		// Compiles parsed file
-		FileCompiler.compile(filename, "bin");
+		FileCompiler.compile(inputFile, "bin");
 		
 		// JDB
 		/*
