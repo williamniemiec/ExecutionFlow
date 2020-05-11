@@ -27,7 +27,7 @@ import executionFlow.info.ClassMethodInfo;
 
 
 /**
- * Computes test path from code debugging.
+ * Computes test path from code debug.
  */
 public class JDB 
 {
@@ -155,6 +155,10 @@ public class JDB
 	 */
 	private synchronized Process jdb_start() throws IOException
 	{
+//		System.out.println("CPR: "+classPathRoot);
+//		System.out.println("srcPath: "+srcPath);
+		
+		
 		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
 		String lib_junit = libPath_relative+"junit-4.13.jar";
@@ -169,7 +173,6 @@ public class JDB
 //		System.out.println(jdb_paths);
 		//System.out.println(new File(".").getCanonicalPath());
 //		System.out.println("jdb classpath: "+jdb_classPath);
-//		System.out.println("CPR: "+classPathRoot);
 //		System.out.println("cis: "+classInvocationSignature);
 		ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c","jdb "+jdb_paths,"org.junit.runner.JUnitCore",classInvocationSignature);
 		pb.directory(new File(classPathRoot));
@@ -186,6 +189,7 @@ public class JDB
 	 */
 	private synchronized void jdb_methodVisitor(String methodSignature) throws IOException, InterruptedException 
 	{
+//		System.out.println("MethodSignature: "+methodSignature);
 		Process process = jdb_start();
         
         // Output

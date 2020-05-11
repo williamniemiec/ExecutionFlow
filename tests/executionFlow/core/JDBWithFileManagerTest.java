@@ -2,6 +2,7 @@ package executionFlow.core;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
@@ -18,29 +19,29 @@ public class JDBWithFileManagerTest
 		List<List<Integer>> tp_jdb;
 		
 		FileManager fileManager = new FileManager(
-			"tests/executionFlow/core/files/test_try.java",
-			"bin/executionFlow/core/files",
+			new File("tests/executionFlow/core/files/test_try.java").getAbsolutePath(),
+			new File("bin/executionFlow/core/files").getAbsolutePath(),
 			"executionFlow.core.files"
 		);
 		
 		String classPath = fileManager.parseFile().compileFile();
 		fileManager.revert();
 		
-		assertEquals("bin\\test_try.class", classPath);
-		
-		int lastLineTestMethod = 37;
+		//assertEquals("bin\\test_try.class", classPath);
+		int lastLineTestMethod = 54;
 		JDB jdb = new JDB(lastLineTestMethod);
 		
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
-			.testMethodSignature("executionFlow.core.call_test_try()")
+			.testMethodSignature("executionFlow.core.JDBWithFileManagerTest.call_test_try()")
 			.classPath(classPath)
+			.srcPath(new File("tests/executionFlow/core/files/test_try.java").getAbsolutePath())
 			.methodName("tryCatchMethod_try")
-			.methodSignature("executionFlow.core.files")
-			.invocationLine(47)
+			//.methodSignature("executionFlow.core.files.tryCatchMethod_try(int)")
+			.methodSignature("executionFlow.core.files.test_try")
+			.invocationLine(53)
 			.build();
 		
 		tp_jdb = jdb.getTestPaths(cmi);
-		
 		System.out.println(tp_jdb);
 	}
 	

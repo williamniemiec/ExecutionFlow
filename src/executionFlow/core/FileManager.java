@@ -29,8 +29,8 @@ public class FileManager
 	/**
 	 * Manages file analyzer and compiler.
 	 * 
-	 * @param srcFilePath Path of java file
-	 * @param classOutput Directory where .class of java file is
+	 * @param srcFilePath Absolute path of java file
+	 * @param classOutput Absolute path of directory where .class of java file is
 	 * @param classPackage Package of the class of the java file 
 	 */
 	public FileManager(String srcFilePath, String classOutput, String classPackage)
@@ -41,6 +41,18 @@ public class FileManager
 		this.originalFile = new File(srcFilePath+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
 	}
+	
+	/**
+	 * Manages file analyzer and compiler.
+	 * 
+	 * @param srcFilePath Path of java file
+	 * @param classOutput Directory where .class of java file is
+	 * @param classPackage Package of the class of the java file 
+	 */
+	/*public FileManager(String srcFilePath, String classOutput, String classPackage)
+	{
+		this(new File(srcFilePath), new File(classOutput), classPackage);
+	}*/
 	
 	
 	//-------------------------------------------------------------------------
@@ -115,6 +127,12 @@ public class FileManager
 	private void createBackupFile()
 	{
 		try {
+			/*
+			System.out.println("copy");
+			System.out.println("input: "+inputFile);
+			System.out.println("input: "+inputFile.toPath());
+			System.out.println("original: "+originalFile);
+			System.out.println("original: "+originalFile.toPath());*/
 			Files.copy(
 				inputFile.toPath(), 
 				originalFile.toPath(), 
