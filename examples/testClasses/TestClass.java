@@ -60,7 +60,8 @@ public class TestClass
 	/**
 	 * Empty concrete function.
 	 */
-	public void test2() { }
+	public void test2() 
+	{ }
 	
 	public static void test3(int x, int y, String k) 
 	{

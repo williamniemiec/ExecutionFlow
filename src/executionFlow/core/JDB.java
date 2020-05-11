@@ -66,7 +66,7 @@ public class JDB
 	 * computation of test path is not guaranteed.
 	 */
 	{
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	/**
@@ -257,6 +257,7 @@ public class JDB
 		InputStream is = process.getInputStream();
         
         Thread t = new Thread(() -> {
+        	String regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}.+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
         	boolean inMethod = false;
         	int lastLineAdded = -1;
         	
@@ -309,7 +310,8 @@ public class JDB
             					endOfMethod = !process.isAlive();
             					lastLineAdded = -1;
             				} else if (line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
-            					if (!commandLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)")) {
+            					if (!commandLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
+        							!commandLine.matches(regex_emptyMethod)) {
             						testPath.add(lineNumber);
             						lastLineAdded = lineNumber;
             					}

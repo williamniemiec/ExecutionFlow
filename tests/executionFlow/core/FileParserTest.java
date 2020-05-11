@@ -15,6 +15,17 @@ import executionFlow.runtime.SkipCollection;
 @SkipCollection
 public class FileParserTest
 {
+	@Test
+	public void testEmptyClass()
+	{
+		String currentDir = new File("tests\\executionFlow\\core\\files").getAbsolutePath();
+		String filename = "test_empty";
+		File f = new File(currentDir, filename+".java");
+		
+		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		fp.parseFile();
+	}
+	
 	/*
 	@Test
 	public void testParseElse()
@@ -158,7 +169,7 @@ public class FileParserTest
 		fp.parseFile();
 	}
 	*/
-	
+	/*
 	@Test
 	public void testForeighCode2()
 	{
@@ -168,7 +179,7 @@ public class FileParserTest
 		
 		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
-	}
+	}*/
 	
 	/*
 	private String extractTxt(File file)
