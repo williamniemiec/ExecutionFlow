@@ -23,6 +23,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//		Pointcut
 	//-----------------------------------------------------------------------
 	pointcut testMethodCollector():
+		!cflow(execution(@SkipMethod * *.*())) &&
 		execution(@Test * *.*())
 //		(execution(@Test * *.*()) || 
 		 //execution(@RepeatedTest * *.*()) ||

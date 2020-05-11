@@ -14,7 +14,9 @@ public aspect ConstructorCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Pointcut
 	//-----------------------------------------------------------------------
-	pointcut constructorCollector(): (initialization(*.new(*)) || initialization(*.new()))	
+	pointcut constructorCollector(): 
+		!cflow(execution(@SkipMethod * *.*())) &&
+		(initialization(*.new(*)) || initialization(*.new()))	
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileParser)
