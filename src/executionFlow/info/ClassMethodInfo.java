@@ -32,7 +32,8 @@ public class ClassMethodInfo
 	 * Stores information about a method.
 	 * 
 	 * @param classPath Method class file path
-	 * @param srcPath
+	 * @param srcPath Path where source file is
+	 * @param invocationLine Line of test method where method is called
 	 * @param methodSignature Signature of the method
 	 * @param testMethodSignature Signature of the test method to which the method belongs
 	 * @param methodName Method's name
@@ -69,60 +70,101 @@ public class ClassMethodInfo
 		private int invocationLine;
 		private String srcPath;
 		
+		/**
+		 * @param invocationLine Line of test method where method is called
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder invocationLine(int invocationLine)
 		{
 			this.invocationLine = invocationLine;
 			return this;
 		}
 		
+		/**
+		 * @param methodName Method's name
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder methodName(String methodName)
 		{
 			this.methodName = methodName;
 			return this;
 		}
 		
+		/**
+		 * @param methodSignature Signature of the method
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder methodSignature(String methodSignature)
 		{
 			this.methodSignature = methodSignature;
 			return this;
 		}
 		
+		/**
+		 * @param parameterTypes Types of method's parameters
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder parameterTypes(Class<?>[] parameterTypes)
 		{
 			this.parameterTypes = parameterTypes;
 			return this;
 		}
 		
+		/**
+		 * @param args Method's arguments
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder args(Object... args)
 		{
 			this.args = args;
 			return this;
 		}
 
+		/**
+		 * @param classPath Method class file path
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder classPath(String classPath)
 		{
 			this.classPath = classPath;
 			return this;
 		}
 		
+		/**
+		 * @param testMethodSignature Signature of the test method to which the method belongs
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder testMethodSignature(String testMethodSignature)
 		{
 			this.testMethodSignature = testMethodSignature;
 			return this;
 		}
 		
+		/**
+		 * @param returnType Return type of the method
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder returnType(Class<?> returnType)
 		{
 			this.returnType = returnType;
 			return this;
 		}
 		
+		/**
+		 * @param srcPath Path where source file is
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder srcPath(String srcPath)
 		{
 			this.srcPath = srcPath;
 			return this;
 		}
 		
+		/**
+		 * Creates {@link ClassMethodInfo} with provided information. 
+		 * 
+		 * @return ClassMethodInfo with provided information
+		 */
 		public ClassMethodInfo build()
 		{
 			return new ClassMethodInfo(
