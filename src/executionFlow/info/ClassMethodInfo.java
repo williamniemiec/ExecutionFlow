@@ -23,6 +23,7 @@ public class ClassMethodInfo
 	private String methodSignature;
 	private int invocationLine;
 	private String srcPath;
+	private String classSignature;
 	
 	
 	//-----------------------------------------------------------------------
@@ -53,6 +54,8 @@ public class ClassMethodInfo
 		this.parameterTypes = parameterTypes;
 		this.args = args;
 		this.invocationLine = invocationLine;
+		
+		this.classSignature = extractClassSignature();
 	}
 
 	/**
@@ -195,10 +198,11 @@ public class ClassMethodInfo
 	 */
 	public SignaturesInfo extractSignatures()
 	{
-		String paramsTypes = extractParameterTypes(parameterTypes);
-		String methodSig = methodSignature+"."+methodName+"("+paramsTypes+")";
+		//String paramsTypes = extractParameterTypes(parameterTypes);
+		//String methodSig = methodSignature+"."+methodName+"("+paramsTypes+")";
 		
-		return new SignaturesInfo(methodSig, testMethodSignature);
+		//return new SignaturesInfo(methodSig, testMethodSignature);
+		return new SignaturesInfo(methodSignature, testMethodSignature);
 	}
 	
 	/**
@@ -207,22 +211,22 @@ public class ClassMethodInfo
 	 * @param parametersTypes Types of each method's parameter
 	 * @return String with the name of each type separated by commas
 	 */
-	private String extractParameterTypes(Class<?>[] parametersTypes)
+	public String extractParameterTypes()
 	{
-		if (parametersTypes == null) { return ""; }
-		StringBuilder parameterTypes = new StringBuilder();
+		if (parameterTypes == null) { return ""; }
+		StringBuilder response = new StringBuilder();
 		
-		for (var parameterType : parametersTypes) {
+		for (var parameterType : parameterTypes) {
 			// Ads only name of the parameter type
 			String[] tmp = parameterType.getTypeName().split("\\."); // Removes signature
 			
-			parameterTypes.append(tmp[tmp.length-1] +",");
+			response.append(tmp[tmp.length-1] +",");
 		}
 		
-		if (parameterTypes.length() > 0)
-			parameterTypes.deleteCharAt(parameterTypes.length()-1);	// Removes last comma
+		if (response.length() > 0)
+			response.deleteCharAt(response.length()-1);	// Removes last comma
 		
-		return parameterTypes.toString();
+		return response.toString();
 	}
 	
 	
@@ -260,7 +264,7 @@ public class ClassMethodInfo
 	 * 
 	 * @return Method's signature
 	 */
-	public String getSignature()
+	/*public String getSignature()
 	{
 		if (parameterTypes == null) { return methodName+"()"; }
 		
@@ -274,7 +278,7 @@ public class ClassMethodInfo
 			types.deleteCharAt(types.length()-1);	// Remove last comma
 		
 		return methodName+"("+types+")";
-	}
+	}*/
 	
 	public String getTestMethodSignature() 
 	{
@@ -306,11 +310,16 @@ public class ClassMethodInfo
 		return this.srcPath;
 	}
 	
+	public String getClassSignature()
+	{
+		return this.classSignature;
+	}
+	
 	public String getPackage()
 	{
-		if (methodSignature == null) { return ""; }
+		if (classSignature == null) { return ""; }
 		
-		String[] tmp = methodSignature.split("\\.");
+		String[] tmp = classSignature.split("\\.");
 		StringBuilder sb = new StringBuilder();
 		
 		for (int i=0; i<tmp.length-1; i++) {
@@ -365,6 +374,23 @@ public class ClassMethodInfo
 		for (int i=0; i<terms.length-1; i++) {
 			response.append(terms[i]);
 			response.append("\\");
+		}
+		
+		if (response.length() > 0) {
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
+	}
+	
+	private String extractClassSignature()
+	{
+		StringBuilder response = new StringBuilder();
+		String[] terms = methodSignature.split("\\.");
+		
+		for (int i=0; i<terms.length-1; i++) {
+			response.append(terms[i]);
+			response.append(".");
 		}
 		
 		if (response.length() > 0) {

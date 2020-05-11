@@ -134,8 +134,8 @@ public class JDB
 	 */
 	public synchronized List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
 	{
-		methodClassSignature = methodInfo.getMethodSignature();
-		String methodSignature = methodInfo.getMethodSignature()+"."+methodInfo.getMethodName()+"()";
+		methodClassSignature = methodInfo.getClassSignature();
+		String methodSignature = methodInfo.getClassSignature()+"."+methodInfo.getMethodName()+"()";
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
@@ -157,8 +157,7 @@ public class JDB
 	{
 //		System.out.println("CPR: "+classPathRoot);
 //		System.out.println("srcPath: "+srcPath);
-		
-		
+
 		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
 		String lib_junit = libPath_relative+"junit-4.13.jar";
@@ -494,28 +493,12 @@ public class JDB
 					if (file.endsWith(classFileName)) {
 						file = file.getParent();
 
-//						System.out.println("FILE: "+file);
-//						System.out.println("CLASSFILENAME "+classFileName);
-						// -1 not to consider method name
-						//int packageFolders = methodInfo.getSignature().split("\\(")[0].split("\\.").length - 1;
-						//int packageFolders = classInvocationSignature.split("\\.").length-1;
-						int packageFolders = methodInfo.getMethodSignature().split("\\.").length-1;
-//						System.out.println("@@");
-//						System.out.println(classInvocationSignature);
-//						System.out.println(packageFolders);
-//						System.out.println(file);
-//						System.out.println("ms: "+methodInfo.getMethodSignature());
-//						System.out.println(methodInfo);
-//						System.out.println(packageFolders);
-//						System.out.println("@@");
+						int packageFolders = methodInfo.getPackage().split("\\.").length;
+						
 						for (int i=0; i<packageFolders; i++) {
 							file = file.getParent();
 						}
 						
-//						System.out.println("FINAL: "+file);
-//						System.out.println("packageFolders: "+packageFolders);
-//						System.out.println("methodSig: "+methodInfo.getSignature());
-//						System.out.println("FILE: "+file);
 						classPathRoot = file.toString();
 						
 						return FileVisitResult.TERMINATE;
@@ -531,7 +514,7 @@ public class JDB
 	
 	private String extractSrcPathDirectory(ClassMethodInfo methodInfo)
 	{
-		int packageFolders = methodInfo.getMethodSignature().split("\\.").length-1;
+		int packageFolders = methodInfo.getClassSignature().split("\\.").length-1;
 		Path file = new File(methodInfo.getSrcPath()).toPath();
 		
 		file = file.getParent();

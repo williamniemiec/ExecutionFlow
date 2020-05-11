@@ -126,7 +126,8 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 		
 		// Gets method signature
-		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
+		//String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
+		String methodSignature = signature.split(" ")[1];
 		
 		// Gets method invocation line
 		int invocationLine = Thread.currentThread().getStackTrace()[3].getLineNumber();

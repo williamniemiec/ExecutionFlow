@@ -129,8 +129,8 @@ public class TestClass
 		for (int i=0; i<letters.length; i++) {
 			if (letters[i] == Character.toUpperCase(letters[i]))
 				response[i] =  Character.toLowerCase(letters[i]);
-			else
-				response[i] =  Character.toUpperCase(letters[i]);
+			else {int _148fb9f4dc0503f652563c160ed55289=0;
+				response[i] =  Character.toUpperCase(letters[i]);}
 		}
 		
 		return response;

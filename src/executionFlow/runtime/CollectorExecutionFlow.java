@@ -241,8 +241,10 @@ public class CollectorExecutionFlow
 	 * @param signature Signature of the method
 	 * @return Name of the package + name of the class
 	 */
+	/*
 	public static String extractMethodSignature(String signature)
 	{
+		System.out.println("!!!!"+signature);
 		signature = signature.split(" ")[1];		// Removes return
 		String[] tmp = signature.split("\\.");
 		StringBuilder response = new StringBuilder();
@@ -258,7 +260,7 @@ public class CollectorExecutionFlow
 		
 		return response.toString();
 	}
-	
+	*/
 	/**
 	 * Extracts class name from a signature.
 	 * 
