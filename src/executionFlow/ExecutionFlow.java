@@ -118,6 +118,10 @@ public class ExecutionFlow
 			try {
 				fileManager.parseFile().compileFile();
 				System.out.println("Processing completed");
+				
+				// Reverts parsed file to its original state
+				fileManager.revert();
+				
 				JDB jdb = new JDB(lastLineTestMethod);
 				
 				// Computes test path from JDB
@@ -125,9 +129,6 @@ public class ExecutionFlow
 				
 				// Stores each computed test path
 				storeTestPath(tp_jdb, collector);
-				
-				// Reverts parsed file to its original state
-				fileManager.revert();
 			} catch (Exception e) {
 				System.out.println("Processing error");
 			}

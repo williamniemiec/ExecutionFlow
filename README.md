@@ -4,6 +4,10 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 
 <hr />
 
+## Avisos importantes
+- Se o método de teste falhar (ou seja, se um assert não coincidir com o resultado esperado) o test path pode não ser gerado
+- Se ao executar o método de teste não for gerado o test path, [execute `clean` no projeto](https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#clean)
+- Não interrompa a execução do teste antes de ser exibida a mensagem 'Processing completed', caso contrário o arquivo fonte do código pode ser comprometido. Caso isso ocorra, veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#arquivo-fonte-comprometido) como recuperar o arquivo original.
 
 ## Requisitos
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
@@ -22,6 +26,8 @@ testClasses.TestClass.factorial(int)
 [88, 90, 91, 90, 91, 90, 91, 90, 91, 90, 94]
 </code></pre>
 
+
+Veja mais exemplos de test paths gerados [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Exemplos).
 
 ## Técnica utilizada para computar o test path
 
