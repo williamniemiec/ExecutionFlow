@@ -5,31 +5,31 @@ public class test_switch
 		letter = Character.toUpperCase(letter);
 				
 		switch (letter) {
-			case 'Á':
-			case 'À':
-			case 'Ã':
-			case 'Â':
+			case 'Á':int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'À':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Ã':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Â':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 				letter = 'A';
 				break;
-			case 'É':
-			case 'È':
-			case 'Ê':
+			case 'É':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'È':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Ê':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 				letter = 'E';
 				break;
-			case 'Ì':
-			case 'Í':
-			case 'Î':
+			case 'Ì':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Í':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Î':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 				letter = 'I';
 				break;
-			case 'Ò':
-			case 'Ó':
-			case 'Ô':
-			case 'Õ':
+			case 'Ò':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Ó':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Ô':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Õ':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 				letter = 'O';
 				break;
-			case 'Ú':
-			case 'Ù':
-			case 'Û':
+			case 'Ú':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Ù':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+			case 'Û':_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 				letter = 'U';
 				break;
 		}

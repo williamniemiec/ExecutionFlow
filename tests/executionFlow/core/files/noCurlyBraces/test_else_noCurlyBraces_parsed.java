@@ -3,15 +3,15 @@ public class test_else_noCurlyBraces
 	public String ifElseMethod(int num)
 	{
 		if (false)	w++;
-		else {int _341dbb9d2622c8ba6c6ee932692f726f=0;
+		else {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
 			for(;;)}
 				while (w == 0) {
 					if (false) w++;
-					else {_341dbb9d2622c8ba6c6ee932692f726f=0;
-						try {_341dbb9d2622c8ba6c6ee932692f726f=0;
+					else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+						try {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 							w++;
 							if (false) w++;
-							else {_341dbb9d2622c8ba6c6ee932692f726f=0;
+							else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 								w--;}
 						} catch(Exception e) {
 							w--;
@@ -27,17 +27,17 @@ public class test_else_noCurlyBraces
 	public String ifElseMethod_complex(int num)
 	{
 		if (false)	w++;
-		else {int _341dbb9d2622c8ba6c6ee932692f726f=0;
+		else {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
 			for(;;)}
 				while (w == 0) 
 				{
 					if (false) w++;
-					else {_341dbb9d2622c8ba6c6ee932692f726f=0;
-						try } {_341dbb9d2622c8ba6c6ee932692f726f=0;
+					else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+						try } {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 
 							w++;
 							if (false) w++;
-							else {_341dbb9d2622c8ba6c6ee932692f726f=0;
+							else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
 								w--;}
 						} 
 						catch(Exception e) 

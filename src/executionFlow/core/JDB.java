@@ -62,7 +62,7 @@ public class JDB
 	 * Enables or disables debug. If activated, shows shell output during JDB execution.
 	 */
 	{
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	/**

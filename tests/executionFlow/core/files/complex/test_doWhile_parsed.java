@@ -8,7 +8,7 @@ public class test_doWhile
 	{
 		int i = 0, k = 0;
 
-		do  {int _341dbb9d2622c8ba6c6ee932692f726f=0;
+		do  {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
 
 			k++;
 		} while (i < num);
@@ -18,7 +18,7 @@ public class test_doWhile
 	{
 		int i = 0, k = 0;
 
-		do  {int _341dbb9d2622c8ba6c6ee932692f726f=0;
+		do  {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
 
 			k++;
 		} 
