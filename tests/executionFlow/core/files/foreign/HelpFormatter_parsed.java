@@ -548,8 +548,8 @@ public class HelpFormatter
         {
             printUsage(pw, width, cmdLineSyntax, options);
         }
-        else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
-
+        else
+        {
             printUsage(pw, width, cmdLineSyntax);
         }
 
@@ -615,8 +615,8 @@ public class HelpFormatter
             }
 
             // if the Option is not part of an OptionGroup
-            else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
-
+            else
+            {
                 appendOption(buff, option, option.isRequired());
             }
 
@@ -687,7 +687,7 @@ public class HelpFormatter
         {
             buff.append("-").append(option.getOpt());
         }
-        else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
+        else {int _341dbb9d2622c8ba6c6ee932692f726f=0;
 
             buff.append("--").append(option.getLongOpt());
         }
@@ -813,7 +813,7 @@ public class HelpFormatter
             {
                 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
             }
-            else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
+            else {int _341dbb9d2622c8ba6c6ee932692f726f=0;
 
                 optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());
 
@@ -831,7 +831,7 @@ public class HelpFormatter
                     // if the option has a blank argname
                     optBuf.append(' ');
                 }
-                else {_39d1184bb15bbf79b2fe585e27e0f905=0;
+                else {_341dbb9d2622c8ba6c6ee932692f726f=0;
 
                     optBuf.append(option.hasLongOpt() ? longOptSeparator : " ");
                     optBuf.append("<").append(argName != null ? option.getArgName() : getArgName()).append(">");
@@ -950,7 +950,7 @@ public class HelpFormatter
                 {
                     sb.append(getNewLine());
                 }
-                else {int _39d1184bb15bbf79b2fe585e27e0f905=0;
+                else {int _341dbb9d2622c8ba6c6ee932692f726f=0;
 
                     firstLine = false;
                 }

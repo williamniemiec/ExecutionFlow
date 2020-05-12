@@ -8,8 +8,8 @@ public class test_else
 		}
 		
 		String response = "";
-		int w;int _db04ee2473693b92ea40dc8836c5e892=0;
-        int k;_db04ee2473693b92ea40dc8836c5e892=0;
+		int w;int _341dbb9d2622c8ba6c6ee932692f726f=0;
+        int k;_341dbb9d2622c8ba6c6ee932692f726f=0;
 
 		if (num == 0) 
 		{
@@ -19,7 +19,7 @@ public class test_else
 		{
 			response = "Number one";
 		} 
-		else  {_db04ee2473693b92ea40dc8836c5e892=0;
+		else  {_341dbb9d2622c8ba6c6ee932692f726f=0;
 
 			response = "Number "+num;
 		}
@@ -35,8 +35,8 @@ public class test_else
 		}
 		
 		String response = "";
-		int w;int _db04ee2473693b92ea40dc8836c5e892=0;
-        int k;_db04ee2473693b92ea40dc8836c5e892=0;
+		int w;int _341dbb9d2622c8ba6c6ee932692f726f=0;
+        int k;_341dbb9d2622c8ba6c6ee932692f726f=0;
 
 		if (num == 0) 
 		{
@@ -46,7 +46,7 @@ public class test_else
 		{
 			response = "Number one";
 		} 
-		else  {_db04ee2473693b92ea40dc8836c5e892=0;
+		else  {_341dbb9d2622c8ba6c6ee932692f726f=0;
 
 			response = "Number "+num;
 		}
