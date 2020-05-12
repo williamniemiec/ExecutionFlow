@@ -9,6 +9,8 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 - Se ao executar o método de teste não for gerado o test path, [execute `clean` no projeto](https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#clean)
 - Não interrompa a execução do teste antes de ser exibida a mensagem 'Processing completed', caso contrário o arquivo fonte do código pode ser comprometido. Caso isso ocorra, veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#arquivo-fonte-comprometido) como recuperar o arquivo original.
 
+Veja todas as limitações da aplicação [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Limita%C3%A7%C3%B5es-e-pontos-importantes).
+
 ## Requisitos
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
