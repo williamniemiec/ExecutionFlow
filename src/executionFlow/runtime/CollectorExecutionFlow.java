@@ -239,28 +239,15 @@ public class CollectorExecutionFlow
 	 * Extracts method's class signature.
 	 * 
 	 * @param signature Signature of the method
-	 * @return Name of the package + name of the class
+	 * @return Name of the package + name of the class + name of the method(param1, param2,...)
 	 */
-	/*
 	public static String extractMethodSignature(String signature)
 	{
-		System.out.println("!!!!"+signature);
-		signature = signature.split(" ")[1];		// Removes return
-		String[] tmp = signature.split("\\.");
-		StringBuilder response = new StringBuilder();
+		int index_endReturnType = signature.indexOf(' ');
 		
-		for (int i=0; i<tmp.length-1; i++) {
-			response.append(tmp[i]);
-			response.append(".");
-		}
-		
-		if (response.length() > 0) {
-			response.deleteCharAt(response.length()-1);	// Removes last dot
-		}
-		
-		return response.toString();
+		return signature.substring(index_endReturnType+1);
 	}
-	*/
+	
 	/**
 	 * Extracts class name from a signature.
 	 * 
