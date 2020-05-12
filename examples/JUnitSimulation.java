@@ -25,7 +25,7 @@ public class JUnitSimulation
 		TestClass tc = new TestClass(4);
 		tc.test2();
 	}
-	/*
+	
 	@Test
 	public void testFactorial() 
 	{
@@ -139,5 +139,4 @@ public class JUnitSimulation
 		
 		assertTrue(resp);
 	}
-	*/
 }
