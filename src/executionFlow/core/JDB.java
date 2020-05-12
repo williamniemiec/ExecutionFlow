@@ -502,8 +502,11 @@ public class JDB
 		}
 	}
 	
-	private String extractSrcPathDirectory(ClassMethodInfo methodInfo)
+	private String extractSrcPathDirectory(ClassMethodInfo methodInfo) throws Exception
 	{
+		if (methodInfo.getSrcPath() == null) 
+			throw new Exception("Source file path cannot be null");
+		
 		int packageFolders = methodInfo.getClassSignature().split("\\.").length-1;
 		Path file = new File(methodInfo.getSrcPath()).toPath();
 		
