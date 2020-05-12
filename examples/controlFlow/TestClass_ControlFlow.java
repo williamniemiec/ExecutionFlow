@@ -98,6 +98,11 @@ public class TestClass_ControlFlow
 	
 	public int doWhileMethod(int a, int b)
 	{
+		if (a == 0)
+			return b;
+		if (b == 0)
+			return a;
+		
 		do {
 			a++;
 			b--;
