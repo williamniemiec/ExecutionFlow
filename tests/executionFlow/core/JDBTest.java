@@ -15,7 +15,7 @@ import executionFlow.runtime.SkipCollection;
 
 
 /**
- * Tests test path computation via debugging analysis.
+ * Tests test path computation via debug analysis.
  */
 @SkipCollection
 public class JDBTest 
@@ -30,22 +30,24 @@ public class JDBTest
 		ClassMethodInfo sumMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.testMethodSignature("executionFlow.core.ExecutionFlowTest.callSum()")
 				.classPath(classPath)
+				.srcPath(new File("tests/math/Calculator.java").getAbsolutePath())
 				.methodName("sum")
-				.methodSignature("math.Calculator")
+				.methodSignature("math.Calculator.sum(int,int)")
 				.returnType(int.class)
 				.parameterTypes(new Class<?>[] {int.class, int.class})
 				.args(2,3)
 				.invocationLine(26)
 				.build();
-		
+
 		JDB md = new JDB(29, false);
 		testPath_sum = md.getTestPaths(sumMethod);
 		
 		ClassMethodInfo loopMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.testMethodSignature("executionFlow.core.ExecutionFlowTest.callLoop()")
 				.classPath(classPath)
+				.srcPath(new File("tests/math/Calculator.java").getAbsolutePath())
 				.methodName("loop")
-				.methodSignature("math.Calculator")
+				.methodSignature("math.Calculator.loop()")
 				.invocationLine(34)
 				.build();
 		
@@ -53,10 +55,7 @@ public class JDBTest
 		testPath_loop = md.getTestPaths(loopMethod);
 		
 		assertEquals(Arrays.asList(8, 10, 11, 10, 11, 10, 11, 10, 14), testPath_sum.get(0));
-		
-		// Note: test path ends with 24 because JDB always considers the last line as an executed line
-		assertEquals(Arrays.asList(19, 21, 22, 21, 22, 21, 22, 21, 24), testPath_loop.get(0));
-		
+		assertEquals(Arrays.asList(19, 21, 22, 21, 22, 21, 22, 21), testPath_loop.get(0));
 	}
 	
 	@Test
@@ -68,8 +67,9 @@ public class JDBTest
 		ClassMethodInfo sumMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.testMethodSignature("executionFlow.core.ExecutionFlowTest.callSum()")
 				.classPath(classPath)
+				.srcPath(new File("tests/math/CalculatorNonStatic.java").getAbsolutePath())
 				.methodName("sum")
-				.methodSignature("math.CalculatorNonStatic")
+				.methodSignature("math.CalculatorNonStatic.sum(int,int)")
 				.returnType(int.class)
 				.parameterTypes(new Class<?>[] {int.class, int.class})
 				.args(2,3)
@@ -92,8 +92,9 @@ public class JDBTest
 		ClassMethodInfo sumMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.testMethodSignature("executionFlow.core.ExecutionFlowTest.callSum()")
 				.classPath(classPath)
+				.srcPath(new File("tests/math/CalculatorNonStaticWithConstructor.java").getAbsolutePath())
 				.methodName("sum")
-				.methodSignature("math.CalculatorNonStaticWithConstructor")
+				.methodSignature("math.CalculatorNonStaticWithConstructor.sum(int,int)")
 				.invocationLine(28)
 				.build();
 		

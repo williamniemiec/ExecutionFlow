@@ -33,7 +33,7 @@ public class ClassMethodInfo
 	 * Stores information about a method.
 	 * 
 	 * @param classPath Method class file path
-	 * @param srcPath Path where source file is
+	 * @param srcPath Absolute path where source file is
 	 * @param invocationLine Line of test method where method is called
 	 * @param methodSignature Signature of the method
 	 * @param testMethodSignature Signature of the test method to which the method belongs
@@ -94,7 +94,7 @@ public class ClassMethodInfo
 		}
 		
 		/**
-		 * @param srcPath Path where source file is
+		 * @param srcPath Absolute path where source file is
 		 * @return Builder to allow chained calls
 		 */
 		public ClassMethodInfoBuilder srcPath(String srcPath)
