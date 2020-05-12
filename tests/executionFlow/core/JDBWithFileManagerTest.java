@@ -10,6 +10,7 @@ import org.junit.Test;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.runtime.SkipMethod;
 
+
 public class JDBWithFileManagerTest
 {
 	@SkipMethod
@@ -27,8 +28,7 @@ public class JDBWithFileManagerTest
 		String classPath = fileManager.parseFile().compileFile();
 		fileManager.revert();
 		
-		//assertEquals("bin\\test_try.class", classPath);
-		int lastLineTestMethod = 54;
+		int lastLineTestMethod = 53;
 		JDB jdb = new JDB(lastLineTestMethod);
 		
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
@@ -36,9 +36,8 @@ public class JDBWithFileManagerTest
 			.classPath(classPath)
 			.srcPath(new File("tests/executionFlow/core/files/test_try.java").getAbsolutePath())
 			.methodName("tryCatchMethod_try")
-			//.methodSignature("executionFlow.core.files.tryCatchMethod_try(int)")
-			.methodSignature("executionFlow.core.files.test_try")
-			.invocationLine(53)
+			.methodSignature("executionFlow.core.files.test_try.tryCatchMethod_try(int)")
+			.invocationLine(52)
 			.build();
 		
 		tp_jdb = jdb.getTestPaths(cmi);
