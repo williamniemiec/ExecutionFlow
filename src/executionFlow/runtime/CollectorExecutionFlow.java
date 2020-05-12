@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -136,7 +135,6 @@ public class CollectorExecutionFlow
 	{
 		Path rootPath = Paths.get(System.getProperty("user.dir"));
 		String aux = Thread.currentThread().getStackTrace()[3].getFileName();
-//		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
 		
 		// Gets folder where .class is
 		String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
@@ -148,10 +146,6 @@ public class CollectorExecutionFlow
 		}
 		
 		String path = sb.toString();
-		
-//		System.out.println(Thread.currentThread().getStackTrace()[3].getClassName());
-//		System.out.println(Thread.currentThread().getStackTrace()[3].getClass().getPackageName());
-//		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!");
 		
 		// <className>.java => <className>
 		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.");
@@ -182,11 +176,12 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * When executed it will determine the current location of the class executed.
+	 * When executed it will determine absolute path of current location of the 
+	 * class executed.
 	 * 
 	 * @implSpec This method was projected to be executed in an AOP file. If
 	 * it will execute in another place the results may be unexpected
-	 * @return Absolute path of current execution class
+	 * @return Absolute path of source file of current execution class
 	 * @throws IOException If class does not exist
 	 */
 	public static String findCurrentSrcPath() throws IOException 

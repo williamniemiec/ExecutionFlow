@@ -38,12 +38,13 @@ public class JDB
 	private String methodClassSignature;
 	private String classInvocationSignature;
 	private static String appPath;
+	private String srcPath;
 	private int lastLineTestMethod;
 	private int methodInvocationLine;
 	private List<Integer> testPath;
 	private List<List<Integer>> testPaths;
 	private static Path libPath;
-	private PrintWriter pw;
+	private PrintWriter input;
 	private boolean readyToDebug;
 	private boolean endOfMethod;
 	private boolean newIteration;
@@ -52,7 +53,6 @@ public class JDB
 	private boolean isInternalCommand;
 	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
-	private String srcPath;
 	
 	
 	//-------------------------------------------------------------------------
@@ -196,7 +196,7 @@ public class JDB
 		
 		// Exits JDB
 		jdb_end();
-		pw.close();
+		input.close();
 		os.close();
 		process.waitFor();
 		process.destroyForcibly();
@@ -205,7 +205,7 @@ public class JDB
 	
 	private synchronized void jdb_input(Process process, OutputStream os) throws InterruptedException
 	{
-		pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
+		input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
 
 		// Executes initial commands
 		jdb_initialCommands();
@@ -383,11 +383,11 @@ public class JDB
 	 */
 	private void jdb_end()
 	{
-		pw.flush();
-		pw.println("clear "+classInvocationSignature+":"+methodInvocationLine);
-		pw.flush();
-		pw.println("exit");
-		pw.flush();
+		input.flush();
+		input.println("clear "+classInvocationSignature+":"+methodInvocationLine);
+		input.flush();
+		input.println("exit");
+		input.flush();
 	}
 	
 	/**
@@ -402,10 +402,10 @@ public class JDB
         args.add("run");
         
 		for (String arg : args) {
-		    pw.println(arg);
+		    input.println(arg);
 		}
 		
-		pw.flush();
+		input.flush();
 		waitForShell();
 	}
 	
@@ -422,8 +422,8 @@ public class JDB
 		// -----{ END DEBUG }-----
 		
 		try {
-			pw.println(command);
-			pw.flush();
+			input.println(command);
+			input.flush();
 			waitForShell();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

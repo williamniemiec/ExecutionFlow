@@ -25,13 +25,13 @@ public class FileParser
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private File file;
-	private static final String VAR_NAME;
-	private boolean alreadyDeclared;
 	private File outputDir;
+	private static final String VAR_NAME;
 	private String outputFilename;
-	boolean elseNoCurlyBrackets;
-	boolean skipNextLine;
-	boolean inComment;
+	private boolean alreadyDeclared;
+	private boolean elseNoCurlyBrackets;
+	private boolean skipNextLine;
+	private boolean inComment;
 	
 	/**
 	 * If true, displays processed lines.

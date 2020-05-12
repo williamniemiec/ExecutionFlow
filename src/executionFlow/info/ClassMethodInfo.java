@@ -11,24 +11,24 @@ import java.util.Arrays;
  */
 public class ClassMethodInfo 
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Attributes
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	private String methodName;
+	private String classPath;
+	private String srcPath;
+	private String testMethodSignature;
+	private String methodSignature;
+	private String classSignature;
+	private int invocationLine;
 	private Class<?>[] parameterTypes;
 	private Object[] args;
 	private Class<?> returnType;
-	private String classPath;
-	private String testMethodSignature;
-	private String methodSignature;
-	private int invocationLine;
-	private String srcPath;
-	private String classSignature;
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Constructors
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Stores information about a method.
 	 * 
@@ -54,7 +54,6 @@ public class ClassMethodInfo
 		this.parameterTypes = parameterTypes;
 		this.args = args;
 		this.invocationLine = invocationLine;
-		
 		this.classSignature = extractClassSignature();
 	}
 
@@ -63,25 +62,16 @@ public class ClassMethodInfo
 	 */
 	public static class ClassMethodInfoBuilder
 	{
+		private String methodName;
 		private String classPath;
+		private String srcPath;
 		private String methodSignature;
 		private String testMethodSignature;
-		private String methodName;
+		private int invocationLine;
 		private Class<?>[] parameterTypes;
 		private Object[] args;
 		private Class<?> returnType = void.class;
-		private int invocationLine;
-		private String srcPath;
 		
-		/**
-		 * @param invocationLine Line of test method where method is called
-		 * @return Builder to allow chained calls
-		 */
-		public ClassMethodInfoBuilder invocationLine(int invocationLine)
-		{
-			this.invocationLine = invocationLine;
-			return this;
-		}
 		
 		/**
 		 * @param methodName Method's name
@@ -94,12 +84,52 @@ public class ClassMethodInfo
 		}
 		
 		/**
+		 * @param classPath Method class file path
+		 * @return Builder to allow chained calls
+		 */
+		public ClassMethodInfoBuilder classPath(String classPath)
+		{
+			this.classPath = classPath;
+			return this;
+		}
+		
+		/**
+		 * @param srcPath Path where source file is
+		 * @return Builder to allow chained calls
+		 */
+		public ClassMethodInfoBuilder srcPath(String srcPath)
+		{
+			this.srcPath = srcPath;
+			return this;
+		}
+		
+		/**
 		 * @param methodSignature Signature of the method
 		 * @return Builder to allow chained calls
 		 */
 		public ClassMethodInfoBuilder methodSignature(String methodSignature)
 		{
 			this.methodSignature = methodSignature;
+			return this;
+		}
+		
+		/**
+		 * @param testMethodSignature Signature of the test method to which the method belongs
+		 * @return Builder to allow chained calls
+		 */
+		public ClassMethodInfoBuilder testMethodSignature(String testMethodSignature)
+		{
+			this.testMethodSignature = testMethodSignature;
+			return this;
+		}
+		
+		/**
+		 * @param invocationLine Line of test method where method is called
+		 * @return Builder to allow chained calls
+		 */
+		public ClassMethodInfoBuilder invocationLine(int invocationLine)
+		{
+			this.invocationLine = invocationLine;
 			return this;
 		}
 		
@@ -122,26 +152,6 @@ public class ClassMethodInfo
 			this.args = args;
 			return this;
 		}
-
-		/**
-		 * @param classPath Method class file path
-		 * @return Builder to allow chained calls
-		 */
-		public ClassMethodInfoBuilder classPath(String classPath)
-		{
-			this.classPath = classPath;
-			return this;
-		}
-		
-		/**
-		 * @param testMethodSignature Signature of the test method to which the method belongs
-		 * @return Builder to allow chained calls
-		 */
-		public ClassMethodInfoBuilder testMethodSignature(String testMethodSignature)
-		{
-			this.testMethodSignature = testMethodSignature;
-			return this;
-		}
 		
 		/**
 		 * @param returnType Return type of the method
@@ -150,16 +160,6 @@ public class ClassMethodInfo
 		public ClassMethodInfoBuilder returnType(Class<?> returnType)
 		{
 			this.returnType = returnType;
-			return this;
-		}
-		
-		/**
-		 * @param srcPath Path where source file is
-		 * @return Builder to allow chained calls
-		 */
-		public ClassMethodInfoBuilder srcPath(String srcPath)
-		{
-			this.srcPath = srcPath;
 			return this;
 		}
 		
@@ -178,9 +178,9 @@ public class ClassMethodInfo
 	}
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Methods
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	@Override
 	public String toString() 
 	{
@@ -198,10 +198,6 @@ public class ClassMethodInfo
 	 */
 	public SignaturesInfo extractSignatures()
 	{
-		//String paramsTypes = extractParameterTypes(parameterTypes);
-		//String methodSig = methodSignature+"."+methodName+"("+paramsTypes+")";
-		
-		//return new SignaturesInfo(methodSig, testMethodSignature);
 		return new SignaturesInfo(methodSignature, testMethodSignature);
 	}
 	
@@ -230,9 +226,9 @@ public class ClassMethodInfo
 	}
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Getters & Setters
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	public String getMethodName() 
 	{
 		return methodName;
@@ -350,9 +346,7 @@ public class ClassMethodInfo
 	public String getClassDirectory()
 	{
 		StringBuilder response = new StringBuilder();
-//		System.out.println("cp:"+classPath);
 		String[] terms = classPath.split("\\\\");
-		//System.out.println(classPath);
 		
 		for (int i=0; i<terms.length-1; i++) {
 			response.append(terms[i]);

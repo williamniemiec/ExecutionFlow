@@ -16,9 +16,9 @@ public class FileManager
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private String filename;
 	private File inputFile;
 	private File originalFile; 
+	private String filename;
 	private String classOutput;
 	private String classPackage;
 	
@@ -41,18 +41,6 @@ public class FileManager
 		this.originalFile = new File(srcFilePath+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
 	}
-	
-	/**
-	 * Manages file analyzer and compiler.
-	 * 
-	 * @param srcFilePath Path of java file
-	 * @param classOutput Directory where .class of java file is
-	 * @param classPackage Package of the class of the java file 
-	 */
-	/*public FileManager(String srcFilePath, String classOutput, String classPackage)
-	{
-		this(new File(srcFilePath), new File(classOutput), classPackage);
-	}*/
 	
 	
 	//-------------------------------------------------------------------------
