@@ -9,7 +9,7 @@ public class TestClass_ControlFlow
 	public String ifElseMethod(int num)
 	{
 		if (num < 0) {
-			return "";
+			return "Negative value";
 		}
 		
 		String response = "";
@@ -94,5 +94,15 @@ public class TestClass_ControlFlow
 		}
 		
 		return letter;
+	}
+	
+	public int doWhileMethod(int a, int b)
+	{
+		do {
+			a++;
+			b--;
+		} while (b != 0);
+		
+		return a;	// a = a + b;
 	}
 }
