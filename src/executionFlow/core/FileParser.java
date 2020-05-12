@@ -138,7 +138,10 @@ public class FileParser
 				
 				// Checks if it is a comment line
 				if (isComment(line)) {
+					
+					// -----{ DEBUG }-----
 					if (DEBUG) { System.out.println(line); }
+					// -----{ END DEBUG }-----
 					
 					bw.write(line);
 					bw.newLine();
@@ -151,7 +154,9 @@ public class FileParser
 						inMethod = false;
 					}
 					
+					// -----{ DEBUG }-----
 					if (DEBUG) { System.out.println(line); }
+					// -----{ END DEBUG }-----
 					
 					bw.write(line);
 					bw.newLine();
@@ -166,7 +171,9 @@ public class FileParser
 					skipNextLine = false;
 					bw.newLine();	// It is necessary to keep line numbers equals to original file 
 					
+					// -----{ DEBUG }-----
 					if (DEBUG) { System.out.println(); }
+					// -----{ END DEBUG }-----
 					
 					continue;
 				}
@@ -177,7 +184,9 @@ public class FileParser
 					bw.write(line);
 					bw.newLine();
 					
+					// -----{ DEBUG }-----
 					if (DEBUG) { System.out.println(line); }
+					// -----{ END DEBUG }-----
 					
 					inMethod = true;
 					continue;
@@ -259,7 +268,9 @@ public class FileParser
 								bw.write(parsedLine);
 								bw.newLine();
 								
+								// -----{ DEBUG }-----
 								if (DEBUG) { System.out.println(parsedLine); }
+								// -----{ END DEBUG }-----
 								
 								nextLine = br_forward.readLine();
 								line = br.readLine();
@@ -291,8 +302,10 @@ public class FileParser
 					parsedLine = line;
 				}
 				
+				// -----{ DEBUG }-----
 				if (DEBUG) { System.out.println(parsedLine); }
-					
+				// -----{ END DEBUG }-----	
+				
 				bw.write(parsedLine);
 				bw.newLine();
 			}
