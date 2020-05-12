@@ -1,3 +1,2 @@
-againstRequirements.AgainstRequirements.moreOneConstructor()
-[37, 38, 46]
-[37, 40, 42, 43, 42, 43, 42, 43, 42, 43, 42, 46]
+ComplexTests.testMethodWithAuxMethods()
+[37, 40, 42, 43, 42, 43, 42, 43, 42, 46]

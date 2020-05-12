@@ -1,2 +1,2 @@
 controlFlow.ControlFlowTest.tryCatchTest2()
-[47, 51, 52, 53]
+[47, 49, 50, 51, 52, 53]

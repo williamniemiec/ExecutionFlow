@@ -22,19 +22,23 @@
 <code>
 	
 	#####################################################################
-	                      testParamSignature_object                      
+                      testParamSignature_object                      
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	JUnitSimulation.testParamSignature_object()
 	testClasses.TestClass.testObjParam(Object)
-	[194]
+	[195]
 
 	#####################################################################
 	                             testEmptyTest                           
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
@@ -46,72 +50,86 @@
 	#####################################################################
 	                             testFactorial                           
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	JUnitSimulation.testFactorial()
 	testClasses.TestClass.factorial(int)
-	[88, 90, 91, 90, 91, 90, 91, 90, 91, 90, 94]
+	[89, 91, 92, 91, 92, 91, 92, 91, 92, 91, 95]
 
 	#####################################################################
 	                            testFibonacci                            
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	JUnitSimulation.testFibonacci()
 	testClasses.TestClass.fibonacci(int)
-	[105, 106, 107, 109, 110, 111, 112, 109, 110, 111, 112, 109, 110, 111, 112, 109, 115]
+	[106, 107, 108, 110, 111, 112, 113, 110, 111, 112, 113, 110, 111, 112, 113, 110, 116]
 
 	#####################################################################
 	                    testStaticMethod_charSequence                    
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	JUnitSimulation.testStaticMethod_charSequence()
 	testClasses.TestClass.parseLetters_noInternalCall(CharSequence)
-	[126, 127, 129, 130, 131, 129, 130, 131, 129, 130, 131, 129, 130, 131, 129, 130, 131, 129, 130, 133, 129, 130, 133, 129, 130, 133, 129, 130, 133, 129, 130, 133, 129, 136]
+	[127, 128, 130, 131, 132, 130, 131, 132, 130, 131, 132, 130, 131, 132, 130, 131, 132, 130, 131, 133, 134, 130, 131, 133, 134, 130, 131, 133, 134, 130, 131, 133, 134, 130, 131, 133, 134, 130, 137]
 
 	#####################################################################
 	                           testFactorial_zero                       
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	JUnitSimulation.testFactorial_zero()
 	testClasses.TestClass.factorial(int)
-	[88, 90, 94]
+	[89, 91, 95]
 
 	#####################################################################
 	                      testParamSignature_createdObject               
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	JUnitSimulation.testParamSignature_createdObject()
 	testClasses.TestClass.testClassParam(ClassInterface)
-	[199]
+	[200]
 
 	#####################################################################
 	                          testInternalCall                           
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	JUnitSimulation.testInternalCall()
 	testClasses.TestClass.parseLetters_withInternalCall(char[])
-	[148, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 152, 150, 155]
+	[149, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 156]
 
 	#####################################################################
 	                             testInterface                           
 	#####################################################################
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
@@ -124,15 +142,21 @@
 - MultipleTestPaths.java - output no console
 <code>
 	
+	Processing source file...
+	Processing completed
 	Generating test path...
+	Processing source file...
+	Processing completed
 	Generating test path...
+	Processing source file...
+	Processing completed
 	Generating test path...
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	MultipleTestPaths.ThreeTestPathsTest()
 	testClasses.TestClass.threePaths(int)
-	[181, 185, 186]
-	[181, 185, 189]
-	[181, 182]
+	[182, 183]
+	[182, 186, 190]
+	[182, 186, 187]
 </code>

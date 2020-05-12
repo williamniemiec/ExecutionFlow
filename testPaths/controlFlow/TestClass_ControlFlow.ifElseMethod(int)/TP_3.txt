@@ -1,2 +1,2 @@
 controlFlow.ControlFlowTest.ifElseTest_earlyReturn()
-[11, 12, 25]
+[11, 12]
