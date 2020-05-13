@@ -15,8 +15,7 @@ Veja todas as limitações da aplicação [aqui](https://github.com/williamniemi
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
 - [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior
-- [ASM 7 ou superior](https://github.com/williamniemiec/ExecutionFlow/tree/master/lib) (Incluído no projeto)
-- JUnit 4
+- JUnit 4 (não compatível com JUnit 5)
 
 ## Exemplo de saída - [SimpleTest](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/SimpleTest.java)
 <pre><code>
