@@ -155,9 +155,7 @@ public class JDB
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
 		String lib_junit = libPath_relative+"junit-4.13.jar";
 		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
-		String lib_asm1 = libPath_relative+"org.objectweb.asm_7.2.0.v20191010-1910.jar";
-		String lib_asm2 = libPath_relative+"org.objectweb.asm.tree_7.2.0.v20191010-1910.jar";
-		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest+";"+lib_asm1+";"+lib_asm2;
+		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
 		String jdb_classPath = "-classpath .;"+libs;
 		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
