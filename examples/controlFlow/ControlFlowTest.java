@@ -9,6 +9,7 @@ import org.junit.Test;
 
 public class ControlFlowTest 
 {
+	/*
 	@Test
 	public void ifElseTest_earlyReturn() 
 	{
@@ -68,7 +69,7 @@ public class ControlFlowTest
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
 		assertEquals('E', tccf.switchCaseMethod('É'));
-	}
+	}*/
 
 	@Test
 	public void doWhileTest()

@@ -38,13 +38,13 @@ public aspect MethodCollector extends RuntimeCollector
 	//		Pointcut
 	//-----------------------------------------------------------------------
 	pointcut methodCollector(): 
-		!cflow(execution(@SkipMethod * *.*())) && cflow(execution(@Test * *.*()))
+		!cflow(execution(@SkipMethod * *.*())) 
+		&& cflow(execution(@Test * *.*()))
+		&& !execution(public int hashCode())
 //		(cflow(execution(@Test * *.*())) || 
 //		 cflow(execution(@RepeatedTest * *.*())) ||
 //		 cflow(execution(@ParameterizedTest * *.*())) || 
-//		 cflow(execution(@TestFactory * *.*())) || 
-//		 cflow(call(* *.*(*))) || 
-//		 cflow(call(* *.*()))) 
+//		 cflow(execution(@TestFactory * *.*()))
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileCompiler)
@@ -99,7 +99,10 @@ public aspect MethodCollector extends RuntimeCollector
 			constructor = thisJoinPoint.getThis();
 			
 			// Key: <method_name>+<method_params>+<constructor@hashCode>
-			key += constructor.toString();
+			//key += constructor.toString();
+			key += constructor.getClass().getName()+"@"+Integer.toHexString(constructor.hashCode());
+			//getClass().getName() + '@' + Integer.toHexString(hashCode())
+
 		}
 		
 		// If the method has already been collected, skip it;
