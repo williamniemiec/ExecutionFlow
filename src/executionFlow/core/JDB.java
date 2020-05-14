@@ -62,7 +62,7 @@ public class JDB
 	 * Enables or disables debug. If activated, shows shell output during JDB execution.
 	 */
 	{
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	/**
@@ -151,15 +151,33 @@ public class JDB
 	 */
 	private synchronized Process jdb_start() throws IOException
 	{
+		System.out.println("CPR-before: "+classPathRoot);
+		boolean maven = false;
+		
+		if (classPathRoot.contains("\\target\\")) {
+			classPathRoot = classPathRoot.replace("\\classes", "\\test-classes");
+			maven = true;
+		}
+		
 		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
 		String lib_junit = libPath_relative+"junit-4.13.jar";
 		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
 		String jdb_classPath = "-classpath .;"+libs;
+
+		if (maven) {
+			//classPathRoot = classPathRoot.replace("\\classes", "\\test-classes");
+			jdb_classPath += ";..\\classes";
+		}
+		
 		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
-
+		
+		System.out.println("CPR-after: "+classPathRoot);
+		System.out.println("jdb_paths: "+jdb_paths);
+		System.out.println();
+		
 		ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c","jdb "+jdb_paths,"org.junit.runner.JUnitCore",classInvocationSignature);
 		pb.directory(new File(classPathRoot));
 
