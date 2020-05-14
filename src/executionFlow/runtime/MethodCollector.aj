@@ -38,13 +38,13 @@ public aspect MethodCollector extends RuntimeCollector
 	//		Pointcut
 	//-----------------------------------------------------------------------
 	pointcut methodCollector(): 
-		!cflow(execution(@SkipMethod * *.*())) &&
-		(cflow(execution(@Test * *.*())) || 
+		!cflow(execution(@SkipMethod * *.*())) && cflow(execution(@Test * *.*()))
+//		(cflow(execution(@Test * *.*())) || 
 //		 cflow(execution(@RepeatedTest * *.*())) ||
 //		 cflow(execution(@ParameterizedTest * *.*())) || 
 //		 cflow(execution(@TestFactory * *.*())) || 
-		 cflow(call(* *.*(*))) || 
-		 cflow(call(* *.*()))) 
+//		 cflow(call(* *.*(*))) || 
+//		 cflow(call(* *.*()))) 
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileCompiler)
