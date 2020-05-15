@@ -54,6 +54,7 @@ public class JDB
 	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
 	
+	String methodClassDir;
 	boolean overloadedMethod;
 	
 	
@@ -137,8 +138,11 @@ public class JDB
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
-		extractClassPathDirectory(methodInfo);
+		// Finds class path root
+		//extractClassPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
+		extractClassPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
 		srcPath = extractSrcPathDirectory(methodInfo);
+		methodClassDir = new File(methodInfo.getClassPath()).getParent().toString();
 		
 		jdb_methodVisitor(methodSignature, methodInfo.getMethodName());
 		
@@ -157,24 +161,24 @@ public class JDB
 			throw new IllegalStateException("Source file path is empty");
 		
 		System.out.println("CPR-before: "+classPathRoot);
-		boolean maven = false;
+		//boolean maven = false;
 		
-		if (classPathRoot.contains("\\target\\")) {
-			classPathRoot = classPathRoot.replace("\\classes", "\\test-classes");
-			maven = true;
-		}
-		
+//		if (classPathRoot.contains("\\target\\")) {
+//			classPathRoot = classPathRoot.replace("\\classes", "\\test-classes");
+//			maven = true;
+//		}
+		String methodClassPath = Paths.get(classPathRoot).relativize(Path.of(methodClassDir)).toString();
 		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
 		String lib_junit = libPath_relative+"junit-4.13.jar";
 		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
-		String jdb_classPath = "-classpath .;"+libs;
+		String jdb_classPath = "-classpath .;"+libs+";"+methodClassPath;
 
-		if (maven) {
-			//classPathRoot = classPathRoot.replace("\\classes", "\\test-classes");
-			jdb_classPath += ";..\\classes";
-		}
+//		if (maven) {
+//			//classPathRoot = classPathRoot.replace("\\classes", "\\test-classes");
+//			jdb_classPath += ";..\\classes";
+//		}
 		
 		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
@@ -509,12 +513,11 @@ public class JDB
 	 * @param methodInfo Information about a method
 	 * @return Directory where classes are
 	 */
-	private void extractClassPathDirectory(ClassMethodInfo methodInfo)
+	private void extractClassPathDirectory(String classPath, String classPackage)
 	{
-		String classPath = methodInfo.getClassPath();
 		String[] tmp = classPath.split("\\\\");
 		String classFileName = tmp[tmp.length-1];
-
+		
 		try {
 			Files.walkFileTree(Path.of(appPath), new SimpleFileVisitor<Path>() {
 				@Override
@@ -523,10 +526,12 @@ public class JDB
 					if (file.endsWith(classFileName)) {
 						file = file.getParent();
 
-						int packageFolders = methodInfo.getPackage().split("\\.").length;
-						
-						for (int i=0; i<packageFolders; i++) {
-							file = file.getParent();
+						if (!classPackage.isEmpty()) {
+							int packageFolders = classPackage.split("\\.").length;
+							
+							for (int i=0; i<packageFolders; i++) {
+								file = file.getParent();
+							}
 						}
 						
 						classPathRoot = file.toString();

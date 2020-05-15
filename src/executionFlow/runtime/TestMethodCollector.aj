@@ -61,8 +61,11 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		reset();
 		
-		testMethodSignature = thisJoinPoint.getSignature().toString();
-		testMethodSignature = testMethodSignature.substring(5);		// Removes return type
+//		System.out.println("!!!!!!!!!!!"+thisJoinPoint.getSignature().toString());
+//		testMethodSignature = thisJoinPoint.getSignature().toString();
+//		testMethodSignature = testMethodSignature.substring(5);		// Removes return type
+		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
+		testMethodPackage = testMethodSignature.replaceAll("\\(.*\\)", "");
 		
 		// Gets test class path
 		try {

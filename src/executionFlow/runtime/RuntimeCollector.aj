@@ -62,7 +62,7 @@ public abstract aspect RuntimeCollector
 	protected static String lastInsertedMethod = "";
 	protected static boolean lastWasInternalCall;
 	protected static boolean skipCollection;
-	
+	protected static String testMethodPackage;
 	
 	//-----------------------------------------------------------------------
 	//		Methods
@@ -112,6 +112,7 @@ public abstract aspect RuntimeCollector
 		methodCollector.clear();
 		consCollector.clear();
 		testMethodSignature = null;
+		testClassPath = null;
 		lastInsertedMethod = "";
 		lastWasInternalCall = false;
 	}
@@ -124,9 +125,6 @@ public abstract aspect RuntimeCollector
 	 */
 	protected boolean isInternalCall(String signature)
 	{
-		// Removes parentheses from the signature of the test method
-		testMethodSignature = testMethodSignature.replaceAll("\\(\\)", "");
-		
 		// It is necessary because if it is an internal call, the next will also be
 		if (lastWasInternalCall) {
 			lastWasInternalCall = false;
@@ -134,8 +132,8 @@ public abstract aspect RuntimeCollector
 		}
 
 		// Checks the execution stack to see if it is an internal call
-		if (!Thread.currentThread().getStackTrace()[3].toString().contains(testMethodSignature) && 
-			!Thread.currentThread().getStackTrace()[4].toString().contains(testMethodSignature)) {
+		if (!Thread.currentThread().getStackTrace()[3].toString().contains(testMethodPackage) && 
+			!Thread.currentThread().getStackTrace()[4].toString().contains(testMethodPackage)) {
 			lastWasInternalCall = true;
 			return true;
 		}

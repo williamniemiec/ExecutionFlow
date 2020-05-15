@@ -57,7 +57,7 @@ public class ClassMethodInfo
 		this.parameterTypes = parameterTypes;
 		this.args = args;
 		this.invocationLine = invocationLine;
-		this.classSignature = extractClassSignature();
+		this.classSignature = extractClassSignature(methodSignature);
 	}
 
 	/**
@@ -300,10 +300,10 @@ public class ClassMethodInfo
 		return testMethodSignature;
 	}
 
-	public void setTestMethodSignature(String testMethodSignature) 
-	{
-		this.testMethodSignature = testMethodSignature;
-	}
+//	public void setTestMethodSignature(String testMethodSignature) 
+//	{
+//		this.testMethodSignature = testMethodSignature;
+//	}
 	
 	public Class<?> getReturnType()
 	{
@@ -334,19 +334,16 @@ public class ClassMethodInfo
 	{
 		if (classSignature == null) { return ""; }
 		
-		String[] tmp = classSignature.split("\\.");
-		StringBuilder sb = new StringBuilder();
+		return extractPackage(classSignature);
+	}
+	
+	public String getTestClassPackage()
+	{
+		if (testMethodSignature == null) { return ""; }
 		
-		for (int i=0; i<tmp.length-1; i++) {
-			sb.append(tmp[i]);
-			sb.append(".");
-		}
+		System.out.println("MTS: "+testMethodSignature);
 		
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length()-1);
-		}
-		
-		return sb.toString();
+		return extractPackage(extractClassSignature(testMethodSignature));
 	}
 	
 	/**
@@ -396,13 +393,32 @@ public class ClassMethodInfo
 		return response.toString();
 	}
 	
-	private String extractClassSignature()
+	private String extractClassSignature(String methodSignature)
 	{
 		StringBuilder response = new StringBuilder();
 		String[] terms = methodSignature.split("\\.");
 		
 		for (int i=0; i<terms.length-1; i++) {
 			response.append(terms[i]);
+			response.append(".");
+		}
+		
+		if (response.length() > 0) {
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
+	}
+	
+	private String extractPackage(String signature)
+	{
+		if (signature == null || signature.isEmpty()) { return ""; }
+		
+		String[] tmp = signature.split("\\.");
+		StringBuilder response = new StringBuilder();
+		
+		for (int i=0; i<tmp.length-1; i++) {
+			response.append(tmp[i]);
 			response.append(".");
 		}
 		

@@ -150,7 +150,7 @@ public aspect MethodCollector extends RuntimeCollector
 				.build();
 
 		CollectorInfo ci = new CollectorInfo(cmi);
-		
+
 		// Collects constructor (if method is not static)
 		if (constructor != null) {
 			ci.setConstructorInfo(consCollector.get(constructor.toString()));
