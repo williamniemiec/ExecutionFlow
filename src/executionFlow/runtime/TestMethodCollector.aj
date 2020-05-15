@@ -21,9 +21,9 @@ import executionFlow.info.SignaturesInfo;
  */
 public aspect TestMethodCollector extends RuntimeCollector
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Pointcut
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	pointcut testMethodCollector():
 		!cflow(execution(@SkipMethod * *.*())) 
 		&& execution(@Test * *.*())
@@ -60,10 +60,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 		
 		reset();
-		
-//		System.out.println("!!!!!!!!!!!"+thisJoinPoint.getSignature().toString());
-//		testMethodSignature = thisJoinPoint.getSignature().toString();
-//		testMethodSignature = testMethodSignature.substring(5);		// Removes return type
+
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
 		testMethodPackage = testMethodSignature.replaceAll("\\(.*\\)", "");
 		

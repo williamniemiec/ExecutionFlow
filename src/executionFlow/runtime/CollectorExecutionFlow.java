@@ -22,9 +22,9 @@ import executionFlow.ExecutionFlow;
  */
 public class CollectorExecutionFlow 
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Attributes
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Necessary for findCurrentClassPath method;
 	 */
@@ -33,34 +33,9 @@ public class CollectorExecutionFlow
 	private static String srcPath;
 
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Methods
-	//-----------------------------------------------------------------------
-	/**
-	 * Extracts signature of the test method.
-	 * 
-	 * @param signature First signature collected by aspect
-	 * @return Signature of the test method
-	 */
-	public static String extractTestClassSignature(String signature)
-	{
-		String response = "";
-		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.\\<");
-		Matcher m = p.matcher(signature);
-		
-		if (m.find()) {
-			String name = m.group();
-			p = Pattern.compile("[A-z0-9-_$]+");
-			m = p.matcher(name);
-			
-			if (m.find()) {
-				response = m.group();
-			}
-		}
-		
-		return response;
-	}
-	
+	//-------------------------------------------------------------------------
 	/**
 	 * Extracts package name of a method signature.
 	 * 

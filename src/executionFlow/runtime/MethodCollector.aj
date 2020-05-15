@@ -27,9 +27,9 @@ import executionFlow.info.SignaturesInfo;
 @SuppressWarnings("unused")
 public aspect MethodCollector extends RuntimeCollector
 {	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Attributes
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	private String classPath;
 	private String srcPath;
 	
@@ -110,7 +110,6 @@ public aspect MethodCollector extends RuntimeCollector
 		if (isInternalCall(signature)) { return; }		
 		
 		// Checks if the collected constructor is not the constructor of the test method
-		//if (constructor != null && isTestMethodConstructor(constructor.toString())) { return; }
 		if (constructor != null && isTestMethodConstructor(key)) { return; }
 		
 		// Gets class path

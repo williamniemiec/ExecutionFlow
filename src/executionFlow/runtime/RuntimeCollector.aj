@@ -27,12 +27,13 @@ import executionFlow.info.CollectorInfo;
  * </ul>
  * 
  * @implNote It will ignore all methods of a class if it has <code>@SkipCollection</code> annotation
+ * @implNote It will ignore methods with <code>@SkipMethod</code> annotation
  */
 public abstract aspect RuntimeCollector 
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Attributes
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Stores signature of collected methods.<hr/>
 	 * <b>Format: </b><code>method_name + method_arguments + constructor@hashCode (if it has one)</code>
@@ -64,9 +65,10 @@ public abstract aspect RuntimeCollector
 	protected static boolean skipCollection;
 	protected static String testMethodPackage;
 	
-	//-----------------------------------------------------------------------
+	
+	//-------------------------------------------------------------------------
 	//		Methods
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Returns if the class of a method that a join point intercepted has <code>@SkipCollection</code>. 
 	 * 

@@ -13,9 +13,9 @@ import executionFlow.info.*;
  */
 public aspect ConstructorCollector extends RuntimeCollector
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Pointcut
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	pointcut constructorCollector(): 
 		!cflow(execution(@SkipMethod * *.*()))
 		&& cflow(execution(@Test * *.*()))
