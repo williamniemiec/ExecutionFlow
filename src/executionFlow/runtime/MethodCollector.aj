@@ -101,8 +101,6 @@ public aspect MethodCollector extends RuntimeCollector
 			// Key: <method_name>+<method_params>+<constructor@hashCode>
 			//key += constructor.toString();
 			key += constructor.getClass().getName()+"@"+Integer.toHexString(constructor.hashCode());
-			//getClass().getName() + '@' + Integer.toHexString(hashCode())
-
 		}
 		
 		// If the method has already been collected, skip it;
@@ -112,7 +110,8 @@ public aspect MethodCollector extends RuntimeCollector
 		if (isInternalCall(signature)) { return; }		
 		
 		// Checks if the collected constructor is not the constructor of the test method
-		if (constructor != null && isTestMethodConstructor(constructor.toString())) { return; }
+		//if (constructor != null && isTestMethodConstructor(constructor.toString())) { return; }
+		if (constructor != null && isTestMethodConstructor(key)) { return; }
 		
 		// Gets class path
 		try {
