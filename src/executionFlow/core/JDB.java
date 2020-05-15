@@ -35,6 +35,7 @@ public class JDB
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private String classPathRoot;
+	private String methodClassDir;
 	private String methodClassSignature;
 	private String classInvocationSignature;
 	private static String appPath;
@@ -51,11 +52,9 @@ public class JDB
 	private boolean exitMethod;
 	private boolean inputReady;
 	private boolean isInternalCommand;
+	private boolean overloadedMethod;
 	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
-	
-	String methodClassDir;
-	boolean overloadedMethod;
 	
 	
 	//-------------------------------------------------------------------------
@@ -138,9 +137,9 @@ public class JDB
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
-		// Finds class path root
-		//extractClassPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
+		// Finds class path root (using test method class directory)
 		extractClassPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
+		
 		srcPath = extractSrcPathDirectory(methodInfo);
 		methodClassDir = new File(methodInfo.getClassPath()).getParent().toString();
 		
@@ -159,14 +158,7 @@ public class JDB
 	{
 		if (srcPath.isEmpty())
 			throw new IllegalStateException("Source file path is empty");
-		
-		System.out.println("CPR-before: "+classPathRoot);
-		//boolean maven = false;
-		
-//		if (classPathRoot.contains("\\target\\")) {
-//			classPathRoot = classPathRoot.replace("\\classes", "\\test-classes");
-//			maven = true;
-//		}
+				
 		String methodClassPath = Paths.get(classPathRoot).relativize(Path.of(methodClassDir)).toString();
 		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
@@ -174,16 +166,10 @@ public class JDB
 		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
 		String jdb_classPath = "-classpath .;"+libs+";"+methodClassPath;
-
-//		if (maven) {
-//			//classPathRoot = classPathRoot.replace("\\classes", "\\test-classes");
-//			jdb_classPath += ";..\\classes";
-//		}
-		
 		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
 		
-		System.out.println("CPR-after: "+classPathRoot);
+		System.out.println("CPR: "+classPathRoot);
 		System.out.println("jdb_paths: "+jdb_paths);
 		System.out.println();
 		
@@ -326,7 +312,6 @@ public class JDB
             				} else {
             					testPath.clear();
             					overloadedMethod = true;
-//            					System.out.println("true!");
             				}
                     	} else if (newIteration || (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature))) {
                 			inMethod = true;
