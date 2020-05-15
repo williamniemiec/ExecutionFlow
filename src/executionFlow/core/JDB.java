@@ -300,19 +300,7 @@ public class JDB
             		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
             			commandLine = br.readLine();
             			
-            			// Checks if it is a call to an overloaded method
-                    	//if (line.split(",")[1].matches(regex_overloadedMethod)) {
-            			if (commandLine.matches(regex_overloadedMethod) && line.contains(classInvocationSignature)) {
-            				if (overloadedMethod) {
-            					exitMethod = true;
-            				}
-            					
-                    		overloadedMethod = true;
-                    		System.out.println("true!");
-                    	}
-            			            			
             			newIteration = 
-        					//overloadedMethod || 
         					(!inMethod && 
             					(
         							line.contains("Breakpoint hit") || 
@@ -327,8 +315,16 @@ public class JDB
             				continue;
             			}
 
-            			// Checks if entered the method
-            			if (newIteration || (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature))) {
+            			// Checks if it is a call to an overloaded method
+            			if (commandLine.matches(regex_overloadedMethod) && !line.contains(classInvocationSignature)) {
+            				if (overloadedMethod) {
+            					exitMethod = true;
+            				} else {
+            					testPath.clear();
+            					overloadedMethod = true;
+//            					System.out.println("true!");
+            				}
+                    	} else if (newIteration || (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature))) {
                 			inMethod = true;
                 		} 
             			else if (inMethod) { 	
@@ -341,7 +337,7 @@ public class JDB
             					inMethod = false;
             					endOfMethod = !process.isAlive();
             					lastLineAdded = -1;
-            				} else if (line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
+            				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
             					if (!commandLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
         							!commandLine.matches(regex_emptyMethod)) {
             						testPath.add(lineNumber);
