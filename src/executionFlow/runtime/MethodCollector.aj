@@ -133,9 +133,12 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method invocation line
 		int invocationLine = Thread.currentThread().getStackTrace()[3].getLineNumber();
 		
+		if (invocationLine <= 0) { return; }
+		
 		// Collects the method
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.classPath(classPath)
+				.testClassPath(testClassPath)
 				.methodSignature(methodSignature)
 				.testMethodSignature(testMethodSignature)
 				.methodName(methodName)
@@ -153,7 +156,7 @@ public aspect MethodCollector extends RuntimeCollector
 			ci.setConstructorInfo(consCollector.get(constructor.toString()));
 		}
 		
-		// Stores collected method
+		// Stores key of collected method
 		collectedMethods.add(key);
 		
 		// If the method is called in a loop, stores this method in a list with its arguments and constructor

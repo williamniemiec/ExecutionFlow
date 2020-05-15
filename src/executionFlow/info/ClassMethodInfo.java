@@ -16,6 +16,7 @@ public class ClassMethodInfo
 	//-------------------------------------------------------------------------
 	private String methodName;
 	private String classPath;
+	private String testClassPath;
 	private String srcPath;
 	private String testMethodSignature;
 	private String methodSignature;
@@ -33,6 +34,7 @@ public class ClassMethodInfo
 	 * Stores information about a method.
 	 * 
 	 * @param classPath Method class file path
+	 * @param testClassPath Test method class file path
 	 * @param srcPath Absolute path where source file is
 	 * @param invocationLine Line of test method where method is called
 	 * @param methodSignature Signature of the method
@@ -42,10 +44,11 @@ public class ClassMethodInfo
 	 * @param parameterTypes Types of method's parameters
 	 * @param args Method's arguments
 	 */
-	private ClassMethodInfo(String classPath, String srcPath, int invocationLine, String methodSignature, 
+	private ClassMethodInfo(String classPath, String testClassPath, String srcPath, int invocationLine, String methodSignature, 
 			String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
 	{
 		this.classPath = classPath;
+		this.testClassPath = testClassPath;
 		this.srcPath = srcPath;
 		this.methodSignature = methodSignature;
 		this.testMethodSignature = testMethodSignature;
@@ -64,6 +67,7 @@ public class ClassMethodInfo
 	{
 		private String methodName;
 		private String classPath;
+		private String testClassPath;
 		private String srcPath;
 		private String methodSignature;
 		private String testMethodSignature;
@@ -90,6 +94,16 @@ public class ClassMethodInfo
 		public ClassMethodInfoBuilder classPath(String classPath)
 		{
 			this.classPath = classPath;
+			return this;
+		}
+		
+		/**
+		 * @param testClassPath Test method class file path
+		 * @return Builder to allow chained calls
+		 */
+		public ClassMethodInfoBuilder testClassPath(String testClassPath)
+		{
+			this.testClassPath = testClassPath;
 			return this;
 		}
 		
@@ -171,8 +185,8 @@ public class ClassMethodInfo
 		public ClassMethodInfo build()
 		{
 			return new ClassMethodInfo(
-				classPath, srcPath, invocationLine, methodSignature, testMethodSignature, methodName, 
-				returnType, parameterTypes, args
+				classPath, testClassPath, srcPath, invocationLine, methodSignature, testMethodSignature, 
+				methodName, returnType, parameterTypes, args
 			);
 		}
 	}
@@ -184,11 +198,11 @@ public class ClassMethodInfo
 	@Override
 	public String toString() 
 	{
-		return "ClassMethodInfo [methodName=" + methodName + ", invocationLine=" + invocationLine 
-				+ ", parameterTypes=" + Arrays.toString(parameterTypes)
-				+ ", args=" + Arrays.toString(args) + ", classPath=" + classPath + ", srcPath=" + srcPath 
-				+ ", testMethodSignature=" + testMethodSignature + ", returnType=" + returnType
-				+ ", methodSignature=" + methodSignature + "]";
+		return "ClassMethodInfo [methodName=" + methodName + ", classPath=" + classPath + ", testClassPath="
+				+ testClassPath + ", srcPath=" + srcPath + ", testMethodSignature=" + testMethodSignature
+				+ ", methodSignature=" + methodSignature + ", classSignature=" + classSignature + ", invocationLine="
+				+ invocationLine + ", parameterTypes=" + Arrays.toString(parameterTypes) + ", args="
+				+ Arrays.toString(args) + ", returnType=" + returnType + "]";
 	}
 
 	/**
@@ -252,6 +266,11 @@ public class ClassMethodInfo
 	public void setClassPath(String classPath)
 	{
 		this.classPath = classPath;
+	}
+	
+	public String getTestClassPath()
+	{
+		return this.testClassPath;
 	}
 	
 	/**

@@ -104,10 +104,8 @@ public class ExecutionFlow
 	{
 		List<List<Integer>> tp_jdb;
 		// Generates test path for each collected method
-		//System.out.println("!!"+collectedMethods.values());
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			CollectorInfo collector = collectors.get(0);
-			//System.out.println(collector);
 			
 			// Parses file
 			System.out.println("Processing source file...");

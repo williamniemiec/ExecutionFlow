@@ -58,6 +58,7 @@ public abstract aspect RuntimeCollector
 	protected static Map<String, ClassConstructorInfo> consCollector = new LinkedHashMap<>();
 	
 	protected static String testMethodSignature;
+	protected static String testClassPath;
 	protected static String lastInsertedMethod = "";
 	protected static boolean lastWasInternalCall;
 	protected static boolean skipCollection;

@@ -1,5 +1,7 @@
 package executionFlow.runtime;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
@@ -61,6 +63,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		testMethodSignature = thisJoinPoint.getSignature().toString();
 		testMethodSignature = testMethodSignature.substring(5);		// Removes return type
+		
+		// Gets test class path
+		try {
+			testClassPath = CollectorExecutionFlow.findCurrentClassPath();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	/**
@@ -72,8 +81,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 		
 		// Gets test paths of the collected methods and export them
-		//ExecutionFlow ef = new ExecutionFlow(methodCollector.values());
-		//System.out.println("L:"+ thisJoinPoint.getSourceLocation().getLine());
 		int lastLineTestMethod = Thread.currentThread().getStackTrace()[2].getLineNumber();
 		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
 		
