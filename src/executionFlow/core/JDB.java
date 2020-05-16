@@ -53,7 +53,7 @@ public class JDB
 	private boolean inputReady;
 	private boolean isInternalCommand;
 	private boolean overloadedMethod;
-	private final boolean USING_ASPECTJ;
+//	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
 	
 	
@@ -95,7 +95,7 @@ public class JDB
 	public JDB(int lastLineMethod)
 	{
 		this.lastLineTestMethod = lastLineMethod;
-		this.USING_ASPECTJ = true;
+//		this.USING_ASPECTJ = true;
 		
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
@@ -110,14 +110,14 @@ public class JDB
 	 * @param usingAspectJ If this class will be used within the context of
 	 * aspects 
 	 */
-	public JDB(int lastLineMethod, boolean usingAspectJ)
-	{
-		this.USING_ASPECTJ = usingAspectJ;
-		this.lastLineTestMethod = lastLineMethod;
-		
-		testPath = new ArrayList<>();
-		testPaths = new ArrayList<>();
-	}
+//	public JDB(int lastLineMethod, boolean usingAspectJ)
+//	{
+//		this.USING_ASPECTJ = usingAspectJ;
+//		this.lastLineTestMethod = lastLineMethod;
+//		
+//		testPath = new ArrayList<>();
+//		testPaths = new ArrayList<>();
+//	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -144,11 +144,11 @@ public class JDB
 		//methodClassDir = new File(methodInfo.getClassPath()).getParent().toString();
 		
 		methodClassDir = extractPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
-		System.out.println("%%");
-		System.out.println(methodInfo.getClassPath());
-		System.out.println(methodInfo.getPackage());
-		System.out.println(methodClassDir);
-		System.out.println("%%");
+//		System.out.println("%%");
+//		System.out.println(methodInfo.getClassPath());
+//		System.out.println(methodInfo.getPackage());
+//		System.out.println(methodClassDir);
+//		System.out.println("%%");
 		
 		jdb_methodVisitor(methodSignature, methodInfo.getMethodName());
 		
@@ -174,11 +174,12 @@ public class JDB
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
 		String jdb_classPath = "-classpath .;"+libs;
 		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
-		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
 		
 		if (!methodClassPath.isEmpty()) {
 			jdb_classPath += ";"+methodClassPath;
 		}
+		
+		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
 		
 		System.out.println("CPR: "+classPathRoot);
 		System.out.println("jdb_paths: "+jdb_paths);
@@ -227,12 +228,12 @@ public class JDB
 		// Executes while inside the method
 		while (!endOfMethod) {
 			inputReady = false;
-			System.out.println("@@@@@");
-			System.out.println(newIteration);
-			System.out.println(exitMethod);
-			System.out.println(overloadedMethod);
-			System.out.println(newIteration);
-			System.out.println("@@@@@");
+//			System.out.println("@@@@@");
+//			System.out.println(newIteration);
+//			System.out.println(exitMethod);
+//			System.out.println(overloadedMethod);
+//			System.out.println(newIteration);
+//			System.out.println("@@@@@");
 			
 			if (newIteration) {
 				// Enters the method, ignoring aspectJ
