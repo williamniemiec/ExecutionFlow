@@ -243,12 +243,13 @@ public class JDB
 					jdb_checkOutput();
 				}
 
+				jdb_checkOutput();
 				/*
 				if (USING_ASPECTJ) {
 					jdb_sendCommand("step into");
 					jdb_checkOutput();
 				}*/
-				newIteration = false;
+				//newIteration = false;
 			} else if (exitMethod) {
 				// Saves test path
 				testPaths.add(testPath);
@@ -296,6 +297,12 @@ public class JDB
                 	if (DEBUG)
                 		System.out.println(line);
             		// -----{ END DEBUG }-----
+                	
+//                	System.out.println("创创创创创创创创创创创创创");
+//                	System.out.println("inMethod: "+inMethod);
+//                	System.out.println("line="+methodInvocationLine);
+//                	System.out.println(classInvocationSignature);
+//                	System.out.println("创创创创创创创创创创创创创");
             		
                 	endOfMethod = line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod);
                 	isInternalCommand = !line.contains(methodClassSignature) && !line.contains(classInvocationSignature);//line.contains("aspectj") || line.contains("aspectOf");

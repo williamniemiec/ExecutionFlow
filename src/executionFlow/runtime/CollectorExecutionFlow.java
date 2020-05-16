@@ -110,7 +110,11 @@ public class CollectorExecutionFlow
 	 */
 	public static String findCurrentClassPath() throws IOException 
 	{
-		Path rootPath = Paths.get(System.getProperty("user.dir"));
+		//Path rootPath = Paths.get(System.getProperty("user.dir"));
+		if (rootPath == null) {
+			rootPath = findProjectRoot().toPath();
+		}
+		
 		String aux = Thread.currentThread().getStackTrace()[3].getFileName();
 		
 		// Gets folder where .class is
@@ -164,6 +168,7 @@ public class CollectorExecutionFlow
 	public static String findCurrentSrcPath() throws IOException 
 	{
 		if (rootPath == null) {
+			/*
 			rootPath = Paths.get(System.getProperty("user.dir"));
 			
 			String[] allFiles;
@@ -189,8 +194,9 @@ public class CollectorExecutionFlow
 			}
 			
 			rootPath = currentPath.toPath();
+			*/
+			rootPath = findProjectRoot().toPath();
 		}
-		
 		
 		String aux = Thread.currentThread().getStackTrace()[3].getFileName();
 		
@@ -219,12 +225,12 @@ public class CollectorExecutionFlow
 		
 		final String className = aux;
 		
-		System.out.println("++++++++++++++++++¨");
-		System.out.println(aux);
-		System.out.println(Thread.currentThread().getStackTrace()[3]);
-		System.out.println(path);
-		System.out.println(rootPath);
-		System.out.println("++++++++++++++++++");
+//		System.out.println("++++++++++++++++++¨");
+//		System.out.println(aux);
+//		System.out.println(Thread.currentThread().getStackTrace()[3]);
+//		System.out.println(path);
+//		System.out.println(rootPath);
+//		System.out.println("++++++++++++++++++");
 		
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
@@ -333,5 +339,32 @@ public class CollectorExecutionFlow
 		else if	(c == Double.class) 	{ response = double.class; }
 		
 		return response;
+	}
+	
+	private static File findProjectRoot()
+	{
+		String[] allFiles;
+		boolean hasSrcFolder = false;
+		int i=0;
+		File currentPath = new File(System.getProperty("user.dir"));
+		
+		while (!hasSrcFolder) {
+			allFiles = currentPath.list();
+			
+			i=0;
+			while (!hasSrcFolder && i < allFiles.length) {
+				if (allFiles[i].equals("src")) {
+					hasSrcFolder = true;
+				} else {
+					i++;
+				}
+			}
+			
+			if (!hasSrcFolder) {
+				currentPath = new File(currentPath.getParent());
+			}
+		}
+		
+		return currentPath;
 	}
 }
