@@ -140,8 +140,15 @@ public class JDB
 		// Finds class path root (using test method class directory)
 		extractClassPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
 		
-		srcPath = extractSrcPathDirectory(methodInfo);
-		methodClassDir = new File(methodInfo.getClassPath()).getParent().toString();
+		srcPath = extractPathDirectory(methodInfo.getSrcPath(), methodInfo.getPackage());
+		//methodClassDir = new File(methodInfo.getClassPath()).getParent().toString();
+		
+		methodClassDir = extractPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
+		System.out.println("%%");
+		System.out.println(methodInfo.getClassPath());
+		System.out.println(methodInfo.getPackage());
+		System.out.println(methodClassDir);
+		System.out.println("%%");
 		
 		jdb_methodVisitor(methodSignature, methodInfo.getMethodName());
 		
@@ -165,9 +172,13 @@ public class JDB
 		String lib_junit = libPath_relative+"junit-4.13.jar";
 		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
-		String jdb_classPath = "-classpath .;"+libs+";"+methodClassPath;
+		String jdb_classPath = "-classpath .;"+libs;
 		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
+		
+		if (!methodClassPath.isEmpty()) {
+			jdb_classPath += ";"+methodClassPath;
+		}
 		
 		System.out.println("CPR: "+classPathRoot);
 		System.out.println("jdb_paths: "+jdb_paths);
@@ -539,13 +550,18 @@ public class JDB
 		}
 	}
 	
-	private String extractSrcPathDirectory(ClassMethodInfo methodInfo) throws Exception
+	private String extractPathDirectory(String classPath, String classPackage) throws Exception
 	{
-		if (methodInfo.getSrcPath() == null) 
+		if (classPath == null) 
 			throw new Exception("Source file path cannot be null");
 		
-		int packageFolders = methodInfo.getClassSignature().split("\\.").length-1;
-		Path file = new File(methodInfo.getSrcPath()).toPath();
+		int packageFolders = 0;
+		
+		if (!classPackage.isEmpty()) {
+			packageFolders = classPackage.split("\\.").length;
+		}
+		
+		Path file = new File(classPath).toPath();
 		
 		file = file.getParent();
 		
