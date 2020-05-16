@@ -10,6 +10,7 @@ import executionFlow.runtime.SkipCollection;
 @SkipCollection
 public class FileParserTest
 {
+	/*
 	@Test
 	public void testEmptyClass()
 	{
@@ -162,5 +163,5 @@ public class FileParserTest
 		
 		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
-	}
+	}*/
 }
