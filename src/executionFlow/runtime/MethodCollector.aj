@@ -74,9 +74,9 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		String signature = thisJoinPoint.getSignature().toString();
 		
-		System.out.println(signature);
+		//System.out.println(signature);
 		String[] tmp = signature.split("\\.");
-		if (tmp[tmp.length-2].toLowerCase().contains("builder")) { System.out.println("skipped");return; }
+		if (tmp[tmp.length-2].toLowerCase().contains("builder")) { return; }
 		
 		// Ignores native java methods
 		if (isNativeMethod(signature)) { return; }

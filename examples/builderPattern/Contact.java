@@ -21,32 +21,32 @@ public class Contact
 	}
 	
 	
-	static class Builder
+	static class ContactBuilder
 	{
 		private String firstName;
 		private String lastName;
 		private String email;
 		private int age;
 		
-		public Builder firstName(String firstName)
+		public ContactBuilder firstName(String firstName)
 		{
 			this.firstName = firstName;
 			return this;
 		}
 		
-		public Builder lastName(String lastName)
+		public ContactBuilder lastName(String lastName)
 		{
 			this.lastName = lastName;
 			return this;
 		}
 		
-		public Builder email(String email)
+		public ContactBuilder email(String email)
 		{
 			this.email = email;
 			return this;
 		}
 		
-		public Builder age(int age)
+		public ContactBuilder age(int age)
 		{
 			this.age = age;
 			return this;

@@ -216,6 +216,12 @@ public class JDB
 		// Executes while inside the method
 		while (!endOfMethod) {
 			inputReady = false;
+			System.out.println("@@@@@");
+			System.out.println(newIteration);
+			System.out.println(exitMethod);
+			System.out.println(overloadedMethod);
+			System.out.println(newIteration);
+			System.out.println("@@@@@");
 			
 			if (newIteration) {
 				// Enters the method, ignoring aspectJ
@@ -225,11 +231,12 @@ public class JDB
 					jdb_checkOutput();
 				}
 
+				/*
 				if (USING_ASPECTJ) {
 					jdb_sendCommand("step into");
-					newIteration = false;
 					jdb_checkOutput();
-				}
+				}*/
+				newIteration = false;
 			} else if (exitMethod) {
 				// Saves test path
 				testPaths.add(testPath);

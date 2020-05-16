@@ -11,7 +11,7 @@ public class BuilderPatternTest
 	@Test
 	public void testBuilderPattern()
 	{
-		Contact contact = new Contact.Builder()
+		Contact contact = new Contact.ContactBuilder()
 			.firstName("My first name")
 			.lastName("My last name")
 			.age(21)
