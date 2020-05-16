@@ -1,5 +1,6 @@
 package executionFlow.runtime;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.FileVisitResult;
@@ -162,8 +163,34 @@ public class CollectorExecutionFlow
 	 */
 	public static String findCurrentSrcPath() throws IOException 
 	{
-		if (rootPath == null)
+		if (rootPath == null) {
 			rootPath = Paths.get(System.getProperty("user.dir"));
+			
+			String[] allFiles;
+			boolean hasSrcFolder = false;
+			int i=0;
+			File currentPath = rootPath.toFile();
+			
+			while (!hasSrcFolder) {
+				allFiles = currentPath.list();
+				
+				i=0;
+				while (!hasSrcFolder && i < allFiles.length) {
+					if (allFiles[i].equals("src")) {
+						hasSrcFolder = true;
+					} else {
+						i++;
+					}
+				}
+				
+				if (!hasSrcFolder) {
+					currentPath = new File(currentPath.getParent());
+				}
+			}
+			
+			rootPath = currentPath.toPath();
+		}
+		
 		
 		String aux = Thread.currentThread().getStackTrace()[3].getFileName();
 		
@@ -192,12 +219,12 @@ public class CollectorExecutionFlow
 		
 		final String className = aux;
 		
-//		System.out.println("ииииииииииииииии");
-//		System.out.println(aux);
-//		System.out.println(Thread.currentThread().getStackTrace()[3]);
-//		System.out.println(path);
-//		System.out.println(rootPath);
-//		System.out.println("ииииииииииииииии");
+		System.out.println("++++++++++++++++++и");
+		System.out.println(aux);
+		System.out.println(Thread.currentThread().getStackTrace()[3]);
+		System.out.println(path);
+		System.out.println(rootPath);
+		System.out.println("++++++++++++++++++");
 		
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override

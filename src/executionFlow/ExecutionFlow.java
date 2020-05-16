@@ -103,9 +103,9 @@ public class ExecutionFlow
 	public ExecutionFlow execute() throws Throwable
 	{
 		List<List<Integer>> tp_jdb;
-//		System.out.println("§§§§§§§§§§§§");
-//		System.out.println(collectedMethods.values());
-//		System.out.println("§§§§§§§§§§§§");
+		System.out.println("-=-=--=-=-=-=-=-");
+		System.out.println(collectedMethods.values());
+		System.out.println("-=-=--=-=-=-=-=-");
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			CollectorInfo collector = collectors.get(0);
