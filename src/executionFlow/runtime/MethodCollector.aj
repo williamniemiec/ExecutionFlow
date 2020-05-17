@@ -138,6 +138,10 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		if (invocationLine <= 0) { return; }
 		
+		System.out.println("METHOD COLLECTED!");
+		System.out.println(signature);
+		System.out.println();
+		
 		// Collects the method
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.classPath(classPath)

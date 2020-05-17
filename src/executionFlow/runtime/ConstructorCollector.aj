@@ -60,8 +60,13 @@ public aspect ConstructorCollector extends RuntimeCollector
 		if (!signature.matches(constructorRegex)) { return; }
 		
 		// Extracts constructor data
-		consParamTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
-		consParamValues = thisJoinPoint.getArgs();
+		if (thisJoinPoint.getArgs() == null) {
+			consParamTypes = null;
+			consParamValues = null;
+		} else {
+			consParamTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
+			consParamValues = thisJoinPoint.getArgs();			
+		}
 		
 		// Saves extracted data
 		consCollector.put(key, new ClassConstructorInfo(consParamTypes, consParamValues));

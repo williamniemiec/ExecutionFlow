@@ -92,7 +92,7 @@ public abstract aspect RuntimeCollector
 	 */
 	protected boolean isNativeMethod(String methodSignature)
 	{
-		return methodSignature == null || methodSignature.contains("java.");
+		return methodSignature == null || methodSignature.contains("java.") || methodSignature.contains("jdk.");
 	}
 	
 	/**
