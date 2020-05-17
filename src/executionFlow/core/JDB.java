@@ -137,8 +137,9 @@ public class JDB
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
-		// Finds class path root (using test method class directory)
-		extractClassPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
+		// Gets class path root (using test method class directory)
+		//extractClassPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
+		classPathRoot = extractPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
 		
 		srcPath = extractPathDirectory(methodInfo.getSrcPath(), methodInfo.getPackage());
 		//methodClassDir = new File(methodInfo.getClassPath()).getParent().toString();
