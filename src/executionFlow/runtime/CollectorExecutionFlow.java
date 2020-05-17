@@ -80,9 +80,8 @@ public class CollectorExecutionFlow
 		
 		int i = 0;
 		Class<?>[] paramTypes = new Class<?>[args.length];
-		
-		for (Object o : args) {
-			paramTypes[i++] = normalizeClass(o.getClass());
+		for (Object o : args) { 
+			paramTypes[i++] = o == null ? null : normalizeClass(o.getClass());
 		}
 		
 		return paramTypes;
