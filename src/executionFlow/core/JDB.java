@@ -144,11 +144,12 @@ public class JDB
 		//methodClassDir = new File(methodInfo.getClassPath()).getParent().toString();
 		
 		methodClassDir = extractPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
-//		System.out.println("%%");
+		System.out.println("%%%%%%%%%%");
 //		System.out.println(methodInfo.getClassPath());
 //		System.out.println(methodInfo.getPackage());
 //		System.out.println(methodClassDir);
-//		System.out.println("%%");
+		System.out.println(methodInfo);
+		System.out.println("%%%%%%%%%%");
 		
 		jdb_methodVisitor(methodSignature, methodInfo.getMethodName());
 		
@@ -263,9 +264,9 @@ public class JDB
 				// Check output
 				exitMethod = false;
 				jdb_checkOutput();
-			} else if (overloadedMethod) {
-				jdb_sendCommand("step into");
-				jdb_checkOutput();
+//			} else if (overloadedMethod) {
+//				jdb_sendCommand("step into");
+//				jdb_checkOutput();
 			} else if (!endOfMethod) {
 				jdb_sendCommand("next");
 				jdb_checkOutput();
@@ -338,6 +339,7 @@ public class JDB
             				} else {
             					testPath.clear();
             					overloadedMethod = true;
+            					newIteration = true;
             				}
                     	} else if (newIteration || (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature))) {
                 			inMethod = true;

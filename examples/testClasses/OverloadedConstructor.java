@@ -16,17 +16,12 @@ public class OverloadedConstructor
 	
 	public int overloadedMethod(int num)
 	{
+		num *= 10;
 		return num;
 	}
 	
 	public int overloadedMethod()
 	{
-		int response= overloadedMethod(-1);
-		
-		int x = 2;
-		x++;
-		x++;
-		
-		return response;
+		return overloadedMethod(10);
 	}
 }

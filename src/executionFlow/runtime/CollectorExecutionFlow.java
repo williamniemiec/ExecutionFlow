@@ -236,7 +236,7 @@ public class CollectorExecutionFlow
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+className+".java")) {
-		        	System.out.println("Found! "+file);
+//		        	System.out.println("Found! "+file);
 		        	
 		        	srcPath = file.toString();
 		        	
