@@ -259,6 +259,8 @@ public class JDB
 				//newIteration = false;
 			} else if (exitMethod) {
 				skip--;
+				
+				// Checks if has to skip collected test path
 				if (skip < 0) {
 					// Saves test path
 					testPaths.add(testPath);
@@ -277,9 +279,6 @@ public class JDB
 				// Check output
 				exitMethod = false;
 				jdb_checkOutput();
-//			} else if (overloadedMethod) {
-//				jdb_sendCommand("step into");
-//				jdb_checkOutput();
 			} else if (!endOfMethod) {
 				jdb_sendCommand("next");
 				jdb_checkOutput();
@@ -294,7 +293,6 @@ public class JDB
         Thread t = new Thread(() -> {
         	String regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}.+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
         	String regex_overloadedMethod = "^.*(\\ |\\t|=|\\.)"+methodName+"\\(.*\\)(\\ |\\t)*;$";
-        	//System.out.println("r: "+regex_overloadedMethod);
         	boolean inMethod = false;
         	int lastLineAdded = -1;
         	
