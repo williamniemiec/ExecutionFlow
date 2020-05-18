@@ -55,6 +55,7 @@ public class JDB
 	private boolean overloadedMethod;
 //	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
+	int skip;
 	
 	
 	//-------------------------------------------------------------------------
@@ -92,9 +93,10 @@ public class JDB
 	 * 
 	 * @param lastLineTestMethod Test method end line
 	 */
-	public JDB(int lastLineMethod)
+	public JDB(int lastLineMethod, int skip)
 	{
 		this.lastLineTestMethod = lastLineMethod;
+		this.skip = skip;
 //		this.USING_ASPECTJ = true;
 		
 		testPath = new ArrayList<>();
@@ -238,14 +240,17 @@ public class JDB
 //			System.out.println("@@@@@");
 			
 			if (newIteration) {
-				// Enters the method, ignoring aspectJ
-				jdb_sendCommand("step into");
-				while (isInternalCommand) {
-					jdb_sendCommand("next");
+				//do {
+					// Enters the method, ignoring aspectJ
+					jdb_sendCommand("step into");
+					while (isInternalCommand) {
+						jdb_sendCommand("next");
+						jdb_checkOutput();
+					}
+	
 					jdb_checkOutput();
-				}
-
-				jdb_checkOutput();
+					//skip--;
+				//} while (skip >= 0);
 				/*
 				if (USING_ASPECTJ) {
 					jdb_sendCommand("step into");
@@ -253,14 +258,21 @@ public class JDB
 				}*/
 				//newIteration = false;
 			} else if (exitMethod) {
-				// Saves test path
-				testPaths.add(testPath);
-				
-				// Prepare for next test path
-				testPath = new ArrayList<>();
-				
-				// Checks if method is in a loop
-				jdb_sendCommand("cont");
+				skip--;
+				if (skip < 0) {
+					// Saves test path
+					testPaths.add(testPath);
+					
+					// Prepare for next test path
+					testPath = new ArrayList<>();
+					
+					// Checks if method is in a loop
+					jdb_sendCommand("cont");
+				} else {
+					testPath.clear();
+					newIteration = true;
+					jdb_sendCommand("step into");
+				}
 				
 				// Check output
 				exitMethod = false;

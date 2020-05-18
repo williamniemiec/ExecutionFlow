@@ -103,39 +103,47 @@ public class ExecutionFlow
 	public ExecutionFlow execute() throws Throwable
 	{
 		List<List<Integer>> tp_jdb;
+		int skip;
 		System.out.println("-=-=--=-=-=-=-=-");
 		System.out.println(collectedMethods.values());
 		System.out.println("-=-=--=-=-=-=-=-");
 		System.out.println();
+		
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
-			CollectorInfo collector = collectors.get(0);
-			
-			// Parses file
-			System.out.println("Processing source file...");
-			FileManager fileManager = new FileManager(
-				collector.getMethodInfo().getSrcPath(), 
-				collector.getMethodInfo().getClassDirectory(),
-				collector.getMethodInfo().getPackage()
-			);
-			
-			try {
-				fileManager.parseFile().compileFile();
-				System.out.println("Processing completed");
+			skip = 0;
+			// Computes test path for each collected method that is invoked in the same line
+			for (CollectorInfo collector : collectors) {
+				// Parses file
+				System.out.println("Processing source file...");
+				FileManager fileManager = new FileManager(
+					collector.getMethodInfo().getSrcPath(), 
+					collector.getMethodInfo().getClassDirectory(),
+					collector.getMethodInfo().getPackage()
+				);
 				
-				// Reverts parsed file to its original state
-				fileManager.revert();
-				
-				JDB jdb = new JDB(lastLineTestMethod);
-				
-				// Computes test path from JDB
-				tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
-				
-				// Stores each computed test path
-				storeTestPath(tp_jdb, collector);
-			} catch (Exception e) {
-				System.out.println("Processing error");
+				try {
+					fileManager.parseFile().compileFile();
+					System.out.println("Processing completed");
+					
+					// Reverts parsed file to its original state
+					fileManager.revert();
+					
+					JDB jdb = new JDB(lastLineTestMethod, skip);
+					
+					// Computes test path from JDB
+					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
+					
+					// Stores each computed test path
+					storeTestPath(tp_jdb, collector);
+					skip++;
+				} catch (Exception e) {
+					System.out.println("Processing error");
+				}
 			}
+			//CollectorInfo collector = collectors.get(0);
+			
+			
 		}
 		
 		return this;
