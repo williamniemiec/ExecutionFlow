@@ -76,6 +76,7 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		//System.out.println(signature);
 		String[] tmp = signature.split("\\.");
+		//System.out.println("tmp[tmp.length-2].toLowerCase().contains(\"builder\"): "+tmp[tmp.length-2].toLowerCase().contains("builder"));
 		if (tmp[tmp.length-2].toLowerCase().contains("builder")) { return; }
 		
 		// Ignores native java methods

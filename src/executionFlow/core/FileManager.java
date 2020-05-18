@@ -75,7 +75,7 @@ public class FileManager
 		createBackupFile();
 		
 		// Parses file
-		FileParser fp = new FileParser(inputFile.getAbsolutePath(), inputFile.getParent(), filename+"_parsed");
+		FileParser fp = new FileParser(inputFile.getAbsolutePath(), classOutput, filename+"_parsed");
 		File out = new File(fp.parseFile());
 		
 		// Changes parsed file name to the same as received filename

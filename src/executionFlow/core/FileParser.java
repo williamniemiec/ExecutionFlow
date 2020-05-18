@@ -180,7 +180,7 @@ public class FileParser
 				}
 				
 				// Checks if it is a class declaration
-				if (line.matches(regex_classDeclaration)) {
+				/*if (line.matches(regex_classDeclaration)) {
 					bw.write("@executionFlow.runtime.SkipCollection "+line);
 					bw.newLine();
 					
@@ -189,7 +189,7 @@ public class FileParser
 					// -----{ END DEBUG }-----
 					
 					continue;
-				}
+				}*/
 				
 				// Checks if it is a method declaration
 				if (!line.matches(regex_new) && pattern_methodDeclaration.matcher(line).find()) {

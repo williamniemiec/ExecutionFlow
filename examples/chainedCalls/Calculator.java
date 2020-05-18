@@ -1,6 +1,6 @@
 package chainedCalls;
 
-@executionFlow.runtime.SkipCollection public class Calculator 
+public class Calculator 
 {
 	private float ans;
 	
