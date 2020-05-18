@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import chainedCalls.Calculator;
 
-public class ChainedMethods {
+@executionFlow.runtime.SkipCollection public class ChainedMethods {
 	@Test
 	public void testChainedMethods()
 	{

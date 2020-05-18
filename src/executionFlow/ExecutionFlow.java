@@ -122,6 +122,12 @@ public class ExecutionFlow
 					collector.getMethodInfo().getPackage()
 				);
 				
+				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
+				System.out.println(collector.getMethodInfo().getSrcPath()); 
+				System.out.println(collector.getMethodInfo().getClassDirectory());
+				System.out.println(collector.getMethodInfo().getPackage());
+				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
+				
 				try {
 					fileManager.parseFile().compileFile();
 					System.out.println("Processing completed");
