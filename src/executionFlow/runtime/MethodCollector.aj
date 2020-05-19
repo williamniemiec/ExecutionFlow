@@ -36,8 +36,8 @@ public aspect MethodCollector extends RuntimeCollector
 	//private boolean inMethod;
 	
 	// key: invocationLine + method first line
-	private List<Integer> collectedLines = new ArrayList<>();
-	private int firstMethodLine = 0;
+	//private List<Integer> collectedLines = new ArrayList<>();
+	
 	
 	
 	//-----------------------------------------------------------------------
@@ -83,21 +83,6 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		if (invocationLine <= 0) { return; }
 		
-		// Checks if it is within a method already collected
-		if (collectedLines.contains(invocationLine)) { return; }
-		
-		StackTraceElement stackFrame = Thread.currentThread().getStackTrace()[2];
-		
-		if (stackFrame.toString().contains(testMethodSignature)) { // Checks if it is within test method
-			firstMethodLine = 0;
-		} else if (firstMethodLine == 0) {
-			firstMethodLine = stackFrame.getLineNumber();
-		}
-		
-		if (!stackFrame.toString().contains(testMethodSignature) &&	// Inside a method 
-			firstMethodLine != invocationLine) {
-			return;
-		}
 		
 		String signature = thisJoinPoint.getSignature().toString();
 		
@@ -114,6 +99,29 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Checks if is a method signature
 		if (!isMethodSignature(signature)) { return; }
+		
+		
+		//==================================================================================
+		// Checks if it is within a method already collected
+		StackTraceElement stackFrame = Thread.currentThread().getStackTrace()[2];
+		
+		System.out.println(testMethodSignature);
+		System.out.println(stackFrame.toString());
+		System.out.println(firstMethodLine);
+		
+		if (stackFrame.toString().contains(testMethodSignature)) { // Checks if it is within test method
+			firstMethodLine = 0;
+		} else {	// Inside a method
+			if (firstMethodLine == 0) {
+				firstMethodLine = stackFrame.getLineNumber();
+			} else if (firstMethodLine != invocationLine) {
+				return;
+			}
+		}
+		//==================================================================================
+		
+		
+		
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
@@ -164,7 +172,7 @@ public aspect MethodCollector extends RuntimeCollector
 		System.out.println("METHOD COLLECTED!");
 		System.out.println(signature);
 		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
-		collectedLines.add(invocationLine);
+		//collectedLines.add(invocationLine);
 		System.out.println();
 		//lastMethodSignature = signature;
 		

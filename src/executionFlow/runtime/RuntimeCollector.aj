@@ -66,7 +66,8 @@ public abstract aspect RuntimeCollector
 	protected static boolean skipCollection;
 	protected static String testMethodPackage;
 	//protected static boolean inMethod;
-	protected static List<Integer> collectedLines = new ArrayList<>();
+	//protected static List<Integer> collectedLines = new ArrayList<>();
+	protected int firstMethodLine = 0;
 	
 	
 	//-------------------------------------------------------------------------
@@ -120,7 +121,7 @@ public abstract aspect RuntimeCollector
 		testClassPath = null;
 		lastInsertedMethod = "";
 		lastWasInternalCall = false;
-		collectedLines.clear();
+		firstMethodLine = 0;
 	}
 	
 	/**
@@ -143,10 +144,6 @@ public abstract aspect RuntimeCollector
 			lastWasInternalCall = true;
 			return true;
 		}
-		
-		System.out.println("NÃO É INTERNAL CALL");
-		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
-		System.out.println();
 		
 		return false;
 	}
