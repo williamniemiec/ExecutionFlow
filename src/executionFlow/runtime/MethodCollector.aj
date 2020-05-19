@@ -32,6 +32,8 @@ public aspect MethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	private String classPath;
 	private String srcPath;
+	//private String lastMethodSignature;
+	private boolean inMethod;
 	
 	
 	//-----------------------------------------------------------------------
@@ -71,6 +73,13 @@ public aspect MethodCollector extends RuntimeCollector
 	{	
 		// Ignores if the class has @SkipCollection annotation
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
+		
+		// Checks if it is within a method already collected
+		if (inMethod && !Thread.currentThread().getStackTrace()[3].toString().contains(testMethodPackage)) {
+			return;
+		} else {
+			inMethod = false;
+		}
 		
 		String signature = thisJoinPoint.getSignature().toString();
 		
@@ -142,6 +151,8 @@ public aspect MethodCollector extends RuntimeCollector
 		System.out.println("METHOD COLLECTED!");
 		System.out.println(signature);
 		System.out.println();
+		//lastMethodSignature = signature;
+		inMethod = true;
 		
 		// Collects the method
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
