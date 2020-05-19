@@ -33,7 +33,11 @@ public aspect MethodCollector extends RuntimeCollector
 	private String classPath;
 	private String srcPath;
 	//private String lastMethodSignature;
-	private boolean inMethod;
+	//private boolean inMethod;
+	
+	// key: invocationLine + method first line
+	private List<Integer> collectedLines = new ArrayList<>();
+	private int firstMethodLine = 0;
 	
 	
 	//-----------------------------------------------------------------------
@@ -74,11 +78,25 @@ public aspect MethodCollector extends RuntimeCollector
 		// Ignores if the class has @SkipCollection annotation
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 		
+		// Gets method invocation line
+		int invocationLine = Thread.currentThread().getStackTrace()[3].getLineNumber();
+		
+		if (invocationLine <= 0) { return; }
+		
 		// Checks if it is within a method already collected
-		if (inMethod && !Thread.currentThread().getStackTrace()[3].toString().contains(testMethodPackage)) {
+		if (collectedLines.contains(invocationLine)) { return; }
+		
+		StackTraceElement stackFrame = Thread.currentThread().getStackTrace()[2];
+		
+		if (stackFrame.toString().contains(testMethodSignature)) { // Checks if it is within test method
+			firstMethodLine = 0;
+		} else if (firstMethodLine == 0) {
+			firstMethodLine = stackFrame.getLineNumber();
+		}
+		
+		if (!stackFrame.toString().contains(testMethodSignature) &&	// Inside a method 
+			firstMethodLine != invocationLine) {
 			return;
-		} else {
-			inMethod = false;
 		}
 		
 		String signature = thisJoinPoint.getSignature().toString();
@@ -143,16 +161,12 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
-		// Gets method invocation line
-		int invocationLine = Thread.currentThread().getStackTrace()[3].getLineNumber();
-		
-		if (invocationLine <= 0) { return; }
-		
 		System.out.println("METHOD COLLECTED!");
 		System.out.println(signature);
+		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
+		collectedLines.add(invocationLine);
 		System.out.println();
 		//lastMethodSignature = signature;
-		inMethod = true;
 		
 		// Collects the method
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
