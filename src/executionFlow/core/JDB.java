@@ -301,7 +301,7 @@ public class JDB
                 String line;
                 // Shell output
                 System.out.println("Generating test path...");
-                String commandLine = null;
+                String srcLine = null;
                 while (!endOfMethod && (line = br.readLine()) != null) {
                 	if (line.equals("\n") || line.equals("") || line.equals(" ")) continue;
                 	
@@ -326,7 +326,7 @@ public class JDB
                 	
                 	// Checks if JDB has started and is ready to receive debug commands
             		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
-            			commandLine = br.readLine();
+            			srcLine = br.readLine();
             			
             			newIteration = 
         					(!inMethod && 
@@ -344,7 +344,7 @@ public class JDB
             			}
 
             			// Checks if it is a call to an overloaded method
-            			if (commandLine.matches(regex_overloadedMethod) && !line.contains(classInvocationSignature)) {
+            			if (srcLine.matches(regex_overloadedMethod) && !line.contains(classInvocationSignature)) {
             				if (overloadedMethod) {
             					exitMethod = true;
             				} else {
@@ -366,8 +366,8 @@ public class JDB
             					endOfMethod = !process.isAlive();
             					lastLineAdded = -1;
             				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
-            					if (!commandLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
-        							!commandLine.matches(regex_emptyMethod)) {
+            					if (!srcLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
+        							!srcLine.matches(regex_emptyMethod)) {
             						testPath.add(lineNumber);
             						lastLineAdded = lineNumber;
             					}
@@ -383,8 +383,8 @@ public class JDB
             		}
             		
             		// -----{ DEBUG }-----
-            		if (DEBUG && commandLine != null)
-            			System.out.println(commandLine);
+            		if (DEBUG && srcLine != null)
+            			System.out.println(srcLine);
             		// -----{ END DEBUG }-----
             		
             		// Checks if there are input commands
