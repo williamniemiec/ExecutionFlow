@@ -92,7 +92,7 @@ public aspect MethodCollector extends RuntimeCollector
 		if (!isMethodSignature(signature)) { return; }
 		
 		// Checks if it is an internal call (if it is, ignore it)
-		//if (isInternalCall(signature)) { return; }		
+		if (isInternalCall(signature)) { return; }		
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
@@ -101,10 +101,10 @@ public aspect MethodCollector extends RuntimeCollector
 		StackTraceElement stackFrame = Thread.currentThread().getStackTrace()[2];
 		String methodSig = stackFrame.getClassName()+"."+stackFrame.getMethodName();
 		
-//		System.out.println("+-+-+-+-+-+-+-+-+-+-");
-//		System.out.println(signature);
-//		System.out.println(methodSig);
-//		System.out.println("+-+-+-+-+-+-+-+-+-+-");
+		System.out.println("+-+-+-+-+-+-+-+-+-+-");
+		System.out.println(signature);
+		System.out.println(methodSig);
+		System.out.println("+-+-+-+-+-+-+-+-+-+-");
 		
 		// If it is not, ignores it
 		if (!signature.contains(methodSig)) { return; }
