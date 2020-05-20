@@ -100,31 +100,24 @@ public aspect MethodCollector extends RuntimeCollector
 		// Checks if is a method signature
 		if (!isMethodSignature(signature)) { return; }
 		
-		
-		//==================================================================================
-		// Checks if it is within a method already collected
-		StackTraceElement stackFrame = Thread.currentThread().getStackTrace()[2];
-		
-		System.out.println(testMethodSignature);
-		System.out.println(stackFrame.toString());
-		System.out.println(firstMethodLine);
-		
-		if (stackFrame.toString().contains(testMethodSignature)) { // Checks if it is within test method
-			firstMethodLine = 0;
-		} else {	// Inside a method
-			if (firstMethodLine == 0) {
-				firstMethodLine = stackFrame.getLineNumber();
-			} else if (firstMethodLine != invocationLine) {
-				return;
-			}
-		}
-		//==================================================================================
-		
-		
-		
+		// Checks if it is an internal call (if it is, ignore it)
+		//if (isInternalCall(signature)) { return; }		
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
+		
+		//==================================================================================
+		// Checks if it is a method that is invoked within test method
+		StackTraceElement stackFrame = Thread.currentThread().getStackTrace()[2];
+		String methodSig = stackFrame.getClassName()+"."+stackFrame.getMethodName();
+		
+//		System.out.println("+-+-+-+-+-+-+-+-+-+-");
+//		System.out.println(signature);
+//		System.out.println(methodSig);
+//		System.out.println("+-+-+-+-+-+-+-+-+-+-");
+		
+		// If it is not, ignores it
+		if (!signature.contains(methodSig)) { return; }
 		
 		// Extracts types of method parameters (if there is any)
 		Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint);
@@ -146,8 +139,7 @@ public aspect MethodCollector extends RuntimeCollector
 		// If the method has already been collected, skip it;
 		if (collectedMethods.contains(key)) { return; }
 		
-		// Checks if it is an internal call (if it is, ignore it)
-		if (isInternalCall(signature)) { return; }		
+		
 		
 		// Checks if the collected constructor is not the constructor of the test method
 		if (constructor != null && isTestMethodConstructor(key)) { return; }

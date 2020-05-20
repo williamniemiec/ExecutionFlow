@@ -67,7 +67,10 @@ public abstract aspect RuntimeCollector
 	protected static String testMethodPackage;
 	//protected static boolean inMethod;
 	//protected static List<Integer> collectedLines = new ArrayList<>();
-	protected int firstMethodLine = 0;
+	protected static int firstMethodLine = 0;
+	protected static String currentMethod = null;
+	protected static List<String> parsedMethods = new ArrayList<>();
+	protected static List<Integer> invocatedLines = new ArrayList<>();
 	
 	
 	//-------------------------------------------------------------------------
@@ -122,6 +125,9 @@ public abstract aspect RuntimeCollector
 		lastInsertedMethod = "";
 		lastWasInternalCall = false;
 		firstMethodLine = 0;
+		currentMethod = null;
+		parsedMethods.clear();
+		collectedMethods.clear();
 	}
 	
 	/**
