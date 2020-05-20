@@ -3,8 +3,10 @@ public class test_switch
 	public char switchCaseMethod(char letter)
 	{ 
 		letter = Character.toUpperCase(letter);
-				
+		
 		switch (letter) {
+		 	case '÷':
+		 		break; 
 			case 'Á':
 			case 'À':
 			case 'Ã':

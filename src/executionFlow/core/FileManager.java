@@ -93,16 +93,21 @@ public class FileManager
 	 */
 	public String compileFile() throws Exception
 	{
-		int packageFolders = classPackage.split("\\.").length;
-		Path file = Paths.get(classOutput);
-		
-		// Sets path to the compiler
-		for (int i=0; i<packageFolders; i++) {
-			file = file.getParent();
+		try {
+			int packageFolders = classPackage.split("\\.").length;
+			Path file = Paths.get(classOutput);
+			
+			// Sets path to the compiler
+			for (int i=0; i<packageFolders; i++) {
+				file = file.getParent();
+			}
+			
+			// Compiles parsed file
+			return FileCompiler.compile(inputFile, file.toString());
+		} finally {
+			// Reverts parsed file to its original state
+			revert();			
 		}
-		
-		// Compiles parsed file
-		return FileCompiler.compile(inputFile, file.toString());
 	}
 	
 	/**
@@ -124,11 +129,11 @@ public class FileManager
 			Files.copy(
 				inputFile.toPath(), 
 				originalFile.toPath(), 
-				StandardCopyOption.REPLACE_EXISTING,
+				//StandardCopyOption.REPLACE_EXISTING,
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 }

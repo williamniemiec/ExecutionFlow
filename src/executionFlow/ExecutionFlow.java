@@ -122,22 +122,22 @@ public class ExecutionFlow
 					collector.getMethodInfo().getPackage()
 				);
 				
-				System.out.println("``````````````````````");
-				System.out.println(skip);
-				System.out.println("``````````````````````");
-				
-				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-				System.out.println(collector.getMethodInfo().getSrcPath()); 
-				System.out.println(collector.getMethodInfo().getClassDirectory());
-				System.out.println(collector.getMethodInfo().getPackage());
-				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
+//				System.out.println("``````````````````````");
+//				System.out.println(skip);
+//				System.out.println("``````````````````````");
+//				
+//				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
+//				System.out.println(collector.getMethodInfo().getSrcPath()); 
+//				System.out.println(collector.getMethodInfo().getClassDirectory());
+//				System.out.println(collector.getMethodInfo().getPackage());
+//				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
 				
 				try {
 					fileManager.parseFile().compileFile();
 					System.out.println("Processing completed");
 					
 					// Reverts parsed file to its original state
-					fileManager.revert();
+					//fileManager.revert();
 					
 					JDB jdb = new JDB(lastLineTestMethod, skip);
 					
