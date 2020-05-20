@@ -3,9 +3,11 @@ package executionFlow.core;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -129,9 +131,11 @@ public class FileParser
 			outputFile = new File(outputFilename+".java");
 		
 		// Opens file streams (file to be parsed and output file / processed file)
-		try (BufferedReader br = new BufferedReader(new FileReader(file));
-			 BufferedReader br_forward = new BufferedReader(new FileReader(file));
+		try (//BufferedReader br = new BufferedReader(new FileReader(file));
+			 //BufferedReader br_forward = new BufferedReader(new FileReader(file));
 			 //BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+			 BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			 BufferedReader br_forward = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"))) {
 			br_forward.readLine();
 			

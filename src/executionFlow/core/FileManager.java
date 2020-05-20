@@ -93,21 +93,16 @@ public class FileManager
 	 */
 	public String compileFile() throws Exception
 	{
-		try {
-			int packageFolders = classPackage.split("\\.").length;
-			Path file = Paths.get(classOutput);
-			
-			// Sets path to the compiler
-			for (int i=0; i<packageFolders; i++) {
-				file = file.getParent();
-			}
-			
-			// Compiles parsed file
-			return FileCompiler.compile(inputFile, file.toString());
-		} finally {
-			// Reverts parsed file to its original state
-			revert();			
+		int packageFolders = classPackage.split("\\.").length;
+		Path file = Paths.get(classOutput);
+		
+		// Sets path to the compiler
+		for (int i=0; i<packageFolders; i++) {
+			file = file.getParent();
 		}
+		
+		// Compiles parsed file
+		return FileCompiler.compile(inputFile, file.toString());
 	}
 	
 	/**

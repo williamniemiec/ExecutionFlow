@@ -136,9 +136,6 @@ public class ExecutionFlow
 					fileManager.parseFile().compileFile();
 					System.out.println("Processing completed");
 					
-					// Reverts parsed file to its original state
-					//fileManager.revert();
-					
 					JDB jdb = new JDB(lastLineTestMethod, skip);
 					
 					// Computes test path from JDB
@@ -149,6 +146,9 @@ public class ExecutionFlow
 					skip++;
 				} catch (Exception e) {
 					System.out.println("Processing error");
+				} finally {
+					// Reverts parsed file to its original state
+					fileManager.revert();
 				}
 			}
 			//CollectorInfo collector = collectors.get(0);

@@ -25,7 +25,6 @@ public class FileCompiler
 	public static String compile(File fileToCompile, String outputDir) throws Exception
 	{
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		System.out.println("-encoding ISO-8859-1 -d (...)");
 		int compilationResult =	compiler.run(null, null, null, new String[] {"-encoding", "UTF8","-d", outputDir, fileToCompile.getAbsolutePath()});
 		
 		if(compilationResult != 0) {
