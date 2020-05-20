@@ -32,12 +32,6 @@ public aspect MethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	private String classPath;
 	private String srcPath;
-	//private String lastMethodSignature;
-	//private boolean inMethod;
-	
-	// key: invocationLine + method first line
-	//private List<Integer> collectedLines = new ArrayList<>();
-	
 	
 	
 	//-----------------------------------------------------------------------
@@ -83,13 +77,10 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		if (invocationLine <= 0) { return; }
 		
-		
 		String signature = thisJoinPoint.getSignature().toString();
 		
-		//System.out.println(signature);
-		String[] tmp = signature.split("\\.");
-		//System.out.println("tmp[tmp.length-2].toLowerCase().contains(\"builder\"): "+tmp[tmp.length-2].toLowerCase().contains("builder"));
-		if (tmp[tmp.length-2].toLowerCase().contains("builder")) { return; }
+		// Ignores classes that contains 'builder' in its name
+		if (isBuilderClass(signature)) { return; }
 		
 		// Ignores native java methods
 		if (isNativeMethod(signature)) { return; }
@@ -106,7 +97,6 @@ public aspect MethodCollector extends RuntimeCollector
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
-		//==================================================================================
 		// Checks if it is a method that is invoked within test method
 		StackTraceElement stackFrame = Thread.currentThread().getStackTrace()[2];
 		String methodSig = stackFrame.getClassName()+"."+stackFrame.getMethodName();
@@ -132,7 +122,6 @@ public aspect MethodCollector extends RuntimeCollector
 			constructor = thisJoinPoint.getThis();
 			
 			// Key: <method_name>+<method_params>+<constructor@hashCode>
-			//key += constructor.toString();
 			key += constructor.getClass().getName()+"@"+Integer.toHexString(constructor.hashCode());
 		}
 		

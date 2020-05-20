@@ -1,7 +1,6 @@
 package executionFlow.runtime;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.CollectorInfo;
-
 
 /**
  * Responsible for data collection of methods and class constructors used in tests.
@@ -65,12 +63,6 @@ public abstract aspect RuntimeCollector
 	protected static boolean lastWasInternalCall;
 	protected static boolean skipCollection;
 	protected static String testMethodPackage;
-	//protected static boolean inMethod;
-	//protected static List<Integer> collectedLines = new ArrayList<>();
-	protected static int firstMethodLine = 0;
-	protected static String currentMethod = null;
-	protected static List<String> parsedMethods = new ArrayList<>();
-	protected static List<Integer> invocatedLines = new ArrayList<>();
 	
 	
 	//-------------------------------------------------------------------------
@@ -124,9 +116,6 @@ public abstract aspect RuntimeCollector
 		testClassPath = null;
 		lastInsertedMethod = "";
 		lastWasInternalCall = false;
-		firstMethodLine = 0;
-		currentMethod = null;
-		parsedMethods.clear();
 		collectedMethods.clear();
 	}
 	
@@ -169,6 +158,18 @@ public abstract aspect RuntimeCollector
 		String methodName = tmp[tmp.length-1];
 		
 		return methodName.equals(testMethodClassName);
+	}
+	
+	/**
+	 * Checks if a signature belongs to a builder class.
+	 * 
+	 * @param signature Signature to be analyzed
+	 * @return If the signature belongs to a builder class
+	 */
+	protected boolean isBuilderClass(String signature)
+	{
+		String[] tmp = signature.split("\\.");
+		return tmp[tmp.length-2].toLowerCase().contains("builder");
 	}
 	
 	/**
