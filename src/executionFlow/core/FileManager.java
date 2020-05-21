@@ -118,7 +118,6 @@ public class FileManager
 			Files.copy(
 				inputFile.toPath(), 
 				originalFile.toPath(), 
-				//StandardCopyOption.REPLACE_EXISTING,
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
 		} catch (IOException e) {	// If already exists a .original, it means

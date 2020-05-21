@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -134,9 +136,12 @@ public class FileParser
 		try (//BufferedReader br = new BufferedReader(new FileReader(file));
 			 //BufferedReader br_forward = new BufferedReader(new FileReader(file));
 			 //BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
-			 BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-			 BufferedReader br_forward = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"))) {
+//			 BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+//			 BufferedReader br_forward = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			 BufferedReader br = Files.newBufferedReader(file.toPath(), StandardCharsets.ISO_8859_1);
+			 BufferedReader br_forward = Files.newBufferedReader(file.toPath(), StandardCharsets.ISO_8859_1); 
+			 BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), StandardCharsets.ISO_8859_1)) { 
+//			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"))) {
 			br_forward.readLine();
 			
 			// Parses file line by line

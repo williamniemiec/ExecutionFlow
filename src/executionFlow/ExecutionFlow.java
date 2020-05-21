@@ -145,15 +145,12 @@ public class ExecutionFlow
 					storeTestPath(tp_jdb, collector);
 					skip++;
 				} catch (Exception e) {
-					System.out.println("Processing error");
+					System.out.println("Processing error: "+e.getMessage());
 				} finally {
 					// Reverts parsed file to its original state
 					fileManager.revert();
 				}
 			}
-			//CollectorInfo collector = collectors.get(0);
-			
-			
 		}
 		
 		return this;
