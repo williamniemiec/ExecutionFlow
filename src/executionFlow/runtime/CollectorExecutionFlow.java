@@ -167,33 +167,6 @@ public class CollectorExecutionFlow
 	public static String findCurrentSrcPath() throws IOException 
 	{
 		if (rootPath == null) {
-			/*
-			rootPath = Paths.get(System.getProperty("user.dir"));
-			
-			String[] allFiles;
-			boolean hasSrcFolder = false;
-			int i=0;
-			File currentPath = rootPath.toFile();
-			
-			while (!hasSrcFolder) {
-				allFiles = currentPath.list();
-				
-				i=0;
-				while (!hasSrcFolder && i < allFiles.length) {
-					if (allFiles[i].equals("src")) {
-						hasSrcFolder = true;
-					} else {
-						i++;
-					}
-				}
-				
-				if (!hasSrcFolder) {
-					currentPath = new File(currentPath.getParent());
-				}
-			}
-			
-			rootPath = currentPath.toPath();
-			*/
 			rootPath = findProjectRoot().toPath();
 		}
 		
@@ -340,6 +313,12 @@ public class CollectorExecutionFlow
 		return response;
 	}
 	
+	/**
+	 * Finds project root. It will return the path that contains a directory 
+	 * with name 'src'. 
+	 * 
+	 * @return Project root
+	 */
 	private static File findProjectRoot()
 	{
 		String[] allFiles;
@@ -347,11 +326,14 @@ public class CollectorExecutionFlow
 		int i=0;
 		File currentPath = new File(System.getProperty("user.dir"));
 		
+		// Searches for a path containing a directory named 'src'
 		while (!hasSrcFolder) {
 			allFiles = currentPath.list();
 			
+			// Checks the name of every file in current path
 			i=0;
 			while (!hasSrcFolder && i < allFiles.length) {
+				// If there is a directory named 'src' stop the search
 				if (allFiles[i].equals("src")) {
 					hasSrcFolder = true;
 				} else {
@@ -359,6 +341,7 @@ public class CollectorExecutionFlow
 				}
 			}
 			
+			// If there is not a directory named 'src', it searches in the parent folder
 			if (!hasSrcFolder) {
 				currentPath = new File(currentPath.getParent());
 			}

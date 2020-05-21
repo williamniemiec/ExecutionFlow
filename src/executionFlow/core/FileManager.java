@@ -115,20 +115,15 @@ public class FileManager
 	private void createBackupFile()
 	{
 		try {
-			/*
-			System.out.println("copy");
-			System.out.println("input: "+inputFile);
-			System.out.println("input: "+inputFile.toPath());
-			System.out.println("original: "+originalFile);
-			System.out.println("original: "+originalFile.toPath());*/
 			Files.copy(
 				inputFile.toPath(), 
 				originalFile.toPath(), 
 				//StandardCopyOption.REPLACE_EXISTING,
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
-		} catch (IOException e) {
-			//e.printStackTrace();
+		} catch (IOException e) {	// If already exists a .original, it means
+			revert();				// that last parsed file was not restored
+			createBackupFile();		// So, restore this file and starts again
 		}
 	}
 }
