@@ -125,10 +125,11 @@ public aspect MethodCollector extends RuntimeCollector
 			key += constructor.getClass().getName()+"@"+Integer.toHexString(constructor.hashCode());
 		}
 		
-		// If the method has already been collected, skip it;
-		if (collectedMethods.contains(key)) { return; }
-		
-		
+		// If the method has already been collected, skip it (avoids collect duplicate methods)
+		if (collectedMethods.contains(key)) {
+			order++;
+			return; 
+		}
 		
 		// Checks if the collected constructor is not the constructor of the test method
 		if (constructor != null && isTestMethodConstructor(key)) { return; }
@@ -157,6 +158,10 @@ public aspect MethodCollector extends RuntimeCollector
 		System.out.println();
 		//lastMethodSignature = signature;
 		
+		if (lastInvocationLine != invocationLine) {
+			order = 0;
+		}
+		
 		// Collects the method
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.classPath(classPath)
@@ -171,8 +176,9 @@ public aspect MethodCollector extends RuntimeCollector
 				.srcPath(srcPath)
 				.build();
 
-		CollectorInfo ci = new CollectorInfo(cmi);
-
+		CollectorInfo ci = new CollectorInfo(cmi, order++);
+		lastInvocationLine = invocationLine;
+		
 		// Collects constructor (if method is not static)
 		if (constructor != null) {
 			ci.setConstructorInfo(consCollector.get(constructor.toString()));

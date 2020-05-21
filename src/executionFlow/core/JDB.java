@@ -53,7 +53,6 @@ public class JDB
 	private boolean inputReady;
 	private boolean isInternalCommand;
 	private boolean overloadedMethod;
-//	private final boolean USING_ASPECTJ;
 	private final boolean DEBUG; 
 	int skip;
 	
@@ -97,29 +96,10 @@ public class JDB
 	{
 		this.lastLineTestMethod = lastLineMethod;
 		this.skip = skip;
-//		this.USING_ASPECTJ = true;
 		
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
 	}
-	
-	/**
-	 * Computes test path from code debugging. If this class will be used
-	 * outside the context of aspects, you must pass 'true' for 'usingAspectJ'
-	 * parameter.
-	 * 
-	 * @param lastLineTestMethod Test method end line
-	 * @param usingAspectJ If this class will be used within the context of
-	 * aspects 
-	 */
-//	public JDB(int lastLineMethod, boolean usingAspectJ)
-//	{
-//		this.USING_ASPECTJ = usingAspectJ;
-//		this.lastLineTestMethod = lastLineMethod;
-//		
-//		testPath = new ArrayList<>();
-//		testPaths = new ArrayList<>();
-//	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -140,19 +120,9 @@ public class JDB
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
 		// Gets class path root (using test method class directory)
-		//extractClassPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
 		classPathRoot = extractPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
-		
 		srcPath = extractPathDirectory(methodInfo.getSrcPath(), methodInfo.getPackage());
-		//methodClassDir = new File(methodInfo.getClassPath()).getParent().toString();
-		
 		methodClassDir = extractPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
-		System.out.println("%%%%%%%%%%");
-//		System.out.println(methodInfo.getClassPath());
-//		System.out.println(methodInfo.getPackage());
-//		System.out.println(methodClassDir);
-		System.out.println(methodInfo);
-		System.out.println("%%%%%%%%%%");
 		
 		jdb_methodVisitor(methodSignature, methodInfo.getMethodName());
 		
@@ -232,15 +202,8 @@ public class JDB
 		// Executes while inside the method
 		while (!endOfMethod) {
 			inputReady = false;
-//			System.out.println("@@@@@");
-//			System.out.println(newIteration);
-//			System.out.println(exitMethod);
-//			System.out.println(overloadedMethod);
-//			System.out.println(newIteration);
-//			System.out.println("@@@@@");
 			
 			if (newIteration) {
-				//do {
 					// Enters the method, ignoring aspectJ
 					jdb_sendCommand("step into");
 					while (isInternalCommand) {
@@ -249,14 +212,6 @@ public class JDB
 					}
 	
 					jdb_checkOutput();
-					//skip--;
-				//} while (skip >= 0);
-				/*
-				if (USING_ASPECTJ) {
-					jdb_sendCommand("step into");
-					jdb_checkOutput();
-				}*/
-				//newIteration = false;
 			} else if (exitMethod) {
 				skip--;
 				
@@ -264,6 +219,7 @@ public class JDB
 				if (skip < 0) {
 					// Saves test path
 					testPaths.add(testPath);
+					System.out.println("TP_ADDED: "+testPath);
 					
 					// Prepare for next test path
 					testPath = new ArrayList<>();
@@ -309,12 +265,6 @@ public class JDB
                 	if (DEBUG)
                 		System.out.println(line);
             		// -----{ END DEBUG }-----
-                	
-//                	System.out.println("创创创创创创创创创创创创创");
-//                	System.out.println("inMethod: "+inMethod);
-//                	System.out.println("line="+methodInvocationLine);
-//                	System.out.println(classInvocationSignature);
-//                	System.out.println("创创创创创创创创创创创创创");
             		
                 	endOfMethod = line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod);
                 	isInternalCommand = !line.contains(methodClassSignature) && !line.contains(classInvocationSignature);//line.contains("aspectj") || line.contains("aspectOf");
@@ -348,6 +298,7 @@ public class JDB
             				if (overloadedMethod) {
             					exitMethod = true;
             				} else {
+            					System.out.println("OVERLOADED METHOD");
             					testPath.clear();
             					overloadedMethod = true;
             					newIteration = true;
@@ -366,9 +317,10 @@ public class JDB
             					endOfMethod = !process.isAlive();
             					lastLineAdded = -1;
             				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
+            					System.out.println("LINE: "+line);
             					if (!srcLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
         							!srcLine.matches(regex_emptyMethod)) {
-            						testPath.add(lineNumber);
+            						testPath.add(lineNumber);System.out.println("ADDED: "+lineNumber);
             						lastLineAdded = lineNumber;
             					}
             				}

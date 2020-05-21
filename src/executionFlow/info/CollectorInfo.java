@@ -12,6 +12,7 @@ public class CollectorInfo
 	//-----------------------------------------------------------------------
 	private ClassConstructorInfo constructorInfo;
 	private ClassMethodInfo methodInfo;
+	private int order;
 	
 	
 	//-----------------------------------------------------------------------
@@ -19,13 +20,19 @@ public class CollectorInfo
 	//-----------------------------------------------------------------------
 	public CollectorInfo(ClassMethodInfo methodInfo)
 	{
-		this.methodInfo = methodInfo;
+		this(methodInfo, 0);
 	}
 	
 	public CollectorInfo(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo)
 	{
-		this(methodInfo);
+		this(methodInfo, 0);
 		this.constructorInfo = constructorInfo;
+	}
+	
+	public CollectorInfo(ClassMethodInfo methodInfo, int order)
+	{
+		this.methodInfo = methodInfo;
+		this.order = order;
 	}
 
 
@@ -59,5 +66,10 @@ public class CollectorInfo
 	public void setMethodInfo(ClassMethodInfo methodInfo) 
 	{
 		this.methodInfo = methodInfo;
+	}
+	
+	public int getOrder()
+	{
+		return this.order;
 	}
 }

@@ -64,6 +64,8 @@ public abstract aspect RuntimeCollector
 	protected static boolean lastWasInternalCall;
 	protected static boolean skipCollection;
 	protected static String testMethodPackage;
+	protected static int lastInvocationLine;
+	protected static int order;
 	
 	
 	//-------------------------------------------------------------------------
@@ -118,6 +120,8 @@ public abstract aspect RuntimeCollector
 		lastInsertedMethod = "";
 		lastWasInternalCall = false;
 		collectedMethods.clear();
+		lastInvocationLine = 0;
+		order = 0;
 	}
 	
 	/**

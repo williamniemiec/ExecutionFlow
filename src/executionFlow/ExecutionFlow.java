@@ -103,7 +103,7 @@ public class ExecutionFlow
 	public ExecutionFlow execute() throws Throwable
 	{
 		List<List<Integer>> tp_jdb;
-		int skip;
+		//int skip;
 		System.out.println("-=-=--=-=-=-=-=-");
 		System.out.println(collectedMethods.values());
 		System.out.println("-=-=--=-=-=-=-=-");
@@ -111,7 +111,7 @@ public class ExecutionFlow
 		
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
-			skip = 0;
+			//skip = 0;
 			// Computes test path for each collected method that is invoked in the same line
 			for (CollectorInfo collector : collectors) {
 				// Parses file
@@ -123,7 +123,7 @@ public class ExecutionFlow
 				);
 				
 //				System.out.println("``````````````````````");
-//				System.out.println(skip);
+//				System.out.println(collector.getOrder());
 //				System.out.println("``````````````````````");
 //				
 //				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
@@ -136,14 +136,14 @@ public class ExecutionFlow
 					fileManager.parseFile().compileFile();
 					System.out.println("Processing completed");
 					
-					JDB jdb = new JDB(lastLineTestMethod, skip);
+					JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());
 					
 					// Computes test path from JDB
 					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
-					skip++;
+					//skip++;
 				} catch (Exception e) {
 					System.out.println("Processing error: "+e.getMessage());
 				} finally {
