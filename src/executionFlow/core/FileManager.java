@@ -2,6 +2,7 @@ package executionFlow.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,6 +22,7 @@ public class FileManager
 	private String filename;
 	private String classOutput;
 	private String classPackage;
+	private boolean charsetError;
 	
 	
 	//-------------------------------------------------------------------------
@@ -65,18 +67,33 @@ public class FileManager
 	 * to constructor.
 	 * 
 	 * @return This object to allow chained calls
+	 * @throws IOException If file charset cannot be defined
 	 * 
 	 * @implNote This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revert()} function.
 	 */
-	public FileManager parseFile()
+	public FileManager parseFile() throws IOException
 	{
 		// Saves .java file to allow to restore it after
 		createBackupFile();
 		
 		// Parses file
-		FileParser fp = new FileParser(inputFile.getAbsolutePath(), classOutput, filename+"_parsed");
-		File out = new File(fp.parseFile());
+		FileParser fp = new FileParser(inputFile.getAbsolutePath(), classOutput, filename+"_parsed", FileCharset.UTF_8);
+		File out;
+		
+		try {
+			out = new File(fp.parseFile());
+		} catch(IOException e) {
+			charsetError = true;
+			fp.setCharset(FileCharset.ISO_8859_1);
+			
+			try {
+				out = new File(fp.parseFile());
+			} catch (IOException e1) {
+				throw new IOException("Parsing failed");
+			}
+		}
+		
 		
 		// Changes parsed file name to the same as received filename
 		inputFile.delete();
@@ -102,7 +119,10 @@ public class FileManager
 		}
 		
 		// Compiles parsed file
-		return FileCompiler.compile(inputFile, file.toString());
+		if (charsetError)
+			return FileCompiler.compile(inputFile, file.toString(), FileCharset.ISO_8859_1);
+		else
+			return FileCompiler.compile(inputFile, file.toString(), FileCharset.UTF_8);
 	}
 	
 	/**

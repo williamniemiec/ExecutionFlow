@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -42,6 +43,8 @@ public class FileParser
 	 * If true, displays processed lines.
 	 */
 	private static final boolean DEBUG;
+	
+	private FileCharset charset = FileCharset.UTF_8;
 	
 	
 	//-------------------------------------------------------------------------
@@ -97,6 +100,12 @@ public class FileParser
 		this(filepath, null, outputFilename);
 	}
 	
+	public FileParser(String filepath, String outputDir, String outputFilename, FileCharset charset)
+	{
+		this(filepath, outputDir, outputFilename);
+		this.charset = charset;
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -104,8 +113,9 @@ public class FileParser
 	/**
 	 * Parses file adding instructions in places in the code that do not exist 
 	 * when converting it to bytecode.
+	 * @throws IOException If file charset is incorrect or if file cannot be readed / written
 	 */
-	public String parseFile()
+	public String parseFile() throws IOException
 	{
 		if (file == null) { return ""; }
 
@@ -133,15 +143,9 @@ public class FileParser
 			outputFile = new File(outputFilename+".java");
 		
 		// Opens file streams (file to be parsed and output file / processed file)
-		try (//BufferedReader br = new BufferedReader(new FileReader(file));
-			 //BufferedReader br_forward = new BufferedReader(new FileReader(file));
-			 //BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
-//			 BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-//			 BufferedReader br_forward = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-			 BufferedReader br = Files.newBufferedReader(file.toPath(), StandardCharsets.ISO_8859_1);
-			 BufferedReader br_forward = Files.newBufferedReader(file.toPath(), StandardCharsets.ISO_8859_1); 
-			 BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), StandardCharsets.ISO_8859_1)) { 
-//			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"))) {
+		try (BufferedReader br = Files.newBufferedReader(file.toPath(), charset.getStandardCharset());
+			 BufferedReader br_forward = Files.newBufferedReader(file.toPath(), charset.getStandardCharset()); 
+			 BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), charset.getStandardCharset())) { 
 			br_forward.readLine();
 			
 			// Parses file line by line
@@ -334,8 +338,6 @@ public class FileParser
 				bw.write(parsedLine);
 				bw.newLine();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		return outputFile.getAbsolutePath();
@@ -614,6 +616,20 @@ public class FileParser
 		}
 		
 		return response;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters & Setters
+	//-------------------------------------------------------------------------
+	public FileCharset getCharset()
+	{
+		return charset;
+	}
+	
+	public void setCharset(FileCharset charset)
+	{
+		this.charset = charset; 
 	}
 	
 	

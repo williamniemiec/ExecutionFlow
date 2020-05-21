@@ -22,10 +22,10 @@ public class FileCompiler
 	 * @return Path of generated .class
 	 * @throws Exception If an error occurs during compilation
 	 */
-	public static String compile(File fileToCompile, String outputDir) throws Exception
+	public static String compile(File fileToCompile, String outputDir, FileCharset charset) throws Exception
 	{
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		int compilationResult =	compiler.run(null, null, null, new String[] {"-encoding", "ISO-8859-1","-d", outputDir, fileToCompile.getAbsolutePath()});
+		int compilationResult =	compiler.run(null, null, null, new String[] {"-encoding", charset.getText(),"-d", outputDir, fileToCompile.getAbsolutePath()});
 		
 		if(compilationResult != 0) {
 			throw new Exception("Compilation Failed");
