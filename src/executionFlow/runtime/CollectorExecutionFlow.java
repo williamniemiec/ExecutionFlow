@@ -203,20 +203,20 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Extracts class name from a method signature.
+	 * Extracts class name from a class signature.
 	 * 
-	 * @param signature Method signature
-	 * @return Class name
+	 * @param classSignature Signature of the class
+	 * @return Name of the class
 	 */
-	public static String getClassName(String signature)
+	public static String getClassName(String classSignature)
 	{
 		String response;
-		String[] tmp = signature.split("\\.");
+		String[] tmp = classSignature.split("\\.");
 		
-		if (tmp.length < 2)
+		if (tmp.length < 1)
 			response = tmp[0];
 		else
-			response = tmp[tmp.length-2];
+			response = tmp[tmp.length-1];
 		
 		return response;	
 	}

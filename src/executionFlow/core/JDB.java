@@ -42,6 +42,7 @@ public class JDB
 	private String srcPath;
 	private int lastLineTestMethod;
 	private int methodInvocationLine;
+	private int skip;
 	private List<Integer> testPath;
 	private List<List<Integer>> testPaths;
 	private static Path libPath;
@@ -54,7 +55,6 @@ public class JDB
 	private boolean isInternalCommand;
 	private boolean overloadedMethod;
 	private final boolean DEBUG; 
-	int skip;
 	
 	
 	//-------------------------------------------------------------------------

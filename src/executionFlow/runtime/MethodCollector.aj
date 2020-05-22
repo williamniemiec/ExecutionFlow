@@ -61,8 +61,11 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(MethodCollector)
 		&& !within(RuntimeCollector)
 		&& !within(TestMethodCollector)
-		//&& !call(* org.junit.runner.JUnitCore.runClasses(*))
-		&& !call(void org.junit.Assert.*(*,*));
+		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
+		&& !call(void org.junit.Assert.*(*))
+		&& !call(void org.junit.Assert.*(*,*))
+		&& !call(void org.junit.Assert.*(*,*,*))
+		&& !call(void org.junit.Assert.*(*,*,*,*));
 	
 	/**
 	 * Executed before the end of each internal call of a method with @Test annotation
@@ -78,7 +81,7 @@ public aspect MethodCollector extends RuntimeCollector
 		// If the test method was ever executed, it is necessary to get 
 		// invocationLine in another way 
 		invocationLine = invocationLine <= 0 ? thisJoinPoint.getSourceLocation().getLine() : invocationLine;
-
+		
 		if (invocationLine <= 0) { return; }
 		
 		String signature = thisJoinPoint.getSignature().toString();
@@ -106,8 +109,8 @@ public aspect MethodCollector extends RuntimeCollector
 		String methodSig = classSignature+"."+methodName;
 		
 		System.out.println("+-+-+-+-+-+-+-+-+-+-");
-		System.out.println(signature);
-		System.out.println(methodSig);
+		System.out.println("signature: "+signature);
+		System.out.println("methodSig: "+methodSig);
 		System.out.println("+-+-+-+-+-+-+-+-+-+-");
 		
 		// If it is not, ignores it
@@ -139,7 +142,8 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Gets class path and source path
 		try {
-			String className = thisJoinPoint.getTarget().getClass().getSimpleName();
+			//String className = thisJoinPoint.getTarget().getClass().getSimpleName();
+			String className = CollectorExecutionFlow.getClassName(classSignature);
 			classPath = CollectorExecutionFlow.findCurrentClassPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findCurrentSrcPath(className, classSignature);
 		} catch (IOException e1) {
@@ -149,9 +153,13 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
+		System.out.println();
 		System.out.println("METHOD COLLECTED!");
 		System.out.println(signature);
-		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
+		System.out.println(invocationLine);
+		System.out.println(classPath);
+		System.out.println(srcPath);
+		System.out.println(methodName);
 		System.out.println();
 		
 		if (lastInvocationLine != invocationLine) {
