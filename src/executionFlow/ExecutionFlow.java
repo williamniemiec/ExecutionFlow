@@ -133,21 +133,20 @@ public class ExecutionFlow
 				try {
 					fileManager.parseFile().compileFile();
 					System.out.println("Processing completed");
-					
-					JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());
-					
-					// Computes test path from JDB
-					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
-					
-					// Stores each computed test path
-					storeTestPath(tp_jdb, collector);
-					//skip++;
 				} catch (Exception e) {
 					System.out.println("[ERROR] "+e.getMessage());
 				} finally {
 					// Reverts parsed file to its original state
 					fileManager.revert();
 				}
+				
+				JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());
+				
+				// Computes test path from JDB
+				tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
+				
+				// Stores each computed test path
+				storeTestPath(tp_jdb, collector);
 			}
 		}
 		
