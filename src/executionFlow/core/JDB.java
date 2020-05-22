@@ -317,10 +317,9 @@ public class JDB
             					endOfMethod = !process.isAlive();
             					lastLineAdded = -1;
             				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
-            					//System.out.println("LINE: "+line);
             					if (!srcLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
         							!srcLine.matches(regex_emptyMethod)) {
-            						testPath.add(lineNumber);//System.out.println("ADDED: "+lineNumber);
+            						testPath.add(lineNumber);
             						lastLineAdded = lineNumber;
             					}
             				}

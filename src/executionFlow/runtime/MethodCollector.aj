@@ -69,25 +69,16 @@ public aspect MethodCollector extends RuntimeCollector
 	 */
 	after(): methodCollector()
 	{	
-//		System.out.println();
-//		System.out.println(thisJoinPoint.getSignature().toString());
-//		System.out.println(hasSkipCollectionAnnotation(thisJoinPoint));
 		// Ignores if the class has @SkipCollection annotation
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 
 		// Gets method invocation line
 		int invocationLine = Thread.currentThread().getStackTrace()[3].getLineNumber();
-		invocationLine = invocationLine <= 0 ? thisJoinPoint.getSourceLocation().getLine() : invocationLine;
-		//int invocationLine = thisJoinPoint.getSourceLocation().getLine();
-		//System.out.println(invocationLine);
-		//System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
-//		System.out.println("1"+thisJoinPoint.getSourceLocation().getLine());	// invocation line
-//		System.out.println("2"+thisJoinPoint.getSourceLocation().getWithinType());
-//		System.out.println("3"+thisJoinPoint.getSourceLocation().getWithinType().getName());
-//		System.out.println("4"+thisJoinPoint.getSignature().getName());	// package + class name
-		//System.out.println("5"+thisJoinPoint.getSignature().getDeclaringTypeName()+"."+thisJoinPoint.getSignature().getName());
-		//System.out.println();
 		
+		// If the test method was ever executed, it is necessary to get 
+		// invocationLine in another way 
+		invocationLine = invocationLine <= 0 ? thisJoinPoint.getSourceLocation().getLine() : invocationLine;
+
 		if (invocationLine <= 0) { return; }
 		
 		String signature = thisJoinPoint.getSignature().toString();
@@ -111,9 +102,8 @@ public aspect MethodCollector extends RuntimeCollector
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
 		// Checks if it is a method that is invoked within test method
-		//StackTraceElement stackFrame = Thread.currentThread().getStackTrace()[2];
-		//String methodSig = stackFrame.getClassName()+"."+stackFrame.getMethodName();
-		String methodSig = thisJoinPoint.getSignature().getDeclaringTypeName()+"."+thisJoinPoint.getSignature().getName();
+		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
+		String methodSig = classSignature+"."+methodName;
 		
 		System.out.println("+-+-+-+-+-+-+-+-+-+-");
 		System.out.println(signature);
@@ -144,31 +134,16 @@ public aspect MethodCollector extends RuntimeCollector
 			order++;
 			return; 
 		}
-//		System.out.println("HERE");
-//		System.out.println(constructor);
-//		System.out.println(key);
-//		System.out.println(isTestMethodConstructor(key));
-//		System.out.println("!!!!"+thisJoinPoint.getTarget().getClass().getName());
-//		System.out.println("!!!!"+thisJoinPoint.getTarget().getClass().getCanonicalName());
-//		System.out.println("!!!!"+thisJoinPoint.getTarget().getClass().getSimpleName());
-		String className = thisJoinPoint.getTarget().getClass().getSimpleName();
-		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-		
 		// Checks if the collected constructor is not the constructor of the test method
 		if (constructor != null && isTestMethodConstructor(key)) { return; }
 		
-		// Gets class path
+		// Gets class path and source path
 		try {
-			classPath = CollectorExecutionFlow.findCurrentClassPath(className+".java", classSignature);
+			String className = thisJoinPoint.getTarget().getClass().getSimpleName();
+			classPath = CollectorExecutionFlow.findCurrentClassPath(className, classSignature);
+			srcPath = CollectorExecutionFlow.findCurrentSrcPath(className, classSignature);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-		}
-		
-		// Gets source path
-		try {
-			srcPath = CollectorExecutionFlow.findCurrentSrcPath(className+".java", classSignature);
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
 		// Gets method signature
@@ -177,9 +152,7 @@ public aspect MethodCollector extends RuntimeCollector
 		System.out.println("METHOD COLLECTED!");
 		System.out.println(signature);
 		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
-		//collectedLines.add(invocationLine);
 		System.out.println();
-		//lastMethodSignature = signature;
 		
 		if (lastInvocationLine != invocationLine) {
 			order = 0;

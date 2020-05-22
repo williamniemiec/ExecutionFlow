@@ -68,7 +68,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		try {
 			String className = thisJoinPoint.getTarget().getClass().getSimpleName();
 			String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-			testClassPath = CollectorExecutionFlow.findCurrentClassPath(className+".java", classSignature);
+			testClassPath = CollectorExecutionFlow.findCurrentClassPath(className, classSignature);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

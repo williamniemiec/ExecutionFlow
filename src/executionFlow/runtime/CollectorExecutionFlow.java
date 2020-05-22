@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Matcher;
@@ -19,7 +18,8 @@ import executionFlow.ExecutionFlow;
 
 
 /**
- * Helper class used to extract the collected data that will be relevant to {@link ExecutionFlow} class.
+ * Helper class used to extract the collected data that will be relevant to 
+ * {@link ExecutionFlow} class.
  */
 public class CollectorExecutionFlow 
 {
@@ -100,59 +100,23 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * When executed it will determine the current location of the class executed.
+	 * When executed it will determine the absolute path of a class.
 	 * 
-	 * @implSpec This method was projected to be executed in an AOP file. If
-	 * it will execute in another place the results may be unexpected
-	 * @return Absolute path of current execution class
+	 * @param className Name of the class
+	 * @param classSignature Signature of the class
+	 * @return Absolute path of the class
 	 * @throws IOException If class does not exist
 	 */
-	public static String findCurrentClassPath(String classFilename, String classSignature) throws IOException 
+	public static String findCurrentClassPath(String className, String classSignature) throws IOException 
 	{
-		//Path rootPath = Paths.get(System.getProperty("user.dir"));
 		if (rootPath == null) {
 			rootPath = findProjectRoot().toPath();
 		}
 		
-		// Gets source file name
-		//String aux = Thread.currentThread().getStackTrace()[3].getFileName();
-		String aux = classFilename;
-//		System.out.println("%%%%%");
-//		System.out.println("aux: "+aux); // class file name + .java
-//		System.out.println(Thread.currentThread().getStackTrace()[3].getClassName()); // package + class name
-//		System.out.println("%%%%%");
-		
 		// Gets folder where .class is
-		//String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
-		String terms[] = classSignature.split("\\.");
-		StringBuilder sb = new StringBuilder();
+		String path = extractPathFromSignature(classSignature);
 		
-		for (int i=0; i<terms.length-1; i++) {
-			sb.append(terms[i]);
-			sb.append("\\");
-		}
-		
-//		System.out.println("%%%%%");
-		String path = sb.toString();
-		System.out.println(path);
-		
-		// <className>.java => <className>
-		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.");
-		Matcher m = p.matcher(aux);
-		
-		if (m.find()) {				// <className>.java
-			p = Pattern.compile("[A-z0-9-_$]+");
-			m = p.matcher(m.group());
-			
-			if (m.find())
-				aux = m.group();	// <className>
-		}
-		
-		final String className = aux;
-//		System.out.println(className);
-//		System.out.println("R:"+rootPath);
-//		System.out.println("%%%%%");
-		
+		// Finds absolute path where the class file is
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
@@ -168,62 +132,27 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * When executed it will determine absolute path of current location of the 
-	 * class in execution.
+	 * When executed it will determine the absolute path of a source file.
 	 * 
-	 * @implSpec This method was projected to be executed in an AOP file. If
-	 * it will execute in another place the results may be unexpected
+	 * @param className Name of the class
+	 * @param classSignature Signature of the class
 	 * @return Absolute path of source file of current execution class
 	 * @throws IOException If class does not exist
 	 */
-	public static String findCurrentSrcPath(String classFilename, String classSignature) throws IOException 
+	public static String findCurrentSrcPath(String className, String classSignature) throws IOException 
 	{
 		if (rootPath == null) {
 			rootPath = findProjectRoot().toPath();
 		}
 		
-		//String aux = Thread.currentThread().getStackTrace()[3].getFileName();
-		String aux = classFilename;
+		// Gets path where .java is
+		String path = extractPathFromSignature(classSignature);
 		
-		// <className>.java => <className>
-		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.");
-		Matcher m = p.matcher(aux);
-		
-		if (m.find()) {				// <className>.java
-			p = Pattern.compile("[A-z0-9-_$]+");
-			m = p.matcher(m.group());
-			
-			if (m.find())
-				aux = m.group();	// <className>
-		}
-		
-		// Gets folder where .java is
-		//String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
-		String terms[] = classSignature.split("\\.");
-		StringBuilder sb = new StringBuilder();
-		
-		for (int i=0; i<terms.length-1; i++) {
-			sb.append(terms[i]);
-			sb.append("\\");
-		}
-		
-		String path = sb.toString();
-		
-		final String className = aux;
-		
-//		System.out.println("++++++++++++++++++¨");
-//		System.out.println(aux);
-//		System.out.println(Thread.currentThread().getStackTrace()[3]);
-//		System.out.println(path);
-//		System.out.println(rootPath);
-//		System.out.println("++++++++++++++++++");
-		
+		// Finds absolute path where the source file is
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+className+".java")) {
-//		        	System.out.println("Found! "+file);
-		        	
 		        	srcPath = file.toString();
 		        	
 		        	return FileVisitResult.TERMINATE;
@@ -362,5 +291,25 @@ public class CollectorExecutionFlow
 		}
 		
 		return currentPath;
+	}
+	
+	/**
+	 * Extracts file path from class signature. 
+	 * 
+	 * @param classSignature Signature of the class
+	 * @return File path obtained from class signature
+	 */
+	private static String extractPathFromSignature(String classSignature)
+	{
+		String terms[] = classSignature.split("\\.");
+		StringBuilder response = new StringBuilder();
+		
+		// Finds path where the file is from class signature
+		for (int i=0; i<terms.length-1; i++) {
+			response.append(terms[i]);
+			response.append("\\");
+		}
+		
+		return response.toString();
 	}
 }
