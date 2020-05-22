@@ -19,6 +19,7 @@ public class FileCompiler
 	 * 
 	 * @param fileToCompile Absolute path of source file to be compiled
 	 * @param outputDir Path where generated .class will be saved
+	 * @param charset File encoding
 	 * @return Path of generated .class
 	 * @throws Exception If an error occurs during compilation
 	 */

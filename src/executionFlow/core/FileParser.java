@@ -72,7 +72,8 @@ public class FileParser
 	//-------------------------------------------------------------------------
 	/**
 	 * Adds instructions in places in the code that do not exist when converting
-	 * it to bytecode.
+	 * it to bytecode. Using this constructor, file encoding will be 
+	 * UTF-8.
 	 * 
 	 * @param filename Path of the file to be parsed
 	 * @param outputDir Directory where parsed file will be saved
@@ -90,7 +91,9 @@ public class FileParser
 	
 	/**
 	 * Adds instructions in places in the code that do not exist when converting
-	 * it to bytecode.
+	 * it to bytecode. Using this constructor, the directory where parsed file 
+	 * will be saved will be in current directory. Also, file encoding will be 
+	 * UTF-8.
 	 * 
 	 * @param filename Path of the file to be parsed
 	 * @param outputFilename Name of the parsed file
@@ -100,6 +103,15 @@ public class FileParser
 		this(filepath, null, outputFilename);
 	}
 	
+	/**
+	 * Adds instructions in places in the code that do not exist when converting
+	 * it to bytecode.
+	 * 
+	 * @param filename Path of the file to be parsed
+	 * @param outputDir Directory where parsed file will be saved
+	 * @param outputFilename Name of the parsed file
+	 * @param charset File encoding
+	 */ 
 	public FileParser(String filepath, String outputDir, String outputFilename, FileCharset charset)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -113,6 +125,7 @@ public class FileParser
 	/**
 	 * Parses file adding instructions in places in the code that do not exist 
 	 * when converting it to bytecode.
+	 * 
 	 * @throws IOException If file charset is incorrect or if file cannot be readed / written
 	 */
 	public String parseFile() throws IOException

@@ -2,7 +2,6 @@ package executionFlow.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,12 +77,17 @@ public class FileManager
 		createBackupFile();
 		
 		// Parses file
-		FileParser fp = new FileParser(inputFile.getAbsolutePath(), classOutput, filename+"_parsed", FileCharset.UTF_8);
+		FileParser fp = new FileParser(
+			inputFile.getAbsolutePath(), classOutput, 
+			filename+"_parsed", FileCharset.UTF_8
+		);
 		File out;
 		
-		try {
+		// Tries to parse file using UTF-8 encoding. If an error occurs, tries 
+		// to parse the file using ISO-8859-1 encoding
+		try {	
 			out = new File(fp.parseFile());
-		} catch(IOException e) {
+		} catch(IOException e) {	
 			charsetError = true;
 			fp.setCharset(FileCharset.ISO_8859_1);
 			
@@ -93,7 +97,6 @@ public class FileManager
 				throw new IOException("Parsing failed");
 			}
 		}
-		
 		
 		// Changes parsed file name to the same as received filename
 		inputFile.delete();
@@ -118,8 +121,9 @@ public class FileManager
 			file = file.getParent();
 		}
 		
-		// Compiles parsed file
-		if (charsetError)
+		// Compiles parsed file. If an error has occurred in parsing, compiles 
+		// using ISO-8859-1 encoding
+		if (charsetError)	
 			return FileCompiler.compile(inputFile, file.toString(), FileCharset.ISO_8859_1);
 		else
 			return FileCompiler.compile(inputFile, file.toString(), FileCharset.UTF_8);
@@ -130,7 +134,7 @@ public class FileManager
 	 * it after.
 	 * 
 	 * @implNote Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
-	 * It will be saved in the same directory of original file
+	 * It will be saved in the same directory of the original file
 	 */
 	private void createBackupFile()
 	{
@@ -140,7 +144,7 @@ public class FileManager
 				originalFile.toPath(), 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
-		} catch (IOException e) {	// If already exists a .original, it means
+		} catch (IOException e) {	// If already exists a .original, this means
 			revert();				// that last parsed file was not restored
 			createBackupFile();		// So, restore this file and starts again
 		}

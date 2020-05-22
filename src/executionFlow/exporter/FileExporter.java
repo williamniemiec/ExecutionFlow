@@ -75,6 +75,8 @@ public class FileExporter implements ExporterExecutionFlow
 	@Override
 	public void export() 
 	{
+		if (classPaths.isEmpty()) { return; }
+		
 		try {
 			// Removes test path folders that will be overwritten (avoid creating duplicate files)
 			prepareExport();

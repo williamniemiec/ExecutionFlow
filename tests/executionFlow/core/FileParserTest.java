@@ -1,6 +1,7 @@
 package executionFlow.core;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -56,13 +57,13 @@ public class FileParserTest
 	}*/
 	
 	@Test
-	public void testParseSwitch()
+	public void testParseSwitch() throws IOException
 	{
 		String currentDir = new File("tests\\executionFlow\\core\\files").getAbsolutePath();
 		String filename = "test_switch";
 		File f = new File(currentDir, filename+".java");
 		
-		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed", FileCharset.ISO_8859_1);
 		fp.parseFile();
 	}
 	/*

@@ -53,13 +53,15 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	@Override
 	public void export() 
 	{
+		if (classPaths.isEmpty()) { return; }
+		
 		String currentTestMethodSignature = null;
 		String currentMethod = "";
 		
 		System.out.println("---------------------------------------------------------------------");
 		System.out.println("                                EXPORT                               ");
 		System.out.println("---------------------------------------------------------------------");
-		//System.out.println(classPaths);
+		
 		for (Map<SignaturesInfo, List<Integer>> classPathInfo : classPaths.values()) {
 			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathInfo.entrySet()) {
 				SignaturesInfo signatures = e.getKey();
