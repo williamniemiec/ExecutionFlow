@@ -113,13 +113,15 @@ public abstract aspect RuntimeCollector
 	 */
 	protected void reset()
 	{
+		collectedMethods.clear();
 		methodCollector.clear();
 		consCollector.clear();
 		testMethodSignature = null;
 		testClassPath = null;
-		lastInsertedMethod = "";
+		lastInsertedMethod = null;
 		lastWasInternalCall = false;
-		collectedMethods.clear();
+		skipCollection = false;
+		testMethodPackage = null;
 		lastInvocationLine = 0;
 		order = 0;
 	}

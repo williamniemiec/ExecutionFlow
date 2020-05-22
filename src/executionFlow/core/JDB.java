@@ -219,7 +219,7 @@ public class JDB
 				if (skip < 0) {
 					// Saves test path
 					testPaths.add(testPath);
-					System.out.println("TP_ADDED: "+testPath);
+					//System.out.println("TP_ADDED: "+testPath);
 					
 					// Prepare for next test path
 					testPath = new ArrayList<>();
@@ -317,10 +317,10 @@ public class JDB
             					endOfMethod = !process.isAlive();
             					lastLineAdded = -1;
             				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
-            					System.out.println("LINE: "+line);
+            					//System.out.println("LINE: "+line);
             					if (!srcLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
         							!srcLine.matches(regex_emptyMethod)) {
-            						testPath.add(lineNumber);System.out.println("ADDED: "+lineNumber);
+            						testPath.add(lineNumber);//System.out.println("ADDED: "+lineNumber);
             						lastLineAdded = lineNumber;
             					}
             				}

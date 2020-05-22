@@ -41,6 +41,11 @@ public class FileManager
 		this.inputFile = new File(srcFilePath);
 		this.originalFile = new File(srcFilePath+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
+		
+		System.out.println("----======-----");
+		System.out.println(inputFile);
+		System.out.println(originalFile);
+		System.out.println("----======-----");
 	}
 	
 	

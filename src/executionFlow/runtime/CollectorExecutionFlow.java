@@ -107,17 +107,24 @@ public class CollectorExecutionFlow
 	 * @return Absolute path of current execution class
 	 * @throws IOException If class does not exist
 	 */
-	public static String findCurrentClassPath() throws IOException 
+	public static String findCurrentClassPath(String classFilename, String classSignature) throws IOException 
 	{
 		//Path rootPath = Paths.get(System.getProperty("user.dir"));
 		if (rootPath == null) {
 			rootPath = findProjectRoot().toPath();
 		}
 		
-		String aux = Thread.currentThread().getStackTrace()[3].getFileName();
+		// Gets source file name
+		//String aux = Thread.currentThread().getStackTrace()[3].getFileName();
+		String aux = classFilename;
+//		System.out.println("%%%%%");
+//		System.out.println("aux: "+aux); // class file name + .java
+//		System.out.println(Thread.currentThread().getStackTrace()[3].getClassName()); // package + class name
+//		System.out.println("%%%%%");
 		
 		// Gets folder where .class is
-		String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
+		//String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
+		String terms[] = classSignature.split("\\.");
 		StringBuilder sb = new StringBuilder();
 		
 		for (int i=0; i<terms.length-1; i++) {
@@ -125,7 +132,9 @@ public class CollectorExecutionFlow
 			sb.append("\\");
 		}
 		
+//		System.out.println("%%%%%");
 		String path = sb.toString();
+		System.out.println(path);
 		
 		// <className>.java => <className>
 		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.");
@@ -140,6 +149,9 @@ public class CollectorExecutionFlow
 		}
 		
 		final String className = aux;
+//		System.out.println(className);
+//		System.out.println("R:"+rootPath);
+//		System.out.println("%%%%%");
 		
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
@@ -164,13 +176,14 @@ public class CollectorExecutionFlow
 	 * @return Absolute path of source file of current execution class
 	 * @throws IOException If class does not exist
 	 */
-	public static String findCurrentSrcPath() throws IOException 
+	public static String findCurrentSrcPath(String classFilename, String classSignature) throws IOException 
 	{
 		if (rootPath == null) {
 			rootPath = findProjectRoot().toPath();
 		}
 		
-		String aux = Thread.currentThread().getStackTrace()[3].getFileName();
+		//String aux = Thread.currentThread().getStackTrace()[3].getFileName();
+		String aux = classFilename;
 		
 		// <className>.java => <className>
 		Pattern p = Pattern.compile("[A-z0-9-_$]+\\.");
@@ -185,7 +198,8 @@ public class CollectorExecutionFlow
 		}
 		
 		// Gets folder where .java is
-		String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
+		//String terms[] = Thread.currentThread().getStackTrace()[3].getClassName().split("\\.");
+		String terms[] = classSignature.split("\\.");
 		StringBuilder sb = new StringBuilder();
 		
 		for (int i=0; i<terms.length-1; i++) {
