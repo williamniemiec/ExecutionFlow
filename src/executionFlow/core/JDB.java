@@ -177,19 +177,25 @@ public class JDB
 		Process process = jdb_start();
 		JDBOutput out = new JDBOutput(process, methodSignature, methodName);
 		JDBInput in = new JDBInput(process);
+		boolean wasNewIteration = false;
+		
 		in.init();
 		
 		// Executes while inside the method
 		while (!endOfMethod) {
-			while (!out.read()) { continue; }  
+			while (!wasNewIteration && !out.read()) { continue; }  
+			
+			wasNewIteration = false;
 			
 			if (newIteration) {
+					wasNewIteration = true;
 					// Enters the method, ignoring aspectJ
 					in.send("step into");
-					out.read();
+					while (!out.read()) {}
+					
 					while (isInternalCommand) {
 						in.send("next");
-						out.read();
+						while (!out.read()) {}
 					}
 			} else if (exitMethod) {
 				skip--;
@@ -204,19 +210,19 @@ public class JDB
 					
 					// Checks if method is in a loop
 					in.send("cont");
-					out.read();
+					//out.read();
 				} else {
 					testPath.clear();	// Discards computed test path
 					newIteration = true;
 					in.send("step into");
-					out.read();
+					//out.read();
 				}
 				
 				// Check output
 				exitMethod = false;
 			} else if (!endOfMethod) {
 				in.send("next");
-				out.read();
+				//out.read();
 			}
 		}
 		
