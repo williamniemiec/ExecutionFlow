@@ -47,11 +47,11 @@ public class JDB
 	private List<List<Integer>> testPaths;
 	private static Path libPath;
 	private PrintWriter input;
-	private boolean readyToDebug;
+	private boolean outputFinished;
 	private boolean endOfMethod;
 	private boolean newIteration;
 	private boolean exitMethod;
-	private boolean inputReady;
+	private boolean inputFinished;
 	private boolean isInternalCommand;
 	private boolean overloadedMethod;
 	private final boolean DEBUG; 
@@ -64,7 +64,7 @@ public class JDB
 	 * Enables or disables debug. If activated, shows shell output during JDB execution.
 	 */
 	{
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	/**
@@ -175,7 +175,58 @@ public class JDB
 	private synchronized void jdb_methodVisitor(String methodSignature, String methodName) throws IOException, InterruptedException 
 	{
 		Process process = jdb_start();
-        
+		JDBOutput out = new JDBOutput(process, methodSignature, methodName);
+		JDBInput in = new JDBInput(process);
+		in.init();
+		
+		// Executes while inside the method
+		while (!endOfMethod) {
+			while (!out.read()) { continue; }  
+			
+			if (newIteration) {
+					// Enters the method, ignoring aspectJ
+					in.send("step into");
+					out.read();
+					while (isInternalCommand) {
+						in.send("next");
+						out.read();
+					}
+			} else if (exitMethod) {
+				skip--;
+				
+				// Checks if has to skip collected test path
+				if (skip < 0) {
+					// Saves test path
+					testPaths.add(testPath);
+					
+					// Prepare for next test path
+					testPath = new ArrayList<>();
+					
+					// Checks if method is in a loop
+					in.send("cont");
+					out.read();
+				} else {
+					testPath.clear();	// Discards computed test path
+					newIteration = true;
+					in.send("step into");
+					out.read();
+				}
+				
+				// Check output
+				exitMethod = false;
+			} else if (!endOfMethod) {
+				in.send("next");
+				out.read();
+			}
+		}
+		
+		in.exit();
+		in.close();
+		out.close();
+		process.waitFor();
+		process.destroyForcibly();
+		
+		/*
         // Output
 		Thread t = jdb_output(process, methodSignature, methodName);
 
@@ -190,179 +241,9 @@ public class JDB
 		process.waitFor();
 		process.destroyForcibly();
 		t.join();
+		*/
 	}
 	
-	private synchronized void jdb_input(Process process, OutputStream os) throws InterruptedException
-	{
-		input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
-
-		// Executes initial commands
-		jdb_initialCommands();
-				
-		// Executes while inside the method
-		while (!endOfMethod) {
-			inputReady = false;
-			
-			if (newIteration) {
-					// Enters the method, ignoring aspectJ
-					jdb_sendCommand("step into");
-					while (isInternalCommand) {
-						jdb_sendCommand("next");
-						jdb_checkOutput();
-					}
-	
-					jdb_checkOutput();
-			} else if (exitMethod) {
-				skip--;
-				
-				// Checks if has to skip collected test path
-				if (skip < 0) {
-					// Saves test path
-					testPaths.add(testPath);
-					//System.out.println("TP_ADDED: "+testPath);
-					
-					// Prepare for next test path
-					testPath = new ArrayList<>();
-					
-					// Checks if method is in a loop
-					jdb_sendCommand("cont");
-				} else {
-					testPath.clear();
-					newIteration = true;
-					jdb_sendCommand("step into");
-				}
-				
-				// Check output
-				exitMethod = false;
-				jdb_checkOutput();
-			} else if (!endOfMethod) {
-				jdb_sendCommand("next");
-				jdb_checkOutput();
-			}
-		}
-	}
-	
-	private Thread jdb_output(Process process, String methodSignature, String methodName)
-	{
-		InputStream is = process.getInputStream();
-        
-        Thread t = new Thread(() -> {
-        	String regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}.+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
-        	String regex_overloadedMethod = "^.*(\\ |\\t|=|\\.)"+methodName+"\\(.*\\)(\\ |\\t)*;$";
-        	boolean inMethod = false;
-        	int lastLineAdded = -1;
-        	
-            try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String line;
-                // Shell output
-                System.out.println("Generating test path...");
-                String srcLine = null;
-                while (!endOfMethod && (line = br.readLine()) != null) {
-                	if (line.equals("\n") || line.equals("") || line.equals(" ")) continue;
-                	
-                	// -----{ DEBUG }-----
-                	if (DEBUG)
-                		System.out.println(line);
-            		// -----{ END DEBUG }-----
-            		
-                	endOfMethod = line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod);
-                	isInternalCommand = !line.contains(methodClassSignature) && !line.contains(classInvocationSignature);//line.contains("aspectj") || line.contains("aspectOf");
-                	
-                	if (endOfMethod) {
-                		readyToDebug = true;
-                		break;
-                	}
-                	
-                	// Checks if JDB has started and is ready to receive debug commands
-            		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
-            			srcLine = br.readLine();
-            			
-            			newIteration = 
-        					(!inMethod && 
-            					(
-        							line.contains("Breakpoint hit") || 
-        							(line.contains("line="+methodInvocationLine) && line.contains(classInvocationSignature))
-    							)
-        					);
-            			readyToDebug = true;
-            			
-            			if (isInternalCommand) {
-            				inMethod = false;
-            				Thread.sleep(1);
-            				continue;
-            			}
-
-            			// Checks if it is a call to an overloaded method
-            			if (srcLine.matches(regex_overloadedMethod) && !line.contains(classInvocationSignature)) {
-            				if (overloadedMethod) {
-            					exitMethod = true;
-            				} else {
-            					System.out.println("OVERLOADED METHOD");
-            					testPath.clear();
-            					overloadedMethod = true;
-            					newIteration = true;
-            				}
-                    	} else if (newIteration || (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature))) {
-                			inMethod = true;
-                		} 
-            			else if (inMethod) { 	
-            				int lineNumber = jdb_getLine(line);
-            				
-            				// Checks if returned from the method
-            				if (line.contains(classInvocationSignature) && line.contains("line="+methodInvocationLine)) {
-            					exitMethod = true;
-            					newIteration = false;
-            					inMethod = false;
-            					endOfMethod = !process.isAlive();
-            					lastLineAdded = -1;
-            				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
-            					if (!srcLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
-        							!srcLine.matches(regex_emptyMethod)) {
-            						testPath.add(lineNumber);
-            						lastLineAdded = lineNumber;
-            					}
-            				}
-                		}
-            		}
-            		
-            		endOfMethod = line.contains("The application exited");
-
-            		if (endOfMethod) {
-            			readyToDebug = true;
-            			break;
-            		}
-            		
-            		// -----{ DEBUG }-----
-            		if (DEBUG && srcLine != null)
-            			System.out.println(srcLine);
-            		// -----{ END DEBUG }-----
-            		
-            		// Checks if there are input commands
-            		while (!inputReady) { Thread.sleep(1); }
-                }
-                br.close();
-            } catch (java.io.IOException | InterruptedException e) { }
-        });
-        t.start();
-        
-        return t;
-	}
-	
-	/**
-	 * Checks if there are outputs that have to be processed. For this, it will 
-	 * use the thread defined in the method 'jdb_output'.
-	 */
-	private void jdb_checkOutput()
-	{
-		inputReady = true;
-		
-		try {
-			Thread.sleep(1);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	/**
 	 * Extracts line number from a debug output.
@@ -389,74 +270,6 @@ public class JDB
 		return response;
 	}
 	
-	/**
-	 * Exits from JDB.
-	 */
-	private void jdb_end()
-	{
-		input.flush();
-		input.println("clear "+classInvocationSignature+":"+methodInvocationLine);
-		input.flush();
-		input.println("exit");
-		input.flush();
-	}
-	
-	/**
-	 * Initializes JDB.
-	 */
-	private void jdb_initialCommands() throws InterruptedException
-	{
-		List<String> args = new LinkedList<String>();
-		args.add("clear");
-		args.add("stop at "+classInvocationSignature+":"+methodInvocationLine);
-		args.add("stop at "+classInvocationSignature+":"+lastLineTestMethod);
-        args.add("run");
-        
-		for (String arg : args) {
-		    input.println(arg);
-		}
-		
-		input.flush();
-		waitForShell();
-	}
-	
-	/**
-	 * Sends a command to JDB.
-	 * 
-	 * @param command Command that will be sent to JDB
-	 */
-	private void jdb_sendCommand(String command)
-	{
-		// -----{ DEBUG }-----
-		if (DEBUG)
-			System.out.println("COMMAND: "+command);
-		// -----{ END DEBUG }-----
-		
-		try {
-			input.println(command);
-			input.flush();
-			waitForShell();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Waits for shell to finish executing commands.
-	 * 
-	 * @throws InterruptedException If thread is interrupted before shell 
-	 * finishes executing the commands.
-	 */
-	private void waitForShell() throws InterruptedException
-	{
-		inputReady = true;
-		
-		while (!readyToDebug) {
-			Thread.sleep(1);
-		}
-		
-		readyToDebug = false;
-	}
 	
 	/**
 	 * Extracts class signature from a method signature.
@@ -479,47 +292,6 @@ public class JDB
 		}
 		
 		return sb.toString();
-	}
-	
-	/**
-	 * Extracts directory where classes are. This directory is the first before 
-	 * package directories.
-	 * 
-	 * @param methodInfo Information about a method
-	 * @return Directory where classes are
-	 */
-	private void extractClassPathDirectory(String classPath, String classPackage)
-	{
-		String[] tmp = classPath.split("\\\\");
-		String classFileName = tmp[tmp.length-1];
-		
-		try {
-			Files.walkFileTree(Path.of(appPath), new SimpleFileVisitor<Path>() {
-				@Override
-				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-				{
-					if (file.endsWith(classFileName)) {
-						file = file.getParent();
-
-						if (!classPackage.isEmpty()) {
-							int packageFolders = classPackage.split("\\.").length;
-							
-							for (int i=0; i<packageFolders; i++) {
-								file = file.getParent();
-							}
-						}
-						
-						classPathRoot = file.toString();
-						
-						return FileVisitResult.TERMINATE;
-					}
-					
-					return FileVisitResult.CONTINUE;
-				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private String extractPathDirectory(String classPath, String classPackage) throws Exception
@@ -569,4 +341,233 @@ public class JDB
 			e.printStackTrace();
 		}
 	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Inner classes
+	//-------------------------------------------------------------------------
+	/**
+	 * Responsible for JDB inputs.
+	 */
+	class JDBInput
+	{
+		//---------------------------------------------------------------------
+		//		Attributes
+		//---------------------------------------------------------------------
+		Process p;
+		OutputStream os;
+		PrintWriter input;
+		
+		
+		//---------------------------------------------------------------------
+		//		Constructor
+		//---------------------------------------------------------------------
+		JDBInput(Process p)
+		{
+			this.p = p;
+			this.input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
+			this.os = p.getOutputStream();
+		}
+		
+		
+		//---------------------------------------------------------------------
+		//		Methods
+		//---------------------------------------------------------------------
+		/**
+		 * Initializes JDB.
+		 */
+		public void init() throws InterruptedException
+		{
+			List<String> args = new LinkedList<String>();
+			args.add("clear");
+			args.add("stop at "+classInvocationSignature+":"+methodInvocationLine);
+			args.add("stop at "+classInvocationSignature+":"+lastLineTestMethod);
+	        args.add("run");
+	        
+			for (String arg : args) {
+			    input.println(arg);
+			}
+			
+			input.flush();
+		}
+		
+		/**
+		 * Exits from JDB.
+		 */
+		public void exit()
+		{
+			input.flush();
+			input.println("clear "+classInvocationSignature+":"+methodInvocationLine);
+			input.flush();
+			input.println("exit");
+			input.flush();
+		}
+		
+		/**
+		 * Closes JDB input.
+		 */
+		public void close()
+		{
+			try {
+				os.close();
+				input.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		/**
+		 * Sends a command to JDB.
+		 * 
+		 * @param command Command that will be sent to JDB
+		 */
+		private void send(String command)
+		{
+			// -----{ DEBUG }-----
+			if (DEBUG) { System.out.println("COMMAND: "+command); }
+			// -----{ END DEBUG }-----
+			
+			input.flush();
+			input.println(command);
+			input.flush();
+		}
+	}
+	
+	/**
+	 * Responsible for JDB outputs.
+	 */
+	class JDBOutput
+	{
+		//---------------------------------------------------------------------
+		//		Attributes
+		//---------------------------------------------------------------------
+		Process p;
+		InputStream is;
+		final String regex_emptyMethod;
+    	final String regex_overloadedMethod;
+    	String methodSignature;
+    	String methodName;
+    	boolean inMethod = false;
+    	boolean processInput = false;
+    	int lastLineAdded = -1;
+    	boolean started = false;
+    	BufferedReader br;
+        String line;
+        String srcLine = null;
+		
+        
+        //---------------------------------------------------------------------
+    	//		Constructor
+    	//---------------------------------------------------------------------
+		JDBOutput(Process p, String methodSignature, String methodName)
+		{
+			this.p = p;
+			this.methodSignature = methodSignature;
+			this.methodName = methodName;
+			is = p.getInputStream();
+			regex_overloadedMethod = "^.*(\\ |\\t|=|\\.)"+methodName+"\\(.*\\)(\\ |\\t)*;$";
+			regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}.+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
+			br = new BufferedReader(new InputStreamReader(is));
+		}
+		
+		
+		//---------------------------------------------------------------------
+    	//		Methods
+    	//---------------------------------------------------------------------
+		/**
+		 * Reads JDB output and returns true if JDB is ready to receive commands.
+		 * 
+		 * @return If JDB is ready to receive commands.
+		 * @throws IOException If it cannot read JDB output
+		 */
+		public boolean read() throws IOException
+		{
+			boolean response = false;
+			
+			if (!endOfMethod && br.ready()) {
+				outputFinished = false;
+            	line = br.readLine();
+            	
+            	if (line.equals("\n") || line.equals("") || line.equals(" ")) return false;
+            	
+            	// -----{ DEBUG }-----
+            	if (DEBUG) { System.out.println(line); }
+        		// -----{ END DEBUG }-----
+        		
+            	endOfMethod = line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod);
+            	isInternalCommand = !line.contains(methodClassSignature) && !line.contains(classInvocationSignature);
+            	
+            	// Checks if JDB has started and is ready to receive debug commands
+        		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
+        			response = true;
+            		srcLine = br.readLine();
+        			
+        			newIteration = 
+    					(!inMethod && 
+        					(
+    							line.contains("Breakpoint hit") || 
+    							(line.contains("line="+methodInvocationLine) && line.contains(classInvocationSignature))
+							)
+    					);
+
+        			if (isInternalCommand) {
+        				inMethod = false;
+        			}
+
+        			// Checks if it is a call to an overloaded method
+        			else if (srcLine != null && srcLine.matches(regex_overloadedMethod) && !line.contains(classInvocationSignature)) {
+        				if (overloadedMethod) {
+        					exitMethod = true;
+        				} else {
+        					//System.out.println("OVERLOADED METHOD");
+        					testPath.clear();
+        					overloadedMethod = true;
+        					newIteration = true;
+        				}
+                	} else if (newIteration || (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature))) {
+            			inMethod = true;
+            		} else if (inMethod) { 	
+        				int lineNumber = jdb_getLine(line);
+        				
+        				// Checks if returned from the method
+        				if (line.contains(classInvocationSignature) && line.contains("line="+methodInvocationLine)) {
+        					exitMethod = true;
+        					newIteration = false;
+        					inMethod = false;
+        					endOfMethod = !p.isAlive();
+        					lastLineAdded = -1;
+        				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
+        					if (!srcLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
+    							!srcLine.matches(regex_emptyMethod)) {
+        						testPath.add(lineNumber);
+        						lastLineAdded = lineNumber;
+        					}
+        				}
+            		}
+        		}
+    		
+	    		endOfMethod = line.contains("The application exited");
+	
+	    		if (endOfMethod) {
+	    			response = true;
+	    		}
+	    		
+	    		// -----{ DEBUG }-----
+	    		if (DEBUG && srcLine != null) { System.out.println(srcLine); }
+	    		// -----{ END DEBUG }-----
+			} 
+			
+			return response;
+		}
+		
+		public void close()
+		{
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }

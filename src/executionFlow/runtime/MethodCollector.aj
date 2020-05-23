@@ -108,10 +108,10 @@ public aspect MethodCollector extends RuntimeCollector
 		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
 		String methodSig = classSignature+"."+methodName;
 		
-		System.out.println("+-+-+-+-+-+-+-+-+-+-");
-		System.out.println("signature: "+signature);
-		System.out.println("methodSig: "+methodSig);
-		System.out.println("+-+-+-+-+-+-+-+-+-+-");
+//		System.out.println("+-+-+-+-+-+-+-+-+-+-");
+//		System.out.println("signature: "+signature);
+//		System.out.println("methodSig: "+methodSig);
+//		System.out.println("+-+-+-+-+-+-+-+-+-+-");
 		
 		// If it is not, ignores it
 		if (!signature.contains(methodSig)) { return; }
@@ -153,14 +153,14 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
-		System.out.println();
-		System.out.println("METHOD COLLECTED!");
-		System.out.println(signature);
-		System.out.println(invocationLine);
-		System.out.println(classPath);
-		System.out.println(srcPath);
-		System.out.println(methodName);
-		System.out.println();
+//		System.out.println();
+//		System.out.println("METHOD COLLECTED!");
+//		System.out.println(signature);
+//		System.out.println(invocationLine);
+//		System.out.println(classPath);
+//		System.out.println(srcPath);
+//		System.out.println(methodName);
+//		System.out.println();
 		
 		if (lastInvocationLine != invocationLine) {
 			order = 0;

@@ -32,9 +32,8 @@ public class FileParser
 	//-------------------------------------------------------------------------
 	private File file;
 	private File outputDir;
-	private static final String VAR_NAME;
+	//private static final String generateVarName();
 	private String outputFilename;
-	private boolean alreadyDeclared;
 	private boolean elseNoCurlyBrackets;
 	private boolean skipNextLine;
 	private boolean inComment;
@@ -50,15 +49,6 @@ public class FileParser
 	//-------------------------------------------------------------------------
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
-	/**
-	 * Generates variable name. It will be current time encrypted in MD5 to
-	 * avoid conflict with variables already declared.
-	 */
-	static {
-		Date now = new Date();
-		VAR_NAME = "_"+md5(String.valueOf(now.getTime()));
-	}
-	
 	/**
 	 * Configures environment. If {@link DEBUG} is true, displays processed lines.
 	 */
@@ -221,7 +211,7 @@ public class FileParser
 				
 				// Checks if it is a method declaration
 				if (!line.matches(regex_new) && pattern_methodDeclaration.matcher(line).find()) {
-					alreadyDeclared = false;
+					//alreadyDeclared = false;
 					
 					bw.write(line);						
 					bw.newLine();
@@ -373,12 +363,7 @@ public class FileParser
 			response.append(line.substring(0, curlyBracketsIndex+1));
 			
 			// Appends in response variable assignment command
-			if (alreadyDeclared)
-				response.append(VAR_NAME+"=0;");
-			else {
-				response.append("int "+VAR_NAME+"=0;");
-				alreadyDeclared = true;
-			}
+			response.append("int "+generateVarName()+"=0;");
 			
 			// Appends in response everything after '{' 
 			response.append(line.substring(curlyBracketsIndex+1));
@@ -407,12 +392,7 @@ public class FileParser
 			sb.append(line.substring(0, curlyBracketsIndex+1));
 			
 			// Appends in response variable assignment command
-			if (alreadyDeclared)
-				sb.append(VAR_NAME+"=0;");
-			else {
-				sb.append("int "+VAR_NAME+"=0;");
-				alreadyDeclared = true;
-			}
+			sb.append("int "+generateVarName()+"=0;");
 			
 			// Appends in response everything after '{' 
 			sb.append(line.substring(curlyBracketsIndex+1));
@@ -423,12 +403,7 @@ public class FileParser
 			sb.append(line.substring(0, indexAfterElse));
 			
 			// Appends in response variable assignment command
-			if (alreadyDeclared)
-				sb.append(" {"+VAR_NAME+"=0;");
-			else {
-				sb.append(" {"+"int "+VAR_NAME+"=0;");
-				alreadyDeclared = true;
-			}
+			sb.append(" {"+"int "+generateVarName()+"=0;");
 			
 			String afterElse = line.substring(indexAfterElse);
 			
@@ -461,13 +436,8 @@ public class FileParser
 			response.append(line.substring(0, curlyBracketsIndex+1));
 			
 			// Appends in response variable assignment command
-			if (alreadyDeclared)
-				response.append(VAR_NAME+"=0;");
-			else {
-				response.append("int "+VAR_NAME+"=0;");
-				alreadyDeclared = true;
-			}
-			
+			response.append("int "+generateVarName()+"=0;");
+
 			// Appends in response everything after '{'
 			response.append(line.substring(curlyBracketsIndex+1));
 		} else {
@@ -488,12 +458,7 @@ public class FileParser
 		String response = line;
 		
 		// Appends in response variable assignment command
-		if (alreadyDeclared) 
-			response += VAR_NAME+"=0;";
-		else {
-			alreadyDeclared = true;
-			response += "int "+VAR_NAME+"=0;";
-		}
+		response += "int "+generateVarName()+"=0;";
 		
 		return response;
 	}
@@ -516,12 +481,7 @@ public class FileParser
 		response.append(line.substring(0, m.start()+1));
 		
 		// Appends in response variable assignment command
-		if (alreadyDeclared)
-			response.append(VAR_NAME+"=0;");
-		else {
-			response.append("int "+VAR_NAME+"=0;");
-			alreadyDeclared = true;
-		}
+		response.append("int "+generateVarName()+"=0;");
 		
 		// Appends in response everything after ':'
 		response.append(line.substring(m.start()+1));
@@ -629,6 +589,17 @@ public class FileParser
 		}
 		
 		return response;
+	}
+	
+	/**
+	 * Generates a unique variable name. It will be:<br />
+	 * <code>MD5(current_time+random_number)</code>
+	 * 
+	 * @return Variable name
+	 */
+	private static String generateVarName()
+	{
+		return "_"+md5(String.valueOf(new Date().getTime()+Math.random()*9999));
 	}
 	
 	
