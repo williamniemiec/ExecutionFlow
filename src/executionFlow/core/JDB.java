@@ -365,8 +365,8 @@ public class JDB
 		JDBInput(Process p)
 		{
 			this.p = p;
-			this.input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
 			this.os = p.getOutputStream();
+			this.input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
 		}
 		
 		
@@ -465,9 +465,9 @@ public class JDB
 			this.methodSignature = methodSignature;
 			this.methodName = methodName;
 			is = p.getInputStream();
+			br = new BufferedReader(new InputStreamReader(is));
 			regex_overloadedMethod = "^.*(\\ |\\t|=|\\.)"+methodName+"\\(.*\\)(\\ |\\t)*;$";
 			regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}.+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
-			br = new BufferedReader(new InputStreamReader(is));
 		}
 		
 		
@@ -494,7 +494,8 @@ public class JDB
             	if (DEBUG) { System.out.println(line); }
         		// -----{ END DEBUG }-----
         		
-            	endOfMethod = line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod);
+            	//endOfMethod = line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod);
+            	endOfMethod = isEndOfTestMethod();
             	isInternalCommand = !line.contains(methodClassSignature) && !line.contains(classInvocationSignature);
             	
             	// Checks if JDB has started and is ready to receive debug commands
@@ -534,7 +535,7 @@ public class JDB
         					exitMethod = true;
         					newIteration = false;
         					inMethod = false;
-        					endOfMethod = !p.isAlive();
+        					//end2OfMethod = !p.isAlive();
         					lastLineAdded = -1;
         				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
         					if (!srcLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
@@ -546,7 +547,7 @@ public class JDB
             		}
         		}
     		
-	    		endOfMethod = line.contains("The application exited");
+	    		//endOfMethod = line.contains("The application exited");
 	
 	    		if (endOfMethod) {
 	    			response = true;
@@ -567,6 +568,13 @@ public class JDB
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		private boolean isEndOfTestMethod()
+		{
+			return 
+				(line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod)) || 
+				line.contains("The application exited");
 		}
 	}
 	
