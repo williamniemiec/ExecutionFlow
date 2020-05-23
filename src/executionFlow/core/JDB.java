@@ -362,6 +362,11 @@ public class JDB
 		//---------------------------------------------------------------------
 		//		Constructor
 		//---------------------------------------------------------------------
+		/**
+		 * JDB input manager. It must be used with {@link JDBOutput}.
+		 * 
+		 * @param p JDB process 
+		 */
 		JDBInput(Process p)
 		{
 			this.p = p;
@@ -417,9 +422,12 @@ public class JDB
 		}
 		
 		/**
-		 * Sends a command to JDB.
+		 * Sends a command to JDB. After calling this method, you must to call
+		 * {@link JDBOutput#read()} for JDB to process the command.
 		 * 
 		 * @param command Command that will be sent to JDB
+		 * @apiNote If DEBUG is activated, it will display the command executed
+		 * on the console
 		 */
 		private void send(String command)
 		{
@@ -443,7 +451,6 @@ public class JDB
 		//---------------------------------------------------------------------
 		Process p;
 		InputStream is;
-		final String regex_emptyMethod;
     	final String regex_overloadedMethod;
     	String methodSignature;
     	String methodName;
@@ -459,6 +466,14 @@ public class JDB
         //---------------------------------------------------------------------
     	//		Constructor
     	//---------------------------------------------------------------------
+        /**
+         * JDB output manager. It must be used with {@link JDBInput} to send
+         * commands.
+         * 
+         * @param p JDB process
+         * @param methodSignature Signature of the method to be debugged
+         * @param methodName Name of the method to be debugged
+         */
 		JDBOutput(Process p, String methodSignature, String methodName)
 		{
 			this.p = p;
@@ -467,7 +482,6 @@ public class JDB
 			is = p.getInputStream();
 			br = new BufferedReader(new InputStreamReader(is));
 			regex_overloadedMethod = "^.*(\\ |\\t|=|\\.)"+methodName+"\\(.*\\)(\\ |\\t)*;$";
-			regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}.+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
 		}
 		
 		
@@ -479,6 +493,8 @@ public class JDB
 		 * 
 		 * @return If JDB is ready to receive commands.
 		 * @throws IOException If it cannot read JDB output
+		 * @apiNote If DEBUG is activated, it will display JDB output on the 
+		 * console
 		 */
 		public boolean read() throws IOException
 		{
@@ -488,66 +504,58 @@ public class JDB
 				outputFinished = false;
             	line = br.readLine();
             	
-            	if (line.equals("\n") || line.equals("") || line.equals(" ")) return false;
+            	if (isEmptyLine()) { return false; }
             	
             	// -----{ DEBUG }-----
             	if (DEBUG) { System.out.println(line); }
         		// -----{ END DEBUG }-----
         		
-            	//endOfMethod = line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod);
             	endOfMethod = isEndOfTestMethod();
-            	isInternalCommand = !line.contains(methodClassSignature) && !line.contains(classInvocationSignature);
+            	isInternalCommand = isInternalMethod();
             	
             	// Checks if JDB has started and is ready to receive debug commands
-        		if (!endOfMethod && (line.contains("Breakpoint hit") || line.contains("Step completed"))) {
+        		if ( !endOfMethod && 
+    				 (line.contains("Breakpoint hit") || line.contains("Step completed")) ) {
         			response = true;
             		srcLine = br.readLine();
         			
-        			newIteration = 
-    					(!inMethod && 
-        					(
-    							line.contains("Breakpoint hit") || 
-    							(line.contains("line="+methodInvocationLine) && line.contains(classInvocationSignature))
-							)
-    					);
+        			newIteration = isNewIteration();
 
         			if (isInternalCommand) {
         				inMethod = false;
-        			}
-
-        			// Checks if it is a call to an overloaded method
-        			else if (srcLine != null && srcLine.matches(regex_overloadedMethod) && !line.contains(classInvocationSignature)) {
+        			} 
+        			else if (isCallToOverloadedMethod()) {
         				if (overloadedMethod) {
         					exitMethod = true;
-        				} else {
-        					//System.out.println("OVERLOADED METHOD");
+        				} 
+        				else {
         					testPath.clear();
         					overloadedMethod = true;
         					newIteration = true;
         				}
-                	} else if (newIteration || (!inMethod && line.contains("Step completed") && line.contains(classInvocationSignature))) {
+                	} 
+        			else if (willEnterInMethod()) {
             			inMethod = true;
-            		} else if (inMethod) { 	
+            		} 
+        			else if (inMethod) { 	
         				int lineNumber = jdb_getLine(line);
         				
         				// Checks if returned from the method
-        				if (line.contains(classInvocationSignature) && line.contains("line="+methodInvocationLine)) {
+        				if ( line.contains(classInvocationSignature) && 
+    						 line.contains("line="+methodInvocationLine) ) {
         					exitMethod = true;
         					newIteration = false;
         					inMethod = false;
-        					//end2OfMethod = !p.isAlive();
         					lastLineAdded = -1;
-        				} else if (!exitMethod && line.contains(methodSignature) && lineNumber != lastLineAdded) {	// Checks if it is still in the method
-        					if (!srcLine.matches("([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)") &&
-    							!srcLine.matches(regex_emptyMethod)) {
+        				} 
+        				else if (isWithinMethod(lineNumber)) {	// Checks if it is still in the method
+        					if (!isEmptyMethod()) {
         						testPath.add(lineNumber);
         						lastLineAdded = lineNumber;
         					}
         				}
             		}
         		}
-    		
-	    		//endOfMethod = line.contains("The application exited");
 	
 	    		if (endOfMethod) {
 	    			response = true;
@@ -561,6 +569,9 @@ public class JDB
 			return response;
 		}
 		
+		/**
+		 * Closes JDB input.
+		 */
 		public void close()
 		{
 			try {
@@ -570,11 +581,111 @@ public class JDB
 			}
 		}
 		
+		/**
+		 * Checks if current line of JDB has reached the end of the test method.
+		 * 
+		 * @return if current line of JDB has reached the end of the test method
+		 */
 		private boolean isEndOfTestMethod()
 		{
 			return 
 				(line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod)) || 
 				line.contains("The application exited");
+		}
+		
+		/**
+		 * Checks if current line of JDB is an internal method.
+		 * 
+		 * @return If current line of JDB is an internal method
+		 */
+		private boolean isInternalMethod()
+		{
+			return 	!line.contains(methodClassSignature) && 
+					!line.contains(classInvocationSignature);
+		}
+		
+		/**
+		 * Checks if current line of JDB is an empty line.
+		 * 
+		 * @return If current line of JDB is an empty line
+		 */
+		private boolean isEmptyLine()
+		{
+			return 	line.equals("\n") || 
+					line.equals("") || 
+					line.equals(" ") ||
+					line.equals("> ") ||
+					line.equals(">") ||
+					line.equals(".");
+		}
+		
+		/**
+		 * Checks if current line of JDB is an empty line.
+		 * 
+		 * @return If current line of JDB is an empty line
+		 */
+		private boolean isNewIteration()
+		{
+			return (
+				!inMethod && 
+				(
+					line.contains("Breakpoint hit") || 
+					( line.contains("line="+methodInvocationLine) && 
+					  line.contains(classInvocationSignature) )
+				)
+			);
+		}
+		
+		/**
+		 * Checks if current line of JDB is a call to an overloaded method.
+		 * 
+		 * @return If current line of JDB is a call to an overloaded method
+		 */
+		private boolean isCallToOverloadedMethod()
+		{
+			return 	srcLine != null && 
+					srcLine.matches(regex_overloadedMethod) && 
+					!line.contains(classInvocationSignature);
+		}
+		
+		/**
+		 * Checks if next line of JDB will be within a method.
+		 * 
+		 * @return If next line of JDB will be within a method
+		 */
+		private boolean willEnterInMethod()
+		{
+			return 	newIteration || 
+					( !inMethod && 
+					  line.contains("Step completed") && 
+					  line.contains(classInvocationSignature) ); 
+		}
+		
+		/**
+		 * Checks if current line of JDB is within a method.
+		 * 
+		 * @return If current line of JDB is within a method
+		 */
+		private boolean isWithinMethod(int lineNumber)
+		{
+			return	!exitMethod && 
+					line.contains(methodSignature) &&
+					lineNumber != lastLineAdded;
+		}
+		
+		/**
+		 * Checks if current line of JDB is an empty method.
+		 * 
+		 * @return If current line of JDB is an empty method
+		 */
+		private boolean isEmptyMethod()
+		{
+			final String regex_onlyCurlyBracket = "([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)";
+			final String regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}"
+					+ ".+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
+			
+			return	srcLine.matches(regex_onlyCurlyBracket) ||
+					srcLine.matches(regex_emptyMethod);
 		}
 	}
 	
