@@ -111,7 +111,9 @@ public class ExecutionFlow
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			// Computes test path for each collected method that is invoked in the same line
-			for (CollectorInfo collector : collectors) {
+			// JDB will take care computing test path for each method that is invoked in the same line
+			CollectorInfo collector = collectors.get(0);	
+			//for (CollectorInfo collector : collectors) {
 				// Parses file
 				System.out.println("Processing source file...");
 				FileManager fileManager = new FileManager(
@@ -147,9 +149,9 @@ public class ExecutionFlow
 				
 				// Stores each computed test path
 				storeTestPath(tp_jdb, collector);
-			}
+			//}
 		}
-		
+		System.out.println("RETORNOU");
 		return this;
 	}
 	

@@ -180,17 +180,18 @@ public class JDB
 		boolean wasNewIteration = false;
 		
 		in.init();
-		
+		System.out.println("Computing test path...");
 		// Executes while inside the method
 		while (!endOfMethod) {
 			while (!wasNewIteration && !out.read()) { continue; }  
 			
+			if (endOfMethod) { break; }
 			wasNewIteration = false;
 			
 			if (newIteration) {
 					wasNewIteration = true;
 					// Enters the method, ignoring aspectJ
-					in.send("step into");
+					in.send("step into");System.out.println("newIt");
 					while (!out.read()) {}
 					
 					while (isInternalCommand) {
@@ -214,7 +215,7 @@ public class JDB
 				} else {
 					testPath.clear();	// Discards computed test path
 					newIteration = true;
-					in.send("step into");
+					in.send("step into");System.out.println("skip>=0");
 					//out.read();
 				}
 				
@@ -225,12 +226,12 @@ public class JDB
 				//out.read();
 			}
 		}
-		
+		System.out.println("SAIU!!!");
 		in.exit();
 		in.close();
 		out.close();
-		process.waitFor();
-		process.destroyForcibly();
+		//process.waitFor();
+		process.destroyForcibly().waitFor();
 		
 		/*
         // Output
@@ -407,7 +408,7 @@ public class JDB
 		 */
 		public void exit()
 		{
-			input.flush();
+			//input.flush();
 			input.println("clear "+classInvocationSignature+":"+methodInvocationLine);
 			input.flush();
 			input.println("exit");
@@ -441,7 +442,7 @@ public class JDB
 			if (DEBUG) { System.out.println("COMMAND: "+command); }
 			// -----{ END DEBUG }-----
 			
-			input.flush();
+			//input.flush();
 			input.println(command);
 			input.flush();
 		}
@@ -510,10 +511,12 @@ public class JDB
 				outputFinished = false;
             	line = br.readLine();
             	
-            	if (isEmptyLine()) { return false; }
+            	if (isEmptyLine() || line.matches("^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t)*$")) { 
+            		return false; 
+        		}
             	
             	// -----{ DEBUG }-----
-            	if (DEBUG) { System.out.println(line); }
+            	if (DEBUG) { System.out.println("LINE: "+line); }
         		// -----{ END DEBUG }-----
         		
             	endOfMethod = isEndOfTestMethod();
@@ -568,7 +571,7 @@ public class JDB
 	    		}
 	    		
 	    		// -----{ DEBUG }-----
-	    		if (DEBUG && srcLine != null) { System.out.println(srcLine); }
+	    		if (DEBUG && srcLine != null) { System.out.println("SRC: "+srcLine); }
 	    		// -----{ END DEBUG }-----
 			} 
 			
