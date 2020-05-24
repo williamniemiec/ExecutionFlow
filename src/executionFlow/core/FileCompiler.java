@@ -28,7 +28,7 @@ public class FileCompiler
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		int compilationResult =	compiler.run(
 			null, null, null, 
-			new String[] {"-encoding", charset.getText(),"-d", outputDir, fileToCompile.getAbsolutePath()}
+			new String[] {"-Xlint:none", "-encoding", charset.getText(),"-d", outputDir, fileToCompile.getAbsolutePath()}
 		);
 		
 		if(compilationResult != 0) {
