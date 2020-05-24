@@ -22,7 +22,9 @@ import executionFlow.info.SignaturesInfo;
  * Captures all executed methods with <code>@Test</code> annotation, including
  * inner methods (captures the method and all internal calls to other methods).
  * 
- * @implNote Excludes calls to native java methods and ExecutionFlow's classes
+ * @implNote Excludes calls to native java methods, ExecutionFlow's classes,
+ * methods with {@link SkipMethod]} signature and all methods from classes
+ * with {@link SkipCollection} annotation.
  */
 @SuppressWarnings("unused")
 public aspect MethodCollector extends RuntimeCollector
@@ -143,14 +145,15 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets class path and source path
 		String testSrcPath = null;
 		try {
-			//String className = thisJoinPoint.getTarget().getClass().getSimpleName();
+			// Class path and source path from method
 			String className = CollectorExecutionFlow.getClassName(classSignature);
 			classPath = CollectorExecutionFlow.findCurrentClassPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findCurrentSrcPath(className, classSignature);
 			
-			String testMethodClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
-			String testMethodClassName = CollectorExecutionFlow.getClassName(testMethodClassSignature);
-			testSrcPath = CollectorExecutionFlow.findCurrentSrcPath(testMethodClassName, testMethodClassSignature);
+			// Class path and source path from test method
+			String testClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
+			String testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
+			testSrcPath = CollectorExecutionFlow.findCurrentSrcPath(testClassName, testClassSignature);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

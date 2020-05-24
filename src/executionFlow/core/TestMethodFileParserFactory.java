@@ -1,6 +1,9 @@
 package executionFlow.core;
 
 
+/**
+ * Responsible for generating {@link TestMethodFileParser} classes.
+ */
 public class TestMethodFileParserFactory implements FileParserFactory
 {
 	@Override

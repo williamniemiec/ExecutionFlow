@@ -12,6 +12,10 @@ import executionFlow.info.*;
 
 /**
  * Captures class instantiation.
+ * 
+ * @implNote Excludes calls to native java methods, ExecutionFlow's classes,
+ * methods with {@link SkipMethod]} signature and all methods from classes
+ * with {@link SkipCollection} annotation
  */
 public aspect ConstructorCollector extends RuntimeCollector
 {

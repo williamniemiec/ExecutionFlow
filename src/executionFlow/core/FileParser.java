@@ -2,9 +2,32 @@ package executionFlow.core;
 
 import java.io.IOException;
 
+
+/**
+ * A file parser will add some code to an existing code if some conditions are 
+ * met. Who will define these conditions will be the classes that implement
+ * this interface.
+ */
 public interface FileParser 
 {
+	/**
+	 * Parses file, adding some code to an existing code if some conditions are 
+	 * met
+	 * 
+	 * @return Location of parsed file
+	 * @throws IOException If it cannot parse the file
+	 */
 	String parseFile() throws IOException;
+	
+	/**
+	 * Gets file encoding.
+	 * 
+	 * @return File encoding
+	 */
 	FileCharset getCharset();
+	
+	/**
+	 * Sets file encoding.
+	 */
 	void setCharset(FileCharset charset);
 }
