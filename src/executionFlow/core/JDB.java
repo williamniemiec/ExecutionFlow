@@ -46,12 +46,9 @@ public class JDB
 	private List<Integer> testPath;
 	private List<List<Integer>> testPaths;
 	private static Path libPath;
-	private PrintWriter input;
-	private boolean outputFinished;
 	private boolean endOfMethod;
 	private boolean newIteration;
 	private boolean exitMethod;
-	private boolean inputFinished;
 	private boolean isInternalCommand;
 	private boolean overloadedMethod;
 	private final boolean DEBUG; 
@@ -61,14 +58,16 @@ public class JDB
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	/**
-	 * Enables or disables debug. If activated, shows shell output during JDB execution.
+	 * Enables or disables debug. If activated, shows shell output during JDB 
+	 * execution.
 	 */
 	{
 		DEBUG = true;
 	}
 	
 	/**
-	 * Computes and stores application root path, based on class {@link ExecutionFlow} location.
+	 * Computes and stores application root path, based on class 
+	 * {@link ExecutionFlow} location.
 	 */
 	static {
 		try {
@@ -87,8 +86,8 @@ public class JDB
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Computes test path from code debugging. Use this constructor if this class
-	 * will be used within the context of aspects.
+	 * Computes test path from code debugging. Use this constructor if this 
+	 * class will be used within the context of aspects.
 	 * 
 	 * @param lastLineTestMethod Test method end line
 	 */
@@ -120,9 +119,9 @@ public class JDB
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
 		// Gets class path root (using test method class directory)
-		classPathRoot = extractPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
-		srcPath = extractPathDirectory(methodInfo.getSrcPath(), methodInfo.getPackage());
-		methodClassDir = extractPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
+		classPathRoot = extractRootPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
+		srcPath = extractRootPathDirectory(methodInfo.getSrcPath(), methodInfo.getPackage());
+		methodClassDir = extractRootPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
 		
 		jdb_methodVisitor(methodSignature, methodInfo.getMethodName());
 		
@@ -159,11 +158,12 @@ public class JDB
 		System.out.println("jdb_paths: "+jdb_paths);
 		System.out.println();
 		
-		ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c","jdb "+jdb_paths,"org.junit.runner.JUnitCore",classInvocationSignature);
+		ProcessBuilder pb = new ProcessBuilder(
+			"cmd.exe","/c","jdb "+jdb_paths,
+			"org.junit.runner.JUnitCore",classInvocationSignature
+		);
 		pb.directory(new File(classPathRoot));
 		
-		//Process p = Runtime.getRuntime().exec(new String[] {"cmd.exe","/c","jdb "+jdb_paths,"org.junit.runner.JUnitCore",classInvocationSignature}, null, new File(classPathRoot));
-		//return p;
 		return pb.start();
 	}
 	
@@ -176,30 +176,34 @@ public class JDB
 	 */
 	private synchronized void jdb_methodVisitor(String methodSignature, String methodName) throws IOException, InterruptedException 
 	{
+		boolean wasNewIteration = false;
 		Process process = jdb_start();
 		JDBOutput out = new JDBOutput(process, methodSignature, methodName);
 		JDBInput in = new JDBInput(process);
-		boolean wasNewIteration = false;
 		
 		in.init();
+		
 		System.out.println("Computing test path...");
+		
 		// Executes while inside the method
 		while (!endOfMethod) {
+			// Checks if output has finished processing
 			while (!wasNewIteration && !out.read()) { continue; }  
 			
 			if (endOfMethod) { break; }
 			wasNewIteration = false;
 			
+			// Check if is entering a method
 			if (newIteration) {
-					wasNewIteration = true;
-					// Enters the method, ignoring aspectJ
-					in.send("step into");System.out.println("newIt");
+				wasNewIteration = true;
+				// Enters the method, ignoring aspectJ
+				in.send("step into");System.out.println("newIt");
+				while (!out.read()) { continue; }
+				
+				while (isInternalCommand) {
+					in.send("next");
 					while (!out.read()) { continue; }
-					
-					while (isInternalCommand) {
-						in.send("next");
-						while (!out.read()) { continue; }
-					}
+				}
 			} else if (exitMethod) {
 				skip--;
 				
@@ -213,45 +217,24 @@ public class JDB
 					
 					// Checks if method is in a loop
 					in.send("cont");
-					//out.read();
 				} else {
 					testPath.clear();	// Discards computed test path
 					newIteration = true;
 					in.send("step into");System.out.println("skip>=0");
-					//out.read();
 				}
 				
 				// Check output
 				exitMethod = false;
 			} else if (!endOfMethod) {
 				in.send("next");
-				//out.read();
 			}
 		}
-		System.out.println("SAIU!!!");
+		
 		in.exit(out);
-		//while (!out.read()) { continue; }
 		in.close();
 		out.close();
 		process.waitFor();
 		process.destroy();
-		
-		/*
-        // Output
-		Thread t = jdb_output(process, methodSignature, methodName);
-
-        // Input
-		OutputStream os = process.getOutputStream();
-		jdb_input(process, os);
-		
-		// Exits JDB
-		jdb_end();
-		input.close();
-		os.close();
-		process.waitFor();
-		process.destroyForcibly();
-		t.join();
-		*/
 	}
 	
 	
@@ -304,10 +287,22 @@ public class JDB
 		return sb.toString();
 	}
 	
-	private String extractPathDirectory(String classPath, String classPackage) throws Exception
+	/**
+	 * Gets root path directory from a class package. 
+	 * <h2>Example</h2>
+	 * Class path: <code>C:/myProgram/src/name1/name2/name3</code><br />
+	 * Class package: <code>name1.name2.name3</code><br />
+	 * <u>Return:</u> <code>C:/myProgram/src/</code><br /><br />
+	 * 
+	 * @param classPath Class path
+	 * @param classPackage Class package
+	 * @return Root path directory
+	 * @throws IllegalStateException If source file path is null
+	 */
+	private String extractRootPathDirectory(String classPath, String classPackage) throws IllegalStateException
 	{
 		if (classPath == null) 
-			throw new Exception("Source file path cannot be null");
+			throw new IllegalStateException("Source file path cannot be null");
 		
 		int packageFolders = 0;
 		
@@ -511,7 +506,6 @@ public class JDB
 			boolean response = false;
 			
 			if (br.ready()) {
-				outputFinished = false;
             	line = br.readLine();
             	
             	if (isEmptyLine() || line.matches("^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t)*$")) { 

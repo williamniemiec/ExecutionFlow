@@ -33,17 +33,21 @@ public class FileManager
 	 * 
 	 * @param srcFilePath Absolute path of java file
 	 * @param classOutput Absolute path of directory where .class of java file is
-	 * @param classPackage Package of the class of the java file 
+	 * @param classPackage Package of the class of the java file
+	 * @param fileParserFactory Factory that will produce {@link FileParser} 
+	 * that will be used for parsing file
 	 */
-	public FileManager(String srcFilePath, String classOutput, String classPackage, FileParserFactory fpf)
+	public FileManager(String srcFilePath, String classOutput, String classPackage, FileParserFactory fileParserFactory)
 	{
 		this.classOutput = classOutput;
 		this.classPackage = classPackage;
 		this.inputFile = new File(srcFilePath);
 		this.originalFile = new File(srcFilePath+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
-		
-		this.fp = fpf.newFileParser(inputFile.getAbsolutePath(), classOutput, filename+"_parsed", FileCharset.UTF_8);
+		this.fp = fileParserFactory.newFileParser(
+			inputFile.getAbsolutePath(), classOutput, 
+			filename+"_parsed", FileCharset.UTF_8
+		);
 	}
 	
 	
@@ -69,7 +73,7 @@ public class FileManager
 	 * to constructor.
 	 * 
 	 * @return This object to allow chained calls
-	 * @throws IOException If file charset cannot be defined
+	 * @throws IOException If file encoding cannot be defined
 	 * 
 	 * @implNote This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revert()} function.
@@ -80,10 +84,6 @@ public class FileManager
 		createBackupFile();
 		
 		// Parses file
-//		FileParser fp = new FileParser(
-//			inputFile.getAbsolutePath(), classOutput, 
-//			filename+"_parsed", FileCharset.UTF_8
-//		);
 		File out;
 		
 		// Tries to parse file using UTF-8 encoding. If an error occurs, tries 
