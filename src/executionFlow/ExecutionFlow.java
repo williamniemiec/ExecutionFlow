@@ -7,6 +7,8 @@ import java.util.Map;
 
 import executionFlow.core.FileManager;
 import executionFlow.core.JDB;
+import executionFlow.core.MethodFileParserFactory;
+import executionFlow.core.TestMethodFileParserFactory;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.exporter.FileExporter;
@@ -116,30 +118,30 @@ public class ExecutionFlow
 			//for (CollectorInfo collector : collectors) {
 				// Parses file
 				System.out.println("Processing source file...");
-				FileManager fileManager = new FileManager(
+				FileManager methodFileManager = new FileManager(
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
-					collector.getMethodInfo().getPackage()
+					collector.getMethodInfo().getPackage(),
+					new MethodFileParserFactory()
 				);
 				
-//				System.out.println("``````````````````````");
-//				System.out.println(collector.getOrder());
-//				System.out.println("``````````````````````");
-//				
-//				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
-//				System.out.println(collector.getMethodInfo().getSrcPath()); 
-//				System.out.println(collector.getMethodInfo().getClassDirectory());
-//				System.out.println(collector.getMethodInfo().getPackage());
-//				System.out.println("$$$$$$$$$$$$$$$$$$$$$");
+				FileManager testMethodFileManager = new FileManager(
+					collector.getMethodInfo().getTestSrcPath(), 
+					collector.getMethodInfo().getTestClassDirectory(),
+					collector.getMethodInfo().getTestClassPackage(),
+					new TestMethodFileParserFactory()
+				);
 				
 				try {
-					fileManager.parseFile().compileFile();
+					methodFileManager.parseFile().compileFile();
+					testMethodFileManager.parseFile().compileFile();
 					System.out.println("Processing completed");
 				} catch (Exception e) {
 					System.out.println("[ERROR] "+e.getMessage());
 				} finally {
 					// Reverts parsed file to its original state
-					fileManager.revert();
+					methodFileManager.revert();
+					testMethodFileManager.revert();
 				}
 				
 				JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());

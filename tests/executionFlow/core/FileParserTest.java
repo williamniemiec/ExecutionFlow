@@ -11,6 +11,8 @@ import executionFlow.runtime.SkipCollection;
 @SkipCollection
 public class FileParserTest
 {
+	
+	
 	/*
 	@Test
 	public void testEmptyClass()
@@ -55,7 +57,7 @@ public class FileParserTest
 		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
 	}*/
-	
+	/*
 	@Test
 	public void testParseSwitch() throws IOException
 	{
@@ -63,9 +65,9 @@ public class FileParserTest
 		String filename = "test_switch";
 		File f = new File(currentDir, filename+".java");
 		
-		FileParser fp = new FileParser(f.getAbsolutePath(), currentDir, filename+"_parsed", FileCharset.ISO_8859_1);
+		MethodFileParser fp = new MethodFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed", FileCharset.ISO_8859_1);
 		fp.parseFile();
-	}
+	}*/
 	/*
 	@Test
 	public void testDoWhile()

@@ -141,11 +141,16 @@ public aspect MethodCollector extends RuntimeCollector
 		if (constructor != null && isTestMethodConstructor(key)) { return; }
 		
 		// Gets class path and source path
+		String testSrcPath = null;
 		try {
 			//String className = thisJoinPoint.getTarget().getClass().getSimpleName();
 			String className = CollectorExecutionFlow.getClassName(classSignature);
 			classPath = CollectorExecutionFlow.findCurrentClassPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findCurrentSrcPath(className, classSignature);
+			
+			String testMethodClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
+			String testMethodClassName = CollectorExecutionFlow.getClassName(testMethodClassSignature);
+			testSrcPath = CollectorExecutionFlow.findCurrentSrcPath(testMethodClassName, testMethodClassSignature);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -178,6 +183,7 @@ public aspect MethodCollector extends RuntimeCollector
 				.args(thisJoinPoint.getArgs())
 				.invocationLine(invocationLine)
 				.srcPath(srcPath)
+				.testSrcPath(testSrcPath)
 				.build();
 
 		CollectorInfo ci = new CollectorInfo(cmi, order++);

@@ -22,6 +22,7 @@ public class FileManager
 	private String classOutput;
 	private String classPackage;
 	private boolean charsetError;
+	private FileParser fp;
 	
 	
 	//-------------------------------------------------------------------------
@@ -34,13 +35,15 @@ public class FileManager
 	 * @param classOutput Absolute path of directory where .class of java file is
 	 * @param classPackage Package of the class of the java file 
 	 */
-	public FileManager(String srcFilePath, String classOutput, String classPackage)
+	public FileManager(String srcFilePath, String classOutput, String classPackage, FileParserFactory fpf)
 	{
 		this.classOutput = classOutput;
 		this.classPackage = classPackage;
 		this.inputFile = new File(srcFilePath);
 		this.originalFile = new File(srcFilePath+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
+		
+		this.fp = fpf.newFileParser(inputFile.getAbsolutePath(), classOutput, filename+"_parsed", FileCharset.UTF_8);
 	}
 	
 	
@@ -77,10 +80,10 @@ public class FileManager
 		createBackupFile();
 		
 		// Parses file
-		FileParser fp = new FileParser(
-			inputFile.getAbsolutePath(), classOutput, 
-			filename+"_parsed", FileCharset.UTF_8
-		);
+//		FileParser fp = new FileParser(
+//			inputFile.getAbsolutePath(), classOutput, 
+//			filename+"_parsed", FileCharset.UTF_8
+//		);
 		File out;
 		
 		// Tries to parse file using UTF-8 encoding. If an error occurs, tries 

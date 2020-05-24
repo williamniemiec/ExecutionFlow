@@ -68,6 +68,22 @@ public class CollectorExecutionFlow
 		return response;
 	}
 	
+	public static String extractClassSignature(String methodSignature)
+	{
+		String[] tmp = methodSignature.split("\\.");
+		StringBuilder response = new StringBuilder();
+		
+		for (int i=0; i<tmp.length-1; i++) {
+			response.append(tmp[i]);
+			response.append(".");
+		}
+		
+		if (response.length() > 0)
+			response.deleteCharAt(response.length()-1);		// Removes last dot
+		
+		return response.toString();
+	}
+	
 	/**
 	 * Given the parameters of a method, discover the class of each of these parameters.
 	 * 
@@ -302,6 +318,9 @@ public class CollectorExecutionFlow
 	private static String extractPathFromSignature(String classSignature)
 	{
 		String terms[] = classSignature.split("\\.");
+		
+		if (terms.length == 1) { return "\\"; }
+		
 		StringBuilder response = new StringBuilder();
 		
 		// Finds path where the file is from class signature

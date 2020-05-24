@@ -18,6 +18,7 @@ public class ClassMethodInfo
 	private String classPath;
 	private String testClassPath;
 	private String srcPath;
+	private String testSrcPath;
 	private String testMethodSignature;
 	private String methodSignature;
 	private String classSignature;
@@ -44,12 +45,13 @@ public class ClassMethodInfo
 	 * @param parameterTypes Types of method's parameters
 	 * @param args Method's arguments
 	 */
-	private ClassMethodInfo(String classPath, String testClassPath, String srcPath, int invocationLine, String methodSignature, 
+	private ClassMethodInfo(String classPath, String testClassPath, String srcPath, String testSrcPath, int invocationLine, String methodSignature, 
 			String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
 	{
 		this.classPath = classPath;
 		this.testClassPath = testClassPath;
 		this.srcPath = srcPath;
+		this.testSrcPath = testSrcPath;
 		this.methodSignature = methodSignature;
 		this.testMethodSignature = testMethodSignature;
 		this.methodName = methodName;
@@ -69,6 +71,7 @@ public class ClassMethodInfo
 		private String classPath;
 		private String testClassPath;
 		private String srcPath;
+		private String testSrcPath;
 		private String methodSignature;
 		private String testMethodSignature;
 		private int invocationLine;
@@ -114,6 +117,12 @@ public class ClassMethodInfo
 		public ClassMethodInfoBuilder srcPath(String srcPath)
 		{
 			this.srcPath = srcPath;
+			return this;
+		}
+		
+		public ClassMethodInfoBuilder testSrcPath(String testSrcPath)
+		{
+			this.testSrcPath = testSrcPath;
 			return this;
 		}
 		
@@ -185,7 +194,7 @@ public class ClassMethodInfo
 		public ClassMethodInfo build()
 		{
 			return new ClassMethodInfo(
-				classPath, testClassPath, srcPath, invocationLine, methodSignature, testMethodSignature, 
+				classPath, testClassPath, srcPath, testSrcPath, invocationLine, methodSignature, testMethodSignature, 
 				methodName, returnType, parameterTypes, args
 			);
 		}
@@ -199,7 +208,7 @@ public class ClassMethodInfo
 	public String toString() 
 	{
 		return "ClassMethodInfo [methodName=" + methodName + ", classPath=" + classPath + ", testClassPath="
-				+ testClassPath + ", srcPath=" + srcPath + ", testMethodSignature=" + testMethodSignature
+				+ testClassPath + ", srcPath=" + srcPath + ", testMethodSrcPath=" + testSrcPath + ", testMethodSignature=" + testMethodSignature
 				+ ", methodSignature=" + methodSignature + ", classSignature=" + classSignature + ", invocationLine="
 				+ invocationLine + ", parameterTypes=" + Arrays.toString(parameterTypes) + ", args="
 				+ Arrays.toString(args) + ", returnType=" + returnType + "]";
@@ -325,6 +334,11 @@ public class ClassMethodInfo
 		return this.srcPath;
 	}
 	
+	public String getTestSrcPath()
+	{
+		return this.testSrcPath;
+	}
+	
 	public String getClassSignature()
 	{
 		return this.classSignature;
@@ -341,8 +355,6 @@ public class ClassMethodInfo
 	{
 		if (testMethodSignature == null) { return ""; }
 		
-		System.out.println("MTS: "+testMethodSignature);
-		
 		return extractPackage(extractClassSignature(testMethodSignature));
 	}
 	
@@ -357,6 +369,23 @@ public class ClassMethodInfo
 			return methodType(returnType);
 		
 		return methodType(returnType, parameterTypes);
+	}
+	
+	public String getTestClassDirectory()
+	{
+		StringBuilder response = new StringBuilder();
+		String[] terms = testClassPath.split("\\\\");
+		
+		for (int i=0; i<terms.length-1; i++) {
+			response.append(terms[i]);
+			response.append("\\");
+		}
+		
+		if (response.length() > 0) {
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
 	}
 	
 	public String getClassDirectory()

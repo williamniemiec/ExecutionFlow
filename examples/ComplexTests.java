@@ -15,6 +15,7 @@ public class ComplexTests
 	/**
 	 * Test method with the creation of constructors in a for loop.
 	 */
+	/*
 	@Test
 	public void testForConstructor()
 	{
@@ -29,12 +30,12 @@ public class ComplexTests
 			
 			before = tc.factorial();
 		}
-	}
+	}*/
 
 	/**
 	 * Test methods with more than one constructor.
 	 */
-	@Test
+	@Test 
 	public void moreOneConstructor()
 	{
 		System.out.println("#####################################################################");

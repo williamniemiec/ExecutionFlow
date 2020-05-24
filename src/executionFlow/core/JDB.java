@@ -161,7 +161,9 @@ public class JDB
 		
 		ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c","jdb "+jdb_paths,"org.junit.runner.JUnitCore",classInvocationSignature);
 		pb.directory(new File(classPathRoot));
-
+		
+		//Process p = Runtime.getRuntime().exec(new String[] {"cmd.exe","/c","jdb "+jdb_paths,"org.junit.runner.JUnitCore",classInvocationSignature}, null, new File(classPathRoot));
+		//return p;
 		return pb.start();
 	}
 	
@@ -192,11 +194,11 @@ public class JDB
 					wasNewIteration = true;
 					// Enters the method, ignoring aspectJ
 					in.send("step into");System.out.println("newIt");
-					while (!out.read()) {}
+					while (!out.read()) { continue; }
 					
 					while (isInternalCommand) {
 						in.send("next");
-						while (!out.read()) {}
+						while (!out.read()) { continue; }
 					}
 			} else if (exitMethod) {
 				skip--;
@@ -227,11 +229,12 @@ public class JDB
 			}
 		}
 		System.out.println("SAIU!!!");
-		in.exit();
+		in.exit(out);
+		//while (!out.read()) { continue; }
 		in.close();
 		out.close();
-		//process.waitFor();
-		process.destroyForcibly().waitFor();
+		process.waitFor();
+		process.destroy();
 		
 		/*
         // Output
@@ -361,7 +364,6 @@ public class JDB
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		Process p;
 		OutputStream os;
 		PrintWriter input;
 		
@@ -376,7 +378,6 @@ public class JDB
 		 */
 		JDBInput(Process p)
 		{
-			this.p = p;
 			this.os = p.getOutputStream();
 			this.input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
 		}
@@ -405,14 +406,18 @@ public class JDB
 		
 		/**
 		 * Exits from JDB.
+		 * @throws IOException 
 		 */
-		public void exit()
+		public void exit(JDBOutput out) throws IOException
 		{
-			//input.flush();
-			input.println("clear "+classInvocationSignature+":"+methodInvocationLine);
+			out.readAll();
 			input.flush();
-			input.println("exit");
-			input.flush();
+			send("clear "+classInvocationSignature+":"+methodInvocationLine);
+			out.readAll();
+			send("exit");
+			out.readAll();
+			send("exit");
+			out.readAll();
 		}
 		
 		/**
@@ -456,7 +461,6 @@ public class JDB
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		Process p;
 		InputStream is;
     	final String regex_overloadedMethod;
     	String methodSignature;
@@ -483,7 +487,6 @@ public class JDB
          */
 		JDBOutput(Process p, String methodSignature, String methodName)
 		{
-			this.p = p;
 			this.methodSignature = methodSignature;
 			this.methodName = methodName;
 			is = p.getInputStream();
@@ -507,7 +510,7 @@ public class JDB
 		{
 			boolean response = false;
 			
-			if (!endOfMethod && br.ready()) {
+			if (br.ready()) {
 				outputFinished = false;
             	line = br.readLine();
             	
@@ -579,11 +582,23 @@ public class JDB
 		}
 		
 		/**
+		 * Reads output until there is nothing else.
+		 * @throws IOException If it cannot read JDB output
+		 */
+		public void readAll() throws IOException
+		{
+			while (br.ready()) {
+				read();
+			}
+		}
+		
+		/**
 		 * Closes JDB input.
 		 */
 		public void close()
 		{
 			try {
+				is.close();
 				br.close();
 			} catch (IOException e) {
 				e.printStackTrace();
