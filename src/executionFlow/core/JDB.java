@@ -86,10 +86,11 @@ public class JDB
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Computes test path from code debugging. Use this constructor if this 
-	 * class will be used within the context of aspects.
+	 * Computes test path from code debugging. 
 	 * 
 	 * @param lastLineTestMethod Test method end line
+	 * @param skip Number of method invocations to be ignored before computing 
+	 * test path
 	 */
 	public JDB(int lastLineMethod, int skip)
 	{
@@ -98,6 +99,17 @@ public class JDB
 		
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
+	}
+	
+	/**
+	 * Computes test path from code debugging. Use this constructor if there is 
+	 * no methods to be ignored before computing test path.
+	 * 
+	 * @param lastLineTestMethod Test method end line
+	 */
+	public JDB(int lastLineMethod)
+	{
+		this(lastLineMethod, 0);
 	}
 	
 	

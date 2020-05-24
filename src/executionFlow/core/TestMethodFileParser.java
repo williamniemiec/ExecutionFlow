@@ -137,7 +137,8 @@ public class TestMethodFileParser implements FileParser
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
-				if (line.contains("@Test") && !line.contains("@executionFlow.runtime.SkipMethod")) {
+				if ( line.contains("@Test") && !line.contains("@executionFlow.runtime.SkipMethod") && 
+					 !line.contains("@SkipMethod") ) {
 					line += " @executionFlow.runtime.SkipMethod";
 				}
 				

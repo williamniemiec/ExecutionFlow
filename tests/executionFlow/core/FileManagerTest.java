@@ -18,7 +18,8 @@ public class FileManagerTest
 		FileManager fileManager = new FileManager(
 			"tests/executionFlow/core/files/test_try.java",
 			"bin/executionFlow/core/files",
-			"executionFlow.core.files"
+			"executionFlow.core.files",
+			new MethodFileParserFactory()
 		);
 		
 		String classPath = fileManager.parseFile().compileFile();

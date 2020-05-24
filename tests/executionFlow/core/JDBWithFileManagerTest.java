@@ -22,13 +22,14 @@ public class JDBWithFileManagerTest
 		FileManager fileManager = new FileManager(
 			new File("tests/executionFlow/core/files/test_try.java").getAbsolutePath(),
 			new File("bin/executionFlow/core/files").getAbsolutePath(),
-			"executionFlow.core.files"
+			"executionFlow.core.files",
+			new MethodFileParserFactory()
 		);
 		
 		String classPath = fileManager.parseFile().compileFile();
 		fileManager.revert();
 		
-		int lastLineTestMethod = 53;
+		int lastLineTestMethod = 56;
 		JDB jdb = new JDB(lastLineTestMethod);
 		
 		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
@@ -37,7 +38,9 @@ public class JDBWithFileManagerTest
 			.srcPath(new File("tests/executionFlow/core/files/test_try.java").getAbsolutePath())
 			.methodName("tryCatchMethod_try")
 			.methodSignature("executionFlow.core.files.test_try.tryCatchMethod_try(int)")
-			.invocationLine(52)
+			.invocationLine(55)
+			.testClassPath(new File("bin/executionFlow/core/JDBWithFileManagerTest.class").getAbsolutePath())
+			.testSrcPath(new File("tests/executionFlow/core/JDBWithFileManagerTest.java").getAbsolutePath())
 			.build();
 		
 		tp_jdb = jdb.getTestPaths(cmi);

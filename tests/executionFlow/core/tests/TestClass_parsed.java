@@ -2,7 +2,7 @@ package executionFlow.core.tests;
 
 import org.junit.Test;
 
-public class JUnitTest 
+public class TestClass 
 {
 	@Test @executionFlow.runtime.SkipMethod
 	public void testFoo()
