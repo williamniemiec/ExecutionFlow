@@ -24,8 +24,8 @@ import executionFlow.runtime.SkipMethod;
 
 
 /**
- * Parses test java file adding {@link SkipMethod} in all tests to disable collectors
- * during JDB.
+ * Parses test java file adding {@link SkipMethod} annotation in all tests to 
+ * disable collectors during JDB.
  */
 public class TestMethodFileParser implements FileParser
 {
@@ -34,7 +34,6 @@ public class TestMethodFileParser implements FileParser
 	//-------------------------------------------------------------------------
 	private File file;
 	private File outputDir;
-	//private static final String generateVarName();
 	private String outputFilename;
 	
 	/**
@@ -49,7 +48,8 @@ public class TestMethodFileParser implements FileParser
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	/**
-	 * Configures environment. If {@link DEBUG} is true, displays processed lines.
+	 * Configures environment. If {@link DEBUG} is true, displays processed 
+	 * lines.
 	 */
 	static {
 		DEBUG = false;
@@ -60,9 +60,9 @@ public class TestMethodFileParser implements FileParser
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Adds instructions in places in the code that do not exist when converting
-	 * it to bytecode. Using this constructor, file encoding will be 
-	 * UTF-8.
+	 * Adds {@link SkipMethod} annotation in test methods to disable collectors
+	 * during {@link JDB} execution. Using this constructor, file encoding will
+	 * be UTF-8.
 	 * 
 	 * @param filename Path of the file to be parsed
 	 * @param outputDir Directory where parsed file will be saved
@@ -79,10 +79,10 @@ public class TestMethodFileParser implements FileParser
 	}
 	
 	/**
-	 * Adds instructions in places in the code that do not exist when converting
-	 * it to bytecode. Using this constructor, the directory where parsed file 
-	 * will be saved will be in current directory. Also, file encoding will be 
-	 * UTF-8.
+	 * Adds {@link SkipMethod} annotation in test methods to disable collectors
+	 * during {@link JDB} execution. Using this constructor, the directory 
+	 * where parsed file will be saved will be in current directory. Also, file 
+	 * encoding will be UTF-8.
 	 * 
 	 * @param filename Path of the file to be parsed
 	 * @param outputFilename Name of the parsed file
@@ -93,8 +93,8 @@ public class TestMethodFileParser implements FileParser
 	}
 	
 	/**
-	 * Adds instructions in places in the code that do not exist when converting
-	 * it to bytecode.
+	 * Adds {@link SkipMethod} annotation in test methods to disable collectors
+	 * during {@link JDB} execution.
 	 * 
 	 * @param filename Path of the file to be parsed
 	 * @param outputDir Directory where parsed file will be saved
@@ -112,11 +112,12 @@ public class TestMethodFileParser implements FileParser
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Parses file adding instructions in places in the code that do not exist 
-	 * when converting it to bytecode.
+	 * Adds {@link SkipMethod} annotation in test methods.
 	 * 
-	 * @throws IOException If file charset is incorrect or if file cannot be readed / written
+	 * @throws IOException If file encoding is incorrect or if file cannot be 
+	 * read / written
 	 */
+	@Override
 	public String parseFile() throws IOException
 	{
 		if (file == null) { return ""; }
@@ -156,11 +157,13 @@ public class TestMethodFileParser implements FileParser
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
+	@Override
 	public FileCharset getCharset()
 	{
 		return charset;
 	}
 	
+	@Override
 	public void setCharset(FileCharset charset)
 	{
 		this.charset = charset; 

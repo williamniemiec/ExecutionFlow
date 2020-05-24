@@ -22,8 +22,8 @@ import java.util.regex.Pattern;
 
 
 /**
- * Parses java file adding instructions in places in the code that do not exist 
- * when converting it to bytecode.
+ * Parses java file adding instructions in parts of the code that does not 
+ * exist when converting it to bytecode.
  */
 public class MethodFileParser implements FileParser
 {
@@ -50,7 +50,8 @@ public class MethodFileParser implements FileParser
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	/**
-	 * Configures environment. If {@link DEBUG} is true, displays processed lines.
+	 * Configures environment. If {@link DEBUG} is true, displays processed 
+	 * lines.
 	 */
 	static {
 		DEBUG = false;
@@ -61,8 +62,8 @@ public class MethodFileParser implements FileParser
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Adds instructions in places in the code that do not exist when converting
-	 * it to bytecode. Using this constructor, file encoding will be 
+	 * Adds instructions in parts of the code that does not exist when 
+	 * converting it to bytecode. Using this constructor, file encoding will be 
 	 * UTF-8.
 	 * 
 	 * @param filename Path of the file to be parsed
@@ -80,10 +81,10 @@ public class MethodFileParser implements FileParser
 	}
 	
 	/**
-	 * Adds instructions in places in the code that do not exist when converting
-	 * it to bytecode. Using this constructor, the directory where parsed file 
-	 * will be saved will be in current directory. Also, file encoding will be 
-	 * UTF-8.
+	 * Adds instructions in parts of the code that does not exist when 
+	 * converting it to bytecode. Using this constructor, the directory where 
+	 * parsed file will be saved will be in current directory. Also, file 
+	 * encoding will be UTF-8.
 	 * 
 	 * @param filename Path of the file to be parsed
 	 * @param outputFilename Name of the parsed file
@@ -94,8 +95,8 @@ public class MethodFileParser implements FileParser
 	}
 	
 	/**
-	 * Adds instructions in places in the code that do not exist when converting
-	 * it to bytecode.
+	 * Adds instructions in parts of the code that does not exist when 
+	 * converting it to bytecode.
 	 * 
 	 * @param filename Path of the file to be parsed
 	 * @param outputDir Directory where parsed file will be saved
@@ -113,11 +114,13 @@ public class MethodFileParser implements FileParser
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Parses file adding instructions in places in the code that do not exist 
+	 * Parses file adding instructions in parts of the code that does not exist 
 	 * when converting it to bytecode.
 	 * 
-	 * @throws IOException If file charset is incorrect or if file cannot be readed / written
+	 * @throws IOException If file encoding is incorrect or if file cannot be 
+	 * read / written
 	 */
+	@Override
 	public String parseFile() throws IOException
 	{
 		if (file == null) { return ""; }
@@ -606,11 +609,13 @@ public class MethodFileParser implements FileParser
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
+	@Override
 	public FileCharset getCharset()
 	{
 		return charset;
 	}
 	
+	@Override
 	public void setCharset(FileCharset charset)
 	{
 		this.charset = charset; 
