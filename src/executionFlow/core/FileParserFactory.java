@@ -15,5 +15,5 @@ public interface FileParserFactory
 	 * @param charset File encoding of the file to be parsed
 	 * @return FileParser instance 
 	 */
-	FileParser newFileParser(String filepath, String outputDir, String outputFilename, FileCharset charset);
+	FileParser newFileParser(String filepath, String outputDir, String outputFilename, FileEncoding charset);
 }

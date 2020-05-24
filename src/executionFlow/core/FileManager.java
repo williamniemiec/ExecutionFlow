@@ -46,7 +46,7 @@ public class FileManager
 		this.filename = inputFile.getName().split("\\.")[0];
 		this.fp = fileParserFactory.newFileParser(
 			inputFile.getAbsolutePath(), classOutput, 
-			filename+"_parsed", FileCharset.UTF_8
+			filename+"_parsed", FileEncoding.UTF_8
 		);
 	}
 	
@@ -92,7 +92,7 @@ public class FileManager
 			out = new File(fp.parseFile());
 		} catch(IOException e) {	
 			charsetError = true;
-			fp.setCharset(FileCharset.ISO_8859_1);
+			fp.setCharset(FileEncoding.ISO_8859_1);
 			
 			try {
 				out = new File(fp.parseFile());
@@ -127,9 +127,9 @@ public class FileManager
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding
 		if (charsetError)	
-			return FileCompiler.compile(inputFile, file.toString(), FileCharset.ISO_8859_1);
+			return FileCompiler.compile(inputFile, file.toString(), FileEncoding.ISO_8859_1);
 		else
-			return FileCompiler.compile(inputFile, file.toString(), FileCharset.UTF_8);
+			return FileCompiler.compile(inputFile, file.toString(), FileEncoding.UTF_8);
 	}
 	
 	/**

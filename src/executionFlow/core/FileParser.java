@@ -24,10 +24,10 @@ public interface FileParser
 	 * 
 	 * @return File encoding
 	 */
-	FileCharset getCharset();
+	FileEncoding getCharset();
 	
 	/**
 	 * Sets file encoding.
 	 */
-	void setCharset(FileCharset charset);
+	void setCharset(FileEncoding charset);
 }

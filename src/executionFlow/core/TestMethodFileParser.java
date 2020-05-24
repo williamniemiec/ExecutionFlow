@@ -41,7 +41,7 @@ public class TestMethodFileParser implements FileParser
 	 */
 	private static final boolean DEBUG;
 	
-	private FileCharset charset = FileCharset.UTF_8;
+	private FileEncoding charset = FileEncoding.UTF_8;
 	
 	
 	//-------------------------------------------------------------------------
@@ -101,7 +101,7 @@ public class TestMethodFileParser implements FileParser
 	 * @param outputFilename Name of the parsed file
 	 * @param charset File encoding
 	 */ 
-	public TestMethodFileParser(String filepath, String outputDir, String outputFilename, FileCharset charset)
+	public TestMethodFileParser(String filepath, String outputDir, String outputFilename, FileEncoding charset)
 	{
 		this(filepath, outputDir, outputFilename);
 		this.charset = charset;
@@ -158,13 +158,13 @@ public class TestMethodFileParser implements FileParser
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	@Override
-	public FileCharset getCharset()
+	public FileEncoding getCharset()
 	{
 		return charset;
 	}
 	
 	@Override
-	public void setCharset(FileCharset charset)
+	public void setCharset(FileEncoding charset)
 	{
 		this.charset = charset; 
 	}
