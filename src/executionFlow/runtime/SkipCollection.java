@@ -7,11 +7,9 @@ import java.lang.annotation.Target;
 
 
 /**
- * When a class has this annotation, {@link RuntimeColletor} will ignore it.
+ * When a class has this annotation, all collectors will ignore it.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface SkipCollection 
-{
-	
-}
+{}

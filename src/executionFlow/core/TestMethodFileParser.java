@@ -3,22 +3,8 @@ package executionFlow.core;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.math.BigInteger;
-import java.nio.charset.MalformedInputException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import executionFlow.runtime.SkipMethod;
 
@@ -137,9 +123,10 @@ public class TestMethodFileParser implements FileParser
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
+				// Checks if line with @Test contains @SkipMethod
 				if ( line.contains("@Test") && !line.contains("@executionFlow.runtime.SkipMethod") && 
 					 !line.contains("@SkipMethod") ) {
-					line += " @executionFlow.runtime.SkipMethod";
+					line += " @executionFlow.runtime._SkipMethod";
 				}
 				
 				// -----{ DEBUG }-----
