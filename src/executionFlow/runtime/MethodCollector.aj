@@ -41,6 +41,7 @@ public aspect MethodCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	pointcut methodCollector(): 
 		!cflow(execution(@SkipMethod * *.*())) 
+		&& !cflow(execution(@_SkipMethod * *.*()))
 		&& cflow(execution(@Test * *.*()))
 		&& !execution(public int hashCode())
 //		(cflow(execution(@Test * *.*())) || 
