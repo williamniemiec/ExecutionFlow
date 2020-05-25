@@ -205,20 +205,10 @@ public class JDB
 			
 			if (endOfMethod) { break; }
 			wasNewIteration = false;
-			
+			//System.out.println("CURRENT SKIP: "+skip);
 			// Check if is entering a method
-			if (newIteration) {
-				wasNewIteration = true;
-				// Enters the method, ignoring aspectJ
-				in.send("step into");
-				while (!out.read()) { continue; }
-				
-				while (isInternalCommand) {
-					in.send("next");
-					while (!out.read()) { continue; }
-				}
-			} else if (exitMethod) {
-				skip--;
+			if (exitMethod) {
+				skip--; //System.out.println("CURRENT SKIP: "+skip);
 
 				// Checks if has to skip collected test path
 				if (skip == -1) {
@@ -238,6 +228,16 @@ public class JDB
 				
 				// Check output
 				exitMethod = false;
+			} else if (newIteration) {
+				wasNewIteration = true;
+				// Enters the method, ignoring aspectJ
+				in.send("step into");
+				while (!out.read()) { continue; }
+				
+				while (isInternalCommand) {
+					in.send("next");
+					while (!out.read()) { continue; }
+				}
 			} else if (!endOfMethod) {
 				in.send("next");
 			}
@@ -546,11 +546,9 @@ public class JDB
             		else {
             			newIteration = isNewIteration();
             		}
-
-        			if (isInternalCommand) {
-        				inMethod = false;
-        			} 
-        			else if (isCallToOverloadedMethod()) {
+            		
+        			
+        			if (isCallToOverloadedMethod()) {
         				if (overloadedMethod) {
         					exitMethod = true;
         				} 
@@ -583,6 +581,21 @@ public class JDB
             		}
         		}
 	
+//        		System.out.println("OUT");
+//        		System.out.println(exitMethod);
+//        		System.out.println(skipped);
+//        		System.out.println(newIteration);
+//        		System.out.println(isCallToOverloadedMethod());
+//        		System.out.println(willEnterInMethod());
+//        		System.out.println(inMethod);
+        		
+//        		if (isInternalCommand) {
+//    				inMethod = false;
+//    			}
+        		
+//        		System.out.println(inMethod);
+//        		System.out.println("END OUT");
+        		
 	    		if (endOfMethod) {
 	    			response = true;
 	    		}

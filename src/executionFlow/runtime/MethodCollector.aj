@@ -212,7 +212,7 @@ public aspect MethodCollector extends RuntimeCollector
 		CollectorInfo ci = new CollectorInfo(cmi, order++);
 		lastInvocationLine = invocationLine;
 		
-		System.out.println("COLLECTED: "+ci);
+//		System.out.println("COLLECTED: "+ci);
 		
 		// Collects constructor (if method is not static)
 		if (constructor != null) {

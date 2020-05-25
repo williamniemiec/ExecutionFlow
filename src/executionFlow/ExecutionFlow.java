@@ -144,9 +144,9 @@ public class ExecutionFlow
 					testMethodFileManager.revert();
 				}
 				
-				System.out.println("\n+++++++++++++++++++++++++++");
-				System.out.println(collector.getOrder());
-				System.out.println("+++++++++++++++++++++++++++\n");
+//				System.out.println("\n+++++++++++++++++++++++++++");
+//				System.out.println(collector.getOrder());
+//				System.out.println("+++++++++++++++++++++++++++\n");
 				
 				JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());
 				
@@ -157,7 +157,7 @@ public class ExecutionFlow
 				storeTestPath(tp_jdb, collector);
 			}
 		}
-		System.out.println("RETORNOU");
+		
 		return this;
 	}
 	
