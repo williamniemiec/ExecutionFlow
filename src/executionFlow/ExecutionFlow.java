@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.core.FileManager;
 import executionFlow.core.JDB;
-import executionFlow.core.MethodFileParserFactory;
-import executionFlow.core.TestMethodFileParserFactory;
+import executionFlow.core.file.FileManager;
+import executionFlow.core.file.parser.factory.MethodFileParserFactory;
+import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.exporter.FileExporter;

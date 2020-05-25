@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import executionFlow.core.FileParser;
+import executionFlow.core.file.parser.FileParser;
 
 
 /**

@@ -1,4 +1,4 @@
-package executionFlow.core;
+package executionFlow.core.file.parser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import executionFlow.core.JDB;
+import executionFlow.core.file.FileEncoding;
 import executionFlow.runtime.SkipMethod;
 
 

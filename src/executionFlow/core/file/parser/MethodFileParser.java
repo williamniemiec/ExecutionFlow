@@ -1,4 +1,4 @@
-package executionFlow.core;
+package executionFlow.core.file.parser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import executionFlow.core.file.FileEncoding;
 
 
 /**

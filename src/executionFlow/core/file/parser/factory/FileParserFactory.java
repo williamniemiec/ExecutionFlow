@@ -1,5 +1,7 @@
-package executionFlow.core;
+package executionFlow.core.file.parser.factory;
 
+import executionFlow.core.file.FileEncoding;
+import executionFlow.core.file.parser.FileParser;
 
 /**
  * Responsible for generating {@link FileParser} classes.

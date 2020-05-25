@@ -1,6 +1,8 @@
-package executionFlow.core;
+package executionFlow.core.file.parser;
 
 import java.io.IOException;
+
+import executionFlow.core.file.FileEncoding;
 
 
 /**

@@ -5,6 +5,9 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import executionFlow.core.file.FileEncoding;
+import executionFlow.core.file.parser.FileParser;
+import executionFlow.core.file.parser.MethodFileParser;
 import executionFlow.runtime.SkipCollection;
 
 
