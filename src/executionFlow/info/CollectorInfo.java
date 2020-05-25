@@ -41,7 +41,8 @@ public class CollectorInfo
 	//-----------------------------------------------------------------------
 	@Override
 	public String toString() {
-		return "CollectorInfo [constructorInfo=" + constructorInfo + ", methodInfo=" + methodInfo + "]";
+		return "CollectorInfo [order=" + order + ", constructorInfo=" + 
+				constructorInfo + ", methodInfo=" + methodInfo + "]";
 	}
 
 	

@@ -8,14 +8,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-import executionFlow.ExecutionFlow;
+import executionFlow.*;
 import executionFlow.core.*;
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.info.ClassConstructorInfo;
-import executionFlow.info.ClassMethodInfo;
-import executionFlow.info.CollectorInfo;
-import executionFlow.info.SignaturesInfo;
+import executionFlow.core.file.*;
+import executionFlow.core.file.parser.*;
+import executionFlow.core.file.parser.factory.*;
+import executionFlow.exporter.*;
+import executionFlow.info.*;
+import executionFlow.runtime.*;
 
 
 /**
@@ -54,7 +54,7 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(FileParser)
 		&& !within(FileManager)
 		&& !within(FileParserFactory)
-		&& !within(FileCharset)
+		&& !within(FileEncoding)
 		&& !within(MethodFileParser)
 		&& !within(MethodFileParserFactory)
 		&& !within(TestMethodFileParser)
@@ -108,7 +108,10 @@ public aspect MethodCollector extends RuntimeCollector
 		if (!isMethodSignature(signature)) { return; }
 		
 		// Checks if it is an internal call (if it is, ignore it)
-		if (isInternalCall(signature)) { return; }		
+		if (isInternalCall(signature)) { return; }
+		
+///////////// Ignores calls, because they are caught by 'execution'
+	if (thisJoinPoint.toLongString().contains("execution(")) { return; }
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
@@ -141,13 +144,23 @@ public aspect MethodCollector extends RuntimeCollector
 			key += constructor.getClass().getName()+"@"+Integer.toHexString(constructor.hashCode());
 		}
 		
+		// Checks if the collected constructor is not the constructor of the test method
+		if (constructor != null && isTestMethodConstructor(key)) { return; }
+		
 		// If the method has already been collected, skip it (avoids collect duplicate methods)
+//		System.out.println(";;;;;");
+//		System.out.println(signature);
+//		System.out.println(key);
+//		System.out.println(collectedMethods.contains(key));
+//		System.out.println(thisJoinPoint.getStaticPart().getId());
+//		System.out.println(thisJoinPoint.toLongString());
+//		System.out.println(thisJoinPoint.getThis().toString());
+//		System.out.println(";;;;;");
+		
 		if (collectedMethods.contains(key)) {
 			order++;
 			return; 
 		}
-		// Checks if the collected constructor is not the constructor of the test method
-		if (constructor != null && isTestMethodConstructor(key)) { return; }
 		
 		// Gets class path and source path
 		String testSrcPath = null;
@@ -198,6 +211,8 @@ public aspect MethodCollector extends RuntimeCollector
 
 		CollectorInfo ci = new CollectorInfo(cmi, order++);
 		lastInvocationLine = invocationLine;
+		
+		System.out.println("COLLECTED: "+ci);
 		
 		// Collects constructor (if method is not static)
 		if (constructor != null) {

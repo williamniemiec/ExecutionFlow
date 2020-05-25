@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import executionFlow.ExecutionFlow;
+import executionFlow.*;
 import executionFlow.core.*;
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.info.ClassConstructorInfo;
-import executionFlow.info.ClassMethodInfo;
-import executionFlow.info.CollectorInfo;
-import executionFlow.info.SignaturesInfo;
+import executionFlow.core.file.*;
+import executionFlow.core.file.parser.*;
+import executionFlow.core.file.parser.factory.*;
+import executionFlow.exporter.*;
+import executionFlow.info.*;
+import executionFlow.runtime.*;
 //import junit.extensions.RepeatedTest;
 
 

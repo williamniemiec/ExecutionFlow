@@ -1,13 +1,15 @@
 package executionFlow.runtime;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
-import executionFlow.ExecutionFlow;
+import executionFlow.*;
 import executionFlow.core.*;
+import executionFlow.core.file.*;
+import executionFlow.core.file.parser.*;
+import executionFlow.core.file.parser.factory.*;
 import executionFlow.exporter.*;
 import executionFlow.info.*;
+import executionFlow.runtime.*;
 
 
 /**
@@ -33,7 +35,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		&& !within(FileManager)
 		&& !within(FileCompiler)
 		&& !within(FileParserFactory)
-		&& !within(FileCharset)
+		&& !within(FileEncoding)
 		&& !within(MethodFileParser)
 		&& !within(MethodFileParserFactory)
 		&& !within(TestMethodFileParser)

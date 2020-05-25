@@ -52,6 +52,7 @@ public class JDB
 	private boolean isInternalCommand;
 	private boolean overloadedMethod;
 	private final boolean DEBUG; 
+	private boolean skipped;
 	
 	
 	//-------------------------------------------------------------------------
@@ -209,7 +210,7 @@ public class JDB
 			if (newIteration) {
 				wasNewIteration = true;
 				// Enters the method, ignoring aspectJ
-				in.send("step into");System.out.println("newIt");
+				in.send("step into");
 				while (!out.read()) { continue; }
 				
 				while (isInternalCommand) {
@@ -218,12 +219,12 @@ public class JDB
 				}
 			} else if (exitMethod) {
 				skip--;
-				
+
 				// Checks if has to skip collected test path
-				if (skip < 0) {
+				if (skip == -1) {
 					// Saves test path
 					testPaths.add(testPath);
-					
+
 					// Prepare for next test path
 					testPath = new ArrayList<>();
 					
@@ -231,8 +232,8 @@ public class JDB
 					in.send("cont");
 				} else {
 					testPath.clear();	// Discards computed test path
-					newIteration = true;
-					in.send("step into");System.out.println("skip>=0");
+					skipped = true;
+					in.send("step into");
 				}
 				
 				// Check output
@@ -241,7 +242,6 @@ public class JDB
 				in.send("next");
 			}
 		}
-		
 		in.exit(out);
 		in.close();
 		out.close();
@@ -417,7 +417,7 @@ public class JDB
 		 */
 		public void exit(JDBOutput out) throws IOException
 		{
-			out.readAll();
+			//out.readAll();
 			input.flush();
 			send("clear "+classInvocationSignature+":"+methodInvocationLine);
 			out.readAll();
@@ -537,7 +537,15 @@ public class JDB
         			response = true;
             		srcLine = br.readLine();
         			
-        			newIteration = isNewIteration();
+            		// Checks if last method was skipped
+            		if (skipped) {
+            			newIteration = false;
+            			inMethod = true;
+            			skipped = false;
+            		}
+            		else {
+            			newIteration = isNewIteration();
+            		}
 
         			if (isInternalCommand) {
         				inMethod = false;

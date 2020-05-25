@@ -163,14 +163,18 @@ public class CollectorExecutionFlow
 		
 		// Gets path where .java is
 		String path = extractPathFromSignature(classSignature);
-		
+//		System.out.println("PATH: "+path);
+//		System.out.println(className);
+//		System.out.println(classSignature);
+//		System.out.println(path+className+".java");
+//		System.out.println(rootPath);
 		// Finds absolute path where the source file is
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+className+".java")) {
 		        	srcPath = file.toString();
-		        	
+//		        	System.out.println("FOUND! "+srcPath);
 		        	return FileVisitResult.TERMINATE;
 		        }
 		        

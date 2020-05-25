@@ -71,6 +71,9 @@ public class FileManager
 		return this;
 	}
 	
+	public void revertCompilation()
+	{}
+	
 	/**
 	 * Parses and process file, saving modified file in the same file passed 
 	 * to constructor.
