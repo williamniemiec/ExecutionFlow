@@ -26,6 +26,8 @@ public class FileManager
 	private String classPackage;
 	private boolean charsetError;
 	private FileParser fp;
+	private Path classPath;
+	private Path originalClassPath;
 	
 	
 	//-------------------------------------------------------------------------
@@ -48,9 +50,14 @@ public class FileManager
 		this.originalFile = new File(srcFilePath+".original"); 
 		this.filename = inputFile.getName().split("\\.")[0];
 		this.fp = fileParserFactory.newFileParser(
-			inputFile.getAbsolutePath(), classOutput, 
-			filename+"_parsed", FileEncoding.UTF_8
+			inputFile.getAbsolutePath(), 
+			classOutput, 
+			filename+"_parsed", 
+			FileEncoding.UTF_8
 		);
+		
+		this.classPath = Path.of(classOutput+"/"+filename+".class");
+		this.originalClassPath = Path.of(classOutput+"/"+filename+".class.original");
 	}
 	
 	
@@ -71,8 +78,23 @@ public class FileManager
 		return this;
 	}
 	
-	public void revertCompilation()
-	{}
+	/**
+	 * Deletes modified .class file and restores original .class file.
+	 * 
+	 * @return This object to allow chained calls
+	 * @throws IOException If method is called without creating a backup file
+	 */
+	public FileManager revertCompilation() throws IOException
+	{
+		try {
+			Files.delete(classPath);
+			Files.move(originalClassPath, classPath);
+		} catch (IOException e) {
+			throw new IOException("Revert compilation without backup");
+		}
+		
+		return this;
+	}
 	
 	/**
 	 * Parses and process file, saving modified file in the same file passed 
@@ -87,7 +109,7 @@ public class FileManager
 	public FileManager parseFile() throws IOException
 	{
 		// Saves .java file to allow to restore it after
-		createBackupFile();
+		createSrcBackupFile();
 		
 		// Parses file
 		File out;
@@ -125,6 +147,8 @@ public class FileManager
 		int packageFolders = classPackage.split("\\.").length;
 		Path file = Paths.get(classOutput);
 		
+		//System.out.println("CLASS OUTPUT: "+classOutput+filename);
+		
 		// Sets path to the compiler
 		for (int i=0; i<packageFolders; i++) {
 			file = file.getParent();
@@ -145,7 +169,7 @@ public class FileManager
 	 * @implNote Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
 	 * It will be saved in the same directory of the original file
 	 */
-	private void createBackupFile()
+	private void createSrcBackupFile()
 	{
 		try {
 			Files.copy(
@@ -155,7 +179,29 @@ public class FileManager
 			);
 		} catch (IOException e) {	// If already exists a .original, this means
 			revert();				// that last parsed file was not restored
-			createBackupFile();		// So, restore this file and starts again
+			createSrcBackupFile();		// So, restore this file and starts again
 		}
+	}
+	
+	public FileManager createClassBackupFile()
+	{
+//		System.out.println("BACKUP: "+classPath+" -> "+originalClassPath);
+		try {
+			Files.copy(
+				classPath,
+				originalClassPath, 
+				StandardCopyOption.COPY_ATTRIBUTES
+			);
+		} catch (IOException e) {		// If already exists a .original, this means
+			try {						// that last compiled file was not restored
+				revertCompilation();	
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+			createClassBackupFile();	// So, restore this file and starts again
+		}
+		
+		return this;
 	}
 }

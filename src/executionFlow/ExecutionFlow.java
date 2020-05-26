@@ -134,14 +134,16 @@ public class ExecutionFlow
 				
 				try {
 					methodFileManager.parseFile().compileFile();
-					testMethodFileManager.parseFile().compileFile();
+					testMethodFileManager.parseFile()
+										 .createClassBackupFile()
+										 .compileFile();
 					System.out.println("Processing completed");
 				} catch (Exception e) {
 					System.out.println("[ERROR] "+e.getMessage());
 				} finally {
 					// Reverts parsed file to its original state
 					methodFileManager.revert();
-					testMethodFileManager.revert();
+					testMethodFileManager.revert().revertCompilation();
 				}
 				
 //				System.out.println("\n+++++++++++++++++++++++++++");

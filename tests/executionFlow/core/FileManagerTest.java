@@ -56,6 +56,6 @@ public class FileManagerTest
 			new TestMethodFileParserFactory()
 		);
 		
-		fileManager.parseFile();
+		fileManager.createClassBackupFile().parseFile().revertCompilation();
 	}
 }
