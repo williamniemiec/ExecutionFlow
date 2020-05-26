@@ -177,15 +177,15 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
-		System.out.println();
-		System.out.println("METHOD COLLECTED!");
-		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
+//		System.out.println();
+//		System.out.println("METHOD COLLECTED!");
+//		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
 //		System.out.println(signature);
 //		System.out.println(invocationLine);
 //		System.out.println(classPath);
 //		System.out.println(srcPath);
 //		System.out.println(methodName);
-		System.out.println();
+//		System.out.println();
 		
 		if (lastInvocationLine != invocationLine) {
 			order = 0;

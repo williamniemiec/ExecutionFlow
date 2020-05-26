@@ -53,7 +53,7 @@ public class JDB
 	private boolean overloadedMethod;
 	private final boolean DEBUG; 
 	private boolean skipped;
-	
+	private String testMethodSignature;
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -126,6 +126,8 @@ public class JDB
 	 */
 	public synchronized List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
 	{
+		testMethodSignature = methodInfo.getTestMethodSignature();
+		
 		methodClassSignature = methodInfo.getClassSignature();
 		String methodSignature = methodInfo.getClassSignature()+"."+methodInfo.getMethodName()+"()";
 		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
@@ -163,6 +165,8 @@ public class JDB
 		
 		if (!methodClassPath.isEmpty()) {
 			jdb_classPath += ";"+methodClassPath;
+		} else {
+			jdb_classPath += ";..\\classes\\";
 		}
 		
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
@@ -190,6 +194,7 @@ public class JDB
 	private synchronized void jdb_methodVisitor(String methodSignature, String methodName) throws IOException, InterruptedException 
 	{
 		boolean wasNewIteration = false;
+		int currentSkip = skip;
 		Process process = jdb_start();
 		JDBOutput out = new JDBOutput(process, methodSignature, methodName);
 		JDBInput in = new JDBInput(process);
@@ -203,20 +208,40 @@ public class JDB
 			// Checks if output has finished processing
 			while (!wasNewIteration && !out.read()) { continue; }  
 			
-			if (endOfMethod) { break; }
+//			System.out.println(";;;;;;;;;;;;;;;;;;;;");
+//			System.out.println(endOfMethod);
+//			System.out.println(currentSkip);
+//			System.out.println(skipped);
+//			System.out.println(wasNewIteration);
+//			System.out.println(exitMethod);
+//			System.out.println(testPath);
+//			System.out.println(";;;;;;;;;;;;;;;;;;;;");
+			
+			if (endOfMethod) {
+				// Checks if there is unsaved test path
+				if (testPath.size() > 0) {
+					testPaths.add(testPath);
+				}
+				
+				break; 
+			}
+			
 			wasNewIteration = false;
 			//System.out.println("CURRENT SKIP: "+skip);
 			// Check if is entering a method
 			if (exitMethod) {
-				skip--; //System.out.println("CURRENT SKIP: "+skip);
+				currentSkip--; //System.out.println("CURRENT SKIP: "+skip);
 
 				// Checks if has to skip collected test path
-				if (skip == -1) {
+				if (currentSkip == -1) {
 					// Saves test path
 					testPaths.add(testPath);
 
 					// Prepare for next test path
 					testPath = new ArrayList<>();
+					
+					// Resets skip
+					currentSkip = skip;
 					
 					// Checks if method is in a loop
 					in.send("cont");
@@ -533,8 +558,17 @@ public class JDB
             	isInternalCommand = isInternalMethod();
             	
             	// Checks if JDB has started and is ready to receive debug commands
-        		if ( !endOfMethod && 
+        		if ( !endOfMethod && line.contains("thread=") &&
     				 (line.contains("Breakpoint hit") || line.contains("Step completed")) ) {
+        			
+//        			System.out.println("$$$$$$$$$$");
+//        			System.out.println(newIteration);
+//        			System.out.println(inMethod);
+//        			System.out.println(willEnterInMethod());
+//        			System.out.println(classInvocationSignature);
+//        			System.out.println(testMethodSignature);
+//        			System.out.println("$$$$$$$$$$");
+        			
         			response = true;
             		srcLine = br.readLine();
         			
@@ -559,15 +593,13 @@ public class JDB
         					newIteration = true;
         				}
                 	} 
-        			else if (willEnterInMethod()) {
-            			inMethod = true;
-            		} 
         			else if (inMethod) { 	
         				int lineNumber = jdb_getLine(line);
         				
         				// Checks if returned from the method
-        				if ( line.contains(classInvocationSignature) && 
-    						 line.contains("line="+methodInvocationLine) ) {
+//        				if ( line.contains(classInvocationSignature) && 
+//    						 line.contains("line="+methodInvocationLine) ) {
+        				if (line.contains(testMethodSignature)) {
         					exitMethod = true;
         					newIteration = false;
         					inMethod = false;
@@ -580,8 +612,22 @@ public class JDB
         					}
         				}
             		}
+        			else if (willEnterInMethod()) {
+            			inMethod = true;
+            		}
         		}
-	
+        		
+        		// Checks if it is the end of the method through source line. It
+        		// is necessary because line 
+        		/*if (!line.contains("thread=")) {
+        			if (srcLine != null &&
+    					((srcLine.contains("Breakpoint hit") && srcLine.contains("line="+lastLineTestMethod)) || 
+    					srcLine.contains("The application exited"))
+        			) {
+        				endOfMethod = true;
+        			}
+        		}*/
+//        		System.out.println("EXIT? "+exitMethod);
 //        		System.out.println("OUT");
 //        		System.out.println(exitMethod);
 //        		System.out.println(skipped);
@@ -641,8 +687,8 @@ public class JDB
 		private boolean isEndOfTestMethod()
 		{
 			return 
-				(line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod)) || 
-				line.contains("The application exited");
+					(line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod)) || 
+					line.contains("The application exited");
 		}
 		
 		/**
