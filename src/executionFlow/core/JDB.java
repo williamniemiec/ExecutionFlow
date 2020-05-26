@@ -518,6 +518,7 @@ public class JDB
 			boolean response = false;
 			
 			if (br.ready()) {
+				//System.out.println("");
             	line = br.readLine();
             	
             	if (isEmptyLine() || line.matches("^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t)*$")) { 
@@ -528,7 +529,7 @@ public class JDB
             	if (DEBUG) { System.out.println("LINE: "+line); }
         		// -----{ END DEBUG }-----
         		
-            	endOfMethod = isEndOfTestMethod();
+            	endOfMethod = endOfMethod == true ? endOfMethod : isEndOfTestMethod();
             	isInternalCommand = isInternalMethod();
             	
             	// Checks if JDB has started and is ready to receive debug commands

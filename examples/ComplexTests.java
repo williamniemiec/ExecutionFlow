@@ -62,7 +62,7 @@ public class ComplexTests
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 		AgainstRequirementsTestClass artc2 = new AgainstRequirementsTestClass(true);
 		
-		assertEquals(-1, artc2.factorial(4));
+		assertEquals(-1, artc2.factorial(4)); 
 		assertEquals(24, artc.factorial(4));
 		
 		assertEquals(24, AgainstRequirementsTestClass.staticFactorial(4));

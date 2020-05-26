@@ -138,6 +138,13 @@ public class ExecutionFlow
 										 .createClassBackupFile()
 										 .compileFile();
 					System.out.println("Processing completed");
+					
+					// Computes test path from JDB
+					JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());					
+					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
+					
+					// Stores each computed test path
+					storeTestPath(tp_jdb, collector);
 				} catch (Exception e) {
 					System.out.println("[ERROR] "+e.getMessage());
 				} finally {
@@ -149,14 +156,6 @@ public class ExecutionFlow
 //				System.out.println("\n+++++++++++++++++++++++++++");
 //				System.out.println(collector.getOrder());
 //				System.out.println("+++++++++++++++++++++++++++\n");
-				
-				JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());
-				
-				// Computes test path from JDB
-				tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
-				
-				// Stores each computed test path
-				storeTestPath(tp_jdb, collector);
 			}
 		}
 		
