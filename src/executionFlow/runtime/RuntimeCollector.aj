@@ -134,20 +134,7 @@ public abstract aspect RuntimeCollector
 	 */
 	protected boolean isInternalCall(String signature)
 	{
-		// It is necessary because if it is an internal call, the next will also be
-		if (lastWasInternalCall) {
-			lastWasInternalCall = false;
-			return true;
-		}
-
-		// Checks the execution stack to see if it is an internal call
-		if (!Thread.currentThread().getStackTrace()[3].toString().contains(testMethodPackage) && 
-			!Thread.currentThread().getStackTrace()[4].toString().contains(testMethodPackage)) {
-			lastWasInternalCall = true;
-			return true;
-		}
-		
-		return false;
+		return !Thread.currentThread().getStackTrace()[3].toString().contains(testMethodPackage);
 	}
 	
 	/**

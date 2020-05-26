@@ -85,11 +85,7 @@ public aspect MethodCollector extends RuntimeCollector
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
 
 		// Gets method invocation line
-		int invocationLine = Thread.currentThread().getStackTrace()[3].getLineNumber();
-		
-		// If the test method was ever executed, it is necessary to get 
-		// invocationLine in another way 
-		invocationLine = invocationLine <= 0 ? thisJoinPoint.getSourceLocation().getLine() : invocationLine;
+		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
 		
 		if (invocationLine <= 0) { return; }
 		
@@ -110,8 +106,8 @@ public aspect MethodCollector extends RuntimeCollector
 		// Checks if it is an internal call (if it is, ignore it)
 		if (isInternalCall(signature)) { return; }
 		
-///////////// Ignores calls, because they are caught by 'execution'
-	if (thisJoinPoint.toLongString().contains("execution(")) { return; }
+		// Ignores methods caught by 'execution', because they are caught by 'call'
+		if (thisJoinPoint.toLongString().contains("execution(")) { return; }
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
@@ -181,14 +177,15 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
-//		System.out.println();
-//		System.out.println("METHOD COLLECTED!");
+		System.out.println();
+		System.out.println("METHOD COLLECTED!");
+		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
 //		System.out.println(signature);
 //		System.out.println(invocationLine);
 //		System.out.println(classPath);
 //		System.out.println(srcPath);
 //		System.out.println(methodName);
-//		System.out.println();
+		System.out.println();
 		
 		if (lastInvocationLine != invocationLine) {
 			order = 0;

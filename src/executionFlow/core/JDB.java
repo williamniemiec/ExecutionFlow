@@ -436,7 +436,7 @@ public class JDB
 				os.close();
 				input.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				
 			}
 		}
 		
@@ -629,7 +629,7 @@ public class JDB
 				is.close();
 				br.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				
 			}
 		}
 		
