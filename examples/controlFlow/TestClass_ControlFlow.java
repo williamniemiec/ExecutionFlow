@@ -10,6 +10,9 @@ import java.io.IOException;
  */
 public class TestClass_ControlFlow 
 {
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	/**
 	 * Method with a if-else control flow. It returns if a number is negative,
 	 * is the number zero or number one; otherwise, returns "Number &lt;number&gt;".

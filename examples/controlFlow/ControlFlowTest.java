@@ -7,9 +7,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 
+/**
+ * Tests test path computation in control flow structures.
+ */
 public class ControlFlowTest 
 {
-	/*
 	@Test
 	public void ifElseTest_earlyReturn() 
 	{
@@ -69,8 +71,8 @@ public class ControlFlowTest
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
 		assertEquals('E', tccf.switchCaseMethod('É'));
-	}*/
-/*
+	}
+
 	@Test
 	public void doWhileTest()
 	{
@@ -78,7 +80,7 @@ public class ControlFlowTest
 		
 		assertEquals(7, tccf.doWhileMethod(2,5));
 	}
-	*/
+
 	@Test
 	public void inlineWhile()
 	{
