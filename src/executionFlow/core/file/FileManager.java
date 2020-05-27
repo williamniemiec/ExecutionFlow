@@ -145,6 +145,10 @@ public class FileManager
 	public String compileFile() throws Exception
 	{
 		int packageFolders = classPackage.split("\\.").length;
+		
+		if (packageFolders == 1)
+			packageFolders = 0;
+		
 		Path file = Paths.get(classOutput);
 		
 		//System.out.println("CLASS OUTPUT: "+classOutput+filename);

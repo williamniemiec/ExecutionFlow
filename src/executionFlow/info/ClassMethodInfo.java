@@ -353,9 +353,14 @@ public class ClassMethodInfo
 	
 	public String getTestClassPackage()
 	{
+		return extractPackage(getTestClassSignature());
+	}
+	
+	public String getTestClassSignature()
+	{
 		if (testMethodSignature == null) { return ""; }
 		
-		return extractPackage(extractClassSignature(testMethodSignature));
+		return extractClassSignature(testMethodSignature);
 	}
 	
 	/**
