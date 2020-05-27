@@ -1,6 +1,5 @@
 package executionFlow.core.file;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,11 +71,6 @@ public class FileManager
 	 */
 	public FileManager revertParse() throws IOException
 	{
-//		srcFile.delete();
-//		originalSrcFile.renameTo(srcFile);
-//		
-//		return this;
-//		
 		try {
 			Files.delete(srcFile);
 			Files.move(originalSrcFile, srcFile);
@@ -139,9 +133,6 @@ public class FileManager
 		}
 		
 		// Changes parsed file name to the same as received filename
-//		srcFile.delete();
-//		out.renameTo(srcFile);
-		
 		Files.delete(srcFile);
 		Files.move(out, srcFile);
 		
