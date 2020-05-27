@@ -19,15 +19,15 @@ public class FileManager
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private File inputFile;
-	private File originalFile; 
+	private Path srcFile;
+	private Path originalSrcFile; 
+	private Path classPath;
+	private Path originalClassPath;
 	private String filename;
 	private String classOutput;
 	private String classPackage;
-	private boolean charsetError;
 	private FileParser fp;
-	private Path classPath;
-	private Path originalClassPath;
+	private boolean charsetError;
 	
 	
 	//-------------------------------------------------------------------------
@@ -46,16 +46,15 @@ public class FileManager
 	{
 		this.classOutput = classOutput;
 		this.classPackage = classPackage;
-		this.inputFile = new File(srcFilePath);
-		this.originalFile = new File(srcFilePath+".original"); 
-		this.filename = inputFile.getName().split("\\.")[0];
+		this.srcFile = Path.of(srcFilePath);
+		this.originalSrcFile = Path.of(srcFilePath+".original"); 
+		this.filename = srcFile.getName(srcFile.getNameCount()-1).toString().split("\\.")[0];
 		this.fp = fileParserFactory.newFileParser(
-			inputFile.getAbsolutePath(), 
+			srcFile.toAbsolutePath().toString(), 
 			classOutput, 
 			filename+"_parsed", 
 			FileEncoding.UTF_8
 		);
-		
 		this.classPath = Path.of(classOutput+"/"+filename+".class");
 		this.originalClassPath = Path.of(classOutput+"/"+filename+".class.original");
 	}
@@ -69,11 +68,21 @@ public class FileManager
 	 * delete .class file of modified file, only .java file.
 	 * 
 	 * @return This object to allow chained calls
+	 * @throws IOException If method is called without creating a backup file
 	 */
-	public FileManager revertParse()
+	public FileManager revertParse() throws IOException
 	{
-		inputFile.delete();
-		originalFile.renameTo(inputFile);
+//		srcFile.delete();
+//		originalSrcFile.renameTo(srcFile);
+//		
+//		return this;
+//		
+		try {
+			Files.delete(srcFile);
+			Files.move(originalSrcFile, srcFile);
+		} catch (IOException e) {
+			throw new IOException("Revert parse without backup");
+		}
 		
 		return this;
 	}
@@ -112,26 +121,29 @@ public class FileManager
 		createSrcBackupFile();
 		
 		// Parses file
-		File out;
+		Path out;
 		
 		// Tries to parse file using UTF-8 encoding. If an error occurs, tries 
 		// to parse the file using ISO-8859-1 encoding
 		try {	
-			out = new File(fp.parseFile());
+			out = Path.of(fp.parseFile());
 		} catch(IOException e) {	
 			charsetError = true;
 			fp.setCharset(FileEncoding.ISO_8859_1);
 			
 			try {
-				out = new File(fp.parseFile());
+				out = Path.of(fp.parseFile());
 			} catch (IOException e1) {
 				throw new IOException("Parsing failed");
 			}
 		}
 		
 		// Changes parsed file name to the same as received filename
-		inputFile.delete();
-		out.renameTo(inputFile);
+//		srcFile.delete();
+//		out.renameTo(srcFile);
+		
+		Files.delete(srcFile);
+		Files.move(out, srcFile);
 		
 		return this;
 	}
@@ -151,8 +163,6 @@ public class FileManager
 		
 		Path file = Paths.get(classOutput);
 		
-		//System.out.println("CLASS OUTPUT: "+classOutput+filename);
-		
 		// Sets path to the compiler
 		for (int i=0; i<packageFolders; i++) {
 			file = file.getParent();
@@ -161,9 +171,9 @@ public class FileManager
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding
 		if (charsetError)	
-			return FileCompiler.compile(inputFile, file.toString(), FileEncoding.ISO_8859_1);
+			return FileCompiler.compile(srcFile, file.toString(), FileEncoding.ISO_8859_1);
 		else
-			return FileCompiler.compile(inputFile, file.toString(), FileEncoding.UTF_8);
+			return FileCompiler.compile(srcFile, file.toString(), FileEncoding.UTF_8);
 	}
 	
 	/**
@@ -177,33 +187,35 @@ public class FileManager
 	{
 		try {
 			Files.copy(
-				inputFile.toPath(), 
-				originalFile.toPath(), 
+				srcFile, 
+				originalSrcFile, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
-		} catch (IOException e) {	// If already exists a .original, this means
-			revertParse();				// that last parsed file was not restored
-			createSrcBackupFile();		// So, restore this file and starts again
+		} catch (IOException e) {		// If already exists a .original, this means
+			try {						// that last parsed file was not restored
+				revertParse();			
+				createSrcBackupFile();	// So, restore this file and starts again
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}				
 		}
 	}
 	
 	public FileManager createClassBackupFile()
 	{
-//		System.out.println("BACKUP: "+classPath+" -> "+originalClassPath);
 		try {
 			Files.copy(
 				classPath,
 				originalClassPath, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
-		} catch (IOException e) {		// If already exists a .original, this means
-			try {						// that last compiled file was not restored
+		} catch (IOException e) {			// If already exists a .original, this means
+			try {							// that last compiled file was not restored
 				revertCompilation();	
+				createClassBackupFile();	// So, restore this file and starts again
 			} catch (IOException e1) {
 				e1.printStackTrace();
-			}
-			
-			createClassBackupFile();	// So, restore this file and starts again
+			}			
 		}
 		
 		return this;

@@ -1,6 +1,7 @@
 package executionFlow.core.file;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -17,13 +18,13 @@ public class FileCompiler
 	/**
 	 * Compiles .java file.
 	 * 
-	 * @param fileToCompile Absolute path of source file to be compiled
+	 * @param fileToCompile Path of source file to be compiled
 	 * @param outputDir Path where generated .class will be saved
 	 * @param charset File encoding
 	 * @return Path of generated .class
 	 * @throws Exception If an error occurs during compilation
 	 */
-	public static String compile(File fileToCompile, String outputDir, FileEncoding charset) throws Exception
+	public static String compile(Path fileToCompile, String outputDir, FileEncoding charset) throws Exception
 	{
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		int compilationResult =	compiler.run(
@@ -34,7 +35,7 @@ public class FileCompiler
 				charset.getText(),
 				"-d", 
 				outputDir, 
-				fileToCompile.getAbsolutePath()
+				fileToCompile.toAbsolutePath().toString()
 			}
 		);
 		
@@ -42,6 +43,8 @@ public class FileCompiler
 			throw new Exception("Compilation Failed");
 		}
 		
-		return outputDir+"\\"+fileToCompile.getName().split("\\.")[0]+".class";
+		String filename = fileToCompile.getName(fileToCompile.getNameCount()-1).toString();
+		
+		return outputDir+"\\"+filename.split("\\.")[0]+".class";
 	}
 }
