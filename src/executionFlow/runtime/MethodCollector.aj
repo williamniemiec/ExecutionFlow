@@ -116,11 +116,6 @@ public aspect MethodCollector extends RuntimeCollector
 		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
 		String methodSig = classSignature+"."+methodName;
 		
-//		System.out.println("+-+-+-+-+-+-+-+-+-+-");
-//		System.out.println("signature: "+signature);
-//		System.out.println("methodSig: "+methodSig);
-//		System.out.println("+-+-+-+-+-+-+-+-+-+-");
-		
 		// If it is not, ignores it
 		if (!signature.contains(methodSig)) { return; }
 		
@@ -144,15 +139,6 @@ public aspect MethodCollector extends RuntimeCollector
 		if (constructor != null && isTestMethodConstructor(key)) { return; }
 		
 		// If the method has already been collected, skip it (avoids collect duplicate methods)
-//		System.out.println(";;;;;");
-//		System.out.println(signature);
-//		System.out.println(key);
-//		System.out.println(collectedMethods.contains(key));
-//		System.out.println(thisJoinPoint.getStaticPart().getId());
-//		System.out.println(thisJoinPoint.toLongString());
-//		System.out.println(thisJoinPoint.getThis().toString());
-//		System.out.println(";;;;;");
-		
 		if (collectedMethods.contains(key)) {
 			order++;
 			return; 
@@ -163,29 +149,19 @@ public aspect MethodCollector extends RuntimeCollector
 		try {
 			// Class path and source path from method
 			String className = CollectorExecutionFlow.getClassName(classSignature);
-			classPath = CollectorExecutionFlow.findCurrentClassPath(className, classSignature);
-			srcPath = CollectorExecutionFlow.findCurrentSrcPath(className, classSignature);
+			classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
+			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
 			// Class path and source path from test method
 			String testClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
 			String testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
-			testSrcPath = CollectorExecutionFlow.findCurrentSrcPath(testClassName, testClassSignature);
+			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
-		
-//		System.out.println();
-//		System.out.println("METHOD COLLECTED!");
-//		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
-//		System.out.println(signature);
-//		System.out.println(invocationLine);
-//		System.out.println(classPath);
-//		System.out.println(srcPath);
-//		System.out.println(methodName);
-//		System.out.println();
 		
 		if (lastInvocationLine != invocationLine) {
 			order = 0;
@@ -208,8 +184,6 @@ public aspect MethodCollector extends RuntimeCollector
 
 		CollectorInfo ci = new CollectorInfo(cmi, order++);
 		lastInvocationLine = invocationLine;
-		
-//		System.out.println("COLLECTED: "+ci);
 		
 		// Collects constructor (if method is not static)
 		if (constructor != null) {

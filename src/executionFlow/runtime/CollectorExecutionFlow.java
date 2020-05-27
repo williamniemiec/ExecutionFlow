@@ -59,8 +59,10 @@ public class CollectorExecutionFlow
 				sb.append(".");
 			}
 			
-			if (sb.length() > 0)
-				sb.deleteCharAt(sb.length()-1);		// Removes last dot
+			if (sb.length() > 0) {
+				// Removes last dot
+				sb.deleteCharAt(sb.length()-1);		
+			}
 			
 			response = sb.toString();
 		}
@@ -78,8 +80,10 @@ public class CollectorExecutionFlow
 			response.append(".");
 		}
 		
-		if (response.length() > 0)
-			response.deleteCharAt(response.length()-1);		// Removes last dot
+		if (response.length() > 0) {
+			// Removes last dot
+			response.deleteCharAt(response.length()-1);		
+		}
 		
 		return response.toString();
 	}
@@ -123,7 +127,7 @@ public class CollectorExecutionFlow
 	 * @return Absolute path of the class
 	 * @throws IOException If class does not exist
 	 */
-	public static String findCurrentClassPath(String className, String classSignature) throws IOException 
+	public static String findClassPath(String className, String classSignature) throws IOException 
 	{
 		if (rootPath == null) {
 			rootPath = findProjectRoot().toPath();
@@ -155,7 +159,7 @@ public class CollectorExecutionFlow
 	 * @return Absolute path of source file of current execution class
 	 * @throws IOException If class does not exist
 	 */
-	public static String findCurrentSrcPath(String className, String classSignature) throws IOException 
+	public static String findSrcPath(String className, String classSignature) throws IOException 
 	{
 		if (rootPath == null) {
 			rootPath = findProjectRoot().toPath();
@@ -163,18 +167,13 @@ public class CollectorExecutionFlow
 		
 		// Gets path where .java is
 		String path = extractPathFromSignature(classSignature);
-//		System.out.println("PATH: "+path);
-//		System.out.println(className);
-//		System.out.println(classSignature);
-//		System.out.println(path+className+".java");
-//		System.out.println(rootPath);
+		
 		// Finds absolute path where the source file is
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+className+".java")) {
 		        	srcPath = file.toString();
-//		        	System.out.println("FOUND! "+srcPath);
 		        	return FileVisitResult.TERMINATE;
 		        }
 		        

@@ -58,7 +58,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	/**
 	 * Executed before each method with <code>@Test</code> annotation.
 	 */
-	
 	before(): testMethodCollector()
 	{
 		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
@@ -72,7 +71,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		try {
 			String className = thisJoinPoint.getTarget().getClass().getSimpleName();
 			String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-			testClassPath = CollectorExecutionFlow.findCurrentClassPath(className, classSignature);
+			testClassPath = CollectorExecutionFlow.findClassPath(className, classSignature);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
