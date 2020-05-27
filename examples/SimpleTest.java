@@ -7,7 +7,7 @@ import testClasses.TestClass;
 
 public class SimpleTest 
 {
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void testFactorial() 
 	{
 		int num = 4;
