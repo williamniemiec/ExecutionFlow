@@ -85,6 +85,7 @@ public class JDB
 	private boolean skipped;
 	private final boolean DEBUG; 
 	
+	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
@@ -140,10 +141,10 @@ public class JDB
 	 */
 	public synchronized List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
 	{ 
-		String methodClassRootPath;	// Path of where is compiled file of method class.
-		String srcRootPath;			// Root path of where is source file of the method.
-		String testClassRootPath;	// Root path where compiled file of test method class is. It 
-									// will be used as JDB root directory.
+		String methodClassRootPath;	// Root path where the compiled file of method class is
+		String srcRootPath;			// Root path where the source file of the method is
+		String testClassRootPath;	// Root path where the compiled file of test method class is. It 
+									// will be used as JDB root directory
 		
 		// Gets information about the method to be analyzed
 		methodClassSignature = methodInfo.getClassSignature();
@@ -169,26 +170,29 @@ public class JDB
 	/**
 	 * Initializes JDB and prepare it for executing methods within test methods.
 	 * 
+	 * @param testClassRootPath Root path where the compiled file of test method class is
+	 * @param srcRootPath Root path where the source file of the method is
+	 * @param methodClassRootPath Root path where the compiled file of method class is
 	 * @return Process running JDB
 	 * @throws IOException If the process cannot be created
 	 */
-	private synchronized Process jdb_start(String classPathRoot, String srcPath, String methodClassDir) throws IOException
+	private synchronized Process jdb_start(String testClassRootPath, String srcRootPath, String methodClassRootPath) throws IOException
 	{
-		if (srcPath.isEmpty())
+		if (srcRootPath.isEmpty())
 			throw new IllegalStateException("Source file path cannot be empty");
 		
 		// Gets paths
 		findLibs(getAppRootPath());
 		
 		// Configures JDB, indicating path of libraries, classes and source files
-		String methodClassPath = Paths.get(classPathRoot).relativize(Path.of(methodClassDir)).toString();
-		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
+		String methodClassPath = Paths.get(testClassRootPath).relativize(Path.of(methodClassRootPath)).toString();
+		String libPath_relative = Paths.get(testClassRootPath).relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
 		String lib_junit = libPath_relative+"junit-4.13.jar";
 		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
 		String jdb_classPath = "-classpath .;"+libs;
-		String jdb_srcPath = "-sourcepath "+Paths.get(classPathRoot).relativize(Paths.get(srcPath));
+		String jdb_srcPath = "-sourcepath "+Paths.get(testClassRootPath).relativize(Paths.get(srcRootPath));
 		
 		if (!methodClassPath.isEmpty()) {
 			jdb_classPath += ";"+methodClassPath;
@@ -201,7 +205,7 @@ public class JDB
 		
 		// -----{ DEBUG }-----
 		if (DEBUG) {
-			System.out.println("classPathRoot: "+classPathRoot);
+			System.out.println("testClassRootPath: "+testClassRootPath);
 			System.out.println("jdb_paths: "+jdb_paths);
 		}
 		// -----{ END DEBUG }-----
@@ -211,7 +215,7 @@ public class JDB
 			"cmd.exe","/c","jdb "+jdb_paths,
 			"org.junit.runner.JUnitCore",classInvocationSignature
 		);
-		pb.directory(new File(classPathRoot));
+		pb.directory(new File(testClassRootPath));
 		
 		return pb.start();
 	}
@@ -238,14 +242,6 @@ public class JDB
 			// Checks if output has finished processing
 			while (!wasNewIteration && !out.read()) { continue; }  
 			
-//			System.out.println(";;;;;;;;;;;;;;;;;;;;");
-//			System.out.println(endOfMethod);
-//			System.out.println(currentSkip);
-//			System.out.println(skipped);
-//			System.out.println(wasNewIteration);
-//			System.out.println(exitMethod);
-//			System.out.println(testPath);
-//			System.out.println(";;;;;;;;;;;;;;;;;;;;");
 			wasNewIteration = false;
 			
 			if (endOfMethod) {
@@ -511,7 +507,6 @@ public class JDB
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		//InputStream is;
 		BufferedReader output;
     	String methodSignature;
     	String methodName;
@@ -574,15 +569,6 @@ public class JDB
             	// Checks if JDB has started and is ready to receive debug commands
         		if ( !endOfMethod && line.contains("thread=") &&
     				 (line.contains("Breakpoint hit") || line.contains("Step completed")) ) {
-        			
-//        			System.out.println("$$$$$$$$$$");
-//        			System.out.println(newIteration);
-//        			System.out.println(inMethod);
-//        			System.out.println(willEnterInMethod());
-//        			System.out.println(classInvocationSignature);
-//        			System.out.println(testMethodSignature);
-//        			System.out.println("$$$$$$$$$$");
-        			
         			response = true;
             		srcLine = output.readLine();
         			
@@ -630,23 +616,6 @@ public class JDB
             		}
         		}
         		
-        		
-//        		System.out.println("EXIT? "+exitMethod);
-//        		System.out.println("OUT");
-//        		System.out.println(exitMethod);
-//        		System.out.println(skipped);
-//        		System.out.println(newIteration);
-//        		System.out.println(isCallToOverloadedMethod());
-//        		System.out.println(willEnterInMethod());
-//        		System.out.println(inMethod);
-        		
-//        		if (isInternalCommand) {
-//    				inMethod = false;
-//    			}
-        		
-//        		System.out.println(inMethod);
-//        		System.out.println("END OUT");
-        		
 	    		if (endOfMethod) {
 	    			response = true;
 	    		}
@@ -677,9 +646,8 @@ public class JDB
 		{
 			try {
 				output.close();
-			} catch (IOException e) {
-				
-			}
+			} catch (IOException e) 
+			{}
 		}
 		
 		/**
@@ -791,5 +759,4 @@ public class JDB
 					srcLine.matches(regex_emptyMethod);
 		}
 	}
-	
 }
