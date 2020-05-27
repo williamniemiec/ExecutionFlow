@@ -11,13 +11,13 @@ public class BuilderPatternTest
 	@Test
 	public void testBuilderPattern()
 	{
-		Contact contact = new Contact.ContactBuilder()
+		Person person = new Person.ContactBuilder()
 			.firstName("My first name")
 			.lastName("My last name")
 			.age(21)
 			.email("test@gmail.com")
 			.build();
 		
-		contact.print();
+		person.print();
 	}
 }
