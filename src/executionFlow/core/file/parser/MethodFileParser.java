@@ -3,15 +3,8 @@ package executionFlow.core.file.parser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.math.BigInteger;
-import java.nio.charset.MalformedInputException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,7 +27,6 @@ public class MethodFileParser implements FileParser
 	//-------------------------------------------------------------------------
 	private File file;
 	private File outputDir;
-	//private static final String generateVarName();
 	private String outputFilename;
 	private boolean elseNoCurlyBrackets;
 	private boolean skipNextLine;
@@ -127,11 +119,9 @@ public class MethodFileParser implements FileParser
 	{
 		if (file == null) { return ""; }
 
-		// Initialization of variables
 		final String regex_varDeclarationWithoutInitialization = "( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
 		final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 		final String regex_new = "(\\ |\\t)+new(\\ |\\t)*";
-		final String regex_classDeclaration = "^(\\ |\\t)*(\\@.*\\ )?([A-z0-9\\-_$<>]+(\\ |\\t))+class(\\ )([A-z0-9\\-_$<>]+(\\ |\\t)*(\\{||))$";
 		final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
 		final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
 		final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
@@ -142,7 +132,6 @@ public class MethodFileParser implements FileParser
 		File outputFile;
 		boolean inMethod = false;
 		ElseBlockManager elseBlockManager = new ElseBlockManager();
-		
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -202,22 +191,8 @@ public class MethodFileParser implements FileParser
 					continue;
 				}
 				
-				// Checks if it is a class declaration
-				/*if (line.matches(regex_classDeclaration)) {
-					bw.write("@executionFlow.runtime.SkipCollection "+line);
-					bw.newLine();
-					
-					// -----{ DEBUG }-----
-					if (DEBUG) { System.out.println(line); }
-					// -----{ END DEBUG }-----
-					
-					continue;
-				}*/
-				
 				// Checks if it is a method declaration
 				if (!line.matches(regex_new) && pattern_methodDeclaration.matcher(line).find()) {
-					//alreadyDeclared = false;
-					
 					bw.write(line);						
 					bw.newLine();
 					
