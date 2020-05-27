@@ -17,8 +17,8 @@ import executionFlow.info.SignaturesInfo;
 
 
 /**
- * Given a class path and specific methods calculate the execution path for each
- * of these methods. This is the main class of execution flow.
+ * Given a class path and specific methods calculate test path for each
+ * of these methods. This is the main class of the application.
  */
 @SuppressWarnings("unused")
 public class ExecutionFlow 
@@ -57,17 +57,14 @@ public class ExecutionFlow
 	 */
 	private int lastLineTestMethod;
 	
-	private final boolean DEBUG;
-	
 	
 	//-----------------------------------------------------------------------
 	//		Initialization block
 	//-----------------------------------------------------------------------
 	/**
-	 * Defines how the export will be done and debug configuration.
+	 * Defines how the export will be done.
 	 */
 	{
-		DEBUG = false;
 		classPaths = new HashMap<>();
 		
 		exporter = new ConsoleExporter(classPaths);
@@ -113,11 +110,8 @@ public class ExecutionFlow
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			// Computes test path for each collected method that is invoked in the same line
-			// JDB will take care computing test path for each method that is invoked in the same line
-			//CollectorInfo collector = collectors.get(0);	
 			for (CollectorInfo collector : collectors) {
-				// Parses file
-				System.out.println("Processing source file...");
+				// Gets FileManager for method file
 				FileManager methodFileManager = new FileManager(
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
@@ -125,6 +119,7 @@ public class ExecutionFlow
 					new MethodFileParserFactory()
 				);
 				
+				// Gets FileManager for test method file
 				FileManager testMethodFileManager = new FileManager(
 					collector.getMethodInfo().getTestSrcPath(), 
 					collector.getMethodInfo().getTestClassDirectory(),
@@ -133,13 +128,18 @@ public class ExecutionFlow
 				);
 				
 				try {
+					System.out.println("Processing method source file...");
 					methodFileManager.parseFile().compileFile();
+					
+					System.out.println("Processing test method source file...");
 					testMethodFileManager.parseFile()
 										 .createClassBackupFile()
 										 .compileFile();
+					
 					System.out.println("Processing completed");
 					
 					// Computes test path from JDB
+					System.out.println("Computing test path...");
 					JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());					
 					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
 					
@@ -149,13 +149,9 @@ public class ExecutionFlow
 					System.out.println("[ERROR] "+e.getMessage());
 				} finally {
 					// Reverts parsed file to its original state
-					methodFileManager.revert();
-					testMethodFileManager.revert().revertCompilation();
+					methodFileManager.revertParse();
+					testMethodFileManager.revertParse().revertCompilation();
 				}
-				
-//				System.out.println("\n+++++++++++++++++++++++++++");
-//				System.out.println(collector.getOrder());
-//				System.out.println("+++++++++++++++++++++++++++\n");
 			}
 		}
 		

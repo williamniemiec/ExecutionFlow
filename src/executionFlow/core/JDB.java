@@ -201,8 +201,6 @@ public class JDB
 		
 		in.init();
 		
-		System.out.println("Computing test path...");
-		
 		// Executes while inside the method
 		while (!endOfMethod) {
 			// Checks if output has finished processing

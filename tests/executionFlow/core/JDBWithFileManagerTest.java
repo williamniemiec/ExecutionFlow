@@ -29,7 +29,7 @@ public class JDBWithFileManagerTest
 		);
 		
 		String classPath = fileManager.parseFile().compileFile();
-		fileManager.revert();
+		fileManager.revertParse();
 		
 		int lastLineTestMethod = 56;
 		JDB jdb = new JDB(lastLineTestMethod);

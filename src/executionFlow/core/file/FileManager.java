@@ -70,7 +70,7 @@ public class FileManager
 	 * 
 	 * @return This object to allow chained calls
 	 */
-	public FileManager revert()
+	public FileManager revertParse()
 	{
 		inputFile.delete();
 		originalFile.renameTo(inputFile);
@@ -104,7 +104,7 @@ public class FileManager
 	 * @throws IOException If file encoding cannot be defined
 	 * 
 	 * @implNote This function overwrite file passed to the constructor! To
-	 * restore the original file, call {@link #revert()} function.
+	 * restore the original file, call {@link #revertParse()} function.
 	 */
 	public FileManager parseFile() throws IOException
 	{
@@ -178,7 +178,7 @@ public class FileManager
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
 		} catch (IOException e) {	// If already exists a .original, this means
-			revert();				// that last parsed file was not restored
+			revertParse();				// that last parsed file was not restored
 			createSrcBackupFile();		// So, restore this file and starts again
 		}
 	}
