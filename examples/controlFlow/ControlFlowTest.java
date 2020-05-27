@@ -70,12 +70,36 @@ public class ControlFlowTest
 		
 		assertEquals('E', tccf.switchCaseMethod('É'));
 	}*/
-
+/*
 	@Test
 	public void doWhileTest()
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
 		assertEquals(7, tccf.doWhileMethod(2,5));
+	}
+	*/
+	@Test
+	public void inlineWhile()
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		
+		assertEquals(0, tccf.inlineWhile(2));
+	}
+	
+	@Test
+	public void inlineDoWhile()
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		
+		assertEquals(0, tccf.inlineDoWhile(2));
+	}
+	
+	@Test
+	public void inlineIfElse()
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		
+		assertTrue(tccf.inlineIfElse(2));
 	}
 }
