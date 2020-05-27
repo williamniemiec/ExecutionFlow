@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
@@ -27,61 +25,77 @@ import executionFlow.info.ClassMethodInfo;
 
 
 /**
- * Computes test path from code debug.
+ * Computes test path from code debugging.
  */
 public class JDB 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private String classPathRoot;
-	private String methodClassDir;
+	/**
+	 * Stores signature of the class of the method.
+	 */
 	private String methodClassSignature;
+	
+	/**
+	 * Stores signature of the class of the test method.
+	 */
 	private String classInvocationSignature;
-	private static String appPath;
-	private String srcPath;
+	
+	/**
+	 * Stores signature of the test method.
+	 */
+	private String testMethodSignature;
+	
+	/**
+	 * Last line of test method (line of last curly bracket).
+	 */
 	private int lastLineTestMethod;
+	
+	/**
+	 * Line of test method that the method is called.
+	 */
 	private int methodInvocationLine;
+	
+	/**
+	 * Number of method invocations to be ignored before computing test path.
+	 */
 	private int skip;
+	
+	/**
+	 * Stores current test path.
+	 */
 	private List<Integer> testPath;
+	
+	/**
+	 * Stores all computed test paths.
+	 */
 	private List<List<Integer>> testPaths;
-	private static Path libPath;
+	
+	/**
+	 * Path of application libraries.
+	 */
+	private Path libPath;
+	
 	private boolean endOfMethod;
 	private boolean newIteration;
 	private boolean exitMethod;
 	private boolean isInternalCommand;
 	private boolean overloadedMethod;
-	private final boolean DEBUG; 
 	private boolean skipped;
-	private String testMethodSignature;
+	private final boolean DEBUG; 
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	/**
-	 * Enables or disables debug. If activated, shows shell output during JDB 
+	 * Enables or disables debug. If activated, displays shell output during JDB 
 	 * execution.
 	 */
 	{
 		DEBUG = true;
 	}
-	
-	/**
-	 * Computes and stores application root path, based on class 
-	 * {@link ExecutionFlow} location.
-	 */
-	static {
-		try {
-			appPath = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
-				    .toURI()).getPath();
-			appPath = new File(appPath+"../").getParent();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		
-		findLibs();
-	}
-	
+
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
@@ -125,20 +139,29 @@ public class JDB
 	 * @throws Throwable If an error occurs
 	 */
 	public synchronized List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
-	{
-		testMethodSignature = methodInfo.getTestMethodSignature();
+	{ 
+		String methodClassRootPath;	// Path of where is compiled file of method class.
+		String srcRootPath;			// Root path of where is source file of the method.
+		String testClassRootPath;	// Root path where compiled file of test method class is. It 
+									// will be used as JDB root directory.
 		
+		// Gets information about the method to be analyzed
 		methodClassSignature = methodInfo.getClassSignature();
-		String methodSignature = methodInfo.getClassSignature()+"."+methodInfo.getMethodName()+"()";
-		classInvocationSignature = extractClassSignature(methodInfo.getTestMethodSignature());
+		
+		// Gets information about the test method of the method to be analyzed
+		testMethodSignature = methodInfo.getTestMethodSignature();
+		classInvocationSignature = methodInfo.getTestClassSignature();
 		methodInvocationLine = methodInfo.getInvocationLine();
 		
-		// Gets class path root (using test method class directory)
-		classPathRoot = extractRootPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
-		srcPath = extractRootPathDirectory(methodInfo.getSrcPath(), methodInfo.getPackage());
-		methodClassDir = extractRootPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
+		// Gets paths
+		srcRootPath = extractRootPathDirectory(methodInfo.getSrcPath(), methodInfo.getPackage());
+		methodClassRootPath = extractRootPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
+		testClassRootPath = extractRootPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
+				
+		Process process = jdb_start(testClassRootPath, srcRootPath, methodClassRootPath);
 		
-		jdb_methodVisitor(methodSignature, methodInfo.getMethodName());
+		String methodSignature = methodInfo.getClassSignature()+"."+methodInfo.getMethodName()+"()";
+		jdb_methodVisitor(process, methodSignature, methodInfo.getMethodName());
 		
 		return testPaths;
 	}
@@ -149,11 +172,15 @@ public class JDB
 	 * @return Process running JDB
 	 * @throws IOException If the process cannot be created
 	 */
-	private synchronized Process jdb_start() throws IOException
+	private synchronized Process jdb_start(String classPathRoot, String srcPath, String methodClassDir) throws IOException
 	{
 		if (srcPath.isEmpty())
-			throw new IllegalStateException("Source file path is empty");
-				
+			throw new IllegalStateException("Source file path cannot be empty");
+		
+		// Gets paths
+		findLibs(getAppRootPath());
+		
+		// Configures JDB, indicating path of libraries, classes and source files
 		String methodClassPath = Paths.get(classPathRoot).relativize(Path.of(methodClassDir)).toString();
 		String libPath_relative = Paths.get(classPathRoot).relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
@@ -165,16 +192,21 @@ public class JDB
 		
 		if (!methodClassPath.isEmpty()) {
 			jdb_classPath += ";"+methodClassPath;
-		} else {
+		} 
+		else {
 			jdb_classPath += ";..\\classes\\";
 		}
 		
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
 		
-		System.out.println("CPR: "+classPathRoot);
-		System.out.println("jdb_paths: "+jdb_paths);
-		System.out.println();
+		// -----{ DEBUG }-----
+		if (DEBUG) {
+			System.out.println("classPathRoot: "+classPathRoot);
+			System.out.println("jdb_paths: "+jdb_paths);
+		}
+		// -----{ END DEBUG }-----
 		
+		// Runs JDB from CMD
 		ProcessBuilder pb = new ProcessBuilder(
 			"cmd.exe","/c","jdb "+jdb_paths,
 			"org.junit.runner.JUnitCore",classInvocationSignature
@@ -191,17 +223,17 @@ public class JDB
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	private synchronized void jdb_methodVisitor(String methodSignature, String methodName) throws IOException, InterruptedException 
+	private synchronized void jdb_methodVisitor(Process process, String methodSignature, String methodName) throws IOException, InterruptedException 
 	{
 		boolean wasNewIteration = false;
 		int currentSkip = skip;
-		Process process = jdb_start();
 		JDBOutput out = new JDBOutput(process, methodSignature, methodName);
 		JDBInput in = new JDBInput(process);
 		
+		// Initializes JDB
 		in.init();
 		
-		// Executes while inside the method
+		// Executes while inside the test method
 		while (!endOfMethod) {
 			// Checks if output has finished processing
 			while (!wasNewIteration && !out.read()) { continue; }  
@@ -214,21 +246,17 @@ public class JDB
 //			System.out.println(exitMethod);
 //			System.out.println(testPath);
 //			System.out.println(";;;;;;;;;;;;;;;;;;;;");
+			wasNewIteration = false;
 			
 			if (endOfMethod) {
 				// Checks if there is unsaved test path
-				if (testPath.size() > 0) {
+				if (testPath.size() > 0) {	// If there is one, save it
 					testPaths.add(testPath);
-				}
-				
-				break; 
+				} 
 			}
-			
-			wasNewIteration = false;
-			//System.out.println("CURRENT SKIP: "+skip);
-			// Check if is entering a method
-			if (exitMethod) {
-				currentSkip--; //System.out.println("CURRENT SKIP: "+skip);
+			// Checks if has exit the method
+			else if (exitMethod) {
+				currentSkip--; 
 
 				// Checks if has to skip collected test path
 				if (currentSkip == -1) {
@@ -241,7 +269,7 @@ public class JDB
 					// Resets skip
 					currentSkip = skip;
 					
-					// Checks if method is in a loop
+					// Checks if method is within a loop
 					in.send("cont");
 				} else {
 					testPath.clear();	// Discards computed test path
@@ -249,10 +277,12 @@ public class JDB
 					in.send("step into");
 				}
 				
-				// Check output
+				// Resets exit method
 				exitMethod = false;
-			} else if (newIteration) {
+			} 
+			else if (newIteration) {
 				wasNewIteration = true;
+				
 				// Enters the method, ignoring aspectJ
 				in.send("step into");
 				while (!out.read()) { continue; }
@@ -261,17 +291,19 @@ public class JDB
 					in.send("next");
 					while (!out.read()) { continue; }
 				}
-			} else if (!endOfMethod) {
+			} 
+			else if (!endOfMethod) {
 				in.send("next");
 			}
 		}
+		
+		// Exits JDB
 		in.exit(out);
 		in.close();
 		out.close();
 		process.waitFor();
 		process.destroy();
 	}
-	
 	
 	/**
 	 * Extracts line number from a debug output.
@@ -296,30 +328,6 @@ public class JDB
 		}
 		
 		return response;
-	}
-	
-	
-	/**
-	 * Extracts class signature from a method signature.
-	 * 
-	 * @param methodSignature Signature of the method
-	 * @return Class signature of this method
-	 */
-	private String extractClassSignature(String methodSignature)
-	{
-		String[] terms = methodSignature.split("\\.");
-		StringBuilder sb = new StringBuilder();
-		
-		for (int i=0; i<terms.length-1;i++) {
-			sb.append(terms[i]);
-			sb.append(".");
-		}
-		
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length()-1);	// Removes last dot
-		}
-		
-		return sb.toString();
 	}
 	
 	/**
@@ -359,12 +367,12 @@ public class JDB
 	/**
 	 * Finds directory of application libraries and stores it in {@link #libPath}.
 	 * 
-	 * @param binPath Location of binary files (.class)
+	 * @param appRoot Application root path
 	 */
-	private static void findLibs()
+	private void findLibs(String appRoot)
 	{
 		try {
-			Files.walkFileTree(Path.of(appPath), new SimpleFileVisitor<Path>() {
+			Files.walkFileTree(Path.of(appRoot), new SimpleFileVisitor<Path>() {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
 				{
@@ -382,6 +390,27 @@ public class JDB
 		}
 	}
 	
+	/**
+	 * Computes and stores application root path, based on class 
+	 * {@link ExecutionFlow} location.
+	 * 
+	 * @return Application root path
+	 */
+	private String getAppRootPath()
+	{
+		String response = null;
+		
+		try {
+			response = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
+				    .toURI()).getPath();
+			response = new File(response+"../").getParent();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		return response;
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Inner classes
@@ -394,7 +423,6 @@ public class JDB
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		OutputStream os;
 		PrintWriter input;
 		
 		
@@ -408,8 +436,7 @@ public class JDB
 		 */
 		JDBInput(Process p)
 		{
-			this.os = p.getOutputStream();
-			this.input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os)));
+			this.input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())));
 		}
 		
 		
@@ -440,7 +467,6 @@ public class JDB
 		 */
 		public void exit(JDBOutput out) throws IOException
 		{
-			//out.readAll();
 			input.flush();
 			send("clear "+classInvocationSignature+":"+methodInvocationLine);
 			out.readAll();
@@ -455,12 +481,7 @@ public class JDB
 		 */
 		public void close()
 		{
-			try {
-				os.close();
-				input.close();
-			} catch (IOException e) {
-				
-			}
+			input.close();
 		}
 		
 		/**
@@ -477,7 +498,6 @@ public class JDB
 			if (DEBUG) { System.out.println("COMMAND: "+command); }
 			// -----{ END DEBUG }-----
 			
-			//input.flush();
 			input.println(command);
 			input.flush();
 		}
@@ -491,15 +511,14 @@ public class JDB
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		InputStream is;
-    	final String regex_overloadedMethod;
+		//InputStream is;
+		BufferedReader output;
     	String methodSignature;
     	String methodName;
     	boolean inMethod = false;
-    	boolean processInput = false;
+    	boolean checkInput = false;
     	int lastLineAdded = -1;
     	boolean started = false;
-    	BufferedReader br;
         String line;
         String srcLine = null;
 		
@@ -519,9 +538,7 @@ public class JDB
 		{
 			this.methodSignature = methodSignature;
 			this.methodName = methodName;
-			is = p.getInputStream();
-			br = new BufferedReader(new InputStreamReader(is));
-			regex_overloadedMethod = "^.*(\\ |\\t|=|\\.)"+methodName+"\\(.*\\)(\\ |\\t)*;$";
+			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		}
 		
 		
@@ -540,9 +557,8 @@ public class JDB
 		{
 			boolean response = false;
 			
-			if (br.ready()) {
-				//System.out.println("");
-            	line = br.readLine();
+			if (output.ready()) {
+            	line = output.readLine();
             	
             	if (isEmptyLine() || line.matches("^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t)*$")) { 
             		return false; 
@@ -568,7 +584,7 @@ public class JDB
 //        			System.out.println("$$$$$$$$$$");
         			
         			response = true;
-            		srcLine = br.readLine();
+            		srcLine = output.readLine();
         			
             		// Checks if last method was skipped
             		if (skipped) {
@@ -580,7 +596,7 @@ public class JDB
             			newIteration = isNewIteration();
             		}
             		
-        			
+        			// Checks if it is a call to an overloaded method
         			if (isCallToOverloadedMethod()) {
         				if (overloadedMethod) {
         					exitMethod = true;
@@ -595,15 +611,14 @@ public class JDB
         				int lineNumber = jdb_getLine(line);
         				
         				// Checks if returned from the method
-//        				if ( line.contains(classInvocationSignature) && 
-//    						 line.contains("line="+methodInvocationLine) ) {
         				if (line.contains(testMethodSignature)) {
         					exitMethod = true;
         					newIteration = false;
         					inMethod = false;
         					lastLineAdded = -1;
         				} 
-        				else if (isWithinMethod(lineNumber)) {	// Checks if it is still in the method
+        				// Checks if it is still in the method
+        				else if (isWithinMethod(lineNumber)) {	
         					if (!isEmptyMethod()) {
         						testPath.add(lineNumber);
         						lastLineAdded = lineNumber;
@@ -615,16 +630,7 @@ public class JDB
             		}
         		}
         		
-        		// Checks if it is the end of the method through source line. It
-        		// is necessary because line 
-        		/*if (!line.contains("thread=")) {
-        			if (srcLine != null &&
-    					((srcLine.contains("Breakpoint hit") && srcLine.contains("line="+lastLineTestMethod)) || 
-    					srcLine.contains("The application exited"))
-        			) {
-        				endOfMethod = true;
-        			}
-        		}*/
+        		
 //        		System.out.println("EXIT? "+exitMethod);
 //        		System.out.println("OUT");
 //        		System.out.println(exitMethod);
@@ -659,7 +665,7 @@ public class JDB
 		 */
 		public void readAll() throws IOException
 		{
-			while (br.ready()) {
+			while (output.ready()) {
 				read();
 			}
 		}
@@ -670,8 +676,7 @@ public class JDB
 		public void close()
 		{
 			try {
-				is.close();
-				br.close();
+				output.close();
 			} catch (IOException e) {
 				
 			}
@@ -739,6 +744,8 @@ public class JDB
 		 */
 		private boolean isCallToOverloadedMethod()
 		{
+			String regex_overloadedMethod = "^.*(\\ |\\t|=|\\.)"+methodName+"\\(.*\\)(\\ |\\t)*;$";
+			
 			return 	srcLine != null && 
 					srcLine.matches(regex_overloadedMethod) && 
 					!line.contains(classInvocationSignature);
