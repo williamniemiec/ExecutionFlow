@@ -13,7 +13,7 @@ import executionFlow.runtime.SkipCollection;
 
 @SkipCollection
 public class MethodFileParserTest
-{
+{/*
 	@Test
 	public void testEmptyClass() throws IOException
 	{
@@ -68,7 +68,7 @@ public class MethodFileParserTest
 		MethodFileParser fp = new MethodFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed", FileEncoding.ISO_8859_1);
 		fp.parseFile();
 	}
-	
+	*/
 	@Test
 	public void testDoWhile() throws IOException
 	{
@@ -79,7 +79,7 @@ public class MethodFileParserTest
 		FileParser fp = new MethodFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
 	}
-	
+	/*
 	@Test
 	public void testParseElse2() throws IOException
 	{
@@ -166,5 +166,5 @@ public class MethodFileParserTest
 		
 		FileParser fp = new MethodFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
-	}
+	}*/
 }

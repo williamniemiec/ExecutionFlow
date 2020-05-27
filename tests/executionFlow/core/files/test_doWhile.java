@@ -6,10 +6,12 @@ public class test_doWhile
 {
 	public void doWhile(int num)
 	{
-		int i = 0, k = 0;
+		int i = num;
 
 		do {
-			k++;
-		} while (i < num);
+			if (i < 0)
+				break;
+			i--;
+		} while (i > 0);
 	}
 }

@@ -122,6 +122,7 @@ public class MethodFileParser implements FileParser
 		final String regex_varDeclarationWithoutInitialization = "( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
 		final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
 		final String regex_new = "(\\ |\\t)+new(\\ |\\t)*";
+		final String regex_continueBreak = "^(\\ |\\t)*(continue|break)(\\ |\\t)*;";
 		final Pattern pattern_tryFinally = Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
 		final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
 		final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
@@ -229,14 +230,16 @@ public class MethodFileParser implements FileParser
 							// Updates else block balance
 							if (line.contains("{") && !line.contains("}")) {
 								elseBlockManager.incrementBalance();
-							} else if (line.contains("{") && line.contains("}")) {
+							} 
+							else if (line.contains("{") && line.contains("}")) {
 								line += "}";
 								elseBlockManager.removeCurrentElseBlock();
 								
 								if (elseBlockManager.getCurrentNestingLevel() == 0)
 									elseNoCurlyBrackets = false;
 							}
-						} else if (!nextLine.matches(regex_catch)) {	// Checks if next line does not have 'catch' keyword
+						} 
+						else if (!nextLine.matches(regex_catch)) {	// Checks if next line does not have 'catch' keyword
 							line += "}";
 							elseBlockManager.removeCurrentElseBlock();
 							
@@ -263,10 +266,18 @@ public class MethodFileParser implements FileParser
 				}
 				
 				// Parses code
-				if (pattern_tryFinally.matcher(line).find() && pattern_tryFinally.matcher(line).find()) {	// Try or finally
+				// Try or finally
+				if (pattern_tryFinally.matcher(line).find() && pattern_tryFinally.matcher(line).find()) {	
 					line = checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_try_finally(line);
-				} else if (!line.contains("if") && pattern_else.matcher(line).find()) {		// Else
+				} 
+				// Continue or Break
+				else if (line.matches(regex_continueBreak)) {	
+					line = checkCurlyBracketNewLine(line, nextLine);
+					parsedLine = parse_continue_break(line);
+				}
+				// Else
+				else if (!line.contains("if") && pattern_else.matcher(line).find()) {
 					line = checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_else(line);
 					
@@ -300,17 +311,24 @@ public class MethodFileParser implements FileParser
 						}
 					}
 					
-				} else if (pattern_do.matcher(line).find()) {								// Do while
+				}
+				// Do while
+				else if (pattern_do.matcher(line).find()) {								
 					line = checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_do(line);
-				}  else if (pattern_switch.matcher(line).find()) {							// Switch
+				}  
+				// Switch
+				else if (pattern_switch.matcher(line).find()) {							
 					line = checkCurlyBracketNewLine(line, nextLine);
 					parsedLine = parse_switch(line);
-				} else if (	!line.contains("return ") && !line.contains("return(") && 		// Var declaration
+				}
+				// Variable declaration without initialization
+				else if (	!line.contains("return ") && !line.contains("return(") && 		
 						!line.contains("package ") && !line.contains("class ") && 
 						line.matches(regex_varDeclarationWithoutInitialization)) {
 				parsedLine = parse_varDeclaration(line);
-				} else {
+				} 
+				else {
 					parsedLine = line;
 				}
 				
@@ -347,11 +365,29 @@ public class MethodFileParser implements FileParser
 			
 			// Appends in response everything after '{' 
 			response.append(line.substring(curlyBracketsIndex+1));
-		} else {
+		} 
+		else {
 			throw new IllegalStateException("Code block must be enclosed in curly brackets");
 		}
 		
 		return response.toString();
+	}
+	
+	/**
+	 * Parses line with 'continue' or 'break' keyword. It will add the following
+	 * code: <br /> 
+	 * <code>if (Boolean.parseBoolean("True")) { &lt;line&gt; }</code>. <br />
+	 * This method cannot add an if clause like "if (true) {line}" because it
+	 * is ignored when class is compiled. The function 'parseBoolean' is just 
+	 * a randomly chosen function and can be replaced by any other function
+	 * that returns true.
+	 * 
+	 * @param line Line with 'continue' or 'break' keyword
+	 * @return Processed line ("if (Boolean.parseBoolean("True")) {"+line+"}"
+	 */
+	private String parse_continue_break(String line)
+	{
+		return "if (Boolean.parseBoolean(\"True\")) {"+line+"}";
 	}
 	
 	/**
@@ -376,7 +412,8 @@ public class MethodFileParser implements FileParser
 			
 			// Appends in response everything after '{' 
 			sb.append(line.substring(curlyBracketsIndex+1));
-		} else {	// Else code block without curly brackets
+		} 
+		else {	// Else code block without curly brackets
 			int indexAfterElse = line.indexOf("else")+4; 
 			
 			// Appends in response everything before 'else' keyword (including it) 
@@ -391,7 +428,8 @@ public class MethodFileParser implements FileParser
 			if (!afterElse.isEmpty() && !afterElse.matches("^(\\s|\\t)+$")) {
 				sb.append(afterElse);	// If there is one, it its an in line else code block
 				sb.append("}");			// Appends in response this command and a closed curly bracket
-			} else {
+			} 
+			else {
 				elseNoCurlyBrackets = true;	// Else it is a else code block with more than one line
 			}
 		}
@@ -420,7 +458,8 @@ public class MethodFileParser implements FileParser
 
 			// Appends in response everything after '{'
 			response.append(line.substring(curlyBracketsIndex+1));
-		} else {
+		} 
+		else {
 			throw new IllegalStateException("Code block must be enclosed in curly brackets");
 		}
 
@@ -435,12 +474,7 @@ public class MethodFileParser implements FileParser
 	 */
 	private String parse_varDeclaration(String line)
 	{
-		String response = line;
-		
-		// Appends in response variable assignment command
-		response += "int "+generateVarName()+"=0;";
-		
-		return response;
+		return line+"int "+generateVarName()+"=0;";
 	}
 	
 	/**
@@ -505,11 +539,13 @@ public class MethodFileParser implements FileParser
 				inComment = false;
 			
 			response = true;
-		} else if (line.contains("/*") && !line.contains("*/")) {
+		} 
+		else if (line.contains("/*") && !line.contains("*/")) {
 			inComment = true;	// Parser is in a comment block
 			
 			response = true;
-		} else if (line.contains("//") || (line.contains("/*") && line.contains("*/"))) {
+		} 
+		else if (line.contains("//") || (line.contains("/*") && line.contains("*/"))) {
 			response = true;
 		}
 		
