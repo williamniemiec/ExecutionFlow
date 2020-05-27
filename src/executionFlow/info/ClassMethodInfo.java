@@ -29,7 +29,7 @@ public class ClassMethodInfo
 	
 	
 	//-------------------------------------------------------------------------
-	//		Constructors
+	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
 	 * Stores information about a method.
@@ -37,6 +37,7 @@ public class ClassMethodInfo
 	 * @param classPath Method class file path
 	 * @param testClassPath Test method class file path
 	 * @param srcPath Absolute path where source file is
+	 * @param testSrcPath Absolute path where source file of test method is
 	 * @param invocationLine Line of test method where method is called
 	 * @param methodSignature Signature of the method
 	 * @param testMethodSignature Signature of the test method to which the method belongs
@@ -45,8 +46,9 @@ public class ClassMethodInfo
 	 * @param parameterTypes Types of method's parameters
 	 * @param args Method's arguments
 	 */
-	private ClassMethodInfo(String classPath, String testClassPath, String srcPath, String testSrcPath, int invocationLine, String methodSignature, 
-			String testMethodSignature, String methodName, Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
+	private ClassMethodInfo(String classPath, String testClassPath, String srcPath, String testSrcPath, 
+			int invocationLine, String methodSignature, String testMethodSignature, String methodName, 
+			Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
 	{
 		this.classPath = classPath;
 		this.testClassPath = testClassPath;
@@ -62,9 +64,10 @@ public class ClassMethodInfo
 		this.classSignature = extractClassSignature(methodSignature);
 	}
 
-	/**
-	 * Builder of this class.
-	 */
+	
+	//-------------------------------------------------------------------------
+	//		Builder
+	//-------------------------------------------------------------------------
 	public static class ClassMethodInfoBuilder
 	{
 		private String methodName;
@@ -120,6 +123,10 @@ public class ClassMethodInfo
 			return this;
 		}
 		
+		/**
+		 * @param testSrcPath Absolute path where source file of test method is
+		 * @return Builder to allow chained calls
+		 */
 		public ClassMethodInfoBuilder testSrcPath(String testSrcPath)
 		{
 			this.testSrcPath = testSrcPath;
@@ -194,8 +201,9 @@ public class ClassMethodInfo
 		public ClassMethodInfo build()
 		{
 			return new ClassMethodInfo(
-				classPath, testClassPath, srcPath, testSrcPath, invocationLine, methodSignature, testMethodSignature, 
-				methodName, returnType, parameterTypes, args
+				classPath, testClassPath, srcPath, testSrcPath, invocationLine, 
+				methodSignature, testMethodSignature, methodName, returnType, 
+				parameterTypes, args
 			);
 		}
 	}
@@ -207,11 +215,15 @@ public class ClassMethodInfo
 	@Override
 	public String toString() 
 	{
-		return "ClassMethodInfo [methodName=" + methodName + ", classPath=" + classPath + ", testClassPath="
-				+ testClassPath + ", srcPath=" + srcPath + ", testMethodSrcPath=" + testSrcPath + ", testMethodSignature=" + testMethodSignature
-				+ ", methodSignature=" + methodSignature + ", classSignature=" + classSignature + ", invocationLine="
-				+ invocationLine + ", parameterTypes=" + Arrays.toString(parameterTypes) + ", args="
-				+ Arrays.toString(args) + ", returnType=" + returnType + "]";
+		return "ClassMethodInfo [methodName=" + methodName + ", classPath=" 
+				+ classPath + ", testClassPath=" + testClassPath + ", srcPath=" 
+				+ srcPath + ", testMethodSrcPath=" + testSrcPath 
+				+ ", testMethodSignature=" + testMethodSignature 
+				+ ", methodSignature=" + methodSignature + ", classSignature=" 
+				+ classSignature + ", invocationLine=" + invocationLine 
+				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
+				+ ", args="	+ Arrays.toString(args) 
+				+ ", returnType=" + returnType + "]";
 	}
 
 	/**
@@ -235,15 +247,70 @@ public class ClassMethodInfo
 		if (parameterTypes == null) { return ""; }
 		StringBuilder response = new StringBuilder();
 		
+		// Stores the name of all types of parameter
 		for (var parameterType : parameterTypes) {
-			// Ads only name of the parameter type
-			String[] tmp = parameterType.getTypeName().split("\\."); // Removes signature
+			// Removes signature
+			String[] tmp = parameterType.getTypeName().split("\\."); 
 			
+			// Adds only the name of the parameter type
 			response.append(tmp[tmp.length-1] +",");
 		}
 		
 		if (response.length() > 0)
-			response.deleteCharAt(response.length()-1);	// Removes last comma
+			// Removes last comma
+			response.deleteCharAt(response.length()-1);	
+		
+		return response.toString();
+	}
+	
+	/**
+	 * Extracts class signature from method signature.
+	 * 
+	 * @param methodSignature Signature of the method
+	 * @return Class signature
+	 */
+	private String extractClassSignature(String methodSignature)
+	{
+		StringBuilder response = new StringBuilder();
+		String[] terms = methodSignature.split("\\.");
+		
+		// Appends all terms of signature, without the last
+		for (int i=0; i<terms.length-1; i++) {
+			response.append(terms[i]);
+			response.append(".");
+		}
+		
+		if (response.length() > 0) {
+			// Removes last dot
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
+	}
+	
+	/**
+	 * Extracts package from a class signature.
+	 * 
+	 * @param signature Signature of the class
+	 * @return Class package
+	 */
+	private String extractPackage(String signature)
+	{
+		if (signature == null || signature.isEmpty()) { return ""; }
+		
+		String[] tmp = signature.split("\\.");
+		StringBuilder response = new StringBuilder();
+		
+		// Appends all terms of signature, without the last
+		for (int i=0; i<tmp.length-1; i++) {
+			response.append(tmp[i]);
+			response.append(".");
+		}
+		
+		if (response.length() > 0) {
+			// Removes last dot
+			response.deleteCharAt(response.length()-1);
+		}
 		
 		return response.toString();
 	}
@@ -282,37 +349,10 @@ public class ClassMethodInfo
 		return this.testClassPath;
 	}
 	
-	/**
-	 * Get method's signature with the following format:<br />
-	 * <code> methodPackage.methodName(arg1,arg2,...) </code>
-	 * 
-	 * @return Method's signature
-	 */
-	/*public String getSignature()
-	{
-		if (parameterTypes == null) { return methodName+"()"; }
-		
-		StringBuilder types = new StringBuilder();
-		
-		for (Class<?> paramType : parameterTypes) {
-			types.append(paramType.getTypeName()+",");
-		}
-		
-		if (types.length() > 0)
-			types.deleteCharAt(types.length()-1);	// Remove last comma
-		
-		return methodName+"("+types+")";
-	}*/
-	
 	public String getTestMethodSignature() 
 	{
 		return testMethodSignature;
 	}
-
-//	public void setTestMethodSignature(String testMethodSignature) 
-//	{
-//		this.testMethodSignature = testMethodSignature;
-//	}
 	
 	public Class<?> getReturnType()
 	{
@@ -418,42 +458,6 @@ public class ClassMethodInfo
 		for (int i=0; i<terms.length-1; i++) {
 			response.append(terms[i]);
 			response.append("\\");
-		}
-		
-		if (response.length() > 0) {
-			response.deleteCharAt(response.length()-1);
-		}
-		
-		return response.toString();
-	}
-	
-	private String extractClassSignature(String methodSignature)
-	{
-		StringBuilder response = new StringBuilder();
-		String[] terms = methodSignature.split("\\.");
-		
-		for (int i=0; i<terms.length-1; i++) {
-			response.append(terms[i]);
-			response.append(".");
-		}
-		
-		if (response.length() > 0) {
-			response.deleteCharAt(response.length()-1);
-		}
-		
-		return response.toString();
-	}
-	
-	private String extractPackage(String signature)
-	{
-		if (signature == null || signature.isEmpty()) { return ""; }
-		
-		String[] tmp = signature.split("\\.");
-		StringBuilder response = new StringBuilder();
-		
-		for (int i=0; i<tmp.length-1; i++) {
-			response.append(tmp[i]);
-			response.append(".");
 		}
 		
 		if (response.length() > 0) {
