@@ -1,6 +1,5 @@
 package executionFlow.runtime;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +14,6 @@ import executionFlow.core.file.parser.*;
 import executionFlow.core.file.parser.factory.*;
 import executionFlow.exporter.*;
 import executionFlow.info.*;
-import executionFlow.runtime.*;
 
 
 /**
@@ -26,7 +24,6 @@ import executionFlow.runtime.*;
  * methods with {@link SkipMethod]} signature and all methods from classes
  * with {@link SkipCollection} annotation.
  */
-@SuppressWarnings("unused")
 public aspect MethodCollector extends RuntimeCollector
 {	
 	//-------------------------------------------------------------------------

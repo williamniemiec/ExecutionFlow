@@ -72,8 +72,10 @@ public class FileManager
 	public FileManager revertParse() throws IOException
 	{
 		try {
-			Files.delete(srcFile);
-			Files.move(originalSrcFile, srcFile);
+			if (Files.exists(originalSrcFile)) {
+				Files.delete(srcFile);
+				Files.move(originalSrcFile, srcFile);
+			}
 		} catch (IOException e) {
 			throw new IOException("Revert parse without backup");
 		}
@@ -90,8 +92,10 @@ public class FileManager
 	public FileManager revertCompilation() throws IOException
 	{
 		try {
-			Files.delete(classPath);
-			Files.move(originalClassPath, classPath);
+			if (Files.exists(originalClassPath)) {
+				Files.delete(classPath);
+				Files.move(originalClassPath, classPath);
+			}
 		} catch (IOException e) {
 			throw new IOException("Revert compilation without backup");
 		}
@@ -133,8 +137,10 @@ public class FileManager
 		}
 		
 		// Changes parsed file name to the same as received filename
-		Files.delete(srcFile);
-		Files.move(out, srcFile);
+		if (Files.exists(out)) {
+			Files.delete(srcFile);
+			Files.move(out, srcFile);
+		}
 		
 		return this;
 	}
@@ -147,11 +153,9 @@ public class FileManager
 	 */
 	public String compileFile() throws Exception
 	{
-		int packageFolders = classPackage.split("\\.").length;
-		
-		if (packageFolders == 1)
-			packageFolders = 0;
-		
+		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
+								0 : classPackage.split("\\.").length;
+
 		Path file = Paths.get(classOutput);
 		
 		// Sets path to the compiler

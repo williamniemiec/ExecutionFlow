@@ -89,7 +89,8 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Given the parameters of a method, discover the class of each of these parameters.
+	 * Given the parameters of a method, discover the class of each of these 
+	 * parameters.
 	 * 
 	 * @param args Parameter values of a method
 	 * @return The classes of these parameter values
@@ -188,7 +189,8 @@ public class CollectorExecutionFlow
 	 * Extracts method's class signature.
 	 * 
 	 * @param signature Signature of the method
-	 * @return Name of the package + name of the class + name of the method(param1, param2,...)
+	 * @return Name of the package + name of the class + name of the 
+	 * method(param1, param2,...)
 	 */
 	public static String extractMethodSignature(String signature)
 	{
@@ -303,7 +305,8 @@ public class CollectorExecutionFlow
 				}
 			}
 			
-			// If there is not a directory named 'src', it searches in the parent folder
+			// If there is not a directory named 'src', it searches in the 
+			// parent folder
 			if (!hasSrcFolder) {
 				currentPath = new File(currentPath.getParent());
 			}

@@ -4,22 +4,24 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import executionFlow.*;
-import executionFlow.core.*;
-import executionFlow.core.file.*;
-import executionFlow.core.file.parser.*;
-import executionFlow.core.file.parser.factory.*;
-import executionFlow.exporter.*;
-import executionFlow.info.*;
-import executionFlow.runtime.*;
-//import junit.extensions.RepeatedTest;
+import executionFlow.ExecutionFlow;
+import executionFlow.core.JDB;
+import executionFlow.core.file.FileCompiler;
+import executionFlow.core.file.FileManager;
+import executionFlow.core.file.parser.FileParser;
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.FileExporter;
+import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.CollectorInfo;
+import executionFlow.info.SignaturesInfo;
 
 
 /**
- * Captures all executed methods with <code>@Test</code> annotation, not including
- * internal calls.
+ * Captures all executed methods with <code>@Test</code> annotation, not 
+ * including internal calls.
  * 
- * @implNote Ignores methods with {@link SkipMethod]} signature and all methods 
+ * @implNote Ignores methods with {@link SkipMethod]} signature and all methods
  * from classes with {@link SkipCollection} annotation
  */
 public aspect TestMethodCollector extends RuntimeCollector

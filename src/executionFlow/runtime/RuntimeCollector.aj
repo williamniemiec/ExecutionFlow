@@ -12,7 +12,8 @@ import executionFlow.info.CollectorInfo;
 
 
 /**
- * Responsible for data collection of methods and class constructors used in tests.
+ * Responsible for data collection of methods and class constructors used in 
+ * tests.
  * 
  * <h2>Requirements</h2>
  * <ul>
@@ -26,7 +27,8 @@ import executionFlow.info.CollectorInfo;
  * 		</li>
  * </ul>
  * 
- * @implNote It will ignore all methods of a class if it has <code>@SkipCollection</code> annotation
+ * @implNote It will ignore all methods of a class if it has 
+ * <code>@SkipCollection</code> annotation
  * @implNote It will ignore methods with <code>@SkipMethod</code> annotation
  */
 public abstract aspect RuntimeCollector 
@@ -36,7 +38,8 @@ public abstract aspect RuntimeCollector
 	//-------------------------------------------------------------------------
 	/**
 	 * Stores signature of collected methods.<hr/>
-	 * <b>Format: </b><code>method_name + method_arguments + constructor@hashCode (if it has one)</code>
+	 * <b>Format: </b><code>method_name + method_arguments + 
+	 * constructor@hashCode (if it has one)</code>
 	 */
 	protected static List<String> collectedMethods = new ArrayList<>();
 	
@@ -72,10 +75,12 @@ public abstract aspect RuntimeCollector
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Returns if the class of a method that a join point intercepted has <code>@SkipCollection</code>. 
+	 * Returns if the class of a method that a join point intercepted has 
+	 * <code>@SkipCollection</code>. 
 	 * 
 	 * @param jp Join point that intercepted a method
-	 * @return If the class of the intercepted method has <code>@SkipCollection</code>
+	 * @return If the class of the intercepted method has 
+	 * <code>@SkipCollection</code>
 	 */
 	protected boolean hasSkipCollectionAnnotation(JoinPoint jp)
 	{
@@ -138,10 +143,12 @@ public abstract aspect RuntimeCollector
 	}
 	
 	/**
-	 * Checks if a signature of a constructor is from a test method constructor.
+	 * Checks if a signature of a constructor is from a test method 
+	 * constructor.
 	 * 
 	 * @param constructorSignature Signature of the constructor
-	 * @return If the signature of the constructor is from a test method constructor
+	 * @return If the signature of the constructor is from a test method 
+	 * constructor
 	 */
 	protected boolean isTestMethodConstructor(String constructorSignature)
 	{
@@ -167,10 +174,12 @@ public abstract aspect RuntimeCollector
 	}
 	
 	/**
-	 * Checks if there is the <code>@SkipCollection</code> annotation in a class.
+	 * Checks if there is the <code>@SkipCollection</code> annotation in a 
+	 * class.
 	 * 
 	 * @param c Class to be analyzed
-	 * @return If <code>@SkipCollection</code> annotation is present in the class
+	 * @return If <code>@SkipCollection</code> annotation is present in the 
+	 * class
 	 */
 	private boolean hasClassSkipCollectionAnnotation(Class<?> c)
 	{
