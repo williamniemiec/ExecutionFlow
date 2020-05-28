@@ -191,7 +191,8 @@ public class ExecutionFlow
 	}
 	
 	/**
-	 * Stores test paths for a method.
+	 * Stores test paths for a method. The test paths are stored in 
+	 * {@link #classPaths}.
 	 * 
 	 * @param testPaths Test paths of this method
 	 * @param collector Informations about this method
@@ -219,6 +220,21 @@ public class ExecutionFlow
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
+	/**
+	 * Gets computed test path. It will return the following map:
+	 * <ul>
+	 * 		<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
+	 * 		<li>
+	 * 			<b>Value:</b> 
+	 * 			<ul>
+	 * 				<li><b>Key:</b> Test method signature and method signature</li>
+	 * 				<li><b>Value:</b> Test path</li>
+	 * 			</ul>
+	 * 		</li>
+	 * </ul>
+	 * 
+	 * @return Computed test path
+	 */
 	public Map<String, Map<SignaturesInfo, List<Integer>>> getClassPaths()
 	{
 		return classPaths;
