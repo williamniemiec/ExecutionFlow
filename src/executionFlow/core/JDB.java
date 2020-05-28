@@ -94,7 +94,7 @@ public class JDB
 	 * execution.
 	 */
 	{
-		DEBUG = true;
+		DEBUG = false;
 	}
 
 	
@@ -465,11 +465,11 @@ public class JDB
 		{
 			input.flush();
 			send("clear "+classInvocationSignature+":"+methodInvocationLine);
-			out.readAll();
+			out.read();
 			send("exit");
-			out.readAll();
+			out.read();
 			send("exit");
-			out.readAll();
+			out.read();
 		}
 		
 		/**

@@ -57,6 +57,8 @@ public class ExecutionFlow
 	 */
 	private int lastLineTestMethod;
 	
+	private final boolean DEBUG; 
+	
 	
 	//-----------------------------------------------------------------------
 	//		Initialization block
@@ -69,6 +71,14 @@ public class ExecutionFlow
 		
 		exporter = new ConsoleExporter(classPaths);
 		//exporter = new FileExporter(classPaths);
+	}
+	
+	/**
+	 * Enables or disables debug. If activated, displays shell output during JDB 
+	 * execution.
+	 */
+	{
+		DEBUG = true;
 	}
 	
 	
@@ -101,11 +111,16 @@ public class ExecutionFlow
 	 */
 	public ExecutionFlow execute() throws Throwable
 	{
+		// -----{ DEBUG }-----
+		if (DEBUG) {
+			System.out.println("-=-=-=-=-=-=-=-=-=-");
+			System.out.println(collectedMethods.values());
+			System.out.println("-=-=-=-=-=-=-=-=-=-");
+			System.out.println();
+		}
+		// -----{ END DEBUG }-----
+		
 		List<List<Integer>> tp_jdb;
-		System.out.println("-=-=--=-=-=-=-=-");
-		System.out.println(collectedMethods.values());
-		System.out.println("-=-=--=-=-=-=-=-");
-		System.out.println();
 		
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
