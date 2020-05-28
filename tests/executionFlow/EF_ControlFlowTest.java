@@ -63,7 +63,7 @@ public class EF_ControlFlowTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod(int)";
 		
-		ClassMethodInfo ifElseTest_earlyReturn = new ClassMethodInfo.ClassMethodInfoBuilder()
+		ClassMethodInfo ifElseMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -74,7 +74,7 @@ public class EF_ControlFlowTest
 				.methodName("ifElseMethod")
 				.build();
 
-		methodsInvoked.add(new CollectorInfo(ifElseTest_earlyReturn));
+		methodsInvoked.add(new CollectorInfo(ifElseMethod));
 		methodCollector.put(19, methodsInvoked);
 		
 		// Computes test path
@@ -101,7 +101,7 @@ public class EF_ControlFlowTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.tryCatchTest1()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.tryCatchMethod_try()";
 		
-		ClassMethodInfo ifElseTest_earlyReturn = new ClassMethodInfo.ClassMethodInfoBuilder()
+		ClassMethodInfo tryCatchMethod_try = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -112,7 +112,7 @@ public class EF_ControlFlowTest
 				.methodName("tryCatchMethod_try")
 				.build();
 
-		methodsInvoked.add(new CollectorInfo(ifElseTest_earlyReturn));
+		methodsInvoked.add(new CollectorInfo(tryCatchMethod_try));
 		methodCollector.put(58, methodsInvoked);
 		
 		// Computes test path
@@ -124,6 +124,44 @@ public class EF_ControlFlowTest
 		testPath = getFirstTestPath(testPaths);
 		
 		assertEquals(Arrays.asList(50,52,53,54,55,56,57,62), testPath);
+	}
+	
+	@Test
+	public void switchCaseTest() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Collection<List<Integer>> testPaths;
+		List<Integer> testPath;
+		
+		// Defines which methods will be collected
+		String testMethodSignature = "controlFlow.ControlFlowTest.switchCaseTest()";
+		String methodSignature = "controlFlow.TestClass_ControlFlow.switchCaseMethod(char)";
+		
+		ClassMethodInfo switchCaseMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
+				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
+				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
+				.testSrcPath(new File("examples/controlFlow/ControlFlowTest.java").getAbsolutePath())
+				.invocationLine(73)
+				.methodSignature(methodSignature)
+				.testMethodSignature(testMethodSignature)
+				.methodName("switchCaseMethod")
+				.build();
+
+		methodsInvoked.add(new CollectorInfo(switchCaseMethod));
+		methodCollector.put(73, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new ExecutionFlow(methodCollector, 74);
+		classPaths = ef.execute().getClassTestPaths();
+		
+		// Gets test path
+		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
+		testPath = getFirstTestPath(testPaths);
+		
+		assertEquals(Arrays.asList(90,92,100,101,102,103,104,123), testPath);
 	}
 	
 	/**
