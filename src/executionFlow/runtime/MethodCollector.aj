@@ -168,40 +168,44 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 		
 		// Collects the method
-		ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
-				.classPath(classPath)
-				.testClassPath(testClassPath)
-				.methodSignature(methodSignature)
-				.testMethodSignature(testMethodSignature)
-				.methodName(methodName)
-				.returnType(returnType)
-				.parameterTypes(paramTypes)
-				.args(thisJoinPoint.getArgs())
-				.invocationLine(invocationLine)
-				.srcPath(srcPath)
-				.testSrcPath(testSrcPath)
-				.build();
-
-		CollectorInfo ci = new CollectorInfo(cmi, order++);
-		lastInvocationLine = invocationLine;
-		
-		// Collects constructor (if method is not static)
-		if (constructor != null) {
-			ci.setConstructorInfo(consCollector.get(constructor.toString()));
+		try {
+			ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
+					.classPath(classPath)
+					.testClassPath(testClassPath)
+					.methodSignature(methodSignature)
+					.testMethodSignature(testMethodSignature)
+					.methodName(methodName)
+					.returnType(returnType)
+					.parameterTypes(paramTypes)
+					.args(thisJoinPoint.getArgs())
+					.invocationLine(invocationLine)
+					.srcPath(srcPath)
+					.testSrcPath(testSrcPath)
+					.build();
+			
+			CollectorInfo ci = new CollectorInfo(cmi, order++);
+			lastInvocationLine = invocationLine;
+			
+			// Collects constructor (if method is not static)
+			if (constructor != null) {
+				ci.setConstructorInfo(consCollector.get(constructor.toString()));
+			}
+			
+			// Stores key of collected method
+			collectedMethods.add(key);
+			
+			// If the method is called in a loop, stores this method in a list with its arguments and constructor
+			if (methodCollector.containsKey(invocationLine)) {
+				List<CollectorInfo> list = methodCollector.get(invocationLine);
+				list.add(ci);
+			} else {	// Else stores the method with its arguments and constructor
+				List<CollectorInfo> list = new ArrayList<>();
+				list.add(ci);
+				methodCollector.put(invocationLine, list);
+			}
+			lastInsertedMethod = signature;
+		} catch(IllegalArgumentException e) {
+			System.err.println("[ERROR] MethodCollector - "+e.getMessage());
 		}
-		
-		// Stores key of collected method
-		collectedMethods.add(key);
-		
-		// If the method is called in a loop, stores this method in a list with its arguments and constructor
-		if (methodCollector.containsKey(invocationLine)) {
-			List<CollectorInfo> list = methodCollector.get(invocationLine);
-			list.add(ci);
-		} else {	// Else stores the method with its arguments and constructor
-			List<CollectorInfo> list = new ArrayList<>();
-			list.add(ci);
-			methodCollector.put(invocationLine, list);
-		}
-		lastInsertedMethod = signature;
 	}
 }

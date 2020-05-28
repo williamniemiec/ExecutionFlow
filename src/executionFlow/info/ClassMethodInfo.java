@@ -68,6 +68,20 @@ public class ClassMethodInfo
 	//-------------------------------------------------------------------------
 	//		Builder
 	//-------------------------------------------------------------------------
+	/**
+	 * Builder for ClassMethodInfo. It is necessary to fill all required 
+	 * fields. The required fields are: <br />
+	 * <ul>
+	 * 		<li>classPath</li>
+	 * 		<li>testClassPath</li>
+	 * 		<li>srcPath</li>
+	 * 		<li>testSrcPath</li>
+	 * 		<li>invocationLine</li>
+	 * 		<li>methodSignature</li>
+	 * 		<li>testMethodSignature</li>
+	 * 		<li>methodName</li>
+	 * </ul>
+	 */
 	public static class ClassMethodInfoBuilder
 	{
 		private String methodName;
@@ -194,17 +208,63 @@ public class ClassMethodInfo
 		}
 		
 		/**
-		 * Creates {@link ClassMethodInfo} with provided information. 
+		 * Creates {@link ClassMethodInfo} with provided information. It is
+		 * necessary that required fields must be filled. The required 
+		 * fields are: <br />
+		 * <ul>
+		 * 		<li>classPath</li>
+		 * 		<li>testClassPath</li>
+		 * 		<li>srcPath</li>
+		 * 		<li>testSrcPath</li>
+		 * 		<li>invocationLine</li>
+		 * 		<li>methodSignature</li>
+		 * 		<li>testMethodSignature</li>
+		 * 		<li>methodName</li>
+		 * </ul>
 		 * 
 		 * @return ClassMethodInfo with provided information
+		 * @throws IllegalArgumentException If any required field is null
 		 */
-		public ClassMethodInfo build()
+		public ClassMethodInfo build() throws IllegalArgumentException
 		{
+			if (isAnyRequiredFieldNull()) {
+				throw new IllegalArgumentException("Required fields cannot be null");
+			}
+			
 			return new ClassMethodInfo(
 				classPath, testClassPath, srcPath, testSrcPath, invocationLine, 
 				methodSignature, testMethodSignature, methodName, returnType, 
 				parameterTypes, args
 			);
+		}
+		
+		/**
+		 * Checks if there is a required field that is null. The required 
+		 * fields are: <br />
+		 * <ul>
+		 * 		<li>classPath</li>
+		 * 		<li>testClassPath</li>
+		 * 		<li>srcPath</li>
+		 * 		<li>testSrcPath</li>
+		 * 		<li>invocationLine</li>
+		 * 		<li>methodSignature</li>
+		 * 		<li>testMethodSignature</li>
+		 * 		<li>methodName</li>
+		 * </ul>
+		 * 
+		 * @return If there is a required field that is null
+		 */
+		private boolean isAnyRequiredFieldNull()
+		{
+			return 	classPath == null || 
+					classPath == null || 
+					testClassPath == null || 
+					srcPath == null || 
+					testSrcPath == null || 
+					invocationLine <= 0 || 
+					methodSignature == null ||
+					testMethodSignature == null ||
+					methodName == null;
 		}
 	}
 	
