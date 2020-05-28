@@ -20,10 +20,9 @@ public class FileCompiler
 	 * @param fileToCompile Path of source file to be compiled
 	 * @param outputDir Path where generated .class will be saved
 	 * @param charset File encoding
-	 * @return Path of generated .class
 	 * @throws Exception If an error occurs during compilation
 	 */
-	public static String compile(Path fileToCompile, String outputDir, FileEncoding charset) throws Exception
+	public static void compile(Path fileToCompile, String outputDir, FileEncoding charset) throws Exception
 	{
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		int compilationResult =	compiler.run(
@@ -41,9 +40,5 @@ public class FileCompiler
 		if(compilationResult != 0) {
 			throw new Exception("Compilation Failed");
 		}
-		
-		String filename = fileToCompile.getName(fileToCompile.getNameCount()-1).toString();
-		
-		return outputDir+"\\"+filename.split("\\.")[0]+".class";
 	}
 }

@@ -148,10 +148,10 @@ public class FileManager
 	/**
 	 * Compiles processed file.
 	 *  
-	 * @return Path of compiled file
+	 * @return This object to allow chained calls
 	 * @throws Exception If an error occurs
 	 */
-	public String compileFile() throws Exception
+	public FileManager compileFile() throws Exception
 	{
 		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
 								0 : classPackage.split("\\.").length;
@@ -166,9 +166,11 @@ public class FileManager
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding
 		if (charsetError)	
-			return FileCompiler.compile(srcFile, file.toString(), FileEncoding.ISO_8859_1);
+			FileCompiler.compile(srcFile, file.toString(), FileEncoding.ISO_8859_1);
 		else
-			return FileCompiler.compile(srcFile, file.toString(), FileEncoding.UTF_8);
+			FileCompiler.compile(srcFile, file.toString(), FileEncoding.UTF_8);
+		
+		return this;
 	}
 	
 	/**
