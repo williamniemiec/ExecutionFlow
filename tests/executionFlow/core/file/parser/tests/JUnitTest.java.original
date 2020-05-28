@@ -1,0 +1,18 @@
+package executionFlow.core.tests;
+
+import org.junit.Test;
+
+public class JUnitTest 
+{
+	@Test
+	public void testFoo()
+	{
+		
+	}
+	
+	@Test @executionFlow.runtime.SkipMethod
+	public void testFoo2()
+	{
+		
+	}
+}

@@ -39,7 +39,7 @@ public class ExecutionFlow
 	 * 		</li>
 	 * </ul>
 	 */
-	private Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
+	private Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths;
 	
 	private ExporterExecutionFlow exporter;
 	
@@ -75,9 +75,9 @@ public class ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		classPaths = new HashMap<>();
+		classTestPaths = new HashMap<>();
 		
-		exporter = new ConsoleExporter(classPaths);
+		exporter = new ConsoleExporter(classTestPaths);
 		//exporter = new FileExporter(classPaths);
 	}
 	
@@ -105,7 +105,7 @@ public class ExecutionFlow
 	//-------------------------------------------------------------------------
 	/**
 	 * Walks the method recording its test paths and save the result in
-	 * {@link #classPaths}.
+	 * {@link #classTestPaths}.
 	 * 
 	 * @return Itself (to allow chained calls)
 	 * @throws Throwable If an error occurs
@@ -192,7 +192,7 @@ public class ExecutionFlow
 	
 	/**
 	 * Stores test paths for a method. The test paths are stored in 
-	 * {@link #classPaths}.
+	 * {@link #classTestPaths}.
 	 * 
 	 * @param testPaths Test paths of this method
 	 * @param collector Informations about this method
@@ -205,13 +205,13 @@ public class ExecutionFlow
 			String key = collector.getMethodInfo().extractSignatures().toString();
 			
 			// Checks if test path belongs to a stored test method and method
-			if (classPaths.containsKey(key)) {
-				classPathInfo = classPaths.get(key);
+			if (classTestPaths.containsKey(key)) {
+				classPathInfo = classTestPaths.get(key);
 				classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
 			} else {	// Else, stores test path with its test method and method
 				classPathInfo = new HashMap<>();
 				classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
-				classPaths.put(key, classPathInfo);
+				classTestPaths.put(key, classPathInfo);
 			}
 		}
 	}
@@ -235,9 +235,9 @@ public class ExecutionFlow
 	 * 
 	 * @return Computed test path
 	 */
-	public Map<String, Map<SignaturesInfo, List<Integer>>> getClassPaths()
+	public Map<String, Map<SignaturesInfo, List<Integer>>> getClassTestPaths()
 	{
-		return classPaths;
+		return classTestPaths;
 	}
 	
 	public ExecutionFlow setExporter(ExporterExecutionFlow exporter) 

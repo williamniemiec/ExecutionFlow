@@ -53,7 +53,7 @@ public class JDBWithFileManagerTest
 	@Test
 	public void call_test_try()
 	{
-		executionFlow.core.files.test_try tt = new executionFlow.core.files.test_try();
+		executionFlow.core.file.parser.files.test_try tt = new executionFlow.core.file.parser.files.test_try();
 		tt.tryCatchMethod_try(2);
 	}
 }
