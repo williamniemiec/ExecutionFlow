@@ -149,9 +149,9 @@ public class FileManager
 	 * Compiles processed file.
 	 *  
 	 * @return This object to allow chained calls
-	 * @throws Exception If an error occurs
+	 * @throws IOException If an error occurs during compilation
 	 */
-	public FileManager compileFile() throws Exception
+	public FileManager compileFile() throws IOException 
 	{
 		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
 								0 : classPackage.split("\\.").length;

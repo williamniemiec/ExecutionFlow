@@ -137,9 +137,10 @@ public class JDB
 	 * 
 	 * @param methodInfo Informations about this method
 	 * @return Test paths of this method
+	 * @throws IOException If JDB cannot be initialized
 	 * @throws Throwable If an error occurs
 	 */
-	public synchronized List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws Throwable
+	public List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws IOException
 	{ 
 		String methodClassRootPath;	// Root path where the compiled file of method class is
 		String srcRootPath;			// Root path where the source file of the method is
@@ -176,7 +177,7 @@ public class JDB
 	 * @return Process running JDB
 	 * @throws IOException If the process cannot be created
 	 */
-	private synchronized Process jdb_start(String testClassRootPath, String srcRootPath, String methodClassRootPath) throws IOException
+	private Process jdb_start(String testClassRootPath, String srcRootPath, String methodClassRootPath) throws IOException
 	{
 		if (srcRootPath.isEmpty())
 			throw new IllegalStateException("Source file path cannot be empty");
@@ -205,8 +206,8 @@ public class JDB
 		
 		// -----{ DEBUG }-----
 		if (DEBUG) {
-			System.out.println("testClassRootPath: "+testClassRootPath);
-			System.out.println("jdb_paths: "+jdb_paths);
+			System.out.println("[DEBUG] testClassRootPath: "+testClassRootPath);
+			System.out.println("[DEBUG] jdb_paths: "+jdb_paths);
 		}
 		// -----{ END DEBUG }-----
 		
@@ -221,13 +222,12 @@ public class JDB
 	}
 	
 	/**
-	 * Starts JDB and computes test paths for a method via debugging.
+	 * Starts JDB and computes test paths for a method from debugging.
 	 * 
 	 * @param methodSignature Signature of the method
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @throws IOException If an error occurs while reading the output 
 	 */
-	private synchronized void jdb_methodVisitor(Process process, String methodSignature, String methodName) throws IOException, InterruptedException 
+	private void jdb_methodVisitor(Process process, String methodSignature, String methodName) throws IOException 
 	{
 		boolean wasNewIteration = false;
 		int currentSkip = skip;
@@ -297,7 +297,13 @@ public class JDB
 		in.exit(out);
 		in.close();
 		out.close();
-		process.waitFor();
+		
+		try {
+			process.waitFor();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		process.destroy();
 	}
 	
@@ -442,7 +448,7 @@ public class JDB
 		/**
 		 * Initializes JDB.
 		 */
-		public void init() throws InterruptedException
+		public void init()
 		{
 			List<String> args = new LinkedList<String>();
 			args.add("clear");
@@ -491,7 +497,7 @@ public class JDB
 		private void send(String command)
 		{
 			// -----{ DEBUG }-----
-			if (DEBUG) { System.out.println("COMMAND: "+command); }
+			if (DEBUG) { System.out.println("[DEBUG] COMMAND: "+command); }
 			// -----{ END DEBUG }-----
 			
 			input.println(command);
@@ -560,7 +566,7 @@ public class JDB
         		}
             	
             	// -----{ DEBUG }-----
-            	if (DEBUG) { System.out.println("LINE: "+line); }
+            	if (DEBUG) { System.out.println("[DEBUG] LINE: "+line); }
         		// -----{ END DEBUG }-----
         		
             	endOfMethod = endOfMethod == true ? endOfMethod : isEndOfTestMethod();
@@ -621,7 +627,7 @@ public class JDB
 	    		}
 	    		
 	    		// -----{ DEBUG }-----
-	    		if (DEBUG && srcLine != null) { System.out.println("SRC: "+srcLine); }
+	    		if (DEBUG && srcLine != null) { System.out.println("[DEBUG] SRC: "+srcLine); }
 	    		// -----{ END DEBUG }-----
 			} 
 			

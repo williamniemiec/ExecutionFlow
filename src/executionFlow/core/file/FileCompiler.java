@@ -1,5 +1,6 @@
 package executionFlow.core.file;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import javax.tools.JavaCompiler;
@@ -20,9 +21,9 @@ public class FileCompiler
 	 * @param fileToCompile Path of source file to be compiled
 	 * @param outputDir Path where generated .class will be saved
 	 * @param charset File encoding
-	 * @throws Exception If an error occurs during compilation
+	 * @throws IOException If an error occurs during compilation
 	 */
-	public static void compile(Path fileToCompile, String outputDir, FileEncoding charset) throws Exception
+	public static void compile(Path fileToCompile, String outputDir, FileEncoding charset) throws IOException
 	{
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		int compilationResult =	compiler.run(
@@ -38,7 +39,7 @@ public class FileCompiler
 		);
 		
 		if(compilationResult != 0) {
-			throw new Exception("Compilation Failed");
+			throw new IOException("Compilation Failed");
 		}
 	}
 }

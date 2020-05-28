@@ -3,6 +3,8 @@ public class test_else_noCurlyBraces
 {
 	public String ifElseMethod(int num)
 	{
+		int w;
+		
 		if (false)	w++;
 		else 
 			for(;;)
@@ -22,11 +24,13 @@ public class test_else_noCurlyBraces
 					w++;
 
 
-		return response;
+		return w;
 	}
 
 	public String ifElseMethod_complex(int num)
 	{
+		int w;
+		
 		if (false)	w++;
 		else 
 			for(;;)
@@ -50,6 +54,6 @@ public class test_else_noCurlyBraces
 					w++;
 
 
-		return response;
+		return w;
 	}
 }

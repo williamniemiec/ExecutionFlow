@@ -114,9 +114,9 @@ public class ExecutionFlow
 	{
 		// -----{ DEBUG }-----
 		if (DEBUG) {
-			System.out.println("-=-=-=-=-=-=-=-=-=-");
-			System.out.println(collectedMethods.values());
-			System.out.println("-=-=-=-=-=-=-=-=-=-");
+			System.out.println("[DEBUG] -=-=-=-=-=-=-=-=-=-");
+			System.out.println("[DEBUG] "+collectedMethods.values());
+			System.out.println("[DEBUG] -=-=-=-=-=-=-=-=-=-");
 			System.out.println();
 		}
 		// -----{ END DEBUG }-----
@@ -151,21 +151,21 @@ public class ExecutionFlow
 				);
 				
 				try {
-					System.out.println("Processing source file of the method...");
+					System.out.println("[INFO] Processing source file of the method...");
 					methodFileManager.parseFile().compileFile();
 					
-					System.out.println("Processing source file of the test method...");
+					System.out.println("[INFO] Processing source file of the test method...");
 					testMethodFileManager.parseFile()
 										 .createClassBackupFile()
 										 .compileFile();
 					
-					System.out.println("Processing completed");
+					System.out.println("[INFO] Processing completed");
 					
 					// Computes test path from JDB
-					System.out.println("Computing test path...");
+					System.out.println("[INFO] Computing test path...");
 					JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());					
 					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
-					System.out.println("Test path has been successfully computed");
+					System.out.println("[INFO] Test path has been successfully computed");
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
