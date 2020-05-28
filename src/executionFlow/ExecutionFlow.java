@@ -23,9 +23,9 @@ import executionFlow.info.SignaturesInfo;
 @SuppressWarnings("unused")
 public class ExecutionFlow 
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Attributes
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Stores computed test paths from a class.<br />
 	 * <ul>
@@ -60,9 +60,17 @@ public class ExecutionFlow
 	private final boolean DEBUG; 
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Initialization block
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
+	/**
+	 * Enables or disables debug. If activated, displays collected methods for
+	 * each test method executed.
+	 */
+	{
+		DEBUG = false;
+	}
+	
 	/**
 	 * Defines how the export will be done.
 	 */
@@ -73,24 +81,17 @@ public class ExecutionFlow
 		//exporter = new FileExporter(classPaths);
 	}
 	
-	/**
-	 * Enables or disables debug. If activated, displays shell output during JDB 
-	 * execution.
-	 */
-	{
-		DEBUG = true;
-	}
 	
-	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Constructors
-	//-----------------------------------------------------------------------	
+	//-------------------------------------------------------------------------
 	/**
 	 * Given a class path and specific methods computes test path for each
 	 * of these methods.
 	 * 
 	 * @param collectedMethods Collected methods from {@link MethodCollector}
-	 * @param lastLineTestMethod Last line of the test method in which these methods are
+	 * @param lastLineTestMethod Last line of the test method in which these 
+	 * methods are
 	 */
 	public ExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, int lastLineTestMethod)
 	{
@@ -99,9 +100,9 @@ public class ExecutionFlow
 	}
 	
 
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Methods
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Walks the method recording its test paths and save the result in
 	 * {@link #classPaths}.
@@ -126,6 +127,13 @@ public class ExecutionFlow
 		for (List<CollectorInfo> collectors : collectedMethods.values()) {
 			// Computes test path for each collected method that is invoked in the same line
 			for (CollectorInfo collector : collectors) {
+				// Checks if collected method is within test method
+				if (collector.getMethodInfo().getClassPath().equals(collector.getMethodInfo().getTestClassPath())) {
+					System.err.println("[ERROR] The method to be tested cannot be within the test class");
+					System.err.println("[ERROR] This test path will be skipped");
+					continue;
+				}
+				
 				// Gets FileManager for method file
 				FileManager methodFileManager = new FileManager(
 					collector.getMethodInfo().getSrcPath(), 
@@ -208,9 +216,9 @@ public class ExecutionFlow
 	}
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Getters & Setters
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	public Map<String, Map<SignaturesInfo, List<Integer>>> getClassPaths()
 	{
 		return classPaths;
