@@ -4,6 +4,10 @@ package executionFlow.info;
 /**
  * Stores information about a method and its constructor (if this 
  * method is not static);
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.4
  */
 public class CollectorInfo 
 {

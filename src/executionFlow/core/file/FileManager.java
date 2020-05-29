@@ -12,6 +12,10 @@ import executionFlow.core.file.parser.factory.FileParserFactory;
 
 /**
  * Responsible for managing file parser and compiler.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.3
+ * @version 1.4
  */
 public class FileManager 
 {
@@ -63,47 +67,6 @@ public class FileManager
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Deletes modified file and restores original file. This function does not
-	 * delete .class file of modified file, only .java file.
-	 * 
-	 * @return This object to allow chained calls
-	 * @throws IOException If method is called without creating a backup file
-	 */
-	public FileManager revertParse() throws IOException
-	{
-		try {
-			if (Files.exists(originalSrcFile)) {
-				Files.delete(srcFile);
-				Files.move(originalSrcFile, srcFile);
-			}
-		} catch (IOException e) {
-			throw new IOException("Revert parse without backup");
-		}
-		
-		return this;
-	}
-	
-	/**
-	 * Deletes modified .class file and restores original .class file.
-	 * 
-	 * @return This object to allow chained calls
-	 * @throws IOException If method is called without creating a backup file
-	 */
-	public FileManager revertCompilation() throws IOException
-	{
-		try {
-			if (Files.exists(originalClassPath)) {
-				Files.delete(classPath);
-				Files.move(originalClassPath, classPath);
-			}
-		} catch (IOException e) {
-			throw new IOException("Revert compilation without backup");
-		}
-		
-		return this;
-	}
-	
-	/**
 	 * Parses and process file, saving modified file in the same file passed 
 	 * to constructor.
 	 * 
@@ -127,7 +90,7 @@ public class FileManager
 			out = Path.of(fp.parseFile());
 		} catch(IOException e) {	
 			charsetError = true;
-			fp.setCharset(FileEncoding.ISO_8859_1);
+			fp.setEncoding(FileEncoding.ISO_8859_1);
 			
 			try {
 				out = Path.of(fp.parseFile());
@@ -174,8 +137,76 @@ public class FileManager
 	}
 	
 	/**
-	 * Creates a copy of file passed to the constructor to allow to restore 
-	 * it after.
+	 * Deletes modified file and restores original file. This function does not
+	 * delete .class file of modified file, only .java file.
+	 * 
+	 * @return This object to allow chained calls
+	 * @throws IOException If method is called without creating a backup file
+	 */
+	public FileManager revertParse() throws IOException
+	{
+		try {
+			if (Files.exists(originalSrcFile)) {
+				Files.delete(srcFile);
+				Files.move(originalSrcFile, srcFile);
+			}
+		} catch (IOException e) {
+			throw new IOException("Revert parse without backup");
+		}
+		
+		return this;
+	}
+	
+	/**
+	 * Deletes modified .class file and restores original .class file.
+	 * 
+	 * @return This object to allow chained calls
+	 * @throws IOException If method is called without creating a backup file
+	 */
+	public FileManager revertCompilation() throws IOException
+	{
+		try {
+			if (Files.exists(originalClassPath)) {
+				Files.delete(classPath);
+				Files.move(originalClassPath, classPath);
+			}
+		} catch (IOException e) {
+			throw new IOException("Revert compilation without backup");
+		}
+		
+		return this;
+	}
+	
+	/**
+	 * Creates a copy of class file passed to the constructor to allow to 
+	 * restore it after.
+	 * 
+	 * @implNote Backup name will be &lt;<b>name_of_file</b>.original.class&gt;.
+	 * It will be saved in the same directory of the original file
+	 */
+	public FileManager createClassBackupFile()
+	{
+		try {
+			Files.copy(
+				classPath,
+				originalClassPath, 
+				StandardCopyOption.COPY_ATTRIBUTES
+			);
+		} catch (IOException e) {			// If already exists a .original, this means
+			try {							// that last compiled file was not restored
+				revertCompilation();	
+				createClassBackupFile();	// So, restore this file and starts again
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}			
+		}
+		
+		return this;
+	}
+	
+	/**
+	 * Creates a copy of source file passed to the constructor to allow to 
+	 * restore it after.
 	 * 
 	 * @implNote Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
 	 * It will be saved in the same directory of the original file
@@ -196,25 +227,5 @@ public class FileManager
 				e1.printStackTrace();
 			}				
 		}
-	}
-	
-	public FileManager createClassBackupFile()
-	{
-		try {
-			Files.copy(
-				classPath,
-				originalClassPath, 
-				StandardCopyOption.COPY_ATTRIBUTES
-			);
-		} catch (IOException e) {			// If already exists a .original, this means
-			try {							// that last compiled file was not restored
-				revertCompilation();	
-				createClassBackupFile();	// So, restore this file and starts again
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}			
-		}
-		
-		return this;
 	}
 }

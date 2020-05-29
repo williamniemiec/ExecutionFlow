@@ -4,7 +4,7 @@ package overloadedMethod;
 /**
  * Class that has an overloaded method.
  */
-public class OverloadedConstructor 
+public class Overload 
 {
 	//-----------------------------------------------------------------------
 	//		Attributes
@@ -15,12 +15,12 @@ public class OverloadedConstructor
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
-	public OverloadedConstructor(int num)
+	public Overload(int num)
 	{
 		this.num = num;
 	}
 	
-	public OverloadedConstructor()
+	public Overload()
 	{
 		this(0);
 	}
@@ -37,6 +37,9 @@ public class OverloadedConstructor
 	
 	public int overloadedMethod()
 	{
+		int x = 0;
+		x++;
+		x++;
 		return overloadedMethod(10);
 	}
 }

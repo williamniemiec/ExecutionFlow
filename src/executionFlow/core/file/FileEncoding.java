@@ -6,6 +6,10 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Contains all supported file encodings.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.4
+ * @version 1.4
  */
 public enum FileEncoding 
 {
@@ -19,16 +23,16 @@ public enum FileEncoding
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private String text;
+	private String name;
 	private Charset charset;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private FileEncoding(String text, Charset charset)
+	private FileEncoding(String name, Charset charset)
 	{
-		this.text = text;
+		this.name = name;
 		this.charset = charset;
 	}
 	
@@ -36,9 +40,9 @@ public enum FileEncoding
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public String getText()
+	public String getName()
 	{
-		return text;
+		return name;
 	}
 	
 	public Charset getStandardCharset()

@@ -20,6 +20,10 @@ import executionFlow.ExecutionFlow;
 /**
  * Helper class used to extract the collected data that will be relevant to 
  * {@link ExecutionFlow} class.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.4
  */
 public class CollectorExecutionFlow 
 {
@@ -27,7 +31,7 @@ public class CollectorExecutionFlow
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Necessary for findCurrentClassPath method;
+	 * Necessary for {@link #findClassPath} method;
 	 */
 	private static String classPath;
 	

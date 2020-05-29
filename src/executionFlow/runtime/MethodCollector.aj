@@ -10,6 +10,7 @@ import org.junit.Test;
 import executionFlow.*;
 import executionFlow.core.*;
 import executionFlow.core.file.*;
+import executionFlow.core.file.parser.*;
 import executionFlow.core.file.parser.factory.*;
 import executionFlow.exporter.*;
 import executionFlow.info.*;
@@ -19,9 +20,13 @@ import executionFlow.info.*;
  * Captures all executed methods with <code>@Test</code> annotation, including
  * inner methods (captures the method and all internal calls to other methods).
  * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.4
+ * 
  * @implNote Excludes calls to native java methods, ExecutionFlow's classes,
- * methods with {@link SkipMethod]} signature and all methods from classes
- * with {@link SkipCollection} annotation.
+ * methods with {@link SkipMethod]} annotation, methods with {@link _SkipMethod]
+ * and all methods from classes with {@link SkipCollection} annotation.
  */
 public aspect MethodCollector extends RuntimeCollector
 {	

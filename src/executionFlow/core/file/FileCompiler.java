@@ -9,6 +9,10 @@ import javax.tools.ToolProvider;
 
 /**
  * Responsible for compiling .java files.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.3
+ * @version 1.4
  */
 public class FileCompiler 
 {
@@ -20,10 +24,10 @@ public class FileCompiler
 	 * 
 	 * @param fileToCompile Path of source file to be compiled
 	 * @param outputDir Path where generated .class will be saved
-	 * @param charset File encoding
+	 * @param encode File encoding
 	 * @throws IOException If an error occurs during compilation
 	 */
-	public static void compile(Path fileToCompile, String outputDir, FileEncoding charset) throws IOException
+	public static void compile(Path fileToCompile, String outputDir, FileEncoding encode) throws IOException
 	{
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		int compilationResult =	compiler.run(
@@ -31,7 +35,7 @@ public class FileCompiler
 			new String[] {
 				"-Xlint:none", 
 				"-encoding", 
-				charset.getText(),
+				encode.getName(),
 				"-d", 
 				outputDir, 
 				fileToCompile.toAbsolutePath().toString()

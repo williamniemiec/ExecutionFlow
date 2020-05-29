@@ -8,14 +8,18 @@ import java.nio.file.Files;
 
 import executionFlow.core.JDB;
 import executionFlow.core.file.FileEncoding;
-import executionFlow.runtime.SkipMethod;
+import executionFlow.runtime._SkipMethod;
 
 
 /**
- * Parses test java file adding {@link SkipMethod} annotation in all tests to 
+ * Parses test java file adding {@link _SkipMethod} annotation in all tests to 
  * disable collectors during JDB.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.4
+ * @version 1.4
  */
-public class TestMethodFileParser implements FileParser
+public class TestMethodFileParser extends FileParser
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -29,7 +33,7 @@ public class TestMethodFileParser implements FileParser
 	 */
 	private static final boolean DEBUG;
 	
-	private FileEncoding charset = FileEncoding.UTF_8;
+	private FileEncoding encode = FileEncoding.UTF_8;
 	
 	
 	//-------------------------------------------------------------------------
@@ -87,12 +91,12 @@ public class TestMethodFileParser implements FileParser
 	 * @param filename Path of the file to be parsed
 	 * @param outputDir Directory where parsed file will be saved
 	 * @param outputFilename Name of the parsed file
-	 * @param charset File encoding
+	 * @param encode File encoding
 	 */ 
-	public TestMethodFileParser(String filepath, String outputDir, String outputFilename, FileEncoding charset)
+	public TestMethodFileParser(String filepath, String outputDir, String outputFilename, FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
-		this.charset = charset;
+		this.encode = encode;
 	}
 	
 	
@@ -120,8 +124,8 @@ public class TestMethodFileParser implements FileParser
 			outputFile = new File(outputFilename+".java");
 		
 		// Opens file streams (file to be parsed and output file / processed file)
-		try (BufferedReader br = Files.newBufferedReader(file.toPath(), charset.getStandardCharset());
-			 BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), charset.getStandardCharset())) { 
+		try (BufferedReader br = Files.newBufferedReader(file.toPath(), encode.getStandardCharset());
+			 BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), encode.getStandardCharset())) { 
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
@@ -148,14 +152,14 @@ public class TestMethodFileParser implements FileParser
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	@Override
-	public FileEncoding getCharset()
+	public FileEncoding getEncoding()
 	{
-		return charset;
+		return encode;
 	}
 	
 	@Override
-	public void setCharset(FileEncoding charset)
+	public void setEncoding(FileEncoding encode)
 	{
-		this.charset = charset; 
+		this.encode = encode; 
 	}
 }

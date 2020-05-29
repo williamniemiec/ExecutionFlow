@@ -21,8 +21,13 @@ import executionFlow.info.SignaturesInfo;
  * Captures all executed methods with <code>@Test</code> annotation, not 
  * including internal calls.
  * 
- * @implNote Ignores methods with {@link SkipMethod]} signature and all methods
- * from classes with {@link SkipCollection} annotation
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.4
+ * 
+ * @implNote Ignores methods with {@link SkipMethod]} annotation, methods with
+ * {@link _SkipMethod] and all methods from classes with {@link SkipCollection}
+ * annotation
  */
 public aspect TestMethodCollector extends RuntimeCollector
 {

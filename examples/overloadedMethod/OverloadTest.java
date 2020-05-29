@@ -5,9 +5,16 @@ import org.junit.Test;
 public class OverloadTest 
 {
 	@Test
-	public void testOverloadedConstructor()
+	public void testOverloadedMethod()
 	{
-		OverloadedConstructor oc = new OverloadedConstructor();
+		Overload oc = new Overload();
 		oc.overloadedMethod();
+	}
+	
+	@Test
+	public void testOverloadedMethod2()
+	{
+		Overload oc = new Overload();
+		oc.overloadedMethod(10);
 	}
 }

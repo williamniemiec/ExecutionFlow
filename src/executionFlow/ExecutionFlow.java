@@ -17,8 +17,12 @@ import executionFlow.info.SignaturesInfo;
 
 
 /**
- * Given a class path and specific methods calculate test path for each
- * of these methods. This is the main class of the application.
+ * Computes test path for collected methods. This is the main class of the 
+ * application.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.4
  */
 @SuppressWarnings("unused")
 public class ExecutionFlow 
@@ -86,8 +90,7 @@ public class ExecutionFlow
 	//		Constructors
 	//-------------------------------------------------------------------------
 	/**
-	 * Given a class path and specific methods computes test path for each
-	 * of these methods.
+	 * Computes test path for collected methods.
 	 * 
 	 * @param collectedMethods Collected methods from {@link MethodCollector}
 	 * @param lastLineTestMethod Last line of the test method in which these 

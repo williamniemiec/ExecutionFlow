@@ -8,12 +8,16 @@ import executionFlow.info.SignaturesInfo;
 
 /**
  * Exports the results on the console.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.0
  */
 public class ConsoleExporter implements ExporterExecutionFlow 
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Attributes
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Stores computed test paths from a class.<br />
 	 * <ul>
@@ -30,9 +34,9 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	private Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Constructor
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/** 
 	 * Shows test paths of a method on the console in the following format:
 	 * <li>Test method's signature</li>
@@ -47,9 +51,9 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	}
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Methods
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	@Override
 	public void export() 
 	{

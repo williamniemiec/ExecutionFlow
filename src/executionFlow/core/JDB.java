@@ -26,6 +26,10 @@ import executionFlow.info.ClassMethodInfo;
 
 /**
  * Computes test path from code debugging.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.2
+ * @version 1.4
  */
 public class JDB 
 {
@@ -425,7 +429,7 @@ public class JDB
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		PrintWriter input;
+		private PrintWriter input;
 		
 		
 		//---------------------------------------------------------------------
@@ -513,15 +517,13 @@ public class JDB
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		BufferedReader output;
-    	String methodSignature;
-    	String methodName;
-    	boolean inMethod = false;
-    	boolean checkInput = false;
-    	int lastLineAdded = -1;
-    	boolean started = false;
-        String line;
-        String srcLine = null;
+		private BufferedReader output;
+		private String methodSignature;
+		private String methodName;
+		private boolean inMethod;
+		private int lastLineAdded = -1;
+		private String line;
+		private String srcLine;
 		
         
         //---------------------------------------------------------------------

@@ -11,6 +11,10 @@ import executionFlow.core.file.parser.FileParser;
 
 /**
  * When a method has this annotation, all collectors will ignore it.
+ *  
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.4
+ * @version 1.4
  * 
  * @apiNote Must be used exclusively by {@link FileParser}
  */

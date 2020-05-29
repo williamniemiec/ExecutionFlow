@@ -5,8 +5,12 @@ import executionFlow.core.file.parser.FileParser;
 
 /**
  * Responsible for generating {@link FileParser} classes.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.4
+ * @version 1.4
  */
-public interface FileParserFactory 
+public abstract class FileParserFactory 
 {
 	/**
 	 * Generates a {@link FileParser} instance.
@@ -14,8 +18,8 @@ public interface FileParserFactory
 	 * @param filepath Path of the file to be parsed
 	 * @param outputDir Directory where parsed file will be saved
 	 * @param outputFilename Name of the parsed file
-	 * @param charset File encoding of the file to be parsed
+	 * @param encode File encoding of the file to be parsed
 	 * @return FileParser instance 
 	 */
-	FileParser newFileParser(String filepath, String outputDir, String outputFilename, FileEncoding charset);
+	public abstract FileParser newFileParser(String filepath, String outputDir, String outputFilename, FileEncoding encode);
 }

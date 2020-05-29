@@ -8,6 +8,10 @@ import java.util.Arrays;
 
 /**
  * Stores information about a method.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.4
  */
 public class ClassMethodInfo 
 {
@@ -40,15 +44,18 @@ public class ClassMethodInfo
 	 * @param testSrcPath Absolute path where source file of test method is
 	 * @param invocationLine Line of test method where method is called
 	 * @param methodSignature Signature of the method
-	 * @param testMethodSignature Signature of the test method to which the method belongs
+	 * @param testMethodSignature Signature of the test method to which the 
+	 * method belongs
 	 * @param methodName Method's name
 	 * @param returnType Return type of the method
 	 * @param parameterTypes Types of method's parameters
 	 * @param args Method's arguments
 	 */
-	private ClassMethodInfo(String classPath, String testClassPath, String srcPath, String testSrcPath, 
-			int invocationLine, String methodSignature, String testMethodSignature, String methodName, 
-			Class<?> returnType, Class<?>[] parameterTypes, Object... args) 
+	private ClassMethodInfo(String classPath, String testClassPath, 
+			String srcPath, String testSrcPath, int invocationLine, 
+			String methodSignature, String testMethodSignature, 
+			String methodName, Class<?> returnType, Class<?>[] parameterTypes, 
+			Object... args) 
 	{
 		this.classPath = classPath;
 		this.testClassPath = testClassPath;
@@ -158,7 +165,8 @@ public class ClassMethodInfo
 		}
 		
 		/**
-		 * @param testMethodSignature Signature of the test method to which the method belongs
+		 * @param testMethodSignature Signature of the test method to which 
+		 * the method belongs
 		 * @return Builder to allow chained calls
 		 */
 		public ClassMethodInfoBuilder testMethodSignature(String testMethodSignature)

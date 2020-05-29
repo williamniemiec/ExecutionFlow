@@ -18,12 +18,16 @@ import executionFlow.info.SignaturesInfo;
 
 /**
  * Exports the results to a file.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.0
  */
 public class FileExporter implements ExporterExecutionFlow 
 {
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Attributes
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Stores computed test paths from a class.<br />
 	 * <ul>
@@ -42,9 +46,9 @@ public class FileExporter implements ExporterExecutionFlow
 	private String dirName;
 
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Constructor
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	/**
 	 * Exports test paths of a method to files in the specified directory.
 	 * 
@@ -69,16 +73,17 @@ public class FileExporter implements ExporterExecutionFlow
 	}
 	
 	
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//		Methods
-	//-----------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	@Override
 	public void export() 
 	{
 		if (classPaths.isEmpty()) { return; }
 		
 		try {
-			// Removes test path folders that will be overwritten (avoid creating duplicate files)
+			// Removes test path folders that will be overwritten (avoids 
+			// creating duplicate files)
 			prepareExport();
 		
 			for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classPaths.values()) {
@@ -265,13 +270,15 @@ public class FileExporter implements ExporterExecutionFlow
 		// Starts trying with TP_1.txt
 		File f = new File(path.toFile(), "TP_"+id+".txt");
 		
-		// It the name is already in use, if the file has the same test method signature
+		// It the name is already in use, if the file has the same test method 
+		// signature
 		while (f.exists()) {
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			String testMethodSignature_file = br.readLine();
 			br.close();
 				
-			// If the file has the same test method signature, test path will belong to it
+			// If the file has the same test method signature, test path will 
+			// belong to it
 			if (testMethodSignature_file.equals(testMethodSignature)) {
 				return "TP_"+id+".txt";
 			}			

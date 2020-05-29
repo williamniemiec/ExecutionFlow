@@ -6,12 +6,16 @@ import executionFlow.core.file.parser.MethodFileParser;
 
 /**
  * Responsible for generating {@link MethodFileParser} classes.
+ * 
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.4
+ * @version 1.4
  */
-public class MethodFileParserFactory implements FileParserFactory
+public class MethodFileParserFactory extends FileParserFactory
 {
 	@Override
-	public FileParser newFileParser(String filepath, String outputDir, String outputFilename, FileEncoding charset) 
+	public FileParser newFileParser(String filepath, String outputDir, String outputFilename, FileEncoding encode) 
 	{
-		return new MethodFileParser(filepath, outputDir, outputFilename, charset);
+		return new MethodFileParser(filepath, outputDir, outputFilename, encode);
 	}
 }

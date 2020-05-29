@@ -15,17 +15,9 @@ import executionFlow.info.CollectorInfo;
  * Responsible for data collection of methods and class constructors used in 
  * tests.
  * 
- * <h2>Requirements</h2>
- * <ul>
- * 		<li>Each test method must have one of the following annotations:
- * 			<ul>
- * 				<li><code>@Test</code></li>
- * 				<li><strike><code>@RepeatedTest</code></strike></li>
-			 	<li><strike><code>@ParameterizedTest</strike></code></li>
-			 	<li><strike><code>@TestFactory</code></strike></li>
-		 	</ul>
- * 		</li>
- * </ul>
+ * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @since 1.0
+ * @version 1.4
  * 
  * @implNote It will ignore all methods of a class if it has 
  * <code>@SkipCollection</code> annotation
@@ -63,10 +55,10 @@ public abstract aspect RuntimeCollector
 	
 	protected static String testMethodSignature;
 	protected static String testClassPath;
+	protected static String testMethodPackage;
 	protected static String lastInsertedMethod = "";
 	protected static boolean lastWasInternalCall;
 	protected static boolean skipCollection;
-	protected static String testMethodPackage;
 	protected static int lastInvocationLine;
 	protected static int order;
 	
