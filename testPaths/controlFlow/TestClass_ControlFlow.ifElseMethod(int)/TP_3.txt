@@ -1,2 +1,0 @@
-controlFlow.ControlFlowTest.ifElseTest_earlyReturn()
-[11, 12]

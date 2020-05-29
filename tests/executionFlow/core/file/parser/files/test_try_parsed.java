@@ -10,8 +10,8 @@ public class test_try
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
-		try {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+		FileWriter fw;int _91036746f0c28b950ea8db90cf9dca09=0;
+		try {int _f5e2b7a9208bacbacfab2e82abc0cbf3=0;
 			fw = new FileWriter(f);
 			fw.write('x');
 			fw.close();

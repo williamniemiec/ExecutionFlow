@@ -1,2 +1,0 @@
-controlFlow.ControlFlowTest.switchCaseTest()
-[64, 66, 73, 74, 75, 76, 77, 96]

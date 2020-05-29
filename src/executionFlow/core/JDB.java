@@ -166,8 +166,7 @@ public class JDB
 				
 		Process process = jdb_start(testClassRootPath, srcRootPath, methodClassRootPath);
 		
-		String methodSignature = methodInfo.getClassSignature()+"."+methodInfo.getMethodName()+"()";
-		jdb_methodVisitor(process, methodSignature, methodInfo.getMethodName());
+		jdb_methodVisitor(process, methodInfo.getMethodName());
 		
 		return testPaths;
 	}
@@ -228,14 +227,13 @@ public class JDB
 	/**
 	 * Starts JDB and computes test paths for a method from debugging.
 	 * 
-	 * @param methodSignature Signature of the method
 	 * @throws IOException If an error occurs while reading the output 
 	 */
-	private void jdb_methodVisitor(Process process, String methodSignature, String methodName) throws IOException 
+	private void jdb_methodVisitor(Process process, String methodName) throws IOException 
 	{
 		boolean wasNewIteration = false;
 		int currentSkip = skip;
-		JDBOutput out = new JDBOutput(process, methodSignature, methodName);
+		JDBOutput out = new JDBOutput(process, methodName);
 		JDBInput in = new JDBInput(process);
 		
 		// Initializes JDB
@@ -517,7 +515,6 @@ public class JDB
 		//		Attributes
 		//---------------------------------------------------------------------
 		private BufferedReader output;
-		private String methodSignature;
 		private String methodName;
 		private boolean inMethod;
 		private int lastLineAdded = -1;
@@ -533,12 +530,10 @@ public class JDB
          * commands.
          * 
          * @param p JDB process
-         * @param methodSignature Signature of the method to be debugged
          * @param methodName Name of the method to be debugged
          */
-		JDBOutput(Process p, String methodSignature, String methodName)
+		JDBOutput(Process p, String methodName)
 		{
-			this.methodSignature = methodSignature;
 			this.methodName = methodName;
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		}

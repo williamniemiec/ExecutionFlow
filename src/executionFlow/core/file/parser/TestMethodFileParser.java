@@ -33,8 +33,6 @@ public class TestMethodFileParser extends FileParser
 	 */
 	private static final boolean DEBUG;
 	
-	private FileEncoding encode = FileEncoding.UTF_8;
-	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization blocks
@@ -145,21 +143,5 @@ public class TestMethodFileParser extends FileParser
 		}
 
 		return outputFile.getAbsolutePath();
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Getters & Setters
-	//-------------------------------------------------------------------------
-	@Override
-	public FileEncoding getEncoding()
-	{
-		return encode;
-	}
-	
-	@Override
-	public void setEncoding(FileEncoding encode)
-	{
-		this.encode = encode; 
 	}
 }

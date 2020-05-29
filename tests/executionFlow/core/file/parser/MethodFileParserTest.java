@@ -83,7 +83,7 @@ public class MethodFileParserTest
 	@Test
 	public void testParseElse2() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/complex").getAbsolutePath();
+		String currentDir = new File("tests/executionFlow/core/file/parser/files/complex").getAbsolutePath();
 		String filename = "test_else";
 		File f = new File(currentDir, filename+".java");
 		
@@ -94,7 +94,7 @@ public class MethodFileParserTest
 	@Test
 	public void testParseTry2() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/complex").getAbsolutePath();
+		String currentDir = new File("tests/executionFlow/core/file/parser/files/complex").getAbsolutePath();
 		String filename = "test_try";
 		File f = new File(currentDir, filename+".java");
 		
@@ -105,7 +105,7 @@ public class MethodFileParserTest
 	@Test
 	public void testParseCatch2() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/complex").getAbsolutePath();
+		String currentDir = new File("tests/executionFlow/core/file/parser/files/complex").getAbsolutePath();
 		String filename = "test_catch";
 		File f = new File(currentDir, filename+".java");
 		
@@ -116,18 +116,18 @@ public class MethodFileParserTest
 	@Test
 	public void testParseSwitch2() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/complex").getAbsolutePath();
+		String currentDir = new File("tests/executionFlow/core/file/parser/files/complex").getAbsolutePath();
 		String filename = "test_switch";
 		File f = new File(currentDir, filename+".java");
 		
-		FileParser fp = new MethodFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		FileParser fp = new MethodFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed", FileEncoding.ISO_8859_1);
 		fp.parseFile();
 	}
 	
 	@Test
 	public void testDoWhile2() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/complex").getAbsolutePath();
+		String currentDir = new File("tests/executionFlow/core/file/parser/files/complex").getAbsolutePath();
 		String filename = "test_doWhile";
 		File f = new File(currentDir, filename+".java");
 		
@@ -138,7 +138,7 @@ public class MethodFileParserTest
 	@Test
 	public void testElseNoCurlyBrackets() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/noCurlyBraces").getAbsolutePath();
+		String currentDir = new File("tests/executionFlow/core/file/parser/files/noCurlyBraces").getAbsolutePath();
 		String filename = "test_else_noCurlyBraces";
 		File f = new File(currentDir, filename+".java");
 		
@@ -149,7 +149,7 @@ public class MethodFileParserTest
 	@Test
 	public void testForeighCode1() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/foreign").getAbsolutePath();
+		String currentDir = new File("tests/executionFlow/core/file/parser/files/foreign").getAbsolutePath();
 		String filename = "HelpFormatter";
 		File f = new File(currentDir, filename+".java");
 		
@@ -160,7 +160,7 @@ public class MethodFileParserTest
 	@Test
 	public void testForeighCode2() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/foreign").getAbsolutePath();
+		String currentDir = new File("tests/executionFlow/core/file/parser/files/foreign").getAbsolutePath();
 		String filename = "MathArrays";
 		File f = new File(currentDir, filename+".java");
 		

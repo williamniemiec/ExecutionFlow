@@ -9,8 +9,8 @@ public class test_catch
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
-		try  {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+		FileWriter fw;int _e6ce86cb4c82318f8cbf337ec5d9bc62=0;
+		try  {int _8377dc25a13eb4cfeae3fc298ca3600b=0;
 
 			throw new IOException();
 		} 

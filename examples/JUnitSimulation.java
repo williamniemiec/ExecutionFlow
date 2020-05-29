@@ -11,7 +11,7 @@ import testClasses.TestClass;
 
 /**
  * Class created to show the application working with
- * JUnit test case in real time.
+ * JUnit test methods in real time.
  */
 public class JUnitSimulation 
 {
@@ -25,7 +25,7 @@ public class JUnitSimulation
 		TestClass tc = new TestClass(4);
 		tc.test2();
 	}
-	
+
 	@Test
 	public void testFactorial() 
 	{
@@ -112,7 +112,6 @@ public class JUnitSimulation
 		
 		assertArrayEquals(expectedResult, parsedLetters);
 	}
-	
 	
 	@Test
 	public void testParamSignature_object()

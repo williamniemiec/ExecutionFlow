@@ -1,0 +1,2 @@
+chainedCalls.ChainedMethods.testChainedMethodsInForLoop()
+[79]

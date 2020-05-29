@@ -1,0 +1,2 @@
+builderPattern.BuilderPatternTest.testBuilderPattern()
+[76, 77, 78, 79]

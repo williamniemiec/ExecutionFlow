@@ -1,0 +1,11 @@
+chainedCalls.ChainedMethods.testChainedMethodsInForLoop()
+[67, 68]
+[67, 68]
+[67, 68]
+[67, 68]
+[67, 68]
+[67, 68]
+[67, 68]
+[67, 68]
+[67, 68]
+[67, 68]

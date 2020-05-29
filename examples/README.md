@@ -5,28 +5,34 @@
 ## /examples
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
-| againstRequirements|`Diretório`| Testes que não funcionavam na primeira versão da aplicação|
-| controlFlow |`Diretório`|Testes relacionados ao fluxo de controle (if, if-else, try-catch,...)|
-| testClasses |`Diretório`|Classes criadas para a execução dos testes criados|
-|AnnotationsTest.java|`Arquivo`      | Exemplos relacionados a anotações de teste (EM BREVE) |
-| ComplexTests.java |`Arquivo`      |Testes mais sofisticados, como testes realizados dentro de laços |
-| JUnitSimulation.java|`Arquivo`|Testes relacionados ao funcionamento da aplicação com testes feitos com o JUnit|
-| MultipleTestPaths.java |`Arquivo`      |Testa a aplicação quando há vários test paths em um único método de teste|
-| SimpleTest.java |`Arquivo`      |Teste simples com apenas 1 método de teste (usado para o exemplo da página inicial)|
+| againstRequirements	|`Diretório`	|	Exemplos de códigos que não respeitam as limitações da aplicação	|
+| builderPattern		|`Diretório`	|	Exemplos de códigos que utilizam [builder pattern](https://www.geeksforgeeks.org/builder-design-pattern/)	|
+| chainedCalls			|`Diretório`	|	Exemplos de códigos que utilizam métodos encadeados	|
+| complexTests			|`Diretório`	|	Exemplos de códigos mais sofisticados, como o uso de construtores em um loop, além de conter códigos que não funcionavam nas versões anteriores da aplicação	|
+| controlFlow 			|`Diretório`	|	Exemplos relacionados ao fluxo de controle (if, if-else, try-catch,...)	|
+| overloadedMethod		|`Diretório`	|	Exemplos de códigos que utilizam chamadas para métodos sobrecarregados	|
+| testClasses 			|`Diretório`	|	Classes criadas para a execução de algum dos testes criados	|
+|AnnotationsTest.java 	|`Arquivo`      |	Exemplo de código que utiliza anotãções do JUnit 5 (<b>em breve</b>)	|
+| JUnitSimulation.java 	|`Arquivo`		|	Exemplo de código relacionado ao funcionamento da aplicação com testes feitos com o JUnit 	|
+| MultipleTestPaths.java |`Arquivo`     |	Exemplo de código que gerará vários test paths em um único método de teste 	|
+| SimpleTest.java 		|`Arquivo`      |	Exemplo de código simples com apenas 1 método de teste (usado para o exemplo da página inicial)	|
+
 
 <hr />
 
 ### Exemplo
-- [JUnitSimulation.java e MultipleTestPaths.java - output em arquivo]()
+- [JUnitSimulation.java e MultipleTestPaths.java - output em arquivo](https://github.com/williamniemiec/ExecutionFlow/tree/master/testPaths/testClasses)
 - JUnitSimulation.java - output no console
 <code>
 	
 	#####################################################################
-                      testParamSignature_object                      
+	                      testParamSignature_object                      
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.testObjParam(Object)...
+	[INFO] Processing source file of test method JUnitSimulation.testParamSignature_object()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.testObjParam(Object)...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
@@ -37,9 +43,11 @@
 	#####################################################################
 	                             testEmptyTest                           
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.test2()...
+	[INFO] Processing source file of test method JUnitSimulation.testEmptyTest()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.test2()...
+	[INFO] Test path is empty
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
@@ -50,9 +58,11 @@
 	#####################################################################
 	                             testFactorial                           
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.factorial(int)...
+	[INFO] Processing source file of test method JUnitSimulation.testFactorial()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.factorial(int)...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
@@ -63,9 +73,11 @@
 	#####################################################################
 	                            testFibonacci                            
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.fibonacci(int)...
+	[INFO] Processing source file of test method JUnitSimulation.testFibonacci()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.fibonacci(int)...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
@@ -76,9 +88,11 @@
 	#####################################################################
 	                    testStaticMethod_charSequence                    
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.parseLetters_noInternalCall(CharSequence)...
+	[INFO] Processing source file of test method JUnitSimulation.testStaticMethod_charSequence()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.parseLetters_noInternalCall(CharSequence)...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
@@ -89,9 +103,11 @@
 	#####################################################################
 	                           testFactorial_zero                       
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.factorial(int)...
+	[INFO] Processing source file of test method JUnitSimulation.testFactorial_zero()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.factorial(int)...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
@@ -102,9 +118,11 @@
 	#####################################################################
 	                      testParamSignature_createdObject               
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.testClassParam(ClassInterface)...
+	[INFO] Processing source file of test method JUnitSimulation.testParamSignature_createdObject()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.testClassParam(ClassInterface)...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
@@ -115,9 +133,11 @@
 	#####################################################################
 	                          testInternalCall                           
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.parseLetters_withInternalCall(char[])...
+	[INFO] Processing source file of test method JUnitSimulation.testInternalCall()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.parseLetters_withInternalCall(char[])...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
@@ -128,35 +148,43 @@
 	#####################################################################
 	                             testInterface                           
 	#####################################################################
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.Interface.test()...
+	[INFO] Processing source file of test method JUnitSimulation.testInterface()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.Interface.test()...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	JUnitSimulation.testInterface()
-	testClasses.ClassInterface.test()
+	testClasses.Interface.test()
 	[30, 31]
 </code>
 
 - MultipleTestPaths.java - output no console
 <code>
 	
-	Processing source file...
-	Processing completed
-	Generating test path...
-	Processing source file...
-	Processing completed
-	Generating test path...
-	Processing source file...
-	Processing completed
-	Generating test path...
+	[INFO] Processing source file of method testClasses.TestClass.threePaths(int)...
+	[INFO] Processing source file of test method MultipleTestPaths.ThreeTestPathsTest()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.threePaths(int)...
+	[INFO] Test path has been successfully computed
+	[INFO] Processing source file of method testClasses.TestClass.threePaths(int)...
+	[INFO] Processing source file of test method MultipleTestPaths.ThreeTestPathsTest()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.threePaths(int)...
+	[INFO] Test path has been successfully computed
+	[INFO] Processing source file of method testClasses.TestClass.threePaths(int)...
+	[INFO] Processing source file of test method MultipleTestPaths.ThreeTestPathsTest()...
+	[INFO] Processing completed
+	[INFO] Computing test path of method testClasses.TestClass.threePaths(int)...
+	[INFO] Test path has been successfully computed
 	---------------------------------------------------------------------
 	                                EXPORT                               
 	---------------------------------------------------------------------
 	MultipleTestPaths.ThreeTestPathsTest()
 	testClasses.TestClass.threePaths(int)
-	[182, 183]
 	[182, 186, 190]
+	[182, 183]
 	[182, 186, 187]
 </code>

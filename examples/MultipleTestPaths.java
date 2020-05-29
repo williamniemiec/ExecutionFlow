@@ -4,6 +4,9 @@ import org.junit.Test;
 import testClasses.TestClass;
 
 
+/**
+ * Tests that have multiple test paths that belong to the same method signature.
+ */
 public class MultipleTestPaths 
 {
 	@Test

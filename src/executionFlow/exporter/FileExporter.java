@@ -21,28 +21,13 @@ import executionFlow.info.SignaturesInfo;
  * 
  * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 1.0
- * @version 1.0
+ * @version 1.4
  */
 public class FileExporter implements ExporterExecutionFlow 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * Stores computed test paths from a class.<br />
-	 * <ul>
-	 * 		<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
-	 * 		<li>
-	 * 			<b>Value:</b> 
-	 * 			<ul>
-	 * 				<li><b>Key:</b> Test method signature and method signature</li>
-	 * 				<li><b>Value:</b> Test path</li>
-	 * 			</ul>
-	 * 		</li>
-	 * </ul>
-	 */
-	private Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
-	
 	private String dirName;
 
 	
@@ -53,23 +38,10 @@ public class FileExporter implements ExporterExecutionFlow
 	 * Exports test paths of a method to files in the specified directory.
 	 * 
 	 * @param dirName Name of the directory
-	 * @param classPaths All tested test paths of a class
 	 */
-	public FileExporter(String dirName, Map<String, Map<SignaturesInfo, List<Integer>>> classPaths)
+	public FileExporter(String dirName)
 	{
-		this(classPaths);
 		this.dirName = dirName;
-	}
-	
-	/**
-	 * Exports test paths of a method to files in the directory "testPaths".
-	 * 
-	 * @param classPaths All tested test paths of a class
-	 */
-	public FileExporter(Map<String, Map<SignaturesInfo, List<Integer>>> classPaths)
-	{
-		this.classPaths = classPaths;
-		this.dirName = "testPaths";
 	}
 	
 	
@@ -77,16 +49,14 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export() 
+	public void export(Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths) 
 	{
-		if (classPaths.isEmpty()) { return; }
-		
 		try {
 			// Removes test path folders that will be overwritten (avoids 
 			// creating duplicate files)
-			prepareExport();
+			prepareExport(classTestPaths);
 		
-			for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classPaths.values()) {
+			for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classTestPaths.values()) {
 				for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathsInfo.entrySet()) {
 					SignaturesInfo signatures = e.getKey();
 		
@@ -98,8 +68,8 @@ public class FileExporter implements ExporterExecutionFlow
 				}
 			}
 			
-			System.out.println("Test paths have been successfully generated!");
-			System.out.println("Location: "+new File(dirName).getAbsolutePath());
+			System.out.println("[INFO] Test paths have been successfully generated!");
+			System.out.println("[INFO] Location: "+new File(dirName).getAbsolutePath());
 			System.out.println();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -193,7 +163,7 @@ public class FileExporter implements ExporterExecutionFlow
 		bfw.newLine();
 		bfw.close();
 		
-		System.out.println("Writing file "+f.getName()+" in "+f.getAbsolutePath());
+		System.out.println("[INFO] Writing file "+f.getName()+" in "+f.getAbsolutePath());
 	}
 	
 	/**
@@ -201,9 +171,9 @@ public class FileExporter implements ExporterExecutionFlow
 	 *  
 	 * @throws IOException If any test path file to be removed is in use
 	 */
-	private void prepareExport() throws IOException
+	private void prepareExport(Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths) throws IOException
 	{
-		for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classPaths.values()) {
+		for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classTestPaths.values()) {
 			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathsInfo.entrySet()) {
 				SignaturesInfo signatures = e.getKey();			
 				

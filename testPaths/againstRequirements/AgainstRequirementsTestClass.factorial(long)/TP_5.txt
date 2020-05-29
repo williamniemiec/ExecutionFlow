@@ -1,3 +1,0 @@
-againstRequirements.AgainstRequirements.moreOneConstructor()
-[37, 40, 42, 43, 42, 43, 42, 43, 42, 43, 42, 46]
-[37, 38]

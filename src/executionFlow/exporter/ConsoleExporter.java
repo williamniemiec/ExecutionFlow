@@ -11,54 +11,16 @@ import executionFlow.info.SignaturesInfo;
  * 
  * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 1.0
- * @version 1.0
+ * @version 1.4
  */
 public class ConsoleExporter implements ExporterExecutionFlow 
 {
 	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	/**
-	 * Stores computed test paths from a class.<br />
-	 * <ul>
-	 * 		<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
-	 * 		<li>
-	 * 			<b>Value:</b> 
-	 * 			<ul>
-	 * 				<li><b>Key:</b> Test method signature and method signature</li>
-	 * 				<li><b>Value:</b> Test path</li>
-	 * 			</ul>
-	 * 		</li>
-	 * </ul>
-	 */
-	private Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	/** 
-	 * Shows test paths of a method on the console in the following format:
-	 * <li>Test method's signature</li>
-	 * <li>Method's signature</li>
-	 * <li>Method's test path</li>
-	 * 
-	 * @param classPaths Test path of each tested method of a class
-	 */	
-	public ConsoleExporter(Map<String, Map<SignaturesInfo, List<Integer>>> classPaths)
-	{
-		this.classPaths = classPaths;
-	}
-	
-	
-	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export() 
+	public void export(Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths) 
 	{
-		if (classPaths.isEmpty()) { return; }
-		
 		String currentTestMethodSignature = null;
 		String currentMethod = "";
 		
@@ -66,7 +28,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 		System.out.println("                                EXPORT                               ");
 		System.out.println("---------------------------------------------------------------------");
 		
-		for (Map<SignaturesInfo, List<Integer>> classPathInfo : classPaths.values()) {
+		for (Map<SignaturesInfo, List<Integer>> classPathInfo : classTestPaths.values()) {
 			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathInfo.entrySet()) {
 				SignaturesInfo signatures = e.getKey();
 				String testMethodSignature = signatures.getTestMethodSignature();
@@ -95,6 +57,6 @@ public class ConsoleExporter implements ExporterExecutionFlow
 			
 			System.out.println();		// New line
 			currentTestMethodSignature = null;
-		}	
+		}
 	}
 }

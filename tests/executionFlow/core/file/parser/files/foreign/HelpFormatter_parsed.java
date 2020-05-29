@@ -687,7 +687,7 @@ public class HelpFormatter
         {
             buff.append("-").append(option.getOpt());
         }
-        else {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+        else {int _737e11307dab94731cdd3a770f587f9a=0;
 
             buff.append("--").append(option.getLongOpt());
         }
@@ -813,7 +813,7 @@ public class HelpFormatter
             {
                 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
             }
-            else {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+            else {int _e2aa3f234852814855553f6d9646f66c=0;
 
                 optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());
 
@@ -831,7 +831,7 @@ public class HelpFormatter
                     // if the option has a blank argname
                     optBuf.append(' ');
                 }
-                else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                else {int _3deee8067aaf08a96ec57ca902fe0d59=0;
 
                     optBuf.append(option.hasLongOpt() ? longOptSeparator : " ");
                     optBuf.append("<").append(argName != null ? option.getArgName() : getArgName()).append(">");
@@ -950,7 +950,7 @@ public class HelpFormatter
                 {
                     sb.append(getNewLine());
                 }
-                else {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                else {int _51b54b67f6f6774cc334cf24d26fa801=0;
 
                     firstLine = false;
                 }
@@ -1005,7 +1005,7 @@ public class HelpFormatter
             final char c = text.charAt(pos);
             if (c == ' ' || c == '\n' || c == '\r')
             {
-                break;
+if (Boolean.parseBoolean("True")) {                break;}
             }
         }
 

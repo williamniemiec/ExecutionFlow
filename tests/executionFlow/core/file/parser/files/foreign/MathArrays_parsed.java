@@ -323,32 +323,32 @@ public class MathArrays {
         T previous = val[0];
         final int max = val.length;
         for (int i = 1; i < max; i++) {
-            final int comp;int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+            final int comp;int _a6d50ec9cd54cc3c6966a6f6b724b86d=0;
             switch (dir) {
-            case INCREASING:_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+            case INCREASING:int _d6f54c2df33b2fb1bb96a41b78f435e=0;
                 comp = previous.compareTo(val[i]);
                 if (strict) {
                     if (comp >= 0) {
                         return false;
                     }
-                } else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                } else {int _3f89d2ab8cb9c8620e37cba0f14cbdee=0;
                     if (comp > 0) {
                         return false;
                     }
                 }
-                break;
-            case DECREASING:_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+if (Boolean.parseBoolean("True")) {                break;}
+            case DECREASING:int _8d76fd93c055761a255308d4506b3e34=0;
                 comp = val[i].compareTo(previous);
                 if (strict) {
                     if (comp >= 0) {
                         return false;
                     }
-                } else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                } else {int _77631fbf7fb164562e005c65f703812d=0;
                     if (comp > 0) {
                        return false;
                     }
                 }
-                break;
+if (Boolean.parseBoolean("True")) {                break;}
             default:
                 // Should never happen.
                 throw new MathInternalError();
@@ -387,7 +387,7 @@ public class MathArrays {
                                            boolean abort) {
         if (a.length == b.length) {
             return true;
-        } else {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+        } else {int _94ad1bb6a85fcf416c1312cd9601cb0=0;
             if (abort) {
                 throw new DimensionMismatchException(a.length, b.length);
             }
@@ -425,7 +425,7 @@ public class MathArrays {
                                            boolean abort) {
         if (a.length == b.length) {
             return true;
-        } else {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+        } else {int _4a43cc4a321f585c7fbce889c785978e=0;
             if (abort) {
                 throw new DimensionMismatchException(a.length, b.length);
             }
@@ -463,32 +463,32 @@ public class MathArrays {
         double previous = val[0];
         final int max = val.length;
 
-        int index;int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+        int index;int _2226335da4aba6fa8db0a788f96da3e8=0;
         ITEM:
         for (index = 1; index < max; index++) {
             switch (dir) {
-            case INCREASING:_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+            case INCREASING:int _44a62a53ec2f9d7c93ae45c50f25becd=0;
                 if (strict) {
                     if (val[index] <= previous) {
-                        break ITEM;_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                        break ITEM;int _ba5ff16d343478cbe826a9c675eb2689=0;
                     }
-                } else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                } else {int _dcac4e48b472a7afa8f280eeda64e866=0;
                     if (val[index] < previous) {
-                        break ITEM;_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                        break ITEM;int _f3621f42ffae2abd8455da4655d77fa=0;
                     }
                 }
-                break;
-            case DECREASING:_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+if (Boolean.parseBoolean("True")) {                break;}
+            case DECREASING:int _543d2e068d5d5800cbe4e632f31337ae=0;
                 if (strict) {
                     if (val[index] >= previous) {
-                        break ITEM;_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                        break ITEM;int _4116e4ffe06ba4b7360895e1d299afe=0;
                     }
-                } else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                } else {int _f09487999b560ac1cf9a93df16fcb909=0;
                     if (val[index] > previous) {
-                        break ITEM;_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+                        break ITEM;int _6b4db0e054e5fdf8ebd85534c0ff18a3=0;
                     }
                 }
-                break;
+if (Boolean.parseBoolean("True")) {                break;}
             default:
                 // Should never happen.
                 throw new MathInternalError();
@@ -915,7 +915,7 @@ public class MathArrays {
         for (int i = 0; i < len; i++) {
             if (Double.isNaN(values[i])) {
                 out[i] = Double.NaN;
-            } else {int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+            } else {int _2316afb7af0bc070b28b81d985c18935=0;
                 out[i] = values[i] * normalizedSum / sum;
             }
         }
@@ -953,11 +953,11 @@ public class MathArrays {
      */
     @SuppressWarnings("unchecked")
     public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-        final T[][] array;int _fe46e5c4af5ae39fd79a35d0857d47e0=0;
+        final T[][] array;int _6c3aa75a26962559d48b9bf331a03849=0;
         if (columns < 0) {
             T[] dummyRow = buildArray(field, 0);
             array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
-        } else {_fe46e5c4af5ae39fd79a35d0857d47e0=0;
+        } else {int _7d926f17e0391b2ef8fb0528fc106ec5=0;
             array = (T[][]) Array.newInstance(field.getRuntimeClass(),
                                               new int[] {
                                                   rows, columns

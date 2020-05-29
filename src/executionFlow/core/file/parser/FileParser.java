@@ -16,6 +16,15 @@ import executionFlow.core.file.FileEncoding;
  */
 public abstract class FileParser 
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
+	protected FileEncoding encode = FileEncoding.UTF_8;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	/**
 	 * Parses file, adding some code to an existing code if some conditions are 
 	 * met
@@ -25,17 +34,27 @@ public abstract class FileParser
 	 */
 	public abstract String parseFile() throws IOException;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Getters & Setters
+	//-------------------------------------------------------------------------
 	/**
 	 * Gets file encoding.
 	 * 
 	 * @return File encoding
 	 */
-	public abstract FileEncoding getEncoding();
+	public FileEncoding getEncoding()
+	{
+		return encode;
+	}
 	
 	/**
 	 * Sets file encoding.
 	 * 
 	 * @param encoding File encoding
 	 */
-	public abstract void setEncoding(FileEncoding encoding);
+	public void setEncoding(FileEncoding encode)
+	{
+		this.encode = encode;
+	}
 }

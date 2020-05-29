@@ -79,10 +79,8 @@ public class ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		classTestPaths = new HashMap<>();
-		
-		exporter = new ConsoleExporter(classTestPaths);
-		//exporter = new FileExporter(classPaths);
+		exporter = new ConsoleExporter();
+		//exporter = new FileExporter();
 	}
 	
 	
@@ -100,6 +98,8 @@ public class ExecutionFlow
 	{
 		this.collectedMethods = collectedMethods;
 		this.lastLineTestMethod = lastLineTestMethod;
+		
+		classTestPaths = new HashMap<>();
 	}
 	
 
@@ -154,10 +154,12 @@ public class ExecutionFlow
 				);
 				
 				try {
-					System.out.println("[INFO] Processing source file of the method...");
+					System.out.println("[INFO] Processing source file of method "
+							+ collector.getMethodInfo().getMethodSignature()+"...");
 					methodFileManager.parseFile().compileFile();
 					
-					System.out.println("[INFO] Processing source file of the test method...");
+					System.out.println("[INFO] Processing source file of test method "
+							+ collector.getMethodInfo().getTestMethodSignature()+"...");
 					testMethodFileManager.parseFile()
 										 .createClassBackupFile()
 										 .compileFile();
@@ -165,10 +167,15 @@ public class ExecutionFlow
 					System.out.println("[INFO] Processing completed");
 					
 					// Computes test path from JDB
-					System.out.println("[INFO] Computing test path...");
+					System.out.println("[INFO] Computing test path of method "
+							+ collector.getMethodInfo().getMethodSignature()+"...");
 					JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());					
 					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
-					System.out.println("[INFO] Test path has been successfully computed");
+					
+					if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())
+						System.out.println("[INFO] Test path is empty");
+					else
+						System.out.println("[INFO] Test path has been successfully computed");
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
@@ -190,7 +197,7 @@ public class ExecutionFlow
 	 */
 	public void export() 
 	{
-		exporter.export();
+		exporter.export(classTestPaths);
 	}
 	
 	/**
@@ -216,6 +223,12 @@ public class ExecutionFlow
 				classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
 				classTestPaths.put(key, classPathInfo);
 			}
+		}
+		
+		if (testPaths.isEmpty()) {
+			classPathInfo = new HashMap<>();
+			classPathInfo.put(collector.getMethodInfo().extractSignatures(), new ArrayList<Integer>());
+			classTestPaths.put(collector.getMethodInfo().extractSignatures().toString(), classPathInfo);
 		}
 	}
 	

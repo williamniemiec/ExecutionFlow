@@ -10,7 +10,7 @@ public class TestClass
 		
 	}
 	
-	@Test @executionFlow.runtime.SkipMethod
+	@Test
 	public void testFoo2()
 	{
 		

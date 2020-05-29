@@ -11,7 +11,7 @@ import org.junit.Test;
  * Tests test path computation in control flow structures.
  */
 public class ControlFlowTest 
-{/*
+{
 	@Test @executionFlow.runtime._SkipMethod
 	public void ifElseTest_earlyReturn() 
 	{
@@ -41,6 +41,7 @@ public class ControlFlowTest
 		
 		assertEquals(expectedResult, result);
 	}
+	
 	@Test @executionFlow.runtime._SkipMethod
 	public void ifElseTest3() 
 	{
@@ -50,14 +51,14 @@ public class ControlFlowTest
 		
 		assertEquals(expectedResult, result);
 	}
-*/
+	
 	@Test @executionFlow.runtime._SkipMethod
 	public void tryCatchTest1() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		assertTrue(tccf.tryCatchMethod_try());
 	}
-/*
+
 	@Test @executionFlow.runtime._SkipMethod
 	public void tryCatchTest2() 
 	{
@@ -103,5 +104,5 @@ public class ControlFlowTest
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
 		assertTrue(tccf.inlineIfElse(2));
-	}*/
+	}
 }
