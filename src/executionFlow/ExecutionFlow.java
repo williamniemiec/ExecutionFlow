@@ -79,8 +79,8 @@ public class ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = new ConsoleExporter();
-		//exporter = new FileExporter();
+		//exporter = new ConsoleExporter();
+		exporter = new FileExporter("testPaths");
 	}
 	
 	

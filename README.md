@@ -6,7 +6,10 @@ Aplicação que tem por objetivo exibir o caminho de teste (test path) de métod
 
 ## Avisos importantes
 - Se ao executar o método de teste não for gerado o test path, [execute `clean` no projeto](https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#clean)
-- Não interrompa a execução do teste antes de ser exibida a mensagem '[INFO] Test path has been successfully computed'; caso contrário, o arquivo do código fonte pode ser comprometido. Caso isso ocorra, veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#arquivo-fonte-comprometido) como recuperar o arquivo original
+- Não interrompa a execução do teste antes de ser exibida a seguinte mensagem:
+> [INFO] Test path has been successfully computed'; 
+
+Caso contrário, o arquivo do código fonte pode ser comprometido. Caso isso ocorra, veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#arquivo-fonte-comprometido) como recuperar o arquivo original.
 - É obrigatório ter diretório 'src' na raiz do projeto
 - Não será computado test path de qualquer método que pertença a classes que contenham nome 'builder'; Além disso, não é computado test path de construtores ou blocos de inicialização
 - Se a computação do test path for interrompida antes de seu fim, o arquivo da classe de teste ficará com código alterado (todos os locais que possuem `@Test` ficarão com `@Test @executionFlow.runtime._SkipMethod`). Ao executar o mesmo teste novamente, este não será executado, visto que essa anotação que foi adicionada desativa os coletores. Veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#arquivo-fonte-comprometido) como restaurar o arquivo original
