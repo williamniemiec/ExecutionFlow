@@ -257,7 +257,6 @@ public class JDB
 			// Checks if has exit the method
 			else if (exitMethod) {
 				currentSkip--; 
-
 				// Checks if has to skip collected test path
 				if (currentSkip == -1) {
 					// Saves test path
@@ -608,8 +607,18 @@ public class JDB
         					newIteration = true;
         				}
                 	} 
-        			else if (inMethod) { 	
+        			else if (inMethod) {
         				int lineNumber = jdb_getLine(line);
+//        				System.out.println("------");
+//        				System.out.println("in; "+lineNumber);
+//        				System.out.println(line.contains(testMethodSignature));
+//        				System.out.println(isWithinMethod(lineNumber));
+//        				System.out.println(!isEmptyMethod());
+//        				System.out.println(!exitMethod); 
+//    					System.out.println(line.contains(methodSignature));
+//    					System.out.println(lineNumber != lastLineAdded);
+//    					System.out.println(methodSignature);
+//        				System.out.println("------");
         				
         				// Checks if returned from the method
         				if (line.contains(testMethodSignature)) {
@@ -755,7 +764,7 @@ public class JDB
 		private boolean isWithinMethod(int lineNumber)
 		{
 			return	!exitMethod && 
-					line.contains(methodSignature) &&
+					//line.contains(methodSignature) &&
 					lineNumber != lastLineAdded;
 		}
 		
