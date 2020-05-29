@@ -26,6 +26,7 @@ Veja todas as considerações e limitações da aplicação [aqui](https://githu
 
 ## Exemplo de saída - [SimpleTest](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/SimpleTest.java)
 <code>
+	
 	[INFO] Processing source file of method testClasses.TestClass.factorial(int)...
 	[INFO] Processing source file of test method SimpleTest.testFactorial()...
 	[INFO] Processing completed
