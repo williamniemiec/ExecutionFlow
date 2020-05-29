@@ -579,6 +579,13 @@ public class JDB
     				 (line.contains("Breakpoint hit") || line.contains("Step completed")) ) {
         			response = true;
             		srcLine = output.readLine();
+            		
+            		// Ignores native calls
+            		if (line.contains("jdk.") || line.contains(".<init>")) {
+            			isInternalCommand = true;
+            			inMethod = false;
+            			return true;
+            		}
         			
             		// Checks if last method was skipped
             		if (skipped) {
