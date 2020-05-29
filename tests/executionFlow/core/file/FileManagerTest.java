@@ -32,9 +32,9 @@ public class FileManagerTest
 		);
 		
 		try {
-			fileManager.parseFile().compileFile();
+			fileManager.parseFile().createClassBackupFile().compileFile();
 		} finally {
-			fileManager.revertParse();
+			fileManager.revertParse().revertCompilation();
 		}
 	}
 	
@@ -58,7 +58,7 @@ public class FileManagerTest
 				.createClassBackupFile()
 				.compileFile();
 		} finally {
-			fileManager.revertCompilation();
+			fileManager.revertParse().revertCompilation();
 		}
 	}
 }

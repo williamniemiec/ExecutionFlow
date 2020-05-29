@@ -12,7 +12,7 @@ import org.junit.Test;
  */
 public class ControlFlowTest 
 {
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void ifElseTest_earlyReturn() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
@@ -22,7 +22,7 @@ public class ControlFlowTest
 		assertEquals(expectedResult, result);
 	}
 
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void ifElseTest() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
@@ -32,7 +32,7 @@ public class ControlFlowTest
 		assertEquals(expectedResult, result);
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void ifElseTest2() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
@@ -42,7 +42,7 @@ public class ControlFlowTest
 		assertEquals(expectedResult, result);
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void ifElseTest3() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
@@ -52,21 +52,21 @@ public class ControlFlowTest
 		assertEquals(expectedResult, result);
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void tryCatchTest1() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		assertTrue(tccf.tryCatchMethod_try());
 	}
 
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void tryCatchTest2() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		assertFalse(tccf.tryCatchMethod_catch());
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void switchCaseTest() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
@@ -74,7 +74,7 @@ public class ControlFlowTest
 		assertEquals('E', tccf.switchCaseMethod('É'));
 	}
 
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void doWhileTest()
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
@@ -82,7 +82,7 @@ public class ControlFlowTest
 		assertEquals(7, tccf.doWhileMethod(2,5));
 	}
 
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void inlineWhile()
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
@@ -90,7 +90,7 @@ public class ControlFlowTest
 		assertEquals(0, tccf.inlineWhile(2));
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void inlineDoWhile()
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
@@ -98,7 +98,7 @@ public class ControlFlowTest
 		assertEquals(0, tccf.inlineDoWhile(2));
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test
 	public void inlineIfElse()
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
