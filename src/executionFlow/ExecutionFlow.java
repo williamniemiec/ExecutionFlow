@@ -72,15 +72,15 @@ public class ExecutionFlow
 	 * each test method executed.
 	 */
 	{
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	/**
 	 * Defines how the export will be done.
 	 */
 	{
-		//exporter = new ConsoleExporter();
-		exporter = new FileExporter("testPaths");
+		exporter = new ConsoleExporter();
+		//exporter = new FileExporter("testPaths");
 	}
 	
 	
@@ -181,6 +181,7 @@ public class ExecutionFlow
 					storeTestPath(tp_jdb, collector);
 				} catch (Exception e) {
 					System.out.println("[ERROR] "+e.getMessage());
+					e.printStackTrace();
 				} finally {
 					// Reverts parsed file to its original state
 					methodFileManager.revertParse();

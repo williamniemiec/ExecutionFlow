@@ -6,8 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import executionFlow.core.file.parser.FileParser;
-
 
 /**
  * When a method has this annotation, all collectors will ignore it.
@@ -16,7 +14,8 @@ import executionFlow.core.file.parser.FileParser;
  * @since 1.4
  * @version 1.4
  * 
- * @apiNote Must be used exclusively by {@link FileParser}
+ * @apiNote Must be used exclusively by 
+ * {@link executionFlow.core.file.parser.FileParser}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(METHOD)

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.*;
 
 import executionFlow.*;
 import executionFlow.core.*;
@@ -22,7 +22,7 @@ import executionFlow.info.*;
  * 
  * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 1.0
- * @version 1.4
+ * @version 1.4.1
  * 
  * @implNote Excludes calls to native java methods, ExecutionFlow's classes,
  * methods with {@link SkipMethod]} annotation, methods with {@link _SkipMethod]
@@ -49,6 +49,16 @@ public aspect MethodCollector extends RuntimeCollector
 //		 cflow(execution(@RepeatedTest * *.*())) ||
 //		 cflow(execution(@ParameterizedTest * *.*())) || 
 //		 cflow(execution(@TestFactory * *.*()))
+		&& !within(is(EnumType))
+		&& !within(is(InnerType))
+		&& !within(is(AnonymousType))
+		&& !within(is(InterfaceType))
+		&& !execution(private * *(..))
+		&& !execution(@Ignore * *(..))
+		&& !execution(@Before * *(..))
+		&& !execution(@After * *(..))
+		&& !execution(@BeforeClass * *(..))
+		&& !execution(@AfterClass * *(..))
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileCompiler)
@@ -75,7 +85,8 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !call(void org.junit.Assert.*(*))
 		&& !call(void org.junit.Assert.*(*,*))
 		&& !call(void org.junit.Assert.*(*,*,*))
-		&& !call(void org.junit.Assert.*(*,*,*,*));
+		&& !call(void org.junit.Assert.*(*,*,*,*))
+		&& !call(void org.junit.Assert.fail());
 	
 	/**
 	 * Executed before the end of each internal call of a method with @Test annotation

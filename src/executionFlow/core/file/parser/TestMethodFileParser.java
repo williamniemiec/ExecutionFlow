@@ -8,12 +8,11 @@ import java.nio.file.Files;
 
 import executionFlow.core.JDB;
 import executionFlow.core.file.FileEncoding;
-import executionFlow.runtime._SkipMethod;
 
 
 /**
- * Parses test java file adding {@link _SkipMethod} annotation in all tests to 
- * disable collectors during JDB.
+ * Parses test java file adding {@link executionFlow.runtime._SkipMethod} 
+ * annotation in all tests to disable collectors during JDB.
  * 
  * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 1.4

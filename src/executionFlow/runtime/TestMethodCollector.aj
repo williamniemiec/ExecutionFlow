@@ -2,7 +2,7 @@ package executionFlow.runtime;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.*;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.core.JDB;
@@ -23,7 +23,7 @@ import executionFlow.info.SignaturesInfo;
  * 
  * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 1.0
- * @version 1.4
+ * @version 1.4.1
  * 
  * @implNote Ignores methods with {@link SkipMethod]} annotation, methods with
  * {@link _SkipMethod] and all methods from classes with {@link SkipCollection}
@@ -43,6 +43,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 		 //execution(@RepeatedTest * *.*()) ||
 //		 execution(@ParameterizedTest * *.*()) ||
 //		 execution(@TestFactory * *.*())) 
+		&& !execution(private * *(..))
+		&& !execution(@Ignore * *(..))
+		&& !execution(@Before * *(..))
+		&& !execution(@After * *(..))
+		&& !execution(@BeforeClass * *(..))
+		&& !execution(@AfterClass * *(..))
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileCompiler)

@@ -1,6 +1,6 @@
 package executionFlow.runtime;
 
-import org.junit.Test;
+import org.junit.*;
 
 import executionFlow.*;
 import executionFlow.core.*;
@@ -20,7 +20,7 @@ import executionFlow.info.*;
  * 
  * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 1.0
- * @version 1.4
+ * @version 1.4.1
  */
 public aspect ConstructorCollector extends RuntimeCollector
 {
@@ -31,7 +31,13 @@ public aspect ConstructorCollector extends RuntimeCollector
 		!cflow(execution(@SkipMethod * *.*()))
 		&& !cflow(execution(@_SkipMethod * *.*()))
 		&& cflow(execution(@Test * *.*()))
-		&& (initialization(*.new(*)) || initialization(*.new()))	
+		&& (initialization(*.new(*)) || initialization(*.new()))
+		&& !execution(private * *(..))
+		&& !execution(@Ignore * *(..))
+		&& !execution(@Before * *(..))
+		&& !execution(@After * *(..))
+		&& !execution(@BeforeClass * *(..))
+		&& !execution(@AfterClass * *(..))
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileParser)
