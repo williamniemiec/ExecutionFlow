@@ -29,7 +29,7 @@ import executionFlow.info.ClassMethodInfo;
  * 
  * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 1.2
- * @version 1.4
+ * @version 1.4.1
  */
 public class JDB 
 {
@@ -98,12 +98,12 @@ public class JDB
 	 * execution.
 	 */
 	{
-		DEBUG = false;
+		DEBUG = true;
 	}
 
 	
 	//-------------------------------------------------------------------------
-	//		Constructor
+	//		Constructors
 	//-------------------------------------------------------------------------
 	/**
 	 * Computes test path from code debugging. 
@@ -245,6 +245,11 @@ public class JDB
 			while (!wasNewIteration && !out.read()) { continue; }  
 			
 			wasNewIteration = false;
+			
+//			while (returned) {
+//				in.send("next");
+//				while (!out.read()) { continue; }
+//			}
 			
 			if (endOfMethod) {
 				// Checks if there is unsaved test path
@@ -604,16 +609,6 @@ public class JDB
                 	} 
         			else if (inMethod) {
         				int lineNumber = jdb_getLine(line);
-//        				System.out.println("------");
-//        				System.out.println("in; "+lineNumber);
-//        				System.out.println(line.contains(testMethodSignature));
-//        				System.out.println(isWithinMethod(lineNumber));
-//        				System.out.println(!isEmptyMethod());
-//        				System.out.println(!exitMethod); 
-//    					System.out.println(line.contains(methodSignature));
-//    					System.out.println(lineNumber != lastLineAdded);
-//    					System.out.println(methodSignature);
-//        				System.out.println("------");
         				
         				// Checks if returned from the method
         				if (line.contains(testMethodSignature)) {
@@ -639,9 +634,15 @@ public class JDB
 	    			response = true;
 	    		}
 	    		
-	    		// -----{ DEBUG }-----
-	    		if (DEBUG && srcLine != null) { System.out.println("[DEBUG] SRC: "+srcLine); }
-	    		// -----{ END DEBUG }-----
+	    		if (srcLine != null) {
+	    			// Checks if current line is a return instruction
+	    			if (!overloadedMethod && srcLine.matches("^[0-9]*(\\ |\\t)*return(\\ |\\t)+.*$"))
+	    				exitMethod = true;
+	    			
+	    			// -----{ DEBUG }-----
+	    			if (DEBUG) { System.out.println("[DEBUG] SRC: "+srcLine); }
+	    			// -----{ END DEBUG }-----	    			
+	    		}
 			} 
 			
 			return response;
