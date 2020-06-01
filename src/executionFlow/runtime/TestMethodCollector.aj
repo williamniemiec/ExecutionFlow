@@ -49,6 +49,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 		&& !execution(@After * *(..))
 		&& !execution(@BeforeClass * *(..))
 		&& !execution(@AfterClass * *(..))
+		&& !within(@SkipCollection *)
+		&& !execution(@SkipMethod * *())
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileCompiler)
@@ -73,8 +75,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{
-		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
-		
 		reset();
 
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
@@ -95,9 +95,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	after(): testMethodCollector() 
 	{	
-		// Ignores if the class has @SkipCollection annotation
-		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
-		
 		// Gets test paths of the collected methods and export them
 		int lastLineTestMethod = Thread.currentThread().getStackTrace()[2].getLineNumber();
 		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);

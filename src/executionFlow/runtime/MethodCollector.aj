@@ -43,7 +43,7 @@ public aspect MethodCollector extends RuntimeCollector
 	pointcut methodCollector(): 
 		!cflow(execution(@SkipMethod * *.*())) 
 		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& cflow(execution(@Test * *.*()))
+		&& cflow(execution(@Test * *.*())) 
 		&& !execution(public int hashCode())
 //		(cflow(execution(@Test * *.*())) || 
 //		 cflow(execution(@RepeatedTest * *.*())) ||
@@ -53,12 +53,13 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(is(InnerType))
 		&& !within(is(AnonymousType))
 		&& !within(is(InterfaceType))
-		&& !execution(private * *(..))
-		&& !execution(@Ignore * *(..))
-		&& !execution(@Before * *(..))
-		&& !execution(@After * *(..))
-		&& !execution(@BeforeClass * *(..))
-		&& !execution(@AfterClass * *(..))
+		&& !execution(private * *(..)) && !execution(private * *(*)) 
+		&& !execution(@Ignore * *())
+		&& !execution(@Before * *())
+		&& !execution(@After * *())
+		&& !execution(@BeforeClass * *())
+		&& !execution(@AfterClass * *())
+		&& !within(@SkipCollection *)
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileCompiler)
@@ -93,9 +94,6 @@ public aspect MethodCollector extends RuntimeCollector
 	 */
 	after(): methodCollector()
 	{	
-		// Ignores if the class has @SkipCollection annotation
-		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
-
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
 		

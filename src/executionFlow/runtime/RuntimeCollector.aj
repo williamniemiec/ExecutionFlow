@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aspectj.lang.JoinPoint;
-
 import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.CollectorInfo;
 
@@ -17,11 +15,11 @@ import executionFlow.info.CollectorInfo;
  * 
  * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 1.0
- * @version 1.4
+ * @version 1.4.1
  * 
  * @implNote It will ignore all methods of a class if it has 
- * <code>@SkipCollection</code> annotation
- * @implNote It will ignore methods with <code>@SkipMethod</code> annotation
+ * {@link SkipCollection} annotation
+ * @implNote It will ignore methods with {@link SkipMethod} annotation
  */
 public abstract aspect RuntimeCollector 
 {
@@ -65,24 +63,7 @@ public abstract aspect RuntimeCollector
 	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------
-	/**
-	 * Returns if the class of a method that a join point intercepted has 
-	 * <code>@SkipCollection</code>. 
-	 * 
-	 * @param jp Join point that intercepted a method
-	 * @return If the class of the intercepted method has 
-	 * <code>@SkipCollection</code>
-	 */
-	protected boolean hasSkipCollectionAnnotation(JoinPoint jp)
-	{
-		if (jp.getThis() != null && hasClassSkipCollectionAnnotation(jp.getThis().getClass())) {
-			skipCollection = true;
-		}
-		
-		return skipCollection;
-	}
-	
+	//-------------------------------------------------------------------------	
 	/**
 	 * Returns if a method is a native method of Java.
 	 * 
@@ -163,20 +144,5 @@ public abstract aspect RuntimeCollector
 	{
 		String[] tmp = signature.split("\\.");
 		return tmp[tmp.length-2].toLowerCase().contains("builder");
-	}
-	
-	/**
-	 * Checks if there is the <code>@SkipCollection</code> annotation in a 
-	 * class.
-	 * 
-	 * @param c Class to be analyzed
-	 * @return If <code>@SkipCollection</code> annotation is present in the 
-	 * class
-	 */
-	private boolean hasClassSkipCollectionAnnotation(Class<?> c)
-	{
-		if (c == null) { return false; }
-		
-		return c.isAnnotationPresent(SkipCollection.class);
 	}
 }

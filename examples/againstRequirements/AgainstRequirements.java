@@ -9,7 +9,8 @@ import org.junit.Test;
 /**
  * Tests what happens if the requirements are not met.
  */
-public class AgainstRequirements {
+public class AgainstRequirements 
+{
 	/**
 	 * Test with curly bracket in the same line of last instruction. No test path
 	 * will be computed.
@@ -22,8 +23,7 @@ public class AgainstRequirements {
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
-		assertEquals(24, artc.factorial(4));
-	}
+		assertEquals(24, artc.factorial(4)); }
 
 	/**
 	 * Test without {@link Test} annotation.

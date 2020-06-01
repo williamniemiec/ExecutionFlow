@@ -38,6 +38,8 @@ public aspect ConstructorCollector extends RuntimeCollector
 		&& !execution(@After * *(..))
 		&& !execution(@BeforeClass * *(..))
 		&& !execution(@AfterClass * *(..))
+		&& !within(@SkipCollection *)
+		&& !execution(@SkipMethod * *())
 		&& !within(ExecutionFlow)
 		&& !within(JDB)
 		&& !within(FileParser)
@@ -68,9 +70,6 @@ public aspect ConstructorCollector extends RuntimeCollector
 	 */
 	after(): constructorCollector()
 	{
-		// Ignores if the class has @SkipCollection annotation
-		if (hasSkipCollectionAnnotation(thisJoinPoint)) { return; }
-		
 		String signature = thisJoinPoint.getSignature().toString();
 		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		
