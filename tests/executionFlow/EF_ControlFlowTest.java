@@ -13,9 +13,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.core.JDB;
-import executionFlow.info.ClassConstructorInfo;
 import executionFlow.info.ClassMethodInfo;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
@@ -59,7 +56,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 19;
-		int lastLineTestMethod = 23;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
@@ -80,7 +76,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -99,7 +95,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 29;
-		int lastLineTestMethod = 33;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest()";
@@ -120,7 +115,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -139,7 +134,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 39;
-		int lastLineTestMethod = 43;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest2()";
@@ -160,7 +154,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -179,7 +173,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 49;
-		int lastLineTestMethod = 53;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest3()";
@@ -200,7 +193,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -219,7 +212,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 59;
-		int lastLineTestMethod = 60;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.tryCatchTest1()";
@@ -240,7 +232,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -259,7 +251,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 66;
-		int lastLineTestMethod = 67;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.tryCatchTest2()";
@@ -280,7 +271,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -299,7 +290,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 74;
-		int lastLineTestMethod = 75;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.switchCaseTest()";
@@ -320,7 +310,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -339,7 +329,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 82;
-		int lastLineTestMethod = 83;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.doWhileTest()";
@@ -360,7 +349,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -379,7 +368,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 90;
-		int lastLineTestMethod = 91;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.inlineWhile()";
@@ -400,7 +388,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -419,7 +407,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 98;
-		int lastLineTestMethod = 99;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.inlineDoWhile()";
@@ -440,7 +427,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
@@ -459,7 +446,6 @@ public class EF_ControlFlowTest
 		Collection<List<Integer>> testPaths;
 		List<Integer> testPath;
 		int invocationLine = 106;
-		int lastLineTestMethod = 107;
 		
 		// Defines which methods will be collected
 		String testMethodSignature = "controlFlow.ControlFlowTest.inlineIfElse()";
@@ -480,7 +466,7 @@ public class EF_ControlFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path

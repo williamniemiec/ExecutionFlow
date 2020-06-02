@@ -56,11 +56,6 @@ public class ExecutionFlow
 	 */
 	private Map<Integer, List<CollectorInfo>> collectedMethods;
 	
-	/**
-	 * Last line of the test method where {@link #collectedMethods} are.
-	 */
-	private int lastLineTestMethod;
-	
 	private final boolean DEBUG; 
 	
 	
@@ -72,7 +67,7 @@ public class ExecutionFlow
 	 * each test method executed.
 	 */
 	{
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	/**
@@ -91,13 +86,10 @@ public class ExecutionFlow
 	 * Computes test path for collected methods.
 	 * 
 	 * @param		collectedMethods Collected methods from {@link MethodCollector}
-	 * @param		lastLineTestMethod Last line of the test method in which these 
-	 * methods are
 	 */
-	public ExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, int lastLineTestMethod)
+	public ExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods)
 	{
 		this.collectedMethods = collectedMethods;
-		this.lastLineTestMethod = lastLineTestMethod;
 		
 		classTestPaths = new HashMap<>();
 	}
@@ -171,7 +163,7 @@ public class ExecutionFlow
 					ConsoleOutput.showInfo("Computing test path of method "
 						+ collector.getMethodInfo().getMethodSignature()+"...");
 
-					JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());					
+					JDB jdb = new JDB(collector.getOrder());					
 					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
 					
 					if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())

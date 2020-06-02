@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
 import executionFlow.info.ClassMethodInfo;
 
@@ -27,9 +28,9 @@ import executionFlow.info.ClassMethodInfo;
 /**
  * Computes test path from code debugging.
  * 
- * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version	1.5
- * @since	1.2
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.2
  */
 public class JDB 
 {
@@ -50,11 +51,6 @@ public class JDB
 	 * Stores signature of the test method.
 	 */
 	private String testMethodSignature;
-	
-	/**
-	 * Last line of test method (line of last curly bracket).
-	 */
-	private int lastLineTestMethod;
 	
 	/**
 	 * Line of test method that the method is called.
@@ -94,11 +90,11 @@ public class JDB
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	/**
-	 * Enables or disables debug. If activated, displays shell output during JDB 
-	 * execution.
+	 * Enables or disables debug. If activated, displays shell output during 
+	 * JDB execution.
 	 */
 	{
-		DEBUG = true;
+		DEBUG = false;
 	}
 
 	
@@ -108,13 +104,11 @@ public class JDB
 	/**
 	 * Computes test path from code debugging. 
 	 * 
-	 * @param lastLineTestMethod Test method end line
-	 * @param skip Number of method invocations to be ignored before computing 
-	 * test path
+	 * @param		skip Number of method invocations to be ignored before 
+	 * computing test path
 	 */
-	public JDB(int lastLineMethod, int skip)
+	public JDB(int skip)
 	{
-		this.lastLineTestMethod = lastLineMethod;
 		this.skip = skip;
 		
 		testPath = new ArrayList<>();
@@ -122,14 +116,12 @@ public class JDB
 	}
 	
 	/**
-	 * Computes test path from code debugging. Use this constructor if there is 
+	 * Computes test path from code debugging. Use this constructor if there is
 	 * no methods to be ignored before computing test path.
-	 * 
-	 * @param lastLineTestMethod Test method end line
 	 */
-	public JDB(int lastLineMethod)
+	public JDB()
 	{
-		this(lastLineMethod, 0);
+		this(0);
 	}
 	
 	
@@ -139,10 +131,10 @@ public class JDB
 	/**
 	 * Computes test paths from a method.
 	 * 
-	 * @param methodInfo Informations about this method
-	 * @return Test paths of this method
-	 * @throws IOException If JDB cannot be initialized
-	 * @throws Throwable If an error occurs
+	 * @param		methodInfo Informations about this method
+	 * @return		Test paths of this method
+	 * @throws		IOException If JDB cannot be initialized
+	 * @throws		Throwable If an error occurs
 	 */
 	public List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws IOException
 	{ 
@@ -174,11 +166,13 @@ public class JDB
 	/**
 	 * Initializes JDB and prepare it for executing methods within test methods.
 	 * 
-	 * @param testClassRootPath Root path where the compiled file of test method class is
-	 * @param srcRootPath Root path where the source file of the method is
-	 * @param methodClassRootPath Root path where the compiled file of method class is
-	 * @return Process running JDB
-	 * @throws IOException If the process cannot be created
+	 * @param		testClassRootPath Root path where the compiled file of test 
+	 * method class is
+	 * @param		srcRootPath Root path where the source file of the method is
+	 * @param		methodClassRootPath Root path where the compiled file of 
+	 * method class is
+	 * @return		Process running JDB
+	 * @throws		IOException If the process cannot be created
 	 */
 	private Process jdb_start(String testClassRootPath, String srcRootPath, String methodClassRootPath) throws IOException
 	{
@@ -198,19 +192,17 @@ public class JDB
 		String jdb_classPath = "-classpath .;"+libs;
 		String jdb_srcPath = "-sourcepath "+Paths.get(testClassRootPath).relativize(Paths.get(srcRootPath));
 		
-		if (!methodClassPath.isEmpty()) {
+		if (!methodClassPath.isEmpty())
 			jdb_classPath += ";"+methodClassPath;
-		} 
-		else {
+		else
 			jdb_classPath += ";..\\classes\\";
-		}
 		
 		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
 		
 		// -----{ DEBUG }-----
 		if (DEBUG) {
-			System.out.println("[DEBUG] testClassRootPath: "+testClassRootPath);
-			System.out.println("[DEBUG] jdb_paths: "+jdb_paths);
+			ConsoleOutput.showDebug("testClassRootPath: "+testClassRootPath);
+			ConsoleOutput.showDebug("jdb_paths: "+jdb_paths);
 		}
 		// -----{ END DEBUG }-----
 		
@@ -227,7 +219,7 @@ public class JDB
 	/**
 	 * Starts JDB and computes test paths for a method from debugging.
 	 * 
-	 * @throws IOException If an error occurs while reading the output 
+	 * @throws		IOException If an error occurs while reading the output 
 	 */
 	private void jdb_methodVisitor(Process process, String methodName) throws IOException 
 	{
@@ -245,11 +237,6 @@ public class JDB
 			while (!wasNewIteration && !out.read()) { continue; }  
 			
 			wasNewIteration = false;
-			
-//			while (returned) {
-//				in.send("next");
-//				while (!out.read()) { continue; }
-//			}
 			
 			if (endOfMethod) {
 				// Checks if there is unsaved test path
@@ -273,7 +260,8 @@ public class JDB
 					
 					// Checks if method is within a loop
 					in.send("cont");
-				} else {
+				} 
+				else {
 					testPath.clear();	// Discards computed test path
 					skipped = true;
 					in.send("step into");
@@ -316,8 +304,8 @@ public class JDB
 	/**
 	 * Extracts line number from a debug output.
 	 * 
-	 * @param line Debug output
-	 * @return Line obtained from this output
+	 * @param		line Debug output
+	 * @return		Line obtained from this output
 	 */
 	private int jdb_getLine(String debugOutput)
 	{
@@ -341,14 +329,14 @@ public class JDB
 	/**
 	 * Gets root path directory from a class package. 
 	 * <h2>Example</h2>
-	 * Class path: <code>C:/myProgram/src/name1/name2/name3</code><br />
-	 * Class package: <code>name1.name2.name3</code><br />
-	 * <u>Return:</u> <code>C:/myProgram/src/</code><br /><br />
+	 * <li>Class path: <code>C:/myProgram/src/name1/name2/name3</code></li>
+	 * <li>Class package: <code>name1.name2.name3</code></li>
+	 * <li><b>Return:</b> <code>C:/myProgram/src/</code></li>
 	 * 
-	 * @param classPath Class path
-	 * @param classPackage Class package
-	 * @return Root path directory
-	 * @throws IllegalStateException If source file path is null
+	 * @param		classPath Class path
+	 * @param		classPackage Class package
+	 * @return		Root path directory
+	 * @throws		IllegalStateException If source file path is null
 	 */
 	private String extractRootPathDirectory(String classPath, String classPackage) throws IllegalStateException
 	{
@@ -375,7 +363,7 @@ public class JDB
 	/**
 	 * Finds directory of application libraries and stores it in {@link #libPath}.
 	 * 
-	 * @param appRoot Application root path
+	 * @param		appRoot Application root path
 	 */
 	private void findLibs(String appRoot)
 	{
@@ -402,7 +390,7 @@ public class JDB
 	 * Computes and stores application root path, based on class 
 	 * {@link ExecutionFlow} location.
 	 * 
-	 * @return Application root path
+	 * @return		Application root path
 	 */
 	private String getAppRootPath()
 	{
@@ -440,7 +428,7 @@ public class JDB
 		/**
 		 * JDB input manager. It must be used with {@link JDBOutput}.
 		 * 
-		 * @param p JDB process 
+		 * @param		p JDB process 
 		 */
 		JDBInput(Process p)
 		{
@@ -459,7 +447,6 @@ public class JDB
 			List<String> args = new LinkedList<String>();
 			args.add("clear");
 			args.add("stop at "+classInvocationSignature+":"+methodInvocationLine);
-			args.add("stop at "+classInvocationSignature+":"+lastLineTestMethod);
 	        args.add("run");
 	        
 			for (String arg : args) {
@@ -471,7 +458,8 @@ public class JDB
 		
 		/**
 		 * Exits from JDB.
-		 * @throws IOException 
+		 * 
+		 * @throws		IOException 
 		 */
 		public void exit(JDBOutput out) throws IOException
 		{
@@ -496,14 +484,14 @@ public class JDB
 		 * Sends a command to JDB. After calling this method, you must to call
 		 * {@link JDBOutput#read()} for JDB to process the command.
 		 * 
-		 * @param command Command that will be sent to JDB
-		 * @apiNote If DEBUG is activated, it will display the command executed
-		 * on the console
+		 * @param		command Command that will be sent to JDB
+		 * @apiNote		If DEBUG is activated, it will display the command 
+		 * executed on the console
 		 */
 		private void send(String command)
 		{
 			// -----{ DEBUG }-----
-			if (DEBUG) { System.out.println("[DEBUG] COMMAND: "+command); }
+			if (DEBUG) { ConsoleOutput.showDebug("COMMAND: "+command); }
 			// -----{ END DEBUG }-----
 			
 			input.println(command);
@@ -534,8 +522,8 @@ public class JDB
          * JDB output manager. It must be used with {@link JDBInput} to send
          * commands.
          * 
-         * @param p JDB process
-         * @param methodName Name of the method to be debugged
+         * @param		p JDB process
+         * @param		methodName Name of the method to be debugged
          */
 		JDBOutput(Process p, String methodName)
 		{
@@ -550,9 +538,9 @@ public class JDB
 		/**
 		 * Reads JDB output and returns true if JDB is ready to receive commands.
 		 * 
-		 * @return If JDB is ready to receive commands.
-		 * @throws IOException If it cannot read JDB output
-		 * @apiNote If DEBUG is activated, it will display JDB output on the 
+		 * @return		If JDB is ready to receive commands.
+		 * @throws		IOException If it cannot read JDB output
+		 * @apiNote		If DEBUG is activated, it will display JDB output on the 
 		 * console
 		 */
 		public boolean read() throws IOException
@@ -567,7 +555,7 @@ public class JDB
         		}
             	
             	// -----{ DEBUG }-----
-            	if (DEBUG) { System.out.println("[DEBUG] LINE: "+line); }
+            	if (DEBUG) { ConsoleOutput.showDebug("LINE: "+line); }
         		// -----{ END DEBUG }-----
         		
             	endOfMethod = endOfMethod == true ? endOfMethod : isEndOfTestMethod();
@@ -640,7 +628,7 @@ public class JDB
 	    				exitMethod = true;
 	    			
 	    			// -----{ DEBUG }-----
-	    			if (DEBUG) { System.out.println("[DEBUG] SRC: "+srcLine); }
+	    			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }
 	    			// -----{ END DEBUG }-----	    			
 	    		}
 			} 
@@ -650,7 +638,8 @@ public class JDB
 		
 		/**
 		 * Reads output until there is nothing else.
-		 * @throws IOException If it cannot read JDB output
+		 * 
+		 * @throws		IOException If it cannot read JDB output
 		 */
 		public void readAll() throws IOException
 		{
@@ -673,19 +662,17 @@ public class JDB
 		/**
 		 * Checks if current line of JDB has reached the end of the test method.
 		 * 
-		 * @return if current line of JDB has reached the end of the test method
+		 * @return		If current line of JDB has reached the end of the test method
 		 */
 		private boolean isEndOfTestMethod()
 		{
-			return 
-					(line.contains("Breakpoint hit") && line.contains("line="+lastLineTestMethod)) || 
-					line.contains("The application exited");
+			return line.contains("The application exited");
 		}
 		
 		/**
 		 * Checks if current line of JDB is an internal method.
 		 * 
-		 * @return If current line of JDB is an internal method
+		 * @return		If current line of JDB is an internal method
 		 */
 		private boolean isInternalMethod()
 		{
@@ -696,7 +683,7 @@ public class JDB
 		/**
 		 * Checks if current line of JDB is an empty line.
 		 * 
-		 * @return If current line of JDB is an empty line
+		 * @return		If current line of JDB is an empty line
 		 */
 		private boolean isEmptyLine()
 		{
@@ -711,7 +698,7 @@ public class JDB
 		/**
 		 * Checks if current line of JDB is an empty line.
 		 * 
-		 * @return If current line of JDB is an empty line
+		 * @return		If current line of JDB is an empty line
 		 */
 		private boolean isNewIteration()
 		{
@@ -728,7 +715,7 @@ public class JDB
 		/**
 		 * Checks if current line of JDB is a call to an overloaded method.
 		 * 
-		 * @return If current line of JDB is a call to an overloaded method
+		 * @return		If current line of JDB is a call to an overloaded method
 		 */
 		private boolean isCallToOverloadedMethod()
 		{
@@ -742,7 +729,7 @@ public class JDB
 		/**
 		 * Checks if next line of JDB will be within a method.
 		 * 
-		 * @return If next line of JDB will be within a method
+		 * @return		If next line of JDB will be within a method
 		 */
 		private boolean willEnterInMethod()
 		{
@@ -755,19 +742,17 @@ public class JDB
 		/**
 		 * Checks if current line of JDB is within a method.
 		 * 
-		 * @return If current line of JDB is within a method
+		 * @return		If current line of JDB is within a method
 		 */
 		private boolean isWithinMethod(int lineNumber)
 		{
-			return	!exitMethod && 
-					//line.contains(methodSignature) &&
-					lineNumber != lastLineAdded;
+			return	!exitMethod && lineNumber != lastLineAdded;
 		}
 		
 		/**
 		 * Checks if current line of JDB is an empty method.
 		 * 
-		 * @return If current line of JDB is an empty method
+		 * @return		If current line of JDB is an empty method
 		 */
 		private boolean isEmptyMethod()
 		{
