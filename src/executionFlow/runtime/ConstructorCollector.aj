@@ -14,13 +14,13 @@ import executionFlow.info.*;
 /**
  * Captures class instantiation.
  * 
- * @implNote Excludes calls to native java methods, ExecutionFlow's classes,
+ * @apiNote		Excludes calls to native java methods, ExecutionFlow's classes,
  * methods with {@link SkipMethod]} signature and all methods from classes
  * with {@link SkipCollection} annotation
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4.1
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.0
  */
 public aspect ConstructorCollector extends RuntimeCollector
 {
@@ -41,6 +41,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		&& !within(@SkipCollection *)
 		&& !execution(@SkipMethod * *())
 		&& !within(ExecutionFlow)
+		&& !within(ConsoleOutput)
 		&& !within(JDB)
 		&& !within(FileParser)
 		&& !within(FileManager)

@@ -20,13 +20,13 @@ import executionFlow.info.*;
  * Captures all executed methods with <code>@Test</code> annotation, including
  * inner methods (captures the method and all internal calls to other methods).
  * 
- * @apiNote	Excludes calls to native java methods, ExecutionFlow's classes,
- * methods with {@link SkipMethod]} annotation, methods with {@link _SkipMethod]
+ * @apiNote		Excludes calls to native java methods, ExecutionFlow's classes,
+ * methods with {@link SkipMethod} annotation, methods with {@link _SkipMethod}
  * and all methods from classes with {@link SkipCollection} annotation.
  * 
- * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version	1.5
- * @since	1.0 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
 {	
@@ -61,6 +61,7 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !execution(@AfterClass * *())
 		&& !within(@SkipCollection *)
 		&& !within(ExecutionFlow)
+		&& !within(ConsoleOutput)
 		&& !within(JDB)
 		&& !within(FileCompiler)
 		&& !within(FileParser)
