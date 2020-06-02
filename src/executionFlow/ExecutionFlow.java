@@ -20,9 +20,9 @@ import executionFlow.info.SignaturesInfo;
  * Computes test path for collected methods. This is the main class of the 
  * application.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.4
+ * @since		1.0
  */
 @SuppressWarnings("unused")
 public class ExecutionFlow 
@@ -90,8 +90,8 @@ public class ExecutionFlow
 	/**
 	 * Computes test path for collected methods.
 	 * 
-	 * @param collectedMethods Collected methods from {@link MethodCollector}
-	 * @param lastLineTestMethod Last line of the test method in which these 
+	 * @param		collectedMethods Collected methods from {@link MethodCollector}
+	 * @param		lastLineTestMethod Last line of the test method in which these 
 	 * methods are
 	 */
 	public ExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, int lastLineTestMethod)
@@ -110,17 +110,16 @@ public class ExecutionFlow
 	 * Walks the method recording its test paths and save the result in
 	 * {@link #classTestPaths}.
 	 * 
-	 * @return Itself (to allow chained calls)
-	 * @throws Throwable If an error occurs
+	 * @return		Itself (to allow chained calls)
+	 * @throws		Throwable If an error occurs
 	 */
 	public ExecutionFlow execute() throws Throwable
 	{
 		// -----{ DEBUG }-----
 		if (DEBUG) {
-			System.out.println("[DEBUG] -=-=-=-=-=-=-=-=-=-");
-			System.out.println("[DEBUG] "+collectedMethods.values());
-			System.out.println("[DEBUG] -=-=-=-=-=-=-=-=-=-");
-			System.out.println();
+			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+			ConsoleOutput.showDebug(collectedMethods.values().toString());
+			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		}
 		// -----{ END DEBUG }-----
 		
@@ -132,8 +131,8 @@ public class ExecutionFlow
 			for (CollectorInfo collector : collectors) {
 				// Checks if collected method is within test method
 				if (collector.getMethodInfo().getClassPath().equals(collector.getMethodInfo().getTestClassPath())) {
-					System.err.println("[ERROR] The method to be tested cannot be within the test class");
-					System.err.println("[ERROR] This test path will be skipped");
+					ConsoleOutput.showError("The method to be tested cannot be within the test class");
+					ConsoleOutput.showError("This test path will be skipped");
 					continue;
 				}
 				
@@ -154,33 +153,36 @@ public class ExecutionFlow
 				);
 				
 				try {
-					System.out.println("[INFO] Processing source file of method "
-							+ collector.getMethodInfo().getMethodSignature()+"...");
+					ConsoleOutput.showInfo("Processing source file of method" 
+						+ collector.getMethodInfo().getMethodSignature()+"...");
+					
 					methodFileManager.parseFile().compileFile();
 					
-					System.out.println("[INFO] Processing source file of test method "
-							+ collector.getMethodInfo().getTestMethodSignature()+"...");
+					ConsoleOutput.showInfo("Processing source file of test method "
+						+ collector.getMethodInfo().getTestMethodSignature()+"...");
+					
 					testMethodFileManager.parseFile()
 										 .createClassBackupFile()
 										 .compileFile();
 					
-					System.out.println("[INFO] Processing completed");
+					ConsoleOutput.showInfo("Processing completed");
 					
 					// Computes test path from JDB
-					System.out.println("[INFO] Computing test path of method "
-							+ collector.getMethodInfo().getMethodSignature()+"...");
+					ConsoleOutput.showInfo("Computing test path of method "
+						+ collector.getMethodInfo().getMethodSignature()+"...");
+
 					JDB jdb = new JDB(lastLineTestMethod, collector.getOrder());					
 					tp_jdb = jdb.getTestPaths(collector.getMethodInfo());
 					
 					if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())
-						System.out.println("[INFO] Test path is empty");
+						ConsoleOutput.showWarning("Test path is empty");
 					else
-						System.out.println("[INFO] Test path has been successfully computed");
+						ConsoleOutput.showInfo("Test path has been successfully computed");
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
 				} catch (Exception e) {
-					System.out.println("[ERROR] "+e.getMessage());
+					ConsoleOutput.showError(e.getMessage());
 					e.printStackTrace();
 				} finally {
 					// Reverts parsed file to its original state
@@ -205,8 +207,8 @@ public class ExecutionFlow
 	 * Stores test paths for a method. The test paths are stored in 
 	 * {@link #classTestPaths}.
 	 * 
-	 * @param testPaths Test paths of this method
-	 * @param collector Informations about this method
+	 * @param		testPaths Test paths of this method
+	 * @param		collector Informations about this method
 	 */
 	private void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
 	{
@@ -250,7 +252,7 @@ public class ExecutionFlow
 	 * 		</li>
 	 * </ul>
 	 * 
-	 * @return Computed test path
+	 * @return		Computed test path
 	 */
 	public Map<String, Map<SignaturesInfo, List<Integer>>> getClassTestPaths()
 	{

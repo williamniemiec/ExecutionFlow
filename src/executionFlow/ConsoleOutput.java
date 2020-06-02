@@ -32,7 +32,7 @@ public class ConsoleOutput
 	 */
 	public static void showError(String message)
 	{
-		System.out.println("[ERROR] "+message);
+		System.err.println("[ERROR] "+message);
 	}
 	
 	/**
