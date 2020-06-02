@@ -18,10 +18,32 @@ public class ConsoleOutput
 	 * <b>Format:</b> <code>[INFO] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
 	 */
 	public static void showInfo(String message)
 	{
-		System.out.println("[INFO] "+message);
+		showInfo(message, true);
+	}
+	
+	/**
+	 * Displays an information message. <br />
+	 * <b>Format:</b> <code>[INFO] &lt;message&gt;</code>
+	 * 
+	 * @param		message Message to be displayed
+	 * @param		breakLine If a break line is added at the end of the
+	 * message
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
+	 * @implNote	If breakLine is false, will not be added a break line at 
+	 * the end of the message
+	 */
+	public static void showInfo(String message, boolean breakLine)
+	{
+		if (breakLine)
+			System.out.println("[INFO] "+message);
+		else
+			System.out.print("[INFO] "+message);
 	}
 	
 	/**
@@ -29,10 +51,32 @@ public class ConsoleOutput
 	 * <b>Format:</b> <code>[ERROR] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
 	 */
 	public static void showError(String message)
 	{
-		System.err.println("[ERROR] "+message);
+		showError(message, true);
+	}
+	
+	/**
+	 * Displays an error message. <br />
+	 * <b>Format:</b> <code>[ERROR] &lt;message&gt;</code>
+	 * 
+	 * @param		message Message to be displayed
+	 * @param		breakLine If a break line is added at the end of the
+	 * message
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
+	 * @implNote	If breakLine is false, will not be added a break line at 
+	 * the end of the message
+	 */
+	public static void showError(String message, boolean breakLine)
+	{
+		if (breakLine)
+			System.err.println("[ERROR] "+message);
+		else
+			System.err.print("[ERROR] "+message);
 	}
 	
 	/**
@@ -40,10 +84,32 @@ public class ConsoleOutput
 	 * <b>Format:</b> <code>[WARNING] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
 	 */
 	public static void showWarning(String message)
 	{
-		System.out.println("[WARNING] "+message);
+		showWarning(message, true);
+	}
+	
+	/**
+	 * Displays a warning message. <br />
+	 * <b>Format:</b> <code>[WARNING] &lt;message&gt;</code>
+	 * 
+	 * @param		message Message to be displayed
+	 * @param		breakLine If a break line is added at the end of the
+	 * message
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
+	 * @implNote	If breakLine is false, will not be added a break line at 
+	 * the end of the message
+	 */
+	public static void showWarning(String message, boolean breakLine)
+	{
+		if (breakLine)
+			System.out.println("[WARNING] "+message);
+		else
+			System.out.print("[WARNING] "+message);
 	}
 	
 	/**
@@ -51,10 +117,32 @@ public class ConsoleOutput
 	 * <b>Format:</b> <code>[DEBUG] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
 	 */
 	public static void showDebug(String message)
 	{
-		System.out.println("[DEBUG] "+message);
+		showDebug(message, true);
+	}
+	
+	/**
+	 * Displays a debug message. <br />
+	 * <b>Format:</b> <code>[DEBUG] &lt;message&gt;</code>
+	 * 
+	 * @param		message Message to be displayed
+	 * @param		breakLine If a break line is added at the end of the
+	 * message
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
+	 * @implNote	If breakLine is false, will not be added a break line at 
+	 * the end of the message	
+	 */
+	public static void showDebug(String message, boolean breakLine)
+	{
+		if (breakLine)
+			System.out.println("[DEBUG] "+message);
+		else
+			System.out.print("[DEBUG] "+message);
 	}
 	
 	/**
@@ -81,9 +169,9 @@ public class ConsoleOutput
 	 * @param		symbol Symbol that the line will be composed
 	 * @param		width How many occurrences of the symbols will appear on 
 	 * the line
-	 * @implNote	Puts a break line at the end
+	 * @implSpec	Puts a break line at the end
 	 */
-	private static void printDivision(char symbol, int width)
+	public static void printDivision(char symbol, int width)
 	{
 		for (int i=0; i<width; i++)
 			System.out.print(symbol);
