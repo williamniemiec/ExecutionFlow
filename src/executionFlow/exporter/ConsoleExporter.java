@@ -3,15 +3,16 @@ package executionFlow.exporter;
 import java.util.List;
 import java.util.Map;
 
+import executionFlow.ConsoleOutput;
 import executionFlow.info.SignaturesInfo;
 
 
 /**
  * Exports the results on the console.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.0
  */
 public class ConsoleExporter implements ExporterExecutionFlow 
 {
@@ -24,9 +25,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 		String currentTestMethodSignature = null;
 		String currentMethod = "";
 		
-		System.out.println("---------------------------------------------------------------------");
-		System.out.println("                                EXPORT                               ");
-		System.out.println("---------------------------------------------------------------------");
+		ConsoleOutput.showHeader("EXPORT", '-');
 		
 		for (Map<SignaturesInfo, List<Integer>> classPathInfo : classTestPaths.values()) {
 			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathInfo.entrySet()) {
@@ -41,7 +40,9 @@ public class ConsoleExporter implements ExporterExecutionFlow
 					System.out.println(signatures.getMethodSignature());		// Method signature
 					currentTestMethodSignature = signatures.getTestMethodSignature();
 					currentMethod = signatures.getMethodSignature();
-				} else {	// It is the same test method
+				} 
+				// It is the same test method
+				else {	
 					// Checks if the test path belongs to current method
 					if (!signatures.getMethodSignature().equals(currentMethod)) {
 						System.out.println();
