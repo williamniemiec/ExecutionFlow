@@ -27,9 +27,9 @@ import executionFlow.info.ClassMethodInfo;
 /**
  * Computes test path from code debugging.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.2
- * @version 1.4.1
+ * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version	1.5
+ * @since	1.2
  */
 public class JDB 
 {
@@ -426,7 +426,7 @@ public class JDB
 	/**
 	 * Responsible for JDB inputs.
 	 */
-	class JDBInput
+	private class JDBInput
 	{
 		//---------------------------------------------------------------------
 		//		Attributes
@@ -514,7 +514,7 @@ public class JDB
 	/**
 	 * Responsible for JDB outputs.
 	 */
-	class JDBOutput
+	private class JDBOutput
 	{
 		//---------------------------------------------------------------------
 		//		Attributes

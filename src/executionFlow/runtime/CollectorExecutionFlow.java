@@ -21,9 +21,9 @@ import executionFlow.ExecutionFlow;
  * Helper class used to extract the collected data that will be relevant to 
  * {@link ExecutionFlow} class.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4
+ * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version	1.5
+ * @since	1.0
  */
 public class CollectorExecutionFlow 
 {
@@ -45,8 +45,8 @@ public class CollectorExecutionFlow
 	/**
 	 * Extracts package name of a method signature.
 	 * 
-	 * @param signature Signature of the method
-	 * @return Package name
+	 * @param	signature Signature of the method
+	 * @return	Package name
 	 */
 	public static String extractPackageName(String signature)
 	{
@@ -96,8 +96,8 @@ public class CollectorExecutionFlow
 	 * Given the parameters of a method, discover the class of each of these 
 	 * parameters.
 	 * 
-	 * @param args Parameter values of a method
-	 * @return The classes of these parameter values
+	 * @param	args Parameter values of a method
+	 * @return	The classes of these parameter values
 	 */
 	public static Class<?>[] extractParamTypes(Object[] args) 
 	{
@@ -115,8 +115,8 @@ public class CollectorExecutionFlow
 	/**
 	 * Extracts parameter types of a method.
 	 * 
-	 * @param jp JoinPoint with the method
-	 * @return Classes of parameter types of the method
+	 * @param	jp JoinPoint with the method
+	 * @return	Classes of parameter types of the method
 	 */
 	public static Class<?>[] extractParamTypes(JoinPoint jp)
 	{
@@ -127,10 +127,10 @@ public class CollectorExecutionFlow
 	/**
 	 * When executed it will determine the absolute path of a class.
 	 * 
-	 * @param className Name of the class
-	 * @param classSignature Signature of the class
-	 * @return Absolute path of the class
-	 * @throws IOException If class does not exist
+	 * @param	className Name of the class
+	 * @param	classSignature Signature of the class
+	 * @return	Absolute path of the class
+	 * @throws	IOException If class does not exist
 	 */
 	public static String findClassPath(String className, String classSignature) throws IOException 
 	{
@@ -159,10 +159,10 @@ public class CollectorExecutionFlow
 	/**
 	 * When executed it will determine the absolute path of a source file.
 	 * 
-	 * @param className Name of the class
-	 * @param classSignature Signature of the class
-	 * @return Absolute path of source file of current execution class
-	 * @throws IOException If class does not exist
+	 * @param	className Name of the class
+	 * @param	classSignature Signature of the class
+	 * @return	Absolute path of source file of current execution class
+	 * @throws	IOException If class does not exist
 	 */
 	public static String findSrcPath(String className, String classSignature) throws IOException 
 	{
@@ -170,14 +170,18 @@ public class CollectorExecutionFlow
 			rootPath = findProjectRoot().toPath();
 		}
 		
+		// Extracts parent class name from inner class (if it is one)
+		final String effectiveClassName = className.split("\\$")[0];
+		
 		// Gets path where .java is
 		String path = extractPathFromSignature(classSignature);
+		
 		
 		// Finds absolute path where the source file is
 		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith(path+className+".java")) {
+		        if (file.toString().endsWith(path+effectiveClassName+".java")) {
 		        	srcPath = file.toString();
 		        	return FileVisitResult.TERMINATE;
 		        }
@@ -192,8 +196,8 @@ public class CollectorExecutionFlow
 	/**
 	 * Extracts method's class signature.
 	 * 
-	 * @param signature Signature of the method
-	 * @return Name of the package + name of the class + name of the 
+	 * @param	signature Signature of the method
+	 * @return	Name of the package + name of the class + name of the 
 	 * method(param1, param2,...)
 	 */
 	public static String extractMethodSignature(String signature)
@@ -206,8 +210,8 @@ public class CollectorExecutionFlow
 	/**
 	 * Extracts class name from a signature.
 	 * 
-	 * @param signature Signature of a method or class
-	 * @return Name of this class or method
+	 * @param	signature Signature of a method or class
+	 * @return	Name of this class or method
 	 */
 	public static String extractMethodName(String signature) 
 	{
@@ -230,8 +234,8 @@ public class CollectorExecutionFlow
 	/**
 	 * Extracts class name from a class signature.
 	 * 
-	 * @param classSignature Signature of the class
-	 * @return Name of the class
+	 * @param	classSignature Signature of the class
+	 * @return	Name of the class
 	 */
 	public static String getClassName(String classSignature)
 	{
@@ -249,8 +253,8 @@ public class CollectorExecutionFlow
 	/**
 	 * Extracts return type of a method.
 	 * 
-	 * @param jp JoinPoint with the method
-	 * @return Class of return type of the method
+	 * @param	jp JoinPoint with the method
+	 * @return	Class of return type of the method
 	 */
 	public static Class<?> extractReturnType(JoinPoint jp)
 	{
@@ -262,8 +266,8 @@ public class CollectorExecutionFlow
 	 * Converts a wrapper class in primitive. If the class is not a
 	 * wrapper class, returns itself.
 	 * 
-	 * @param c Class to be normalized
-	 * @return Normalized class
+	 * @param	c Class to be normalized
+	 * @return	Normalized class
 	 */
 	private static Class<?> normalizeClass(Class<?> c)
 	{
@@ -285,7 +289,7 @@ public class CollectorExecutionFlow
 	 * Finds project root. It will return the path that contains a directory 
 	 * with name 'src'. 
 	 * 
-	 * @return Project root
+	 * @return	Project root
 	 */
 	private static File findProjectRoot()
 	{
@@ -320,10 +324,13 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Extracts file path from class signature. 
+	 * Extracts file path from class signature. <br />
+	 * Example <br />
+	 * <li>Class signature: <code>a.b.c()</code></li> 
+	 * <li>File path: <code>a/b</code></li>
 	 * 
-	 * @param classSignature Signature of the class
-	 * @return File path obtained from class signature
+	 * @param	classSignature Signature of the class
+	 * @return	File path obtained from class signature
 	 */
 	private static String extractPathFromSignature(String classSignature)
 	{

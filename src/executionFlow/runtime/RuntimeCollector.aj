@@ -13,13 +13,13 @@ import executionFlow.info.CollectorInfo;
  * Responsible for data collection of methods and class constructors used in 
  * tests.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4.1
- * 
- * @implNote It will ignore all methods of a class if it has 
+ * @apiNote It will ignore all methods of a class if it has 
  * {@link SkipCollection} annotation
- * @implNote It will ignore methods with {@link SkipMethod} annotation
+ * @apiNote It will ignore methods with {@link SkipMethod} annotation
+ * 
+ * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version	1.5
+ * @since	1.0
  */
 public abstract aspect RuntimeCollector 
 {
@@ -83,7 +83,7 @@ public abstract aspect RuntimeCollector
 	 */
 	protected boolean isMethodSignature(String signature)
 	{
-		return signature.matches("[A-z]+\\s([A-z0-9-_$]+\\.)+[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)");
+		return signature.matches("[A-z\\.]+\\s([A-z0-9-_$]+\\.)+[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)");
 	}
 	
 	/**

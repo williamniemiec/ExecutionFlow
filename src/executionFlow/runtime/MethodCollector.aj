@@ -20,13 +20,13 @@ import executionFlow.info.*;
  * Captures all executed methods with <code>@Test</code> annotation, including
  * inner methods (captures the method and all internal calls to other methods).
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4.1
- * 
- * @implNote Excludes calls to native java methods, ExecutionFlow's classes,
+ * @apiNote	Excludes calls to native java methods, ExecutionFlow's classes,
  * methods with {@link SkipMethod]} annotation, methods with {@link _SkipMethod]
  * and all methods from classes with {@link SkipCollection} annotation.
+ * 
+ * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version	1.5
+ * @since	1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
 {	
@@ -100,10 +100,7 @@ public aspect MethodCollector extends RuntimeCollector
 		if (invocationLine <= 0) { return; }
 		
 		String signature = thisJoinPoint.getSignature().toString();
-		
-		// Ignores classes that contains 'builder' in its name
-		if (isBuilderClass(signature)) { return; }
-		
+
 		// Ignores native java methods
 		if (isNativeMethod(signature)) { return; }
 		
@@ -124,7 +121,7 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Checks if it is a method that is invoked within test method
 		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-		String methodSig = classSignature+"."+methodName;
+		String methodSig = classSignature.replace("$", ".")+"."+methodName;
 		
 		// If it is not, ignores it
 		if (!signature.contains(methodSig)) { return; }
@@ -180,18 +177,18 @@ public aspect MethodCollector extends RuntimeCollector
 		// Collects the method
 		try {
 			ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
-					.classPath(classPath)
-					.testClassPath(testClassPath)
-					.methodSignature(methodSignature)
-					.testMethodSignature(testMethodSignature)
-					.methodName(methodName)
-					.returnType(returnType)
-					.parameterTypes(paramTypes)
-					.args(thisJoinPoint.getArgs())
-					.invocationLine(invocationLine)
-					.srcPath(srcPath)
-					.testSrcPath(testSrcPath)
-					.build();
+				.classPath(classPath)
+				.testClassPath(testClassPath)
+				.methodSignature(methodSignature)
+				.testMethodSignature(testMethodSignature)
+				.methodName(methodName)
+				.returnType(returnType)
+				.parameterTypes(paramTypes)
+				.args(thisJoinPoint.getArgs())
+				.invocationLine(invocationLine)
+				.srcPath(srcPath)
+				.testSrcPath(testSrcPath)
+				.build();
 			
 			CollectorInfo ci = new CollectorInfo(cmi, order++);
 			lastInvocationLine = invocationLine;
@@ -208,14 +205,15 @@ public aspect MethodCollector extends RuntimeCollector
 			if (methodCollector.containsKey(invocationLine)) {
 				List<CollectorInfo> list = methodCollector.get(invocationLine);
 				list.add(ci);
-			} else {	// Else stores the method with its arguments and constructor
+			} 
+			else {	// Else stores the method with its arguments and constructor
 				List<CollectorInfo> list = new ArrayList<>();
 				list.add(ci);
 				methodCollector.put(invocationLine, list);
 			}
 			lastInsertedMethod = signature;
 		} catch(IllegalArgumentException e) {
-			System.err.println("[ERROR] MethodCollector - "+e.getMessage());
+			System.err.println("[ERROR] MethodCollector - "+e.getMessage()+"\n");
 		}
 	}
 }
