@@ -180,6 +180,7 @@ public aspect MethodCollector extends RuntimeCollector
 			ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.classPath(classPath)
 				.testClassPath(testClassPath)
+				.classSignature(classSignature)
 				.methodSignature(methodSignature)
 				.testMethodSignature(testMethodSignature)
 				.methodName(methodName)

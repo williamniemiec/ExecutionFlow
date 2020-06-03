@@ -9,9 +9,9 @@ import java.util.Arrays;
 /**
  * Stores information about a method.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4
+ * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version	1.4
+ * @since	1.0
  */
 public class ClassMethodInfo 
 {
@@ -43,6 +43,7 @@ public class ClassMethodInfo
 	 * @param srcPath Absolute path where source file is
 	 * @param testSrcPath Absolute path where source file of test method is
 	 * @param invocationLine Line of test method where method is called
+	 * @param classSignature Signature of the class that the method belongs
 	 * @param methodSignature Signature of the method
 	 * @param testMethodSignature Signature of the test method to which the 
 	 * method belongs
@@ -52,7 +53,7 @@ public class ClassMethodInfo
 	 * @param args Method's arguments
 	 */
 	private ClassMethodInfo(String classPath, String testClassPath, 
-			String srcPath, String testSrcPath, int invocationLine, 
+			String srcPath, String testSrcPath, int invocationLine, String classSignature,
 			String methodSignature, String testMethodSignature, 
 			String methodName, Class<?> returnType, Class<?>[] parameterTypes, 
 			Object... args) 
@@ -62,13 +63,14 @@ public class ClassMethodInfo
 		this.srcPath = srcPath;
 		this.testSrcPath = testSrcPath;
 		this.methodSignature = methodSignature;
+		this.classSignature = classSignature;
 		this.testMethodSignature = testMethodSignature;
 		this.methodName = methodName;
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
 		this.invocationLine = invocationLine;
-		this.classSignature = extractClassSignature(methodSignature);
+		//this.classSignature = extractClassSignature(methodSignature);
 	}
 
 	
@@ -85,6 +87,7 @@ public class ClassMethodInfo
 	 * 		<li>testSrcPath</li>
 	 * 		<li>invocationLine</li>
 	 * 		<li>methodSignature</li>
+	 * 		<li>classSignature</li>
 	 * 		<li>testMethodSignature</li>
 	 * 		<li>methodName</li>
 	 * </ul>
@@ -96,6 +99,7 @@ public class ClassMethodInfo
 		private String testClassPath;
 		private String srcPath;
 		private String testSrcPath;
+		private String classSignature;
 		private String methodSignature;
 		private String testMethodSignature;
 		private int invocationLine;
@@ -151,6 +155,16 @@ public class ClassMethodInfo
 		public ClassMethodInfoBuilder testSrcPath(String testSrcPath)
 		{
 			this.testSrcPath = testSrcPath;
+			return this;
+		}
+		
+		/**
+		 * @param classSignature Signature of the class
+		 * @return Builder to allow chained calls
+		 */
+		public ClassMethodInfoBuilder classSignature(String classSignature)
+		{
+			this.classSignature = classSignature;
 			return this;
 		}
 		
@@ -226,6 +240,7 @@ public class ClassMethodInfo
 		 * 		<li>testSrcPath</li>
 		 * 		<li>invocationLine</li>
 		 * 		<li>methodSignature</li>
+		 * 		<li>classSignature</li>
 		 * 		<li>testMethodSignature</li>
 		 * 		<li>methodName</li>
 		 * </ul>
@@ -235,14 +250,36 @@ public class ClassMethodInfo
 		 */
 		public ClassMethodInfo build() throws IllegalArgumentException
 		{
-			if (isAnyRequiredFieldNull()) {
-				throw new IllegalArgumentException("Required fields cannot be null");
-			}
+			//if (isAnyRequiredFieldNull()) {
+				String nullField = null;
+				
+				if (classPath == null)
+					nullField = "classPath";
+				else if (testClassPath == null)
+					nullField = "testClassPath";
+				else if (srcPath == null)
+					nullField = "srcPath";
+				else if (testSrcPath == null)
+					nullField = "testSrcPath";
+				else if (invocationLine <= 0)
+					nullField = "invocationLine";
+				else if (classSignature == null)
+					nullField = "classSignature";
+				else if (methodSignature == null)
+					nullField = "methodSignature";
+				else if (testMethodSignature == null)
+					nullField = "testMethodSignature";
+				else if (methodName == null)
+					nullField = "methodName";
+				
+				if (nullField != null)
+					throw new IllegalArgumentException("Required fields cannot be null: "+nullField);
+			//}
 			
 			return new ClassMethodInfo(
 				classPath, testClassPath, srcPath, testSrcPath, invocationLine, 
-				methodSignature, testMethodSignature, methodName, returnType, 
-				parameterTypes, args
+				classSignature, methodSignature, testMethodSignature, methodName, 
+				returnType, parameterTypes, args
 			);
 		}
 		
@@ -287,8 +324,9 @@ public class ClassMethodInfo
 				+ classPath + ", testClassPath=" + testClassPath + ", srcPath=" 
 				+ srcPath + ", testMethodSrcPath=" + testSrcPath 
 				+ ", testMethodSignature=" + testMethodSignature 
-				+ ", methodSignature=" + methodSignature + ", classSignature=" 
-				+ classSignature + ", invocationLine=" + invocationLine 
+				+ ", classSignature=" + classSignature 
+				+ ", methodSignature=" + methodSignature 
+				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
 				+ ", args="	+ Arrays.toString(args) 
 				+ ", returnType=" + returnType + "]";
