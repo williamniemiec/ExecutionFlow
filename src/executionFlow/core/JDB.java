@@ -81,7 +81,6 @@ public class JDB
 	private boolean newIteration;
 	private boolean exitMethod;
 	private boolean isInternalCommand;
-	private boolean overloadedMethod;
 	private boolean skipped;
 	private final boolean DEBUG; 
 	
@@ -584,18 +583,7 @@ public class JDB
             			newIteration = isNewIteration();
             		}
             		
-        			// Checks if it is a call to an overloaded method
-        			if (isCallToOverloadedMethod()) {
-        				if (overloadedMethod) {
-        					exitMethod = true;
-        				} 
-        				else {
-        					testPath.clear();
-        					overloadedMethod = true;
-        					newIteration = true;
-        				}
-                	} 
-        			else if (inMethod) {
+        			if (inMethod) {
         				int lineNumber = jdb_getLine(line);
         				
         				// Checks if returned from the method
@@ -624,7 +612,7 @@ public class JDB
 	    		
 	    		if (srcLine != null) {
 	    			// Checks if current line is a return instruction
-	    			if (!overloadedMethod && srcLine.matches("^[0-9]*(\\ |\\t)*return(\\ |\\t)+.*$"))
+	    			if (srcLine.matches("^[0-9]*(\\ |\\t)*return(\\ |\\t)+.*$"))
 	    				exitMethod = true;
 	    			
 	    			// -----{ DEBUG }-----
