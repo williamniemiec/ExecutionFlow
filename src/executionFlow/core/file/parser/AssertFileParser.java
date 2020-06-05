@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 import executionFlow.core.file.FileEncoding;
@@ -22,8 +23,8 @@ public class AssertFileParser extends FileParser
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private File file;
-	private File outputDir;
+	private Path file;
+	private Path outputDir;
 	private String outputFilename;
 	
 	
@@ -35,12 +36,12 @@ public class AssertFileParser extends FileParser
 	 * it handles the {@link org.junit.ComparisonFailure} and 
 	 * {@link org.junit.AssertFail} exceptions.
 	 * 
-	 * @param filename Path of the file to be parsed
-	 * @param outputDir Directory where parsed file will be saved
-	 * @param outputFilename Name of the parsed file
-	 * @param encode File encoding
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
+	 * @param		outputFilename Name of the parsed file
+	 * @param		encode File encoding
 	 */ 
-	public AssertFileParser(String filepath, String outputDir, String outputFilename, FileEncoding encode)
+	public AssertFileParser(Path filepath, Path outputDir, String outputFilename, FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
 		this.encode = encode;
@@ -52,17 +53,14 @@ public class AssertFileParser extends FileParser
 	 * {@link org.junit.AssertFail} exceptions. Using this constructor, file 
 	 * encoding will be UTF-8.
 	 * 
-	 * @param filename Path of the file to be parsed
-	 * @param outputDir Directory where parsed file will be saved
-	 * @param outputFilename Name of the parsed file
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
+	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public AssertFileParser(String filepath, String outputDir, String outputFilename)
+	public AssertFileParser(Path filepath, Path outputDir, String outputFilename)
 	{
-		this.file = new File(filepath);
-		
-		if (outputDir != null)
-			this.outputDir = new File(outputDir);
-		
+		this.file = filepath;
+		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
 	}
 	
@@ -74,8 +72,8 @@ public class AssertFileParser extends FileParser
 	 * For each assert, it handles the {@link org.junit.ComparisonFailure} and 
 	 * {@link org.junit.AssertFail} exceptions.
 	 * 
-	 * @return Path to parsed file
-	 * @throws IOException If file encoding is incorrect or if file cannot be 
+	 * @return		Path to parsed file
+	 * @throws		IOException If file encoding is incorrect or if file cannot be 
 	 * read / written
 	 */
 	@Override
@@ -85,29 +83,60 @@ public class AssertFileParser extends FileParser
 
 		String line;
 		File outputFile;
-		Pattern pattern_assert = Pattern.compile("(\\ |\\t)+assert[A-z]+\\(.+\\);");
+		Pattern pattern_assert = Pattern.compile("(\\ |\\t)+assert[A-z]+(\\ |\\t)*\\((.+\\);)?");
+		//String try_catch_message = "executionFlow.ConsoleOutput.showWarning(\"AssertFail(\"+e.getStackTrace()[2].getMethodName()+\") - \"+e.getMessage());";
+		String try_catch_message = "";
+		int roundBracketsBalance = 0;
+		boolean inAssert = false;
+		
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
-			outputFile = new File(outputDir, outputFilename+".java");
+			outputFile = new File(outputDir.toFile(), outputFilename+".java");
 		else	// Else processed file will be saved in current directory
 			outputFile = new File(outputFilename+".java");
 		
 		// Opens file streams (file to be parsed and output file / processed file)
-		try (BufferedReader br = Files.newBufferedReader(file.toPath(), encode.getStandardCharset());
+		try (BufferedReader br = Files.newBufferedReader(file, encode.getStandardCharset());
 			 BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), encode.getStandardCharset())) { 
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
-				if (pattern_assert.matcher(line).find()) {
-					int assertEnd = line.indexOf("//");
-					String try_catch_message = "executionFlow.ConsoleOutput.showWarning(\"AssertFail(\"+e.getStackTrace()[2].getMethodName()+\") - \"+e.getMessage());";
-					if (assertEnd == -1)
-						line = "try {"+line+"} catch(org.junit.ComparisonFailure e){"+try_catch_message+"}";
+				// Checks if it is in a multiline assert
+				if (inAssert) {
+					roundBracketsBalance += (int) (line.chars().filter(c -> c == '(').count() - line.chars().filter(c -> c == ')').count());
+					
+					if (roundBracketsBalance == 0) {
+						inAssert = false;
+						int endOfAssert = line.lastIndexOf(';') + 1;
+						line = line.substring(0, endOfAssert) 
+								+ "} catch(org.junit.ComparisonFailure e){" + try_catch_message + "}"
+								+ line.substring(endOfAssert);
+					}					
+				}
+				// Checks if it is an assert instruction
+				else if (pattern_assert.matcher(line).find()) {
+					roundBracketsBalance = (int) (line.chars().filter(c -> c == '(').count() - line.chars().filter(c -> c == ')').count());
+					
+					// Checks if it is an inline assert
+					if (roundBracketsBalance == 0) {
+						// Checks if it is a comment next to the line
+						int commentStart = line.indexOf("//");
+						
+						// There is no comment next to the line
+						if (commentStart == -1)
+							line = "try {" + line + "} catch(org.junit.ComparisonFailure e){" + try_catch_message + "}";
+						// There is a comment next to the line
+						else {
+							line = "try {" + line.substring(0, commentStart)
+								+ "} catch(org.junit.ComparisonFailure e){" + try_catch_message + "}"
+								+ line.substring(commentStart);
+						}
+					}
+					// Multiline assert
 					else {
-						line = "try {" + line.substring(0, assertEnd)
-							+ "} catch(org.junit.ComparisonFailure e){"+try_catch_message+"}"
-							+ line.substring(assertEnd);
+						inAssert = true;
+						line = "try {" + line;
 					}
 				}
 				

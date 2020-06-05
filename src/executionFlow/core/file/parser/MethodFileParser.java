@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -20,17 +21,17 @@ import executionFlow.core.file.FileEncoding;
  * Parses java file adding instructions in parts of the code that does not 
  * exist when converting it to bytecode.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.4
- * @version 1.4
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since 		1.4
  */
 public class MethodFileParser extends FileParser
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private File file;
-	private File outputDir;
+	private Path file;
+	private Path outputDir;
 	private String outputFilename;
 	private boolean elseNoCurlyBrackets;
 	private boolean skipNextLine;
@@ -62,17 +63,14 @@ public class MethodFileParser extends FileParser
 	 * converting it to bytecode. Using this constructor, file encoding will be 
 	 * UTF-8.
 	 * 
-	 * @param filename Path of the file to be parsed
-	 * @param outputDir Directory where parsed file will be saved
-	 * @param outputFilename Name of the parsed file
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
+	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public MethodFileParser(String filepath, String outputDir, String outputFilename)
+	public MethodFileParser(Path filepath, Path outputDir, String outputFilename)
 	{
-		this.file = new File(filepath);
-		
-		if (outputDir != null)
-			this.outputDir = new File(outputDir);
-		
+		this.file = filepath;
+		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
 	}
 	
@@ -82,10 +80,10 @@ public class MethodFileParser extends FileParser
 	 * parsed file will be saved will be in current directory. Also, file 
 	 * encoding will be UTF-8.
 	 * 
-	 * @param filename Path of the file to be parsed
-	 * @param outputFilename Name of the parsed file
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public MethodFileParser(String filepath, String outputFilename)
+	public MethodFileParser(Path filepath, String outputFilename)
 	{
 		this(filepath, null, outputFilename);
 	}
@@ -94,12 +92,12 @@ public class MethodFileParser extends FileParser
 	 * Adds instructions in parts of the code that does not exist when 
 	 * converting it to bytecode.
 	 * 
-	 * @param filename Path of the file to be parsed
-	 * @param outputDir Directory where parsed file will be saved
-	 * @param outputFilename Name of the parsed file
-	 * @param encode File encoding
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
+	 * @param		outputFilename Name of the parsed file
+	 * @param		encode File encoding
 	 */ 
-	public MethodFileParser(String filepath, String outputDir, String outputFilename, FileEncoding encode)
+	public MethodFileParser(Path filepath, Path outputDir, String outputFilename, FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
 		this.encode = encode;
@@ -113,8 +111,8 @@ public class MethodFileParser extends FileParser
 	 * Parses file adding instructions in parts of the code that does not exist 
 	 * when converting it to bytecode.
 	 * 
-	 * @throws IOException If file encoding is incorrect or if file cannot be 
-	 * read / written
+	 * @throws		IOException If file encoding is incorrect or if file cannot
+	 * be read / written
 	 */
 	@Override
 	public String parseFile() throws IOException
@@ -138,13 +136,13 @@ public class MethodFileParser extends FileParser
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
-			outputFile = new File(outputDir, outputFilename+".java");
+			outputFile = new File(outputDir.toFile(), outputFilename+".java");
 		else	// Else processed file will be saved in current directory
 			outputFile = new File(outputFilename+".java");
 		
 		// Opens file streams (file to be parsed and output file / processed file)
-		try (BufferedReader br = Files.newBufferedReader(file.toPath(), encode.getStandardCharset());
-			 BufferedReader br_forward = Files.newBufferedReader(file.toPath(), encode.getStandardCharset()); 
+		try (BufferedReader br = Files.newBufferedReader(file, encode.getStandardCharset());
+			 BufferedReader br_forward = Files.newBufferedReader(file, encode.getStandardCharset()); 
 			 BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), encode.getStandardCharset())) { 
 			br_forward.readLine();
 			
@@ -349,8 +347,8 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Parses line with 'do' keyword.
 	 * 
-	 * @param Line with 'do' keyword
-	 * @return Processed line (line + variable assignment command)
+	 * @param		Line with 'do' keyword
+	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_do(String line)
 	{
@@ -378,14 +376,16 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Parses line with 'continue' or 'break' keyword. It will add the following
 	 * code: <br /> 
+	 * 
 	 * <code>if (Boolean.parseBoolean("True")) { &lt;line&gt; }</code>. <br />
+	 * 
 	 * This method cannot add an if clause like "if (true) {line}" because it
 	 * is ignored when class is compiled. The function 'parseBoolean' is just 
 	 * a randomly chosen function and can be replaced by any other function
 	 * that returns true.
 	 * 
-	 * @param line Line with 'continue' or 'break' keyword
-	 * @return Processed line ("if (Boolean.parseBoolean("True")) {"+line+"}"
+	 * @param		line Line with 'continue' or 'break' keyword
+	 * @return		Processed line ("if (Boolean.parseBoolean("True")) {"+line+"}"
 	 */
 	private String parse_continue_break(String line)
 	{
@@ -395,8 +395,8 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Parses line with 'else' keyword.
 	 * 
-	 * @param Line with else keyword
-	 * @return Processed line (line + variable assignment command)
+	 * @param		Line with else keyword
+	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_else(String line)
 	{
@@ -442,8 +442,8 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Parses line with 'try' or 'finally' keywords.
 	 * 
-	 * @param Line with try or finally keyword
-	 * @return Processed line (line + variable assignment command)
+	 * @param		Line with try or finally keyword
+	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_try_finally(String line)
 	{
@@ -471,8 +471,8 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Parses line with variable declaration without initialization.
 	 * 
-	 * @param Line with variable declaration line without initialization
-	 * @return Processed line (line + variable assignment command)
+	 * @param		Line with variable declaration line without initialization
+	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_varDeclaration(String line)
 	{
@@ -483,8 +483,9 @@ public class MethodFileParser extends FileParser
 	 * Parses 'switch' code block (most specifically, line with 'case' or 
 	 * 'default' keyword).
 	 * 
-	 * @param Line with 'case' or 'default' keyword (inside a switch block)
-	 * @return Processed line (line + variable assignment command)
+	 * @param		Line with 'case' or 'default' keyword (inside a switch 
+	 * block)
+	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_switch(String line)
 	{
@@ -509,9 +510,9 @@ public class MethodFileParser extends FileParser
 	 * Checks if open curly bracket is in next line. If it is, moves it to
 	 * the end of current line.
 	 * 
-	 * @param line Current line
-	 * @param nextLine Line following the current line
-	 * @return Current line with open curly bracket at the end
+	 * @param		line Current line
+	 * @param		nextLine Line following the current line
+	 * @return		Current line with open curly bracket at the end
 	 */
 	private String checkCurlyBracketNewLine(String line, String nextLine)
 	{
@@ -528,8 +529,8 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Checks if a line is a comment line.
 	 * 
-	 * @param line Line to be analyzed
-	 * @return If line is a comment line
+	 * @param		line Line to be analyzed
+	 * @return		If line is a comment line
 	 */
 	private boolean isComment(String line)
 	{
@@ -557,8 +558,8 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Counts how many open curly brackets are in a text.
 	 * 
-	 * @param text Text to be analyzed
-	 * @return Amount of open curly brackets in the text
+	 * @param		text Text to be analyzed
+	 * @return		Amount of open curly brackets in the text
 	 */
 	private int countOpenCurlyBrackets(String text)
 	{
@@ -574,8 +575,8 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Counts how many closed curly brackets are in a text.
 	 * 
-	 * @param text Text to be analyzed
-	 * @return Amount of closed curly brackets in the text
+	 * @param		text Text to be analyzed
+	 * @return		Amount of closed curly brackets in the text
 	 */
 	private int countClosedCurlyBrackets(String text)
 	{
@@ -591,8 +592,8 @@ public class MethodFileParser extends FileParser
 	/**
 	 * Encrypts a text in MD5.
 	 * 
-	 * @param text Text to be encrypted
-	 * @return Encrypted text or the text if an error occurs
+	 * @param		text Text to be encrypted
+	 * @return		Encrypted text or the text if an error occurs
 	 */
 	private static String md5(String text)
 	{
@@ -613,7 +614,7 @@ public class MethodFileParser extends FileParser
 	 * Generates a unique variable name. It will be:<br />
 	 * <code>MD5(current_time+random_number)</code>
 	 * 
-	 * @return Variable name
+	 * @return		Variable name
 	 */
 	private static String generateVarName()
 	{
@@ -651,7 +652,7 @@ public class MethodFileParser extends FileParser
 		/**
 		 * Increments balance.
 		 * 
-		 * @apiNote Must be called only when an open curly bracket is found
+		 * @apiNote		Must be called only when an open curly bracket is found
 		 */
 		public void increaseBalance()
 		{
@@ -665,7 +666,7 @@ public class MethodFileParser extends FileParser
 		/**
 		 * Decrements balance.
 		 * 
-		 * @apiNote Must be called only when a closed curly bracket is found
+		 * @apiNote		Must be called only when a closed curly bracket is found
 		 */
 		public void decreaseBalance()
 		{
@@ -675,7 +676,7 @@ public class MethodFileParser extends FileParser
 		/**
 		 * Returns balance.
 		 * 
-		 * @return Current balance
+		 * @return		Current balance
 		 */
 		public int getBalance()
 		{
@@ -685,7 +686,7 @@ public class MethodFileParser extends FileParser
 		/**
 		 * Checks if balance is empty
 		 * 
-		 * @return If balance is zero
+		 * @return		If balance is zero
 		 */
 		public boolean isBalanceEmpty()
 		{
@@ -695,7 +696,7 @@ public class MethodFileParser extends FileParser
 		/**
 		 * Checks if at any time the balance was equal to 2.
 		 * 
-		 * @return If at any time the balance was equal to 2
+		 * @return		If at any time the balance was equal to 2
 		 */
 		public boolean hasBalanceAlreadyPassedTwo()
 		{
@@ -760,7 +761,7 @@ public class MethodFileParser extends FileParser
 		/**
 		 * Gets {@link #currentNestingLevel current nesting level}.
 		 * 
-		 * @return Current nesting level
+		 * @return		Current nesting level
 		 */
 		public int getCurrentNestingLevel()
 		{
@@ -772,7 +773,7 @@ public class MethodFileParser extends FileParser
 		 * {@link #currentNestingLevel current nesting level}. If nesting level
 		 * is zero, do not do anything.
 		 * 
-		 * @apiNote Must be called only when an open curly bracket is found
+		 * @apiNote		Must be called only when an open curly bracket is found
 		 */
 		public void incrementBalance()
 		{
@@ -785,7 +786,7 @@ public class MethodFileParser extends FileParser
 		 * {@link #currentNestingLevel current nesting level}. If nesting level
 		 * is zero, do not do anything.
 		 * 
-		 * @apiNote Must be called only when a closed curly bracket is found
+		 * @apiNote		Must be called only when a closed curly bracket is found
 		 */
 		public void decreaseBalance()
 		{
@@ -798,7 +799,7 @@ public class MethodFileParser extends FileParser
 		 * {@link #currentNestingLevel current nesting level}. If nesting level
 		 * is zero, do not do anything.
 		 * 
-		 * @return Current balance or -1 if nesting level is zero
+		 * @return		Current balance or -1 if nesting level is zero
 		 */
 		public int getCurrentBalance()
 		{
@@ -811,7 +812,7 @@ public class MethodFileParser extends FileParser
 		 * Checks if balance of else block associated with 
 		 * {@link #currentNestingLevel current nesting level} is empty.
 		 * 
-		 * @return If balance is zero
+		 * @return		If balance is zero
 		 */
 		public boolean isCurrentBalanceEmpty()
 		{
@@ -824,7 +825,7 @@ public class MethodFileParser extends FileParser
 		 * Checks if at any time the balance of else block associated with 
 		 * {@link #currentNestingLevel current nesting level} was equal to 2.
 		 * 
-		 * @return If at any time the balance was equal to 2
+		 * @return		If at any time the balance was equal to 2
 		 */
 		private boolean hasBalanceAlreadyPassedTwo()
 		{

@@ -10,9 +10,9 @@ import executionFlow.core.file.FileEncoding;
  * met. Who will define these conditions will be the classes that implement
  * this class.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.4
- * @version 1.4
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.4
+ * @since		1.4
  */
 public abstract class FileParser 
 {
@@ -29,8 +29,8 @@ public abstract class FileParser
 	 * Parses file, adding some code to an existing code if some conditions are 
 	 * met
 	 * 
-	 * @return Location of parsed file
-	 * @throws IOException If it cannot parse the file
+	 * @return		Location of parsed file
+	 * @throws		IOException If it cannot parse the file
 	 */
 	public abstract String parseFile() throws IOException;
 	
@@ -41,7 +41,7 @@ public abstract class FileParser
 	/**
 	 * Gets file encoding.
 	 * 
-	 * @return File encoding
+	 * @return		File encoding
 	 */
 	public FileEncoding getEncoding()
 	{
@@ -51,7 +51,7 @@ public abstract class FileParser
 	/**
 	 * Sets file encoding.
 	 * 
-	 * @param encoding File encoding
+	 * @param		encoding File encoding
 	 */
 	public void setEncoding(FileEncoding encode)
 	{
