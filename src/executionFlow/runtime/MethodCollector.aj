@@ -43,9 +43,9 @@ public aspect MethodCollector extends RuntimeCollector
 	pointcut methodCollector(): 
 		!cflow(execution(@SkipMethod * *.*())) 
 		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& cflow(execution(@Test * *.*())) 
+		&& cflow(execution(@Test * *.*()))
 		&& !execution(public int hashCode())
-//		(cflow(execution(@Test * *.*())) || 
+//		(cflow(execution(@AssertTest * *.*())) || 
 //		 cflow(execution(@RepeatedTest * *.*())) ||
 //		 cflow(execution(@ParameterizedTest * *.*())) || 
 //		 cflow(execution(@TestFactory * *.*()))
@@ -61,8 +61,10 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !execution(@AfterClass * *())
 		&& !within(@SkipCollection *)
 		&& !within(ExecutionFlow)
+		&& !within(AssertTest)
 		&& !within(ConsoleOutput)
 		&& !within(JDB)
+		&& !within(TestMethodManager)
 		&& !within(AssertFileParser)
 		&& !within(FileCompiler)
 		&& !within(FileParser)
@@ -96,7 +98,7 @@ public aspect MethodCollector extends RuntimeCollector
 	 * Executed before the end of each internal call of a method with @Test annotation
 	 */
 	after(): methodCollector()
-	{	
+	{
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
 		
