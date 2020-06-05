@@ -42,6 +42,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		&& !execution(@SkipMethod * *())
 		&& !within(ExecutionFlow)
 		&& !within(ConsoleOutput)
+		&& !within(AssertFileParserFactory)
 		&& !within(JDB)
 		&& !within(FileParser)
 		&& !within(FileManager)

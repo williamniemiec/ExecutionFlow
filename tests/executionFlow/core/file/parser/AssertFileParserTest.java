@@ -5,17 +5,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import executionFlow.core.file.FileEncoding;
-import executionFlow.core.file.parser.FileParser;
-import executionFlow.core.file.parser.TestMethodFileParser;
 import executionFlow.runtime.SkipCollection;
 
 
 /**
- * Tests for class {@link TestMethodFileParser}.
+ * Tests for class {@link AssertFileParser}.
  */
 @SkipCollection
-public class TestMethodFileParserTest 
+public class AssertFileParserTest 
 {
 	@Test
 	public void testClassTest() throws IOException
@@ -24,7 +21,7 @@ public class TestMethodFileParserTest
 		String filename = "TestClass";
 		File f = new File(currentDir, filename+".java");
 		
-		FileParser fp = new TestMethodFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		FileParser fp = new AssertFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
 		fp.parseFile();
 	}
 }

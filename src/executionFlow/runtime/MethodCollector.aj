@@ -63,10 +63,12 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(ExecutionFlow)
 		&& !within(ConsoleOutput)
 		&& !within(JDB)
+		&& !within(AssertFileParser)
 		&& !within(FileCompiler)
 		&& !within(FileParser)
 		&& !within(FileManager)
 		&& !within(FileParserFactory)
+		&& !within(AssertFileParserFactory)
 		&& !within(FileEncoding)
 		&& !within(MethodFileParser)
 		&& !within(MethodFileParserFactory)
@@ -89,7 +91,7 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !call(void org.junit.Assert.*(*,*,*))
 		&& !call(void org.junit.Assert.*(*,*,*,*))
 		&& !call(void org.junit.Assert.fail());
-	
+
 	/**
 	 * Executed before the end of each internal call of a method with @Test annotation
 	 */
