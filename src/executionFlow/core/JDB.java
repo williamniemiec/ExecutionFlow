@@ -11,7 +11,6 @@ import java.net.URISyntaxException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -137,9 +136,9 @@ public class JDB
 	 */
 	public List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws IOException
 	{ 
-		String methodClassRootPath;	// Root path where the compiled file of method class is
-		String srcRootPath;			// Root path where the source file of the method is
-		String testClassRootPath;	// Root path where the compiled file of test method class is. It 
+		Path methodClassRootPath;	// Root path where the compiled file of method class is
+		Path srcRootPath;			// Root path where the source file of the method is
+		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
 									// will be used as JDB root directory
 		
 		// Gets information about the method to be analyzed
@@ -157,7 +156,7 @@ public class JDB
 				
 		Process process = jdb_start(testClassRootPath, srcRootPath, methodClassRootPath);
 		
-		jdb_methodVisitor(process, methodInfo.getMethodName());
+		jdb_methodVisitor(process);
 		
 		return testPaths;
 	}
@@ -173,23 +172,23 @@ public class JDB
 	 * @return		Process running JDB
 	 * @throws		IOException If the process cannot be created
 	 */
-	private Process jdb_start(String testClassRootPath, String srcRootPath, String methodClassRootPath) throws IOException
+	private Process jdb_start(Path testClassRootPath, Path srcRootPath, Path methodClassRootPath) throws IOException
 	{
-		if (srcRootPath.isEmpty())
+		if (srcRootPath == null)
 			throw new IllegalStateException("Source file path cannot be empty");
 		
 		// Gets paths
-		findLibs(getAppRootPath());
+		findLibs(ExecutionFlow.getAppRootPath());
 		
 		// Configures JDB, indicating path of libraries, classes and source files
-		String methodClassPath = Paths.get(testClassRootPath).relativize(Path.of(methodClassRootPath)).toString();
-		String libPath_relative = Paths.get(testClassRootPath).relativize(libPath).toString()+"\\";
+		String methodClassPath = testClassRootPath.relativize(methodClassRootPath).toString();
+		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
 		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
 		String lib_junit = libPath_relative+"junit-4.13.jar";
 		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
 		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
 		String jdb_classPath = "-classpath .;"+libs;
-		String jdb_srcPath = "-sourcepath "+Paths.get(testClassRootPath).relativize(Paths.get(srcRootPath));
+		String jdb_srcPath = "-sourcepath "+testClassRootPath.relativize(srcRootPath);
 		
 		if (!methodClassPath.isEmpty())
 			jdb_classPath += ";"+methodClassPath;
@@ -210,7 +209,7 @@ public class JDB
 			"cmd.exe","/c","jdb "+jdb_paths,
 			"org.junit.runner.JUnitCore",classInvocationSignature
 		);
-		pb.directory(new File(testClassRootPath));
+		pb.directory(testClassRootPath.toFile());
 		
 		return pb.start();
 	}
@@ -218,13 +217,14 @@ public class JDB
 	/**
 	 * Starts JDB and computes test paths for a method from debugging.
 	 * 
+	 * @param		process Profess running JDB
 	 * @throws		IOException If an error occurs while reading the output 
 	 */
-	private void jdb_methodVisitor(Process process, String methodName) throws IOException 
+	private void jdb_methodVisitor(Process process) throws IOException 
 	{
 		boolean wasNewIteration = false;
 		int currentSkip = skip;
-		JDBOutput out = new JDBOutput(process, methodName);
+		JDBOutput out = new JDBOutput(process);
 		JDBInput in = new JDBInput(process);
 		
 		// Initializes JDB
@@ -337,7 +337,7 @@ public class JDB
 	 * @return		Root path directory
 	 * @throws		IllegalStateException If source file path is null
 	 */
-	private String extractRootPathDirectory(String classPath, String classPackage) throws IllegalStateException
+	private Path extractRootPathDirectory(Path classPath, String classPackage) throws IllegalStateException
 	{
 		if (classPath == null) 
 			throw new IllegalStateException("Source file path cannot be null");
@@ -348,15 +348,13 @@ public class JDB
 			packageFolders = classPackage.split("\\.").length;
 		}
 		
-		Path file = new File(classPath).toPath();
-		
-		file = file.getParent();
+		classPath = classPath.getParent();
 		
 		for (int i=0; i<packageFolders; i++) {
-			file = file.getParent();
+			classPath = classPath.getParent();
 		}
 		
-		return file.toString();
+		return classPath;
 	}
 	
 	/**
@@ -383,27 +381,6 @@ public class JDB
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Computes and stores application root path, based on class 
-	 * {@link ExecutionFlow} location.
-	 * 
-	 * @return		Application root path
-	 */
-	private String getAppRootPath()
-	{
-		String response = null;
-		
-		try {
-			response = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
-				    .toURI()).getPath();
-			response = new File(response+"../").getParent();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		
-		return response;
 	}
 	
 	
@@ -507,7 +484,7 @@ public class JDB
 		//		Attributes
 		//---------------------------------------------------------------------
 		private BufferedReader output;
-		private String methodName;
+		//private String methodName;
 		private boolean inMethod;
 		private int lastLineAdded = -1;
 		private String line;
@@ -522,11 +499,9 @@ public class JDB
          * commands.
          * 
          * @param		p JDB process
-         * @param		methodName Name of the method to be debugged
          */
-		JDBOutput(Process p, String methodName)
+		JDBOutput(Process p)
 		{
-			this.methodName = methodName;
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		}
 		
@@ -698,20 +673,6 @@ public class JDB
 					  line.contains(classInvocationSignature) )
 				)
 			);
-		}
-		
-		/**
-		 * Checks if current line of JDB is a call to an overloaded method.
-		 * 
-		 * @return		If current line of JDB is a call to an overloaded method
-		 */
-		private boolean isCallToOverloadedMethod()
-		{
-			String regex_overloadedMethod = "^.*(\\ |\\t|=|\\.)"+methodName+"\\(.*\\)(\\ |\\t)*;$";
-			
-			return 	srcLine != null && 
-					srcLine.matches(regex_overloadedMethod) && 
-					!line.contains(classInvocationSignature);
 		}
 		
 		/**

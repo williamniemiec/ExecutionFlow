@@ -3,7 +3,6 @@ package executionFlow.core.file;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import executionFlow.core.file.parser.FileParser;
@@ -13,9 +12,9 @@ import executionFlow.core.file.parser.factory.FileParserFactory;
 /**
  * Responsible for managing file parser and compiler.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.3
- * @version 1.4
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.3
  */
 public class FileManager 
 {
@@ -27,7 +26,7 @@ public class FileManager
 	private Path classPath;
 	private Path originalClassPath;
 	private String filename;
-	private String classOutput;
+	private Path classOutput;
 	private String classPackage;
 	private FileParser fp;
 	private boolean charsetError;
@@ -39,21 +38,20 @@ public class FileManager
 	/**
 	 * Manages file analyzer and compiler.
 	 * 
-	 * @param srcFilePath Absolute path of java file
-	 * @param classOutput Absolute path of directory where .class of java file is
-	 * @param classPackage Package of the class of the java file
-	 * @param fileParserFactory Factory that will produce {@link FileParser} 
-	 * that will be used for parsing file
+	 * @param		srcFilePath Path of java file
+	 * @param		classOutput Path of directory where .class of java file is
+	 * @param		classPackage Package of the class of the java file
+	 * @param		fileParserFactory Factory that will produce 
+	 * {@link FileParser} that will be used for parsing file
 	 */
-	public FileManager(String srcFilePath, String classOutput, String classPackage, FileParserFactory fileParserFactory)
+	public FileManager(Path srcFilePath, Path classOutput, String classPackage, FileParserFactory fileParserFactory)
 	{
 		this.classOutput = classOutput;
-		this.classPackage = classPackage;
-		this.srcFile = Path.of(srcFilePath);
-		this.originalSrcFile = Path.of(srcFilePath+".original"); 
-		this.filename = srcFile.getName(srcFile.getNameCount()-1).toString().split("\\.")[0];
+		this.classPackage = classPackage;;
+		this.filename = srcFilePath.getName(srcFilePath.getNameCount()-1).toString().split("\\.")[0];
+		this.originalSrcFile = Path.of(srcFilePath.toAbsolutePath().toString()+".original"); 
 		this.fp = fileParserFactory.newFileParser(
-			srcFile.toAbsolutePath().toString(), 
+			srcFile, 
 			classOutput, 
 			filename+"_parsed", 
 			FileEncoding.UTF_8
@@ -70,8 +68,8 @@ public class FileManager
 	 * Parses and process file, saving modified file in the same file passed 
 	 * to constructor.
 	 * 
-	 * @return This object to allow chained calls
-	 * @throws IOException If file encoding cannot be defined
+	 * @return		This object to allow chained calls
+	 * @throws		IOException If file encoding cannot be defined
 	 * 
 	 * @implNote This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertParse()} function.
@@ -111,27 +109,25 @@ public class FileManager
 	/**
 	 * Compiles processed file.
 	 *  
-	 * @return This object to allow chained calls
-	 * @throws IOException If an error occurs during compilation
+	 * @return		This object to allow chained calls
+	 * @throws		IOException If an error occurs during compilation
 	 */
 	public FileManager compileFile() throws IOException 
 	{
 		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
 								0 : classPackage.split("\\.").length;
-
-		Path file = Paths.get(classOutput);
 		
 		// Sets path to the compiler
 		for (int i=0; i<packageFolders; i++) {
-			file = file.getParent();
+			classOutput = classOutput.getParent();
 		}
-		
+
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding
 		if (charsetError)	
-			FileCompiler.compile(srcFile, file.toString(), FileEncoding.ISO_8859_1);
+			FileCompiler.compile(srcFile, classOutput, FileEncoding.ISO_8859_1);
 		else
-			FileCompiler.compile(srcFile, file.toString(), FileEncoding.UTF_8);
+			FileCompiler.compile(srcFile, classOutput, FileEncoding.UTF_8);
 		
 		return this;
 	}
@@ -140,8 +136,9 @@ public class FileManager
 	 * Deletes modified file and restores original file. This function does not
 	 * delete .class file of modified file, only .java file.
 	 * 
-	 * @return This object to allow chained calls
-	 * @throws IOException If method is called without creating a backup file
+	 * @return		This object to allow chained calls
+	 * @throws		IOException If method is called without creating a backup 
+	 * file
 	 */
 	public FileManager revertParse() throws IOException
 	{
@@ -160,8 +157,9 @@ public class FileManager
 	/**
 	 * Deletes modified .class file and restores original .class file.
 	 * 
-	 * @return This object to allow chained calls
-	 * @throws IOException If method is called without creating a backup file
+	 * @return		This object to allow chained calls
+	 * @throws		IOException If method is called without creating a backup 
+	 * file
 	 */
 	public FileManager revertCompilation() throws IOException
 	{
@@ -177,11 +175,21 @@ public class FileManager
 		return this;
 	}
 	
+	public boolean hasClassBackupStored()
+	{
+		return Files.exists(originalClassPath);
+	}
+	
+	public boolean hasSrcBackupStored()
+	{
+		return Files.exists(originalSrcFile);
+	}
+	
 	/**
 	 * Creates a copy of class file passed to the constructor to allow to 
 	 * restore it after.
 	 * 
-	 * @implNote Backup name will be &lt;<b>name_of_file</b>.original.class&gt;.
+	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.class&gt;.
 	 * It will be saved in the same directory of the original file
 	 */
 	public FileManager createClassBackupFile()
@@ -208,7 +216,7 @@ public class FileManager
 	 * Creates a copy of source file passed to the constructor to allow to 
 	 * restore it after.
 	 * 
-	 * @implNote Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
+	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
 	 * It will be saved in the same directory of the original file
 	 */
 	private void createSrcBackupFile()

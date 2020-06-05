@@ -1,5 +1,7 @@
 package executionFlow;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,7 @@ import executionFlow.info.SignaturesInfo;
  * application.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.4
+ * @version		1.5
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -178,8 +180,10 @@ public class ExecutionFlow
 					e.printStackTrace();
 				} finally {
 					// Reverts parsed file to its original state
-					methodFileManager.revertParse();
-					testMethodFileManager.revertParse().revertCompilation();
+					try {
+						methodFileManager.revertParse();
+						testMethodFileManager.revertParse().revertCompilation();
+					} catch (java.io.IOException e) {}
 				}
 			}
 		}
@@ -225,6 +229,27 @@ public class ExecutionFlow
 			classPathInfo.put(collector.getMethodInfo().extractSignatures(), new ArrayList<Integer>());
 			classTestPaths.put(collector.getMethodInfo().extractSignatures().toString(), classPathInfo);
 		}
+	}
+	
+	/**
+	 * Computes and stores application root path, based on class 
+	 * {@link ExecutionFlow} location.
+	 * 
+	 * @return		Application root path
+	 */
+	public static String getAppRootPath()
+	{
+		String response = null;
+		
+		try {
+			response = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
+				    .toURI()).getPath();
+			response = new File(response+"../").getParent();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		return response;
 	}
 	
 	
