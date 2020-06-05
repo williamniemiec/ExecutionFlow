@@ -1,5 +1,6 @@
 package executionFlow.runtime;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,13 +14,13 @@ import executionFlow.info.CollectorInfo;
  * Responsible for data collection of methods and class constructors used in 
  * tests.
  * 
- * @apiNote It will ignore all methods of a class if it has 
+ * @apiNote		It will ignore all methods of a class if it has 
  * {@link SkipCollection} annotation
- * @apiNote It will ignore methods with {@link SkipMethod} annotation
+ * @apiNote		It will ignore methods with {@link SkipMethod} annotation
  * 
- * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version	1.5
- * @since	1.0
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.0
  */
 public abstract aspect RuntimeCollector 
 {
@@ -52,7 +53,8 @@ public abstract aspect RuntimeCollector
 	protected static Map<String, ClassConstructorInfo> consCollector = new LinkedHashMap<>();
 	
 	protected static String testMethodSignature;
-	protected static String testClassPath;
+	protected static Path testClassPath;
+	protected static Path testSrcPath;
 	protected static String testMethodPackage;
 	protected static String lastInsertedMethod = "";
 	protected static boolean lastWasInternalCall;
@@ -67,8 +69,8 @@ public abstract aspect RuntimeCollector
 	/**
 	 * Returns if a method is a native method of Java.
 	 * 
-	 * @param methodSignature Signature of the method
-	 * @return If the method is a native method
+	 * @param		methodSignature Signature of the method
+	 * @return		If the method is a native method
 	 */
 	protected boolean isNativeMethod(String methodSignature)
 	{
@@ -78,8 +80,8 @@ public abstract aspect RuntimeCollector
 	/**
 	 * Returns if a signature is a method signature.
 	 * 
-	 * @param signature Signature to be analyzed
-	 * @return If the signature is a method signature
+	 * @param		signature Signature to be analyzed
+	 * @return		If the signature is a method signature
 	 */
 	protected boolean isMethodSignature(String signature)
 	{
@@ -96,6 +98,7 @@ public abstract aspect RuntimeCollector
 		consCollector.clear();
 		testMethodSignature = null;
 		testClassPath = null;
+		testSrcPath = null;
 		lastInsertedMethod = null;
 		lastWasInternalCall = false;
 		skipCollection = false;
@@ -107,8 +110,8 @@ public abstract aspect RuntimeCollector
 	/**
 	 * Checks if a signature belongs to an internal call.
 	 * 
-	 * @param signature Signature of the method
-	 * @return If the signature belongs to an internal call
+	 * @param		signature Signature of the method
+	 * @return		If the signature belongs to an internal call
 	 */
 	protected boolean isInternalCall(String signature)
 	{
@@ -119,8 +122,8 @@ public abstract aspect RuntimeCollector
 	 * Checks if a signature of a constructor is from a test method 
 	 * constructor.
 	 * 
-	 * @param constructorSignature Signature of the constructor
-	 * @return If the signature of the constructor is from a test method 
+	 * @param		constructorSignature Signature of the constructor
+	 * @return		If the signature of the constructor is from a test method 
 	 * constructor
 	 */
 	protected boolean isTestMethodConstructor(String constructorSignature)
@@ -137,8 +140,8 @@ public abstract aspect RuntimeCollector
 	/**
 	 * Checks if a signature belongs to a builder class.
 	 * 
-	 * @param signature Signature to be analyzed
-	 * @return If the signature belongs to a builder class
+	 * @param		signature Signature to be analyzed
+	 * @return		If the signature belongs to a builder class
 	 */
 	protected boolean isBuilderClass(String signature)
 	{
