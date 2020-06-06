@@ -29,7 +29,7 @@ public class MethodManager
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private final String backupFilename;
-	private Set<FileManager> files;
+	private HashSet<FileManager> files;
 	
 	/**
 	 * Stores hashcode of FileManager that have already been processed 
@@ -55,16 +55,16 @@ public class MethodManager
 	 */
 	public MethodManager(MethodManagerType type)
 	{
+		files = new HashSet<>(); 
 		parsedFiles = new HashSet<>();
 		compiledFiles = new HashSet<>();
+		backupFilename = "_EF_"+type.getName()+"_FILES.ef";
 
 		// If there are files modified from the last execution that were not
 		// restored, restore them
 		if (this.hasBackupStored()) {
 			restoreFromBackup();
-		}
-		
-		backupFilename = "_EF_"+type.getName()+"_FILES.ef";
+		}		
 	}
 	
 	
@@ -80,8 +80,12 @@ public class MethodManager
 	 */
 	public MethodManager parse(FileManager fm) throws IOException
 	{
-		if (parsedFiles.contains(fm.hashCode()))
+		int key = fm.hashCode();
+		
+		if (parsedFiles.contains(key))
 			return this;
+		
+		parsedFiles.add(key);
 		
 		if (!files.contains(fm)) {
 			files.add(fm);
@@ -102,8 +106,12 @@ public class MethodManager
 	 */
 	public MethodManager compile(FileManager fm) throws IOException
 	{	
+		int key = fm.hashCode();
+		
 		if (compiledFiles.contains(fm.hashCode()))
 			return this;
+		
+		compiledFiles.add(key);
 		
 		if (!files.contains(fm)) {
 			files.add(fm);
@@ -148,6 +156,30 @@ public class MethodManager
 	}
 	
 	/**
+	 * Checks if exists a backup file.
+	 * 
+	 * @return		If exists a backup file
+	 */
+	private boolean hasBackupStored()
+	{
+		return Files.exists(Path.of(backupFilename));
+	}
+	
+	/**
+	 * Serializes list of FileManagers to allow modified files to be restored 
+	 * in case the program is interrupted without having restored these files.
+	 */
+	private void save()
+	{
+		// Serializes list of parsed files
+		try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFilename))) {
+			ois.writeObject(files);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Restores all original files that have been modified.
 	 * 
 	 * @param		files List of modified files
@@ -185,20 +217,6 @@ public class MethodManager
 		
 		return response;
 	}
-
-	/**
-	 * Serializes list of FileManagers to allow modified files to be restored 
-	 * in case the program is interrupted without having restored these files.
-	 */
-	private void save()
-	{
-		// Serializes list of parsed files
-		try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFilename))) {
-			ois.writeObject(files);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	/**
 	 * Restores list of files modified in the last execution.
@@ -208,7 +226,7 @@ public class MethodManager
 		// Deserializes list of files
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFilename))) {
 			@SuppressWarnings("unchecked")
-			Set<FileManager> restoredFiles = (Set<FileManager>)ois.readObject();
+			HashSet<FileManager> restoredFiles = (HashSet<FileManager>)ois.readObject();
 			
 			// Restores original files
 			restoreAll(restoredFiles);
@@ -216,21 +234,19 @@ public class MethodManager
 			e.printStackTrace();
 		}
 		
+		deleteBackup();
+	}
+	
+	/**
+	 * Deletes backup file
+	 */
+	private void deleteBackup()
+	{
 		// Deletes backup file
 		try {
 			Files.delete(Path.of(backupFilename));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Checks if exists a backup file.
-	 * 
-	 * @return		If exists a backup file
-	 */
-	private boolean hasBackupStored()
-	{
-		return Files.exists(Path.of(backupFilename));
 	}
 }

@@ -1,8 +1,13 @@
 package executionFlow.runtime;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import executionFlow.ConsoleOutput;
@@ -20,7 +25,6 @@ import executionFlow.info.ClassMethodInfo;
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5
  * @since		1.5
- *
  */
 public class TestMethodManager
 {
@@ -31,6 +35,7 @@ public class TestMethodManager
 	private Path testClassPath; 
 	private String testClassPackage;
 	private static final String DELIMITER_END_TEST_METHOD = "_END_OF_TEST_METHOD";
+	private final String backupFilename = "_EF_ASSERT_TEST_METHOD.ef";;
 	
 	
 	//-------------------------------------------------------------------------
@@ -48,6 +53,10 @@ public class TestMethodManager
 	{
 		this.testClassPath = testClassPath;
 		this.testClassPackage = testClassPackage;
+		
+		if (hasBackupStored()) {
+			restoreFromBackup();
+		}
 	}
 	
 	
@@ -83,33 +92,16 @@ public class TestMethodManager
 			testMethodFileManager.createClassBackupFile()
 				.parseFile()
 				.compileFile();
+			save();
 		} catch(IOException e) {
 			testMethodFileManager.revertCompilation();
 			testMethodFileManager.revertParse();
 			e.printStackTrace();
 		}
 		
-		ConsoleOutput.showInfo("Pre-processing has been completed!");
+		ConsoleOutput.showInfo("Pre-processing completed");
 		
 		return true;
-	}
-	
-	/**
-	 * Restores test method original files (source file and compiled file).
-	 */
-	public void restoreOriginalFiles()
-	{
-		try {
-			testMethodFileManager.revertParse();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			testMethodFileManager.revertCompilation();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
@@ -118,9 +110,6 @@ public class TestMethodManager
 	 * {@link #assertParser(String)}.
 	 * 
 	 * @param		testClassName Class name containing the test method
-	 * 
-	 * @implSpec	At the end, it will restore compiled file before executing
-	 * {@link #assertParser(String)}.
 	 */
 	public void run(String testClassName)
 	{	
@@ -202,5 +191,88 @@ public class TestMethodManager
 	public static void putEndDelimiter()
 	{
 		System.out.println(DELIMITER_END_TEST_METHOD);
+	}
+	
+	/**
+	 * Restores test method original files (source file and compiled file).
+	 */
+	public void restoreAll()
+	{
+		restoreAll(testMethodFileManager);
+		deleteBackup();
+	}
+	
+	/**
+	 * Checks if exists a backup file.
+	 * 
+	 * @return		If exists a backup file
+	 */
+	private boolean hasBackupStored()
+	{
+		return Files.exists(Path.of(backupFilename));
+	}
+	
+	/**
+	 * Serializes list of FileManagers to allow modified files to be restored 
+	 * in case the program is interrupted without having restored these files.
+	 */
+	private void save()
+	{
+		// Serializes list of parsed files
+		try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFilename))) {
+			ois.writeObject(testMethodFileManager);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Restores test method original files (source file and compiled file).
+	 * 
+	 * @param		testMethodFileManager File manager of the file
+	 */
+	private void restoreAll(FileManager testMethodFileManager)
+	{
+		try {
+			testMethodFileManager.revertParse();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			testMethodFileManager.revertCompilation();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Restores list of files modified in the last execution.
+	 */
+	private void restoreFromBackup()
+	{
+		// Deserializes list of files
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFilename))) {
+			FileManager restoredFiles = (FileManager)ois.readObject();
+			
+			// Restores original files
+			restoreAll(restoredFiles);
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		deleteBackup();
+	}
+	
+	/**
+	 * Deletes backup file
+	 */
+	private void deleteBackup()
+	{
+		try {
+			Files.delete(Path.of(backupFilename));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
