@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,8 +33,8 @@ public class MethodFileParser extends FileParser
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Path file;
-	private Path outputDir;
+	private transient Path file;
+	private transient Path outputDir;
 	private String outputFilename;
 	private boolean elseNoCurlyBrackets;
 	private boolean skipNextLine;
@@ -619,6 +622,28 @@ public class MethodFileParser extends FileParser
 	private static String generateVarName()
 	{
 		return "_"+md5(String.valueOf(new Date().getTime()+(Math.random()*9999+1)));
+	}
+	
+	private void writeObject(ObjectOutputStream oos)
+	{
+		try {
+			oos.defaultWriteObject();
+			oos.writeUTF(file.toAbsolutePath().toString());
+			oos.writeUTF(outputDir.toAbsolutePath().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void readObject(ObjectInputStream ois)
+	{
+		try {
+			ois.defaultReadObject();
+			this.file = Path.of(ois.readUTF());
+			this.outputDir = Path.of(ois.readUTF());
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

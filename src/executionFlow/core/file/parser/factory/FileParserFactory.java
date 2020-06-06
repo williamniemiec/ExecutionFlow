@@ -1,5 +1,6 @@
 package executionFlow.core.file.parser.factory;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 
 import executionFlow.core.file.FileEncoding;
@@ -12,7 +13,7 @@ import executionFlow.core.file.parser.FileParser;
  * @version		1.5
  * @since		1.4
  */
-public abstract class FileParserFactory 
+public abstract class FileParserFactory
 {
 	/**
 	 * Generates a {@link FileParser} instance.

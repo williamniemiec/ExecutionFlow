@@ -1,6 +1,7 @@
 package executionFlow.core.file.parser;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import executionFlow.core.file.FileEncoding;
 
@@ -11,10 +12,10 @@ import executionFlow.core.file.FileEncoding;
  * this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.4
+ * @version		1.5
  * @since		1.4
  */
-public abstract class FileParser 
+public abstract class FileParser implements Serializable 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
