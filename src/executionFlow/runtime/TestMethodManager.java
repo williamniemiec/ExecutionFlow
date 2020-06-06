@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 
+import executionFlow.ConsoleOutput;
 import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.AssertFileParserFactory;
 import executionFlow.info.ClassMethodInfo;
@@ -63,18 +64,20 @@ public class TestMethodManager
 	 * @throws		IOException If it is not possible to reverse the processing
 	 * done
 	 */
-	public boolean assertParser(String testSrcPath) throws IOException
+	public boolean assertParser(Path testSrcPath) throws IOException
 	{
 		testMethodFileManager = new FileManager(
 			testSrcPath,
-			ClassMethodInfo.getTestClassDirectory(testClassPath).toString(),
+			ClassMethodInfo.getCompiledFileDirectory(testClassPath),
 			testClassPackage,
-			new AssertFileParserFactory()
+			new AssertFileParserFactory(),
+			"original2"
 		);
 		
 		if (testMethodFileManager.hasClassBackupStored()) 
 			return false;
 		
+		ConsoleOutput.showInfo("Pre-processing test method...");
 		
 		try {
 			testMethodFileManager.createClassBackupFile()
@@ -84,11 +87,29 @@ public class TestMethodManager
 			testMethodFileManager.revertCompilation();
 			testMethodFileManager.revertParse();
 			e.printStackTrace();
-		} finally {
-			testMethodFileManager.revertParse();
 		}
 		
+		ConsoleOutput.showInfo("Pre-processing has been completed!");
+		
 		return true;
+	}
+	
+	/**
+	 * Restores test method original files (source file and compiled file).
+	 */
+	public void restoreOriginalFiles()
+	{
+		try {
+			testMethodFileManager.revertParse();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			testMethodFileManager.revertCompilation();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -97,21 +118,29 @@ public class TestMethodManager
 	 * {@link #assertParser(String)}.
 	 * 
 	 * @param		testClassName Class name containing the test method
+	 * 
+	 * @implSpec	At the end, it will restore compiled file before executing
+	 * {@link #assertParser(String)}.
 	 */
 	public void run(String testClassName)
 	{	
 		try {
 			ProcessBuilder pb = new ProcessBuilder(
-				"cmd.exe","/c","java "+"-classpath ..\\lib\\junit-4.13.jar;..\\lib\\hamcrest-all-1.3.jar;.;..\\lib\\aspectjrt-1.9.2.jar",
+				"cmd.exe","/c",
+				"java "+"-classpath ..\\lib\\junit-4.13.jar;"
+						+ "..\\lib\\hamcrest-all-1.3.jar;"
+						+ ".;"
+						+ "..\\lib\\aspectjrt-1.9.2.jar;"
+						+ "..\\lib\\aspectjtools.jar;",
 				"org.junit.runner.JUnitCore",testClassName
 			);
 			
-			pb.directory(ClassMethodInfo.extractRootClassDirectory(testClassPath, testClassPackage).toFile());
+			pb.directory(ClassMethodInfo.extractClassRootDirectory(testClassPath, testClassPackage).toFile());
 			final String regex_junitInfo1 = "^JUnit version [0-9]+(\\.[0-9]+)?";
 			final String regex_junitInfo2 = "^Time: [0-9]+(\\,[0-9]+)?";
-			final String regex_junitInfo3 = "^OK \\([0-9]+\\ test\\)$";
+			final String regex_junitInfo3 = "^OK \\([0-9]+\\ test(s)?\\)$";
 			final String regex_endMethod = "^"+DELIMITER_END_TEST_METHOD+"$";
-			boolean endOfMethod = false;
+			boolean endTestMethod = false;
 			
 			try {
 				Process p = pb.start();
@@ -120,33 +149,46 @@ public class TestMethodManager
 				
 				String line;
 
-				while (!endOfMethod && (line = output.readLine()) != null) {
+				while ((line = output.readLine()) != null) {
+					// Displays error messages (if any)
+					while (outputError.ready() && (line = outputError.readLine()) != null) {
+						System.err.println(line);
+					}
+					
+					// Checks if it is initial message
 					if (line.matches(regex_junitInfo1)) {
 						line = output.readLine();
 						line = line.substring(1);
+					}
+					// Checks if it has reached at the end of the test method
+					else if (endTestMethod) {
+						endTestMethod = false;
+						
+						// If line is not empty, removes dot added by the execution
+						if (line.length() > 0)
+							line = line.substring(1);
+						// If line is empty, current line should be ignored
+						else if (line.length() == 0)
+							continue;
 					}
 					
 					// If it is a internal message, skip it and the next
 					if ( line.matches(regex_junitInfo2) || 
 						 line.matches(regex_junitInfo3) )
 						line = output.readLine();
+					// Checks if it has reached at the end of the test method
 					else if (line.matches(regex_endMethod))
-						endOfMethod = true;
+						endTestMethod = true;
 					else
 						System.out.println(line);
 				}
 				
-				while ((line = outputError.readLine()) != null) {
-					System.err.println(line);
-				}
 				
 				output.close();
 				outputError.close();
 				p.waitFor();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			} finally {
-				testMethodFileManager.revertCompilation();				
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -155,7 +197,7 @@ public class TestMethodManager
 	
 	/**
 	 * Puts a delimiter indicating that it has reached the end of the test
-	 * method, being useful to indicate when the process should stop.
+	 * method.
 	 */
 	public static void putEndDelimiter()
 	{
