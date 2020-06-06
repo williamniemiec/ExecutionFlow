@@ -36,7 +36,8 @@ public class FileManager
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Manages file analyzer and compiler.
+	 * Manages file analyzer and compiler. Using this constructor, backup files
+	 * will end with '.original'.
 	 * 
 	 * @param		srcFilePath Path of java file
 	 * @param		classOutput Path of directory where .class of java file is
@@ -44,12 +45,29 @@ public class FileManager
 	 * @param		fileParserFactory Factory that will produce 
 	 * {@link FileParser} that will be used for parsing file
 	 */
-	public FileManager(Path srcFilePath, Path classOutput, String classPackage, FileParserFactory fileParserFactory)
+	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
+			FileParserFactory fileParserFactory)
+	{
+		this(srcFilePath, classOutput, classPackage, fileParserFactory, "original");
+	}
+	
+	/**
+	 * Manages file analyzer and compiler.
+	 * 
+	 * @param		srcFilePath Path of java file
+	 * @param		classOutput Path of directory where .class of java file is
+	 * @param		classPackage Package of the class of the java file
+	 * @param		fileParserFactory Factory that will produce 
+	 * {@link FileParser} that will be used for parsing file
+	 * @param		backupExtensionName Backup file extension name
+	 */
+	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
+			FileParserFactory fileParserFactory, String backupExtensionName)
 	{
 		this.classOutput = classOutput;
 		this.classPackage = classPackage;;
 		this.filename = srcFilePath.getName(srcFilePath.getNameCount()-1).toString().split("\\.")[0];
-		this.originalSrcFile = Path.of(srcFilePath.toAbsolutePath().toString()+".original"); 
+		this.srcFile = srcFilePath;
 		this.fp = fileParserFactory.newFileParser(
 			srcFile, 
 			classOutput, 
@@ -57,7 +75,8 @@ public class FileManager
 			FileEncoding.UTF_8
 		);
 		this.classPath = Path.of(classOutput+"/"+filename+".class");
-		this.originalClassPath = Path.of(classOutput+"/"+filename+".class.original");
+		this.originalSrcFile = Path.of(srcFilePath.toAbsolutePath().toString()+"."+backupExtensionName); 
+		this.originalClassPath = Path.of(classOutput+"/"+filename+".class."+backupExtensionName);
 	}
 	
 	
@@ -71,7 +90,7 @@ public class FileManager
 	 * @return		This object to allow chained calls
 	 * @throws		IOException If file encoding cannot be defined
 	 * 
-	 * @implNote This function overwrite file passed to the constructor! To
+	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertParse()} function.
 	 */
 	public FileManager parseFile() throws IOException
@@ -102,7 +121,7 @@ public class FileManager
 			Files.delete(srcFile);
 			Files.move(out, srcFile);
 		}
-		
+
 		return this;
 	}
 	
@@ -128,7 +147,7 @@ public class FileManager
 			FileCompiler.compile(srcFile, classOutput, FileEncoding.ISO_8859_1);
 		else
 			FileCompiler.compile(srcFile, classOutput, FileEncoding.UTF_8);
-		
+
 		return this;
 	}
 	
