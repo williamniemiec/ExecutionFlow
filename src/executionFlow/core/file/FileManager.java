@@ -23,7 +23,7 @@ public class FileManager
 	//-------------------------------------------------------------------------
 	private Path srcFile;
 	private Path originalSrcFile; 
-	private Path classPath;
+	private Path compiledFile;
 	private Path originalClassPath;
 	private String filename;
 	private Path classOutput;
@@ -74,7 +74,7 @@ public class FileManager
 			filename+"_parsed", 
 			FileEncoding.UTF_8
 		);
-		this.classPath = Path.of(classOutput+"/"+filename+".class");
+		this.compiledFile = Path.of(classOutput+"/"+filename+".class");
 		this.originalSrcFile = Path.of(srcFilePath.toAbsolutePath().toString()+"."+backupExtensionName); 
 		this.originalClassPath = Path.of(classOutput+"/"+filename+".class."+backupExtensionName);
 	}
@@ -83,6 +83,22 @@ public class FileManager
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	@Override
+	public int hashCode()
+	{
+		return srcFile.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) 
+	{
+		if (obj == null)						{ return false;	}
+		if (obj == this)						{ return true;	}
+		if (this.getClass() != obj.getClass())	{ return false;	}
+		
+		return this.srcFile.equals(((FileManager)obj).getSrcFile());
+	}
+
 	/**
 	 * Parses and process file, saving modified file in the same file passed 
 	 * to constructor.
@@ -184,8 +200,8 @@ public class FileManager
 	{
 		try {
 			if (Files.exists(originalClassPath)) {
-				Files.delete(classPath);
-				Files.move(originalClassPath, classPath);
+				Files.delete(compiledFile);
+				Files.move(originalClassPath, compiledFile);
 			}
 		} catch (IOException e) {
 			throw new IOException("Revert compilation without backup");
@@ -215,7 +231,7 @@ public class FileManager
 	{
 		try {
 			Files.copy(
-				classPath,
+				compiledFile,
 				originalClassPath, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
@@ -254,5 +270,19 @@ public class FileManager
 				e1.printStackTrace();
 			}				
 		}
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	public Path getSrcFile()
+	{
+		return srcFile;
+	}
+	
+	public Path getCompiledFile()
+	{
+		return compiledFile;
 	}
 }
