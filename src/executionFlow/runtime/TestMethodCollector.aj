@@ -40,6 +40,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	static boolean finished = false;
 	private String testClassName;
 	private String testClassPackage;
+	private static Transaction transaction = new Transaction("Test_Method");
 	
 	
 	//-------------------------------------------------------------------------
@@ -86,6 +87,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{
+		if (finished)
+			return;
+		
 		reset();
 
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
@@ -112,20 +116,39 @@ public aspect TestMethodCollector extends RuntimeCollector
 				"original_assert"
 			);
 			
-			firstTime = testMethodManager.wasParsed(testMethodFileManager);
+			if (testMethodManager == null && !transaction.isActive())
+				testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
+			System.out.println("------------");
+			System.out.println(transaction.exists());
+			System.out.println(transaction.isActive());
+//			firstTime = firstTime == true ? !testMethodManager.hasBackupStored() : false;
+//			System.out.println(testMethodManager.hasBackupStored());
+			
+			// Checks if there are files that were not restored in the last execution
+			//if (testMethodManager.hasBackupStored() && !testMethodManager.isBackupFileBeingUsed()) {
+			
+			if (transaction.exists() && !transaction.isActive()) {
+				// Deletes backup file from the last execution
+				testMethodManager.deleteBackup();
+				transaction.delete();
+			}
+			
+			firstTime = !transaction.exists();
+			
+			System.out.println("FT? "+firstTime);
+			System.out.println("------------");
 			
 			// Performs pre-processing of the file containing the test method so 
 			// that the collection of the methods is done even if an assert fails
 			if (firstTime) {
 				ConsoleOutput.showInfo("Pre-processing test method...");
 				
-				testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD);
+				// Start of transaction
+				transaction.start();
 				
 				// Parses test method and handles all asserts so that method collection 
 				// is done even if {@link org.junit.ComparisonFailure} occurs
 				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-				
-				firstTime = testMethodManager.wasParsed(testMethodFileManager);
 				
 				ConsoleOutput.showInfo("Pre-processing completed");
 			}
@@ -138,16 +161,24 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	after(): testMethodCollector() 
 	{	
+		
 		// Runs a new process of the application. This code block must only be
 		// executed once per test file
 		if (firstTime) {
 			firstTime = false;
-			//tmm.run(testClassName);
 			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
 			finished = true;
 			
 			// Restores original test file and its compiled file
 			testMethodManager.restoreAll();
+			testMethodManager.deleteBackup();
+			
+			// End of transaction
+			try {
+				transaction.end();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			
 			return;
 		}

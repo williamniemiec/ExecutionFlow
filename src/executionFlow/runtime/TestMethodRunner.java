@@ -94,7 +94,7 @@ public class TestMethodRunner
 					else if (line.matches(regex_endMethod))
 						endTestMethod = true;
 					else
-						System.out.println(line);
+						System.out.println("L: "+line);
 				}
 				
 				

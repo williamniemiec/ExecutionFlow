@@ -64,6 +64,7 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !within(ExecutionFlow)
 		&& !within(ConsoleOutput)
 		&& !within(JDB)
+		&& !within(Transaction)
 		&& !within(AssertFileParser)
 		&& !within(TestMethodRunner)
 		&& !within(MethodManager)

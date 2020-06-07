@@ -43,6 +43,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		&& !within(ExecutionFlow)
 		&& !within(ConsoleOutput)
 		&& !within(AssertFileParserFactory)
+		&& !within(Transaction)
 		&& !within(JDB)
 		&& !within(MethodManager)
 		&& !within(TestMethodRunner)
