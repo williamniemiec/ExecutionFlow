@@ -4,11 +4,15 @@ import java.io.IOException;
 
 import org.junit.*;
 
+import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
 import executionFlow.core.JDB;
 import executionFlow.core.file.FileCompiler;
 import executionFlow.core.file.FileManager;
+import executionFlow.core.file.MethodManager;
+import executionFlow.core.file.ParserType;
 import executionFlow.core.file.parser.FileParser;
+import executionFlow.core.file.parser.factory.AssertFileParserFactory;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
 import executionFlow.info.ClassConstructorInfo;
@@ -21,16 +25,23 @@ import executionFlow.info.SignaturesInfo;
  * Captures all executed methods with <code>@Test</code> annotation, not 
  * including internal calls.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4.1
- * 
- * @implNote Ignores methods with {@link SkipMethod]} annotation, methods with
- * {@link _SkipMethod] and all methods from classes with {@link SkipCollection}
+ * @apiNote		Ignores methods with {@link SkipMethod} annotation, methods with
+ * {@link _SkipMethod} and all methods from classes with {@link SkipCollection}
  * annotation
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
 {
+	private MethodManager testMethodManager;
+	static boolean firstTime = true;
+	static boolean finished = false;
+	private String testClassName;
+	private String testClassPackage;
+	
+	
 	//-------------------------------------------------------------------------
 	//		Pointcut
 	//-------------------------------------------------------------------------
@@ -39,7 +50,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		&& !cflow(execution(@_SkipMethod * *.*()))
 		&& execution(@Test * *.*())
 		&& !execution(public int hashCode())
-//		(execution(@Test * *.*()) || 
+//		(execution(@AssertTest * *.*()) || 
 		 //execution(@RepeatedTest * *.*()) ||
 //		 execution(@ParameterizedTest * *.*()) ||
 //		 execution(@TestFactory * *.*())) 
@@ -80,24 +91,74 @@ public aspect TestMethodCollector extends RuntimeCollector
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
 		testMethodPackage = testMethodSignature.replaceAll("\\(.*\\)", "");
 		
-		// Gets test class path
+		// Gets information about test method
 		try {
+			// Gets compiled file path of the test method
 			String className = thisJoinPoint.getTarget().getClass().getSimpleName();
 			String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
 			testClassPath = CollectorExecutionFlow.findClassPath(className, classSignature);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+			
+			// Gets source file path of the test method
+			String testClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
+			testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
+			testClassPackage = ClassMethodInfo.extractPackage(testClassSignature);
+			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
+			
+			FileManager testMethodFileManager = new FileManager(
+				testSrcPath,
+				ClassMethodInfo.getCompiledFileDirectory(testClassPath),
+				testClassPackage,
+				new AssertFileParserFactory(),
+				"original_assert"
+			);
+			
+			firstTime = testMethodManager.wasParsed(testMethodFileManager);
+			
+			// Performs pre-processing of the file containing the test method so 
+			// that the collection of the methods is done even if an assert fails
+			if (firstTime) {
+				ConsoleOutput.showInfo("Pre-processing test method...");
+				
+				testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD);
+				
+				// Parses test method and handles all asserts so that method collection 
+				// is done even if {@link org.junit.ComparisonFailure} occurs
+				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
+				
+				firstTime = testMethodManager.wasParsed(testMethodFileManager);
+				
+				ConsoleOutput.showInfo("Pre-processing completed");
+			}
+		} catch(IOException e) 
+		{}	
 	}
 	
 	/**
-	 * Executed after the end of a method with @Test annotation.
+	 * Executed after the end of a method with <code>@Test</code> annotation.
 	 */
 	after(): testMethodCollector() 
 	{	
+		// Runs a new process of the application. This code block must only be
+		// executed once per test file
+		if (firstTime) {
+			firstTime = false;
+			//tmm.run(testClassName);
+			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
+			finished = true;
+			
+			// Restores original test file and its compiled file
+			testMethodManager.restoreAll();
+			
+			return;
+		}
+		
+		// If the execution of the process of the application has been 
+		// completed all test paths have been computed
+		if (finished)
+			return;
+		
 		// Gets test paths of the collected methods and export them
-		int lastLineTestMethod = Thread.currentThread().getStackTrace()[2].getLineNumber();
-		ExecutionFlow ef = new ExecutionFlow(methodCollector, lastLineTestMethod);
+		ExecutionFlow ef = new ExecutionFlow(methodCollector);
 		
 		try {
 			ef.execute().export();
@@ -106,5 +167,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		}
 		
 		reset();	// Prepares for next test
+		TestMethodRunner.putEndDelimiter();
 	}
 }

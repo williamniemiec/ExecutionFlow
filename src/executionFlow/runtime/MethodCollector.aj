@@ -1,6 +1,7 @@
 package executionFlow.runtime;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +34,8 @@ public aspect MethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private String classPath;
-	private String srcPath;
+	private Path classPath;
+	private Path srcPath;
 	
 	
 	//-----------------------------------------------------------------------
@@ -61,11 +62,11 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !execution(@AfterClass * *())
 		&& !within(@SkipCollection *)
 		&& !within(ExecutionFlow)
-		&& !within(AssertTest)
 		&& !within(ConsoleOutput)
 		&& !within(JDB)
-		&& !within(TestMethodManager)
 		&& !within(AssertFileParser)
+		&& !within(TestMethodRunner)
+		&& !within(MethodManager)
 		&& !within(FileCompiler)
 		&& !within(FileParser)
 		&& !within(FileManager)
@@ -157,17 +158,11 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 		
 		// Gets class path and source path
-		String testSrcPath = null;
 		try {
 			// Class path and source path from method
 			String className = CollectorExecutionFlow.getClassName(classSignature);
 			classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
-			
-			// Class path and source path from test method
-			String testClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
-			String testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
-			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

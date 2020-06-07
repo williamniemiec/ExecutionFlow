@@ -33,9 +33,9 @@ public class CollectorExecutionFlow
 	/**
 	 * Necessary for {@link #findClassPath} method;
 	 */
-	private static String classPath;
+	private static Path classPath;
 	
-	private static String srcPath;
+	private static Path srcPath;
 	private static Path rootPath;
 	
 	
@@ -74,7 +74,7 @@ public class CollectorExecutionFlow
 		return response;
 	}
 	
-	public static String extractClassSignature(String methodSignature)
+	/*public static String extractClassSignature(String methodSignature)
 	{
 		String[] tmp = methodSignature.split("\\.");
 		StringBuilder response = new StringBuilder();
@@ -90,7 +90,7 @@ public class CollectorExecutionFlow
 		}
 		
 		return response.toString();
-	}
+	}*/
 	
 	/**
 	 * Given the parameters of a method, discover the class of each of these 
@@ -127,12 +127,12 @@ public class CollectorExecutionFlow
 	/**
 	 * When executed it will determine the absolute path of a class.
 	 * 
-	 * @param	className Name of the class
-	 * @param	classSignature Signature of the class
-	 * @return	Absolute path of the class
-	 * @throws	IOException If class does not exist
+	 * @param		className Name of the class
+	 * @param		classSignature Signature of the class
+	 * @return		Path of the class
+	 * @throws		IOException If class does not exist
 	 */
-	public static String findClassPath(String className, String classSignature) throws IOException 
+	public static Path findClassPath(String className, String classSignature) throws IOException 
 	{
 		if (rootPath == null) {
 			rootPath = findProjectRoot().toPath();
@@ -146,7 +146,7 @@ public class CollectorExecutionFlow
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+className+".class")) {
-		        	classPath = file.toString();
+		        	classPath = file;
 		        }
 		        
 		        return FileVisitResult.CONTINUE;
@@ -159,12 +159,12 @@ public class CollectorExecutionFlow
 	/**
 	 * When executed it will determine the absolute path of a source file.
 	 * 
-	 * @param	className Name of the class
-	 * @param	classSignature Signature of the class
-	 * @return	Absolute path of source file of current execution class
-	 * @throws	IOException If class does not exist
+	 * @param		className Name of the class
+	 * @param		classSignature Signature of the class
+	 * @return		Path of source file of current execution class
+	 * @throws		IOException If class does not exist
 	 */
-	public static String findSrcPath(String className, String classSignature) throws IOException 
+	public static Path findSrcPath(String className, String classSignature) throws IOException 
 	{
 		if (rootPath == null) {
 			rootPath = findProjectRoot().toPath();
@@ -182,7 +182,7 @@ public class CollectorExecutionFlow
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+effectiveClassName+".java")) {
-		        	srcPath = file.toString();
+		        	srcPath = file;
 		        	return FileVisitResult.TERMINATE;
 		        }
 		        
@@ -260,6 +260,75 @@ public class CollectorExecutionFlow
 	{
 		Method method = ((MethodSignature) jp.getSignature()).getMethod();
 		return method.getReturnType();
+	}
+	
+	public static String getTestClassDirectory(String testClassPath)
+	{
+		StringBuilder response = new StringBuilder();
+		String[] terms = testClassPath.split("\\\\");
+		
+		for (int i=0; i<terms.length-1; i++) {
+			response.append(terms[i]);
+			response.append("\\");
+		}
+		
+		if (response.length() > 0) {
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
+	}
+	
+	/**
+	 * Extracts class signature from method signature.
+	 * 
+	 * @param methodSignature Signature of the method
+	 * @return Class signature
+	 */
+	public static String extractClassSignature(String methodSignature)
+	{
+		StringBuilder response = new StringBuilder();
+		String[] terms = methodSignature.split("\\.");
+		
+		// Appends all terms of signature, without the last
+		for (int i=0; i<terms.length-1; i++) {
+			response.append(terms[i]);
+			response.append(".");
+		}
+		
+		if (response.length() > 0) {
+			// Removes last dot
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
+	}
+	
+	/**
+	 * Extracts package from a class signature.
+	 * 
+	 * @param signature Signature of the class
+	 * @return Class package
+	 */
+	public static String extractPackage(String signature)
+	{
+		if (signature == null || signature.isEmpty()) { return ""; }
+		
+		String[] tmp = signature.split("\\.");
+		StringBuilder response = new StringBuilder();
+		
+		// Appends all terms of signature, without the last
+		for (int i=0; i<tmp.length-1; i++) {
+			response.append(tmp[i]);
+			response.append(".");
+		}
+		
+		if (response.length() > 0) {
+			// Removes last dot
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
 	}
 	
 	/**
