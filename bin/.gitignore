@@ -5,8 +5,12 @@
 /againstRequirements/
 /builderPattern/
 /chainedCalls/
+/complexTests/
 /controlFlow/
 /executionFlow/
 /overloadedMethod/
 /testClasses/
-/complexTests/
+/AssertFailTest.class
+/README.md
+/AssertFailTest.java.original
+/AssertFailTest.java.original_assert

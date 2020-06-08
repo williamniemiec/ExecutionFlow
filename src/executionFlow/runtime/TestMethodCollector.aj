@@ -40,7 +40,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	static boolean finished = false;
 	private String testClassName;
 	private String testClassPackage;
-	private static Transaction transaction = new Transaction("Test_Method");
+	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
 	
 	
 	//-------------------------------------------------------------------------
@@ -116,25 +116,25 @@ public aspect TestMethodCollector extends RuntimeCollector
 				"original_assert"
 			);
 			
-			if (testMethodManager == null && !transaction.isActive())
+			if (testMethodManager == null && !checkpoint.isActive())
 				testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
 
 			// Checks if there are files that were not restored in the last execution
-			if (transaction.exists() && !transaction.isActive()) {
+			if (checkpoint.exists() && !checkpoint.isActive()) {
 				// Deletes backup file from the last execution
 				testMethodManager.deleteBackup();
-				transaction.delete();
+				checkpoint.delete();
 			}
 			
-			firstTime = !transaction.exists();
+			firstTime = !checkpoint.exists();
 			
 			// Performs pre-processing of the file containing the test method so 
 			// that the collection of the methods is done even if an assert fails
 			if (firstTime) {
 				ConsoleOutput.showInfo("Pre-processing test method...");
 				
-				// Start of transaction
-				transaction.start();
+				// Enabled checkpoint
+				checkpoint.enable();
 				
 				// Parses test method and handles all asserts so that method collection 
 				// is done even if {@link org.junit.ComparisonFailure} occurs
@@ -172,9 +172,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 			ExecutionFlow.testMethodManager.deleteBackup();
 			testMethodManager.deleteBackup();
 			
-			// End of transaction
+			// Disables checkpoint
 			try {
-				transaction.end();
+				checkpoint.disable();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
