@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import executionFlow.ConsoleOutput;
 import executionFlow.core.file.FileEncoding;
 
 
@@ -27,10 +25,25 @@ public class TestMethodFileParser extends FileParser
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private transient Path file;
-	private transient Path outputDir;
-	private String outputFilename;
-
+	private static final long serialVersionUID = 105L;
+	
+	/**
+	 * If true, displays processed lines.
+	 */
+	private static final boolean DEBUG;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization blocks
+	//-------------------------------------------------------------------------
+	/**
+	 * Configures environment. If {@link #DEBUG} is true, displays processed 
+	 * lines.
+	 */
+	static {
+		DEBUG = false;
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
@@ -105,7 +118,8 @@ public class TestMethodFileParser extends FileParser
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
 			outputFile = new File(outputDir.toFile(), outputFilename+".java");
-		else	// Else processed file will be saved in current directory
+		// Else processed file will be saved in current directory
+		else	
 			outputFile = new File(outputFilename+".java");
 		
 		// Opens file streams (file to be parsed and output file / processed file)
@@ -121,33 +135,15 @@ public class TestMethodFileParser extends FileParser
 					line += " @executionFlow.runtime._SkipMethod";
 				}
 				
+				// -----{ DEBUG }-----
+				if (DEBUG) { ConsoleOutput.showDebug(line); }
+				// -----{ END DEBUG }-----	
+				
 				bw.write(line);
 				bw.newLine();
 			}
 		}
 
 		return outputFile.getAbsolutePath();
-	}
-	
-	private void writeObject(ObjectOutputStream oos)
-	{
-		try {
-			oos.defaultWriteObject();
-			oos.writeUTF(file.toAbsolutePath().toString());
-			oos.writeUTF(outputDir.toAbsolutePath().toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void readObject(ObjectInputStream ois)
-	{
-		try {
-			ois.defaultReadObject();
-			this.file = Path.of(ois.readUTF());
-			this.outputDir = Path.of(ois.readUTF());
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
 	}
 }

@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +14,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import executionFlow.ConsoleOutput;
 import executionFlow.core.file.FileEncoding;
 
 
@@ -33,24 +31,23 @@ public class MethodFileParser extends FileParser
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private transient Path file;
-	private transient Path outputDir;
-	private String outputFilename;
-	private boolean elseNoCurlyBrackets;
-	private boolean skipNextLine;
-	private boolean inComment;
+	private static final long serialVersionUID = 105L;
 	
 	/**
 	 * If true, displays processed lines.
 	 */
 	private static final boolean DEBUG;
 	
+	private boolean elseNoCurlyBrackets;
+	private boolean skipNextLine;
+	private boolean inComment;
+	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	/**
-	 * Configures environment. If {@link DEBUG} is true, displays processed 
+	 * Configures environment. If {@link #DEBUG} is true, displays processed 
 	 * lines.
 	 */
 	static {
@@ -137,10 +134,12 @@ public class MethodFileParser extends FileParser
 		boolean inMethod = false;
 		ElseBlockManager elseBlockManager = new ElseBlockManager();
 		
+		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
 			outputFile = new File(outputDir.toFile(), outputFilename+".java");
-		else	// Else processed file will be saved in current directory
+		// Otherwise processed file will be saved in current directory
+		else	
 			outputFile = new File(outputFilename+".java");
 		
 		// Opens file streams (file to be parsed and output file / processed file)
@@ -157,7 +156,7 @@ public class MethodFileParser extends FileParser
 				if (isComment(line)) {
 					
 					// -----{ DEBUG }-----
-					if (DEBUG) { System.out.println(line); }
+					if (DEBUG) { ConsoleOutput.showDebug(line); }
 					// -----{ END DEBUG }-----
 					
 					bw.write(line);
@@ -172,7 +171,7 @@ public class MethodFileParser extends FileParser
 					}
 					
 					// -----{ DEBUG }-----
-					if (DEBUG) { System.out.println(line); }
+					if (DEBUG) { ConsoleOutput.showDebug(line); }
 					// -----{ END DEBUG }-----
 					
 					bw.write(line);
@@ -189,7 +188,7 @@ public class MethodFileParser extends FileParser
 					bw.newLine();	// It is necessary to keep line numbers equals to original file 
 					
 					// -----{ DEBUG }-----
-					if (DEBUG) { System.out.println(); }
+					if (DEBUG) { ConsoleOutput.showDebug(""); }
 					// -----{ END DEBUG }-----
 					
 					continue;
@@ -201,7 +200,7 @@ public class MethodFileParser extends FileParser
 					bw.newLine();
 					
 					// -----{ DEBUG }-----
-					if (DEBUG) { System.out.println(line); }
+					if (DEBUG) { ConsoleOutput.showDebug(line); }
 					// -----{ END DEBUG }-----
 					
 					inMethod = true;
@@ -295,7 +294,7 @@ public class MethodFileParser extends FileParser
 								bw.newLine();
 								
 								// -----{ DEBUG }-----
-								if (DEBUG) { System.out.println(parsedLine); }
+								if (DEBUG) { ConsoleOutput.showDebug(parsedLine); }
 								// -----{ END DEBUG }-----
 								
 								nextLine = br_forward.readLine();
@@ -313,7 +312,6 @@ public class MethodFileParser extends FileParser
 							}
 						}
 					}
-					
 				}
 				// Do while
 				else if (pattern_do.matcher(line).find()) {								
@@ -336,7 +334,7 @@ public class MethodFileParser extends FileParser
 				}
 				
 				// -----{ DEBUG }-----
-				if (DEBUG) { System.out.println(parsedLine); }
+				if (DEBUG) { ConsoleOutput.showDebug(parsedLine); }
 				// -----{ END DEBUG }-----	
 				
 				bw.write(parsedLine);
@@ -623,29 +621,7 @@ public class MethodFileParser extends FileParser
 	{
 		return "_"+md5(String.valueOf(new Date().getTime()+(Math.random()*9999+1)));
 	}
-	
-	private void writeObject(ObjectOutputStream oos)
-	{
-		try {
-			oos.defaultWriteObject();
-			oos.writeUTF(file.toAbsolutePath().toString());
-			oos.writeUTF(outputDir.toAbsolutePath().toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void readObject(ObjectInputStream ois)
-	{
-		try {
-			ois.defaultReadObject();
-			this.file = Path.of(ois.readUTF());
-			this.outputDir = Path.of(ois.readUTF());
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
+
 	
 	//-------------------------------------------------------------------------
 	//		Inner classes

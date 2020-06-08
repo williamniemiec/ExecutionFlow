@@ -94,7 +94,7 @@ public class ConsoleOutput
 	
 	/**
 	 * Displays a warning message. <br />
-	 * <b>Format:</b> <code>[WARNING] &lt;message&gt;</code>
+	 * <b>Format:</b> <code>[WARN] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
 	 * @param		breakLine If a break line is added at the end of the
@@ -107,9 +107,9 @@ public class ConsoleOutput
 	public static void showWarning(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.out.println("[WARNING] "+message);
+			System.out.println("[WARN] "+message);
 		else
-			System.out.print("[WARNING] "+message);
+			System.out.print("[WARN] "+message);
 	}
 	
 	/**

@@ -1,10 +1,10 @@
 package executionFlow.core.file.parser.factory;
 
-import java.io.Serializable;
 import java.nio.file.Path;
 
 import executionFlow.core.file.FileEncoding;
 import executionFlow.core.file.parser.FileParser;
+
 
 /**
  * Responsible for generating {@link FileParser} classes.
@@ -24,5 +24,6 @@ public abstract class FileParserFactory
 	 * @param		encode File encoding of the file to be parsed
 	 * @return		FileParser instance 
 	 */
-	public abstract FileParser newFileParser(Path filepath, Path outputDir, String outputFilename, FileEncoding encode);
+	public abstract FileParser newFileParser(Path filepath, Path outputDir, 
+			String outputFilename, FileEncoding encode);
 }

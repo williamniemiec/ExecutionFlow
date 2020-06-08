@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
+import executionFlow.ConsoleOutput;
 import executionFlow.core.file.FileEncoding;
 
 
@@ -25,9 +24,24 @@ public class AssertFileParser extends FileParser
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private transient Path file;
-	private transient Path outputDir;
-	private String outputFilename;
+	private static final long serialVersionUID = 105L;
+	
+	/**
+	 * If true, displays processed lines.
+	 */
+	private static final boolean DEBUG;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization blocks
+	//-------------------------------------------------------------------------
+	/**
+	 * Configures environment. If {@link #DEBUG} is true, displays processed 
+	 * lines.
+	 */
+	static {
+		DEBUG = false;
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -75,20 +89,18 @@ public class AssertFileParser extends FileParser
 	 * {@link org.junit.AssertFail} exceptions.
 	 * 
 	 * @return		Path to parsed file
-	 * @throws		IOException If file encoding is incorrect or if file cannot be 
-	 * read / written
+	 * @throws		IOException If file encoding is incorrect or if file cannot
+	 * be read / written
 	 */
 	@Override
 	public String parseFile() throws IOException
 	{
 		if (file == null) { return ""; }
 
-		String line;
 		File outputFile;
-		Pattern pattern_assert = Pattern.compile("(\\ |\\t)+assert[A-z]+(\\ |\\t)*\\((.+\\);)?");
-		//String try_catch_message = "executionFlow.ConsoleOutput.showWarning(\"AssertFail(\"+e.getStackTrace()[2].getMethodName()+\") - \"+e.getMessage());";
-		String try_catch_message = "";
-		int roundBracketsBalance = 0;
+		Pattern pattern_assert = Pattern.compile("^(\\ |\\t)+assert[A-z]+(\\ |\\t)*\\((.+\\);)?");
+		String line, try_catch_message = "";
+		int endOfAssert, commentStart, roundBracketsBalance = 0;
 		boolean inAssert = false;
 		
 		
@@ -104,13 +116,13 @@ public class AssertFileParser extends FileParser
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
-				// Checks if it is in a multiline assert
+				// Checks if it is within a multiline assert
 				if (inAssert) {
-					roundBracketsBalance += (int) (line.chars().filter(c -> c == '(').count() - line.chars().filter(c -> c == ')').count());
+					roundBracketsBalance += getRoundBracketsBalance(line);
 					
 					if (roundBracketsBalance == 0) {
 						inAssert = false;
-						int endOfAssert = line.lastIndexOf(';') + 1;
+						endOfAssert = line.lastIndexOf(';') + 1;
 						line = line.substring(0, endOfAssert) 
 								+ "} catch(org.junit.ComparisonFailure e){" + try_catch_message + "}"
 								+ line.substring(endOfAssert);
@@ -118,16 +130,17 @@ public class AssertFileParser extends FileParser
 				}
 				// Checks if it is an assert instruction
 				else if (pattern_assert.matcher(line).find()) {
-					roundBracketsBalance = (int) (line.chars().filter(c -> c == '(').count() - line.chars().filter(c -> c == ')').count());
+					roundBracketsBalance = getRoundBracketsBalance(line);
 					
 					// Checks if it is an inline assert
 					if (roundBracketsBalance == 0) {
 						// Checks if it is a comment next to the line
-						int commentStart = line.indexOf("//");
+						commentStart = line.indexOf("//");
 						
 						// There is no comment next to the line
 						if (commentStart == -1)
-							line = "try {" + line + "} catch(org.junit.ComparisonFailure e){" + try_catch_message + "}";
+							line = "try {" + line + "} "
+								+ "catch(org.junit.ComparisonFailure e){" + try_catch_message + "}";
 						// There is a comment next to the line
 						else {
 							line = "try {" + line.substring(0, commentStart)
@@ -142,6 +155,10 @@ public class AssertFileParser extends FileParser
 					}
 				}
 				
+				// -----{ DEBUG }-----
+				if (DEBUG) { ConsoleOutput.showDebug(line); }
+				// -----{ END DEBUG }-----
+				
 				bw.write(line);
 				bw.newLine();
 			}
@@ -150,25 +167,21 @@ public class AssertFileParser extends FileParser
 		return outputFile.getAbsolutePath();
 	}
 	
-	private void writeObject(ObjectOutputStream oos)
+	/**
+	 * Gets amount of '(' minus amount of ')' in a line.
+	 * 
+	 * @param		line Line to be analyzed
+	 * @return		Amount of '(' minus amount of ')' in the line
+	 */
+	private int getRoundBracketsBalance(String line)
 	{
-		try {
-			oos.defaultWriteObject();
-			oos.writeUTF(file.toAbsolutePath().toString());
-			oos.writeUTF(outputDir.toAbsolutePath().toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void readObject(ObjectInputStream ois)
-	{
-		try {
-			ois.defaultReadObject();
-			this.file = Path.of(ois.readUTF());
-			this.outputDir = Path.of(ois.readUTF());
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
+		return (int) (
+			line.chars()
+				.filter(c -> c == '(')
+				.count() - 
+			line.chars()
+				.filter(c -> c == ')')
+				.count()
+		);
 	}
 }

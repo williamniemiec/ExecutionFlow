@@ -6,9 +6,9 @@ import java.util.Arrays;
 /**
  * Stores information about a class' constructor.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.0
+ * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version	1.5
+ * @since	1.0
  */
 public class ClassConstructorInfo 
 {
@@ -17,14 +17,17 @@ public class ClassConstructorInfo
 	//-------------------------------------------------------------------------
 	private Class<?>[] constructorTypes;
 	private Object[] constructorArgs;
+//	private String classPath;
+//	private String srcPath;
+//	private int invocationLine;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * @param constructorTypes Parameter's types of the constructor
-	 * @param constructorArgs Parameter's values of the constructor
+	 * @param	constructorTypes Parameter's types of the constructor
+	 * @param	constructorArgs Parameter's values of the constructor
 	 */
 	public ClassConstructorInfo(Class<?>[] constructorTypes, Object... constructorArgs) 
 	{

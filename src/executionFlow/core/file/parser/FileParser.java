@@ -1,7 +1,10 @@
 package executionFlow.core.file.parser;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Path;
 
 import executionFlow.core.file.FileEncoding;
 
@@ -20,7 +23,12 @@ public abstract class FileParser implements Serializable
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private static final long serialVersionUID = 105L;
+	
 	protected FileEncoding encode = FileEncoding.UTF_8;
+	protected transient Path file;
+	protected transient Path outputDir;
+	protected String outputFilename;
 	
 	
 	//-------------------------------------------------------------------------
@@ -57,5 +65,31 @@ public abstract class FileParser implements Serializable
 	public void setEncoding(FileEncoding encode)
 	{
 		this.encode = encode;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Serialization and deserialization methods
+	//-------------------------------------------------------------------------
+	private void writeObject(ObjectOutputStream oos)
+	{
+		try {
+			oos.defaultWriteObject();
+			oos.writeUTF(file.toAbsolutePath().toString());
+			oos.writeUTF(outputDir.toAbsolutePath().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void readObject(ObjectInputStream ois)
+	{
+		try {
+			ois.defaultReadObject();
+			this.file = Path.of(ois.readUTF());
+			this.outputDir = Path.of(ois.readUTF());
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

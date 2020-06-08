@@ -1,6 +1,7 @@
 package executionFlow;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +10,8 @@ import java.util.Map;
 
 import executionFlow.core.JDB;
 import executionFlow.core.file.FileManager;
+import executionFlow.core.file.MethodManager;
+import executionFlow.core.file.ParserType;
 import executionFlow.core.file.parser.factory.MethodFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.ConsoleExporter;
@@ -58,17 +61,65 @@ public class ExecutionFlow
 	 */
 	private Map<Integer, List<CollectorInfo>> collectedMethods;
 	
-	private final boolean DEBUG; 
+	/**
+	 * If true, displays collected methods for each test method executed.
+	 */
+	private static final boolean DEBUG; 
+	
+	public static MethodManager methodManager;
+	public static MethodManager testMethodManager;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	/**
+	 * Initializes method managers. If some exception is thrown, stop the
+	 * execution, otherwise the original files that have been modified in the 
+	 * last run may be lost.
+	 */
+	static {
+		boolean error = false;
+		
+		try {
+			testMethodManager = new MethodManager(ParserType.TEST_METHOD, true);
+		} catch (ClassNotFoundException e) {
+			error = true;
+			ConsoleOutput.showError("Test method file");
+			ConsoleOutput.showError("Class FileManager not found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			error = true;
+			ConsoleOutput.showError("Test method file");
+			ConsoleOutput.showError("It is not possible to recover all backup files");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#it-is-not-possible-to-recover-all-backup-files");
+			e.printStackTrace();
+		}
+		
+		try {
+			methodManager = new MethodManager(ParserType.METHOD, true);
+		} catch (ClassNotFoundException e) {
+			error = true;
+			ConsoleOutput.showError("Method file");
+			ConsoleOutput.showError("Class FileManager not found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			error = true;
+			ConsoleOutput.showError("Method file");
+			ConsoleOutput.showError("It is not possible to recover all backup files");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#it-is-not-possible-to-recover-all-backup-files");
+			e.printStackTrace();
+		}
+		
+		if (error)
+			System.exit(-1);
+	}
+	
+	/**
 	 * Enables or disables debug. If activated, displays collected methods for
 	 * each test method executed.
 	 */
-	{
+	static {
 		DEBUG = false;
 	}
 	
@@ -104,7 +155,7 @@ public class ExecutionFlow
 	 * Walks the method recording its test paths and save the result in
 	 * {@link #classTestPaths}.
 	 * 
-	 * @return		Itself (to allow chained calls)
+	 * @return		This object to allow chained calls
 	 * @throws		Throwable If an error occurs
 	 */
 	public ExecutionFlow execute() throws Throwable
@@ -147,19 +198,25 @@ public class ExecutionFlow
 				);
 				
 				try {
-					ConsoleOutput.showInfo("Processing source file of method" 
-						+ collector.getMethodInfo().getMethodSignature()+"...");
+					// Processes the source file of the test method if it has
+					// not been processed yet
+					if (!testMethodManager.wasParsed(testMethodFileManager)) {
+						ConsoleOutput.showInfo("Processing source file of test method "
+							+ collector.getMethodInfo().getTestMethodSignature()+"...");
+						
+						testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
+						ConsoleOutput.showInfo("Processing completed");	
+					}
 					
-					methodFileManager.parseFile().compileFile();
-					
-					ConsoleOutput.showInfo("Processing source file of test method "
-						+ collector.getMethodInfo().getTestMethodSignature()+"...");
-					
-					testMethodFileManager.parseFile()
-										 .createClassBackupFile()
-										 .compileFile();
-					
-					ConsoleOutput.showInfo("Processing completed");
+					// Processes the source file of the method if it has not 
+					// been processed yet
+					if (!methodManager.wasParsed(methodFileManager)) {
+						ConsoleOutput.showInfo("Processing source file of method " 
+							+ collector.getMethodInfo().getMethodSignature()+"...");
+						
+						methodManager.parse(methodFileManager).compile(methodFileManager);
+						ConsoleOutput.showInfo("Processing completed");
+					}
 					
 					// Computes test path from JDB
 					ConsoleOutput.showInfo("Computing test path of method "
@@ -178,12 +235,6 @@ public class ExecutionFlow
 				} catch (Exception e) {
 					ConsoleOutput.showError(e.getMessage());
 					e.printStackTrace();
-				} finally {
-					// Reverts parsed file to its original state
-					try {
-						methodFileManager.revertParse();
-						testMethodFileManager.revertParse().revertCompilation();
-					} catch (java.io.IOException e) {}
 				}
 			}
 		}
@@ -257,7 +308,7 @@ public class ExecutionFlow
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	/**
-	 * Gets computed test path. It will return the following map:
+	 * Gets computed test path.It will return the following map:
 	 * <ul>
 	 * 		<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
 	 * 		<li>
@@ -270,12 +321,21 @@ public class ExecutionFlow
 	 * </ul>
 	 * 
 	 * @return		Computed test path
+	 * 
+	 * @implNote	It must only be called after method {@link #execute()} has 
+	 * been executed
 	 */
 	public Map<String, Map<SignaturesInfo, List<Integer>>> getClassTestPaths()
 	{
 		return classTestPaths;
 	}
 	
+	/**
+	 * Changes exporter that will be used to export computed test path.
+	 * 
+	 * @param		exporter New exporter
+	 * @return		This object to allow chained calls
+	 */
 	public ExecutionFlow setExporter(ExporterExecutionFlow exporter) 
 	{
 		this.exporter = exporter;

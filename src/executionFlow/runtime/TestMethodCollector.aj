@@ -118,15 +118,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			if (testMethodManager == null && !transaction.isActive())
 				testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
-			System.out.println("------------");
-			System.out.println(transaction.exists());
-			System.out.println(transaction.isActive());
-//			firstTime = firstTime == true ? !testMethodManager.hasBackupStored() : false;
-//			System.out.println(testMethodManager.hasBackupStored());
-			
+
 			// Checks if there are files that were not restored in the last execution
-			//if (testMethodManager.hasBackupStored() && !testMethodManager.isBackupFileBeingUsed()) {
-			
 			if (transaction.exists() && !transaction.isActive()) {
 				// Deletes backup file from the last execution
 				testMethodManager.deleteBackup();
@@ -134,9 +127,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 			}
 			
 			firstTime = !transaction.exists();
-			
-			System.out.println("FT? "+firstTime);
-			System.out.println("------------");
 			
 			// Performs pre-processing of the file containing the test method so 
 			// that the collection of the methods is done even if an assert fails
@@ -152,8 +142,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 				
 				ConsoleOutput.showInfo("Pre-processing completed");
 			}
-		} catch(IOException e) 
-		{}	
+		} catch(IOException | ClassNotFoundException e) {
+			// Stops execution if a problem occurs
+			System.exit(-1);
+		}	
 	}
 	
 	/**
@@ -169,8 +161,15 @@ public aspect TestMethodCollector extends RuntimeCollector
 			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
 			finished = true;
 			
-			// Restores original test file and its compiled file
+			// Restores original method files and its compiled files
+			ExecutionFlow.methodManager.restoreAll();
+			
+			// Restores original test method file and its compiled file
 			testMethodManager.restoreAll();
+			
+			// Deletes backup files
+			ExecutionFlow.methodManager.deleteBackup();
+			ExecutionFlow.testMethodManager.deleteBackup();
 			testMethodManager.deleteBackup();
 			
 			// End of transaction

@@ -1,5 +1,6 @@
 package executionFlow.core.file;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -7,11 +8,11 @@ import java.nio.charset.StandardCharsets;
 /**
  * Contains all supported file encodings.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.4
- * @version 1.4
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.4
  */
-public enum FileEncoding 
+public enum FileEncoding implements Serializable
 {
 	//-------------------------------------------------------------------------
 	//		Enumerations
@@ -38,7 +39,7 @@ public enum FileEncoding
 	
 	
 	//-------------------------------------------------------------------------
-	//		Methods
+	//		Getters
 	//-------------------------------------------------------------------------
 	public String getName()
 	{

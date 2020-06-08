@@ -2,18 +2,20 @@ package executionFlow.core.file;
 
 
 /**
- * Contains types of methods supported by class {@link MethodManager}.
+ * Contains all types of parser supported.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5
  * @since		1.5
  */
-public enum MethodManagerType 
+public enum ParserType 
 {
 	//-------------------------------------------------------------------------
 	//		Enumerations
 	//-------------------------------------------------------------------------
-	METHOD("METHOD"), TEST_METHOD("TEST_METHOD");
+	METHOD("METHOD"), 
+	TEST_METHOD("TEST_METHOD"),
+	ASSERT_TEST_METHOD("ASSERT_TEST_METHOD");
 	
 	
 	//-------------------------------------------------------------------------
@@ -25,7 +27,7 @@ public enum MethodManagerType
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private MethodManagerType(String name)
+	private ParserType(String name)
 	{
 		this.name = name;
 	}

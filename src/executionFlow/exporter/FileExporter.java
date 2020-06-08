@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 
 import executionFlow.info.SignaturesInfo;
 
@@ -19,9 +19,9 @@ import executionFlow.info.SignaturesInfo;
 /**
  * Exports the results to a file.
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.4
+ * @since		1.0
  */
 public class FileExporter implements ExporterExecutionFlow 
 {
@@ -37,7 +37,7 @@ public class FileExporter implements ExporterExecutionFlow
 	/**
 	 * Exports test paths of a method to files in the specified directory.
 	 * 
-	 * @param dirName Name of the directory
+	 * @param		dirName Name of the directory
 	 */
 	public FileExporter(String dirName)
 	{
@@ -79,8 +79,8 @@ public class FileExporter implements ExporterExecutionFlow
 	/**
 	 * Returns path where are test paths of a method.
 	 * 
-	 * @param methodSignature Signature of the method
-	 * @return Path where are test paths of a method.
+	 * @param		methodSignature Signature of the method
+	 * @return		Path where are test paths of a method.
 	 */
 	private String getSavePath(String methodSignature)
 	{
@@ -95,8 +95,8 @@ public class FileExporter implements ExporterExecutionFlow
 	/**
 	 * Generates folder's path based on method's signature.
 	 * 
-	 * @param signatureFields Fields of the signature of the method
-	 * @return Folder's path
+	 * @param		signatureFields Fields of the signature of the method
+	 * @return		Folder's path
 	 */
 	private String getFolderPath(String[] signatureFields)
 	{
@@ -121,8 +121,8 @@ public class FileExporter implements ExporterExecutionFlow
 	/**
 	 * Generates folder's name based on method's signature.
 	 * 
-	 * @param signatureFields Fields of the signature of the method
-	 * @return Folder's name
+	 * @param		signatureFields Fields of the signature of the method
+	 * @return		Folder's name
 	 */
 	private String getFolderName(String[] signatureFields)
 	{
@@ -138,10 +138,10 @@ public class FileExporter implements ExporterExecutionFlow
 	/**
 	 * Writes test paths of a method in a file.
 	 * 
-	 * @param testPaths Test paths of the method
-	 * @param savePath Location where the file will be saved
-	 * @param testMethodSignature Signature of the test method the method is in
-	 * @throws IOException If it is not possible to write some test path file
+	 * @param		testPaths Test paths of the method
+	 * @param		savePath Location where the file will be saved
+	 * @param		testMethodSignature Signature of the test method the method is in
+	 * @throws		IOException If it is not possible to write some test path file
 	 */
 	private void writeFile(List<Integer> testPaths, Path savePath, String testMethodSignature) throws IOException
 	{
@@ -169,7 +169,7 @@ public class FileExporter implements ExporterExecutionFlow
 	/**
 	 * Removes test path folders that will be overwritten.
 	 *  
-	 * @throws IOException If any test path file to be removed is in use
+	 * @throws		IOException If any test path file to be removed is in use
 	 */
 	private void prepareExport(Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths) throws IOException
 	{
@@ -187,9 +187,14 @@ public class FileExporter implements ExporterExecutionFlow
 				}
 				
 				// Else removes files that will be overwritten
+				System.out.println("------");
+				System.out.println(Arrays.toString(dir.list()));
+				System.out.println(dir);
+				System.out.println("------");
 				String[] files = dir.list();
 				File testPathFile;
 				
+				// Searches by files that will be overwritten and delete them 
 				for (String filename : files) {
 					testPathFile = new File(dir, filename);
 					
@@ -205,10 +210,10 @@ public class FileExporter implements ExporterExecutionFlow
 	/**
 	 * Checks if a test path file will be overwritten.
 	 * 
-	 * @param file Test path file
-	 * @param testMethodSignature Signature of the test method the method is in
-	 * @return True if the file will be overwritten; otherwise, returns false
-	 * @throws IOException If it is not possible to read the file
+	 * @param		file Test path file
+	 * @param		testMethodSignature Signature of the test method the method is in
+	 * @return		True if the file will be overwritten; otherwise, returns false
+	 * @throws		IOException If it is not possible to read the file
 	 */
 	private boolean willBeOverwritten(File file, String testMethodSignature) throws IOException
 	{
@@ -229,9 +234,9 @@ public class FileExporter implements ExporterExecutionFlow
 	/**
 	 * Returns the file name that the test path file should have.
 	 * 
-	 * @param path Path where the test path files are located
-	 * @return Name that the test path file should have
-	 * @throws IOException If it cannot find file in the provided path
+	 * @param		path Path where the test path files are located
+	 * @return		Name that the test path file should have
+	 * @throws		IOException If it cannot find file in the provided path
 	 */
 	private String getTestPathName(Path path, String testMethodSignature) throws IOException
 	{

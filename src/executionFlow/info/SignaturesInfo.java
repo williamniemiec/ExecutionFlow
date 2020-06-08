@@ -6,9 +6,9 @@ package executionFlow.info;
  * <li>Method's signature</li>
  * <li>Test method's signature</li>
  * 
- * @author William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @since 1.0
- * @version 1.4
+ * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version	1.4
+ * @since	1.0
  */
 public class SignaturesInfo 
 {

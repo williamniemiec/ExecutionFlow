@@ -17,7 +17,8 @@ import executionFlow.core.file.parser.MethodFileParser;
 public class MethodFileParserFactory extends FileParserFactory
 {
 	@Override
-	public FileParser newFileParser(Path filepath, Path outputDir, String outputFilename, FileEncoding encode) 
+	public FileParser newFileParser(Path filepath, Path outputDir, 
+			String outputFilename, FileEncoding encode) 
 	{
 		return new MethodFileParser(filepath, outputDir, outputFilename, encode);
 	}

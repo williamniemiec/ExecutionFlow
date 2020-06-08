@@ -1,17 +1,17 @@
 package executionFlow.core.file;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import executionFlow.ConsoleOutput;
+import executionFlow.ExecutionFlow;
 
 
 /**
@@ -28,7 +28,7 @@ public class MethodManager
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private final String backupFilename;
+	private File backupFile;
 	private HashSet<FileManager> files;
 	
 	/**
@@ -41,6 +41,8 @@ public class MethodManager
 	 */
 	private Set<Integer> compiledFiles;
 	
+	private boolean autoDelete;
+	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
@@ -49,22 +51,55 @@ public class MethodManager
 	 * Manages method file, being responsible for its processing and 
 	 * compilation. It will avoid processing files that have already been 
 	 * processed. Also, if the application ends before the original files are 
-	 * restored, it will restore them.
+	 * restored, it will restore them. It will create a backup file with the
+	 * following name: <br /><br />
 	 * 
-	 * @param		type Type of the method file
+	 * <code>_EF_ + type.getName() + _FILES.ef</code>
+	 * 
+	 * @param		type Type of parser that will be used in 
+	 * {@link #parse(FileManager)}
+	 * @param		autoDelete If true, if there are backup files, it will 
+	 * delete them after restore them
+	 * @throws		IOException If an error occurs during class deserialization
+	 * (while restoring backup files)
+	 * @throws		ClassNotFoundException If class {@link FileManager} is not
+	 * found  
 	 */
-	public MethodManager(MethodManagerType type)
+	public MethodManager(ParserType type, boolean autoDelete) throws ClassNotFoundException, IOException
 	{
 		files = new HashSet<>(); 
 		parsedFiles = new HashSet<>();
 		compiledFiles = new HashSet<>();
-		backupFilename = "_EF_"+type.getName()+"_FILES.ef";
+		backupFile = new File(ExecutionFlow.getAppRootPath(), "_EF_"+type.getName()+"_FILES.ef");
+		this.autoDelete = autoDelete;
 
 		// If there are files modified from the last execution that were not
 		// restored, restore them
 		if (this.hasBackupStored()) {
 			restoreFromBackup();
 		}		
+	}
+	
+	/**
+	 * Manages method file, being responsible for its processing and 
+	 * compilation. It will avoid processing files that have already been 
+	 * processed. Also, if the application ends before the original files are 
+	 * restored, it will restore them. Using this constructor, 
+	 * {@link ParserType} will be {@link ParserType#METHOD}. Also, it will 
+	 * create a backup file with the following name: <br /><br />
+	 * 
+	 * <code>_EF_ + {@link ParserType#METHOD}.getName() + _FILES.ef</code>
+	 * 
+	 * @param		autoDelete If true, if there are backup files, it will 
+	 * delete them after restore them
+	 * @throws		IOException If an error occurs during class deserialization
+	 * (while restoring backup files)
+	 * @throws		ClassNotFoundException If class {@link FileManager} is not
+	 * found  
+	 */
+	public MethodManager(boolean autoDelete) throws ClassNotFoundException, IOException
+	{
+		this(ParserType.METHOD, autoDelete);
 	}
 	
 	
@@ -76,7 +111,8 @@ public class MethodManager
 	 * 
 	 * @param		fm File manager of the file
 	 * @return		This object to allow chained calls
-	 * @throws		IOException If an error occurs during parsing
+	 * @throws		IOException If an error occurs during parsing or during
+	 * class serialization
 	 */
 	public MethodManager parse(FileManager fm) throws IOException
 	{
@@ -102,7 +138,8 @@ public class MethodManager
 	 * 
 	 * @param		fm File manager of the file
 	 * @return		This object to allow chained calls
-	 * @throws		IOException If an error occurs during compilation
+	 * @throws		IOException If an error occurs during compilation or during
+	 * class serialization
 	 */
 	public MethodManager compile(FileManager fm) throws IOException
 	{	
@@ -156,27 +193,35 @@ public class MethodManager
 	}
 	
 	/**
+	 * Deletes backup file
+	 */
+	public void deleteBackup()
+	{
+		backupFile.delete();
+	}
+	
+	/**
 	 * Checks if exists a backup file.
 	 * 
 	 * @return		If exists a backup file
 	 */
-	private boolean hasBackupStored()
+	public boolean hasBackupStored()
 	{
-		return Files.exists(Path.of(backupFilename));
+		return backupFile.exists();
 	}
 	
 	/**
 	 * Serializes list of FileManagers to allow modified files to be restored 
 	 * in case the program is interrupted without having restored these files.
+	 * 
+	 * @throws		IOException If an error occurs during class serialization 
 	 */
-	private void save()
+	private void save() throws IOException
 	{
 		// Serializes list of parsed files
-		try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFilename))) {
-			ois.writeObject(files);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFile));
+		ois.writeObject(files);
+		ois.close();
 	}
 	
 	/**
@@ -220,33 +265,26 @@ public class MethodManager
 	
 	/**
 	 * Restores list of files modified in the last execution.
+	 * 
+	 * @throws		IOException If an error occurs during class deserialization 
+	 * @throws		ClassNotFoundException If class {@link FileManager} is not
+	 * found 
 	 */
-	private void restoreFromBackup()
+	private void restoreFromBackup() throws IOException, ClassNotFoundException
 	{
 		// Deserializes list of files
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFilename))) {
-			@SuppressWarnings("unchecked")
-			HashSet<FileManager> restoredFiles = (HashSet<FileManager>)ois.readObject();
-			
-			// Restores original files
-			restoreAll(restoredFiles);
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile));
 		
-		deleteBackup();
-	}
-	
-	/**
-	 * Deletes backup file
-	 */
-	private void deleteBackup()
-	{
-		// Deletes backup file
-		try {
-			Files.delete(Path.of(backupFilename));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		@SuppressWarnings("unchecked")
+		HashSet<FileManager> restoredFiles = (HashSet<FileManager>)ois.readObject();
+		
+		ois.close();
+		
+		// Restores original files
+		restoreAll(restoredFiles);
+		
+		
+		if (autoDelete)
+			deleteBackup();
 	}
 }

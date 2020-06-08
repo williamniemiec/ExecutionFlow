@@ -17,7 +17,8 @@ import executionFlow.core.file.parser.TestMethodFileParser;
 public class TestMethodFileParserFactory extends FileParserFactory
 {
 	@Override
-	public FileParser newFileParser(Path filepath, Path outputDir, String outputFilename, FileEncoding encode) 
+	public FileParser newFileParser(Path filepath, Path outputDir, 
+			String outputFilename, FileEncoding encode) 
 	{
 		return new TestMethodFileParser(filepath, outputDir, outputFilename, encode);
 	}

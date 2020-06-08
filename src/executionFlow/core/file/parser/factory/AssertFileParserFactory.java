@@ -17,7 +17,8 @@ import executionFlow.core.file.parser.FileParser;
 public class AssertFileParserFactory extends FileParserFactory
 {
 	@Override
-	public FileParser newFileParser(Path filepath, Path outputDir, String outputFilename, FileEncoding encode) 
+	public FileParser newFileParser(Path filepath, Path outputDir, 
+			String outputFilename, FileEncoding encode) 
 	{
 		return new AssertFileParser(filepath, outputDir, outputFilename, encode);
 	}

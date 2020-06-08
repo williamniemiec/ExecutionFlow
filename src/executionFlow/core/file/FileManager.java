@@ -1,6 +1,9 @@
 package executionFlow.core.file;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -16,17 +19,17 @@ import executionFlow.core.file.parser.factory.FileParserFactory;
  * @version		1.5
  * @since		1.3
  */
-public class FileManager 
+public class FileManager implements Serializable
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Path srcFile;
-	private Path originalSrcFile; 
-	private Path compiledFile;
-	private Path originalClassPath;
+	private transient Path srcFile;
+	private transient Path originalSrcFile; 
+	private transient Path compiledFile;
+	private transient Path originalClassPath;
 	private String filename;
-	private Path classOutput;
+	private transient Path classOutput;
 	private String classPackage;
 	private FileParser fp;
 	private boolean charsetError;
@@ -64,10 +67,10 @@ public class FileManager
 	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
 			FileParserFactory fileParserFactory, String backupExtensionName)
 	{
-		this.classOutput = classOutput;
-		this.classPackage = classPackage;;
-		this.filename = srcFilePath.getName(srcFilePath.getNameCount()-1).toString().split("\\.")[0];
 		this.srcFile = srcFilePath;
+		this.classOutput = classOutput;
+		this.classPackage = classPackage;
+		this.filename = srcFilePath.getName(srcFilePath.getNameCount()-1).toString().split("\\.")[0];
 		this.fp = fileParserFactory.newFileParser(
 			srcFile, 
 			classOutput, 
@@ -137,7 +140,7 @@ public class FileManager
 			Files.delete(srcFile);
 			Files.move(out, srcFile);
 		}
-
+		
 		return this;
 	}
 	
@@ -269,6 +272,34 @@ public class FileManager
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}				
+		}
+	}
+	
+	private void writeObject(ObjectOutputStream oos)
+	{
+		try {
+			oos.defaultWriteObject();
+			oos.writeUTF(srcFile.toAbsolutePath().toString());
+			oos.writeUTF(classOutput.toAbsolutePath().toString());
+			oos.writeUTF(compiledFile.toAbsolutePath().toString());
+			oos.writeUTF(originalSrcFile.toAbsolutePath().toString());
+			oos.writeUTF(originalClassPath.toAbsolutePath().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void readObject(ObjectInputStream ois)
+	{
+		try {
+			ois.defaultReadObject();
+			this.srcFile = Path.of(ois.readUTF());
+			this.classOutput = Path.of(ois.readUTF());
+			this.compiledFile = Path.of(ois.readUTF());;
+			this.originalSrcFile = Path.of(ois.readUTF());;
+			this.originalClassPath = Path.of(ois.readUTF());;
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

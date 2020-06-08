@@ -2,12 +2,10 @@ package executionFlow.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.URISyntaxException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +34,11 @@ public class JDB
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	/**
+	 * If true, displays shell output.
+	 */
+	private static final boolean DEBUG; 
+	
 	/**
 	 * Stores signature of the class of the method.
 	 */
@@ -81,7 +84,6 @@ public class JDB
 	private boolean exitMethod;
 	private boolean isInternalCommand;
 	private boolean skipped;
-	private final boolean DEBUG; 
 	
 	
 	//-------------------------------------------------------------------------
@@ -89,9 +91,9 @@ public class JDB
 	//-------------------------------------------------------------------------
 	/**
 	 * Enables or disables debug. If activated, displays shell output during 
-	 * JDB execution.
+	 * JDB execution (performance can get worse).
 	 */
-	{
+	static {
 		DEBUG = false;
 	}
 
@@ -272,13 +274,13 @@ public class JDB
 			else if (newIteration) {
 				wasNewIteration = true;
 				
-				// Enters the method, ignoring aspectJ
+				// Enters the method, ignoring native methods
 				in.send("step into");
-				while (!out.read()) { continue; }
+				out.readAll();
 				
 				while (isInternalCommand) {
 					in.send("next");
-					while (!out.read()) { continue; }
+					out.readAll();
 				}
 			} 
 			else if (!endOfMethod) {
@@ -461,8 +463,9 @@ public class JDB
 		 * {@link JDBOutput#read()} for JDB to process the command.
 		 * 
 		 * @param		command Command that will be sent to JDB
-		 * @apiNote		If DEBUG is activated, it will display the command 
-		 * executed on the console
+		 * 
+		 * @apiNote		If {@link #DEBUG} is activated, it will display the 
+		 * command executed on the console
 		 */
 		private void send(String command)
 		{
@@ -484,7 +487,6 @@ public class JDB
 		//		Attributes
 		//---------------------------------------------------------------------
 		private BufferedReader output;
-		//private String methodName;
 		private boolean inMethod;
 		private int lastLineAdded = -1;
 		private String line;
@@ -514,8 +516,9 @@ public class JDB
 		 * 
 		 * @return		If JDB is ready to receive commands.
 		 * @throws		IOException If it cannot read JDB output
-		 * @apiNote		If DEBUG is activated, it will display JDB output on the 
-		 * console
+		 * 
+		 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
+		 * output on the console
 		 */
 		public boolean read() throws IOException
 		{
@@ -606,8 +609,8 @@ public class JDB
 		 */
 		public void readAll() throws IOException
 		{
-			while (output.ready()) {
-				read();
+			while (!read()) {
+				continue;
 			}
 		}
 		

@@ -1,9 +1,6 @@
 package executionFlow.core.file;
 
-import java.io.File;
-
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 import org.aspectj.bridge.IMessage;
@@ -41,7 +38,7 @@ public class FileCompiler
 		MessageHandler m = new MessageHandler();
 		
 		String aspectsRootDirectory = ExecutionFlow.getAppRootPath()+"\\bin\\executionFlow\\runtime";
-				
+		
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 

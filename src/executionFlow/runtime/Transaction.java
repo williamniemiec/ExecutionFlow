@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import executionFlow.ExecutionFlow;
 
@@ -19,16 +20,26 @@ import executionFlow.ExecutionFlow;
  */
 public class Transaction
 {
-	private File transaction;
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
+	private Path transaction;
 	private Thread transactionFileThread;
 	private boolean end;
 	
 	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public Transaction(String name)
 	{
-		transaction = new File(ExecutionFlow.getAppRootPath(), name+".transaction");
+		transaction = new File(ExecutionFlow.getAppRootPath(), name+".transaction").toPath();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	public void end() throws IOException
 	{
 			end = true;
@@ -44,11 +55,10 @@ public class Transaction
 	
 	public void start() throws IOException
 	{
-		transaction.createNewFile();
-		System.out.println("Transaction created: "+transaction.getAbsolutePath());
+		Files.createFile(transaction);
 		
 		Runnable r = () -> {
-				try (FileReader fr = new FileReader(transaction)) {
+				try (FileReader fr = new FileReader(transaction.toFile())) {
 					while (!end) {
 						try {
 							Thread.sleep(200);
@@ -69,7 +79,7 @@ public class Transaction
 	
 	public boolean exists()
 	{
-		return transaction.exists();
+		return Files.exists(transaction);
 	}
 	
 	public boolean isActive()
@@ -80,24 +90,19 @@ public class Transaction
 		boolean response = false;
 
 		try {
-			if (!transaction.delete()) { return true; }
-			
-			transaction.createNewFile();
-			System.out.println("Transaction created: "+transaction.getAbsolutePath());
-		//} catch (SecurityException | IOException e) {
-		} catch (IOException e) {
+			Files.delete(transaction);
+			Files.createFile(transaction);
+		} catch (SecurityException | IOException e) {
 			response = true;
 		}
 		
 		return response;
 	}
 	
-	public void delete()
+	public void delete() throws IOException
 	{
-		/*if (Files.exists(transaction)) {
+		if (Files.exists(transaction)) {
 			Files.delete(transaction);
-		}*/
-		if (transaction.exists())
-			transaction.delete();
+		}
 	}
 }
