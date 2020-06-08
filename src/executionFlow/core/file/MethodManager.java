@@ -2,6 +2,7 @@ package executionFlow.core.file;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -122,7 +123,7 @@ public class MethodManager
 			return this;
 		
 		parsedFiles.add(key);
-		
+
 		if (!files.contains(fm)) {
 			files.add(fm);
 			save();
@@ -216,12 +217,42 @@ public class MethodManager
 	 * 
 	 * @throws		IOException If an error occurs during class serialization 
 	 */
-	private void save() throws IOException
+	public void save() throws IOException
 	{
-		// Serializes list of parsed files
 		ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFile));
 		ois.writeObject(files);
 		ois.close();
+	}
+	
+	/**
+	 * Retrieves the list of file managers stores in a backup file. This list
+	 * will be saved in {@link #files}.
+	 * 
+	 * @return		If the lists of file managers were retrieved
+	 * @throws 		IOException If an error occurs while deserializing the list
+	 * of file managers 
+	 * @throws 		ClassNotFoundException If class {@link FileManager} is not
+	 * found 
+	 * 
+	 * @implNote	If backup file does not exist, {@link #files} will be null
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean load() throws IOException, ClassNotFoundException
+	{
+		if (!hasBackupStored()) { return false; }
+		
+		boolean response = true;
+		
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile));
+			this.files = (HashSet<FileManager>)ois.readObject();
+			ois.close();
+		} catch (FileNotFoundException e) {
+			this.files = null;
+			response = false;
+		}
+		
+		return response;
 	}
 	
 	/**
@@ -272,7 +303,7 @@ public class MethodManager
 	 */
 	private void restoreFromBackup() throws IOException, ClassNotFoundException
 	{
-		// Deserializes list of files
+		// Deserialization
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile));
 		
 		@SuppressWarnings("unchecked")
@@ -282,7 +313,6 @@ public class MethodManager
 		
 		// Restores original files
 		restoreAll(restoredFiles);
-		
 		
 		if (autoDelete)
 			deleteBackup();

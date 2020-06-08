@@ -143,6 +143,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 				ConsoleOutput.showInfo("Pre-processing completed");
 			}
 		} catch(IOException | ClassNotFoundException e) {
+			ConsoleOutput.showError(e.getMessage());
+			e.printStackTrace();
+			
 			// Stops execution if a problem occurs
 			System.exit(-1);
 		}	
@@ -153,18 +156,45 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	after(): testMethodCollector() 
 	{	
-		
 		// Runs a new process of the application. This code block must only be
 		// executed once per test file
 		if (firstTime) {
 			firstTime = false;
 			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
 			finished = true;
-			
-			// Restores original method files and its compiled files
-			ExecutionFlow.methodManager.restoreAll();
+			boolean hasError = false;
 			
 			// Restores original test method file and its compiled file
+			try {
+				if (ExecutionFlow.testMethodManager.load())
+					ExecutionFlow.testMethodManager.restoreAll();	
+				
+			} catch (ClassNotFoundException e) {
+				hasError = true;
+				ConsoleOutput.showError("Class FileManager not found");
+				e.printStackTrace();
+			} catch (IOException e) {
+				hasError = true;
+				ConsoleOutput.showError("Could not recover the backup file of the test method");
+				ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+				e.printStackTrace();
+			}
+			
+			// Restores original method files and its compiled files
+			try {
+				if (ExecutionFlow.methodManager.load())
+					ExecutionFlow.methodManager.restoreAll();		
+			} catch (ClassNotFoundException e) {
+				hasError = true;
+				ConsoleOutput.showError("Class FileManager not found");
+				e.printStackTrace();
+			} catch (IOException e) {
+				hasError = true;
+				ConsoleOutput.showError("Could not recover all backup files for methods");
+				ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+				e.printStackTrace();
+			}
+			
 			testMethodManager.restoreAll();
 			
 			// Deletes backup files
@@ -176,8 +206,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 			try {
 				checkpoint.disable();
 			} catch (IOException e) {
+				hasError = true;
+				ConsoleOutput.showError("Checkpoint cannot be disabled");
 				e.printStackTrace();
 			}
+			
+			// Stops execution if a problem occurs
+			if (hasError)
+				System.exit(-1);
 			
 			return;
 		}

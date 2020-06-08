@@ -130,7 +130,7 @@ public class TestClass
 		for (int i=0; i<letters.length; i++) {
 			if (letters[i] == Character.toUpperCase(letters[i]))
 				response[i] =  Character.toLowerCase(letters[i]);
-			else {int _f41dd3c16d43d1c00e9db9a2873aa054=0;int _7228f90e5ab908d543bf37b3605942dc=0;
+			else {int _8c31cbbca3ec664ac0a9019b2cdfa891=0;int _7228f90e5ab908d543bf37b3605942dc=0;
 				response[i] =  Character.toUpperCase(letters[i]);}
 		}
 		

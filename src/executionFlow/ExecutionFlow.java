@@ -85,29 +85,25 @@ public class ExecutionFlow
 			testMethodManager = new MethodManager(ParserType.TEST_METHOD, true);
 		} catch (ClassNotFoundException e) {
 			error = true;
-			ConsoleOutput.showError("Test method file");
 			ConsoleOutput.showError("Class FileManager not found");
 			e.printStackTrace();
 		} catch (IOException e) {
 			error = true;
-			ConsoleOutput.showError("Test method file");
-			ConsoleOutput.showError("It is not possible to recover all backup files");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#it-is-not-possible-to-recover-all-backup-files");
+			ConsoleOutput.showError("Could not recover the backup file of the test method");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
 			e.printStackTrace();
 		}
 		
 		try {
 			methodManager = new MethodManager(ParserType.METHOD, true);
 		} catch (ClassNotFoundException e) {
-			error = true;
-			ConsoleOutput.showError("Method file");
+			error = true;;
 			ConsoleOutput.showError("Class FileManager not found");
 			e.printStackTrace();
 		} catch (IOException e) {
 			error = true;
-			ConsoleOutput.showError("Method file");
-			ConsoleOutput.showError("It is not possible to recover all backup files");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#it-is-not-possible-to-recover-all-backup-files");
+			ConsoleOutput.showError("Could not recover all backup files for methods");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
 			e.printStackTrace();
 		}
 		
@@ -207,7 +203,7 @@ public class ExecutionFlow
 						testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 						ConsoleOutput.showInfo("Processing completed");	
 					}
-					
+
 					// Processes the source file of the method if it has not 
 					// been processed yet
 					if (!methodManager.wasParsed(methodFileManager)) {

@@ -24,6 +24,8 @@ public class FileManager implements Serializable
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private static final long serialVersionUID = 105L;
+	
 	private transient Path srcFile;
 	private transient Path originalSrcFile; 
 	private transient Path compiledFile;
