@@ -126,7 +126,7 @@ public class ClassMethodInfo
 		 */
 		public ClassMethodInfoBuilder classPath(Path classPath)
 		{
-			this.classPath = classPath;
+			this.classPath = classPath.isAbsolute() ? classPath : classPath.toAbsolutePath();
 			return this;
 		}
 		
@@ -136,7 +136,7 @@ public class ClassMethodInfo
 		 */
 		public ClassMethodInfoBuilder testClassPath(Path testClassPath)
 		{
-			this.testClassPath = testClassPath;
+			this.testClassPath = testClassPath.isAbsolute() ? testClassPath : testClassPath.toAbsolutePath();
 			return this;
 		}
 		
@@ -146,7 +146,7 @@ public class ClassMethodInfo
 		 */
 		public ClassMethodInfoBuilder srcPath(Path srcPath)
 		{
-			this.srcPath = srcPath;
+			this.srcPath = srcPath.isAbsolute() ? srcPath : srcPath.toAbsolutePath();
 			return this;
 		}
 		
@@ -156,7 +156,7 @@ public class ClassMethodInfo
 		 */
 		public ClassMethodInfoBuilder testSrcPath(Path testSrcPath)
 		{
-			this.testSrcPath = testSrcPath;
+			this.testSrcPath = testSrcPath.isAbsolute() ? testSrcPath : testSrcPath.toAbsolutePath();
 			return this;
 		}
 		
