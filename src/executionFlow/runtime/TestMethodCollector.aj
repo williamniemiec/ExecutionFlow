@@ -2,8 +2,6 @@ package executionFlow.runtime;
 
 import java.io.IOException;
 
-import org.junit.*;
-
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
 import executionFlow.core.JDB;
@@ -38,29 +36,43 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private MethodManager testMethodManager;
 	static boolean firstTime = true;
 	static boolean finished = false;
+	private static boolean isJUnit5Test;
 	private String testClassName;
 	private String testClassPackage;
 	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
 	
 	
 	//-------------------------------------------------------------------------
-	//		Pointcut
+	//		Pointcuts
 	//-------------------------------------------------------------------------
+	pointcut junit5Check():
+		!within(TestMethodCollector) && (
+			execution(@org.junit.jupiter.api.Test * *.*()) ||
+			execution(@org.junit.jupiter.params.ParameterizedTest * *.*()) ||
+			execution(@org.junit.jupiter.api.RepeatedTest * *.*())
+		) && testMethodCollector();
+	
+	before(): junit5Check()
+	{
+		isJUnit5Test = true;
+	}
+	
+	
 	pointcut testMethodCollector():
 		!cflow(execution(@SkipMethod * *.*())) 
 		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& execution(@Test * *.*())
+		&& ( execution(@org.junit.Test * *.*()) || if(isJUnit5Test) )
 		&& !execution(public int hashCode())
 //		(execution(@AssertTest * *.*()) || 
 		 //execution(@RepeatedTest * *.*()) ||
 //		 execution(@ParameterizedTest * *.*()) ||
 //		 execution(@TestFactory * *.*())) 
 		&& !execution(private * *(..))
-		&& !execution(@Ignore * *(..))
-		&& !execution(@Before * *(..))
-		&& !execution(@After * *(..))
-		&& !execution(@BeforeClass * *(..))
-		&& !execution(@AfterClass * *(..))
+		&& !execution(@org.junit.Ignore * *(..))
+		&& !execution(@org.junit.Before * *(..))
+		&& !execution(@org.junit.After * *(..))
+		&& !execution(@org.junit.BeforeClass * *(..))
+		&& !execution(@org.junit.AfterClass * *(..))
 		&& !within(@SkipCollection *)
 		&& !execution(@SkipMethod * *())
 		&& !within(ExecutionFlow)
@@ -87,6 +99,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{
+		System.out.println("JUNIT5? "+isJUnit5Test);
+		
+		isJUnit5Test = false; // it is necessary to avoid infinite loop
+		
 		if (finished)
 			return;
 		
