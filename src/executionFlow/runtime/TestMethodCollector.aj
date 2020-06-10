@@ -2,21 +2,10 @@ package executionFlow.runtime;
 
 import java.io.IOException;
 
-import executionFlow.ConsoleOutput;
-import executionFlow.ExecutionFlow;
-import executionFlow.core.JDB;
-import executionFlow.core.file.FileCompiler;
-import executionFlow.core.file.FileManager;
-import executionFlow.core.file.MethodManager;
-import executionFlow.core.file.ParserType;
-import executionFlow.core.file.parser.FileParser;
-import executionFlow.core.file.parser.factory.AssertFileParserFactory;
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.info.ClassConstructorInfo;
-import executionFlow.info.ClassMethodInfo;
-import executionFlow.info.CollectorInfo;
-import executionFlow.info.SignaturesInfo;
+import executionFlow.*;
+import executionFlow.core.file.*;
+import executionFlow.core.file.parser.factory.*;
+import executionFlow.info.*;
 
 
 /**
@@ -34,9 +23,8 @@ import executionFlow.info.SignaturesInfo;
 public aspect TestMethodCollector extends RuntimeCollector
 {
 	private MethodManager testMethodManager;
-	static boolean firstTime = true;
-	static boolean finished = false;
-	private static boolean isJUnit5Test;
+	private static boolean firstTime = true;
+	private static boolean finished = false;
 	private String testClassName;
 	private String testClassPackage;
 	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
@@ -45,52 +33,21 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-	pointcut junit5Check():
-		!within(TestMethodCollector) && (
-			execution(@org.junit.jupiter.api.Test * *.*()) ||
-			execution(@org.junit.jupiter.params.ParameterizedTest * *.*()) ||
-			execution(@org.junit.jupiter.api.RepeatedTest * *.*())
-		) && testMethodCollector();
-	
-	before(): junit5Check()
-	{
-		isJUnit5Test = true;
-	}
-	
-	
 	pointcut testMethodCollector():
 		!cflow(execution(@SkipMethod * *.*())) 
 		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& ( execution(@org.junit.Test * *.*()) || if(isJUnit5Test) )
+		&& ( execution(@org.junit.Test * *.*()) || execution_JUnit5() )
 		&& !execution(public int hashCode())
-//		(execution(@AssertTest * *.*()) || 
-		 //execution(@RepeatedTest * *.*()) ||
-//		 execution(@ParameterizedTest * *.*()) ||
-//		 execution(@TestFactory * *.*())) 
-		&& !execution(private * *(..))
-		&& !execution(@org.junit.Ignore * *(..))
-		&& !execution(@org.junit.Before * *(..))
-		&& !execution(@org.junit.After * *(..))
-		&& !execution(@org.junit.BeforeClass * *(..))
-		&& !execution(@org.junit.AfterClass * *(..))
+		&& !call(* *.*(*))
+		&& !execution(private * *(*))
+		&& !execution(@org.junit.Ignore * *(*))
+		&& !execution(@org.junit.Before * *(*))
+		&& !execution(@org.junit.After * *(*))
+		&& !execution(@org.junit.BeforeClass * *(*))
+		&& !execution(@org.junit.AfterClass * *(*))
 		&& !within(@SkipCollection *)
-		&& !execution(@SkipMethod * *())
-		&& !within(ExecutionFlow)
-		&& !within(JDB)
-		&& !within(FileCompiler)
-		&& !within(FileParser)
-		&& !within(FileManager)
-		&& !within(ConsoleExporter)
-		&& !within(FileExporter)
-		&& !within(ClassConstructorInfo)
-		&& !within(ClassMethodInfo)
-		&& !within(CollectorInfo)
-		&& !within(SignaturesInfo)
-		&& !within(CollectorExecutionFlow)
-		&& !within(ConstructorCollector) 
-		&& !within(MethodCollector)
-		&& !within(RuntimeCollector)
-		&& !within(TestMethodCollector)
+		&& !execution(@SkipMethod * *(*))
+		&& !classes_app()
 		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
 		&& !call(void org.junit.Assert.*(*,*));
 	
@@ -99,10 +56,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{
-		System.out.println("JUNIT5? "+isJUnit5Test);
-		
-		isJUnit5Test = false; // it is necessary to avoid infinite loop
-		
 		if (finished)
 			return;
 		
@@ -164,7 +117,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Stops execution if a problem occurs
 			System.exit(-1);
-		}	
+		}
 	}
 	
 	/**
@@ -249,6 +202,5 @@ public aspect TestMethodCollector extends RuntimeCollector
 		}
 		
 		reset();	// Prepares for next test
-		TestMethodRunner.putEndDelimiter();
 	}
 }

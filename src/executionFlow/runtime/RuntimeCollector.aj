@@ -6,8 +6,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.info.ClassConstructorInfo;
-import executionFlow.info.CollectorInfo;
+import executionFlow.*;
+import executionFlow.core.*;
+import executionFlow.core.file.*;
+import executionFlow.core.file.parser.*;
+import executionFlow.core.file.parser.factory.*;
+import executionFlow.exporter.*;
+import executionFlow.info.*;
 
 
 /**
@@ -61,6 +66,56 @@ public abstract aspect RuntimeCollector
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
 	protected static int order;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Pointcuts
+	//-------------------------------------------------------------------------
+	pointcut classes_app():
+		within(ExecutionFlow) ||
+		within(ConsoleOutput) ||
+		within(JDB) ||
+		within(Checkpoint) ||
+		within(AssertFileParser) ||
+		within(TestMethodRunner) ||
+		within(MethodManager) ||
+		within(FileCompiler) ||
+		within(FileParser) ||
+		within(FileManager) ||
+		within(FileParserFactory) ||
+		within(AssertFileParserFactory) ||
+		within(FileEncoding) ||
+		within(MethodFileParser) ||
+		within(MethodFileParserFactory) ||
+		within(TestMethodFileParser) ||
+		within(TestMethodFileParserFactory) ||
+		within(ConsoleExporter) ||
+		within(FileExporter) ||
+		within(ClassConstructorInfo) ||
+		within(ClassMethodInfo) ||
+		within(CollectorInfo) ||
+		within(SignaturesInfo) ||
+		within(CollectorExecutionFlow) ||
+		within(ConstructorCollector)  ||
+		within(MethodCollector) ||
+		within(RuntimeCollector) ||
+		within(TestMethodCollector);
+	
+	pointcut execution_JUnit5():
+		!classes_app() && (
+			execution(@org.junit.jupiter.api.Test * *.*()) ||
+			execution(@org.junit.jupiter.params.ParameterizedTest * *.*(*)) ||
+			execution(@org.junit.jupiter.api.RepeatedTest * *.*()) //||
+			//execution(@org.junit.jupiter.api.BeforeEach * *.*())
+		);
+	
+	pointcut cflow_execution_JUnit5():
+		!classes_app() && cflow(
+			execution(@org.junit.jupiter.api.Test * *.*()) ||
+			execution(@org.junit.jupiter.params.ParameterizedTest * *.*(*)) ||
+			execution(@org.junit.jupiter.api.RepeatedTest * *.*()) //||
+			//execution(@org.junit.jupiter.api.BeforeEach * *.*())
+		);
 	
 	
 	//-------------------------------------------------------------------------

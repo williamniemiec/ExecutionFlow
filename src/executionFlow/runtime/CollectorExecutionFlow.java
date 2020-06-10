@@ -74,24 +74,6 @@ public class CollectorExecutionFlow
 		return response;
 	}
 	
-	/*public static String extractClassSignature(String methodSignature)
-	{
-		String[] tmp = methodSignature.split("\\.");
-		StringBuilder response = new StringBuilder();
-		
-		for (int i=0; i<tmp.length-1; i++) {
-			response.append(tmp[i]);
-			response.append(".");
-		}
-		
-		if (response.length() > 0) {
-			// Removes last dot
-			response.deleteCharAt(response.length()-1);		
-		}
-		
-		return response.toString();
-	}*/
-	
 	/**
 	 * Given the parameters of a method, discover the class of each of these 
 	 * parameters.

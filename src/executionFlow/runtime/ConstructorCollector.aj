@@ -2,12 +2,6 @@ package executionFlow.runtime;
 
 import org.junit.*;
 
-import executionFlow.*;
-import executionFlow.core.*;
-import executionFlow.core.file.*;
-import executionFlow.core.file.parser.*;
-import executionFlow.core.file.parser.factory.*;
-import executionFlow.exporter.*;
 import executionFlow.info.*;
 
 
@@ -30,7 +24,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 	pointcut constructorCollector(): 
 		!cflow(execution(@SkipMethod * *.*()))
 		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& cflow(execution(@Test * *.*()))
+		&& cflow(execution(@Test * *.*()) || cflow_execution_JUnit5())
 		&& (initialization(*.new(*)) || initialization(*.new()))
 		&& !execution(private * *(..))
 		&& !execution(@Ignore * *(..))
@@ -40,33 +34,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		&& !execution(@AfterClass * *(..))
 		&& !within(@SkipCollection *)
 		&& !execution(@SkipMethod * *())
-		&& !within(ExecutionFlow)
-		&& !within(ConsoleOutput)
-		&& !within(AssertFileParserFactory)
-		&& !within(Checkpoint)
-		&& !within(JDB)
-		&& !within(MethodManager)
-		&& !within(TestMethodRunner)
-		&& !within(FileParser)
-		&& !within(FileManager)
-		&& !within(FileCompiler)
-		&& !within(FileParserFactory)
-		&& !within(FileEncoding)
-		&& !within(MethodFileParser)
-		&& !within(MethodFileParserFactory)
-		&& !within(TestMethodFileParser)
-		&& !within(TestMethodFileParserFactory)
-		&& !within(ConsoleExporter)
-		&& !within(FileExporter)
-		&& !within(ClassConstructorInfo)
-		&& !within(ClassMethodInfo)
-		&& !within(CollectorInfo)
-		&& !within(SignaturesInfo)
-		&& !within(CollectorExecutionFlow)
-		&& !within(ConstructorCollector) 
-		&& !within(MethodCollector)
-		&& !within(RuntimeCollector)
-		&& !within(TestMethodCollector)
+		&& !classes_app()
 		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
 		&& !call(void org.junit.Assert.*(*,*));
 	

@@ -8,12 +8,6 @@ import java.util.List;
 
 import org.junit.*;
 
-import executionFlow.*;
-import executionFlow.core.*;
-import executionFlow.core.file.*;
-import executionFlow.core.file.parser.*;
-import executionFlow.core.file.parser.factory.*;
-import executionFlow.exporter.*;
 import executionFlow.info.*;
 
 
@@ -44,12 +38,8 @@ public aspect MethodCollector extends RuntimeCollector
 	pointcut methodCollector(): 
 		!cflow(execution(@SkipMethod * *.*())) 
 		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& cflow(execution(@Test * *.*()))
+		&& cflow(execution(@Test * *.*()) || cflow_execution_JUnit5())
 		&& !execution(public int hashCode())
-//		(cflow(execution(@AssertTest * *.*())) || 
-//		 cflow(execution(@RepeatedTest * *.*())) ||
-//		 cflow(execution(@ParameterizedTest * *.*())) || 
-//		 cflow(execution(@TestFactory * *.*()))
 		&& !within(is(EnumType))
 		&& !within(is(InnerType))
 		&& !within(is(AnonymousType))
@@ -61,34 +51,7 @@ public aspect MethodCollector extends RuntimeCollector
 		&& !execution(@BeforeClass * *())
 		&& !execution(@AfterClass * *())
 		&& !within(@SkipCollection *)
-		&& !within(ExecutionFlow)
-		&& !within(ConsoleOutput)
-		&& !within(JDB)
-		&& !within(Checkpoint)
-		&& !within(AssertFileParser)
-		&& !within(TestMethodRunner)
-		&& !within(MethodManager)
-		&& !within(FileCompiler)
-		&& !within(FileParser)
-		&& !within(FileManager)
-		&& !within(FileParserFactory)
-		&& !within(AssertFileParserFactory)
-		&& !within(FileEncoding)
-		&& !within(MethodFileParser)
-		&& !within(MethodFileParserFactory)
-		&& !within(TestMethodFileParser)
-		&& !within(TestMethodFileParserFactory)
-		&& !within(ConsoleExporter)
-		&& !within(FileExporter)
-		&& !within(ClassConstructorInfo)
-		&& !within(ClassMethodInfo)
-		&& !within(CollectorInfo)
-		&& !within(SignaturesInfo)
-		&& !within(CollectorExecutionFlow)
-		&& !within(ConstructorCollector) 
-		&& !within(MethodCollector)
-		&& !within(RuntimeCollector)
-		&& !within(TestMethodCollector)
+		&& !classes_app()
 		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
 		&& !call(void org.junit.Assert.*(*))
 		&& !call(void org.junit.Assert.*(*,*))
