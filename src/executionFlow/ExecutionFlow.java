@@ -3,6 +3,7 @@ package executionFlow;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,11 +15,10 @@ import executionFlow.core.file.MethodManager;
 import executionFlow.core.file.ParserType;
 import executionFlow.core.file.parser.factory.MethodFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.ExporterExecutionFlow;
-import executionFlow.exporter.FileExporter;
+import executionFlow.exporter.*;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
+import executionFlow.runtime.MethodCollector;
 
 
 /**
@@ -264,7 +264,9 @@ public class ExecutionFlow
 			if (classTestPaths.containsKey(key)) {
 				classPathInfo = classTestPaths.get(key);
 				classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
-			} else {	// Else, stores test path with its test method and method
+			} 
+			// Else stores test path with its test method and method
+			else {	
 				classPathInfo = new HashMap<>();
 				classPathInfo.put(collector.getMethodInfo().extractSignatures(), testPath);
 				classTestPaths.put(key, classPathInfo);
@@ -291,7 +293,10 @@ public class ExecutionFlow
 		try {
 			response = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
 				    .toURI()).getPath();
-			response = new File(response+"../").getParent();
+			
+			response = response.charAt(response.length()-1) == '.' ? 
+					Path.of(response).getParent().getParent().toAbsolutePath().toString() : 
+					Path.of(response).getParent().toAbsolutePath().toString();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
