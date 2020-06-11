@@ -46,7 +46,8 @@ public abstract aspect RuntimeCollector
 	/**
 	 * Stores information about collected constructor.<hr/>
 	 * <ul>
-	 * 		<li><b>Key:</b> constructor@hashCode</li>
+	 * 		<li><b>Key(with arguments):</b>		<code>classSignature[arg1,arg2,...]</code></li>
+	 * 		<li><b>Key(without arguments):</b>	<code>classSignature[]</code></li>
 	 * 		<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */

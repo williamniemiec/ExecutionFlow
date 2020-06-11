@@ -40,7 +40,7 @@ public aspect MethodCollector extends RuntimeCollector
 		!execution(public int hashCode());
 
 	/**
-	 * Executed before the end of each internal call of a method with @Test annotation
+	 * Intercepts methods within a test method.
 	 */
 	before(): methodCollector()
 	{
@@ -139,9 +139,13 @@ public aspect MethodCollector extends RuntimeCollector
 			lastInvocationLine = invocationLine;
 			
 			// Collects constructor (if method is not static)
-			if (constructor != null) {
-				ci.setConstructorInfo(consCollector.get(constructor.toString()));
-			}
+//			if (constructor != null) {
+//				//new ClassConstructorInfo()
+//				System.out.println("MC - c: "+constructor.toString());
+//				System.out.println(thisJoinPoint.getTarget().hashCode());
+//				//System.out.println(constructor.getClass().getConstructor(parameterTypes));
+//				ci.setConstructorInfo(consCollector.get(constructor.toString()));
+//			}
 			
 			// Stores key of collected method
 			collectedMethods.add(key);
@@ -151,11 +155,13 @@ public aspect MethodCollector extends RuntimeCollector
 				List<CollectorInfo> list = methodCollector.get(invocationLine);
 				list.add(ci);
 			} 
-			else {	// Else stores the method with its arguments and constructor
+			// Else stores the method with its arguments and constructor
+			else {	
 				List<CollectorInfo> list = new ArrayList<>();
 				list.add(ci);
 				methodCollector.put(invocationLine, list);
 			}
+
 			lastInsertedMethod = signature;
 		} catch(IllegalArgumentException e) {
 			System.err.println("[ERROR] MethodCollector - "+e.getMessage()+"\n");
