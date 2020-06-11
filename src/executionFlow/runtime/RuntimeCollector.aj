@@ -6,13 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.*;
-import executionFlow.core.*;
-import executionFlow.core.file.*;
-import executionFlow.core.file.parser.*;
-import executionFlow.core.file.parser.factory.*;
-import executionFlow.exporter.*;
-import executionFlow.info.*;
+import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.CollectorInfo;
 
 
 /**
@@ -71,51 +66,36 @@ public abstract aspect RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-	pointcut classes_app():
-		within(ExecutionFlow) ||
-		within(ConsoleOutput) ||
-		within(JDB) ||
-		within(Checkpoint) ||
-		within(AssertFileParser) ||
-		within(TestMethodRunner) ||
-		within(MethodManager) ||
-		within(FileCompiler) ||
-		within(FileParser) ||
-		within(FileManager) ||
-		within(FileParserFactory) ||
-		within(AssertFileParserFactory) ||
-		within(FileEncoding) ||
-		within(MethodFileParser) ||
-		within(MethodFileParserFactory) ||
-		within(TestMethodFileParser) ||
-		within(TestMethodFileParserFactory) ||
-		within(ConsoleExporter) ||
-		within(FileExporter) ||
-		within(ClassConstructorInfo) ||
-		within(ClassMethodInfo) ||
-		within(CollectorInfo) ||
-		within(SignaturesInfo) ||
-		within(CollectorExecutionFlow) ||
-		within(ConstructorCollector)  ||
-		within(MethodCollector) ||
-		within(RuntimeCollector) ||
-		within(TestMethodCollector);
+	pointcut skipAnnotation():
+		withincode(@executionFlow.runtime.SkipMethod * *.*()) ||
+		withincode(@executionFlow.runtime._SkipMethod * *.*()) ||
+		execution(@executionFlow.runtime.SkipMethod * *.*()) ||
+		execution(@executionFlow.runtime._SkipMethod * *.*()); 
 	
-	pointcut execution_JUnit5():
-		!classes_app() && (
-			execution(@org.junit.jupiter.api.Test * *.*()) ||
-			execution(@org.junit.jupiter.params.ParameterizedTest * *.*(*)) ||
-			execution(@org.junit.jupiter.api.RepeatedTest * *.*()) //||
-			//execution(@org.junit.jupiter.api.BeforeEach * *.*())
+	pointcut junit4():
+		!junit4_internal() && 
+		withincode(@org.junit.Test * *.*());
+	
+	pointcut junit5():
+		!junit5_internal() && (
+			withincode(@org.junit.jupiter.api.Test * *.*()) ||
+			withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(*)) ||
+			withincode(@org.junit.jupiter.api.RepeatedTest * *.*()) //||
+			//withincode(@org.junit.jupiter.api.BeforeEach * *.*())
 		);
 	
-	pointcut cflow_execution_JUnit5():
-		!classes_app() && cflow(
-			execution(@org.junit.jupiter.api.Test * *.*()) ||
-			execution(@org.junit.jupiter.params.ParameterizedTest * *.*(*)) ||
-			execution(@org.junit.jupiter.api.RepeatedTest * *.*()) //||
-			//execution(@org.junit.jupiter.api.BeforeEach * *.*())
-		);
+	pointcut junit4_internal():
+		call(* org.junit.runner.JUnitCore.runClasses(*)) ||
+		call(void org.junit.Assert.*(*)) ||
+		call(void org.junit.Assert.*(*,*)) ||
+		call(void org.junit.Assert.*(*,*,*)) ||
+		call(void org.junit.Assert.*(*,*,*,*)) ||
+		call(void org.junit.Assert.fail());
+	
+	pointcut junit5_internal():
+		call(void org.junit.jupiter.api.Assertions.*(*)) ||
+		call(void org.junit.jupiter.api.Assertions.*(*,*)) ||
+		call(void org.junit.jupiter.api.Assertions.*(*,*,*));
 	
 	
 	//-------------------------------------------------------------------------

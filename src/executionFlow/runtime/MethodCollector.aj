@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.*;
-
-import executionFlow.info.*;
+import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.CollectorInfo;
 
 
 /**
@@ -36,33 +35,14 @@ public aspect MethodCollector extends RuntimeCollector
 	//		Pointcut
 	//-----------------------------------------------------------------------
 	pointcut methodCollector(): 
-		!cflow(execution(@SkipMethod * *.*())) 
-		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& cflow(execution(@Test * *.*()) || cflow_execution_JUnit5())
-		&& !execution(public int hashCode())
-		&& !within(is(EnumType))
-		&& !within(is(InnerType))
-		&& !within(is(AnonymousType))
-		&& !within(is(InterfaceType))
-		&& !execution(private * *(..)) && !execution(private * *(*)) 
-		&& !execution(@Ignore * *())
-		&& !execution(@Before * *())
-		&& !execution(@After * *())
-		&& !execution(@BeforeClass * *())
-		&& !execution(@AfterClass * *())
-		&& !within(@SkipCollection *)
-		&& !classes_app()
-		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
-		&& !call(void org.junit.Assert.*(*))
-		&& !call(void org.junit.Assert.*(*,*))
-		&& !call(void org.junit.Assert.*(*,*,*))
-		&& !call(void org.junit.Assert.*(*,*,*,*))
-		&& !call(void org.junit.Assert.fail());
+		!skipAnnotation() &&
+		(junit4() || junit5()) && 
+		!execution(public int hashCode());
 
 	/**
 	 * Executed before the end of each internal call of a method with @Test annotation
 	 */
-	after(): methodCollector()
+	before(): methodCollector()
 	{
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();

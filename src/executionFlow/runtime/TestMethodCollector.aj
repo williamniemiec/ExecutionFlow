@@ -2,10 +2,13 @@ package executionFlow.runtime;
 
 import java.io.IOException;
 
-import executionFlow.*;
-import executionFlow.core.file.*;
-import executionFlow.core.file.parser.factory.*;
-import executionFlow.info.*;
+import executionFlow.ConsoleOutput;
+import executionFlow.ExecutionFlow;
+import executionFlow.core.file.FileManager;
+import executionFlow.core.file.MethodManager;
+import executionFlow.core.file.ParserType;
+import executionFlow.core.file.parser.factory.AssertFileParserFactory;
+import executionFlow.info.ClassMethodInfo;
 
 
 /**
@@ -34,22 +37,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//		Pointcuts
 	//-------------------------------------------------------------------------
 	pointcut testMethodCollector():
-		!cflow(execution(@SkipMethod * *.*())) 
-		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& ( execution(@org.junit.Test * *.*()) || execution_JUnit5() )
-		&& !execution(public int hashCode())
-		&& !call(* *.*(*))
-		&& !execution(private * *(*))
-		&& !execution(@org.junit.Ignore * *(*))
-		&& !execution(@org.junit.Before * *(*))
-		&& !execution(@org.junit.After * *(*))
-		&& !execution(@org.junit.BeforeClass * *(*))
-		&& !execution(@org.junit.AfterClass * *(*))
-		&& !within(@SkipCollection *)
-		&& !execution(@SkipMethod * *(*))
-		&& !classes_app()
-		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
-		&& !call(void org.junit.Assert.*(*,*));
+		!skipAnnotation() &&
+		(junit4() || junit5());
 	
 	/**
 	 * Executed before each method with <code>@Test</code> annotation.
@@ -106,7 +95,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 				checkpoint.enable();
 				
 				// Parses test method and handles all asserts so that method collection 
-				// is done even if {@link org.junit.ComparisonFailure} occurs
+				// is done even if an assert fails
 				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 				
 				ConsoleOutput.showInfo("Pre-processing completed");

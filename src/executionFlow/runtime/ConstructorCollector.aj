@@ -1,8 +1,6 @@
 package executionFlow.runtime;
 
-import org.junit.*;
-
-import executionFlow.info.*;
+import executionFlow.info.ClassConstructorInfo;
 
 
 /**
@@ -22,26 +20,15 @@ public aspect ConstructorCollector extends RuntimeCollector
 	//		Pointcut
 	//-------------------------------------------------------------------------
 	pointcut constructorCollector(): 
-		!cflow(execution(@SkipMethod * *.*()))
-		&& !cflow(execution(@_SkipMethod * *.*()))
-		&& cflow(execution(@Test * *.*()) || cflow_execution_JUnit5())
-		&& (initialization(*.new(*)) || initialization(*.new()))
-		&& !execution(private * *(..))
-		&& !execution(@Ignore * *(..))
-		&& !execution(@Before * *(..))
-		&& !execution(@After * *(..))
-		&& !execution(@BeforeClass * *(..))
-		&& !execution(@AfterClass * *(..))
-		&& !within(@SkipCollection *)
-		&& !execution(@SkipMethod * *())
-		&& !classes_app()
-		&& !call(* org.junit.runner.JUnitCore.runClasses(*))
-		&& !call(void org.junit.Assert.*(*,*));
-	
+		!skipAnnotation() &&
+		(junit4() || junit5()) &&
+		!within(ConstructorCollector) &&
+		call(*.new(*));
+		
 	/**
-	 * Executed after instantiating an object.
+	 * Executed after instantiating an object within a test method.
 	 */
-	after(): constructorCollector()
+	before(): constructorCollector()
 	{
 		String signature = thisJoinPoint.getSignature().toString();
 		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
