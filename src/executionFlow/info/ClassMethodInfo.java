@@ -113,70 +113,104 @@ public class ClassMethodInfo
 		/**
 		 * @param		methodName Method's name
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If methodName is null
 		 */
 		public ClassMethodInfoBuilder methodName(String methodName)
 		{
+			if (methodName == null)
+				throw new IllegalArgumentException("Method's name cannot be null");
+			
 			this.methodName = methodName;
+			
 			return this;
 		}
 		
 		/**
 		 * @param		classPath Method class file path
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If classPath is null
 		 */
 		public ClassMethodInfoBuilder classPath(Path classPath)
 		{
+			if (classPath == null)
+				throw new IllegalArgumentException("Method class file path cannot be null");
+			
 			this.classPath = classPath.isAbsolute() ? classPath : classPath.toAbsolutePath();
+			
 			return this;
 		}
 		
 		/**
 		 * @param		testClassPath Test method class file path
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If testClassPath is null
 		 */
 		public ClassMethodInfoBuilder testClassPath(Path testClassPath)
 		{
+			if (testClassPath == null)
+				throw new IllegalArgumentException("Test method class file path cannot be null");
+				
 			this.testClassPath = testClassPath.isAbsolute() ? testClassPath : testClassPath.toAbsolutePath();
 			return this;
 		}
 		
 		/**
-		 * @param		srcPath Path where source file is
+		 * @param		srcPath Path where method's source file is
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If srcPath is null
 		 */
 		public ClassMethodInfoBuilder srcPath(Path srcPath)
 		{
+			if (srcPath == null)
+				throw new IllegalArgumentException("Method's source file cannot be null");
+			
 			this.srcPath = srcPath.isAbsolute() ? srcPath : srcPath.toAbsolutePath();
+			
 			return this;
 		}
 		
 		/**
-		 * @param		testSrcPath Path where source file of test method is
+		 * @param		testSrcPath Path where test method's source file is
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If testSrcPath is null
 		 */
 		public ClassMethodInfoBuilder testSrcPath(Path testSrcPath)
 		{
+			if (testSrcPath == null)
+				throw new IllegalArgumentException("Test method's source file cannot be null");
+			
 			this.testSrcPath = testSrcPath.isAbsolute() ? testSrcPath : testSrcPath.toAbsolutePath();
+			
 			return this;
 		}
 		
 		/**
-		 * @param		classSignature Signature of the class
+		 * @param		classSignature Class signature
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If classSignature is null
 		 */
 		public ClassMethodInfoBuilder classSignature(String classSignature)
 		{
+			if (classSignature == null)
+				throw new IllegalArgumentException("Class signature cannot be null");
+			
 			this.classSignature = classSignature;
+			
 			return this;
 		}
 		
 		/**
-		 * @param		methodSignature Signature of the method
+		 * @param		methodSignature Method signature
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If methodSignature is null
 		 */
 		public ClassMethodInfoBuilder methodSignature(String methodSignature)
 		{
+			if (methodSignature == null)
+				throw new IllegalArgumentException("Method signature cannot be null");
+			
 			this.methodSignature = methodSignature;
+			
 			return this;
 		}
 		
@@ -184,10 +218,15 @@ public class ClassMethodInfo
 		 * @param		testMethodSignature Signature of the test method to 
 		 * which the method belongs
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If testMethodSignature is null
 		 */
 		public ClassMethodInfoBuilder testMethodSignature(String testMethodSignature)
 		{
+			if (testMethodSignature == null)
+				throw new IllegalArgumentException("Test method signature cannot be null");
+			
 			this.testMethodSignature = testMethodSignature;
+			
 			return this;
 		}
 		
@@ -195,40 +234,61 @@ public class ClassMethodInfo
 		 * @param		invocationLine Line of test method where method is 
 		 * called
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If invocationLine is less than
+		 * or equal to zero
 		 */
 		public ClassMethodInfoBuilder invocationLine(int invocationLine)
 		{
+			if (invocationLine <= 0)
+				throw new IllegalArgumentException("Invocation line must be a number greater than zero");
+			
 			this.invocationLine = invocationLine;
+			
 			return this;
 		}
 		
 		/**
 		 * @param		parameterTypes Types of method's parameters
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
 		public ClassMethodInfoBuilder parameterTypes(Class<?>[] parameterTypes)
 		{
+			if (parameterTypes == null)
+				throw new IllegalArgumentException("Types of method's parameters cannot be null");
+			
 			this.parameterTypes = parameterTypes;
+			
 			return this;
 		}
 		
 		/**
 		 * @param		args Method's arguments
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If args is null
 		 */
 		public ClassMethodInfoBuilder args(Object... args)
 		{
+			if (args == null)
+				throw new IllegalArgumentException("Method's arguments cannot be null");
+			
 			this.args = args;
+			
 			return this;
 		}
 		
 		/**
-		 * @param		returnType Return type of the method
+		 * @param		returnType Method return type
 		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If returnType is null
 		 */
 		public ClassMethodInfoBuilder returnType(Class<?> returnType)
 		{
+			if (returnType == null)
+				throw new IllegalArgumentException("Method return type cannot be null");
+			
 			this.returnType = returnType;
+			
 			return this;
 		}
 		
@@ -253,29 +313,30 @@ public class ClassMethodInfo
 		 */
 		public ClassMethodInfo build() throws IllegalArgumentException
 		{
-			String nullField = null;
+			StringBuilder nullFields = new StringBuilder();
 			
 			if (classPath == null)
-				nullField = "classPath";
-			else if (testClassPath == null)
-				nullField = "testClassPath";
-			else if (srcPath == null)
-				nullField = "srcPath";
-			else if (testSrcPath == null)
-				nullField = "testSrcPath";
-			else if (invocationLine <= 0)
-				nullField = "invocationLine";
-			else if (classSignature == null)
-				nullField = "classSignature";
-			else if (methodSignature == null)
-				nullField = "methodSignature";
-			else if (testMethodSignature == null)
-				nullField = "testMethodSignature";
-			else if (methodName == null)
-				nullField = "methodName";
+				nullFields.append("classPath").append(", ");
+			if (testClassPath == null)
+				nullFields.append("testClassPath").append(", ");
+			if (srcPath == null)
+				nullFields.append("srcPath").append(", ");
+			if (testSrcPath == null)
+				nullFields.append("testSrcPath").append(", ");
+			if (invocationLine <= 0)
+				nullFields.append("invocationLine").append(", ");
+			if (classSignature == null)
+				nullFields.append("classSignature").append(", ");
+			if (methodSignature == null)
+				nullFields.append("methodSignature").append(", ");
+			if (testMethodSignature == null)
+				nullFields.append("testMethodSignature").append(", ");
+			if (methodName == null)
+				nullFields.append("methodName").append(", ");
 			
-			if (nullField != null)
-				throw new IllegalArgumentException("Required fields cannot be null: "+nullField);
+			if (nullFields.length() > 0)
+				throw new IllegalArgumentException("Required fields cannot be null: "
+						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
 			return new ClassMethodInfo(
 				classPath, testClassPath, srcPath, testSrcPath, invocationLine, 
