@@ -35,29 +35,29 @@ public class TestMethodRunner
 		String appRoot = ExecutionFlow.getAppRootPath();
 		Path testClassRootPath = ClassMethodInfo.extractClassRootDirectory(testClassPath, testClassPackage);
 		Path libPath = Path.of(appRoot+"\\lib");
-		
 		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
-		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
-		String lib_aspectjTools = libPath_relative+"aspectjtools.jar";
-		String lib_junit = libPath_relative+"junit-4.13.jar";
-		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
-		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest+";"+lib_aspectjTools;
+		String cp_junitPlatformConsole = libPath_relative+"junit5\\junit-platform-console-standalone-1.6.2";
+		
+		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
+				+ libPath_relative + "junit-4.13.jar" + ";"
+				+ libPath_relative + "hamcrest-all-1.3.jar" + ";"
+				+ libPath_relative+"aspectjtools.jar" + ";"
+				+ cp_junitPlatformConsole;
+		
 		String classPath = ".;"+libs+";..\\classes";
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage+"."+testClassName;
-		
+
 		try {
-			ProcessBuilder pb;
-			String lib_junit5_console = libPath_relative+"junit5\\junit-platform-console-standalone-1.6.2.jar";
-			
-			pb = new ProcessBuilder(
+			ProcessBuilder pb = new ProcessBuilder(
 				"cmd.exe","/c",
-				"java", "-jar", lib_junit5_console,
-				"-cp","\""+classPath+"\"",
+				"java", "-cp", cp_junitPlatformConsole, "org.junit.platform.console.ConsoleLauncher",
+				"-cp","\""+classPath+";"+cp_junitPlatformConsole+"\\."+"\"",
 				"-c",classSignature,
 				"--disable-banner",
 				"--details=none"
 			);
+			
 			pb.directory(testClassRootPath.toFile());
 			
 			try {
@@ -67,7 +67,7 @@ public class TestMethodRunner
 				String line;
 				
 				// Checks if there was an error creating the process
-				while ((line = outputError.readLine()) != null) {
+				while (outputError.ready() && (line = outputError.readLine()) != null) {
 					System.err.println(line);
 				}
 				
