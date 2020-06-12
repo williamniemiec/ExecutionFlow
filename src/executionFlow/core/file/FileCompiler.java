@@ -37,7 +37,7 @@ public class FileCompiler
 	 * compilation (performance can get worse).
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	
@@ -66,7 +66,11 @@ public class FileCompiler
 				"-9.0",
 				"-encoding", 
 				encode.getName(),
-				"-classpath", outputDir.toAbsolutePath().toString(),
+				"-classpath", outputDir.toAbsolutePath().toString()+";"
+						+ appRootPath + "\\lib\\aspectjrt-1.9.2.jar" + ";"
+						+ appRootPath + "\\lib\\junit-4.13.jar" + ";"
+						+ appRootPath + "\\lib\\hamcrest-all-1.3.jar" + ";"
+						+ appRootPath + "\\lib\\junit5\\junit-jupiter-api-5.6.2.jar",
 				"-d", 
 				outputDir.toAbsolutePath().toString(), 
 				fileToCompile.toAbsolutePath().toString()
