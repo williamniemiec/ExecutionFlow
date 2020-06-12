@@ -21,49 +21,29 @@ import executionFlow.ExecutionFlow;
 public class FileCompiler 
 {
 	//-------------------------------------------------------------------------
-	//		Methods
+	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Compiles .java file.
-	 * 
-	 * @param		fileToCompile Path of source file to be compiled
-	 * @param		outputDir Path where generated .class will be saved
-	 * @param		encode File encoding
-	 * @param		debug If true, displays compiler output
-	 * @throws		IOException If an error occurs during compilation
+	 * If true, displays shell output. 
 	 */
-	public static void compile(Path fileToCompile, Path outputDir, FileEncoding encode, boolean debug) throws IOException
-	{
-		Main compiler = new Main();
-		MessageHandler m = new MessageHandler();
-		
-		String aspectsRootDirectory = ExecutionFlow.getAppRootPath()+"\\bin\\executionFlow\\runtime";
-		
-		compiler.run(
-			new String[] {
-				"-Xlint:ignore", 
-				"-inpath", aspectsRootDirectory,
-				"-source","1.9",
-				"-encoding", 
-				encode.getName(),
-				"-d", 
-				outputDir.toAbsolutePath().toString(), 
-				fileToCompile.toAbsolutePath().toString()
-			},m);
-		
-		// -----{ DEBUG }-----
-		if (debug) {
-			IMessage[] ms = m.getMessages(null, true);
-			
-			ConsoleOutput.showDebug("FileCompilator - start");
-			for (var msg : ms) {
-				ConsoleOutput.showDebug(msg.toString());
-			}
-			ConsoleOutput.showDebug("FileCompilator - end");
-		}
-		// -----{ END DEBUG }----
+	private static final boolean DEBUG;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
+	/**
+	 * Enables or disables debug. If activated, displays shell output during 
+	 * compilation (performance can get worse).
+	 */
+	static {
+		DEBUG = true;
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	/**
 	 * Compiles .java file.
 	 * 
@@ -74,6 +54,34 @@ public class FileCompiler
 	 */
 	public static void compile(Path fileToCompile, Path outputDir, FileEncoding encode) throws IOException
 	{
-		compile(fileToCompile, outputDir, encode, false);
+		Main compiler = new Main();
+		MessageHandler m = new MessageHandler();
+		String appRootPath = ExecutionFlow.getAppRootPath();
+		String aspectsRootDirectory = appRootPath+"\\bin\\executionFlow\\runtime";
+		
+		compiler.run(
+			new String[] {
+				"-Xlint:ignore", 
+				"-inpath", aspectsRootDirectory,
+				"-9.0",
+				"-encoding", 
+				encode.getName(),
+				"-classpath", outputDir.toAbsolutePath().toString(),
+				"-d", 
+				outputDir.toAbsolutePath().toString(), 
+				fileToCompile.toAbsolutePath().toString()
+			},m);
+		
+		// -----{ DEBUG }-----
+		if (DEBUG) {
+			IMessage[] ms = m.getMessages(null, true);
+			
+			ConsoleOutput.showDebug("FileCompilator - start");
+			for (var msg : ms) {
+				ConsoleOutput.showDebug(msg.toString());
+			}
+			ConsoleOutput.showDebug("FileCompilator - end");
+		}
+		// -----{ END DEBUG }----
 	}
 }
