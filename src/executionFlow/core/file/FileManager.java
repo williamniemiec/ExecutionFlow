@@ -161,7 +161,7 @@ public class FileManager implements Serializable
 		for (int i=0; i<packageFolders; i++) {
 			classOutput = classOutput.getParent();
 		}
-
+		
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding
 		if (charsetError)	
@@ -184,7 +184,10 @@ public class FileManager implements Serializable
 	{
 		try {
 			if (Files.exists(originalSrcFile)) {
-				Files.delete(srcFile);
+				try {
+					Files.delete(srcFile);
+				} catch (IOException e) { }
+
 				Files.move(originalSrcFile, srcFile);
 			}
 		} catch (IOException e) {
@@ -205,7 +208,11 @@ public class FileManager implements Serializable
 	{
 		try {
 			if (Files.exists(originalClassPath)) {
-				Files.delete(compiledFile);
+				
+				try {
+					Files.delete(compiledFile);
+				} catch (IOException e) { }
+				
 				Files.move(originalClassPath, compiledFile);
 			}
 		} catch (IOException e) {
