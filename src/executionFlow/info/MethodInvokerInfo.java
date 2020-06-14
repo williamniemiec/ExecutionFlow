@@ -14,20 +14,12 @@ import java.util.Arrays;
  * @version		1.5
  * @since		1.0
  */
-public class ClassMethodInfo 
+public class ClassMethodInfo extends InvokerInfo
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private String methodName;
-	private Path classPath;
-	private Path srcPath;
-	private String methodSignature;
-	private String classSignature;
-	private String classPackage;
-	private int invocationLine;
-	private Class<?>[] parameterTypes;
-	private Object[] args;
 	private Class<?> returnType;
 	
 	
@@ -52,7 +44,7 @@ public class ClassMethodInfo
 	{
 		this.classPath = classPath;
 		this.srcPath = srcPath;
-		this.methodSignature = methodSignature;
+		this.invokerSignature = methodSignature;
 		this.methodName = methodName;
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
@@ -65,8 +57,8 @@ public class ClassMethodInfo
 	//		Builder
 	//-------------------------------------------------------------------------
 	/**
-	 * Builder for ClassMethodInfo. It is necessary to fill all required 
-	 * fields. The required fields are: <br />
+	 * Builder for {@link ClassMethodInfo}. It is necessary to fill all 
+	 * required fields. The required fields are: <br />
 	 * <ul>
 	 * 	<li>classPath</li>
 	 * 	<li>srcPath</li>
@@ -78,7 +70,7 @@ public class ClassMethodInfo
 		private String methodName;
 		private Path classPath;
 		private Path srcPath;
-		private String methodSignature;
+		private String invokerSignature;
 		private int invocationLine;
 		private Class<?>[] parameterTypes;
 		private Object[] args;
@@ -133,14 +125,14 @@ public class ClassMethodInfo
 		/**
 		 * @param		methodSignature Method signature
 		 * @return		Builder to allow chained calls
-		 * @throws		IllegalArgumentException If methodSignature is null
+		 * @throws		IllegalArgumentException If invokerSignature is null
 		 */
 		public ClassMethodInfoBuilder methodSignature(String methodSignature)
 		{
 			if (methodSignature == null)
 				throw new IllegalArgumentException("Method signature cannot be null");
 			
-			this.methodSignature = methodSignature;
+			this.invokerSignature = methodSignature;
 			
 			return this;
 		}
@@ -228,7 +220,7 @@ public class ClassMethodInfo
 				nullFields.append("classPath").append(", ");
 			if (srcPath == null)
 				nullFields.append("srcPath").append(", ");
-			if (methodSignature == null)
+			if (invokerSignature == null)
 				nullFields.append("methodSignature").append(", ");
 			
 			if (nullFields.length() > 0)
@@ -236,7 +228,7 @@ public class ClassMethodInfo
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
 			return new ClassMethodInfo(
-				classPath, srcPath, invocationLine, methodSignature, 
+				classPath, srcPath, invocationLine, invokerSignature, 
 				methodName, returnType, parameterTypes, args
 			);
 		}
@@ -249,124 +241,28 @@ public class ClassMethodInfo
 	@Override
 	public String toString() 
 	{
-		return "ClassMethodInfo [methodName=" + methodName 
-				+ ", classPath=" + classPath + ", srcPath=" + srcPath
+		return "ClassMethodInfo ["
+				+ "methodName=" + methodName 
+				+ ", classPath=" + classPath 
+				+ ", srcPath=" + srcPath
 				+ ", classSignature=" + classSignature 
-				+ ", methodSignature=" + methodSignature 
+				+ ", methodSignature=" + invokerSignature 
 				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
 				+ ", args="	+ Arrays.toString(args) 
-				+ ", returnType=" + returnType + "]";
-	}
-	
-	/**
-	 * Extracts the types of the method parameters.
-	 * 
-	 * @param		parametersTypes Types of each method's parameter
-	 * @return		String with the name of each type separated by commas
-	 */
-	public String extractParameterTypes()
-	{
-		if (parameterTypes == null) { return ""; }
-		StringBuilder response = new StringBuilder();
-		
-		// Stores the name of all types of parameter
-		for (var parameterType : parameterTypes) {
-			// Removes signature
-			String[] tmp = parameterType.getTypeName().split("\\."); 
-			
-			// Adds only the name of the parameter type
-			response.append(tmp[tmp.length-1] +",");
-		}
-		
-		if (response.length() > 0)
-			// Removes last comma
-			response.deleteCharAt(response.length()-1);	
-		
-		return response.toString();
-	}
-	
-	/**
-	 * Extracts class signature from a method signature.
-	 * 
-	 * @param		methodSignature Signature of the method
-	 * @return		Class signature
-	 */
-	public static String extractClassSignature(String methodSignature)
-	{
-		StringBuilder response = new StringBuilder();
-		String[] terms = methodSignature.split("\\.");
-		
-		// Appends all terms of signature, without the last
-		for (int i=0; i<terms.length-1; i++) {
-			response.append(terms[i]);
-			response.append(".");
-		}
-		
-		if (response.length() > 0) {
-			// Removes last dot
-			response.deleteCharAt(response.length()-1);
-		}
-		
-		return response.toString();
-	}
-	
-	/**
-	 * Extracts package from a class signature.
-	 * 
-	 * @param		classSignature Signature of the class
-	 * @return		Class package
-	 */
-	public static String extractPackage(String classSignature)
-	{
-		if (classSignature == null || classSignature.isEmpty()) { return ""; }
-		
-		String[] tmp = classSignature.split("\\.");
-		StringBuilder response = new StringBuilder();
-		
-		// Appends all terms of signature, without the last
-		for (int i=0; i<tmp.length-1; i++) {
-			response.append(tmp[i]);
-			response.append(".");
-		}
-		
-		if (response.length() > 0) {
-			// Removes last dot
-			response.deleteCharAt(response.length()-1);
-		}
-		
-		return response.toString();
-	}
-	
-	/**
-	 * Extracts class root directory. <br />
-	 * Example: <br />
-	 * <li><b>Class path:</b> C:/app/bin/packageName1/packageName2/className.java</li>
-	 * <li><b>Class root directory:</b> C:/app/bin</li>
-	 * 
-	 * @param		classPath Path where compiled file is
-	 * @param		classPackage Package of this class
-	 * @return		Class root directory
-	 */
-	public static Path extractClassRootDirectory(Path classPath, String classPackage)
-	{
-		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
-				0 : classPackage.split("\\.").length;
-
-		classPath = classPath.getParent();
-		
-		// Sets path to the compiler
-		for (int i=0; i<packageFolders; i++) {
-			classPath = classPath.getParent();
-		}
-		
-		return classPath;
+				+ ", returnType=" + returnType 
+			+ "]";
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
+	public String getMethodSignature()
+	{
+		return getInvokerSignature();
+	}
+	
 	/**
 	 * Gets method name.
 	 * 
@@ -377,60 +273,6 @@ public class ClassMethodInfo
 		return methodName;
 	}
 
-	/**
-	 * Gets path of the compiled file of the method.
-	 * 
-	 * @return		Path of the compiled file of the method
-	 */
-	public Path getClassPath()
-	{
-		return this.classPath;
-	}
-	
-	/**
-	 * Gets the path of the method source file.
-	 * 
-	 * @return		Path of the method source file
-	 */
-	public Path getSrcPath()
-	{
-		return this.srcPath;
-	}
-	
-	/**
-	 * Gets method's signature.
-	 * 
-	 * @return		Method signature
-	 */
-	public String getMethodSignature()
-	{
-		return this.methodSignature;
-	}
-	
-	/**
-	 * Gets class signature. 
-	 * 
-	 * @return		Class signature
-	 * @implNote	Lazy initialization
-	 */
-	public String getClassSignature()
-	{
-		if (classSignature == null)
-			classSignature = extractClassSignature(methodSignature);
-		
-		return classSignature; 
-	}
-	
-	/**
-	 * Gets line where the method is invoked in the test method.
-	 * 
-	 * @return		Line where the method is invoked in the test method
-	 */
-	public int getInvocationLine()
-	{
-		return this.invocationLine;
-	}
-	
 	/**
 	 * Gets types from the method's parameters.
 	 * 
@@ -462,20 +304,6 @@ public class ClassMethodInfo
 	}
 	
 	/**
-	 * Gets package of the method.
-	 * 
-	 * @return		Package to which the class belongs
-	 * @implNote	Lazy initialization
-	 */
-	public String getPackage()
-	{
-		if (classPackage == null)
-			classPackage = extractPackage(getClassSignature());
-
-		return classPackage;
-	}
-	
-	/**
 	 * Gets parameter types and return type of the method.
 	 * 
 	 * @return		Return type and parameter types of the method
@@ -486,36 +314,5 @@ public class ClassMethodInfo
 			return methodType(returnType);
 		
 		return methodType(returnType, parameterTypes);
-	}
-	
-	/**
-	 * Gets directory where a compiled file is.
-	 * 
-	 * @param		compiledFilePath Compiled file path
-	 * @return		Directory where the compiled test method file is
-	 */
-	public static Path getCompiledFileDirectory(Path compiledFilePath)
-	{
-		return compiledFilePath.getParent();
-	}
-	
-	/**
-	 * Gets directory where the method's compiled file is.
-	 * 
-	 * @return		Directory where the method's source file is.
-	 */
-	public Path getClassDirectory()
-	{
-		return classPath.getParent();
-	}
-	
-	/**
-	 * Gets directory where the method's source file is.
-	 * 
-	 * @return		Directory where the method's source file is.
-	 */
-	public Path getSrcDirectory()
-	{
-		return srcPath.getParent();
 	}
 }

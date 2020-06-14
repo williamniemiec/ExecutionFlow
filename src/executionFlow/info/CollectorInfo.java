@@ -20,6 +20,11 @@ public class CollectorInfo
 	private ClassMethodInfo methodInfo;
 	
 	/**
+	 * Stores {@link ClassMethodInfo information} about a test method.
+	 */
+	private ClassMethodInfo testMethodInfo;
+	
+	/**
 	 * Stores {@link ClassConstructorInfo information} about the constructor of
 	 * {@link #methodInfo the method}.
 	 */
@@ -38,60 +43,60 @@ public class CollectorInfo
 	/**
 	 * Stores information about a method, with its order and constructor.
 	 * 
-	 * @param methodInfo Information about a method
-	 * @param constructorInfo Information about the constructor of the method
-	 * @param order Order in which the method is called. It is used when more
-	 * than one method is called in a single line. The order of a method is
-	 * how many methods are called in this line before it
+	 * @param		methodInfo Information about a method
+	 * @param		testMethodInfo Information about the constructor of the method
+	 * @param		order Order in which the method is called. It is used when more
+	 * than one method is called in a single line. The order of a method is how
+	 * many methods are called in this line before it
 	 */
-	public CollectorInfo(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo, int order)
+	public CollectorInfo(ClassMethodInfo methodInfo, ClassMethodInfo testMethodInfo, int order)
 	{
 		this.methodInfo = methodInfo;
-		this.constructorInfo = constructorInfo;
+		this.testMethodInfo = testMethodInfo;
 		this.order = order;
 	}
 	
-	/**
-	 * Stores information about a method, with its order and constructor. Using
-	 * this constructor, {@link #constructorInfo method constructor} will be 
-	 * null and the {@link order} of the method will be zero.
-	 * 
-	 * @param methodInfo Information about a method
-	 * @param constructorInfo Information about the constructor of the method
-	 * @param order Order in which the method is called. It is used when more
-	 * than one method is called in a single line. The order of a method is
-	 * how many methods are called in this line before it
-	 */
-	public CollectorInfo(ClassMethodInfo methodInfo)
-	{
-		this(methodInfo, 0);
-	}
-	
-	/**
-	 * Stores information about a method, with its order and constructor. Using
-	 * this constructor the {@link order} of method will be zero.
-	 * 
-	 * @param methodInfo Information about a method
-	 * @param constructorInfo Information about the constructor of the method
-	 */
-	public CollectorInfo(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo)
-	{
-		this(methodInfo, constructorInfo, 0);
-	}
-	
-	/**
-	 * Stores information about a method with its order. Use this method when
-	 * you do not want to save information about constructor.
-	 * 
-	 * @param methodInfo Information about a method
-	 * @param order Order in which the method is called. It is used when more
-	 * than one method is called in a single line. The order of a method is
-	 * how many methods are called in this line before it
-	 */
-	public CollectorInfo(ClassMethodInfo methodInfo, int order)
-	{
-		this(methodInfo, null, order);
-	}
+//	/**
+//	 * Stores information about a method, with its order and constructor. Using
+//	 * this constructor, {@link #constructorInfo method constructor} will be 
+//	 * null and the {@link order} of the method will be zero.
+//	 * 
+//	 * @param methodInfo Information about a method
+//	 * @param constructorInfo Information about the constructor of the method
+//	 * @param order Order in which the method is called. It is used when more
+//	 * than one method is called in a single line. The order of a method is
+//	 * how many methods are called in this line before it
+//	 */
+//	public CollectorInfo(ClassMethodInfo methodInfo)
+//	{
+//		this(methodInfo, 0);
+//	}
+//	
+//	/**
+//	 * Stores information about a method, with its order and constructor. Using
+//	 * this constructor the {@link order} of method will be zero.
+//	 * 
+//	 * @param methodInfo Information about a method
+//	 * @param constructorInfo Information about the constructor of the method
+//	 */
+//	public CollectorInfo(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo)
+//	{
+//		this(methodInfo, constructorInfo, 0);
+//	}
+//	
+//	/**
+//	 * Stores information about a method with its order. Use this method when
+//	 * you do not want to save information about constructor.
+//	 * 
+//	 * @param methodInfo Information about a method
+//	 * @param order Order in which the method is called. It is used when more
+//	 * than one method is called in a single line. The order of a method is
+//	 * how many methods are called in this line before it
+//	 */
+//	public CollectorInfo(ClassMethodInfo methodInfo, int order)
+//	{
+//		this(methodInfo, null, order);
+//	}
 
 
 	//-------------------------------------------------------------------------
@@ -107,24 +112,24 @@ public class CollectorInfo
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
-	public ClassConstructorInfo getConstructorInfo()
-	{
-		return constructorInfo;
-	}
-
-	public void setConstructorInfo(ClassConstructorInfo constructorInfo) 
-	{
-		this.constructorInfo = constructorInfo;
-	}
-
 	public ClassMethodInfo getMethodInfo() 
 	{
 		return methodInfo;
 	}
 
-	public void setMethodInfo(ClassMethodInfo methodInfo) 
+	public void setMethodInfo(ClassMethodInfo testMethodInfo) 
 	{
-		this.methodInfo = methodInfo;
+		this.testMethodInfo = testMethodInfo;
+	}
+	
+	public ClassMethodInfo getTestMethodInfo() 
+	{
+		return testMethodInfo;
+	}
+
+	public void setTestMethodInfo(ClassMethodInfo testMethodInfo) 
+	{
+		this.testMethodInfo = testMethodInfo;
 	}
 	
 	public int getOrder()

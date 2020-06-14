@@ -55,6 +55,6 @@ public aspect ConstructorCollector extends RuntimeCollector
 		String key = signature+Arrays.toString(consParamValues);
 		
 		// Saves extracted data
-		consCollector.put(key, new ClassConstructorInfo(consParamTypes, consParamValues));
+		//consCollector.put(key, new ClassConstructorInfo(consParamTypes, consParamValues));
 	}
 }
