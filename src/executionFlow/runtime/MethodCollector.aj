@@ -32,7 +32,7 @@ public aspect MethodCollector extends RuntimeCollector
 	
 	
 	//-----------------------------------------------------------------------
-	//		Pointcut
+	//		Pointcuts
 	//-----------------------------------------------------------------------
 	pointcut methodCollector(): 
 		!skipAnnotation() &&
@@ -47,34 +47,36 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
 		
-		if (invocationLine <= 0) { return; }
+		//if (invocationLine <= 0) { return; }
 		
 		String signature = thisJoinPoint.getSignature().toString();
-
-		// Ignores native java methods
-		if (isNativeMethod(signature)) { return; }
-		
-		// Ignores methods in the method test (with @Test) (it will only consider internal calls)
-		if (testMethodSignature != null && signature.contains(testMethodSignature)) { return; }
 		
 		// Checks if is a method signature
 		if (!isMethodSignature(signature)) { return; }
 		
+		// Ignores native java methods
+		if (isNativeMethod(signature)) { return; }
+		
+		//System.out.println(signature);
+		
+		// Ignores methods in the method test (with @Test) (it will only consider internal calls)
+		if (testMethodSignature != null && signature.contains(testMethodSignature)) { return; }
+		
 		// Checks if it is an internal call (if it is, ignore it)
-		if (isInternalCall(signature)) { return; }
+		//if (isInternalCall(signature)) { return; }
 		
 		// Ignores methods caught by 'execution', because they are caught by 'call'
-		if (thisJoinPoint.toLongString().contains("execution(")) { return; }
+		//if (thisJoinPoint.toLongString().contains("execution(")) { return; }
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
 		// Checks if it is a method that is invoked within test method
 		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-		String methodSig = classSignature.replace("$", ".")+"."+methodName;
+		//String methodSig = classSignature.replace("$", ".")+"."+methodName;
 		
 		// If it is not, ignores it
-		if (!signature.contains(methodSig)) { return; }
+		//if (!signature.contains(methodSig)) { return; }
 		
 		// Extracts types of method parameters (if there is any)
 		Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint);
@@ -120,32 +122,27 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Collects the method
 		try {
-			ClassMethodInfo cmi = new ClassMethodInfo.ClassMethodInfoBuilder()
+			ClassMethodInfo methodInfo = new ClassMethodInfo.ClassMethodInfoBuilder()
 				.classPath(classPath)
-				.testClassPath(testClassPath)
-				.classSignature(classSignature)
 				.methodSignature(methodSignature)
-				.testMethodSignature(testMethodSignature)
 				.methodName(methodName)
 				.returnType(returnType)
 				.parameterTypes(paramTypes)
 				.args(thisJoinPoint.getArgs())
 				.invocationLine(invocationLine)
 				.srcPath(srcPath)
-				.testSrcPath(testSrcPath)
 				.build();
 			
-			CollectorInfo ci = new CollectorInfo(cmi, order++);
-			lastInvocationLine = invocationLine;
+			ClassMethodInfo testMethodInfo = new ClassMethodInfo.ClassMethodInfoBuilder()
+				.classPath(testClassPath)
+				.methodSignature(testMethodSignature)
+				.args(testMethodArgs)
+				.srcPath(testSrcPath)
+				.build();
 			
-			// Collects constructor (if method is not static)
-//			if (constructor != null) {
-//				//new ClassConstructorInfo()
-//				System.out.println("MC - c: "+constructor.toString());
-//				System.out.println(thisJoinPoint.getTarget().hashCode());
-//				//System.out.println(constructor.getClass().getConstructor(parameterTypes));
-//				ci.setConstructorInfo(consCollector.get(constructor.toString()));
-//			}
+			
+			CollectorInfo ci = new CollectorInfo(methodInfo, testMethodInfo, order++);
+			lastInvocationLine = invocationLine;
 			
 			// Stores key of collected method
 			collectedMethods.add(key);
@@ -162,7 +159,6 @@ public aspect MethodCollector extends RuntimeCollector
 				methodCollector.put(invocationLine, list);
 			}
 
-			lastInsertedMethod = signature;
 		} catch(IllegalArgumentException e) {
 			System.err.println("[ERROR] MethodCollector - "+e.getMessage()+"\n");
 		}

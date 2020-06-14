@@ -29,6 +29,8 @@ public class TestMethodRunner
 	 * {@link executionFlow.core.file.MethodManager#assertParser(String)}.
 	 * 
 	 * @param		testClassName Class name containing the test method
+	 * @param testClassPath
+	 * @param testClassPackage
 	 */
 	public static void run(String testClassName, Path testClassPath, String testClassPackage)
 	{	
@@ -36,11 +38,9 @@ public class TestMethodRunner
 		Path testClassRootPath = ClassMethodInfo.extractClassRootDirectory(testClassPath, testClassPackage);
 		Path libPath = Path.of(appRoot+"\\lib");
 		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
-		String cp_junitPlatformConsole = libPath_relative+"junit5\\junit-platform-console-standalone-1.6.2";
+		String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";
 		
 		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
-				+ libPath_relative + "junit-4.13.jar" + ";"
-				+ libPath_relative + "hamcrest-all-1.3.jar" + ";"
 				+ libPath_relative+"aspectjtools.jar" + ";"
 				+ cp_junitPlatformConsole;
 		
@@ -52,7 +52,7 @@ public class TestMethodRunner
 			ProcessBuilder pb = new ProcessBuilder(
 				"cmd.exe","/c",
 				"java", "-cp", cp_junitPlatformConsole, "org.junit.platform.console.ConsoleLauncher",
-				"-cp","\""+classPath+";"+cp_junitPlatformConsole+"\\."+"\"",
+				"-cp","\""+classPath/*+";"+cp_junitPlatformConsole+"\\."*/+"\"",
 				"-c",classSignature,
 				"--disable-banner",
 				"--details=none"
@@ -60,33 +60,29 @@ public class TestMethodRunner
 			
 			pb.directory(testClassRootPath.toFile());
 			
-			try {
-				Process p = pb.start();
-				BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
-				BufferedReader outputError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-				String line;
-				
-				// Checks if there was an error creating the process
+			Process p = pb.start();
+			BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			BufferedReader outputError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			String line;
+			
+			// Checks if there was an error creating the process
+			while (outputError.ready() && (line = outputError.readLine()) != null) {
+				System.err.println(line);
+			}
+			
+			while ((line = output.readLine()) != null) {
+				// Displays error messages (if any)
 				while (outputError.ready() && (line = outputError.readLine()) != null) {
 					System.err.println(line);
 				}
 				
-				while ((line = output.readLine()) != null) {
-					// Displays error messages (if any)
-					while (outputError.ready() && (line = outputError.readLine()) != null) {
-						System.err.println(line);
-					}
-					
-					System.out.println(line);
-				}
-				
-				output.close();
-				outputError.close();
-				p.waitFor();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println(line);
 			}
-		} catch (IOException e1) {
+			
+			output.close();
+			outputError.close();
+			p.waitFor();
+		} catch (IOException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
 	}

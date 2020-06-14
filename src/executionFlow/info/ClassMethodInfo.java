@@ -21,12 +21,10 @@ public class ClassMethodInfo
 	//-------------------------------------------------------------------------
 	private String methodName;
 	private Path classPath;
-	private Path testClassPath;
 	private Path srcPath;
-	private Path testSrcPath;
-	private String testMethodSignature;
 	private String methodSignature;
 	private String classSignature;
+	private String classPackage;
 	private int invocationLine;
 	private Class<?>[] parameterTypes;
 	private Object[] args;
@@ -40,34 +38,21 @@ public class ClassMethodInfo
 	 * Stores information about a method.
 	 * 
 	 * @param		classPath Method class file path
-	 * @param		testClassPath Test method class file path
 	 * @param		srcPath Path where source file is
-	 * @param		testSrcPath Path where source file of test method 
-	 * is
 	 * @param		invocationLine Line of test method where method is called
-	 * @param		classSignature Signature of the class that the method 
-	 * belongs
 	 * @param		methodSignature Signature of the method
-	 * @param		testMethodSignature Signature of the test method to which 
-	 * the method belongs
 	 * @param		methodName Method's name
 	 * @param		returnType Return type of the method
 	 * @param		parameterTypes Types of method's parameters
 	 * @param		args Method's arguments
 	 */
-	private ClassMethodInfo(Path classPath, Path testClassPath, Path srcPath, 
-			Path testSrcPath, int invocationLine, String classSignature,
-			String methodSignature, String testMethodSignature, 
-			String methodName, Class<?> returnType, Class<?>[] parameterTypes, 
-			Object... args) 
+	private ClassMethodInfo(Path classPath, Path srcPath, int invocationLine,
+			String methodSignature, String methodName,
+			Class<?> returnType, Class<?>[] parameterTypes, Object[] args) 
 	{
 		this.classPath = classPath;
-		this.testClassPath = testClassPath;
 		this.srcPath = srcPath;
-		this.testSrcPath = testSrcPath;
 		this.methodSignature = methodSignature;
-		this.classSignature = classSignature;
-		this.testMethodSignature = testMethodSignature;
 		this.methodName = methodName;
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
@@ -83,27 +68,17 @@ public class ClassMethodInfo
 	 * Builder for ClassMethodInfo. It is necessary to fill all required 
 	 * fields. The required fields are: <br />
 	 * <ul>
-	 * 		<li>classPath</li>
-	 * 		<li>testClassPath</li>
-	 * 		<li>srcPath</li>
-	 * 		<li>testSrcPath</li>
-	 * 		<li>invocationLine</li>
-	 * 		<li>methodSignature</li>
-	 * 		<li>classSignature</li>
-	 * 		<li>testMethodSignature</li>
-	 * 		<li>methodName</li>
+	 * 	<li>classPath</li>
+	 * 	<li>srcPath</li>
+	 * 	<li>methodSignature</li>
 	 * </ul>
 	 */
 	public static class ClassMethodInfoBuilder
 	{
 		private String methodName;
 		private Path classPath;
-		private Path testClassPath;
 		private Path srcPath;
-		private Path testSrcPath;
-		private String classSignature;
 		private String methodSignature;
-		private String testMethodSignature;
 		private int invocationLine;
 		private Class<?>[] parameterTypes;
 		private Object[] args;
@@ -141,20 +116,6 @@ public class ClassMethodInfo
 		}
 		
 		/**
-		 * @param		testClassPath Test method class file path
-		 * @return		Builder to allow chained calls
-		 * @throws		IllegalArgumentException If testClassPath is null
-		 */
-		public ClassMethodInfoBuilder testClassPath(Path testClassPath)
-		{
-			if (testClassPath == null)
-				throw new IllegalArgumentException("Test method class file path cannot be null");
-				
-			this.testClassPath = testClassPath.isAbsolute() ? testClassPath : testClassPath.toAbsolutePath();
-			return this;
-		}
-		
-		/**
 		 * @param		srcPath Path where method's source file is
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If srcPath is null
@@ -170,36 +131,6 @@ public class ClassMethodInfo
 		}
 		
 		/**
-		 * @param		testSrcPath Path where test method's source file is
-		 * @return		Builder to allow chained calls
-		 * @throws		IllegalArgumentException If testSrcPath is null
-		 */
-		public ClassMethodInfoBuilder testSrcPath(Path testSrcPath)
-		{
-			if (testSrcPath == null)
-				throw new IllegalArgumentException("Test method's source file cannot be null");
-			
-			this.testSrcPath = testSrcPath.isAbsolute() ? testSrcPath : testSrcPath.toAbsolutePath();
-			
-			return this;
-		}
-		
-		/**
-		 * @param		classSignature Class signature
-		 * @return		Builder to allow chained calls
-		 * @throws		IllegalArgumentException If classSignature is null
-		 */
-		public ClassMethodInfoBuilder classSignature(String classSignature)
-		{
-			if (classSignature == null)
-				throw new IllegalArgumentException("Class signature cannot be null");
-			
-			this.classSignature = classSignature;
-			
-			return this;
-		}
-		
-		/**
 		 * @param		methodSignature Method signature
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If methodSignature is null
@@ -210,22 +141,6 @@ public class ClassMethodInfo
 				throw new IllegalArgumentException("Method signature cannot be null");
 			
 			this.methodSignature = methodSignature;
-			
-			return this;
-		}
-		
-		/**
-		 * @param		testMethodSignature Signature of the test method to 
-		 * which the method belongs
-		 * @return		Builder to allow chained calls
-		 * @throws		IllegalArgumentException If testMethodSignature is null
-		 */
-		public ClassMethodInfoBuilder testMethodSignature(String testMethodSignature)
-		{
-			if (testMethodSignature == null)
-				throw new IllegalArgumentException("Test method signature cannot be null");
-			
-			this.testMethodSignature = testMethodSignature;
 			
 			return this;
 		}
@@ -276,7 +191,7 @@ public class ClassMethodInfo
 			
 			return this;
 		}
-		
+
 		/**
 		 * @param		returnType Method return type
 		 * @return		Builder to allow chained calls
@@ -297,15 +212,9 @@ public class ClassMethodInfo
 		 * necessary that required fields must be filled. The required 
 		 * fields are: <br />
 		 * <ul>
-		 * 		<li>classPath</li>
-		 * 		<li>testClassPath</li>
-		 * 		<li>srcPath</li>
-		 * 		<li>testSrcPath</li>
-		 * 		<li>invocationLine</li>
-		 * 		<li>methodSignature</li>
-		 * 		<li>classSignature</li>
-		 * 		<li>testMethodSignature</li>
-		 * 		<li>methodName</li>
+		 * 	<li>classPath</li>
+		 * 	<li>srcPath</li>
+		 * 	<li>methodSignature</li>
 		 * </ul>
 		 * 
 		 * @return		ClassMethodInfo with provided information
@@ -317,31 +226,18 @@ public class ClassMethodInfo
 			
 			if (classPath == null)
 				nullFields.append("classPath").append(", ");
-			if (testClassPath == null)
-				nullFields.append("testClassPath").append(", ");
 			if (srcPath == null)
 				nullFields.append("srcPath").append(", ");
-			if (testSrcPath == null)
-				nullFields.append("testSrcPath").append(", ");
-			if (invocationLine <= 0)
-				nullFields.append("invocationLine").append(", ");
-			if (classSignature == null)
-				nullFields.append("classSignature").append(", ");
 			if (methodSignature == null)
 				nullFields.append("methodSignature").append(", ");
-			if (testMethodSignature == null)
-				nullFields.append("testMethodSignature").append(", ");
-			if (methodName == null)
-				nullFields.append("methodName").append(", ");
 			
 			if (nullFields.length() > 0)
 				throw new IllegalArgumentException("Required fields cannot be null: "
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
 			return new ClassMethodInfo(
-				classPath, testClassPath, srcPath, testSrcPath, invocationLine, 
-				classSignature, methodSignature, testMethodSignature, methodName, 
-				returnType, parameterTypes, args
+				classPath, srcPath, invocationLine, methodSignature, 
+				methodName, returnType, parameterTypes, args
 			);
 		}
 	}
@@ -353,26 +249,14 @@ public class ClassMethodInfo
 	@Override
 	public String toString() 
 	{
-		return "ClassMethodInfo [methodName=" + methodName + ", classPath=" 
-				+ classPath + ", testClassPath=" + testClassPath + ", srcPath=" 
-				+ srcPath + ", testMethodSrcPath=" + testSrcPath 
-				+ ", testMethodSignature=" + testMethodSignature 
+		return "ClassMethodInfo [methodName=" + methodName 
+				+ ", classPath=" + classPath + ", srcPath=" + srcPath
 				+ ", classSignature=" + classSignature 
 				+ ", methodSignature=" + methodSignature 
 				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
 				+ ", args="	+ Arrays.toString(args) 
 				+ ", returnType=" + returnType + "]";
-	}
-
-	/**
-	 * Extracts test method signature and method signature.
-	 * 
-	 * @return		Test method signature and method signature
-	 */
-	public SignaturesInfo extractSignatures()
-	{
-		return new SignaturesInfo(methodSignature, testMethodSignature);
 	}
 	
 	/**
@@ -504,16 +388,6 @@ public class ClassMethodInfo
 	}
 	
 	/**
-	 * Gets path of the compiled file of the test method.
-	 * 
-	 * @return		Path of the compiled file of the test method
-	 */
-	public Path getTestClassPath()
-	{
-		return this.testClassPath;
-	}
-	
-	/**
 	 * Gets the path of the method source file.
 	 * 
 	 * @return		Path of the method source file
@@ -521,16 +395,6 @@ public class ClassMethodInfo
 	public Path getSrcPath()
 	{
 		return this.srcPath;
-	}
-	
-	/**
-	 * Gets the path of the test method source file.
-	 * 
-	 * @return		Path of the test method source file
-	 */
-	public Path getTestSrcPath()
-	{
-		return this.testSrcPath;
 	}
 	
 	/**
@@ -544,23 +408,17 @@ public class ClassMethodInfo
 	}
 	
 	/**
-	 * Gets test method signature.
-	 * 
-	 * @return		Test method signature
-	 */
-	public String getTestMethodSignature() 
-	{
-		return testMethodSignature;
-	}
-	
-	/**
 	 * Gets class signature. 
 	 * 
 	 * @return		Class signature
+	 * @implNote	Lazy initialization
 	 */
 	public String getClassSignature()
 	{
-		return this.classSignature;
+		if (classSignature == null)
+			classSignature = extractClassSignature(methodSignature);
+		
+		return classSignature; 
 	}
 	
 	/**
@@ -606,35 +464,15 @@ public class ClassMethodInfo
 	/**
 	 * Gets package of the method.
 	 * 
-	 * @return		Package to which the method belongs
+	 * @return		Package to which the class belongs
+	 * @implNote	Lazy initialization
 	 */
 	public String getPackage()
 	{
-		if (classSignature == null) { return ""; }
-		
-		return extractPackage(classSignature);
-	}
-	
-	/**
-	 * Gets package of the test method.
-	 * 
-	 * @return		Package to which the method belongs
-	 */
-	public String getTestClassPackage()
-	{
-		return extractPackage(getTestClassSignature());
-	}
-	
-	/**
-	 * Gets class signature from the test method. 
-	 * 
-	 * @return		Class signature
-	 */
-	public String getTestClassSignature()
-	{
-		if (testMethodSignature == null) { return ""; }
-		
-		return extractClassSignature(testMethodSignature);
+		if (classPackage == null)
+			classPackage = extractPackage(getClassSignature());
+
+		return classPackage;
 	}
 	
 	/**
@@ -648,16 +486,6 @@ public class ClassMethodInfo
 			return methodType(returnType);
 		
 		return methodType(returnType, parameterTypes);
-	}
-	
-	/**
-	 * Gets directory where the test method's compiled file is.
-	 * 
-	 * @return		Directory where the compiled test method file is
-	 */
-	public Path getTestClassDirectory()
-	{
-		return getCompiledFileDirectory(testClassPath);
 	}
 	
 	/**

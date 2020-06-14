@@ -25,28 +25,57 @@ import executionFlow.info.ClassMethodInfo;
  */
 public aspect TestMethodCollector extends RuntimeCollector
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private MethodManager testMethodManager;
 	private static boolean firstTime = true;
 	private static boolean finished = false;
 	private String testClassName;
 	private String testClassPackage;
 	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
+	private boolean junit5NewTest;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
+	pointcut junit4():
+		!junit4_internal() && 
+		execution(@org.junit.Test * *.*());
+	
+	pointcut junit5():
+		!junit5_internal() && (
+			execution(@org.junit.jupiter.api.Test * *.*()) ||
+			execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
+			execution(@org.junit.jupiter.api.RepeatedTest * *.*(..))
+		);
+	
 	pointcut testMethodCollector():
 		!skipAnnotation() &&
 		(junit4() || junit5());
 	
+	pointcut junit5_newTests():
+		execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
+		execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
+	
+	before(): junit5_newTests()
+	{
+		junit5NewTest = true;
+	}
+	
 	/**
-	 * Executed before each method with <code>@Test</code> annotation.
+	 * Executed before each test method.
 	 */
 	before(): testMethodCollector()
 	{
 		if (finished)
 			return;
+		
+		if (junit5NewTest) {
+			ConsoleOutput.showWarning("New JUnit 5 annotations are not supported");
+			return;
+		}
 		
 		reset();
 
@@ -65,6 +94,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
 			testClassPackage = ClassMethodInfo.extractPackage(testClassSignature);
 			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
+			testMethodArgs = thisJoinPoint.getArgs();
 			
 			FileManager testMethodFileManager = new FileManager(
 				testSrcPath,
@@ -73,7 +103,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 				new AssertFileParserFactory(),
 				"original_assert"
 			);
-			
+
+			// Checks if it the first execution
 			if (testMethodManager == null && !checkpoint.isActive())
 				testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
 
@@ -91,7 +122,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			if (firstTime) {
 				ConsoleOutput.showInfo("Pre-processing test method...");
 				
-				// Enabled checkpoint
+				// Enables checkpoint
 				checkpoint.enable();
 				
 				// Parses test method and handles all asserts so that method collection 
@@ -104,8 +135,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			ConsoleOutput.showError(e.getMessage());
 			e.printStackTrace();
 			
-			// Stops execution if a problem occurs
-			System.exit(-1);
+			System.exit(-1);	// Stops execution if a problem occurs
 		}
 	}
 	
@@ -113,14 +143,18 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Executed after the end of a method with <code>@Test</code> annotation.
 	 */
 	after(): testMethodCollector() 
-	{	
+	{			
+		if (junit5NewTest)
+			return;
+		
 		// Runs a new process of the application. This code block must only be
 		// executed once per test file
 		if (firstTime) {
+			boolean hasError = false;
+			
 			firstTime = false;
 			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
 			finished = true;
-			boolean hasError = false;
 			
 			// Restores original test method file and its compiled file
 			try {

@@ -57,21 +57,21 @@ public abstract aspect RuntimeCollector
 	protected static Path testClassPath;
 	protected static Path testSrcPath;
 	protected static String testMethodPackage;
-	protected static String lastInsertedMethod = "";
-	protected static boolean lastWasInternalCall;
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
 	protected static int order;
+	protected static Object[] testMethodArgs;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
 	pointcut skipAnnotation():
-		withincode(@executionFlow.runtime.SkipMethod * *.*()) ||
-		withincode(@executionFlow.runtime._SkipMethod * *.*()) ||
-		execution(@executionFlow.runtime.SkipMethod * *.*()) ||
-		execution(@executionFlow.runtime._SkipMethod * *.*()); 
+		within(@SkipCollection *) ||
+		withincode(@executionFlow.runtime.SkipMethod * *.*(..)) ||
+		withincode(@executionFlow.runtime._SkipMethod * *.*(..)) ||
+		execution(@executionFlow.runtime.SkipMethod * *.*(..)) ||
+		execution(@executionFlow.runtime._SkipMethod * *.*(..)); 
 	
 	pointcut junit4():
 		!junit4_internal() && 
@@ -80,9 +80,8 @@ public abstract aspect RuntimeCollector
 	pointcut junit5():
 		!junit5_internal() && (
 			withincode(@org.junit.jupiter.api.Test * *.*()) ||
-			withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(*)) ||
-			withincode(@org.junit.jupiter.api.RepeatedTest * *.*()) //||
-			//withincode(@org.junit.jupiter.api.BeforeEach * *.*())
+			withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
+			withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..))
 		);
 	
 	pointcut junit4_internal():
@@ -110,7 +109,9 @@ public abstract aspect RuntimeCollector
 	 */
 	protected boolean isNativeMethod(String methodSignature)
 	{
-		return methodSignature == null || methodSignature.contains("java.") || methodSignature.contains("jdk.");
+		return	methodSignature == null || 
+				methodSignature.contains("java.") || 
+				methodSignature.contains("jdk.");
 	}
 	
 	/**
@@ -135,8 +136,6 @@ public abstract aspect RuntimeCollector
 		testMethodSignature = null;
 		testClassPath = null;
 		testSrcPath = null;
-		lastInsertedMethod = null;
-		lastWasInternalCall = false;
 		skipCollection = false;
 		testMethodPackage = null;
 		lastInvocationLine = 0;
