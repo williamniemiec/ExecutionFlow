@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.MethodInvokerInfo;
 
 
 /**
@@ -35,7 +35,7 @@ public class TestMethodRunner
 	public static void run(String testClassName, Path testClassPath, String testClassPackage)
 	{	
 		String appRoot = ExecutionFlow.getAppRootPath();
-		Path testClassRootPath = ClassMethodInfo.extractClassRootDirectory(testClassPath, testClassPackage);
+		Path testClassRootPath = MethodInvokerInfo.extractClassRootDirectory(testClassPath, testClassPackage);
 		Path libPath = Path.of(appRoot+"\\lib");
 		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
 		String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";

@@ -15,20 +15,20 @@ public class CollectorInfo
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores {@link ClassMethodInfo information} about a method.
+	 * Stores {@link MethodInvokerInfo information} about a method.
 	 */
-	private ClassMethodInfo methodInfo;
+	private MethodInvokerInfo methodInfo;
 	
 	/**
-	 * Stores {@link ClassMethodInfo information} about a test method.
+	 * Stores {@link MethodInvokerInfo information} about a test method.
 	 */
-	private ClassMethodInfo testMethodInfo;
+	private MethodInvokerInfo testMethodInfo;
 	
 	/**
-	 * Stores {@link ClassConstructorInfo information} about the constructor of
+	 * Stores {@link ConstructorInvokerInfo information} about the constructor of
 	 * {@link #methodInfo the method}.
 	 */
-	private ClassConstructorInfo constructorInfo;
+	private ConstructorInvokerInfo constructorInfo;
 	
 	/**
 	 * The order of a method is how many methods are called in this line before
@@ -49,7 +49,7 @@ public class CollectorInfo
 	 * than one method is called in a single line. The order of a method is how
 	 * many methods are called in this line before it
 	 */
-	public CollectorInfo(ClassMethodInfo methodInfo, ClassMethodInfo testMethodInfo, int order)
+	public CollectorInfo(MethodInvokerInfo methodInfo, MethodInvokerInfo testMethodInfo, int order)
 	{
 		this.methodInfo = methodInfo;
 		this.testMethodInfo = testMethodInfo;
@@ -112,22 +112,22 @@ public class CollectorInfo
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
-	public ClassMethodInfo getMethodInfo() 
+	public MethodInvokerInfo getMethodInfo() 
 	{
 		return methodInfo;
 	}
 
-	public void setMethodInfo(ClassMethodInfo testMethodInfo) 
+	public void setMethodInfo(MethodInvokerInfo testMethodInfo) 
 	{
 		this.testMethodInfo = testMethodInfo;
 	}
 	
-	public ClassMethodInfo getTestMethodInfo() 
+	public MethodInvokerInfo getTestMethodInfo() 
 	{
 		return testMethodInfo;
 	}
 
-	public void setTestMethodInfo(ClassMethodInfo testMethodInfo) 
+	public void setTestMethodInfo(MethodInvokerInfo testMethodInfo) 
 	{
 		this.testMethodInfo = testMethodInfo;
 	}

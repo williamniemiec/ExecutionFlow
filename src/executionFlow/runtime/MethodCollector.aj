@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.MethodInvokerInfo;
 import executionFlow.info.CollectorInfo;
 
 
@@ -122,7 +122,7 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Collects the method
 		try {
-			ClassMethodInfo methodInfo = new ClassMethodInfo.ClassMethodInfoBuilder()
+			MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(classPath)
 				.methodSignature(methodSignature)
 				.methodName(methodName)
@@ -133,7 +133,7 @@ public aspect MethodCollector extends RuntimeCollector
 				.srcPath(srcPath)
 				.build();
 			
-			ClassMethodInfo testMethodInfo = new ClassMethodInfo.ClassMethodInfoBuilder()
+			MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
 				.methodSignature(testMethodSignature)
 				.args(testMethodArgs)

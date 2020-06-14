@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @version		1.5
  * @since		1.0
  */
-public class ClassMethodInfo extends InvokerInfo
+public class MethodInvokerInfo extends InvokerInfo
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -38,7 +38,7 @@ public class ClassMethodInfo extends InvokerInfo
 	 * @param		parameterTypes Types of method's parameters
 	 * @param		args Method's arguments
 	 */
-	private ClassMethodInfo(Path classPath, Path srcPath, int invocationLine,
+	private MethodInvokerInfo(Path classPath, Path srcPath, int invocationLine,
 			String methodSignature, String methodName,
 			Class<?> returnType, Class<?>[] parameterTypes, Object[] args) 
 	{
@@ -57,7 +57,7 @@ public class ClassMethodInfo extends InvokerInfo
 	//		Builder
 	//-------------------------------------------------------------------------
 	/**
-	 * Builder for {@link ClassMethodInfo}. It is necessary to fill all 
+	 * Builder for {@link MethodInvokerInfo}. It is necessary to fill all 
 	 * required fields. The required fields are: <br />
 	 * <ul>
 	 * 	<li>classPath</li>
@@ -65,7 +65,7 @@ public class ClassMethodInfo extends InvokerInfo
 	 * 	<li>methodSignature</li>
 	 * </ul>
 	 */
-	public static class ClassMethodInfoBuilder
+	public static class MethodInvokerInfoBuilder
 	{
 		private String methodName;
 		private Path classPath;
@@ -82,7 +82,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If methodName is null
 		 */
-		public ClassMethodInfoBuilder methodName(String methodName)
+		public MethodInvokerInfoBuilder methodName(String methodName)
 		{
 			if (methodName == null)
 				throw new IllegalArgumentException("Method's name cannot be null");
@@ -97,7 +97,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If classPath is null
 		 */
-		public ClassMethodInfoBuilder classPath(Path classPath)
+		public MethodInvokerInfoBuilder classPath(Path classPath)
 		{
 			if (classPath == null)
 				throw new IllegalArgumentException("Method class file path cannot be null");
@@ -112,7 +112,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If srcPath is null
 		 */
-		public ClassMethodInfoBuilder srcPath(Path srcPath)
+		public MethodInvokerInfoBuilder srcPath(Path srcPath)
 		{
 			if (srcPath == null)
 				throw new IllegalArgumentException("Method's source file cannot be null");
@@ -127,7 +127,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If invokerSignature is null
 		 */
-		public ClassMethodInfoBuilder methodSignature(String methodSignature)
+		public MethodInvokerInfoBuilder methodSignature(String methodSignature)
 		{
 			if (methodSignature == null)
 				throw new IllegalArgumentException("Method signature cannot be null");
@@ -144,7 +144,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @throws		IllegalArgumentException If invocationLine is less than
 		 * or equal to zero
 		 */
-		public ClassMethodInfoBuilder invocationLine(int invocationLine)
+		public MethodInvokerInfoBuilder invocationLine(int invocationLine)
 		{
 			if (invocationLine <= 0)
 				throw new IllegalArgumentException("Invocation line must be a number greater than zero");
@@ -159,7 +159,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
-		public ClassMethodInfoBuilder parameterTypes(Class<?>[] parameterTypes)
+		public MethodInvokerInfoBuilder parameterTypes(Class<?>[] parameterTypes)
 		{
 			if (parameterTypes == null)
 				throw new IllegalArgumentException("Types of method's parameters cannot be null");
@@ -174,7 +174,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If args is null
 		 */
-		public ClassMethodInfoBuilder args(Object... args)
+		public MethodInvokerInfoBuilder args(Object... args)
 		{
 			if (args == null)
 				throw new IllegalArgumentException("Method's arguments cannot be null");
@@ -189,7 +189,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If returnType is null
 		 */
-		public ClassMethodInfoBuilder returnType(Class<?> returnType)
+		public MethodInvokerInfoBuilder returnType(Class<?> returnType)
 		{
 			if (returnType == null)
 				throw new IllegalArgumentException("Method return type cannot be null");
@@ -200,7 +200,7 @@ public class ClassMethodInfo extends InvokerInfo
 		}
 		
 		/**
-		 * Creates {@link ClassMethodInfo} with provided information. It is
+		 * Creates {@link MethodInvokerInfo} with provided information. It is
 		 * necessary that required fields must be filled. The required 
 		 * fields are: <br />
 		 * <ul>
@@ -212,7 +212,7 @@ public class ClassMethodInfo extends InvokerInfo
 		 * @return		ClassMethodInfo with provided information
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public ClassMethodInfo build() throws IllegalArgumentException
+		public MethodInvokerInfo build() throws IllegalArgumentException
 		{
 			StringBuilder nullFields = new StringBuilder();
 			
@@ -227,7 +227,7 @@ public class ClassMethodInfo extends InvokerInfo
 				throw new IllegalArgumentException("Required fields cannot be null: "
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
-			return new ClassMethodInfo(
+			return new MethodInvokerInfo(
 				classPath, srcPath, invocationLine, invokerSignature, 
 				methodName, returnType, parameterTypes, args
 			);
@@ -241,11 +241,12 @@ public class ClassMethodInfo extends InvokerInfo
 	@Override
 	public String toString() 
 	{
-		return "ClassMethodInfo ["
+		return "MethodInvoker ["
 				+ "methodName=" + methodName 
 				+ ", classPath=" + classPath 
 				+ ", srcPath=" + srcPath
-				+ ", classSignature=" + classSignature 
+				+ ", classSignature=" + getClassSignature()
+				+ ", classPackage=" + getPackage()
 				+ ", methodSignature=" + invokerSignature 
 				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 

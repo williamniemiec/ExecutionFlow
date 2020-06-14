@@ -8,7 +8,7 @@ import executionFlow.core.file.FileManager;
 import executionFlow.core.file.MethodManager;
 import executionFlow.core.file.ParserType;
 import executionFlow.core.file.parser.factory.AssertFileParserFactory;
-import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.MethodInvokerInfo;
 
 
 /**
@@ -92,13 +92,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 			// Gets source file path of the test method
 			String testClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
 			testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
-			testClassPackage = ClassMethodInfo.extractPackage(testClassSignature);
+			testClassPackage = MethodInvokerInfo.extractPackage(testClassSignature);
 			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
 			testMethodArgs = thisJoinPoint.getArgs();
 			
 			FileManager testMethodFileManager = new FileManager(
 				testSrcPath,
-				ClassMethodInfo.getCompiledFileDirectory(testClassPath),
+				MethodInvokerInfo.getCompiledFileDirectory(testClassPath),
 				testClassPackage,
 				new AssertFileParserFactory(),
 				"original_assert"
@@ -214,6 +214,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// completed all test paths have been computed
 		if (finished)
 			return;
+		
+		System.out.println("Cons");
+		System.out.println(constructorCollector);
 		
 		// Gets test paths of the collected methods and export them
 		ExecutionFlow ef = new ExecutionFlow(methodCollector);

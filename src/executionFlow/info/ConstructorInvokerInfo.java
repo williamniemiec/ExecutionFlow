@@ -11,7 +11,7 @@ import java.util.Arrays;
  * @version	1.5
  * @since	1.0
  */
-public class ClassConstructorInfo extends InvokerInfo
+public class ConstructorInvokerInfo extends InvokerInfo
 {
 	//-------------------------------------------------------------------------
 	//		Constructor
@@ -26,7 +26,7 @@ public class ClassConstructorInfo extends InvokerInfo
 	 * @param		parameterTypes Types of constructor's parameters
 	 * @param		args Constructor's arguments
 	 */
-	private ClassConstructorInfo(Path classPath, Path srcPath, int invocationLine,
+	private ConstructorInvokerInfo(Path classPath, Path srcPath, int invocationLine,
 			String constructorSignature, Class<?>[] parameterTypes, Object[] args) 
 	{
 		this.classPath = classPath;
@@ -42,7 +42,7 @@ public class ClassConstructorInfo extends InvokerInfo
 	//		Builder
 	//-------------------------------------------------------------------------
 	/**
-	 * Builder for {@link ClassConstructorInfo}. It is necessary to fill all 
+	 * Builder for {@link ConstructorInvokerInfo}. It is necessary to fill all 
 	 * required fields. The required fields are: <br />
 	 * <ul>
 	 * 	<li>classPath</li>
@@ -50,7 +50,7 @@ public class ClassConstructorInfo extends InvokerInfo
 	 * 	<li>constructorSignature</li>
 	 * </ul>
 	 */
-	public static class ClassMethodInfoBuilder
+	public static class ConstructorInvokerInfoBuilder
 	{
 		private Path classPath;
 		private Path srcPath;
@@ -65,7 +65,7 @@ public class ClassConstructorInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If classPath is null
 		 */
-		public ClassMethodInfoBuilder classPath(Path classPath)
+		public ConstructorInvokerInfoBuilder classPath(Path classPath)
 		{
 			if (classPath == null)
 				throw new IllegalArgumentException("Constructor class file path cannot be null");
@@ -80,7 +80,7 @@ public class ClassConstructorInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If srcPath is null
 		 */
-		public ClassMethodInfoBuilder srcPath(Path srcPath)
+		public ConstructorInvokerInfoBuilder srcPath(Path srcPath)
 		{
 			if (srcPath == null)
 				throw new IllegalArgumentException("Constructor's source file cannot be null");
@@ -95,7 +95,7 @@ public class ClassConstructorInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If invokerSignature is null
 		 */
-		public ClassMethodInfoBuilder constructorSignature(String constructorSignature)
+		public ConstructorInvokerInfoBuilder constructorSignature(String constructorSignature)
 		{
 			if (constructorSignature == null)
 				throw new IllegalArgumentException("Constructor signature cannot be null");
@@ -112,7 +112,7 @@ public class ClassConstructorInfo extends InvokerInfo
 		 * @throws		IllegalArgumentException If invocationLine is less than
 		 * or equal to zero
 		 */
-		public ClassMethodInfoBuilder invocationLine(int invocationLine)
+		public ConstructorInvokerInfoBuilder invocationLine(int invocationLine)
 		{
 			if (invocationLine <= 0)
 				throw new IllegalArgumentException("Invocation line must be a number greater than zero");
@@ -127,7 +127,7 @@ public class ClassConstructorInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
-		public ClassMethodInfoBuilder parameterTypes(Class<?>[] parameterTypes)
+		public ConstructorInvokerInfoBuilder parameterTypes(Class<?>[] parameterTypes)
 		{
 			if (parameterTypes == null)
 				throw new IllegalArgumentException("Types of constructor's parameters cannot be null");
@@ -142,7 +142,7 @@ public class ClassConstructorInfo extends InvokerInfo
 		 * @return		Builder to allow chained calls
 		 * @throws		IllegalArgumentException If args is null
 		 */
-		public ClassMethodInfoBuilder args(Object... args)
+		public ConstructorInvokerInfoBuilder args(Object... args)
 		{
 			if (args == null)
 				throw new IllegalArgumentException("Constructor's arguments cannot be null");
@@ -153,7 +153,7 @@ public class ClassConstructorInfo extends InvokerInfo
 		}
 		
 		/**
-		 * Creates {@link ClassConstructorInfo} with provided information. It is
+		 * Creates {@link ConstructorInvokerInfo} with provided information. It is
 		 * necessary that required fields must be filled. The required 
 		 * fields are: <br />
 		 * <ul>
@@ -165,7 +165,7 @@ public class ClassConstructorInfo extends InvokerInfo
 		 * @return		ClassConstructorInfo with provided information
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public ClassConstructorInfo build() throws IllegalArgumentException
+		public ConstructorInvokerInfo build() throws IllegalArgumentException
 		{
 			StringBuilder nullFields = new StringBuilder();
 			
@@ -180,7 +180,7 @@ public class ClassConstructorInfo extends InvokerInfo
 				throw new IllegalArgumentException("Required fields cannot be null: "
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
-			return new ClassConstructorInfo(
+			return new ConstructorInvokerInfo(
 				classPath, srcPath, invocationLine, invokerSignature, 
 				parameterTypes, args
 			);
@@ -194,15 +194,25 @@ public class ClassConstructorInfo extends InvokerInfo
 	@Override
 	public String toString() 
 	{
-		return "ClassConstructorInfo ["
+		return "ConstructorInvokerInfo ["
 				+ "classPath=" + classPath 
 				+ ", srcPath=" + srcPath
-				+ ", classSignature=" + classSignature 
+				+ ", classSignature=" + getClassSignature()
+				+ ", classPackage=" + getPackage()
 				+ ", constructorSignature=" + invokerSignature 
 				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
 				+ ", args="	+ Arrays.toString(args) 
 			+ "]";
+	}
+	
+	@Override
+	public String getClassSignature()
+	{
+		if (classSignature == null)
+			classSignature = invokerSignature.split("\\(")[0];
+		
+		return classSignature; 
 	}
 	
 	

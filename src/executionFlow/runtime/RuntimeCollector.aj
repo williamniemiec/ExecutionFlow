@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.ConstructorInvokerInfo;
 import executionFlow.info.CollectorInfo;
 
 
@@ -51,7 +51,7 @@ public abstract aspect RuntimeCollector
 	 * 		<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
-	protected static Map<String, ClassConstructorInfo> consCollector = new LinkedHashMap<>();
+	protected static Map<String, ConstructorInvokerInfo> constructorCollector = new LinkedHashMap<>();
 	
 	protected static String testMethodSignature;
 	protected static Path testClassPath;
@@ -132,7 +132,7 @@ public abstract aspect RuntimeCollector
 	{
 		collectedMethods.clear();
 		methodCollector.clear();
-		consCollector.clear();
+		constructorCollector.clear();
 		testMethodSignature = null;
 		testClassPath = null;
 		testSrcPath = null;

@@ -1,8 +1,11 @@
 package executionFlow.runtime;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 
-import executionFlow.info.ClassConstructorInfo;
+import executionFlow.info.ConstructorInvokerInfo;
+import executionFlow.info.InvokerInfo;
 
 
 /**
@@ -36,25 +39,56 @@ public aspect ConstructorCollector extends RuntimeCollector
 		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		
 		// Collect constructor data
-		Class<?>[] consParamTypes;		// Constructor parameter types
-		Object[] consParamValues;		// Constructor parameter values
+		Class<?>[] paramTypes;		// Constructor parameter types
+		Object[] paramValues;		// Constructor parameter values
 		
 		// Checks if it is a constructor signature
 		if (!signature.matches(constructorRegex)) { return; }
 		
 		// Extracts constructor data
 		if (thisJoinPoint.getArgs() == null) {
-			consParamTypes = new Class<?>[0];
-			consParamValues = new Object[0];
+			paramTypes = new Class<?>[0];
+			paramValues = new Object[0];
 		} 
 		else {
-			consParamTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
-			consParamValues = thisJoinPoint.getArgs();			
+			paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
+			paramValues = thisJoinPoint.getArgs();			
 		}
 		
-		String key = signature+Arrays.toString(consParamValues);
+		String key = signature + Arrays.toString(paramValues);
+		String classSignature = signature.split("\\(")[0];
 		
-		// Saves extracted data
-		//consCollector.put(key, new ClassConstructorInfo(consParamTypes, consParamValues));
+		// Gets class path and source path
+		try {
+			// Class path and source path from method
+			String className = CollectorExecutionFlow.extractMethodName(signature);
+			
+			// errados
+			Path classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
+			Path srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
+		
+			System.out.println("-----");
+			System.out.println(signature);
+			System.out.println(classSignature);
+			System.out.println(className);
+			System.out.println(classPath);
+			System.out.println(srcPath);
+			System.out.println("-----");
+			
+			ConstructorInvokerInfo cii = new ConstructorInvokerInfo.ConstructorInvokerInfoBuilder()
+				.classPath(classPath)
+				.srcPath(srcPath)
+				.constructorSignature(signature)
+				.parameterTypes(paramTypes)
+				.args(paramValues)
+				.invocationLine(thisJoinPoint.getSourceLocation().getLine())
+				.build();
+			
+			// Saves extracted data
+			constructorCollector.put(key, cii);
+		
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 }
