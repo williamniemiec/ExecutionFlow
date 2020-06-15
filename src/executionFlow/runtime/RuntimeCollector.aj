@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.info.ConstructorInvokerInfo;
+import executionFlow.info.MethodInvokerInfo;
 import executionFlow.info.CollectorInfo;
 
 
@@ -37,8 +38,8 @@ public abstract aspect RuntimeCollector
 	/**
 	 * Stores information about collected methods.<hr/>
 	 * <ul>
-	 * 		<li><b>Key:</b> Method invocation line</li>
-	 * 		<li><b>Value:</b> List of methods invoked from this line</li>
+	 * 	<li><b>Key:</b> Method invocation line</li>
+	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 	 * </ul>
 	 */
 	protected static Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
@@ -46,17 +47,15 @@ public abstract aspect RuntimeCollector
 	/**
 	 * Stores information about collected constructor.<hr/>
 	 * <ul>
-	 * 		<li><b>Key(with arguments):</b>		<code>classSignature[arg1,arg2,...]</code></li>
-	 * 		<li><b>Key(without arguments):</b>	<code>classSignature[]</code></li>
-	 * 		<li><b>Value:</b> Informations about the constructor</li>
+	 * 	<li><b>Key(with arguments):</b>		<code>classSignature[arg1,arg2,...]</code></li>
+	 * 	<li><b>Key(without arguments):</b>	<code>classSignature[]</code></li>
+	 * 	<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
-	protected static Map<String, ConstructorInvokerInfo> constructorCollector = new LinkedHashMap<>();
+	protected static Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
 	
 	protected static String testMethodSignature;
-	protected static Path testClassPath;
-	protected static Path testSrcPath;
-	protected static String testMethodPackage;
+	protected static MethodInvokerInfo testMethodInfo;
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
 	protected static int order;
@@ -134,10 +133,7 @@ public abstract aspect RuntimeCollector
 		methodCollector.clear();
 		constructorCollector.clear();
 		testMethodSignature = null;
-		testClassPath = null;
-		testSrcPath = null;
 		skipCollection = false;
-		testMethodPackage = null;
 		lastInvocationLine = 0;
 		order = 0;
 	}
@@ -148,10 +144,10 @@ public abstract aspect RuntimeCollector
 	 * @param		signature Signature of the method
 	 * @return		If the signature belongs to an internal call
 	 */
-	protected boolean isInternalCall(String signature)
-	{
-		return !Thread.currentThread().getStackTrace()[3].toString().contains(testMethodPackage);
-	}
+//	protected boolean isInternalCall(String signature)
+//	{
+//		return !Thread.currentThread().getStackTrace()[3].toString().contains(testMethodPackage);
+//	}
 	
 	/**
 	 * Checks if a signature of a constructor is from a test method 

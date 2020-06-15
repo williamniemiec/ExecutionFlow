@@ -133,15 +133,12 @@ public aspect MethodCollector extends RuntimeCollector
 				.srcPath(srcPath)
 				.build();
 			
-			MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
-				.methodSignature(testMethodSignature)
-				.args(testMethodArgs)
-				.srcPath(testSrcPath)
+			CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.order(order++)
 				.build();
 			
-			
-			CollectorInfo ci = new CollectorInfo(methodInfo, testMethodInfo, order++);
 			lastInvocationLine = invocationLine;
 			
 			// Stores key of collected method

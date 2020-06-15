@@ -1,9 +1,12 @@
 package executionFlow.runtime;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import executionFlow.ConsoleOutput;
+import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
+import executionFlow.MethodExecutionFlow;
 import executionFlow.core.file.FileManager;
 import executionFlow.core.file.MethodManager;
 import executionFlow.core.file.ParserType;
@@ -12,11 +15,11 @@ import executionFlow.info.MethodInvokerInfo;
 
 
 /**
- * Captures all executed methods with <code>@Test</code> annotation, not 
- * including internal calls.
+ * Captures all test methods, not including internal calls.
  * 
- * @apiNote		Ignores methods with {@link SkipMethod} annotation, methods with
- * {@link _SkipMethod} and all methods from classes with {@link SkipCollection}
+ * @apiNote		Ignores methods with {@link executionFlow.runtime.SkipMethod}
+ * annotation, methods with {@link executionFlow.runtime._SkipMethod} and all
+ * methods from classes with {@link executionFlow.runtime.SkipCollection} 
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
@@ -35,6 +38,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private String testClassPackage;
 	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
 	private boolean junit5NewTest;
+	private Path testClassPath;
 	
 	
 	//-------------------------------------------------------------------------
@@ -59,6 +63,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 		execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
 		execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
 	
+	/**
+	 * Executed on test not supported by the application.
+	 */
 	before(): junit5_newTests()
 	{
 		junit5NewTest = true;
@@ -80,8 +87,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		reset();
 
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
-		testMethodPackage = testMethodSignature.replaceAll("\\(.*\\)", "");
-		
+
 		// Gets information about test method
 		try {
 			// Gets compiled file path of the test method
@@ -93,8 +99,15 @@ public aspect TestMethodCollector extends RuntimeCollector
 			String testClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
 			testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
 			testClassPackage = MethodInvokerInfo.extractPackage(testClassSignature);
-			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
+			Path testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
 			testMethodArgs = thisJoinPoint.getArgs();
+
+			testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
+				.classPath(testClassPath)
+				.methodSignature(testMethodSignature)
+				.args(testMethodArgs)
+				.srcPath(testSrcPath)
+				.build();
 			
 			FileManager testMethodFileManager = new FileManager(
 				testSrcPath,
@@ -214,18 +227,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// completed all test paths have been computed
 		if (finished)
 			return;
-		
-		System.out.println("Cons");
-		System.out.println(constructorCollector);
-		
+
 		// Gets test paths of the collected methods and export them
-		ExecutionFlow ef = new ExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ef.execute().export();
 		
-		try {
-			ef.execute().export();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
+		// Gets test paths of the collected constructors and export them
+		ef = new ConstructorExecutionFlow(constructorCollector.values());
+		ef.execute().export();
 		
 		reset();	// Prepares for next test
 	}

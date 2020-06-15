@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokerInfo;
-import executionFlow.info.InvokerInfo;
 
 
 /**
- * Captures class instantiation.
+ * Captures class instantiation within test methods.
  * 
  * @apiNote		Excludes calls to native java methods, ExecutionFlow's classes,
  * methods with {@link SkipMethod]} signature and all methods from classes
@@ -62,18 +62,8 @@ public aspect ConstructorCollector extends RuntimeCollector
 		try {
 			// Class path and source path from method
 			String className = CollectorExecutionFlow.extractMethodName(signature);
-			
-			// errados
 			Path classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
 			Path srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
-		
-			System.out.println("-----");
-			System.out.println(signature);
-			System.out.println(classSignature);
-			System.out.println(className);
-			System.out.println(classPath);
-			System.out.println(srcPath);
-			System.out.println("-----");
 			
 			ConstructorInvokerInfo cii = new ConstructorInvokerInfo.ConstructorInvokerInfoBuilder()
 				.classPath(classPath)
@@ -85,7 +75,12 @@ public aspect ConstructorCollector extends RuntimeCollector
 				.build();
 			
 			// Saves extracted data
-			constructorCollector.put(key, cii);
+			CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+					.constructorInfo(cii)
+					.testMethodInfo(testMethodInfo)
+					.build();
+			
+			constructorCollector.put(key, ci);
 		
 		} catch (IOException e1) {
 			e1.printStackTrace();
