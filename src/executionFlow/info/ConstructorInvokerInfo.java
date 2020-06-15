@@ -9,7 +9,7 @@ import java.util.Arrays;
  * 
  * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version	1.5
- * @since	1.0
+ * @since	1.5
  */
 public class ConstructorInvokerInfo extends InvokerInfo
 {
