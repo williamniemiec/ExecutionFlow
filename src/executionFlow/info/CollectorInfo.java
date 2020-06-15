@@ -130,13 +130,12 @@ public class CollectorInfo
 		 * when more than one method is called in a single line. The order of a
 		 * method is how many methods are called in this line before it
 		 * @return		Builder to allow chained calls
-		 * @throws		IllegalArgumentException If order is less then or equal
-		 * to zero
+		 * @throws		IllegalArgumentException If order is less then zero
 		 */
 		public CollectorInfoBuilder order(int order)
 		{
-			if (order <= 0)
-				throw new IllegalArgumentException("Order cannot be less then or equal to zero");
+			if (order < 0)
+				throw new IllegalArgumentException("Order cannot be less then zero");
 			
 			this.order = order;
 			
@@ -192,6 +191,11 @@ public class CollectorInfo
 	public InvokerInfo getTestMethodInfo() 
 	{
 		return testMethodInfo;
+	}
+	
+	public InvokerInfo getConstructorInfo() 
+	{
+		return constructorInfo;
 	}
 	
 	public int getOrder()

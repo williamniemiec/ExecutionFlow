@@ -128,10 +128,8 @@ public class TestMethodFileParser extends FileParser
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
-				// Checks if line with @Test contains @SkipMethod
-				if ( line.contains("@Test") && 
-					 !line.contains("@executionFlow.runtime.SkipMethod") &&
-					 !line.contains("@SkipMethod") ) {
+				// Checks whether the line contains a test annotation
+				if (isTestMethod(line)) {
 					line += " @executionFlow.runtime._SkipMethod";
 				}
 				
@@ -145,5 +143,19 @@ public class TestMethodFileParser extends FileParser
 		}
 
 		return outputFile.getAbsolutePath();
+	}
+	
+	/**
+	 * Checks whether a line contains a test annotation.
+	 * 
+	 * @param		line Line to be analyzed
+	 * @return		If line contains a test annotation
+	 */
+	private boolean isTestMethod(String line)
+	{
+		return	line.contains("@Test"); //||
+				//line.contains("@BeforeEach");
+				//line.contains("@ParameterizedTest") ||
+				//line.contains("@RepeatedTest");
 	}
 }

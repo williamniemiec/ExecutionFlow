@@ -9,9 +9,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/junit-4.13.jar"/>
-	<classpathentry kind="lib" path="lib/hamcrest-all-1.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="C:/Users/William Niemiec/Documents/IC.local/workspace_ec12/ExecutionFlow/lib/aspectjtools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

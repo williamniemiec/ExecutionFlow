@@ -70,11 +70,14 @@ public class FileCompiler
 						+ appRootPath + "\\lib\\aspectjrt-1.9.2.jar" + ";"
 						+ appRootPath + "\\lib\\junit-4.13.jar" + ";"
 						+ appRootPath + "\\lib\\hamcrest-all-1.3.jar" + ";"
-						+ appRootPath + "\\lib\\junit5\\junit-jupiter-api-5.6.2.jar",
+						+ appRootPath + "\\lib\\junit-jupiter-api-5.6.2.jar" + ";"
+						+ appRootPath + "\\lib\\junit-jupiter-params-5.6.2.jar",
 				"-d", 
 				outputDir.toAbsolutePath().toString(), 
 				fileToCompile.toAbsolutePath().toString()
 			},m);
+		
+		compiler.quit();
 		
 		// -----{ DEBUG }-----
 		if (DEBUG) {

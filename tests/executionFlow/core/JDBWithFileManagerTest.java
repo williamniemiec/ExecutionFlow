@@ -12,7 +12,7 @@ import org.junit.Test;
 import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.MethodFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
-import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.MethodInvokerInfo;
 import executionFlow.runtime.SkipCollection;
 
 
@@ -40,7 +40,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod(int)";
 		
-		ClassMethodInfo ifElseMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo ifElseMethod = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -102,7 +102,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
-		ClassMethodInfo ifElseMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo ifElseMethod = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -164,7 +164,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest2()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
-		ClassMethodInfo ifElseMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo ifElseMethod = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -226,7 +226,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest3()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
-		ClassMethodInfo ifElseMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo ifElseMethod = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -288,7 +288,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.tryCatchTest1()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.tryCatchMethod_try()";
 		
-		ClassMethodInfo tryCatchMethod_try = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo tryCatchMethod_try = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -350,7 +350,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.tryCatchTest2()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()";
 		
-		ClassMethodInfo tryCatchMethod_catch = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo tryCatchMethod_catch = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -412,7 +412,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.switchCaseTest()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.switchCaseMethod(char)";
 		
-		ClassMethodInfo switchCaseTest = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo switchCaseTest = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -474,7 +474,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.doWhileTest()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)";
 		
-		ClassMethodInfo doWhileMethod = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo doWhileMethod = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -536,7 +536,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.inlineWhile()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.inlineWhile()";
 		
-		ClassMethodInfo inlineWhile = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo inlineWhile = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -598,7 +598,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.inlineDoWhile()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.inlineDoWhile()";
 		
-		ClassMethodInfo inlineDoWhile = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo inlineDoWhile = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())
@@ -660,7 +660,7 @@ public class JDBWithFileManagerTest
 		String testMethodSignature = "controlFlow.ControlFlowTest.inlineIfElse()";
 		String methodSignature = "controlFlow.TestClass_ControlFlow.inlineIfElse()";
 		
-		ClassMethodInfo inlineIfElse = new ClassMethodInfo.ClassMethodInfoBuilder()
+		MethodInvokerInfo inlineIfElse = new ConstructorInvokerInfoBuilder.ClassMethodInfoBuilder()
 				.classPath(new File("bin/controlFlow/TestClass_ControlFlow.class").getAbsolutePath())
 				.testClassPath(new File("bin/controlFlow/ControlFlowTest.class").getAbsolutePath())
 				.srcPath(new File("examples/controlFlow/TestClass_ControlFlow.java").getAbsolutePath())

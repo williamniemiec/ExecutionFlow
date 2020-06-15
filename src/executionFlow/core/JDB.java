@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
-import executionFlow.info.ClassMethodInfo;
+import executionFlow.info.InvokerInfo;
 
 
 /**
@@ -42,7 +42,7 @@ public class JDB
 	/**
 	 * Stores signature of the class of the method.
 	 */
-	private String methodClassSignature;
+	private String classSignature;
 	
 	/**
 	 * Stores signature of the class of the test method.
@@ -57,7 +57,7 @@ public class JDB
 	/**
 	 * Line of test method that the method is called.
 	 */
-	private int methodInvocationLine;
+	private int invocationLine;
 	
 	/**
 	 * Number of method invocations to be ignored before computing test path.
@@ -94,7 +94,7 @@ public class JDB
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 
 	
@@ -136,27 +136,27 @@ public class JDB
 	 * @throws		IOException If JDB cannot be initialized
 	 * @throws		Throwable If an error occurs
 	 */
-	public List<List<Integer>> getTestPaths(ClassMethodInfo methodInfo) throws IOException
+	public List<List<Integer>> getTestPaths(InvokerInfo invokerInfo, InvokerInfo testMethodInfo) throws IOException
 	{ 
-		Path methodClassRootPath;	// Root path where the compiled file of method class is
-		Path srcRootPath;			// Root path where the source file of the method is
+		Path classRootPath;			// Root path where the compiled file of invoker class is
+		Path srcRootPath;			// Root path where the source file of the invoker is
 		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
 									// will be used as JDB root directory
 		
-		// Gets information about the method to be analyzed
-		methodClassSignature = methodInfo.getClassSignature();
+		// Gets information about the invoker to be analyzed
+		classSignature = invokerInfo.getClassSignature();
 		
-		// Gets information about the test method of the method to be analyzed
-		testMethodSignature = methodInfo.getTestMethodSignature();
-		classInvocationSignature = methodInfo.getTestClassSignature();
-		methodInvocationLine = methodInfo.getInvocationLine();
+		// Gets information about the test method of the invoker to be analyzed
+		testMethodSignature = testMethodInfo.getInvokerSignature();
+		classInvocationSignature = testMethodInfo.getClassSignature();
+		invocationLine = invokerInfo.getInvocationLine();
 		
 		// Gets paths
-		srcRootPath = extractRootPathDirectory(methodInfo.getSrcPath(), methodInfo.getPackage());
-		methodClassRootPath = extractRootPathDirectory(methodInfo.getClassPath(), methodInfo.getPackage());
-		testClassRootPath = extractRootPathDirectory(methodInfo.getTestClassPath(), methodInfo.getTestClassPackage());
+		srcRootPath = extractRootPathDirectory(invokerInfo.getSrcPath(), invokerInfo.getPackage());
+		classRootPath = extractRootPathDirectory(invokerInfo.getClassPath(), invokerInfo.getPackage());
+		testClassRootPath = extractRootPathDirectory(testMethodInfo.getClassPath(), testMethodInfo.getPackage());
 				
-		Process process = jdb_start(testClassRootPath, srcRootPath, methodClassRootPath);
+		Process process = jdb_start(testClassRootPath, srcRootPath, classRootPath);
 		
 		jdb_methodVisitor(process);
 		
@@ -185,19 +185,20 @@ public class JDB
 		// Configures JDB, indicating path of libraries, classes and source files
 		String methodClassPath = testClassRootPath.relativize(methodClassRootPath).toString();
 		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
-		String lib_aspectj = libPath_relative+"aspectjrt-1.9.2.jar";
-		String lib_junit = libPath_relative+"junit-4.13.jar";
-		String lib_hamcrest = libPath_relative+"hamcrest-all-1.3.jar";
-		String libs = lib_aspectj+";"+lib_junit+";"+lib_hamcrest;
-		String jdb_classPath = "-classpath .;"+libs;
-		String jdb_srcPath = "-sourcepath "+testClassRootPath.relativize(srcRootPath);
+		String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";
+		
+		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
+				+ cp_junitPlatformConsole;
+		
+		String jdb_classPath = ".;"+libs;
+		String jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString();
 		
 		if (!methodClassPath.isEmpty())
 			jdb_classPath += ";"+methodClassPath;
 		else
 			jdb_classPath += ";..\\classes\\";
 		
-		String jdb_paths = jdb_srcPath+" "+jdb_classPath;
+		String jdb_paths = "-sourcepath "+jdb_srcPath+" "+"-classpath "+jdb_classPath;
 		
 		// -----{ DEBUG }-----
 		if (DEBUG) {
@@ -208,11 +209,16 @@ public class JDB
 		
 		// Runs JDB from CMD
 		ProcessBuilder pb = new ProcessBuilder(
-			"cmd.exe","/c","jdb "+jdb_paths,
-			"org.junit.runner.JUnitCore",classInvocationSignature
+			"cmd.exe","/c",	"jdb "+jdb_paths
+			+" org.junit.platform.console.ConsoleLauncher"
+			+" -cp "+"\""+jdb_classPath+";"+cp_junitPlatformConsole+"\\."+"\""
+			+" -c "+classInvocationSignature
+			+" --disable-banner"
+			+" --details=none"
 		);
-		pb.directory(testClassRootPath.toFile());
 		
+		pb.directory(testClassRootPath.toFile());
+
 		return pb.start();
 	}
 	
@@ -343,7 +349,7 @@ public class JDB
 	{
 		if (classPath == null) 
 			throw new IllegalStateException("Source file path cannot be null");
-		
+
 		int packageFolders = 0;
 		
 		if (!classPackage.isEmpty()) {
@@ -408,7 +414,7 @@ public class JDB
 		 * 
 		 * @param		p JDB process 
 		 */
-		JDBInput(Process p)
+		public JDBInput(Process p)
 		{
 			this.input = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())));
 		}
@@ -424,8 +430,8 @@ public class JDB
 		{
 			List<String> args = new LinkedList<String>();
 			args.add("clear");
-			args.add("stop at "+classInvocationSignature+":"+methodInvocationLine);
-	        args.add("run");
+			args.add("stop at "+classInvocationSignature+":"+invocationLine);
+			args.add("run");
 	        
 			for (String arg : args) {
 			    input.println(arg);
@@ -442,7 +448,7 @@ public class JDB
 		public void exit(JDBOutput out) throws IOException
 		{
 			input.flush();
-			send("clear "+classInvocationSignature+":"+methodInvocationLine);
+			send("clear "+classInvocationSignature+":"+invocationLine);
 			out.read();
 			send("exit");
 			out.read();
@@ -502,7 +508,7 @@ public class JDB
          * 
          * @param		p JDB process
          */
-		JDBOutput(Process p)
+		public JDBOutput(Process p)
 		{
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		}
@@ -534,7 +540,7 @@ public class JDB
             	// -----{ DEBUG }-----
             	if (DEBUG) { ConsoleOutput.showDebug("LINE: "+line); }
         		// -----{ END DEBUG }-----
-        		
+            	
             	endOfMethod = endOfMethod == true ? endOfMethod : isEndOfTestMethod();
             	isInternalCommand = isInternalMethod();
             	
@@ -642,7 +648,7 @@ public class JDB
 		 */
 		private boolean isInternalMethod()
 		{
-			return 	!line.contains(methodClassSignature) && 
+			return 	!line.contains(classSignature) && 
 					!line.contains(classInvocationSignature);
 		}
 		
@@ -672,7 +678,7 @@ public class JDB
 				!inMethod && 
 				(
 					line.contains("Breakpoint hit") || 
-					( line.contains("line="+methodInvocationLine) && 
+					( line.contains("line="+invocationLine) && 
 					  line.contains(classInvocationSignature) )
 				)
 			);

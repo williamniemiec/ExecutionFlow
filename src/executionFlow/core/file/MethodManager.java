@@ -155,7 +155,7 @@ public class MethodManager
 			files.add(fm);
 			save();
 		}
-		
+
 		fm.createClassBackupFile().compileFile();
 		
 		return this;

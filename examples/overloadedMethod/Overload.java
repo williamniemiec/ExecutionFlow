@@ -40,6 +40,6 @@ public class Overload
 		int x = 0;
 		x++;
 		x++;
-		return overloadedMethod(10);
+		return x+overloadedMethod(10);
 	}
 }

@@ -11,44 +11,44 @@ public class TestClass
 	@Test
 	public void testFoo()
 	{
-try {		assertEquals("1", "1");} catch(org.junit.ComparisonFailure e){}
-try {		assertEquals("1", "2");	} catch(org.junit.ComparisonFailure e){}// It will fail
+		assertEquals("1", "1");
+		assertEquals("1", "2");	// It will fail
 	}
 	
 	@Test
-try {	public void assertFailInTheMiddleTest() } catch(org.junit.ComparisonFailure e){}
+	public void assertFailInTheMiddleTest() 
 	{
 		TestClass tc = new TestClass(99);
-try {		assertEquals("one", tc.threePaths(1));} catch(org.junit.ComparisonFailure e){}
-try {		assertEquals("nine", 
-				tc.threePaths(3));} catch(org.junit.ComparisonFailure e){}		// It will fail
-try {		assertEquals("two", tc.threePaths(2));} catch(org.junit.ComparisonFailure e){}
+		assertEquals("one", tc.threePaths(1));
+		assertEquals("nine", 
+				tc.threePaths(3));		// It will fail
+		assertEquals("two", tc.threePaths(2));
 	}
 	
 	@Test
 	public void multilineAssert1()
 	{
-try {		assertEquals(param1, 			// Comment 1
+		assertEquals(param1, 			// Comment 1
 				param2,					// Comment 2
-				param3);} catch(org.junit.ComparisonFailure e){}				// Comment 3
+				param3);				// Comment 3
 	}
 	
 	@Test
 	public void multilineAssert2()
 	{
-try {		assertEquals (
+		assertEquals (
 				param1, 				// Comment 1
 				param2,					// Comment 2
-				param3);} catch(org.junit.ComparisonFailure e){}				// Comment 3
+				param3);				// Comment 3
 	}
 	
-	@Test
+	@Test @executionFlow.runtime.EndTestMethod
 	public void multilineAssert3()
 	{
-try {		assertEquals (
+		assertEquals (
 				param1, 				// Comment 1
 				param2,					// Comment 2
 				param3					// Comment 3
-		);} catch(org.junit.ComparisonFailure e){}								// Comment 4
+		);								// Comment 4
 	}
 }
