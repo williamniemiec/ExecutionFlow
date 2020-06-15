@@ -2,12 +2,11 @@ package executionFlow.info;
 
 
 /**
- * Stores information about a method and its constructor (if this 
- * method is not static);
+ * Stores information about a method and the test method it belongs to.
  * 
- * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version	1.4
- * @since	1.0
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.0
  */
 public class CollectorInfo 
 {
@@ -17,18 +16,18 @@ public class CollectorInfo
 	/**
 	 * Stores {@link MethodInvokerInfo information} about a method.
 	 */
-	private MethodInvokerInfo methodInfo;
+	private InvokerInfo methodInfo;
 	
 	/**
 	 * Stores {@link MethodInvokerInfo information} about a test method.
 	 */
-	private MethodInvokerInfo testMethodInfo;
+	private InvokerInfo testMethodInfo;
 	
 	/**
 	 * Stores {@link ConstructorInvokerInfo information} about the constructor of
 	 * {@link #methodInfo the method}.
 	 */
-	private ConstructorInvokerInfo constructorInfo;
+	private InvokerInfo constructorInfo;
 	
 	/**
 	 * The order of a method is how many methods are called in this line before
@@ -41,95 +40,158 @@ public class CollectorInfo
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores information about a method, with its order and constructor.
+	 * Stores information about a method, its constructor, along with its order
+	 * and test method to which this method is called.
 	 * 
 	 * @param		methodInfo Information about a method
-	 * @param		testMethodInfo Information about the constructor of the method
+	 * @param		testMethodInfo Information about the test method to which 
+	 * the method is called
 	 * @param		order Order in which the method is called. It is used when more
 	 * than one method is called in a single line. The order of a method is how
 	 * many methods are called in this line before it
 	 */
-	public CollectorInfo(MethodInvokerInfo methodInfo, MethodInvokerInfo testMethodInfo, int order)
+	private CollectorInfo(InvokerInfo methodInfo, InvokerInfo constructorInfo, 
+			InvokerInfo testMethodInfo, int order)
 	{
 		this.methodInfo = methodInfo;
+		this.constructorInfo = constructorInfo;
 		this.testMethodInfo = testMethodInfo;
 		this.order = order;
 	}
 	
-//	/**
-//	 * Stores information about a method, with its order and constructor. Using
-//	 * this constructor, {@link #constructorInfo method constructor} will be 
-//	 * null and the {@link order} of the method will be zero.
-//	 * 
-//	 * @param methodInfo Information about a method
-//	 * @param constructorInfo Information about the constructor of the method
-//	 * @param order Order in which the method is called. It is used when more
-//	 * than one method is called in a single line. The order of a method is
-//	 * how many methods are called in this line before it
-//	 */
-//	public CollectorInfo(ClassMethodInfo methodInfo)
-//	{
-//		this(methodInfo, 0);
-//	}
-//	
-//	/**
-//	 * Stores information about a method, with its order and constructor. Using
-//	 * this constructor the {@link order} of method will be zero.
-//	 * 
-//	 * @param methodInfo Information about a method
-//	 * @param constructorInfo Information about the constructor of the method
-//	 */
-//	public CollectorInfo(ClassMethodInfo methodInfo, ClassConstructorInfo constructorInfo)
-//	{
-//		this(methodInfo, constructorInfo, 0);
-//	}
-//	
-//	/**
-//	 * Stores information about a method with its order. Use this method when
-//	 * you do not want to save information about constructor.
-//	 * 
-//	 * @param methodInfo Information about a method
-//	 * @param order Order in which the method is called. It is used when more
-//	 * than one method is called in a single line. The order of a method is
-//	 * how many methods are called in this line before it
-//	 */
-//	public CollectorInfo(ClassMethodInfo methodInfo, int order)
-//	{
-//		this(methodInfo, null, order);
-//	}
-
+	
+	//-------------------------------------------------------------------------
+	//		Builder
+	//-------------------------------------------------------------------------
+	/**
+	 * Builder for {@link CollectorInfo}. It is necessary to provide at least 
+	 * one of the following fields: <br />
+	 * <ul>
+	 * 	<li>methodInfo</li>
+	 * 	<li>testMethodInfo</li>
+	 * 	<li>constructorInfo</li>
+	 * </ul>
+	 */
+	public static class CollectorInfoBuilder
+	{
+		private InvokerInfo methodInfo;
+		private InvokerInfo testMethodInfo;
+		private InvokerInfo constructorInfo;
+		private int order;
+		
+		
+		/**
+		 * @param		methodInfo Informations about a method
+		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If methodInfo is null
+		 */
+		public CollectorInfoBuilder methodInfo(InvokerInfo methodInfo)
+		{
+			if (methodInfo == null)
+				throw new IllegalArgumentException("Method's info cannot be null");
+			
+			this.methodInfo = methodInfo;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		testMethodInfo Informations about a test method
+		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If testMethodInfo is null
+		 */
+		public CollectorInfoBuilder testMethodInfo(InvokerInfo testMethodInfo)
+		{
+			if (testMethodInfo == null)
+				throw new IllegalArgumentException("Test method's info cannot be null");
+			
+			this.testMethodInfo = testMethodInfo;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		constructorInfo Informations about a constructor
+		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If constructorInfo is null
+		 */
+		public CollectorInfoBuilder constructorInfo(InvokerInfo constructorInfo)
+		{
+			if (constructorInfo == null)
+				throw new IllegalArgumentException("Constructor's info cannot be null");
+			
+			this.constructorInfo = constructorInfo;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		order Order in which the method is called. It is used
+		 * when more than one method is called in a single line. The order of a
+		 * method is how many methods are called in this line before it
+		 * @return		Builder to allow chained calls
+		 * @throws		IllegalArgumentException If order is less then or equal
+		 * to zero
+		 */
+		public CollectorInfoBuilder order(int order)
+		{
+			if (order <= 0)
+				throw new IllegalArgumentException("Order cannot be less then or equal to zero");
+			
+			this.order = order;
+			
+			return this;
+		}
+		
+		/**
+		 * Creates {@link CollectorInfo} instance. It is necessary to provide 
+		 * at least one of the following fields: <br />
+		 * <ul>
+		 * 	<li>methodInfo</li>
+		 * 	<li>testMethodInfo</li>
+		 * 	<li>constructorInfo</li>
+		 * </ul>
+		 * 
+		 * @throws		IllegalArgumentException If all fields above are null
+		 */
+		public CollectorInfo build()
+		{
+			if (methodInfo == null && testMethodInfo == null && constructorInfo == null)
+				throw new IllegalArgumentException("It is necessary to provide "
+						+ "at least one of the following fields: methodInfo, "
+						+ "testMethodInfo or constructorInfo");
+				
+			return new CollectorInfo(methodInfo, constructorInfo, testMethodInfo, order);
+		}
+	}
+	
 
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public String toString() {
-		return "CollectorInfo [order=" + order + ", constructorInfo=" + 
-				constructorInfo + ", methodInfo=" + methodInfo + "]";
+	public String toString() 
+	{
+		return "CollectorInfo ["
+				+ "methodInfo=" + methodInfo 
+				+ ", testMethodInfo=" + testMethodInfo 
+				+ ", constructorInfo=" + constructorInfo 
+				+ ", order=" + order 
+			+ "]";
 	}
 
 	
 	//-------------------------------------------------------------------------
-	//		Getters & Setters
+	//		Getters
 	//-------------------------------------------------------------------------
-	public MethodInvokerInfo getMethodInfo() 
+	public InvokerInfo getMethodInfo() 
 	{
 		return methodInfo;
 	}
-
-	public void setMethodInfo(MethodInvokerInfo testMethodInfo) 
-	{
-		this.testMethodInfo = testMethodInfo;
-	}
 	
-	public MethodInvokerInfo getTestMethodInfo() 
+	public InvokerInfo getTestMethodInfo() 
 	{
 		return testMethodInfo;
-	}
-
-	public void setTestMethodInfo(MethodInvokerInfo testMethodInfo) 
-	{
-		this.testMethodInfo = testMethodInfo;
 	}
 	
 	public int getOrder()
