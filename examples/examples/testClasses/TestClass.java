@@ -1,4 +1,4 @@
-package testClasses;
+package examples.testClasses;
 
 
 /**

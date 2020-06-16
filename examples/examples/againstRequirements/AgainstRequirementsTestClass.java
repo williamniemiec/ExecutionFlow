@@ -1,4 +1,4 @@
-package againstRequirements;
+package examples.againstRequirements;
 
 
 public class AgainstRequirementsTestClass 

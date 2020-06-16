@@ -1,8 +1,10 @@
+package examples;
+
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import testClasses.TestClass;
+import examples.testClasses.TestClass;
 
 
 public class SimpleTest 

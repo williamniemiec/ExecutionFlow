@@ -1,4 +1,4 @@
-package chainedCalls;
+package examples.chainedCalls;
 
 
 /**

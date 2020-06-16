@@ -1,4 +1,4 @@
-package chainedCalls;
+package examples.chainedCalls;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;

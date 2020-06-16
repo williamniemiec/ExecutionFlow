@@ -1,4 +1,4 @@
-package controlFlow;
+package examples.controlFlow;
 
 import java.io.File;
 import java.io.FileWriter;

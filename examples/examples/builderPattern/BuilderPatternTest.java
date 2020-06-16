@@ -1,4 +1,4 @@
-package builderPattern;
+package examples.builderPattern;
 
 import org.junit.Test;
 

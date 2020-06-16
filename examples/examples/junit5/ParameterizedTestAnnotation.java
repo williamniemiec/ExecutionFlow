@@ -1,12 +1,12 @@
-package junit5;
+package examples.junit5;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import examples.testClasses.TestClass;
 import executionFlow.runtime.SkipMethod;
-import testClasses.TestClass;
 
 
 /**

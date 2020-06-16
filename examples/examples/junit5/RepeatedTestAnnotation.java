@@ -1,11 +1,11 @@
-package junit5;
+package examples.junit5;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 
-import testClasses.TestClass;
+import examples.testClasses.TestClass;
 
 
 /**

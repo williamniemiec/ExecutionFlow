@@ -1,10 +1,10 @@
-package complexTests;
+package examples.complexTests;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import againstRequirements.AgainstRequirementsTestClass;
-import testClasses.TestClass;
+import examples.againstRequirements.AgainstRequirementsTestClass;
+import examples.testClasses.TestClass;
 
 
 public class ComplexTests 

@@ -1,4 +1,4 @@
-package overloadedMethod;
+package examples.overloadedMethod;
 import org.junit.Test;
 
 

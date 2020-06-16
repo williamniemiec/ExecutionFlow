@@ -1,12 +1,14 @@
+package examples;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import testClasses.ClassInterface;
-import testClasses.Interface;
-import testClasses.TestClass;
+import examples.testClasses.ClassInterface;
+import examples.testClasses.Interface;
+import examples.testClasses.TestClass;
 
 
 /**

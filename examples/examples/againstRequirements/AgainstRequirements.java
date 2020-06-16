@@ -1,4 +1,4 @@
-package againstRequirements;
+package examples.againstRequirements;
 
 import static org.junit.Assert.assertEquals;
 
