@@ -24,7 +24,7 @@ public class JDBWithFileManagerTest
 {
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#ifElseTest_earlyReturn()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#ifElseTest_earlyReturn()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -86,7 +86,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#ifElseTest()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#ifElseTest()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -148,7 +148,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#ifElseTest2()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#ifElseTest2()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -210,7 +210,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#ifElseTest3()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#ifElseTest3()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -272,7 +272,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#tryCatchTest1()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#tryCatchTest1()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -334,7 +334,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#tryCatchTest2()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#tryCatchTest2()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -396,7 +396,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#switchCaseTest()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#switchCaseTest()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -458,7 +458,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#doWhileTest()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#doWhileTest()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -520,7 +520,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#inlineWhile()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#inlineWhile()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -582,7 +582,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#inlineDoWhile()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#inlineDoWhile()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path
@@ -644,7 +644,7 @@ public class JDBWithFileManagerTest
 	
 	/**
 	 * Tests integration using as example 
-	 * {@link controlFlow.ControlFlowTest#inlineIfElse()} method.
+	 * {@link examples.controlFlow.ControlFlowTest#inlineIfElse()} method.
 	 * 
 	 * @throws IOException If an error occurs in file parsing or during the 
 	 * computation of the test path

@@ -1,0 +1,118 @@
+package executionFlow;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.junit.Test;
+
+import executionFlow.ConstructorExecutionFlow;
+import executionFlow.ExecutionFlow;
+import executionFlow.core.file.FileManager;
+import executionFlow.core.file.MethodManager;
+import executionFlow.core.file.ParserType;
+import executionFlow.core.file.parser.factory.AssertFileParserFactory;
+import executionFlow.info.CollectorInfo;
+import executionFlow.info.ConstructorInvokerInfo;
+import executionFlow.info.MethodInvokerInfo;
+import executionFlow.runtime.SkipCollection;
+
+
+/**
+ * Tests test path computation from constructors through 
+ * {@link ConstructorExecutionFlow} class.
+ */
+@SkipCollection
+public class ConstructorExecutionFlowTest 
+{
+	private FileManager testMethodFileManager;
+	private MethodManager testMethodManager;
+	
+	
+	/**
+	 * Tests constructor used by {@link examples.controlFlow.ControlFlowTest}
+	 * test.
+	 * 
+	 * @throws		IOException If an error occurs during file parsing
+	 * @throws		ClassNotFoundException If class {@link FileManager} is not
+	 * found
+	 * @apiNote		{@link examples.controlFlow.ControlFlowTest} uses only one
+	 * constructor, so it is possible choose any test method that uses the
+	 * constructor
+	 */
+	@Test
+	public void controlFlowTest() throws IOException, ClassNotFoundException
+	{
+		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
+		Path testSrcPath = Path.of("examples/examples/controlFlow/ControlFlowTest.java");
+		Path testClassPath = Path.of("bin/examples/controlFlow/ControlFlowTest.class");
+		Object[] paramValues = {};
+		Class<?>[] paramTypes = {};
+		String signature = "examples.controlFlow.TestClass_ControlFlow()";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
+		String testClassPackage = "examples.controlFlow";
+		String key = signature + Arrays.toString(paramValues);
+		
+		
+		// Creates backup from original files
+		testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
+		
+		testMethodFileManager = new FileManager(
+			testSrcPath,
+			MethodInvokerInfo.getCompiledFileDirectory(testClassPath),
+			testClassPackage,
+			new AssertFileParserFactory(),
+			"original_assert"
+		);
+		
+		// Parses test method
+		try {
+			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);			
+		} catch (IOException e) {
+			testMethodManager.restoreAll();
+			testMethodManager.deleteBackup();
+			throw e;
+		}
+		
+		// Informations about test method
+		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
+			.classPath(testClassPath)
+			.srcPath(testSrcPath)
+			.methodSignature(testMethodSignature)
+			.build();
+		
+		// Informations about constructor
+		ConstructorInvokerInfo cii = new ConstructorInvokerInfo.ConstructorInvokerInfoBuilder()
+			.classPath(Path.of("bin/examples/controlFlow/TestClass_ControlFlow.class"))
+			.srcPath(Path.of("examples/examples/controlFlow/TestClass_ControlFlow.java"))
+			.constructorSignature(signature)
+			.parameterTypes(paramTypes)
+			.args(paramValues)
+			.invocationLine(18)
+			.build();
+		
+		// Saves extracted data
+		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+			.constructorInfo(cii)
+			.testMethodInfo(testMethodInfo)
+			.build();
+		
+		constructorCollector.put(key, ci);
+		
+		// Gets test paths of the collected constructors and export them
+		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values());
+		ef.execute().export();
+		
+		// Restore original files
+		ExecutionFlow.testMethodManager.restoreAll();
+		ExecutionFlow.testMethodManager.deleteBackup();
+		
+		ExecutionFlow.methodManager.restoreAll();
+		ExecutionFlow.methodManager.deleteBackup();
+		
+		testMethodManager.restoreAll();
+		testMethodManager.deleteBackup();
+	}
+}

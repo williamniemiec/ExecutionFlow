@@ -16,7 +16,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import controlFlow.ControlFlowTest;
 import executionFlow.core.file.FileManager;
 import executionFlow.core.file.MethodManager;
 import executionFlow.core.file.ParserType;
@@ -28,19 +27,22 @@ import executionFlow.runtime.SkipCollection;
 
 
 /**
- * Tests test path computation of class {@link ControlFlowTest} from debug 
- * analysis.
+ * Tests test path computation from methods through 
+ * {@link MethodExecutionFlow} class.
+ * 
+ * @apiNote		Tests test path computation from methods of class 
+ * {@link examples.controlFlow.ControlFlowTest}.
  */
 @SkipCollection
-public class MethodExecutionFlow_ControlFlowTest 
+public class MethodExecutionFlowTest 
 {
 	private static FileManager testMethodFileManager;
 	private static MethodManager testMethodManager;
-	private static final Path classPath = Path.of("bin/controlFlow/TestClass_ControlFlow.class");
-	private static final Path testClassPath = Path.of("bin/controlFlow/ControlFlowTest.class");
-	private static final Path srcPath = Path.of("examples/controlFlow/TestClass_ControlFlow.java");
-	private static final Path testSrcPath = Path.of("examples/controlFlow/ControlFlowTest.java");
-	private static final String testClassPackage = "controlFlow";
+	private static final Path classPath = Path.of("bin/examples/controlFlow/TestClass_ControlFlow.class");
+	private static final Path testClassPath = Path.of("bin/examples/controlFlow/ControlFlowTest.class");
+	private static final Path srcPath = Path.of("examples/examples/controlFlow/TestClass_ControlFlow.java");
+	private static final Path testSrcPath = Path.of("examples/examples/controlFlow/ControlFlowTest.java");
+	private static final String testClassPackage = "examples.controlFlow";
 	
 	
 	@BeforeClass
@@ -111,8 +113,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 19;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod(int)";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod(int)";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -158,8 +160,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 29;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod()";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -205,8 +207,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 39;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest2()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod()";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest2()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -252,8 +254,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 49;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.ifElseTest3()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.ifElseMethod()";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest3()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -299,8 +301,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 59;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.tryCatchTest1()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.tryCatchMethod_try()";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.tryCatchTest1()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_try()";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -346,8 +348,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 66;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.tryCatchTest2()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.tryCatchTest2()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -393,8 +395,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 74;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.switchCaseTest()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.switchCaseMethod(char)";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.switchCaseTest()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.switchCaseMethod(char)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -440,8 +442,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 82;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.doWhileTest()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.doWhileTest()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -487,8 +489,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 90;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.inlineWhile()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.inlineWhile(int)";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineWhile()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineWhile(int)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -534,8 +536,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 98;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.inlineDoWhile()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.inlineDoWhile(int)";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineDoWhile()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineDoWhile(int)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)
@@ -581,8 +583,8 @@ public class MethodExecutionFlow_ControlFlowTest
 		int invocationLine = 106;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "controlFlow.ControlFlowTest.inlineIfElse()";
-		String methodSignature = "controlFlow.TestClass_ControlFlow.inlineIfElse(int)";
+		String testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineIfElse()";
+		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineIfElse(int)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(testClassPath)

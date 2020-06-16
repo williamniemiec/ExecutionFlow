@@ -17,7 +17,7 @@ import executionFlow.runtime.SkipCollection;
 public class FileManagerTest 
 {
 	/**
-	 * Tests FileManager using {@link controlFlow.TestClass_ControlFlow}.
+	 * Tests FileManager using {@link examples.controlFlow.TestClass_ControlFlow}.
 	 * 
 	 * @throws Exception If FileManager cannot parse or compile files
 	 */
@@ -39,7 +39,7 @@ public class FileManagerTest
 	}
 	
 	/**
-	 * Tests FileManager using {@link controlFlow.ControlFlowTest}.
+	 * Tests FileManager using {@link examples.controlFlow.ControlFlowTest}.
 	 * 
 	 * @throws Exception If FileManager cannot parse or compile files
 	 */
