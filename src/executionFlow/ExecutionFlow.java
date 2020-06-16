@@ -69,7 +69,7 @@ public abstract class ExecutionFlow
 	 * each test method executed.
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	/**

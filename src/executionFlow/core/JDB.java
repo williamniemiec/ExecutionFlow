@@ -94,7 +94,7 @@ public class JDB
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 
 	
@@ -104,7 +104,7 @@ public class JDB
 	/**
 	 * Computes test path from code debugging. 
 	 * 
-	 * @param		skip Number of method invocations to be ignored before 
+	 * @param		skip Number of method invocations to be ignored before
 	 * computing test path
 	 */
 	public JDB(int skip)
@@ -529,11 +529,15 @@ public class JDB
 		public boolean read() throws IOException
 		{
 			boolean response = false;
+			final String regex_constructorNativeCall = "[0-9]+(\\ |\\t)+([a-z]+\\ )?[A-z0-9$\\-_]+\\(.*\\)(\\ |\\t)*";
+			final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t)*$";
+			final String regex_return = "^[0-9]*(\\ |\\t)*return(\\ |\\t)+.*$";
+			
 			
 			if (output.ready()) {
             	line = output.readLine();
             	
-            	if (isEmptyLine() || line.matches("^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t)*$")) { 
+            	if (isEmptyLine() || line.matches(regex_emptyOutput)) { 
             		return false; 
         		}
             	
@@ -551,14 +555,20 @@ public class JDB
             		srcLine = output.readLine();
             		
             		// Ignores native calls
-            		if (line.contains("jdk.") || line.contains(".<init>")) {
+            		if (line.contains("jdk.")) {
             			isInternalCommand = true;
             			inMethod = false;
-            			return true;
+            			//return true;
+            			response = true;
             		}
-        			
+            		// Ignores constructor native calls
+            		else if (line.contains(".<init>") && srcLine.matches(regex_constructorNativeCall)) {
+            			isInternalCommand = true;
+            			//return true;
+            			response = true;
+            		}
             		// Checks if last method was skipped
-            		if (skipped) {
+            		else if (skipped) {
             			newIteration = false;
             			inMethod = true;
             			skipped = false;
@@ -567,26 +577,28 @@ public class JDB
             			newIteration = isNewIteration();
             		}
             		
-        			if (inMethod) {
-        				int lineNumber = jdb_getLine(line);
-        				
-        				// Checks if returned from the method
-        				if (line.contains(testMethodSignature)) {
-        					exitMethod = true;
-        					newIteration = false;
-        					inMethod = false;
-        					lastLineAdded = -1;
-        				} 
-        				// Checks if it is still in the method
-        				else if (isWithinMethod(lineNumber)) {	
-        					if (!isEmptyMethod()) {
-        						testPath.add(lineNumber);
-        						lastLineAdded = lineNumber;
-        					}
-        				}
-            		}
-        			else if (willEnterInMethod()) {
-            			inMethod = true;
+            		if (!isInternalCommand) {
+	        			if (inMethod) {
+	        				int lineNumber = jdb_getLine(line);
+	        				
+	        				// Checks if returned from the method
+	        				if (line.contains(testMethodSignature)) {
+	        					exitMethod = true;
+	        					newIteration = false;
+	        					inMethod = false;
+	        					lastLineAdded = -1;
+	        				} 
+	        				// Checks if it is still in the method
+	        				else if (isWithinMethod(lineNumber)) {	
+	        					if (!isEmptyMethod()) {
+	        						testPath.add(lineNumber);
+	        						lastLineAdded = lineNumber;
+	        					}
+	        				}
+	            		}
+	        			else if (willEnterInMethod()) {
+	            			inMethod = true;
+	            		}
             		}
         		}
         		
@@ -596,7 +608,7 @@ public class JDB
 	    		
 	    		if (srcLine != null) {
 	    			// Checks if current line is a return instruction
-	    			if (srcLine.matches("^[0-9]*(\\ |\\t)*return(\\ |\\t)+.*$"))
+	    			if (srcLine.matches(regex_return))
 	    				exitMethod = true;
 	    			
 	    			// -----{ DEBUG }-----
