@@ -2,20 +2,23 @@ package executionFlow.info;
 
 
 /**
- * Stores signatures of a method. The signatures are:
- * <li>Method's signature</li>
- * <li>Test method's signature</li>
+ * Stores signatures of an invoker, where invoker can be a method or a
+ * constructor. The signatures are:
+ * <ul>
+ * 	<li>Invoker signature</li>
+ * 	<li>Signature of the test method to which this invoker is called</li>
+ * </ul>
  * 
- * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version	1.4
- * @since	1.0
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.0
  */
 public class SignaturesInfo 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private String methodSignature;
+	private String invokerSignature;
 	private String testMethodSignature;
 	
 	
@@ -23,14 +26,15 @@ public class SignaturesInfo
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores signatures of a method.
+	 * Stores signatures of an invoker, where invoker can be a method or a 
+	 * constructor.
 	 * 
-	 * @param methodSignature Method's signature
-	 * @param testMethodSignature Test method's signature
+	 * @param		methodSignature Method's signature
+	 * @param		testMethodSignature Test method's signature
 	 */
 	public SignaturesInfo(String methodSignature, String testMethodSignature) 
 	{
-		this.methodSignature = methodSignature;
+		this.invokerSignature = methodSignature;
 		this.testMethodSignature = testMethodSignature;
 	}
 	
@@ -39,22 +43,42 @@ public class SignaturesInfo
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Returns test method signature and method signature in the following format:<br />
-	 * <code>test_method_signature + '$' + method_signature</code>
+	 * Returns test method signature and invoker signature in the following 
+	 * format: <br />
+	 * <code>test_method_signature + '$' + invoker_signature</code>
 	 */
 	@Override
 	public String toString()
 	{
-		return testMethodSignature+"$"+methodSignature;
+		return testMethodSignature + "$" + invokerSignature;
 	}
-	
-	
+
+	@Override
+	public int hashCode() 
+	{
+		return this.invokerSignature.hashCode() + this.testMethodSignature.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) 
+	{
+		if (obj == null)						{	return false;	}
+		if (obj.getClass() != this.getClass())	{	return false;	}
+		if (this == obj)						{	return true;	}
+		
+		SignaturesInfo si = (SignaturesInfo) obj;
+		
+		return	this.invokerSignature.equals(si.getInvokerSignature()) && 
+				this.testMethodSignature.equals(si.getTestMethodSignature());
+	}
+
+
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
-	public String getMethodSignature() 
+	public String getInvokerSignature() 
 	{
-		return methodSignature;
+		return invokerSignature;
 	}
 	
 	public String getTestMethodSignature() 
