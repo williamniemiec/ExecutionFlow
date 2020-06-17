@@ -20,15 +20,15 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths) 
+	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
 	{
 		String currentTestMethodSignature = null;
 		String currentMethod = "";
 		
 		ConsoleOutput.showHeader("EXPORT", '-');
 		
-		for (Map<SignaturesInfo, List<Integer>> classPathInfo : classTestPaths.values()) {
-			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathInfo.entrySet()) {
+		//for (Map<SignaturesInfo, List<Integer>> classPathInfo : classTestPaths.values()) {
+			for (Map.Entry<SignaturesInfo, List<List<Integer>>> e : classTestPaths.entrySet()) {
 				SignaturesInfo signatures = e.getKey();
 				String testMethodSignature = signatures.getTestMethodSignature();
 				
@@ -37,27 +37,29 @@ public class ConsoleExporter implements ExporterExecutionFlow
 				// Test path from another test method
 				if (!testMethodSignature.equals(currentTestMethodSignature)) {
 					System.out.println(signatures.getTestMethodSignature());	// Test method signature
-					System.out.println(signatures.getMethodSignature());		// Method signature
+					System.out.println(signatures.getInvokerSignature());		// Method signature
 					currentTestMethodSignature = signatures.getTestMethodSignature();
-					currentMethod = signatures.getMethodSignature();
+					currentMethod = signatures.getInvokerSignature();
 				} 
 				// It is the same test method
 				else {	
 					// Checks if the test path belongs to current method
-					if (!signatures.getMethodSignature().equals(currentMethod)) {
+					if (!signatures.getInvokerSignature().equals(currentMethod)) {
 						System.out.println();
 						System.out.println(signatures.getTestMethodSignature());
-						System.out.println(signatures.getMethodSignature());
+						System.out.println(signatures.getInvokerSignature());
 						
-						currentMethod = signatures.getMethodSignature();
+						currentMethod = signatures.getInvokerSignature();
 					}
 				}
 				
-				System.out.println(e.getValue());	// Test path
+				for (List<Integer> testPath : e.getValue()) {
+					System.out.println(testPath);	// Test path
+				}
 			}
 			
 			System.out.println();		// New line
 			currentTestMethodSignature = null;
-		}
+		//}
 	}
 }

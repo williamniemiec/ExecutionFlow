@@ -244,7 +244,6 @@ public class JDB
 			while (!wasNewIteration && !out.read()) { continue; }  
 			
 			wasNewIteration = false;
-			
 			if (endOfMethod) {
 				// Checks if there is unsaved test path
 				if (testPath.size() > 0) {	// If there is one, save it
@@ -258,7 +257,7 @@ public class JDB
 				if (currentSkip == -1) {
 					// Saves test path
 					testPaths.add(testPath);
-
+					
 					// Prepare for next test path
 					testPath = new ArrayList<>();
 					
@@ -267,6 +266,8 @@ public class JDB
 					
 					// Checks if method is within a loop
 					in.send("cont");
+					
+					//inMethod = false;
 				} 
 				else {
 					testPath.clear();	// Discards computed test path
@@ -293,7 +294,7 @@ public class JDB
 				in.send("next");
 			}
 		}
-		
+
 		// Exits JDB
 		in.exit(out);
 		in.close();
@@ -494,6 +495,7 @@ public class JDB
 		//---------------------------------------------------------------------
 		private BufferedReader output;
 		private boolean inMethod;
+		private boolean withinConstructor;
 		private int lastLineAdded = -1;
 		private String line;
 		private String srcLine;
@@ -529,13 +531,15 @@ public class JDB
 		public boolean read() throws IOException
 		{
 			boolean response = false;
-			final String regex_constructorNativeCall = "[0-9]+(\\ |\\t)+([a-z]+\\ )?[A-z0-9$\\-_]+\\(.*\\)(\\ |\\t)*";
-			final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t)*$";
+			boolean ignore = false;
+			final String regex_constructorNativeCall = "[0-9]+(\\ |\\t)+([a-z]+\\ )?(class )?[A-z0-9$\\-_]+(\\(.*\\))?(\\ |\\t)*";
+			final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
 			final String regex_return = "^[0-9]*(\\ |\\t)*return(\\ |\\t)+.*$";
 			
 			
 			if (output.ready()) {
             	line = output.readLine();
+            	isInternalCommand = false;
             	
             	if (isEmptyLine() || line.matches(regex_emptyOutput)) { 
             		return false; 
@@ -554,17 +558,24 @@ public class JDB
         			response = true;
             		srcLine = output.readLine();
             		
+            		// Checks if it is within a constructor
+            		withinConstructor = line.contains(".<init>");
+            		
             		// Ignores native calls
             		if (line.contains("jdk.")) {
             			isInternalCommand = true;
             			inMethod = false;
-            			//return true;
-            			response = true;
             		}
             		// Ignores constructor native calls
             		else if (line.contains(".<init>") && srcLine.matches(regex_constructorNativeCall)) {
-            			isInternalCommand = true;
-            			//return true;
+            			//isInternalCommand = true;
+            			ignore = true;
+            		}
+            		// Checks if it is still within a constructor
+            		else if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
+            			withinConstructor = false;
+            			//inMethod = false;
+            			exitMethod = true;
             			response = true;
             		}
             		// Checks if last method was skipped
@@ -573,11 +584,11 @@ public class JDB
             			inMethod = true;
             			skipped = false;
             		}
-            		else {
+            		//else {
             			newIteration = isNewIteration();
-            		}
+            		//}
             		
-            		if (!isInternalCommand) {
+            		if (!isInternalCommand && !exitMethod && !ignore) {
 	        			if (inMethod) {
 	        				int lineNumber = jdb_getLine(line);
 	        				
@@ -589,7 +600,7 @@ public class JDB
 	        					lastLineAdded = -1;
 	        				} 
 	        				// Checks if it is still in the method
-	        				else if (isWithinMethod(lineNumber)) {	
+	        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
 	        					if (!isEmptyMethod()) {
 	        						testPath.add(lineNumber);
 	        						lastLineAdded = lineNumber;
@@ -611,9 +622,12 @@ public class JDB
 	    			if (srcLine.matches(regex_return))
 	    				exitMethod = true;
 	    			
+	    			if (exitMethod)
+	    				inMethod = false;
+	    			
 	    			// -----{ DEBUG }-----
 	    			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }
-	    			// -----{ END DEBUG }-----	    			
+	    			// -----{ END DEBUG }-----	    		
 	    		}
 			} 
 			
@@ -687,7 +701,7 @@ public class JDB
 		private boolean isNewIteration()
 		{
 			return (
-				!inMethod && 
+				!inMethod && !exitMethod &&
 				(
 					line.contains("Breakpoint hit") || 
 					( line.contains("line="+invocationLine) && 

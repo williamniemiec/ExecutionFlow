@@ -26,7 +26,7 @@ public class SignaturesInfo
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores signatures of an invoker, where invoker can be a method or a 
+	 * Stores signatures of an invoker, where an invoker can be a method or a 
 	 * constructor.
 	 * 
 	 * @param		methodSignature Method's signature

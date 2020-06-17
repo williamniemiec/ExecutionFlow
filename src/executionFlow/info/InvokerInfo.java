@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 /**
  * Stores information about an invoker, where an invoker can be a 
- * constructor or a method. 
+ * method or a constructor. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5

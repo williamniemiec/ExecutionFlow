@@ -22,8 +22,8 @@ import executionFlow.runtime.MethodCollector;
 
 
 /**
- * Computes test path for collected invokers, where a invoker is a method or a
- * constructor. This is the main class of the application.
+ * Computes test path for collected invokers, where an invoker can be a method
+ * or a constructor. This is the main class of the application.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5
@@ -36,28 +36,22 @@ public abstract class ExecutionFlow
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * If true, displays collected methods for each test method executed.
+	 * If true, displays collected invokers for each test method executed.
 	 */
 	protected static final boolean DEBUG;
 	
 	/**
 	 * Stores computed test paths from a class.<br />
 	 * <ul>
-	 * 	<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
-	 * 	<li>
-	 * 		<b>Value:</b> 
-	 * 		<ul>
-	 * 			<li><b>Key:</b> Test method signature and method signature</li>
-	 * 			<li><b>Value:</b> Test path</li>
-	 * 		</ul>
-	 * 	</li>
+	 * 	<li><b>Key:</b> Test method signature and invoker signature</li>
+	 * 	<li><b>Value:</b> List of test paths</li>
 	 * </ul>
 	 */
-	protected Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths;
+	protected Map<SignaturesInfo, List<List<Integer>>> classTestPaths;
 	
 	protected ExporterExecutionFlow exporter;
 	
-	public static MethodManager methodManager;
+	public static MethodManager invokerManager;
 	public static MethodManager testMethodManager;
 	
 	
@@ -65,7 +59,7 @@ public abstract class ExecutionFlow
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	/**
-	 * Enables or disables debug. If activated, displays collected methods for
+	 * Enables or disables debug. If activated, displays collected invokers for
 	 * each test method executed.
 	 */
 	static {
@@ -94,7 +88,7 @@ public abstract class ExecutionFlow
 		}
 		
 		try {
-			methodManager = new MethodManager(ParserType.METHOD, true);
+			invokerManager = new MethodManager(ParserType.METHOD, true);
 		} catch (ClassNotFoundException e) {
 			error = true;;
 			ConsoleOutput.showError("Class FileManager not found");
@@ -123,7 +117,7 @@ public abstract class ExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Walks the method recording its test paths and save the result in
+	 * Walks the invoker recording its test paths and save the result in
 	 * {@link #classTestPaths}.
 	 * 
 	 * @return		This object to allow chained calls
@@ -139,14 +133,41 @@ public abstract class ExecutionFlow
 	}
 	
 	/**
-	 * Stores test paths for a method. The test paths are stored in 
+	 * Stores test paths for an invoker. The test paths are stored in 
 	 * {@link #classTestPaths}.
 	 * 
-	 * @param		testPaths Test paths of this method
-	 * @param		collector Informations about this method
+	 * @param		testPaths Test paths of this invoker
+	 * @param		collector Informations about this invoker
 	 */
-	protected abstract void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector);
-	
+	protected void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
+	{
+		List<List<Integer>> classPathInfo;
+		SignaturesInfo signaturesInfo = new SignaturesInfo(
+			collector.getConstructorInfo().getInvokerSignature(), 
+			collector.getTestMethodInfo().getInvokerSignature()
+		);
+
+		for (List<Integer> testPath : testPaths) {
+			// Checks if test path belongs to a stored test method and method
+			if (classTestPaths.containsKey(signaturesInfo)) {
+				classPathInfo = classTestPaths.get(signaturesInfo);
+				classPathInfo.add(testPath);
+			} 
+			// Else stores test path with its test method and method
+			else {	
+				classPathInfo = new ArrayList<>();
+				classPathInfo.add(testPath);
+				classTestPaths.put(signaturesInfo, classPathInfo);
+			}
+		}
+		
+		// If test path is empty, stores test method and invoker with an empty list
+		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
+			classPathInfo = new ArrayList<>();
+			classPathInfo.add(new ArrayList<>());
+			classTestPaths.put(signaturesInfo, classPathInfo);
+		}
+	}
 	
 	/**
 	 * Computes and stores application root path, based on class 
@@ -179,22 +200,15 @@ public abstract class ExecutionFlow
 	/**
 	 * Gets computed test path.It will return the following map:
 	 * <ul>
-	 * 	<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
-	 * 	<li>
-	 * 		<b>Value:</b> 
-	 * 		<ul>
-	 * 			<li><b>Key:</b> Test method signature and method signature</li>
-	 * 			<li><b>Value:</b> Test path</li>
-	 * 		</ul>
-	 * 	</li>
+	 * 	<li><b>Key:</b> Test method signature and invoker signature</li>
+	 * 	<li><b>Value:</b> List of test paths</li>
 	 * </ul>
 	 * 
 	 * @return		Computed test path
-	 * 
 	 * @implNote	It must only be called after method {@link #execute()} has 
 	 * been executed
 	 */
-	public Map<String, Map<SignaturesInfo, List<Integer>>> getClassTestPaths()
+	public Map<SignaturesInfo, List<List<Integer>>> getClassTestPaths()
 	{
 		return classTestPaths;
 	}

@@ -73,8 +73,8 @@ public class MethodExecutionFlowTest
 		ExecutionFlow.testMethodManager.restoreAll();
 		ExecutionFlow.testMethodManager.deleteBackup();
 		
-		ExecutionFlow.methodManager.restoreAll();
-		ExecutionFlow.methodManager.deleteBackup();
+		ExecutionFlow.invokerManager.restoreAll();
+		ExecutionFlow.invokerManager.deleteBackup();
 		
 		testMethodManager.restoreAll();
 		testMethodManager.deleteBackup();
@@ -84,32 +84,16 @@ public class MethodExecutionFlowTest
 	public void ifElseTest_earlyReturn() throws Throwable 
 	{
 		/**
-		 * Stores information about collected methods.<hr/>
+		 * Stores information about collected methods.
 		 * <ul>
-		 * 		<li><b>Key:</b> Method invocation line</li>
-		 * 		<li><b>Value:</b> List of methods invoked from this line</li>
+		 * 	<li><b>Key:</b> Method invocation line</li>
+		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 		 * </ul>
 		 */
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		
-		/**
-		 * Stores computed test paths from a class.<br />
-		 * <ul>
-		 * 		<li><b>Key:</b> test_method_signature + '$' + method_signature</li>
-		 * 		<li>
-		 * 			<b>Value:</b> 
-		 * 			<ul>
-		 * 				<li><b>Key:</b> Test method signature and method signature</li>
-		 * 				<li><b>Value:</b> Test path</li>
-		 * 			</ul>
-		 * 		</li>
-		 * </ul>
-		 */
-		
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
+
+		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 19;
 		
 		// Defines which methods will be collected
@@ -140,23 +124,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(25,26), testPath);
+		assertEquals(Arrays.asList(25,26), testPaths.get(0));
 	}
 	
 	@Test
 	public void ifElseTest() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 29;
 		
 		// Defines which methods will be collected
@@ -187,23 +167,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(25,29,31,32,39), testPath);
+		assertEquals(Arrays.asList(25,29,31,32,39), testPaths.get(0));
 	}
 	
 	@Test
 	public void ifElseTest2() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 39;
 		
 		// Defines which methods will be collected
@@ -234,23 +210,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(25,29,31,33,34,39), testPath);
+		assertEquals(Arrays.asList(25,29,31,33,34,39), testPaths.get(0));
 	}
 	
 	@Test
 	public void ifElseTest3() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 49;
 		
 		// Defines which methods will be collected
@@ -281,23 +253,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
-		
+
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(25,29,31,33,35,36,39), testPath);
+		assertEquals(Arrays.asList(25,29,31,33,35,36,39), testPaths.get(0));
 	}
 	
 	@Test
 	public void tryCatchTest1() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 59;
 		
 		// Defines which methods will be collected
@@ -328,23 +296,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(50,52,53,54,55,56,57,62), testPath);
+		assertEquals(Arrays.asList(50,52,53,54,55,56,57,62), testPaths.get(0));
 	}
 	
 	@Test
 	public void tryCatchTest2() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 66;
 		
 		// Defines which methods will be collected
@@ -375,23 +339,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(73,75,76,77,78,79), testPath);
+		assertEquals(Arrays.asList(73,75,76,77,78,79), testPaths.get(0));
 	}
 	
 	@Test
 	public void switchCaseTest() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 74;
 		
 		// Defines which methods will be collected
@@ -422,23 +382,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(90,92,100,101,102,103,104,123), testPath);
+		assertEquals(Arrays.asList(90,92,100,101,102,103,104,123), testPaths.get(0));
 	}
 	
 	@Test
 	public void doWhileTest() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 82;
 		
 		// Defines which methods will be collected
@@ -469,23 +425,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(135,137,140,141,142,143,140,141,142,143,140,141,142,143,140,141,142,143,140,141,142,143,145), testPath);
+		assertEquals(Arrays.asList(135,137,140,141,142,143,140,141,142,143,140,141,142,143,140,141,142,143,140,141,142,143,145), testPaths.get(0));
 	}
 	
 	@Test
 	public void inlineWhile() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 90;
 		
 		// Defines which methods will be collected
@@ -516,23 +468,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(156,158), testPath);
+		assertEquals(Arrays.asList(156,158), testPaths.get(0));
 	}
 	
 	@Test
 	public void inlineDoWhile() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 98;
 		
 		// Defines which methods will be collected
@@ -563,23 +511,19 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(180,183,185), testPath);
+		assertEquals(Arrays.asList(180,183,185), testPaths.get(0));
 	}
 	
 	@Test
 	public void inlineIfElse() throws Throwable 
 	{
+		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		Map<String, Map<SignaturesInfo, List<Integer>>> classPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		Collection<List<Integer>> testPaths;
-		List<Integer> testPath;
 		int invocationLine = 106;
 		
 		// Defines which methods will be collected
@@ -610,39 +554,26 @@ public class MethodExecutionFlowTest
 		
 		// Computes test path
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
-		classPaths = ef.execute().getClassTestPaths();
 		
 		// Gets test path
-		testPaths = getTestPaths(classPaths, testMethodSignature, methodSignature);
-		testPath = getFirstTestPath(testPaths);
+		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(169), testPath);
+		assertEquals(Arrays.asList(169), testPaths.get(0));
 	}
+
 	
 	/**
 	 * Gets all test paths obtained from {@link ExecutionFlow}. 
 	 * 
-	 * @param testPaths Test paths obtained from ExecutionFlow 
-	 * @param testMethodSignature Signature of the test method
-	 * @param methodSignature Signature of the method
-	 * @return Collection of all test paths
+	 * @param		testPaths Test paths obtained from ExecutionFlow 
+	 * @param		testMethodSignature Signature of the test method
+	 * @param		constructorSignature Constructor signature
+	 * @return		Collection of all test paths
 	 */
-	private Collection<List<Integer>> getTestPaths(Map<String, Map<SignaturesInfo, List<Integer>>> testPaths, 
+	private List<List<Integer>> getTestPaths(Map<SignaturesInfo, List<List<Integer>>> testPaths, 
 			String testMethodSignature, String methodSignature)
 	{
-		return testPaths.get(testMethodSignature+"$"+methodSignature).values();
-	}
-	
-	/**
-	 * Extracts first test path.
-	 * 
-	 * @param testPaths Collection with test paths
-	 * @return First test path
-	 */
-	private List<Integer> getFirstTestPath(Collection<List<Integer>> testPaths)
-	{
-		Iterator<List<Integer>> it = testPaths.iterator();
-		
-		return it.hasNext() ? it.next() : null;
+		SignaturesInfo si = new SignaturesInfo(methodSignature, testMethodSignature);
+		return testPaths.get(si);
 	}
 }

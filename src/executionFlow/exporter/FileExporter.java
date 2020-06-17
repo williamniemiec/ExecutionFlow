@@ -20,7 +20,7 @@ import executionFlow.info.SignaturesInfo;
  * Exports the results to a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.4
+ * @version		1.5
  * @since		1.0
  */
 public class FileExporter implements ExporterExecutionFlow 
@@ -49,24 +49,24 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths) 
+	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
 	{
 		try {
 			// Removes test path folders that will be overwritten (avoids 
 			// creating duplicate files)
 			prepareExport(classTestPaths);
 		
-			for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classTestPaths.values()) {
-				for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathsInfo.entrySet()) {
+			//for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classTestPaths.values()) {
+				for (Map.Entry<SignaturesInfo, List<List<Integer>>> e : classTestPaths.entrySet()) {
 					SignaturesInfo signatures = e.getKey();
 		
 					// Gets save path
-					Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
+					Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
 					
 					// Writes test paths in the file
 					writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
 				}
-			}
+			//}
 			
 			System.out.println("[INFO] Test paths have been successfully generated!");
 			System.out.println("[INFO] Location: "+new File(dirName).getAbsolutePath());
@@ -143,7 +143,7 @@ public class FileExporter implements ExporterExecutionFlow
 	 * @param		testMethodSignature Signature of the test method the method is in
 	 * @throws		IOException If it is not possible to write some test path file
 	 */
-	private void writeFile(List<Integer> testPaths, Path savePath, String testMethodSignature) throws IOException
+	private void writeFile(List<List<Integer>> testPaths, Path savePath, String testMethodSignature) throws IOException
 	{
 		boolean alreadyExists;
 		
@@ -159,7 +159,10 @@ public class FileExporter implements ExporterExecutionFlow
 			bfw.newLine();
 		}
 		
-		bfw.write(testPaths.toString());		// Writes test path in the file
+		for (List<Integer> testPath : testPaths) {
+			bfw.write(testPath.toString());		// Writes test path in the file			
+		}
+			
 		bfw.newLine();
 		bfw.close();
 		
@@ -168,17 +171,18 @@ public class FileExporter implements ExporterExecutionFlow
 	
 	/**
 	 * Removes test path folders that will be overwritten.
-	 *  
+	 * 
+	 * @param		classTestPaths Collected test paths
 	 * @throws		IOException If any test path file to be removed is in use
 	 */
-	private void prepareExport(Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths) throws IOException
+	private void prepareExport(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) throws IOException
 	{
-		for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classTestPaths.values()) {
-			for (Map.Entry<SignaturesInfo, List<Integer>> e : classPathsInfo.entrySet()) {
-				SignaturesInfo signatures = e.getKey();			
+		//for (Map<SignaturesInfo, List<List<Integer>>> classPathsInfo : classTestPaths.values()) {
+			for (SignaturesInfo signatures : classTestPaths.keySet()) {
+				//SignaturesInfo signatures = e.getKey();			
 				
 				// Gets save path
-				Path savePath = Paths.get(getSavePath(signatures.getMethodSignature()));
+				Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
 				File dir = savePath.toFile();
 				
 				// If the save path does not exist nothing will be overwritten
@@ -203,7 +207,7 @@ public class FileExporter implements ExporterExecutionFlow
 					}
 				}
 			}
-		}
+		//}
 	}
 	
 	

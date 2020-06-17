@@ -9,7 +9,7 @@ import executionFlow.info.SignaturesInfo;
  * Responsible for exporting the results obtained in {@link ExecutionFlow}.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.4
+ * @version		1.5
  * @since		1.0
  */
 public interface ExporterExecutionFlow 
@@ -19,5 +19,5 @@ public interface ExporterExecutionFlow
 	 * 
 	 * @param		classTestPaths Test paths to be exported
 	 */
-	public void export(Map<String, Map<SignaturesInfo, List<Integer>>> classTestPaths);
+	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths);
 }

@@ -1,6 +1,5 @@
 package executionFlow;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.MethodFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.SignaturesInfo;
 import executionFlow.runtime.MethodCollector;
 
 
@@ -108,11 +106,11 @@ public class MethodExecutionFlow extends ExecutionFlow
 
 					// Processes the source file of the method if it has not 
 					// been processed yet
-					if (!methodManager.wasParsed(methodFileManager)) {
+					if (!invokerManager.wasParsed(methodFileManager)) {
 						ConsoleOutput.showInfo("Processing source file of method " 
 							+ collector.getMethodInfo().getInvokerSignature()+"...");
 						
-						methodManager.parse(methodFileManager).compile(methodFileManager);
+						invokerManager.parse(methodFileManager).compile(methodFileManager);
 						ConsoleOutput.showInfo("Processing completed");
 					}
 					
@@ -138,36 +136,5 @@ public class MethodExecutionFlow extends ExecutionFlow
 		}
 		
 		return this;
-	}
-	
-	@Override
-	protected void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
-	{
-		Map<SignaturesInfo, List<Integer>> classPathInfo;
-		SignaturesInfo signaturesInfo = new SignaturesInfo(
-			collector.getMethodInfo().getInvokerSignature(), 
-			collector.getTestMethodInfo().getInvokerSignature()
-		);
-		String key = signaturesInfo.toString();
-		
-		for (List<Integer> testPath : testPaths) {
-			// Checks if test path belongs to a stored test method and method
-			if (classTestPaths.containsKey(key)) {
-				classPathInfo = classTestPaths.get(key);
-				classPathInfo.put(signaturesInfo, testPath);
-			} 
-			// Else stores test path with its test method and method
-			else {	
-				classPathInfo = new HashMap<>();
-				classPathInfo.put(signaturesInfo, testPath);
-				classTestPaths.put(key, classPathInfo);
-			}
-		}
-		
-		if (testPaths.isEmpty()) {
-			classPathInfo = new HashMap<>();
-			classPathInfo.put(signaturesInfo, new ArrayList<Integer>());
-			classTestPaths.put(key, classPathInfo);
-		}
 	}
 }

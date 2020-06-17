@@ -187,8 +187,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Restores original method files and its compiled files
 			try {
-				if (ExecutionFlow.methodManager.load())
-					ExecutionFlow.methodManager.restoreAll();		
+				if (ExecutionFlow.invokerManager.load())
+					ExecutionFlow.invokerManager.restoreAll();		
 			} catch (ClassNotFoundException e) {
 				hasError = true;
 				ConsoleOutput.showError("Class FileManager not found");
@@ -203,7 +203,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			testMethodManager.restoreAll();
 			
 			// Deletes backup files
-			ExecutionFlow.methodManager.deleteBackup();
+			ExecutionFlow.invokerManager.deleteBackup();
 			ExecutionFlow.testMethodManager.deleteBackup();
 			testMethodManager.deleteBackup();
 			
