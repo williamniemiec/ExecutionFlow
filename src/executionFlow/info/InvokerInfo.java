@@ -235,4 +235,14 @@ public abstract class InvokerInfo
 	{
 		return srcPath.getParent();
 	}
+	
+	/**
+	 * Gets values from the invoker's arguments.
+	 * 
+	 * @return		Values from the invoker's arguments
+	 */
+	public Object[] getArgs() 
+	{
+		return args;
+	}
 }

@@ -285,16 +285,6 @@ public class MethodInvokerInfo extends InvokerInfo
 	}
 	
 	/**
-	 * Gets values from the method's arguments.
-	 * 
-	 * @return		Values from the method's arguments
-	 */
-	public Object[] getArgs() 
-	{
-		return args;
-	}
-	
-	/**
 	 * Gets return type of the method.
 	 * 
 	 * @return		Method return type
