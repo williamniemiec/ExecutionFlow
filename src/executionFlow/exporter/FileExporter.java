@@ -9,15 +9,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import executionFlow.ConsoleOutput;
 import executionFlow.info.SignaturesInfo;
 
 
 /**
- * Exports the results to a file.
+ * Exports computed test path to a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5
@@ -35,7 +35,8 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Exports test paths of a method to files in the specified directory.
+	 * Exports computed test paths from collected invokers, where an invoker
+	 * can be a method or a constructor.
 	 * 
 	 * @param		dirName Name of the directory
 	 */
@@ -56,35 +57,33 @@ public class FileExporter implements ExporterExecutionFlow
 			// creating duplicate files)
 			prepareExport(classTestPaths);
 		
-			//for (Map<SignaturesInfo, List<Integer>> classPathsInfo : classTestPaths.values()) {
-				for (Map.Entry<SignaturesInfo, List<List<Integer>>> e : classTestPaths.entrySet()) {
-					SignaturesInfo signatures = e.getKey();
-		
-					// Gets save path
-					Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
-					
-					// Writes test paths in the file
-					writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
-				}
-			//}
-			
-			System.out.println("[INFO] Test paths have been successfully generated!");
-			System.out.println("[INFO] Location: "+new File(dirName).getAbsolutePath());
-			System.out.println();
+			for (Map.Entry<SignaturesInfo, List<List<Integer>>> e : classTestPaths.entrySet()) {
+				SignaturesInfo signatures = e.getKey();
+	
+				// Gets save path
+				Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
+				
+				// Writes test paths in the file
+				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
+			}
+
+			ConsoleOutput.showInfo("Test paths have been successfully exported!");
+			ConsoleOutput.showInfo("Location: "+new File(dirName).getAbsolutePath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Returns path where are test paths of a method.
+	 * Returns path where are test paths of an invoker.
 	 * 
-	 * @param		methodSignature Signature of the method
-	 * @return		Path where are test paths of a method.
+	 * @param		invokerSignature Invoker signature
+	 * 
+	 * @return		Path where are test paths of an invoker.
 	 */
-	private String getSavePath(String methodSignature)
+	private String getSavePath(String invokerSignature)
 	{
-		String[] signatureFields = methodSignature.split("\\.");
+		String[] signatureFields = invokerSignature.split("\\.");
 		
 		String folderPath = getFolderPath(signatureFields);
 		String folderName = getFolderName(signatureFields);
@@ -93,9 +92,10 @@ public class FileExporter implements ExporterExecutionFlow
 	}
 	
 	/**
-	 * Generates folder's path based on method's signature.
+	 * Generates folder's path based on invoker's signature.
 	 * 
-	 * @param		signatureFields Fields of the signature of the method
+	 * @param		signatureFields Fields of the signature of the invoker
+	 * 
 	 * @return		Folder's path
 	 */
 	private String getFolderPath(String[] signatureFields)
@@ -119,9 +119,10 @@ public class FileExporter implements ExporterExecutionFlow
 	}
 	
 	/**
-	 * Generates folder's name based on method's signature.
+	 * Generates folder's name based on invoker's signature.
 	 * 
-	 * @param		signatureFields Fields of the signature of the method
+	 * @param		signatureFields Fields of the signature of the invoker
+	 * 
 	 * @return		Folder's name
 	 */
 	private String getFolderName(String[] signatureFields)
@@ -129,18 +130,19 @@ public class FileExporter implements ExporterExecutionFlow
 		// Extracts class name
 		String className = signatureFields[signatureFields.length-2];
 		
-		// Extracts method name with parameters
-		String methodName = signatureFields[signatureFields.length-1];
+		// Extracts invoker name with parameters
+		String invokerName = signatureFields[signatureFields.length-1];
 		
-		return className+"."+methodName;
+		return className+"."+invokerName;
 	}
 	
 	/**
-	 * Writes test paths of a method in a file.
+	 * Writes test paths of an invoker in a file.
 	 * 
-	 * @param		testPaths Test paths of the method
+	 * @param		testPaths Test paths of the invoker
 	 * @param		savePath Location where the file will be saved
-	 * @param		testMethodSignature Signature of the test method the method is in
+	 * @param		testMethodSignature Signature of the test method the invoker is in
+	 * 
 	 * @throws		IOException If it is not possible to write some test path file
 	 */
 	private void writeFile(List<List<Integer>> testPaths, Path savePath, String testMethodSignature) throws IOException
@@ -166,57 +168,51 @@ public class FileExporter implements ExporterExecutionFlow
 		bfw.newLine();
 		bfw.close();
 		
-		System.out.println("[INFO] Writing file "+f.getName()+" in "+f.getAbsolutePath());
+		ConsoleOutput.showInfo("Writing file "+f.getName()+" in "+f.getAbsolutePath());
 	}
 	
 	/**
 	 * Removes test path folders that will be overwritten.
 	 * 
 	 * @param		classTestPaths Collected test paths
+	 * 
 	 * @throws		IOException If any test path file to be removed is in use
 	 */
 	private void prepareExport(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) throws IOException
 	{
-		//for (Map<SignaturesInfo, List<List<Integer>>> classPathsInfo : classTestPaths.values()) {
-			for (SignaturesInfo signatures : classTestPaths.keySet()) {
-				//SignaturesInfo signatures = e.getKey();			
+		for (SignaturesInfo signatures : classTestPaths.keySet()) {	
+			// Gets save path
+			Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
+			File dir = savePath.toFile();
+			
+			// If the save path does not exist nothing will be overwritten
+			if (!dir.exists()) {
+				return;
+			}
+			
+			// Else removes files that will be overwritten
+			String[] files = dir.list();
+			File testPathFile;
+			
+			// Searches by files that will be overwritten and delete them 
+			for (String filename : files) {
+				testPathFile = new File(dir, filename);
 				
-				// Gets save path
-				Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
-				File dir = savePath.toFile();
-				
-				// If the save path does not exist nothing will be overwritten
-				if (!dir.exists()) {
-					return;
-				}
-				
-				// Else removes files that will be overwritten
-				System.out.println("------");
-				System.out.println(Arrays.toString(dir.list()));
-				System.out.println(dir);
-				System.out.println("------");
-				String[] files = dir.list();
-				File testPathFile;
-				
-				// Searches by files that will be overwritten and delete them 
-				for (String filename : files) {
-					testPathFile = new File(dir, filename);
-					
-					if (willBeOverwritten(testPathFile, signatures.getTestMethodSignature())) {
-						testPathFile.getAbsoluteFile().delete();
-					}
+				if (willBeOverwritten(testPathFile, signatures.getTestMethodSignature())) {
+					testPathFile.getAbsoluteFile().delete();
 				}
 			}
-		//}
+		}
 	}
-	
 	
 	/**
 	 * Checks if a test path file will be overwritten.
 	 * 
 	 * @param		file Test path file
 	 * @param		testMethodSignature Signature of the test method the method is in
+	 * 
 	 * @return		True if the file will be overwritten; otherwise, returns false
+	 * 
 	 * @throws		IOException If it is not possible to read the file
 	 */
 	private boolean willBeOverwritten(File file, String testMethodSignature) throws IOException
@@ -239,7 +235,9 @@ public class FileExporter implements ExporterExecutionFlow
 	 * Returns the file name that the test path file should have.
 	 * 
 	 * @param		path Path where the test path files are located
+	 * 
 	 * @return		Name that the test path file should have
+	 * 
 	 * @throws		IOException If it cannot find file in the provided path
 	 */
 	private String getTestPathName(Path path, String testMethodSignature) throws IOException

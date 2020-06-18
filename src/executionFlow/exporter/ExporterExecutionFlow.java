@@ -5,6 +5,7 @@ import java.util.Map;
 
 import executionFlow.info.SignaturesInfo;
 
+
 /**
  * Responsible for exporting the results obtained in {@link ExecutionFlow}.
  * 
@@ -15,7 +16,7 @@ import executionFlow.info.SignaturesInfo;
 public interface ExporterExecutionFlow 
 {
 	/**
-	 * Exports test path
+	 * Exports test path.
 	 * 
 	 * @param		classTestPaths Test paths to be exported
 	 */
