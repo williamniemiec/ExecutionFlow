@@ -60,6 +60,7 @@ public class FileExporter implements ExporterExecutionFlow
 			for (Map.Entry<SignaturesInfo, List<List<Integer>>> e : classTestPaths.entrySet()) {
 				SignaturesInfo signatures = e.getKey();
 	
+				
 				// Gets save path
 				Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
 				
@@ -84,9 +85,9 @@ public class FileExporter implements ExporterExecutionFlow
 	private String getSavePath(String invokerSignature)
 	{
 		String[] signatureFields = invokerSignature.split("\\.");
-		
 		String folderPath = getFolderPath(signatureFields);
 		String folderName = getFolderName(signatureFields);
+		
 		
 		return dirName+"/"+folderPath+"/"+folderName;
 	}
@@ -100,10 +101,9 @@ public class FileExporter implements ExporterExecutionFlow
 	 */
 	private String getFolderPath(String[] signatureFields)
 	{
-		// Extracts folder path
 		String folderPath = "";
-		
 		StringBuilder sb = new StringBuilder();
+		
 		
 		for (int i=0; i<signatureFields.length-2; i++) {
 			sb.append(signatureFields[i]);
@@ -133,6 +133,7 @@ public class FileExporter implements ExporterExecutionFlow
 		// Extracts invoker name with parameters
 		String invokerName = signatureFields[signatureFields.length-1];
 		
+		
 		return className+"."+invokerName;
 	}
 	
@@ -148,9 +149,10 @@ public class FileExporter implements ExporterExecutionFlow
 	private void writeFile(List<List<Integer>> testPaths, Path savePath, String testMethodSignature) throws IOException
 	{
 		boolean alreadyExists;
+		File f = new File(savePath.toFile(), getTestPathName(savePath, testMethodSignature));
+
 		
 		Files.createDirectories(savePath);
-		File f = new File(savePath.toFile(), getTestPathName(savePath, testMethodSignature));
 		alreadyExists = f.exists();
 		
 		BufferedWriter bfw = new BufferedWriter(new FileWriter(f, true));
@@ -183,16 +185,18 @@ public class FileExporter implements ExporterExecutionFlow
 		for (SignaturesInfo signatures : classTestPaths.keySet()) {	
 			// Gets save path
 			Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
-			File dir = savePath.toFile();
+			
+			File dir = savePath.toFile(), testPathFile;
+			String[] files;
+			
 			
 			// If the save path does not exist nothing will be overwritten
-			if (!dir.exists()) {
+			if (!dir.exists())
 				return;
-			}
+			
 			
 			// Else removes files that will be overwritten
-			String[] files = dir.list();
-			File testPathFile;
+			files = dir.list();
 			
 			// Searches by files that will be overwritten and delete them 
 			for (String filename : files) {
@@ -218,15 +222,15 @@ public class FileExporter implements ExporterExecutionFlow
 	private boolean willBeOverwritten(File file, String testMethodSignature) throws IOException
 	{
 		boolean response = false;
-		
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String testMethodSignature_file = br.readLine();
+
+		
 		br.close();
 		
 		// If the file has the same test method signature it will be overwritten
-		if (testMethodSignature_file.equals(testMethodSignature)) {
-			response = true;
-		}		
+		if (testMethodSignature_file.equals(testMethodSignature))
+			response = true;	
 		
 		return response;
 	}
@@ -241,17 +245,20 @@ public class FileExporter implements ExporterExecutionFlow
 	 * @throws		IOException If it cannot find file in the provided path
 	 */
 	private String getTestPathName(Path path, String testMethodSignature) throws IOException
-	{
+	{		
 		int id = 1;
 		
 		// Starts trying with TP_1.txt
 		File f = new File(path.toFile(), "TP_"+id+".txt");
+		
 		
 		// It the name is already in use, if the file has the same test method 
 		// signature
 		while (f.exists()) {
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			String testMethodSignature_file = br.readLine();
+			
+			
 			br.close();
 				
 			// If the file has the same test method signature, test path will 

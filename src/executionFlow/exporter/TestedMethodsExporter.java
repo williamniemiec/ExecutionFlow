@@ -3,13 +3,11 @@ package executionFlow.exporter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +41,7 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 	 * the test method.
 	 * <ul>
 	 * 	<li><b>Key:</b> Test method signature</li>
-	 * 	<li><b>Value:</b> List of invokers tested by this test method</li>
+	 * 	<li><b>Value:</b> List of invokers tested by a test method</li>
 	 * </ul>
 	 */
 	private Map<String, List<String>> testedInvokers;
@@ -78,41 +76,72 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
 	{
 		Set<SignaturesInfo> signatures = classTestPaths.keySet();
-		Set<String> csvLines = new HashSet<>();
-		StringBuilder line = new StringBuilder();
-		String currentLine;
 		
+		/**
+		 * Stores lines from a CSV file.
+		 * 
+		 * Key: Test method signature
+		 * Value: List of invokers tested by a test method
+		 */
+		Map<String, List<String>> csvLines = new HashMap<>();
+
 		
-		// Fill testedMethods
-		testedInvokers = extractTestedMethods(signatures);
+		ConsoleOutput.showInfo("Exporting tested methods to CSV...");
+		
+		// Gets collected invokers
+		testedInvokers = extractTestedInvokers(signatures);
 		
 		// Reads CSV (if it already exists)
 		csvLines = extractCSV();
 		
-		// Exports to CSV
-		ConsoleOutput.showInfo("Exporting tested methods to CSV...");
+		// Erases CVS file
+		output.delete();
 		
-		try (BufferedWriter csv = new BufferedWriter(new FileWriter(output, true))) {
-			for (Map.Entry<String, List<String>> e : testedInvokers.entrySet()) {
+		// Merges current CSV file with new collected invokers
+		for (Map.Entry<String, List<String>> e : testedInvokers.entrySet()) {
+			String testMethodSignature = e.getKey();
+			List<String> csvTestedInvokers;
+			
+			
+			if (csvLines.containsKey(testMethodSignature))
+				csvTestedInvokers = csvLines.get(testMethodSignature);
+			else
+				csvTestedInvokers = new ArrayList<>();
+			
+			// Groups invoker signatures along with the test method that
+			// calls it
+			for (String invokerSignature : e.getValue()) {
+				// If invoker belongs to the current test method and has
+				// not been placed on the list, put it				
+				if (!csvTestedInvokers.contains(invokerSignature))
+					csvTestedInvokers.add(invokerSignature);
+			}
+			
+			csvLines.put(testMethodSignature, csvTestedInvokers);
+		}
+		
+		
+		// Writes collected invokers along with its test method in CSV file
+		try (BufferedWriter csv = new BufferedWriter(new FileWriter(output))) {
+			for (Map.Entry<String, List<String>> e : csvLines.entrySet()) {
 				String testMethodSignature = e.getKey();
-				line.append(testMethodSignature);
-				line.append(",");
-	
+				StringBuilder sb = new StringBuilder();
+				
+				
+				sb.append(testMethodSignature);
+				sb.append(",");
+				
 				for (String invokerSignature : e.getValue()) {
-					line.append(invokerSignature);
-					line.append(",");
+					sb.append(invokerSignature);
+					sb.append(",");
 				}
 				
 				// Removes last comma
-				line.deleteCharAt(line.length()-1);	
-								
-				// Writes line in CSV file
-				currentLine = line.toString();
+				sb = sb.deleteCharAt(sb.length()-1);	
 				
-				if (!csvLines.contains(currentLine)) {
-					csv.write(currentLine);
-					csv.newLine();
-				}
+				// Writes test method + testedInvokers in CSV file
+				csv.write(sb.toString());
+				csv.newLine();
 			}
 		} catch (IOException e1) {
 			ConsoleOutput.showError("CSV - " + e1.getMessage());
@@ -134,21 +163,29 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 	 * 
 	 * @return		Map with the above structure
 	 */
-	private Map<String, List<String>> extractTestedMethods(Set<SignaturesInfo> signatures)
+	private Map<String, List<String>> extractTestedInvokers(Set<SignaturesInfo> signatures)
 	{
 		Map<String, List<String>> response = new HashMap<>();
 		
+		
+		// Converts Set<SignaturesInfo> -> Map<String, List<String>>, where:
+		// 		Key:	Test method signature
+		//		Value:	List of invokers tested by this test method
 		for (SignaturesInfo signaturesInfo : signatures) {
 			// If the test method signature is already in response, add the 
 			// invoker signature in it
 			if (response.containsKey(signaturesInfo.getTestMethodSignature())) {
 				List<String> invokerSignatures = response.get(signaturesInfo.getTestMethodSignature());
+				
+				
 				invokerSignatures.add(signaturesInfo.getInvokerSignature());
 			}
 			// Else adds the test method signature along with the invoker
 			// signature
 			else {
 				List<String> invokers = new ArrayList<>();
+				
+				
 				invokers.add(signaturesInfo.getInvokerSignature());
 				response.put(signaturesInfo.getTestMethodSignature(), invokers);
 			}
@@ -156,15 +193,39 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 		
 		return response;
 	}
-	
-	private Set<String> extractCSV()
+
+	/**
+	 * Reads exported CSV file and returns a Set with all its lines.
+	 * <br />
+	 * <h1>Output</h1>
+	 * <ul>
+	 * 	<li><b>Key:</b> Test method signature</li>
+	 * 	<li><b>Value:</b> List of invokers tested by a test method</li>
+	 * </ul>
+	 * 
+	 * @return		Set with CSV lines
+	 */
+	private Map<String, List<String>> extractCSV()
 	{
-		Set<String> lines = new HashSet<>();
-		String line;
+		Map<String, List<String>> lines = new HashMap<>();
+		String line, testMethod;
+		String[] content;
+		List<String> testedInvokers;
+		
 		
 		try (BufferedReader csv = new BufferedReader(new FileReader(output))) {
+			// Reads content from a CSV file and stores it in a Map
 			while ((line = csv.readLine()) != null) {
-				lines.add(line);				
+				testedInvokers = new ArrayList<>();
+				content = line.split(",");
+				testMethod = content[0];
+				
+				for (int i=1; i<content.length; i++) {
+					if (!testedInvokers.contains(content[i]))
+						testedInvokers.add(content[i]);
+				}
+				
+				lines.put(testMethod, testedInvokers);				
 			}
 		} catch (IOException e) { }
 		

@@ -25,11 +25,13 @@ public class ConsoleExporter implements ExporterExecutionFlow
 		String currentTestMethodSignature = null;
 		String currentMethod = "";
 		
+		
 		ConsoleOutput.showHeader("EXPORT", '-');
 		
 		for (Map.Entry<SignaturesInfo, List<List<Integer>>> e : classTestPaths.entrySet()) {
 			SignaturesInfo signatures = e.getKey();
 			String testMethodSignature = signatures.getTestMethodSignature();
+			
 			
 			if (testMethodSignature == null) { testMethodSignature = ""; }
 			
