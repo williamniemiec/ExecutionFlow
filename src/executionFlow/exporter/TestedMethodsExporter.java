@@ -1,11 +1,15 @@
 package executionFlow.exporter;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,10 +78,16 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
 	{
 		Set<SignaturesInfo> signatures = classTestPaths.keySet();
+		Set<String> csvLines = new HashSet<>();
 		StringBuilder line = new StringBuilder();
+		String currentLine;
+		
 		
 		// Fill testedMethods
 		testedInvokers = extractTestedMethods(signatures);
+		
+		// Reads CSV (if it already exists)
+		csvLines = extractCSV();
 		
 		// Exports to CSV
 		ConsoleOutput.showInfo("Exporting tested methods to CSV...");
@@ -97,8 +107,12 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 				line.deleteCharAt(line.length()-1);	
 								
 				// Writes line in CSV file
-				csv.write(line.toString());
-				csv.newLine();
+				currentLine = line.toString();
+				
+				if (!csvLines.contains(currentLine)) {
+					csv.write(currentLine);
+					csv.newLine();
+				}
 			}
 		} catch (IOException e1) {
 			ConsoleOutput.showError("CSV - " + e1.getMessage());
@@ -141,5 +155,19 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 		}
 		
 		return response;
+	}
+	
+	private Set<String> extractCSV()
+	{
+		Set<String> lines = new HashSet<>();
+		String line;
+		
+		try (BufferedReader csv = new BufferedReader(new FileReader(output))) {
+			while ((line = csv.readLine()) != null) {
+				lines.add(line);				
+			}
+		} catch (IOException e) { }
+		
+		return lines;
 	}
 }
