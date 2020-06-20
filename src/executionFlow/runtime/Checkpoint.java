@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -58,7 +59,11 @@ public class Checkpoint
 	 */
 	public void enable() throws IOException
 	{
-		Files.createFile(checkpointFile);
+		end = false;
+		
+		try {
+			Files.createFile(checkpointFile);
+		} catch(FileAlreadyExistsException e) { }
 		
 		Runnable r = () -> {
 			try (FileReader fr = new FileReader(checkpointFile.toFile())) {
