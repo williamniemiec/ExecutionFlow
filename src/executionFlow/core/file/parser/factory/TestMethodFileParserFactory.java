@@ -16,10 +16,23 @@ import executionFlow.core.file.parser.TestMethodFileParser;
  */
 public class TestMethodFileParserFactory extends FileParserFactory
 {
+	private Object arg;
+	
+	public TestMethodFileParserFactory(Object arg)
+	{
+		this.arg = arg;
+	}
+	
+	public TestMethodFileParserFactory()
+	{ }
+	
 	@Override
 	public FileParser newFileParser(Path filepath, Path outputDir, 
 			String outputFilename, FileEncoding encode) 
 	{
-		return new TestMethodFileParser(filepath, outputDir, outputFilename, encode);
+		if (arg == null)
+			return new TestMethodFileParser(filepath, outputDir, outputFilename, encode);
+		
+		return new TestMethodFileParser(arg, filepath, outputDir, outputFilename, encode);
 	}
 }

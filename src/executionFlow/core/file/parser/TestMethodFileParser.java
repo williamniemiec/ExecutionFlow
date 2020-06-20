@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.core.file.FileEncoding;
@@ -33,6 +35,9 @@ public class TestMethodFileParser extends FileParser
 	private static final boolean DEBUG;
 	
 	
+	private Object arg;
+	
+	
 	//-------------------------------------------------------------------------
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
@@ -41,7 +46,7 @@ public class TestMethodFileParser extends FileParser
 	 * lines.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	
@@ -96,6 +101,18 @@ public class TestMethodFileParser extends FileParser
 	}
 	
 	
+	
+	
+	
+	
+	
+	public TestMethodFileParser(Object arg, Path filepath, Path outputDir, String outputFilename, FileEncoding encode)
+	{
+		this(filepath, outputDir, outputFilename, encode);
+		this.arg = arg;
+	}
+	
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -104,6 +121,7 @@ public class TestMethodFileParser extends FileParser
 	 * test methods.
 	 * 
 	 * @return		Path to parsed file
+	 * 
 	 * @throws		IOException If file encoding is incorrect or if file cannot
 	 * be read / written
 	 */
@@ -114,6 +132,10 @@ public class TestMethodFileParser extends FileParser
 
 		String line;
 		File outputFile;
+		boolean inParameterizedTest = false, inTestMethodSignature = false;
+		final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
+		String params = null;
+		
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -129,8 +151,41 @@ public class TestMethodFileParser extends FileParser
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
 				// Checks whether the line contains a test annotation
-				if (isTestMethod(line)) {
+				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
 					line += " @executionFlow.runtime._SkipMethod";
+					inTestMethodSignature = true;
+				}
+				
+				if (arg != null && inTestMethodSignature) {
+					if (line.matches(pattern_methodDeclaration.toString())) {
+						inTestMethodSignature = false;
+						// Extracts parameters
+						Pattern p = Pattern.compile("\\(.*\\)");
+						Matcher m = p.matcher(line);
+						
+						
+						if (m.find()) {
+							params = m.group();
+							params = params.replace("(", "").replace(")", ""); // Removes parentheses
+							line = line.replace(params, ""); // Deletes params from method
+						}
+					}
+					// Converts parameters to local variables
+					else if (params != null) {
+						params = params + "=" + arg + ";";
+						
+						
+						if (line.contains("{")) {	// Problem: anonymous class at first time
+							int index = line.indexOf("{");
+							
+							
+							line = line.substring(0, index+1) + params + line.substring(index+1);
+						}
+						else {
+							line = params + line;
+						}
+						inParameterizedTest = false;
+					}
 				}
 				
 				// -----{ DEBUG }-----
@@ -149,6 +204,7 @@ public class TestMethodFileParser extends FileParser
 	 * Checks whether a line contains a test annotation.
 	 * 
 	 * @param		line Line to be analyzed
+	 * 
 	 * @return		If line contains a test annotation
 	 */
 	private boolean isTestMethod(String line)
