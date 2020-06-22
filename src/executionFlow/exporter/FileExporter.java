@@ -14,6 +14,7 @@ import java.util.Map;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.info.SignaturesInfo;
+import executionFlow.util.DataUtils;
 
 
 /**
@@ -62,7 +63,7 @@ public class FileExporter implements ExporterExecutionFlow
 	
 				
 				// Gets save path
-				Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
+				Path savePath = Paths.get(DataUtils.getSavePath(signatures.getInvokerSignature()));
 				
 				// Writes test paths in the file
 				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
@@ -76,69 +77,7 @@ public class FileExporter implements ExporterExecutionFlow
 	}
 	
 	/**
-	 * Returns path where are test paths of an invoker.
-	 * 
-	 * @param		invokerSignature Invoker signature
-	 * 
-	 * @return		Path where are test paths of an invoker.
-	 */
-	private String getSavePath(String invokerSignature)
-	{
-		String[] signatureFields = invokerSignature.split("\\.");
-		String folderPath = getFolderPath(signatureFields);
-		String folderName = getFolderName(signatureFields);
-		
-		
-		return dirName+"/"+folderPath+"/"+folderName;
-	}
-	
-	/**
-	 * Generates folder's path based on invoker's signature.
-	 * 
-	 * @param		signatureFields Fields of the signature of the invoker
-	 * 
-	 * @return		Folder's path
-	 */
-	private String getFolderPath(String[] signatureFields)
-	{
-		String folderPath = "";
-		StringBuilder sb = new StringBuilder();
-		
-		
-		for (int i=0; i<signatureFields.length-2; i++) {
-			sb.append(signatureFields[i]);
-			sb.append("/");
-		}
-		
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length()-1);	// Removes last slash
-			folderPath = sb.toString();
-		}
-		
-		return folderPath;
-	}
-	
-	/**
-	 * Generates folder's name based on invoker's signature.
-	 * 
-	 * @param		signatureFields Fields of the signature of the invoker
-	 * 
-	 * @return		Folder's name
-	 */
-	private String getFolderName(String[] signatureFields)
-	{
-		// Extracts class name
-		String className = signatureFields[signatureFields.length-2];
-		
-		// Extracts invoker name with parameters
-		String invokerName = signatureFields[signatureFields.length-1];
-		
-		
-		return className+"."+invokerName;
-	}
-	
-	/**
-	 * Writes test paths of an invoker in a file.
+	 * Writes test paths of an invoker to a file.
 	 * 
 	 * @param		testPaths Test paths of the invoker
 	 * @param		savePath Location where the file will be saved
@@ -184,7 +123,7 @@ public class FileExporter implements ExporterExecutionFlow
 	{
 		for (SignaturesInfo signatures : classTestPaths.keySet()) {	
 			// Gets save path
-			Path savePath = Paths.get(getSavePath(signatures.getInvokerSignature()));
+			Path savePath = Paths.get(DataUtils.getSavePath(signatures.getInvokerSignature()));
 			
 			File dir = savePath.toFile(), testPathFile;
 			String[] files;

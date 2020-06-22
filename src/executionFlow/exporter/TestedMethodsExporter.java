@@ -1,10 +1,6 @@
 package executionFlow.exporter;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,17 +10,23 @@ import java.util.Set;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.info.SignaturesInfo;
+import executionFlow.util.CSV;
+import executionFlow.util.DataUtils;
 
 
 /**
- * Responsible for exporting tested Invoker in CSV with the following format: 
+ * Responsible for exporting invokers along with the test method that tests it
+ * in CSV file with the following format: 
  * <br /> <br />
+ * 
  * <code>
  * InvokerSignature1, TestMethodSignature11, TestMethodSignature12,...
- * InvokerSignature2, TestMethodSignature21, TestMethodSignature22,... 
- * <br />...
+ * InvokerSignature2, TestMethodSignature21, TestMethodSignature22,... <br /> 
+ * ...
  * </code>
+ * 
  * <br />
+ * 
  * <b>Note:</b> An invoker can be a method or a constructor
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
@@ -37,8 +39,8 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores the signature of the tested invokers along with the signature of
-	 * the test method.
+	 * Stores the signature of the tested invokers along with test methods that
+	 * tests these invokers.
 	 * <ul>
 	 * 	<li><b>Key:</b> Invoker signature</li>
 	 * 	<li><b>Value:</b> List of test methods that tests an invoker</li>
@@ -53,8 +55,8 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 	//		Constructor
 	//-------------------------------------------------------------------------	
 	/**
-	 * Exports tested invokers along with the signature of the test method that
-	 * tests this invoker.
+	 * Exports tested invokers along with test methods that tests these
+	 * invokers.
 	 * 
 	 * @param		filename Filename without extension
 	 * @param		output Path where the file will be saved
@@ -78,34 +80,52 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 		Set<SignaturesInfo> signatures = classTestPaths.keySet();
 		
 		/**
-		 * Stores lines from a CSV file.
+		 * Stores tested invoker signature along with its invoked method
+		 * signatures.
 		 * 
 		 * <ul>
 		 * 	<li><b>Key:</b> Invoker signature</li>
 		 * 	<li><b>Value:</b> List of test methods that tests an invoker</li>
 		 * </ul>
 		 */
-		Map<String, List<String>> csvLines = new HashMap<>();
+		Map<String, List<String>> invokedMethodSignatures = new HashMap<>();
 
 		
-		ConsoleOutput.showInfo("Exporting invokers along with test methods to CSV...");
+		ConsoleOutput.showInfo("Exporting invokers along with test methods that test them to CSV...");
 		
 		// Gets invoker along with test methods that test it
 		invoker_testMethods = extractTestedInvokers(signatures);
 		
 		// Reads CSV (if it already exists)
-		csvLines = extractCSV();
+		try {
+			for (List<String> line : CSV.read(output)) {
+				List<String> invokedMethod = new ArrayList<>();
+				
+				
+				for (int i=1; i<line.size(); i++) {
+					invokedMethod.add(line.get(i));
+				}
+				
+				invokedMethodSignatures.put(line.get(0), invokedMethod);
+			}			
+		} catch (IOException e) { }
 		
 		// Erases CSV file
 		output.delete();
 		
 		// Merges current CSV file with new collected invokers and its test methods
-		mergesMaps(invoker_testMethods, csvLines);
+		DataUtils.mergesMaps(invoker_testMethods, invokedMethodSignatures);
 		
 		// Writes collected invokers along with a list of test methods that 
 		// call them to a CSV file
 		try {
-			writeCSV(csvLines);
+			for (Map.Entry<String, List<String>> e : invokedMethodSignatures.entrySet()) {
+				List<String> content = e.getValue();
+				
+				
+				content.add(0, e.getKey());
+				CSV.write(content, output);
+			}
 		} catch (IOException e1) {
 			ConsoleOutput.showError("CSV - " + e1.getMessage());
 			e1.printStackTrace();
@@ -156,114 +176,5 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 		}
 		
 		return response;
-	}
-	
-	/**
-	 * Given two Maps, adds all content from the first Map to the second.
-	 * 
-	 * @param		map1 Some map
-	 * @param		map2 Map that will be merge with map1 
-	 */
-	private void mergesMaps(Map<String, List<String>> map1, Map<String, List<String>> map2)
-	{
-		for (Map.Entry<String, List<String>> e : map1.entrySet()) {
-			String keyMap1 = e.getKey();
-			List<String> contentMap2;
-
-			
-			// Adds content from first Map to the second
-			for (String contentMap1 : e.getValue()) {
-				// If second Map contains the same key as the first, add all
-				// the content of this key from first Map in the second
-				if (map2.containsKey(keyMap1)) {
-					contentMap2 = map2.get(keyMap1);
-					
-					if (!contentMap2.contains(contentMap1)) {
-						contentMap2.add(contentMap1);
-					}
-				}
-				else {
-					contentMap2 = new ArrayList<>();
-					contentMap2.add(contentMap1);
-					map2.put(keyMap1, contentMap2);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Writes a Map to a CSV file.
-	 * 
-	 * @param		content Map with the content to be written, with the
-	 * following structure:
-	 * <ul>
-	 * 	<li><b>Key:</b> First column element</li>
-	 * 	<li><b>Value:</b> List with subsequent elements of the first column
-	 * 	element</li>
-	 * </ul>
-	 * 
-	 * @throws		IOException If an error occurs while writing the file 
-	 */
-	private void writeCSV(Map<String, List<String>> content) throws IOException
-	{
-		try (BufferedWriter csv = new BufferedWriter(new FileWriter(output))) {
-			for (Map.Entry<String, List<String>> e : content.entrySet()) {
-				String firstColumn = e.getKey();
-				StringBuilder sb = new StringBuilder();
-				
-				
-				sb.append(firstColumn);
-				sb.append(",");
-				
-				for (String subsequentElement : e.getValue()) {
-					sb.append(subsequentElement);
-					sb.append(",");
-				}
-				
-				// Removes last comma
-				sb = sb.deleteCharAt(sb.length()-1);	
-				
-				// Writes the content to CSV file
-				csv.write(sb.toString());
-				csv.newLine();
-			}
-		}
-	}
-
-	/**
-	 * Reads exported CSV file and returns a Map with its content.
-	 * 
-	 * @return		Map with CSV content with the following structure:
-	 * <ul>
-	 * 	<li><b>Key:</b> First column element</li>
-	 * 	<li><b>Value:</b> List with subsequent elements of the first column
-	 * 	element</li>
-	 * </ul>
-	 */
-	private Map<String, List<String>> extractCSV()
-	{
-		Map<String, List<String>> lines = new HashMap<>();
-		String line, firstColumnElement;
-		String[] content;
-		List<String> subsequentElements;
-		
-		
-		try (BufferedReader csv = new BufferedReader(new FileReader(output))) {
-			// Reads content from a CSV file and stores it in a Map
-			while ((line = csv.readLine()) != null) {
-				subsequentElements = new ArrayList<>();
-				content = line.split(",");
-				firstColumnElement = content[0];
-				
-				for (int i=1; i<content.length; i++) {
-					if (!subsequentElements.contains(content[i]))
-						subsequentElements.add(content[i]);
-				}
-				
-				lines.put(firstColumnElement, subsequentElements);				
-			}
-		} catch (IOException e) { }
-		
-		return lines;
 	}
 }
