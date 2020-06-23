@@ -12,8 +12,10 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +56,8 @@ public class JDB
 	 */
 	private String testMethodSignature;
 	
+	private String currentMethodSignature;
+	
 	/**
 	 * Line of test method that the method is called.
 	 */
@@ -75,6 +79,15 @@ public class JDB
 	private List<List<Integer>> testPaths;
 	
 	/**
+	 * Stores invoked methods by tested invoker.
+	 * <ul>
+	 * 	<li><b>Key:</b> Invoker signature</li>
+	 * 	<li><b>Value:</b> List of invoked method signatures by tested invoker</li>
+	 * </ul>
+	 */
+	private Map<String, List<String>> invokedMethodsByTestedInvoker;
+	
+	/**
 	 * Path of application libraries.
 	 */
 	private Path libPath;
@@ -94,7 +107,7 @@ public class JDB
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 
 	
@@ -113,6 +126,7 @@ public class JDB
 		
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
+		invokedMethodsByTestedInvoker = new HashMap<>();
 	}
 	
 	/**
@@ -129,10 +143,26 @@ public class JDB
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
+	 * Returns invoked methods by tested invoker
+	 * 
+	 * @return		Invoked methods by tested invoker in the following format:
+	 * <ul>
+	 * 	<li><b>Key:</b> Invoker signature</li>
+	 * 	<li><b>Value:</b> List of invoked method signatures by tested invoker</li>
+	 * </ul>
+	 */
+	public Map<String, List<String>> getInvokedMethodsByTestedMethod()
+	{
+		return invokedMethodsByTestedInvoker;
+	}
+	
+	/**
 	 * Computes test paths from a method.
 	 * 
 	 * @param		methodInfo Informations about this method
+	 * 
 	 * @return		Test paths of this method
+	 * 
 	 * @throws		IOException If JDB cannot be initialized
 	 * @throws		Throwable If an error occurs
 	 */
@@ -171,7 +201,9 @@ public class JDB
 	 * @param		srcRootPath Root path where the source file of the method is
 	 * @param		methodClassRootPath Root path where the compiled file of 
 	 * method class is
+	 * 
 	 * @return		Process running JDB
+	 * 
 	 * @throws		IOException If the process cannot be created
 	 */
 	private Process jdb_start(Path testClassRootPath, Path srcRootPath, Path methodClassRootPath) throws IOException
@@ -188,7 +220,13 @@ public class JDB
 		String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";
 		
 		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
-				+ cp_junitPlatformConsole;
+			+ libPath_relative + "aspectjtools.jar" + ";"
+			
+			+ libPath_relative + "junit-4.13.jar" + ";"
+			+ libPath_relative + "hamcrest-all-1.3.jar" + ";"
+			
+			+ cp_junitPlatformConsole;
+		
 		
 		String jdb_classPath = ".;"+libs;
 		String jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString();
@@ -207,14 +245,9 @@ public class JDB
 		}
 		// -----{ END DEBUG }-----
 		
-		// Runs JDB from CMD
 		ProcessBuilder pb = new ProcessBuilder(
-			"cmd.exe","/c",	"jdb "+jdb_paths
-			+" org.junit.platform.console.ConsoleLauncher"
-			+" -cp "+"\""+jdb_classPath+";"+cp_junitPlatformConsole+"\\."+"\""
-			+" -c "+classInvocationSignature
-			+" --disable-banner"
-			+" --details=none"
+			"cmd.exe","/c","jdb "+jdb_paths,
+			"org.junit.runner.JUnitCore",classInvocationSignature
 		);
 		
 		pb.directory(testClassRootPath.toFile());
@@ -226,6 +259,7 @@ public class JDB
 	 * Starts JDB and computes test paths for a method from debugging.
 	 * 
 	 * @param		process Profess running JDB
+	 * 
 	 * @throws		IOException If an error occurs while reading the output 
 	 */
 	private void jdb_methodVisitor(Process process) throws IOException 
@@ -313,6 +347,7 @@ public class JDB
 	 * Extracts line number from a debug output.
 	 * 
 	 * @param		line Debug output
+	 * 
 	 * @return		Line obtained from this output
 	 */
 	private int jdb_getLine(String debugOutput)
@@ -343,7 +378,9 @@ public class JDB
 	 * 
 	 * @param		classPath Class path
 	 * @param		classPackage Class package
+	 * 
 	 * @return		Root path directory
+	 * 
 	 * @throws		IllegalStateException If source file path is null
 	 */
 	private Path extractRootPathDirectory(Path classPath, String classPackage) throws IllegalStateException
@@ -523,6 +560,7 @@ public class JDB
 		 * Reads JDB output and returns true if JDB is ready to receive commands.
 		 * 
 		 * @return		If JDB is ready to receive commands.
+		 * 
 		 * @throws		IOException If it cannot read JDB output
 		 * 
 		 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
@@ -611,6 +649,34 @@ public class JDB
 	            			inMethod = true;
 	            		}
             		}
+        		}
+        		// Gets tested method signature
+        		else if (line.contains("__TES_SIG")) {
+        			int idx = line.indexOf(":");
+        			
+        			
+        			currentMethodSignature = line.substring(idx+1);
+        			System.out.println("CURRENT SIG: "+currentMethodSignature);
+        		}
+        		
+        		// Gets invocation signature
+        		else if (line.contains("__INV_SIG")) {
+        			int idx = line.indexOf(":");
+        			
+        			
+        			if (invokedMethodsByTestedInvoker.containsKey(currentMethodSignature)) {
+        				List<String> invokedMethods = invokedMethodsByTestedInvoker.get(currentMethodSignature);
+        				
+        				
+        				invokedMethods.add(line.substring(idx+1));
+        			}
+        			else {
+        				List<String> invokedMethods = new ArrayList<>();
+        				
+        				
+        				invokedMethods.add(line.substring(idx+1));
+        				invokedMethodsByTestedInvoker.put(currentMethodSignature, invokedMethods);
+        			}
         		}
         		
 	    		if (endOfMethod) {
