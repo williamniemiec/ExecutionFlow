@@ -533,6 +533,7 @@ public class JDB
 		private BufferedReader output;
 		private boolean inMethod;
 		private boolean withinConstructor;
+		private boolean constructorFirstLine = true;
 		private int lastLineAdded = -1;
 		private String line;
 		private String srcLine;
@@ -600,13 +601,13 @@ public class JDB
             		withinConstructor = line.contains(".<init>");
             		
             		// Ignores native calls
-            		if (line.contains("jdk.")) {
+            		if (line.contains("jdk.") || line.contains("aspectj.") || line.contains("executionFlow.runtime")) {
             			isInternalCommand = true;
             			inMethod = false;
             		}
             		// Ignores constructor native calls
-            		else if (line.contains(".<init>") && srcLine.matches(regex_constructorNativeCall)) {
-            			//isInternalCommand = true;
+            		else if (withinConstructor && constructorFirstLine) {
+            			constructorFirstLine = false;
             			ignore = true;
             		}
             		// Checks if it is still within a constructor
@@ -622,9 +623,8 @@ public class JDB
             			inMethod = true;
             			skipped = false;
             		}
-            		//else {
-            			newIteration = isNewIteration();
-            		//}
+
+        			newIteration = isNewIteration();
             		
             		if (!isInternalCommand && !exitMethod && !ignore) {
 	        			if (inMethod) {
@@ -633,6 +633,7 @@ public class JDB
 	        				// Checks if returned from the method
 	        				if (line.contains(testMethodSignature)) {
 	        					exitMethod = true;
+	        					constructorFirstLine = true;
 	        					newIteration = false;
 	        					inMethod = false;
 	        					lastLineAdded = -1;
