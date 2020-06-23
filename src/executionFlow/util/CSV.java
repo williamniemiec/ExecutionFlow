@@ -57,10 +57,10 @@ public class CSV
 	 */
 	public static void write(List<String> content, File output) throws IOException
 	{
-		try (BufferedWriter csv = new BufferedWriter(new FileWriter(output))) {
+		try (BufferedWriter csv = new BufferedWriter(new FileWriter(output, true))) {
 			StringBuilder sb = new StringBuilder();
 
-			
+
 			for (String element : content) {
 				sb.append(element);
 				sb.append(",");
