@@ -195,8 +195,9 @@ public class MethodFileParser extends FileParser
 				}
 				
 				// Checks if it is a method declaration
-				if (!line.matches(regex_new) && pattern_methodDeclaration.matcher(line).find()) {
-					bw.write(line);						
+				if (!line.matches(regex_new) && line.matches(pattern_methodDeclaration.toString())) {
+					line = "@executionFlow.runtime.CollectInvokedMethods " + line;
+					bw.write(line);
 					bw.newLine();
 					
 					// -----{ DEBUG }-----
@@ -324,11 +325,15 @@ public class MethodFileParser extends FileParser
 					parsedLine = parse_switch(line);
 				}
 				// Variable declaration without initialization
-				else if (	!line.contains("return ") && !line.contains("return(") && 		
+				else if (!line.contains("return ") && !line.contains("return(") && 		
 						!line.contains("package ") && !line.contains("class ") && 
 						line.matches(regex_varDeclarationWithoutInitialization)) {
 				parsedLine = parse_varDeclaration(line);
 				} 
+				// Invoker signature
+				//else if (pattern_methodDeclaration.matcher(line).find()) {
+				//	
+				//}
 				else {
 					parsedLine = line;
 				}
@@ -349,6 +354,7 @@ public class MethodFileParser extends FileParser
 	 * Parses line with 'do' keyword.
 	 * 
 	 * @param		Line with 'do' keyword
+	 * 
 	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_do(String line)
@@ -386,6 +392,7 @@ public class MethodFileParser extends FileParser
 	 * that returns true.
 	 * 
 	 * @param		line Line with 'continue' or 'break' keyword
+	 * 
 	 * @return		Processed line ("if (Boolean.parseBoolean("True")) {"+line+"}"
 	 */
 	private String parse_continue_break(String line)
@@ -444,6 +451,7 @@ public class MethodFileParser extends FileParser
 	 * Parses line with 'try' or 'finally' keywords.
 	 * 
 	 * @param		Line with try or finally keyword
+	 * 
 	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_try_finally(String line)
@@ -473,6 +481,7 @@ public class MethodFileParser extends FileParser
 	 * Parses line with variable declaration without initialization.
 	 * 
 	 * @param		Line with variable declaration line without initialization
+	 * 
 	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_varDeclaration(String line)
@@ -486,6 +495,7 @@ public class MethodFileParser extends FileParser
 	 * 
 	 * @param		Line with 'case' or 'default' keyword (inside a switch 
 	 * block)
+	 * 
 	 * @return		Processed line (line + variable assignment command)
 	 */
 	private String parse_switch(String line)
@@ -513,6 +523,7 @@ public class MethodFileParser extends FileParser
 	 * 
 	 * @param		line Current line
 	 * @param		nextLine Line following the current line
+	 * 
 	 * @return		Current line with open curly bracket at the end
 	 */
 	private String checkCurlyBracketNewLine(String line, String nextLine)
@@ -531,6 +542,7 @@ public class MethodFileParser extends FileParser
 	 * Checks if a line is a comment line.
 	 * 
 	 * @param		line Line to be analyzed
+	 * 
 	 * @return		If line is a comment line
 	 */
 	private boolean isComment(String line)
@@ -560,6 +572,7 @@ public class MethodFileParser extends FileParser
 	 * Counts how many open curly brackets are in a text.
 	 * 
 	 * @param		text Text to be analyzed
+	 * 
 	 * @return		Amount of open curly brackets in the text
 	 */
 	private int countOpenCurlyBrackets(String text)
@@ -577,6 +590,7 @@ public class MethodFileParser extends FileParser
 	 * Counts how many closed curly brackets are in a text.
 	 * 
 	 * @param		text Text to be analyzed
+	 * 
 	 * @return		Amount of closed curly brackets in the text
 	 */
 	private int countClosedCurlyBrackets(String text)
@@ -594,6 +608,7 @@ public class MethodFileParser extends FileParser
 	 * Encrypts a text in MD5.
 	 * 
 	 * @param		text Text to be encrypted
+	 * 
 	 * @return		Encrypted text or the text if an error occurs
 	 */
 	private static String md5(String text)

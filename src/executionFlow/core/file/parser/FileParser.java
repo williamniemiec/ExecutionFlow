@@ -39,6 +39,7 @@ public abstract class FileParser implements Serializable
 	 * met
 	 * 
 	 * @return		Location of parsed file
+	 * 
 	 * @throws		IOException If it cannot parse the file
 	 */
 	public abstract String parseFile() throws IOException;

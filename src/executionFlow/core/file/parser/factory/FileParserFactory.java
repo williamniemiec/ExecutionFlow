@@ -22,6 +22,7 @@ public abstract class FileParserFactory
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding of the file to be parsed
+	 * 
 	 * @return		FileParser instance 
 	 */
 	public abstract FileParser newFileParser(Path filepath, Path outputDir, 

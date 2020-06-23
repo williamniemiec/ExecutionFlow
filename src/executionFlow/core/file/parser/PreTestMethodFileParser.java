@@ -44,7 +44,7 @@ public class PreTestMethodFileParser extends FileParser
 	 * lines.
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	
@@ -186,7 +186,7 @@ public class PreTestMethodFileParser extends FileParser
 		//---------------------------------------------------------------------
 		private boolean inTestMethodSignature = false;
 		private final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
-		private String params = null;
+		private String parameters = null;
 		private Object testMethodArg;
 		
 		
@@ -264,23 +264,23 @@ public class PreTestMethodFileParser extends FileParser
 						
 						
 						if (m.find()) {
-							params = m.group();
-							params = params.replace("(", "").replace(")", ""); // Removes parentheses
-							line = line.replace(params, ""); // Deletes params from method
+							parameters = m.group();
+							parameters = parameters.replace("(", "").replace(")", ""); // Removes parentheses
+							line = line.replace(parameters, ""); // Deletes params from method
 						}
 					}
 					// Converts parameters to local variables
-					else if (params != null) {
-						params = params + "=" + testMethodArg + ";";
+					else if (parameters != null) {
+						parameters = parameters + "=" + testMethodArg + ";";
 						
 						if (line.contains("{")) {
 							int index = line.indexOf("{");
 							
 							
-							line = line.substring(0, index+1) + params + line.substring(index+1);
+							line = line.substring(0, index+1) + parameters + line.substring(index+1);
 						}
 						else {
-							line = params + line;
+							line = parameters + line;
 						}
 
 						inTestMethodSignature = false;
