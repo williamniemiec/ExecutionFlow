@@ -5,14 +5,20 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import executionFlow.info.MethodInvokerInfo;
 import executionFlow.info.CollectorInfo;
 
 
 /**
- * Captures all executed methods with <code>@Test</code> annotation, including
- * inner methods (captures the method and all internal calls to other methods).
+ * Collects various information about methods tested by a JUnit test.
+ * 
+ * <h1>Collected information</h1>
+ * <ul>
+ * 	<li>Tested methods by a JUnit test</li>
+ * 	<li>Invoked methods by a tested method</li>
+ * </ul>
  * 
  * @apiNote		Excludes calls to native java methods, ExecutionFlow's classes,
  * methods with {@link SkipMethod} annotation, methods with {@link _SkipMethod}
@@ -34,49 +40,84 @@ public aspect MethodCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	//		Pointcuts
 	//-----------------------------------------------------------------------
-	pointcut methodCollector(): 
-		!skipAnnotation() &&
-		(junit4() || junit5()) && 
+	/**
+	 * Displays tested method signatures by a JUnit test that has 
+	 * {@link @executionFlow.runtime._SkipMethod} annotation.
+	 */
+	pointcut invokerSignature(): 
+		cflow(execution(@executionFlow.runtime._SkipMethod * *.*(..))) && 
+		(junit4() || junit5()) &&
+		!junit4_internal() && !junit5_internal() &&
 		!execution(public int hashCode());
+	
+	before(): invokerSignature()
+	{
+		String invocationSignature = thisJoinPoint.getSignature().toString();
+		
+		
+		// Checks if is a method signature
+		if (!isMethodSignature(invocationSignature)) { return; }
+		
+		// Ignores native java methods
+		if (isNativeMethod(invocationSignature)) { return; }
+		
+		System.out.println("__TES_SIG:"+invocationSignature);
+		
+	}
+	
+	/**
+	 * Displays invoked method signatures within a method with 
+	 * {@link @executionFlow.runtime.CollectInvokedMethods} annotation.
+	 */
+	pointcut invokedMethodsByTestedMethod():
+		withincode(@executionFlow.runtime.CollectInvokedMethods * *.*(..)) &&
+		!cflowbelow(withincode(@executionFlow.runtime.CollectInvokedMethods * *.*(..)));
+	
+	before(): invokedMethodsByTestedMethod()
+	{
+		String invokedMethodSignature = thisJoinPoint.getSignature().toString();
 
+		
+		// Checks if is a method signature
+		if (!isMethodSignature(invokedMethodSignature)) { return; }
+		
+		// Ignores native java methods
+		if (isNativeMethod(invokedMethodSignature)) { return; }
+
+		System.out.println("__INV_SIG:"+invokedMethodSignature);
+	}
+	
 	/**
 	 * Intercepts methods within a test method.
 	 */
+	pointcut methodCollector(): 
+		!skipAnnotation() &&
+		(junit4() || junit5()) &&
+		!junit4_internal() && !junit5_internal() &&
+		!execution(public int hashCode());
+
 	before(): methodCollector()
 	{
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
 		
 		//if (invocationLine <= 0) { return; }
-		
 		String signature = thisJoinPoint.getSignature().toString();
-		
+
 		// Checks if is a method signature
 		if (!isMethodSignature(signature)) { return; }
 		
 		// Ignores native java methods
 		if (isNativeMethod(signature)) { return; }
 		
-		//System.out.println(signature);
-		
 		// Ignores methods in the method test (with @Test) (it will only consider internal calls)
 		if (testMethodSignature != null && signature.contains(testMethodSignature)) { return; }
-		
-		// Checks if it is an internal call (if it is, ignore it)
-		//if (isInternalCall(signature)) { return; }
-		
-		// Ignores methods caught by 'execution', because they are caught by 'call'
-		//if (thisJoinPoint.toLongString().contains("execution(")) { return; }
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
-		// Checks if it is a method that is invoked within test method
+		// Extracts class signature
 		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-		//String methodSig = classSignature.replace("$", ".")+"."+methodName;
-		
-		// If it is not, ignores it
-		//if (!signature.contains(methodSig)) { return; }
 		
 		// Extracts types of method parameters (if there is any)
 		Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint);

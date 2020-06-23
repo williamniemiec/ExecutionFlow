@@ -10,12 +10,12 @@ import java.lang.annotation.Target;
 /**
  * When a method has this annotation, all collectors will ignore it.
  *  
- * @apiNote	Must be used exclusively by 
+ * @apiNote		Must be used exclusively by 
  * {@link executionFlow.core.file.parser.FileParser}
  * 
- * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version	1.4
- * @since	1.4
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.4
+ * @since		1.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(METHOD)

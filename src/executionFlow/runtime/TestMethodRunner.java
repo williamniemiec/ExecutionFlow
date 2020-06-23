@@ -29,34 +29,35 @@ public class TestMethodRunner
 	 * {@link executionFlow.core.file.MethodManager#assertParser(String)}.
 	 * 
 	 * @param		testClassName Class name containing the test method
-	 * @param testClassPath
-	 * @param testClassPackage
+	 * @param		testClassPath Test class path containing the test method
+	 * @param		testClassPackage Package of the class containing the test
+	 * method 
 	 */
 	public static void run(String testClassName, Path testClassPath, String testClassPackage)
 	{	
 		String appRoot = ExecutionFlow.getAppRootPath();
 		Path testClassRootPath = MethodInvokerInfo.extractClassRootDirectory(testClassPath, testClassPackage);
-		Path libPath = Path.of(appRoot+"\\lib");
-		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
-		String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";
-		
+		Path libPath = Path.of(appRoot + "\\lib");
+		String libPath_relative = testClassRootPath.relativize(libPath).toString() + "\\";
+		String cp_junitPlatformConsole = libPath_relative + "junit-platform-console-standalone-1.6.2.jar";
 		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
-				+ libPath_relative+"aspectjtools.jar" + ";"
+				+ libPath_relative + "aspectjtools.jar" + ";"
+				
+				+ libPath_relative + "junit-4.13.jar" + ";"
+				+ libPath_relative + "hamcrest-all-1.3.jar" + ";"
+				
 				+ cp_junitPlatformConsole;
-		
-		String classPath = ".;"+libs+";..\\classes";
+		String classPath = ".;" + libs + ";..\\classes";
 		String classSignature = testClassPackage.isEmpty() ? 
-				testClassName : testClassPackage+"."+testClassName;
+				testClassName : testClassPackage + "." + testClassName;
 
+		
 		try {
 			ProcessBuilder pb = new ProcessBuilder(
-				"cmd.exe","/c",
-				"java", "-cp", cp_junitPlatformConsole, "org.junit.platform.console.ConsoleLauncher",
-				"-cp","\""+classPath/*+";"+cp_junitPlatformConsole+"\\."*/+"\"",
-				"-c",classSignature,
-				"--disable-banner",
-				"--details=none"
-			);
+					"cmd.exe", "/c",
+					"java", "-cp", classPath, "org.junit.runner.JUnitCore",
+					 classSignature
+				);
 			
 			pb.directory(testClassRootPath.toFile());
 			

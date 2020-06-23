@@ -1,14 +1,12 @@
 package executionFlow.runtime;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.info.ConstructorInvokerInfo;
-import executionFlow.info.MethodInvokerInfo;
 import executionFlow.info.CollectorInfo;
+import executionFlow.info.MethodInvokerInfo;
 
 
 /**
@@ -53,7 +51,7 @@ public abstract aspect RuntimeCollector
 	 * </ul>
 	 */
 	protected static Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
-	
+
 	protected static String testMethodSignature;
 	protected static MethodInvokerInfo testMethodInfo;
 	protected static boolean skipCollection;
@@ -65,6 +63,9 @@ public abstract aspect RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
+	/**
+	 * Intercepts methods and classes with skip annotations.
+	 */
 	pointcut skipAnnotation():
 		within(@SkipCollection *) ||
 		withincode(@executionFlow.runtime.SkipMethod * *.*(..)) ||
@@ -72,29 +73,33 @@ public abstract aspect RuntimeCollector
 		execution(@executionFlow.runtime.SkipMethod * *.*(..)) ||
 		execution(@executionFlow.runtime._SkipMethod * *.*(..)); 
 	
+	/**
+	 * Intercepts test methods with JUnit 4 test annotation.
+	 */
 	pointcut junit4():
-		!junit4_internal() && 
 		withincode(@org.junit.Test * *.*());
 	
+	/**
+	 * Intercepts test methods with JUnit 5 test annotation.
+	 */
 	pointcut junit5():
-		!junit5_internal() && (
-			withincode(@org.junit.jupiter.api.Test * *.*()) ||
-			withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
-			withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..))
-		);
+		withincode(@org.junit.jupiter.api.Test * *.*()) ||
+		withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
+		withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..));
 	
+	/**
+	 * Intercepts methods from JUnit 4.
+	 */
 	pointcut junit4_internal():
-		call(* org.junit.runner.JUnitCore.runClasses(*)) ||
-		call(void org.junit.Assert.*(*)) ||
-		call(void org.junit.Assert.*(*,*)) ||
-		call(void org.junit.Assert.*(*,*,*)) ||
-		call(void org.junit.Assert.*(*,*,*,*)) ||
+		call(* org.junit.runner.JUnitCore.runClasses(..)) ||
+		call(void org.junit.Assert.*(..)) ||
 		call(void org.junit.Assert.fail());
 	
+	/**
+	 * Intercepts methods from JUnit 5.
+	 */
 	pointcut junit5_internal():
-		call(void org.junit.jupiter.api.Assertions.*(*)) ||
-		call(void org.junit.jupiter.api.Assertions.*(*,*)) ||
-		call(void org.junit.jupiter.api.Assertions.*(*,*,*));
+		call(void org.junit.jupiter.api.Assertions.*(..));
 	
 	
 	//-------------------------------------------------------------------------
@@ -104,6 +109,7 @@ public abstract aspect RuntimeCollector
 	 * Returns if a method is a native method of Java.
 	 * 
 	 * @param		methodSignature Signature of the method
+	 * 
 	 * @return		If the method is a native method
 	 */
 	protected boolean isNativeMethod(String methodSignature)
@@ -117,6 +123,7 @@ public abstract aspect RuntimeCollector
 	 * Returns if a signature is a method signature.
 	 * 
 	 * @param		signature Signature to be analyzed
+	 * 
 	 * @return		If the signature is a method signature
 	 */
 	protected boolean isMethodSignature(String signature)
@@ -139,21 +146,11 @@ public abstract aspect RuntimeCollector
 	}
 	
 	/**
-	 * Checks if a signature belongs to an internal call.
-	 * 
-	 * @param		signature Signature of the method
-	 * @return		If the signature belongs to an internal call
-	 */
-//	protected boolean isInternalCall(String signature)
-//	{
-//		return !Thread.currentThread().getStackTrace()[3].toString().contains(testMethodPackage);
-//	}
-	
-	/**
 	 * Checks if a signature of a constructor is from a test method 
 	 * constructor.
 	 * 
 	 * @param		constructorSignature Signature of the constructor
+	 * 
 	 * @return		If the signature of the constructor is from a test method 
 	 * constructor
 	 */
@@ -172,6 +169,7 @@ public abstract aspect RuntimeCollector
 	 * Checks if a signature belongs to a builder class.
 	 * 
 	 * @param		signature Signature to be analyzed
+	 * 
 	 * @return		If the signature belongs to a builder class
 	 */
 	protected boolean isBuilderClass(String signature)

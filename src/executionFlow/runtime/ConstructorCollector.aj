@@ -24,15 +24,15 @@ public aspect ConstructorCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Pointcut
 	//-------------------------------------------------------------------------
+	/**
+	 * Intercepts object instantiation within test methods.
+	 */
 	pointcut constructorCollector(): 
 		!skipAnnotation() &&
 		(junit4() || junit5()) &&
 		!within(ConstructorCollector) &&
 		call(*.new(..));
 		
-	/**
-	 * Executed after instantiating an object within a test method.
-	 */
 	before(): constructorCollector()
 	{
 		String signature = thisJoinPoint.getSignature().toString();
@@ -46,7 +46,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		if (!signature.matches(constructorRegex)) { return; }
 		
 		// Extracts constructor data
-		if (thisJoinPoint.getArgs() == null) {
+		if (thisJoinPoint.getArgs() == null || thisJoinPoint.getArgs().length == 0) {
 			paramTypes = new Class<?>[0];
 			paramValues = new Object[0];
 		} 
@@ -76,9 +76,9 @@ public aspect ConstructorCollector extends RuntimeCollector
 			
 			// Saves extracted data
 			CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
-					.constructorInfo(cii)
-					.testMethodInfo(testMethodInfo)
-					.build();
+				.constructorInfo(cii)
+				.testMethodInfo(testMethodInfo)
+				.build();
 			
 			constructorCollector.put(key, ci);
 		

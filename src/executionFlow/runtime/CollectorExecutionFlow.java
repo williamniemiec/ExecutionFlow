@@ -46,6 +46,7 @@ public class CollectorExecutionFlow
 	 * Extracts package name of a method signature.
 	 * 
 	 * @param	signature Signature of the method
+	 * 
 	 * @return	Package name
 	 */
 	public static String extractPackageName(String signature)
@@ -79,16 +80,18 @@ public class CollectorExecutionFlow
 	 * parameters.
 	 * 
 	 * @param	args Parameter values of a method
+	 * 
 	 * @return	The classes of these parameter values
 	 */
 	public static Class<?>[] extractParamTypes(Object[] args) 
 	{
-		if (args == null || args.length == 0) { return null; }
+		if (args == null || args.length == 0) { return new Class<?>[0]; }
 		
 		int i = 0;
 		Class<?>[] paramTypes = new Class<?>[args.length];
 		for (Object o : args) { 
-			paramTypes[i++] = o == null ? null : normalizeClass(o.getClass());
+			if (o != null)
+				paramTypes[i++] = normalizeClass(o.getClass());
 		}
 		
 		return paramTypes;
@@ -98,6 +101,7 @@ public class CollectorExecutionFlow
 	 * Extracts parameter types of a method.
 	 * 
 	 * @param	jp JoinPoint with the method
+	 * 
 	 * @return	Classes of parameter types of the method
 	 */
 	public static Class<?>[] extractParamTypes(JoinPoint jp)
@@ -111,7 +115,9 @@ public class CollectorExecutionFlow
 	 * 
 	 * @param		className Name of the class
 	 * @param		classSignature Signature of the class
+	 * 
 	 * @return		Path of the class
+	 * 
 	 * @throws		IOException If class does not exist
 	 */
 	public static Path findClassPath(String className, String classSignature) throws IOException 
@@ -143,7 +149,9 @@ public class CollectorExecutionFlow
 	 * 
 	 * @param		className Name of the class
 	 * @param		classSignature Signature of the class
+	 * 
 	 * @return		Path of source file of current execution class
+	 * 
 	 * @throws		IOException If class does not exist
 	 */
 	public static Path findSrcPath(String className, String classSignature) throws IOException 
@@ -179,6 +187,7 @@ public class CollectorExecutionFlow
 	 * Extracts method's class signature.
 	 * 
 	 * @param	signature Signature of the method
+	 * 
 	 * @return	Name of the package + name of the class + name of the 
 	 * method(param1, param2,...)
 	 */
@@ -193,6 +202,7 @@ public class CollectorExecutionFlow
 	 * Extracts class name from a signature.
 	 * 
 	 * @param	signature Signature of a method or class
+	 * 
 	 * @return	Name of this class or method
 	 */
 	public static String extractMethodName(String signature) 
@@ -217,6 +227,7 @@ public class CollectorExecutionFlow
 	 * Extracts class name from a class signature.
 	 * 
 	 * @param	classSignature Signature of the class
+	 * 
 	 * @return	Name of the class
 	 */
 	public static String getClassName(String classSignature)
@@ -236,6 +247,7 @@ public class CollectorExecutionFlow
 	 * Extracts return type of a method.
 	 * 
 	 * @param	jp JoinPoint with the method
+	 * 
 	 * @return	Class of return type of the method
 	 */
 	public static Class<?> extractReturnType(JoinPoint jp)
@@ -265,6 +277,7 @@ public class CollectorExecutionFlow
 	 * Extracts class signature from method signature.
 	 * 
 	 * @param methodSignature Signature of the method
+	 * 
 	 * @return Class signature
 	 */
 	public static String extractClassSignature(String methodSignature)
@@ -290,6 +303,7 @@ public class CollectorExecutionFlow
 	 * Extracts package from a class signature.
 	 * 
 	 * @param signature Signature of the class
+	 * 
 	 * @return Class package
 	 */
 	public static String extractPackage(String signature)
@@ -318,6 +332,7 @@ public class CollectorExecutionFlow
 	 * wrapper class, returns itself.
 	 * 
 	 * @param	c Class to be normalized
+	 * 
 	 * @return	Normalized class
 	 */
 	private static Class<?> normalizeClass(Class<?> c)
@@ -381,6 +396,7 @@ public class CollectorExecutionFlow
 	 * <li>File path: <code>a/b</code></li>
 	 * 
 	 * @param	classSignature Signature of the class
+	 * 
 	 * @return	File path obtained from class signature
 	 */
 	private static String extractPathFromSignature(String classSignature)
