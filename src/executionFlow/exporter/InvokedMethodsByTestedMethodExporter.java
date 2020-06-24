@@ -10,6 +10,7 @@ import java.util.Map;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
+import executionFlow.info.ConstructorInvokerInfo;
 import executionFlow.info.InvokerInfo;
 import executionFlow.util.CSV;
 import executionFlow.util.DataUtils;
@@ -78,12 +79,16 @@ public class InvokedMethodsByTestedMethodExporter
 	 * 	<li><b>Key:</b> Invoker signature</li>
 	 * 	<li><b>Value:</b> List of invoked method signatures by a tested invoker</li>
 	 * </ul>
+	 * @param		insConstructor If the invoker is a constructor
 	 */
-	public void export(Map<String, List<String>> invokedMethodsByTestedMethod)
+	public void export(Map<String, List<String>> invokedMethodsByTestedMethod, boolean isConstructor)
 	{
+		ConsoleOutput.showInfo("Exporting invoked methods by tested method...");
+		
 		for (Map.Entry<String, List<String>> e : invokedMethodsByTestedMethod.entrySet()) {
 			String invokerSignature = InvokerInfo.getInvokerSignatureWithoutReturnType(e.getKey());
-			File dirPath = new File(ExecutionFlow.getAppRootPath(), dirName + "/" + DataUtils.getSavePath(invokerSignature));
+			List<String> content = e.getValue();
+			File dirPath = new File(ExecutionFlow.getAppRootPath(), dirName + "/" + DataUtils.generateDirectoryPath(invokerSignature, isConstructor));
 			File output = new File(dirPath, filename+".csv");
 			
 			
@@ -96,21 +101,14 @@ public class InvokedMethodsByTestedMethodExporter
 			// Reads CSV file (if it exists)
 			if (output.exists()) {
 				try {
-					Map<String, List<String>> content = new HashMap<>();
-					
-					
 					for (List<String> line : CSV.read(output)) {
-						List<String> invokedMethod = new ArrayList<>();
-						
-						
+						// Merges CSV content with collected content
 						for (int i=1; i<line.size(); i++) {
-							invokedMethod.add(line.get(i));
+							if (!content.contains(line.get(i)))
+								content.add(line.get(i));
 						}
-						
-						content.put(line.get(0), invokedMethod);
 					}
-					
-					DataUtils.mergesMaps(content, invokedMethodsByTestedMethod);
+					output.delete();
 				} catch (IOException e2) {
 					ConsoleOutput.showError("Failed to read CSV file - "+e2.getMessage());
 				}			
@@ -119,16 +117,14 @@ public class InvokedMethodsByTestedMethodExporter
 			// Writes tested method signature along with invoked methods by it
 			// to CSV file
 			try {
-				List<String> content = e.getValue();
-				
-				
 				content.add(0, e.getKey());
 				CSV.write(content, output);
-				ConsoleOutput.showInfo("Invoked methods by tested method - export: "+output.getAbsolutePath());
 			} catch (IOException e2) {
 				ConsoleOutput.showError("Failed to write CSV file - "+e2.getMessage());
-			}	
+			}
+			
+			ConsoleOutput.showInfo("The export was successful");
+			ConsoleOutput.showInfo("Location: "+output.getAbsolutePath());
 		}
-		
 	}
 }
