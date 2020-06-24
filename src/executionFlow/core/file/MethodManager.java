@@ -256,6 +256,24 @@ public class MethodManager
 	}
 	
 	/**
+	 * Removes a file manager from the list of processed files.
+	 * <br /><br />
+	 * <b>Note:</b> By doing this, a file that has already been processed can
+	 * be processed again, generating extra processing that may be unnecessary.
+	 * 
+	 * @param		fm File manager to be deleted
+	 * 
+	 * @return		If file manager was successfully removed
+	 */
+	public boolean remove(FileManager fm)
+	{
+		parsedFiles.remove(fm.hashCode());
+		compiledFiles.remove(fm.hashCode());
+		
+		return files.remove(fm);
+	}
+	
+	/**
 	 * Restores all original files that have been modified.
 	 * 
 	 * @param		files List of modified files

@@ -68,11 +68,13 @@ public class DataUtils
 	 * 
 	 * @return		Generated path
 	 */
-	public static String getSavePath(String invokerSignature, boolean isConstructor)
+	public static String generateDirectoryPath(String invokerSignature, boolean isConstructor)
 	{
 		String[] signatureFields = invokerSignature.split("\\.");
 		String folderPath = getFolderPath(signatureFields, isConstructor);
 		String folderName = getFolderName(signatureFields, isConstructor);
+		System.out.println("FP: "+folderPath);
+		System.out.println("FN: "+folderName);
 		
 		
 		return folderPath+"/"+folderName;
@@ -129,6 +131,9 @@ public class DataUtils
 		if (isConstructor) {
 			// Extracts class name
 			String className = signatureFields[signatureFields.length-1];
+			
+			if (!className.contains("("))
+				className += "()";
 			
 			response = className;
 		}

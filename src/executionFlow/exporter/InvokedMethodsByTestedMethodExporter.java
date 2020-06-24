@@ -73,7 +73,7 @@ public class InvokedMethodsByTestedMethodExporter
 	/**
 	 * Exports invoked method signatures by a tested invoker in a CSV file.
 	 * 
-	 * @param		invokedMethodsByTestedMethod Tested invokers signatures 
+	 * @param		invokedMethodsByTestedInvoker Tested invokers signatures 
 	 * along with its invoked method signatures. It has the following structure:
 	 * <ul>
 	 * 	<li><b>Key:</b> Invoker signature</li>
@@ -81,11 +81,11 @@ public class InvokedMethodsByTestedMethodExporter
 	 * </ul>
 	 * @param		isConstructor If the invoker is a constructor
 	 */
-	public void export(Map<String, List<String>> invokedMethodsByTestedMethod, boolean isConstructor)
+	public void export(Map<String, List<String>> invokedMethodsByTestedInvoker, boolean isConstructor)
 	{
 		ConsoleOutput.showInfo("Exporting invoked methods by tested method...");
 		
-		for (Map.Entry<String, List<String>> e : invokedMethodsByTestedMethod.entrySet()) {
+		for (Map.Entry<String, List<String>> e : invokedMethodsByTestedInvoker.entrySet()) {
 			String invokerSignature = InvokerInfo.getInvokerSignatureWithoutReturnType(e.getKey());
 			List<String> content = e.getValue();
 			File dirPath = new File(ExecutionFlow.getAppRootPath(), dirName + "/" + DataUtils.generateDirectoryPath(invokerSignature, isConstructor));

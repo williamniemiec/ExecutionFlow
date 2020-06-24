@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import executionFlow.info.MethodInvokerInfo;
 import executionFlow.info.CollectorInfo;
@@ -45,6 +44,7 @@ public aspect MethodCollector extends RuntimeCollector
 	 * {@link @executionFlow.runtime._SkipMethod} annotation.
 	 */
 	pointcut invokerSignature(): 
+		!within(@SkipCollection *) &&
 		cflow(execution(@executionFlow.runtime._SkipMethod * *.*(..))) && 
 		(junit4() || junit5()) &&
 		!junit4_internal() && !junit5_internal() &&
@@ -54,10 +54,7 @@ public aspect MethodCollector extends RuntimeCollector
 	{
 		String invocationSignature = thisJoinPoint.getSignature().toString();
 		
-		
-		// Checks if is a method signature
-		if (!isMethodSignature(invocationSignature)) { return; }
-		
+
 		// Ignores native java methods
 		if (isNativeMethod(invocationSignature)) { return; }
 		
@@ -66,17 +63,21 @@ public aspect MethodCollector extends RuntimeCollector
 	}
 	
 	/**
-	 * Displays invoked method signatures within a method with 
+	 * Displays invoked method signatures within an invoker with 
 	 * {@link @executionFlow.runtime.CollectInvokedMethods} annotation.
 	 */
-	pointcut invokedMethodsByTestedMethod():
-		withincode(@executionFlow.runtime.CollectInvokedMethods * *.*(..)) &&
-		!cflowbelow(withincode(@executionFlow.runtime.CollectInvokedMethods * *.*(..)));
+	pointcut invokedMethodsByTestedInvoker():
+		// Within a constructor
+		( withincode(@executionFlow.runtime.CollectInvokedMethods *.new(..)) && 
+		  !cflowbelow(withincode(@executionFlow.runtime.CollectInvokedMethods * *(..))) ) ||
+		// Within a method
+		( withincode(@executionFlow.runtime.CollectInvokedMethods * *(..)) && 
+		  !cflowbelow(withincode(@executionFlow.runtime.CollectInvokedMethods *.new(..))) && 
+		  !cflowbelow(withincode(@executionFlow.runtime.CollectInvokedMethods * *(..))) );
 	
-	before(): invokedMethodsByTestedMethod()
+	before(): invokedMethodsByTestedInvoker()
 	{
 		String invokedMethodSignature = thisJoinPoint.getSignature().toString();
-
 		
 		// Checks if is a method signature
 		if (!isMethodSignature(invokedMethodSignature)) { return; }

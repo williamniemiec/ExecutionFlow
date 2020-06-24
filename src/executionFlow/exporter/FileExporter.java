@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.ConsoleOutput;
+import executionFlow.ExecutionFlow;
 import executionFlow.info.SignaturesInfo;
 import executionFlow.util.DataUtils;
 
@@ -66,14 +67,15 @@ public class FileExporter implements ExporterExecutionFlow
 	
 				
 				// Gets save path
-				Path savePath = Paths.get(DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
+				Path savePath = Paths.get(ExecutionFlow.getAppRootPath(), dirName,
+						DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
 				
 				// Writes test paths in the file
 				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
 			}
 
 			ConsoleOutput.showInfo("Test paths have been successfully exported!");
-			ConsoleOutput.showInfo("Location: "+new File(dirName).getAbsolutePath());
+			ConsoleOutput.showInfo("Location: "+new File(ExecutionFlow.getAppRootPath(), dirName).getAbsolutePath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +94,6 @@ public class FileExporter implements ExporterExecutionFlow
 	{
 		boolean alreadyExists;
 		File f = new File(savePath.toFile(), getTestPathName(savePath, testMethodSignature));
-
 		
 		Files.createDirectories(savePath);
 		alreadyExists = f.exists();
@@ -106,7 +107,7 @@ public class FileExporter implements ExporterExecutionFlow
 		}
 		
 		for (List<Integer> testPath : testPaths) {
-			bfw.write(testPath.toString());		// Writes test path in the file			
+			bfw.write(testPath.toString());		// Writes test path in the file		
 		}
 			
 		bfw.newLine();
@@ -126,7 +127,8 @@ public class FileExporter implements ExporterExecutionFlow
 	{
 		for (SignaturesInfo signatures : classTestPaths.keySet()) {	
 			// Gets save path
-			Path savePath = Paths.get(DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
+			Path savePath = Paths.get(ExecutionFlow.getAppRootPath(), dirName,
+					DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
 			
 			File dir = savePath.toFile(), testPathFile;
 			String[] files;

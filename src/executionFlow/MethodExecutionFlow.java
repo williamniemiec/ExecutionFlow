@@ -10,6 +10,7 @@ import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.MethodFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.FileExporter;
 import executionFlow.exporter.InvokedMethodsByTestedMethodExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
@@ -45,8 +46,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = new ConsoleExporter();
-		//exporter = new FileExporter("testPaths", false);
+		//exporter = new ConsoleExporter();
+		exporter = new FileExporter("testPaths", false);
 	}
 	
 	

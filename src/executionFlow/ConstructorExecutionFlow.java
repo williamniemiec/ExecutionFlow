@@ -10,6 +10,7 @@ import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.MethodFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.FileExporter;
 import executionFlow.exporter.InvokedMethodsByTestedMethodExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
@@ -40,8 +41,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = new ConsoleExporter();
-		//exporter = new FileExporter("testPaths", true);
+		//exporter = new ConsoleExporter();
+		exporter = new FileExporter("testPaths", true);
 	}
 	
 	
@@ -142,8 +143,6 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				storeTestPath(tp_jdb, collector);
 				
 				// Exports invoked methods by tested method to a CSV
-				System.out.println("!"+jdb.getInvokedMethodsByTestedInvoker());
-				
 				invokedMethodsExporter.export(jdb.getInvokedMethodsByTestedInvoker(), true);
 			} catch (Exception e) {
 				ConsoleOutput.showError(e.getMessage());

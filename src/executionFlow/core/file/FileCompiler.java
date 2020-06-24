@@ -87,7 +87,12 @@ public class FileCompiler
 			for (var msg : ms) {
 				ConsoleOutput.showDebug(msg.toString());
 			}
-			ConsoleOutput.showDebug("FileCompilator - end");
+			ConsoleOutput.showDebug("FileCompilator - end");try {
+				Thread.sleep(9000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		// -----{ END DEBUG }----
 	}

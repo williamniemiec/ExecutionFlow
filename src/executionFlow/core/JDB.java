@@ -653,32 +653,34 @@ public class JDB
             		}
         		}
         		// Gets tested method signature
-        		else if (line.contains("__TES_SIG")) {
-        			int idx = line.indexOf(":");
-        			
-        			
-        			currentMethodSignature = line.substring(idx+1);
-        			System.out.println("CURRENT SIG: "+currentMethodSignature);
-        		}
-        		
-        		// Gets invocation signature
-        		else if (line.contains("__INV_SIG")) {
-        			int idx = line.indexOf(":");
-        			
-        			
-        			if (invokedMethodsByTestedInvoker.containsKey(currentMethodSignature)) {
-        				List<String> invokedMethods = invokedMethodsByTestedInvoker.get(currentMethodSignature);
-        				
-        				
-        				invokedMethods.add(line.substring(idx+1));
-        			}
-        			else {
-        				List<String> invokedMethods = new ArrayList<>();
-        				
-        				
-        				invokedMethods.add(line.substring(idx+1));
-        				invokedMethodsByTestedInvoker.put(currentMethodSignature, invokedMethods);
-        			}
+        		else if (line.contains("main[")) {
+	        		if (line.contains("__TES_SIG")) {
+	        			int idx = line.indexOf(":");
+	        			
+	        			
+	        			currentMethodSignature = line.substring(idx+1);
+	        			System.out.println("CURRENT SIG: "+currentMethodSignature);
+	        		}
+	        		
+	        		// Gets invocation signature
+	        		else if (line.contains("__INV_SIG")) {
+	        			int idx = line.indexOf(":");
+	        			
+	        			
+	        			if (invokedMethodsByTestedInvoker.containsKey(currentMethodSignature)) {
+	        				List<String> invokedMethods = invokedMethodsByTestedInvoker.get(currentMethodSignature);
+	        				
+	        				
+	        				invokedMethods.add(line.substring(idx+1));
+	        			}
+	        			else {
+	        				List<String> invokedMethods = new ArrayList<>();
+	        				
+	        				
+	        				invokedMethods.add(line.substring(idx+1));
+	        				invokedMethodsByTestedInvoker.put(currentMethodSignature, invokedMethods);
+	        			}
+	        		}
         		}
         		
 	    		if (endOfMethod) {

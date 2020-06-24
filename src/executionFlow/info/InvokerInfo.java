@@ -133,6 +133,21 @@ public abstract class InvokerInfo
 		return classPath;
 	}
 	
+	/**
+	 * Gets invoker signature without return type.
+	 * 
+	 * @param		invokerSignature Invoker signature
+	 * 
+	 * @return		Invoker signature without return type
+	 */
+	public static String getInvokerSignatureWithoutReturnType(String invokerSignature)
+	{
+		int index = invokerSignature.indexOf(" ");
+		
+		
+		return invokerSignature.substring(index+1);
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Getters
