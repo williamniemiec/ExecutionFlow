@@ -64,14 +64,15 @@ public class DataUtils
 	 * </ul>
 	 * 
 	 * @param		invokerSignature Invoker signature
+	 * @param		isConstructor If the invoker is a constructor
 	 * 
 	 * @return		Generated path
 	 */
-	public static String getSavePath(String invokerSignature)
+	public static String getSavePath(String invokerSignature, boolean isConstructor)
 	{
 		String[] signatureFields = invokerSignature.split("\\.");
-		String folderPath = getFolderPath(signatureFields);
-		String folderName = getFolderName(signatureFields);
+		String folderPath = getFolderPath(signatureFields, isConstructor);
+		String folderName = getFolderName(signatureFields, isConstructor);
 		
 		
 		return folderPath+"/"+folderName;
@@ -88,16 +89,18 @@ public class DataUtils
 	 * </ul>
 	 * 
 	 * @param		signatureFields Fields of the invoker signature
+	 * @param		isConstructor If the invoker is a constructor
 	 * 
 	 * @return		Folder's path
 	 */
-	private static String getFolderPath(String[] signatureFields)
+	private static String getFolderPath(String[] signatureFields, boolean isConstructor)
 	{
 		String folderPath = "";
 		StringBuilder sb = new StringBuilder();
+		int size = isConstructor ? signatureFields.length-1 : signatureFields.length-2;
 		
 		
-		for (int i=0; i<signatureFields.length-2; i++) {
+		for (int i=0; i<size; i++) {
 			sb.append(signatureFields[i]);
 			sb.append("/");
 		}
@@ -118,15 +121,27 @@ public class DataUtils
 	 * 
 	 * @return		Folder's name
 	 */
-	private static String getFolderName(String[] signatureFields)
+	private static String getFolderName(String[] signatureFields, boolean isConstructor)
 	{
-		// Extracts class name
-		String className = signatureFields[signatureFields.length-2];
-		
-		// Extracts invoker name with parameter types
-		String invokerName = signatureFields[signatureFields.length-1];
+		String response = null;
 		
 		
-		return className+"."+invokerName;
+		if (isConstructor) {
+			// Extracts class name
+			String className = signatureFields[signatureFields.length-1];
+			
+			response = className;
+		}
+		else {
+			// Extracts class name
+			String className = signatureFields[signatureFields.length-2];
+			
+			// Extracts invoker name with parameter types
+			String invokerName = signatureFields[signatureFields.length-1];
+			
+			response = className+"."+invokerName;
+		}
+		
+		return response;
 	}
 }
