@@ -51,7 +51,7 @@ public class MethodFileParser extends FileParser
 	 * lines.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	

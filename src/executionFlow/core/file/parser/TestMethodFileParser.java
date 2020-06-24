@@ -41,7 +41,7 @@ public class TestMethodFileParser extends FileParser
 	 * lines.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	
