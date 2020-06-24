@@ -151,7 +151,7 @@ public class JDB
 	 * 	<li><b>Value:</b> List of invoked method signatures by tested invoker</li>
 	 * </ul>
 	 */
-	public Map<String, List<String>> getInvokedMethodsByTestedMethod()
+	public Map<String, List<String>> getInvokedMethodsByTestedInvoker()
 	{
 		return invokedMethodsByTestedInvoker;
 	}
@@ -601,7 +601,8 @@ public class JDB
             		withinConstructor = line.contains(".<init>");
             		
             		// Ignores native calls
-            		if (line.contains("jdk.") || line.contains("aspectj.") || line.contains("executionFlow.runtime")) {
+            		if (line.contains("jdk.") || line.contains("aspectj.") || 
+            				line.contains("executionFlow.runtime") || srcLine.contains("package ")) {
             			isInternalCommand = true;
             			inMethod = false;
             		}
