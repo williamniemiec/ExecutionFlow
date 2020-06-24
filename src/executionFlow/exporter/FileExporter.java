@@ -30,6 +30,7 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private String dirName;
+	private boolean isConstructor;
 
 	
 	//-------------------------------------------------------------------------
@@ -40,10 +41,12 @@ public class FileExporter implements ExporterExecutionFlow
 	 * can be a method or a constructor.
 	 * 
 	 * @param		dirName Name of the directory
+	 * @param		isConstructor If the invoker is a constructor
 	 */
-	public FileExporter(String dirName)
+	public FileExporter(String dirName, boolean isConstructor)
 	{
 		this.dirName = dirName;
+		this.isConstructor = isConstructor;
 	}
 	
 	
@@ -63,7 +66,7 @@ public class FileExporter implements ExporterExecutionFlow
 	
 				
 				// Gets save path
-				Path savePath = Paths.get(DataUtils.getSavePath(signatures.getInvokerSignature()));
+				Path savePath = Paths.get(DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
 				
 				// Writes test paths in the file
 				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
@@ -123,7 +126,7 @@ public class FileExporter implements ExporterExecutionFlow
 	{
 		for (SignaturesInfo signatures : classTestPaths.keySet()) {	
 			// Gets save path
-			Path savePath = Paths.get(DataUtils.getSavePath(signatures.getInvokerSignature()));
+			Path savePath = Paths.get(DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
 			
 			File dir = savePath.toFile(), testPathFile;
 			String[] files;

@@ -1,5 +1,6 @@
 package executionFlow;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,10 @@ import executionFlow.core.JDB;
 import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.MethodFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.InvokedMethodsByTestedMethodExporter;
 import executionFlow.info.CollectorInfo;
+import executionFlow.info.SignaturesInfo;
 
 
 /**
@@ -27,6 +31,18 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Stores information about collected constructors.
 	 */
 	private Collection<CollectorInfo> constructorCollector;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
+	/**
+	 * Defines how the export will be done.
+	 */
+	{
+		exporter = new ConsoleExporter();
+		//exporter = new FileExporter("testPaths", true);
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -60,6 +76,9 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		// -----{ END DEBUG }-----
 		
 		List<List<Integer>> tp_jdb;
+		InvokedMethodsByTestedMethodExporter invokedMethodsExporter = 
+				new InvokedMethodsByTestedMethodExporter("InvokedMethodsByTestedConstructor", "testPaths");
+		
 		
 		// Generates test path for each collected method
 		for (CollectorInfo collector : constructorCollector) {
@@ -121,6 +140,11 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				
 				// Stores each computed test path
 				storeTestPath(tp_jdb, collector);
+				
+				// Exports invoked methods by tested method to a CSV
+				System.out.println("!"+jdb.getInvokedMethodsByTestedInvoker());
+				
+				invokedMethodsExporter.export(jdb.getInvokedMethodsByTestedInvoker(), true);
 			} catch (Exception e) {
 				ConsoleOutput.showError(e.getMessage());
 				e.printStackTrace();
@@ -128,5 +152,36 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		}
 		
 		return this;
+	}
+	
+	@Override
+	protected void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
+	{
+		List<List<Integer>> classPathInfo;
+		SignaturesInfo signaturesInfo = new SignaturesInfo(
+			collector.getConstructorInfo().getInvokerSignature(), 
+			collector.getTestMethodInfo().getInvokerSignature()
+		);
+
+		for (List<Integer> testPath : testPaths) {
+			// Checks if test path belongs to a stored test method and method
+			if (classTestPaths.containsKey(signaturesInfo)) {
+				classPathInfo = classTestPaths.get(signaturesInfo);
+				classPathInfo.add(testPath);
+			} 
+			// Else stores test path with its test method and method
+			else {	
+				classPathInfo = new ArrayList<>();
+				classPathInfo.add(testPath);
+				classTestPaths.put(signaturesInfo, classPathInfo);
+			}
+		}
+		
+		// If test path is empty, stores test method and invoker with an empty list
+		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
+			classPathInfo = new ArrayList<>();
+			classPathInfo.add(new ArrayList<>());
+			classTestPaths.put(signaturesInfo, classPathInfo);
+		}
 	}
 }

@@ -63,11 +63,11 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 	 */
 	public TestedMethodsExporter(String filename, File output)
 	{
-		this.output = new File(output, filename+".csv");
-
 		if (!output.exists()) {
 			output.mkdir();
 		}
+		
+		this.output = new File(output, filename+".csv");
 	}
 	
 	

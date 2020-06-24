@@ -79,7 +79,7 @@ public class InvokedMethodsByTestedMethodExporter
 	 * 	<li><b>Key:</b> Invoker signature</li>
 	 * 	<li><b>Value:</b> List of invoked method signatures by a tested invoker</li>
 	 * </ul>
-	 * @param		insConstructor If the invoker is a constructor
+	 * @param		isConstructor If the invoker is a constructor
 	 */
 	public void export(Map<String, List<String>> invokedMethodsByTestedMethod, boolean isConstructor)
 	{

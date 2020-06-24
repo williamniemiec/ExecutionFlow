@@ -63,7 +63,7 @@ public abstract class ExecutionFlow
 	 * each test method executed.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	/**
@@ -104,14 +104,6 @@ public abstract class ExecutionFlow
 			System.exit(-1);
 	}
 	
-	/**
-	 * Defines how the export will be done.
-	 */
-	{
-		exporter = new ConsoleExporter();
-		//exporter = new FileExporter("testPaths");
-	}
-	
 
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -126,9 +118,14 @@ public abstract class ExecutionFlow
 	
 	/**
 	 * Exports the result.
+	 * 
+	 * @throws		IllegalArgumentException If exporter is null
 	 */
 	public void export() 
 	{
+		if (exporter == null)
+			throw new IllegalArgumentException("Exporter cannot be null");
+		
 		exporter.export(classTestPaths);
 	}
 	
@@ -139,35 +136,7 @@ public abstract class ExecutionFlow
 	 * @param		testPaths Test paths of this invoker
 	 * @param		collector Informations about this invoker
 	 */
-	protected void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
-	{
-		List<List<Integer>> classPathInfo;
-		SignaturesInfo signaturesInfo = new SignaturesInfo(
-			collector.getConstructorInfo().getInvokerSignature(), 
-			collector.getTestMethodInfo().getInvokerSignature()
-		);
-
-		for (List<Integer> testPath : testPaths) {
-			// Checks if test path belongs to a stored test method and method
-			if (classTestPaths.containsKey(signaturesInfo)) {
-				classPathInfo = classTestPaths.get(signaturesInfo);
-				classPathInfo.add(testPath);
-			} 
-			// Else stores test path with its test method and method
-			else {	
-				classPathInfo = new ArrayList<>();
-				classPathInfo.add(testPath);
-				classTestPaths.put(signaturesInfo, classPathInfo);
-			}
-		}
-		
-		// If test path is empty, stores test method and invoker with an empty list
-		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
-			classPathInfo = new ArrayList<>();
-			classPathInfo.add(new ArrayList<>());
-			classTestPaths.put(signaturesInfo, classPathInfo);
-		}
-	}
+	protected abstract void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector);
 	
 	/**
 	 * Computes and stores application root path, based on class 

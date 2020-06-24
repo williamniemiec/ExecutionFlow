@@ -1,5 +1,6 @@
 package executionFlow;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,10 @@ import executionFlow.core.JDB;
 import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.MethodFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.InvokedMethodsByTestedMethodExporter;
 import executionFlow.info.CollectorInfo;
+import executionFlow.info.SignaturesInfo;
 import executionFlow.runtime.MethodCollector;
 
 
@@ -32,6 +36,18 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * <ul> 
 	 */
 	protected Map<Integer, List<CollectorInfo>> collectedMethods;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
+	/**
+	 * Defines how the export will be done.
+	 */
+	{
+		exporter = new ConsoleExporter();
+		//exporter = new FileExporter("testPaths", false);
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -65,6 +81,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 		// -----{ END DEBUG }-----
 		
 		List<List<Integer>> tp_jdb;
+		InvokedMethodsByTestedMethodExporter invokedMethodsExporter = 
+				new InvokedMethodsByTestedMethodExporter("InvokedMethodsByTestedMethod", "testPaths");
+		
 		
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : collectedMethods.values()) { 
@@ -84,7 +103,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getPackage(),
 					new MethodFileParserFactory()
 				);
-				
+
 				// Gets FileManager for test method file
 				FileManager testMethodFileManager = new FileManager(
 					collector.getTestMethodInfo().getSrcPath(), 
@@ -128,6 +147,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
+					
+					// Exports invoked methods by tested method to a CSV
+					invokedMethodsExporter.export(jdb.getInvokedMethodsByTestedInvoker(), false);
 				} catch (Exception e) {
 					ConsoleOutput.showError(e.getMessage());
 					e.printStackTrace();
@@ -136,5 +158,36 @@ public class MethodExecutionFlow extends ExecutionFlow
 		}
 		
 		return this;
+	}
+	
+	@Override
+	protected void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
+	{
+		List<List<Integer>> classPathInfo;
+		SignaturesInfo signaturesInfo = new SignaturesInfo(
+			collector.getMethodInfo().getInvokerSignature(), 
+			collector.getTestMethodInfo().getInvokerSignature()
+		);
+
+		for (List<Integer> testPath : testPaths) {
+			// Checks if test path belongs to a stored test method and method
+			if (classTestPaths.containsKey(signaturesInfo)) {
+				classPathInfo = classTestPaths.get(signaturesInfo);
+				classPathInfo.add(testPath);
+			} 
+			// Else stores test path with its test method and method
+			else {	
+				classPathInfo = new ArrayList<>();
+				classPathInfo.add(testPath);
+				classTestPaths.put(signaturesInfo, classPathInfo);
+			}
+		}
+		
+		// If test path is empty, stores test method and invoker with an empty list
+		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
+			classPathInfo = new ArrayList<>();
+			classPathInfo.add(new ArrayList<>());
+			classTestPaths.put(signaturesInfo, classPathInfo);
+		}
 	}
 }
