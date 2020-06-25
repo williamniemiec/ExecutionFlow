@@ -3,14 +3,11 @@ package executionFlow.exporter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
-import executionFlow.info.ConstructorInvokerInfo;
 import executionFlow.info.InvokerInfo;
 import executionFlow.util.CSV;
 import executionFlow.util.DataUtils;
@@ -30,7 +27,7 @@ import executionFlow.util.DataUtils;
  * @version		1.5
  * @since		1.5
  */
-public class InvokedMethodsByTestedMethodExporter 
+public class InvokedMethodsByTestedInvokerExporter 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -60,7 +57,7 @@ public class InvokedMethodsByTestedMethodExporter
 	 * @param		filename CSV filename (without '.csv')
 	 * @param		dirName Directory name
 	 */
-	public InvokedMethodsByTestedMethodExporter(String filename, String dirName)
+	public InvokedMethodsByTestedInvokerExporter(String filename, String dirName)
 	{
 		this.filename = filename;
 		this.dirName = dirName;

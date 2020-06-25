@@ -13,9 +13,9 @@ public enum ParserType
 	//-------------------------------------------------------------------------
 	//		Enumerations
 	//-------------------------------------------------------------------------
-	METHOD("METHOD"), 
+	INVOKER("INVOKER"), 
 	TEST_METHOD("TEST_METHOD"),
-	ASSERT_TEST_METHOD("ASSERT_TEST_METHOD");
+	PRE_TEST_METHOD("PRE_TEST_METHOD");
 	
 	
 	//-------------------------------------------------------------------------

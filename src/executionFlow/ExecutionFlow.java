@@ -11,9 +11,9 @@ import java.util.Map;
 
 import executionFlow.core.JDB;
 import executionFlow.core.file.FileManager;
-import executionFlow.core.file.MethodManager;
+import executionFlow.core.file.InvokerManager;
 import executionFlow.core.file.ParserType;
-import executionFlow.core.file.parser.factory.MethodFileParserFactory;
+import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.*;
 import executionFlow.info.CollectorInfo;
@@ -51,8 +51,10 @@ public abstract class ExecutionFlow
 	
 	protected ExporterExecutionFlow exporter;
 	
-	public static MethodManager invokerManager;
-	public static MethodManager testMethodManager;
+	private static String appRoot;
+	private static File currentProjectRoot;
+	public static InvokerManager invokerManager;
+	public static InvokerManager testMethodManager;
 	
 	
 	//-------------------------------------------------------------------------
@@ -75,7 +77,7 @@ public abstract class ExecutionFlow
 		boolean error = false;
 		
 		try {
-			testMethodManager = new MethodManager(ParserType.TEST_METHOD, true);
+			testMethodManager = new InvokerManager(ParserType.TEST_METHOD, true);
 		} catch (ClassNotFoundException e) {
 			error = true;
 			ConsoleOutput.showError("Class FileManager not found");
@@ -88,7 +90,7 @@ public abstract class ExecutionFlow
 		}
 		
 		try {
-			invokerManager = new MethodManager(ParserType.METHOD, true);
+			invokerManager = new InvokerManager(ParserType.INVOKER, true);
 		} catch (ClassNotFoundException e) {
 			error = true;;
 			ConsoleOutput.showError("Class FileManager not found");
@@ -143,23 +145,71 @@ public abstract class ExecutionFlow
 	 * {@link ExecutionFlow} location.
 	 * 
 	 * @return		Application root path
+	 * 
+	 * @implSpec	Lazy initialization
 	 */
 	public static String getAppRootPath()
 	{
-		String response = null;
+		if (appRoot != null)
+			return appRoot;
 		
 		try {
-			response = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
+			appRoot = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
 				    .toURI()).getPath();
 			
-			response = response.charAt(response.length()-1) == '.' ? 
-					Path.of(response).getParent().getParent().toAbsolutePath().toString() : 
-					Path.of(response).getParent().toAbsolutePath().toString();
+			appRoot = appRoot.charAt(appRoot.length()-1) == '.' ? 
+					Path.of(appRoot).getParent().getParent().toAbsolutePath().toString() : 
+					Path.of(appRoot).getParent().toAbsolutePath().toString();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 		
-		return response;
+		return appRoot;
+	}
+	
+	/**
+	 * Finds current project root (project that is running the application). It
+	 * will return the path that contains a directory with name 'src'. 
+	 * 
+	 * @return		Project root path
+	 * 
+	 * @implSpec	Lazy initialization
+	 */
+	public static File getCurrentProjectRoot()
+	{
+		if (currentProjectRoot != null)
+			return currentProjectRoot;
+		
+		String[] allFiles;
+		boolean hasSrcFolder = false;
+		int i=0;
+		
+		
+		currentProjectRoot = new File(System.getProperty("user.dir"));
+		
+		// Searches for a path containing a directory named 'src'
+		while (!hasSrcFolder) {
+			allFiles = currentProjectRoot.list();
+			
+			// Checks the name of every file in current path
+			i=0;
+			while (!hasSrcFolder && i < allFiles.length) {
+				// If there is a directory named 'src' stop the search
+				if (allFiles[i].equals("src")) {
+					hasSrcFolder = true;
+				} else {
+					i++;
+				}
+			}
+			
+			// If there is not a directory named 'src', it searches in the 
+			// parent folder
+			if (!hasSrcFolder) {
+				currentProjectRoot = new File(currentProjectRoot.getParent());
+			}
+		}
+		
+		return currentProjectRoot;
 	}
 	
 	
@@ -174,6 +224,7 @@ public abstract class ExecutionFlow
 	 * </ul>
 	 * 
 	 * @return		Computed test path
+	 * 
 	 * @implNote	It must only be called after method {@link #execute()} has 
 	 * been executed
 	 */
@@ -186,6 +237,7 @@ public abstract class ExecutionFlow
 	 * Changes exporter that will be used to export computed test path.
 	 * 
 	 * @param		exporter New exporter
+	 * 
 	 * @return		This object to allow chained calls
 	 */
 	public ExecutionFlow setExporter(ExporterExecutionFlow exporter) 

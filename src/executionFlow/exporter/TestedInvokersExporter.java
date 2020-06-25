@@ -33,7 +33,7 @@ import executionFlow.util.DataUtils;
  * @version		1.5
  * @since		1.5
  */
-public class TestedMethodsExporter implements ExporterExecutionFlow
+public class TestedInvokersExporter implements ExporterExecutionFlow
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -61,7 +61,7 @@ public class TestedMethodsExporter implements ExporterExecutionFlow
 	 * @param		filename Filename without extension
 	 * @param		output Path where the file will be saved
 	 */
-	public TestedMethodsExporter(String filename, File output)
+	public TestedInvokersExporter(String filename, File output)
 	{
 		if (!output.exists()) {
 			output.mkdir();

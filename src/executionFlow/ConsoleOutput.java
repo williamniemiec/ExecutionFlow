@@ -18,6 +18,7 @@ public class ConsoleOutput
 	 * <b>Format:</b> <code>[INFO] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
+	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
@@ -33,8 +34,10 @@ public class ConsoleOutput
 	 * @param		message Message to be displayed
 	 * @param		breakLine If a break line is added at the end of the
 	 * message
+	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
+	 * 
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message
 	 */
@@ -51,6 +54,7 @@ public class ConsoleOutput
 	 * <b>Format:</b> <code>[ERROR] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
+	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
@@ -66,8 +70,10 @@ public class ConsoleOutput
 	 * @param		message Message to be displayed
 	 * @param		breakLine If a break line is added at the end of the
 	 * message
+	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
+	 * 
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message
 	 */
@@ -84,6 +90,7 @@ public class ConsoleOutput
 	 * <b>Format:</b> <code>[WARNING] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
+	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
@@ -99,8 +106,10 @@ public class ConsoleOutput
 	 * @param		message Message to be displayed
 	 * @param		breakLine If a break line is added at the end of the
 	 * message
+	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
+	 * 
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message
 	 */
@@ -117,6 +126,7 @@ public class ConsoleOutput
 	 * <b>Format:</b> <code>[DEBUG] &lt;message&gt;</code>
 	 * 
 	 * @param		message Message to be displayed
+	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
@@ -132,8 +142,10 @@ public class ConsoleOutput
 	 * @param		message Message to be displayed
 	 * @param		breakLine If a break line is added at the end of the
 	 * message
+	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
+	 * 
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message	
 	 */
@@ -169,6 +181,7 @@ public class ConsoleOutput
 	 * @param		symbol Symbol that the line will be composed
 	 * @param		width How many occurrences of the symbols will appear on 
 	 * the line
+	 * 
 	 * @implSpec	Puts a break line at the end
 	 */
 	public static void printDivision(char symbol, int width)

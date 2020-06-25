@@ -2,7 +2,7 @@ package executionFlow.info;
 
 
 /**
- * Stores signatures of an invoker, where invoker can be a method or a
+ * Stores invoker signature, where invoker can be a method or a
  * constructor. The signatures are:
  * <ul>
  * 	<li>Invoker signature</li>
@@ -26,15 +26,15 @@ public class SignaturesInfo
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores signatures of an invoker, where an invoker can be a method or a 
-	 * constructor.
+	 * Stores signatures of an invoker (method or constructor), where an 
+	 * invoker can be a method or a constructor.
 	 * 
-	 * @param		methodSignature Method's signature
+	 * @param		invokerSignature Invoker signature
 	 * @param		testMethodSignature Test method's signature
 	 */
-	public SignaturesInfo(String methodSignature, String testMethodSignature) 
+	public SignaturesInfo(String invokerSignature, String testMethodSignature) 
 	{
-		this.invokerSignature = methodSignature;
+		this.invokerSignature = invokerSignature;
 		this.testMethodSignature = testMethodSignature;
 	}
 	
@@ -67,6 +67,7 @@ public class SignaturesInfo
 		if (this == obj)						{	return true;	}
 		
 		SignaturesInfo si = (SignaturesInfo) obj;
+		
 		
 		return	this.invokerSignature.equals(si.getInvokerSignature()) && 
 				this.testMethodSignature.equals(si.getTestMethodSignature());

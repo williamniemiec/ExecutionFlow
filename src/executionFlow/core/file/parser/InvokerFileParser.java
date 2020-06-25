@@ -26,7 +26,7 @@ import executionFlow.core.file.FileEncoding;
  * @version		1.5
  * @since 		1.4
  */
-public class MethodFileParser extends FileParser
+public class InvokerFileParser extends FileParser
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -68,7 +68,7 @@ public class MethodFileParser extends FileParser
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public MethodFileParser(Path filepath, String outputFilename)
+	public InvokerFileParser(Path filepath, String outputFilename)
 	{
 		this(filepath, null, outputFilename);
 	}
@@ -82,7 +82,7 @@ public class MethodFileParser extends FileParser
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public MethodFileParser(Path filepath, Path outputDir, String outputFilename)
+	public InvokerFileParser(Path filepath, Path outputDir, String outputFilename)
 	{
 		this.file = filepath;
 		this.outputDir = outputDir;
@@ -100,7 +100,7 @@ public class MethodFileParser extends FileParser
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public MethodFileParser(Path filepath, Path outputDir, String outputFilename, 
+	public InvokerFileParser(Path filepath, Path outputDir, String outputFilename, 
 			String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -116,7 +116,7 @@ public class MethodFileParser extends FileParser
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
 	 */ 
-	public MethodFileParser(Path filepath, Path outputDir, String outputFilename,
+	public InvokerFileParser(Path filepath, Path outputDir, String outputFilename,
 			FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -134,7 +134,7 @@ public class MethodFileParser extends FileParser
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public MethodFileParser(Path filepath, Path outputDir, String outputFilename,
+	public InvokerFileParser(Path filepath, Path outputDir, String outputFilename,
 			FileEncoding encode, String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename, encode);
@@ -165,11 +165,12 @@ public class MethodFileParser extends FileParser
 		final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
 		final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
 		final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+(case|default)(\\t|\\ )+");
-		final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
+		//final Pattern pattern_invokerDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
+		final Pattern pattern_invokerDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+(\\ |\\t)*\\(.*");
 		String parsedLine = null;
 		String line, nextLine;
 		File outputFile;
-		boolean inMethod = false;
+		boolean withinInvoker = false;
 		ElseBlockManager elseBlockManager = new ElseBlockManager();
 		
 		
@@ -202,10 +203,10 @@ public class MethodFileParser extends FileParser
 					continue;
 				}
 				
-				// Checks if it is within a method declaration line
-				if (inMethod) {
+				// Checks if it is an invoker declaration line
+				if (withinInvoker) {
 					if (line.contains("{")) {
-						inMethod = false;
+						withinInvoker = false;
 					}
 					
 					// -----{ DEBUG }-----
@@ -232,8 +233,8 @@ public class MethodFileParser extends FileParser
 					continue;
 				}
 				
-				// Checks if it is a method declaration
-				if (!line.matches(regex_new) && line.matches(pattern_methodDeclaration.toString())) {
+				// Checks if it is an invoker declaration
+				if (!line.matches(regex_new) && line.matches(pattern_invokerDeclaration.toString())) {
 					line = "@executionFlow.runtime.CollectInvokedMethods " + line;
 					bw.write(line);
 					bw.newLine();
@@ -242,7 +243,7 @@ public class MethodFileParser extends FileParser
 					if (DEBUG) { ConsoleOutput.showDebug(line); }
 					// -----{ END DEBUG }-----
 					
-					inMethod = true;
+					withinInvoker = true;
 					continue;
 				}
 				
@@ -367,11 +368,7 @@ public class MethodFileParser extends FileParser
 						!line.contains("package ") && !line.contains("class ") && 
 						line.matches(regex_varDeclarationWithoutInitialization)) {
 				parsedLine = parse_varDeclaration(line);
-				} 
-				// Invoker signature
-				//else if (pattern_methodDeclaration.matcher(line).find()) {
-				//	
-				//}
+				}
 				else {
 					parsedLine = line;
 				}

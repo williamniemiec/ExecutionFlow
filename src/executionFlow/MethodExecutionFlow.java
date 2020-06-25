@@ -7,11 +7,9 @@ import java.util.Map;
 
 import executionFlow.core.JDB;
 import executionFlow.core.file.FileManager;
-import executionFlow.core.file.parser.factory.MethodFileParserFactory;
+import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.exporter.InvokedMethodsByTestedMethodExporter;
+import executionFlow.exporter.*;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
 import executionFlow.runtime.MethodCollector;
@@ -46,8 +44,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		//exporter = new ConsoleExporter();
-		exporter = new FileExporter("testPaths", false);
+		exporter = new ConsoleExporter();
+		//exporter = new FileExporter("testPaths", false);
 	}
 	
 	
@@ -82,8 +80,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 		// -----{ END DEBUG }-----
 		
 		List<List<Integer>> tp_jdb;
-		InvokedMethodsByTestedMethodExporter invokedMethodsExporter = 
-				new InvokedMethodsByTestedMethodExporter("InvokedMethodsByTestedMethod", "testPaths");
+		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = 
+				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedMethod", "testPaths");
 		
 		
 		// Generates test path for each collected method
@@ -102,7 +100,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
-					new MethodFileParserFactory()
+					new InvokerFileParserFactory()
 				);
 
 				// Gets FileManager for test method file
@@ -170,6 +168,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 			collector.getTestMethodInfo().getInvokerSignature()
 		);
 
+		
 		for (List<Integer> testPath : testPaths) {
 			// Checks if test path belongs to a stored test method and method
 			if (classTestPaths.containsKey(signaturesInfo)) {
@@ -179,6 +178,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 			// Else stores test path with its test method and method
 			else {	
 				classPathInfo = new ArrayList<>();
+				
+				
 				classPathInfo.add(testPath);
 				classTestPaths.put(signaturesInfo, classPathInfo);
 			}
@@ -187,6 +188,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 		// If test path is empty, stores test method and invoker with an empty list
 		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
 			classPathInfo = new ArrayList<>();
+			
+			
 			classPathInfo.add(new ArrayList<>());
 			classTestPaths.put(signaturesInfo, classPathInfo);
 		}

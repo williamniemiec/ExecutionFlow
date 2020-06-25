@@ -13,7 +13,7 @@ import executionFlow.core.file.parser.factory.FileParserFactory;
 
 
 /**
- * Responsible for managing file parser and compiler.
+ * Responsible for managing file parser and compiler for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5
@@ -109,6 +109,7 @@ public class FileManager implements Serializable
 	 * to constructor.
 	 * 
 	 * @return		This object to allow chained calls
+	 * 
 	 * @throws		IOException If file encoding cannot be defined
 	 * 
 	 * @implNote	This function overwrite file passed to the constructor! To
@@ -150,6 +151,7 @@ public class FileManager implements Serializable
 	 * Compiles processed file.
 	 *  
 	 * @return		This object to allow chained calls
+	 * 
 	 * @throws		IOException If an error occurs during compilation
 	 */
 	public FileManager compileFile() throws IOException 
@@ -177,8 +179,8 @@ public class FileManager implements Serializable
 	 * delete .class file of modified file, only .java file.
 	 * 
 	 * @return		This object to allow chained calls
-	 * @throws		IOException If method is called without creating a backup 
-	 * file
+	 * 
+	 * @throws		IOException If file has not a backup file
 	 */
 	public FileManager revertParse() throws IOException
 	{
@@ -201,8 +203,8 @@ public class FileManager implements Serializable
 	 * Deletes modified .class file and restores original .class file.
 	 * 
 	 * @return		This object to allow chained calls
-	 * @throws		IOException If method is called without creating a backup 
-	 * file
+	 * 
+	 * @throws		IOException If file has not a backup file
 	 */
 	public FileManager revertCompilation() throws IOException
 	{
@@ -222,11 +224,21 @@ public class FileManager implements Serializable
 		return this;
 	}
 	
+	/**
+	 * Checks whether file has class backup file.
+	 * 
+	 * @return		If file has class backup file
+	 */
 	public boolean hasClassBackupStored()
 	{
 		return Files.exists(originalClassPath);
 	}
 	
+	/**
+	 * Checks whether file has source backup file.
+	 * 
+	 * @return		If file has source backup file
+	 */
 	public boolean hasSrcBackupStored()
 	{
 		return Files.exists(originalSrcFile);
@@ -284,6 +296,24 @@ public class FileManager implements Serializable
 		}
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	public Path getSrcFile()
+	{
+		return srcFile;
+	}
+	
+	public Path getCompiledFile()
+	{
+		return compiledFile;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Serialization and deserialization methods
+	//-------------------------------------------------------------------------
 	private void writeObject(ObjectOutputStream oos)
 	{
 		try {
@@ -310,19 +340,5 @@ public class FileManager implements Serializable
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Getters
-	//-------------------------------------------------------------------------
-	public Path getSrcFile()
-	{
-		return srcFile;
-	}
-	
-	public Path getCompiledFile()
-	{
-		return compiledFile;
 	}
 }

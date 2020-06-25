@@ -9,10 +9,10 @@ import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.core.file.FileManager;
-import executionFlow.core.file.MethodManager;
+import executionFlow.core.file.InvokerManager;
 import executionFlow.core.file.ParserType;
 import executionFlow.core.file.parser.factory.PreTestMethodFileParserFactory;
-import executionFlow.exporter.TestedMethodsExporter;
+import executionFlow.exporter.TestedInvokersExporter;
 import executionFlow.info.InvokerInfo;
 import executionFlow.info.MethodInvokerInfo;
 
@@ -34,7 +34,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private MethodManager testMethodManager;
+	private InvokerManager testMethodManager;
 	private static boolean firstTime = true;
 	private static boolean finished = false;
 	private String testClassName;
@@ -136,7 +136,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Checks if it the first execution
 			if (testMethodManager == null && !checkpoint.isActive())
-				testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
+				testMethodManager = new InvokerManager(ParserType.PRE_TEST_METHOD, false);
 
 			// Checks if there are files that were not restored in the last execution
 			if (checkpoint.exists() && !checkpoint.isActive()) {
@@ -254,7 +254,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested methods to a CSV
-		ef.setExporter(new TestedMethodsExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), "testPaths")))
+		ef.setExporter(new TestedInvokersExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), "testPaths")))
 			.export();
 		
 		// Gets test paths of the collected constructors and export them
@@ -262,7 +262,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested constructors to a CSV
-		ef.setExporter(new TestedMethodsExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), "testPaths")))
+		ef.setExporter(new TestedInvokersExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), "testPaths")))
 			.export();
 		
 		reset();	// Prepares for next test

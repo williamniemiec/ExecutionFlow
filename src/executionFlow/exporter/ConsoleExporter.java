@@ -23,7 +23,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
 	{
 		String currentTestMethodSignature = null;
-		String currentMethod = "";
+		String currentInvoker = "";
 		
 		
 		ConsoleOutput.showHeader("EXPORT", '-');
@@ -38,19 +38,19 @@ public class ConsoleExporter implements ExporterExecutionFlow
 			// Test path from another test method
 			if (!testMethodSignature.equals(currentTestMethodSignature)) {
 				System.out.println(signatures.getTestMethodSignature());	// Test method signature
-				System.out.println(signatures.getInvokerSignature());		// Method signature
+				System.out.println(signatures.getInvokerSignature());		// Invoker signature
 				currentTestMethodSignature = signatures.getTestMethodSignature();
-				currentMethod = signatures.getInvokerSignature();
+				currentInvoker = signatures.getInvokerSignature();
 			} 
 			// It is the same test method
 			else {	
-				// Checks if the test path belongs to current method
-				if (!signatures.getInvokerSignature().equals(currentMethod)) {
+				// Checks if the test path belongs to current invoker
+				if (!signatures.getInvokerSignature().equals(currentInvoker)) {
 					System.out.println();
 					System.out.println(signatures.getTestMethodSignature());
 					System.out.println(signatures.getInvokerSignature());
 					
-					currentMethod = signatures.getInvokerSignature();
+					currentInvoker = signatures.getInvokerSignature();
 				}
 			}
 			

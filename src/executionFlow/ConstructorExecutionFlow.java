@@ -7,11 +7,9 @@ import java.util.List;
 
 import executionFlow.core.JDB;
 import executionFlow.core.file.FileManager;
-import executionFlow.core.file.parser.factory.MethodFileParserFactory;
+import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.exporter.InvokedMethodsByTestedMethodExporter;
+import executionFlow.exporter.*;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
 
@@ -41,8 +39,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		//exporter = new ConsoleExporter();
-		exporter = new FileExporter("testPaths", true);
+		exporter = new ConsoleExporter();
+		//exporter = new FileExporter("testPaths", true);
 	}
 	
 	
@@ -77,8 +75,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		// -----{ END DEBUG }-----
 		
 		List<List<Integer>> tp_jdb;
-		InvokedMethodsByTestedMethodExporter invokedMethodsExporter = 
-				new InvokedMethodsByTestedMethodExporter("InvokedMethodsByTestedConstructor", "testPaths");
+		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = 
+				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedConstructor", "testPaths");
 		
 		
 		// Generates test path for each collected method
@@ -95,7 +93,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				collector.getConstructorInfo().getSrcPath(), 
 				collector.getConstructorInfo().getClassDirectory(),
 				collector.getConstructorInfo().getPackage(),
-				new MethodFileParserFactory()
+				new InvokerFileParserFactory()
 			);
 			
 			// Gets FileManager for test method file
@@ -105,6 +103,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				collector.getTestMethodInfo().getPackage(),
 				new TestMethodFileParserFactory()
 			);
+			
 			
 			try {
 				// Processes the source file of the test method if it has
@@ -142,7 +141,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				// Stores each computed test path
 				storeTestPath(tp_jdb, collector);
 				
-				// Exports invoked methods by tested method to a CSV
+				// Exports invoked methods by tested constructor to a CSV
 				invokedMethodsExporter.export(jdb.getInvokedMethodsByTestedInvoker(), true);
 			} catch (Exception e) {
 				ConsoleOutput.showError(e.getMessage());
@@ -162,6 +161,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			collector.getTestMethodInfo().getInvokerSignature()
 		);
 
+		
 		for (List<Integer> testPath : testPaths) {
 			// Checks if test path belongs to a stored test method and method
 			if (classTestPaths.containsKey(signaturesInfo)) {
@@ -171,6 +171,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			// Else stores test path with its test method and method
 			else {	
 				classPathInfo = new ArrayList<>();
+				
+				
 				classPathInfo.add(testPath);
 				classTestPaths.put(signaturesInfo, classPathInfo);
 			}
@@ -179,6 +181,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		// If test path is empty, stores test method and invoker with an empty list
 		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
 			classPathInfo = new ArrayList<>();
+			
+			
 			classPathInfo.add(new ArrayList<>());
 			classTestPaths.put(signaturesInfo, classPathInfo);
 		}

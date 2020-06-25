@@ -24,7 +24,7 @@ import executionFlow.ExecutionFlow;
  * @version		1.5
  * @since		1.5
  */
-public class MethodManager 
+public class InvokerManager 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -49,11 +49,11 @@ public class MethodManager
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Manages method file, being responsible for its processing and 
-	 * compilation. It will avoid processing files that have already been 
-	 * processed. Also, if the application ends before the original files are 
-	 * restored, it will restore them. It will create a backup file with the
-	 * following name: <br /><br />
+	 * Manages invoker file (an invoker can be a method or a constructor),
+	 * being responsible for its processing and compilation. It will avoid 
+	 * processing files that have already been processed. Also, if the 
+	 * application ends before the original files are restored, it will restore
+	 * them. It will create a backup file with the following name: <br /> <br />
 	 * 
 	 * <code>_EF_ + type.getName() + _FILES.ef</code>
 	 * 
@@ -66,12 +66,12 @@ public class MethodManager
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found  
 	 */
-	public MethodManager(ParserType type, boolean autoDelete) throws ClassNotFoundException, IOException
+	public InvokerManager(ParserType type, boolean autoDelete) throws ClassNotFoundException, IOException
 	{
 		files = new HashSet<>(); 
 		parsedFiles = new HashSet<>();
 		compiledFiles = new HashSet<>();
-		backupFile = new File(ExecutionFlow.getAppRootPath(), "_EF_"+type.getName()+"_FILES.ef");
+		backupFile = new File(ExecutionFlow.getCurrentProjectRoot(), "_EF_"+type.getName()+"_FILES.ef");
 		this.autoDelete = autoDelete;
 
 		// If there are files modified from the last execution that were not
@@ -82,14 +82,15 @@ public class MethodManager
 	}
 	
 	/**
-	 * Manages method file, being responsible for its processing and 
-	 * compilation. It will avoid processing files that have already been 
-	 * processed. Also, if the application ends before the original files are 
-	 * restored, it will restore them. Using this constructor, 
-	 * {@link ParserType} will be {@link ParserType#METHOD}. Also, it will 
-	 * create a backup file with the following name: <br /><br />
+	 * Manages invoker file (an invoker can be a method or a constructor), 
+	 * being responsible for its processing and compilation. It will avoid
+	 * processing files that have already been processed. Also, if the 
+	 * application ends before the original files are restored, it will restore
+	 * them. Using this constructor, {@link ParserType} will be 
+	 * {@link ParserType#INVOKER}. Also, it will create a backup file with the 
+	 * following name: <br /> <br />
 	 * 
-	 * <code>_EF_ + {@link ParserType#METHOD}.getName() + _FILES.ef</code>
+	 * <code>_EF_ + {@link ParserType#INVOKER}.getName() + _FILES.ef</code>
 	 * 
 	 * @param		autoDelete If true, if there are backup files, it will 
 	 * delete them after restore them
@@ -98,9 +99,9 @@ public class MethodManager
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found  
 	 */
-	public MethodManager(boolean autoDelete) throws ClassNotFoundException, IOException
+	public InvokerManager(boolean autoDelete) throws ClassNotFoundException, IOException
 	{
-		this(ParserType.METHOD, autoDelete);
+		this(ParserType.INVOKER, autoDelete);
 	}
 	
 	
@@ -115,7 +116,7 @@ public class MethodManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public MethodManager parse(FileManager fm) throws IOException
+	public InvokerManager parse(FileManager fm) throws IOException
 	{
 		int key = fm.hashCode();
 		
@@ -142,7 +143,7 @@ public class MethodManager
 	 * @throws		IOException If an error occurs during compilation or during
 	 * class serialization
 	 */
-	public MethodManager compile(FileManager fm) throws IOException
+	public InvokerManager compile(FileManager fm) throws IOException
 	{	
 		int key = fm.hashCode();
 		
