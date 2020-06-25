@@ -31,6 +31,8 @@ public class TestMethodFileParser extends FileParser
 	 * If true, displays processed lines.
 	 */
 	private static final boolean DEBUG;
+	
+	private String fileExtension = "java";
 
 	
 	//-------------------------------------------------------------------------
@@ -49,22 +51,6 @@ public class TestMethodFileParser extends FileParser
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
-	 * test methods to disable collectors during {@link executionFlow.core.JDB 
-	 * JDB} execution. Using this constructor, file encoding will be UTF-8.
-	 * 
-	 * @param		filename Path of the file to be parsed
-	 * @param		outputDir Directory where parsed file will be saved
-	 * @param		outputFilename Name of the parsed file
-	 */ 
-	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename)
-	{
-		this.file = filepath;
-		this.outputDir = outputDir;
-		this.outputFilename = outputFilename;
-	}
-	
-	/**
 	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in
 	 * test methods to disable collectors during {@link executionFlow.core.JDB
 	 * JDB} execution. Using this constructor, the directory where parsed file
@@ -81,6 +67,40 @@ public class TestMethodFileParser extends FileParser
 	
 	/**
 	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
+	 * test methods to disable collectors during {@link executionFlow.core.JDB 
+	 * JDB} execution. Using this constructor, file encoding will be UTF-8.
+	 * 
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
+	 * @param		outputFilename Name of the parsed file
+	 */ 
+	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename)
+	{
+		this.file = filepath;
+		this.outputDir = outputDir;
+		this.outputFilename = outputFilename;
+	}
+	
+	/**
+	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
+	 * test methods to disable collectors during {@link executionFlow.core.JDB 
+	 * JDB} execution. Using this constructor, file encoding will be UTF-8.
+	 * 
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
+	 * @param		outputFilename Name of the parsed file
+	 * @param		fileExtension Output file extension (without dot)
+	 * (default is java)
+	 */ 
+	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename, 
+			String fileExtension)
+	{
+		this(filepath, outputDir, outputFilename);
+		this.fileExtension = fileExtension;
+	}
+	
+	/**
+	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
 	 * test methods to disable collectors during {@link executionFlow.core.JDB
 	 * JDB} execution.
 	 * 
@@ -89,10 +109,30 @@ public class TestMethodFileParser extends FileParser
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
 	 */ 
-	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename, FileEncoding encode)
+	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename, 
+			FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
 		this.encode = encode;
+	}
+	
+	/**
+	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
+	 * test methods to disable collectors during {@link executionFlow.core.JDB
+	 * JDB} execution.
+	 * 
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
+	 * @param		outputFilename Name of the parsed file
+	 * @param		encode File encoding
+	 * @param		fileExtension Output file extension (without dot)
+	 * (default is java)
+	 */ 
+	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename, 
+			FileEncoding encode, String fileExtension)
+	{
+		this(filepath, outputDir, outputFilename, encode);
+		this.fileExtension = fileExtension;
 	}
 	
 	
@@ -119,10 +159,10 @@ public class TestMethodFileParser extends FileParser
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
-			outputFile = new File(outputDir.toFile(), outputFilename+".java");
+			outputFile = new File(outputDir.toFile(), outputFilename + "." + fileExtension);
 		// Else processed file will be saved in current directory
 		else	
-			outputFile = new File(outputFilename+".java");
+			outputFile = new File(outputFilename + "." + fileExtension);
 		
 		// Opens file streams (file to be parsed and output file / processed file)
 		try (BufferedReader br = Files.newBufferedReader(file, encode.getStandardCharset());

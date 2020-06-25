@@ -55,6 +55,6 @@ public class PreTestMethodFileParserFactory extends FileParserFactory
 		if (testMethodArg == null)
 			return new PreTestMethodFileParser(filepath, outputDir, outputFilename, encode);
 		
-		return new PreTestMethodFileParser(testMethodArg, filepath, outputDir, outputFilename, encode);
+		return new PreTestMethodFileParser(filepath, outputDir, outputFilename, encode, testMethodArg);
 	}
 }

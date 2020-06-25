@@ -38,6 +38,7 @@ public class MethodFileParser extends FileParser
 	 */
 	private static final boolean DEBUG;
 	
+	private String fileExtension = "java";
 	private boolean elseNoCurlyBrackets;
 	private boolean skipNextLine;
 	private boolean inComment;
@@ -60,6 +61,20 @@ public class MethodFileParser extends FileParser
 	//-------------------------------------------------------------------------
 	/**
 	 * Adds instructions in parts of the code that does not exist when 
+	 * converting it to bytecode. Using this constructor, the directory where 
+	 * parsed file will be saved will be in current directory. Also, file 
+	 * encoding will be UTF-8.
+	 * 
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputFilename Name of the parsed file
+	 */ 
+	public MethodFileParser(Path filepath, String outputFilename)
+	{
+		this(filepath, null, outputFilename);
+	}
+	
+	/**
+	 * Adds instructions in parts of the code that does not exist when 
 	 * converting it to bytecode. Using this constructor, file encoding will be 
 	 * UTF-8.
 	 * 
@@ -76,16 +91,20 @@ public class MethodFileParser extends FileParser
 	
 	/**
 	 * Adds instructions in parts of the code that does not exist when 
-	 * converting it to bytecode. Using this constructor, the directory where 
-	 * parsed file will be saved will be in current directory. Also, file 
-	 * encoding will be UTF-8.
+	 * converting it to bytecode. Using this constructor, file encoding will be 
+	 * UTF-8.
 	 * 
 	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
+	 * @param		fileExtension Output file extension (without dot)
+	 * (default is java)
 	 */ 
-	public MethodFileParser(Path filepath, String outputFilename)
+	public MethodFileParser(Path filepath, Path outputDir, String outputFilename, 
+			String fileExtension)
 	{
-		this(filepath, null, outputFilename);
+		this(filepath, outputDir, outputFilename);
+		this.fileExtension = fileExtension;
 	}
 	
 	/**
@@ -97,10 +116,29 @@ public class MethodFileParser extends FileParser
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
 	 */ 
-	public MethodFileParser(Path filepath, Path outputDir, String outputFilename, FileEncoding encode)
+	public MethodFileParser(Path filepath, Path outputDir, String outputFilename,
+			FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
 		this.encode = encode;
+	}
+	
+	/**
+	 * Adds instructions in parts of the code that does not exist when 
+	 * converting it to bytecode.
+	 * 
+	 * @param		filename Path of the file to be parsed
+	 * @param		outputDir Directory where parsed file will be saved
+	 * @param		outputFilename Name of the parsed file
+	 * @param		encode File encoding
+	 * @param		fileExtension Output file extension (without dot)
+	 * (default is java)
+	 */ 
+	public MethodFileParser(Path filepath, Path outputDir, String outputFilename,
+			FileEncoding encode, String fileExtension)
+	{
+		this(filepath, outputDir, outputFilename, encode);
+		this.fileExtension = fileExtension;
 	}
 	
 	
@@ -137,10 +175,10 @@ public class MethodFileParser extends FileParser
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
-			outputFile = new File(outputDir.toFile(), outputFilename+".java");
+			outputFile = new File(outputDir.toFile(), outputFilename + "." + fileExtension);
 		// Otherwise processed file will be saved in current directory
 		else	
-			outputFile = new File(outputFilename+".java");
+			outputFile = new File(outputFilename + "." + fileExtension);
 		
 		// Opens file streams (file to be parsed and output file / processed file)
 		try (BufferedReader br = Files.newBufferedReader(file, encode.getStandardCharset());
