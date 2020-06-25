@@ -235,16 +235,19 @@ public class InvokerFileParser extends FileParser
 				
 				// Checks if it is an invoker declaration
 				if (!line.matches(regex_new) && line.matches(pattern_invokerDeclaration.toString())) {
-					line = "@executionFlow.runtime.CollectInvokedMethods " + line;
-					bw.write(line);
-					bw.newLine();
-					
-					// -----{ DEBUG }-----
-					if (DEBUG) { ConsoleOutput.showDebug(line); }
-					// -----{ END DEBUG }-----
-					
-					withinInvoker = true;
-					continue;
+					if (isMethodDeclaration(line)) {
+						line = "@executionFlow.runtime.CollectInvokedMethods " + line;
+						
+						bw.write(line);
+						bw.newLine();
+						
+						// -----{ DEBUG }-----
+						if (DEBUG) { ConsoleOutput.showDebug(line); }
+						// -----{ END DEBUG }-----
+						
+						withinInvoker = !line.contains("{");
+						continue;
+					}
 				}
 				
 				// Checks if parser is within a else block without curly brackets
@@ -601,6 +604,22 @@ public class InvokerFileParser extends FileParser
 		}
 		
 		return response;
+	}
+	
+	/**
+	 * Checks whether a line contains an invoker declaration.
+	 * 
+	 * @param		line Line to be analyzed
+	 * @return		If the line contains an invoker declaration
+	 */
+	private boolean isMethodDeclaration(String line)
+	{
+				// Checks if it is an invoker whose parameters are all on the same line
+		return	line.matches("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))"
+					+ "+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*") || 
+				// Checks if it is an invoker whose parameters are broken on other lines
+				line.matches("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t?]+(\\s|\\t))+"
+						+ "[A-z0-9\\-_$]+(\\ |\\t)*\\(.*,(\\ |\\t)*");
 	}
 	
 	/**
