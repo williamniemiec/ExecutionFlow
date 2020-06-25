@@ -1,0 +1,59 @@
+package executionFlow.core.file.parser.files.noCurlyBraces;
+public class test_else_noCurlyBraces 
+{
+@executionFlow.runtime.CollectInvokedMethods 	public String ifElseMethod(int num)
+	{
+		int w;int _37e40e9a8fc15d48f3936d2227182270=0;
+		
+		if (false)	w++;
+		else {int _8175281eeb1a5ba3e854b2769cc144c0=0;
+			for(;;)}
+				while (w == 0) {
+					if (false) w++;
+					else {int _ee852030c0daf21704caced38bb08372=0;
+						try {int _f6790a044e8abf4b971c12dee1ebd0ff=0;
+							w++;
+							if (false) w++;
+							else {int _c881ca1d5a3cf8977606c7ab630053c6=0;
+								w--;}
+						} catch(Exception e) {
+							w--;
+						}
+				}
+				for(;;)
+					w++;
+
+
+		return w;
+	}
+
+@executionFlow.runtime.CollectInvokedMethods 	public String ifElseMethod_complex(int num)
+	{
+		int w;int _866073e2096799a8cbcc90e814aa7bc8=0;
+		
+		if (false)	w++;
+		else {int _f738bf25682e780ffad1242a56dc6a2b=0;
+			for(;;)}
+				while (w == 0) 
+				{
+					if (false) w++;
+					else {int _84366b1e122df198c75124c4b53816f6=0;
+						try } {int _f735eeb61cc12720bd0356b907984=0;
+
+							w++;
+							if (false) w++;
+							else {int _da1d8d80549eee4f796c7a16d7cee92f=0;
+								w--;}
+						} 
+						catch(Exception e) 
+						{
+							w--;
+						}
+				}
+				for(;;)
+					w++;
+
+
+		return w;
+	}
+}

@@ -9,19 +9,30 @@ import executionFlow.runtime.SkipCollection;
 
 
 /**
- * Tests for class {@link AssertFileParser}.
+ * Tests for class {@link PreTestMethodFileParser}.
  */
 @SkipCollection
-public class AssertFileParserTest 
+public class PreTestMethodFileParserTest 
 {
 	@Test
 	public void testClassTest() throws IOException
 	{
-		String currentDir = new File("tests/executionFlow/core/file/parser/tests").getAbsolutePath();
+		File currentDir = new File("tests/executionFlow/core/file/parser/files/PreTestMethodFileParserTest");
 		String filename = "TestClass";
-		File f = new File(currentDir, filename+".java");
+		File f = new File(currentDir, filename+".java.txt");
 		
-		FileParser fp = new AssertFileParser(f.getAbsolutePath(), currentDir, filename+"_parsed");
+		FileParser fp = new PreTestMethodFileParser(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		fp.parseFile();
+	}
+	
+	@Test
+	public void parameterizedTestMethodTest() throws IOException
+	{
+		File currentDir = new File("tests/executionFlow/core/file/parser/files/PreTestMethodFileParserTest");
+		String filename = "ParameterizedTestMethod";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileParser fp = new PreTestMethodFileParser(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
 		fp.parseFile();
 	}
 }

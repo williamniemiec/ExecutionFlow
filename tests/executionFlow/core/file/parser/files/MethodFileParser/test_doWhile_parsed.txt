@@ -5,11 +5,11 @@ import java.io.IOException;
 
 public class test_doWhile
 {
-	public void doWhile(int num)
+@executionFlow.runtime.CollectInvokedMethods 	public void doWhile(int num)
 	{
 		int i = num;
 
-		do {int _676558a1c23e4b4f322e4beea0395a3=0;
+		do {int _9747c0239b706e0bac31446d75a79649=0;
 			if (i < 0)
 if (Boolean.parseBoolean("True")) {				break;}
 			i--;

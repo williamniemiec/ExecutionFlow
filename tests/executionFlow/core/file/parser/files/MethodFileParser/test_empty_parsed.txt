@@ -6,7 +6,7 @@ public class test_empty {
 	public void foo2() 
 	{ }
 	
-	public void foo3() {
+@executionFlow.runtime.CollectInvokedMethods 	public void foo3() {
 		
 	}
 	

@@ -1,0 +1,20 @@
+package executionFlow.core.file.parser.tests;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import examples.testClasses.TestClass;
+
+public class ParameterizedTestMethod {
+	@ParameterizedTest
+	@ValueSource(ints = {-1,0,1})
+	public void test1(int num)
+	{
+		TestClass tc = new TestClass(4);
+		
+try {		assertEquals(1, tc.factorial(num));} catch(Throwable e){}
+try {		assertEquals(1, tc.factorial(num));} catch(Throwable e){}
+	}
+}

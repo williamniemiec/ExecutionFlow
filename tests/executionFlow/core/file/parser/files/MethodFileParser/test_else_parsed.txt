@@ -1,21 +1,21 @@
 package executionFlow.core.file.parser.files;
 public class test_else 
 {
-	public String ifElseMethod(int num)
+@executionFlow.runtime.CollectInvokedMethods 	public String ifElseMethod(int num)
 	{
 		if (num < 0) {
 			return "";
 		}
 		
 		String response = "";
-		int w;int _86d261acc74b5f5ce23650902ced89b2=0;
-        int k;int _ca07c125df9ef3a61be2a2b114440894=0;
+		int w;int _9d0acf18f3ede5c9953ffde00f2d2b89=0;
+        int k;int _42a7f36efeeadae567da0a5fc0eacfd1=0;
 
 		if (num == 0) {
 			response = "Number zero";
 		} else if (num == 1) {
 			response = "Number one";
-		} else {int _4cca53fee2a745c95734a5ca8daf1e12=0;
+		} else {int _e03586645faf4c4cb7c780a3a5b56193=0;
 			response = "Number "+num;
 		}
 		
