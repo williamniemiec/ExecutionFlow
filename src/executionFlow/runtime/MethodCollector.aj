@@ -20,7 +20,7 @@ import executionFlow.info.CollectorInfo;
  * </ul>
  * 
  * @apiNote		Excludes calls to native java methods, ExecutionFlow's classes,
- * methods with {@link SkipMethod} annotation, methods with {@link _SkipMethod}
+ * methods with {@link SkipInvoker} annotation, methods with {@link _SkipInvoker}
  * and all methods from classes with {@link SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
@@ -45,7 +45,7 @@ public aspect MethodCollector extends RuntimeCollector
 	 */
 	pointcut invokerSignature(): 
 		!within(@SkipCollection *) &&
-		cflow(execution(@executionFlow.runtime._SkipMethod * *.*(..))) && 
+		cflow(execution(@executionFlow.runtime._SkipInvoker * *.*(..))) && 
 		(junit4() || junit5()) &&
 		!junit4_internal() && !junit5_internal() &&
 		!execution(public int hashCode());
@@ -102,7 +102,6 @@ public aspect MethodCollector extends RuntimeCollector
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
 		
-		//if (invocationLine <= 0) { return; }
 		String signature = thisJoinPoint.getSignature().toString();
 
 		// Checks if is a method signature

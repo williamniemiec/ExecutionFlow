@@ -8,14 +8,14 @@ import examples.testClasses.TestClass;
 
 public class TestClass 
 {
-	@Test @executionFlow.runtime._SkipMethod
+	@Test @executionFlow.runtime._SkipInvoker
 	public void testFoo()
 	{
 		assertEquals("1", "1");
 		assertEquals("1", "2");	// It will fail
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test @executionFlow.runtime._SkipInvoker
 	public void assertFailInTheMiddleTest() 
 	{
 		TestClass tc = new TestClass(99);
@@ -25,7 +25,7 @@ public class TestClass
 		assertEquals("two", tc.threePaths(2));
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test @executionFlow.runtime._SkipInvoker
 	public void multilineAssert1()
 	{
 		assertEquals(param1, 			// Comment 1
@@ -33,7 +33,7 @@ public class TestClass
 				param3);				// Comment 3
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test @executionFlow.runtime._SkipInvoker
 	public void multilineAssert2()
 	{
 		assertEquals (
@@ -42,7 +42,7 @@ public class TestClass
 				param3);				// Comment 3
 	}
 	
-	@Test @executionFlow.runtime._SkipMethod
+	@Test @executionFlow.runtime._SkipInvoker
 	public void multilineAssert3()
 	{
 		assertEquals (

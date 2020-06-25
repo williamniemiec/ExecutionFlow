@@ -323,27 +323,27 @@ public class MathArrays {
         T previous = val[0];
         final int max = val.length;
         for (int i = 1; i < max; i++) {
-            final int comp;int _12f78d97043cd0ea234ce76c7917b556=0;
+            final int comp;int _b9bcfc31aaf2a315ea6e965daa829995=0;
             switch (dir) {
-            case INCREASING:int _db08620f863bb7e371ec4cfa2c7d01e3=0;
+            case INCREASING:int _a2baae16b2aa69a33d8d2d32c5f05e9e=0;
                 comp = previous.compareTo(val[i]);
                 if (strict) {
                     if (comp >= 0) {
                         return false;
                     }
-                } else {int _8f83b18e29593010fca3713bef2abe0d=0;
+                } else {int _d979796556b5fdebef9befd64b0c8e35=0;
                     if (comp > 0) {
                         return false;
                     }
                 }
 if (Boolean.parseBoolean("True")) {                break;}
-            case DECREASING:int _d9a17284f343767cda9d44956527cd5=0;
+            case DECREASING:int _a9ad8913db6131fcadcda2674070c88e=0;
                 comp = val[i].compareTo(previous);
                 if (strict) {
                     if (comp >= 0) {
                         return false;
                     }
-                } else {int _a39ae85d850f117e3abf02dd6b114861=0;
+                } else {int _6ad66a6292d254eae877459f50a4249d=0;
                     if (comp > 0) {
                        return false;
                     }
@@ -387,7 +387,7 @@ if (Boolean.parseBoolean("True")) {                break;}
                                            boolean abort) {
         if (a.length == b.length) {
             return true;
-        } else {int _d1f8a222412ad4d313ea59e2f09d31d7=0;
+        } else {int _c1555ddbc20be47913b4c99a31d92d9e=0;
             if (abort) {
                 throw new DimensionMismatchException(a.length, b.length);
             }
@@ -425,7 +425,7 @@ if (Boolean.parseBoolean("True")) {                break;}
                                            boolean abort) {
         if (a.length == b.length) {
             return true;
-        } else {int _999c56cb338732c9cb808cdd81838244=0;
+        } else {int _fa794d5f0fc457c8e91df6e56a2c12cd=0;
             if (abort) {
                 throw new DimensionMismatchException(a.length, b.length);
             }
@@ -463,29 +463,29 @@ if (Boolean.parseBoolean("True")) {                break;}
         double previous = val[0];
         final int max = val.length;
 
-        int index;int _d7fc235ba626b50e4b829dab1e40e430=0;
+        int index;int _c7d518f1ae48cce04f5c80b60094a3b6=0;
         ITEM:
         for (index = 1; index < max; index++) {
             switch (dir) {
-            case INCREASING:int _89b91e249834e728c89edbcd4021c80d=0;
+            case INCREASING:int _3698dd47718cb78c0959ad468c8cdef4=0;
                 if (strict) {
                     if (val[index] <= previous) {
-                        break ITEM;int _985e8bc5d74812fe1eb0392edb109a85=0;
+                        break ITEM;int _432549dcb5991b6061034df12d5690e1=0;
                     }
-                } else {int _f638c56cf0c990e29ebed9ce0cc79b6d=0;
+                } else {int _43dffdd43f65baa2b94ac38b51a526c1=0;
                     if (val[index] < previous) {
-                        break ITEM;int _a723bb48fbf4904bdf5f31f54d75888a=0;
+                        break ITEM;int _8d9d54e9258b1e7e9c9231dbd5fbb598=0;
                     }
                 }
 if (Boolean.parseBoolean("True")) {                break;}
-            case DECREASING:int _aee221c76f41c8fe149e0462d23aad41=0;
+            case DECREASING:int _2dacbdfa1f3301afa2aeb4033c1c2b62=0;
                 if (strict) {
                     if (val[index] >= previous) {
-                        break ITEM;int _2026ebad217b2fa501c2b09ef7a68532=0;
+                        break ITEM;int _c2ff839bf5fd46da4e1d6f46d05d07c3=0;
                     }
-                } else {int _aa1738899c904b09cc001289b4d51c6a=0;
+                } else {int _8a0a77967f8e57c66cfeeb61979ff436=0;
                     if (val[index] > previous) {
-                        break ITEM;int _3863dd85dc4c3214899a5f77ca1957bb=0;
+                        break ITEM;int _157f862d9cf554f9e3b2f3f1e3605b4=0;
                     }
                 }
 if (Boolean.parseBoolean("True")) {                break;}
@@ -505,7 +505,7 @@ if (Boolean.parseBoolean("True")) {                break;}
         // Loop early exit means wrong ordering.
         if (abort) {
             throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);
-        } else {int _19237ad58aef2c873cf433d8464b42c9=0;
+        } else {int _d46353d67afa1cc4b4e837ce5cbe6af=0;
             return false;
         }
     }
@@ -915,7 +915,7 @@ if (Boolean.parseBoolean("True")) {                break;}
         for (int i = 0; i < len; i++) {
             if (Double.isNaN(values[i])) {
                 out[i] = Double.NaN;
-            } else {int _db3d15918034a5acdcebb3c1d761514f=0;
+            } else {int _e47e3d1a9bac592925c4a55d6f5528c5=0;
                 out[i] = values[i] * normalizedSum / sum;
             }
         }
@@ -953,11 +953,11 @@ if (Boolean.parseBoolean("True")) {                break;}
      */
     @SuppressWarnings("unchecked")
     public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-        final T[][] array;int _5592079d1d488333235deff87d001bbe=0;
+        final T[][] array;int _3d64a35c73b9ee98d61ef75aaecd3c99=0;
         if (columns < 0) {
             T[] dummyRow = buildArray(field, 0);
             array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
-        } else {int _e8bd494afd987540c7b8a9cf926c4e7f=0;
+        } else {int _dfb13e723349c41ee35f1e9fb6cebb4b=0;
             array = (T[][]) Array.newInstance(field.getRuntimeClass(),
                                               new int[] {
                                                   rows, columns

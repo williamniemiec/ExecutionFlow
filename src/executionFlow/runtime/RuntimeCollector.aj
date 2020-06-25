@@ -15,7 +15,7 @@ import executionFlow.info.MethodInvokerInfo;
  * 
  * @apiNote		It will ignore all methods of a class if it has 
  * {@link SkipCollection} annotation
- * @apiNote		It will ignore methods with {@link SkipMethod} annotation
+ * @apiNote		It will ignore methods with {@link SkipInvoker} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5
@@ -68,10 +68,10 @@ public abstract aspect RuntimeCollector
 	 */
 	pointcut skipAnnotation():
 		within(@SkipCollection *) ||
-		withincode(@executionFlow.runtime.SkipMethod * *.*(..)) ||
-		withincode(@executionFlow.runtime._SkipMethod * *.*(..)) ||
-		execution(@executionFlow.runtime.SkipMethod * *.*(..)) ||
-		execution(@executionFlow.runtime._SkipMethod * *.*(..)); 
+		withincode(@executionFlow.runtime.SkipInvoker * *.*(..)) ||
+		withincode(@executionFlow.runtime._SkipInvoker * *.*(..)) ||
+		execution(@executionFlow.runtime.SkipInvoker * *.*(..)) ||
+		execution(@executionFlow.runtime._SkipInvoker * *.*(..)); 
 	
 	/**
 	 * Intercepts test methods with JUnit 4 test annotation.

@@ -1,6 +1,5 @@
 package executionFlow.runtime;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.FileVisitResult;
@@ -36,7 +35,6 @@ public class CollectorExecutionFlow
 	private static Path classPath;
 	
 	private static Path srcPath;
-	private static Path rootPath;
 	
 	
 	//-------------------------------------------------------------------------
@@ -122,15 +120,11 @@ public class CollectorExecutionFlow
 	 */
 	public static Path findClassPath(String className, String classSignature) throws IOException 
 	{
-		if (rootPath == null) {
-			rootPath = findProjectRoot().toPath();
-		}
-		
 		// Gets folder where .class is
 		String path = extractPathFromSignature(classSignature);
 		
 		// Finds absolute path where the class file is
-		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
+		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot().toPath(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+className+".class")) {
@@ -156,10 +150,6 @@ public class CollectorExecutionFlow
 	 */
 	public static Path findSrcPath(String className, String classSignature) throws IOException 
 	{
-		if (rootPath == null) {
-			rootPath = findProjectRoot().toPath();
-		}
-		
 		// Extracts parent class name from inner class (if it is one)
 		final String effectiveClassName = className.split("\\$")[0];
 		
@@ -168,7 +158,7 @@ public class CollectorExecutionFlow
 		
 		
 		// Finds absolute path where the source file is
-		Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
+		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot().toPath(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+effectiveClassName+".java")) {
@@ -186,7 +176,7 @@ public class CollectorExecutionFlow
 	/**
 	 * Extracts method's class signature.
 	 * 
-	 * @param	signature Signature of the method
+	 * @param	signature Method signature
 	 * 
 	 * @return	Name of the package + name of the class + name of the 
 	 * method(param1, param2,...)
@@ -274,32 +264,6 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Extracts class signature from method signature.
-	 * 
-	 * @param methodSignature Signature of the method
-	 * 
-	 * @return Class signature
-	 */
-	public static String extractClassSignature(String methodSignature)
-	{
-		StringBuilder response = new StringBuilder();
-		String[] terms = methodSignature.split("\\.");
-		
-		// Appends all terms of signature, without the last
-		for (int i=0; i<terms.length-1; i++) {
-			response.append(terms[i]);
-			response.append(".");
-		}
-		
-		if (response.length() > 0) {
-			// Removes last dot
-			response.deleteCharAt(response.length()-1);
-		}
-		
-		return response.toString();
-	}
-	
-	/**
 	 * Extracts package from a class signature.
 	 * 
 	 * @param signature Signature of the class
@@ -349,44 +313,6 @@ public class CollectorExecutionFlow
 		else if	(c == Double.class) 	{ response = double.class; }
 		
 		return response;
-	}
-	
-	/**
-	 * Finds project root. It will return the path that contains a directory 
-	 * with name 'src'. 
-	 * 
-	 * @return	Project root
-	 */
-	private static File findProjectRoot()
-	{
-		String[] allFiles;
-		boolean hasSrcFolder = false;
-		int i=0;
-		File currentPath = new File(System.getProperty("user.dir"));
-		
-		// Searches for a path containing a directory named 'src'
-		while (!hasSrcFolder) {
-			allFiles = currentPath.list();
-			
-			// Checks the name of every file in current path
-			i=0;
-			while (!hasSrcFolder && i < allFiles.length) {
-				// If there is a directory named 'src' stop the search
-				if (allFiles[i].equals("src")) {
-					hasSrcFolder = true;
-				} else {
-					i++;
-				}
-			}
-			
-			// If there is not a directory named 'src', it searches in the 
-			// parent folder
-			if (!hasSrcFolder) {
-				currentPath = new File(currentPath.getParent());
-			}
-		}
-		
-		return currentPath;
 	}
 	
 	/**

@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 
 /**
- * When a method has this annotation, all invoked method signatures within it
- * will be collected.
+ * When a method or a constructor has this annotation, all invoked method
+ * signatures within it will be collected.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5

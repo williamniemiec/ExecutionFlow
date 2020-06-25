@@ -13,6 +13,7 @@ import executionFlow.core.file.MethodManager;
 import executionFlow.core.file.ParserType;
 import executionFlow.core.file.parser.factory.PreTestMethodFileParserFactory;
 import executionFlow.exporter.TestedMethodsExporter;
+import executionFlow.info.InvokerInfo;
 import executionFlow.info.MethodInvokerInfo;
 
 
@@ -107,7 +108,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			testClassPath = CollectorExecutionFlow.findClassPath(className, classSignature);
 			
 			// Gets source file path of the test method
-			String testClassSignature = CollectorExecutionFlow.extractClassSignature(testMethodSignature);
+			String testClassSignature = InvokerInfo.extractClassSignature(testMethodSignature);
 			testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
 			testClassPackage = MethodInvokerInfo.extractPackage(testClassSignature);
 			Path testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
@@ -253,7 +254,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested methods to a CSV
-		ef.setExporter(new TestedMethodsExporter("Invokers_TestMethods", new File(ExecutionFlow.getAppRootPath(), "testPaths")))
+		ef.setExporter(new TestedMethodsExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), "testPaths")))
 			.export();
 		
 		// Gets test paths of the collected constructors and export them
@@ -261,7 +262,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested constructors to a CSV
-		ef.setExporter(new TestedMethodsExporter("Invokers_TestMethods", new File(ExecutionFlow.getAppRootPath(), "testPaths")))
+		ef.setExporter(new TestedMethodsExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), "testPaths")))
 			.export();
 		
 		reset();	// Prepares for next test

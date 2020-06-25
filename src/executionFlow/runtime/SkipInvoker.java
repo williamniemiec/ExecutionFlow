@@ -1,20 +1,20 @@
 package executionFlow.runtime;
 
-import static java.lang.annotation.ElementType.METHOD;
-
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
 /**
- * When a method has this annotation, all collectors will ignore it.
+ * When a method or a constructor has this annotation, all collectors will
+ * ignore it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.3
- * @since		1.3
+ * @version		1.5
+ * @since		1.5
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(METHOD)
-public @interface SkipMethod 
-{}
+@Target( {ElementType.METHOD, ElementType.CONSTRUCTOR} )
+public @interface SkipInvoker 
+{ }

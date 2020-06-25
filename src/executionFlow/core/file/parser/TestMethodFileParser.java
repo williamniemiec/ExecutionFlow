@@ -172,7 +172,7 @@ public class TestMethodFileParser extends FileParser
 			while ((line = br.readLine()) != null) {
 				// Checks whether the line contains a test annotation
 				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-					line += " @executionFlow.runtime._SkipMethod";
+					line += " @executionFlow.runtime._SkipInvoker";
 				}
 				
 				// -----{ DEBUG }-----

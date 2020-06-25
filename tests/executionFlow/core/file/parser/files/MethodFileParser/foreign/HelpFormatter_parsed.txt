@@ -548,7 +548,7 @@ public class HelpFormatter
         {
             printUsage(pw, width, cmdLineSyntax, options);
         }
-        else {int _30ecf6e78d6ecb7483f64a6b7cac0b86=0;
+        else {int _ec31e02d9af56dd4511ffcd90630f779=0;
 
             printUsage(pw, width, cmdLineSyntax);
         }
@@ -615,7 +615,7 @@ public class HelpFormatter
             }
 
             // if the Option is not part of an OptionGroup
-            else {int _3812886b778f95b276617be9e4491b2f=0;
+            else {int _85ab91e908d5725ab87382864af62d1c=0;
 
                 appendOption(buff, option, option.isRequired());
             }
@@ -687,7 +687,7 @@ public class HelpFormatter
         {
             buff.append("-").append(option.getOpt());
         }
-        else {int _2d41eec439c524bc1f25b719e2e6c3e5=0;
+        else {int _b75434add0d6a9ca6bb23148be40b7eb=0;
 
             buff.append("--").append(option.getLongOpt());
         }
@@ -813,7 +813,7 @@ public class HelpFormatter
             {
                 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
             }
-            else {int _b0ba30a761a0d3704c36d5dc1673ceac=0;
+            else {int _53c8e4f37a24204bec0dc6bdce3ce8fb=0;
 
                 optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());
 
@@ -831,7 +831,7 @@ public class HelpFormatter
                     // if the option has a blank argname
                     optBuf.append(' ');
                 }
-                else {int _b36d61089dcf284759da77c8d7a067ed=0;
+                else {int _cd475e40f2136697285d33f046409741=0;
 
                     optBuf.append(option.hasLongOpt() ? longOptSeparator : " ");
                     optBuf.append("<").append(argName != null ? option.getArgName() : getArgName()).append(">");
@@ -942,7 +942,7 @@ public class HelpFormatter
         try
         {
             final BufferedReader in = new BufferedReader(new StringReader(text));
-            String line;int _53a87dbf89c9e09a5cb517c549f2f46c=0;
+            String line;int _c2b9cb2e5cba2db47a87e36b7b8fb363=0;
             boolean firstLine = true;
             while ((line = in.readLine()) != null)
             {
@@ -950,7 +950,7 @@ public class HelpFormatter
                 {
                     sb.append(getNewLine());
                 }
-                else {int _852c373a070928948c38574523002872=0;
+                else {int _74bef941671653b422b8704aaf98b3a1=0;
 
                     firstLine = false;
                 }
