@@ -533,7 +533,7 @@ public class JDB
 		private BufferedReader output;
 		private boolean inMethod;
 		private boolean withinConstructor;
-		private boolean constructorFirstLine = true;
+		private boolean withinOverloadCall;
 		private int lastLineAdded = -1;
 		private String line;
 		private String srcLine;
@@ -606,10 +606,14 @@ public class JDB
             			isInternalCommand = true;
             			inMethod = false;
             		}
-            		// Ignores constructor native calls
-            		else if (withinConstructor && constructorFirstLine) {
-            			constructorFirstLine = false;
-            			ignore = true;
+            		else if (withinOverloadCall) {
+            			if (isEmptyMethod()) {
+            				withinOverloadCall = false;
+            				ignore = false;
+            			}
+            			else {
+            				ignore = true;
+            			}
             		}
             		// Checks if it is still within a constructor
             		else if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
@@ -634,7 +638,7 @@ public class JDB
 	        				// Checks if returned from the method
 	        				if (line.contains(testMethodSignature)) {
 	        					exitMethod = true;
-	        					constructorFirstLine = true;
+	        					
 	        					newIteration = false;
 	        					inMethod = false;
 	        					lastLineAdded = -1;
@@ -651,6 +655,10 @@ public class JDB
 	            			inMethod = true;
 	            		}
             		}
+            		
+            		// Checks if it is a overload call
+            		if (!withinOverloadCall)
+            			withinOverloadCall = withinConstructor && srcLine.contains("this(");
         		}
         		// Gets tested method signature
         		else if (line.contains("main[")) {
