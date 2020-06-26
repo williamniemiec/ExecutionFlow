@@ -541,7 +541,7 @@ public class JDB
 		private boolean inMethod;
 		private boolean withinConstructor;
 		private boolean withinOverloadCall;
-		boolean firstTime;
+		boolean firstTime = true;
 		private int lastLineAdded = -1;
 		private String line;
 		private String srcLine;
@@ -559,6 +559,7 @@ public class JDB
 		public JDBOutput(Process p)
 		{
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//			firstTime = true;
 		}
 		
 		
@@ -579,7 +580,6 @@ public class JDB
 		{
 			boolean response = false;
 			boolean ignore = false;
-			final String regex_constructorNativeCall = "[0-9]+(\\ |\\t)+([a-z]+\\ )?(class )?[A-z0-9$\\-_]+(\\(.*\\))?(\\ |\\t)*";
 			final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
 			final String regex_return = "^[0-9]*(\\ |\\t)*return(\\ |\\t)+.*$";
 			
@@ -642,21 +642,10 @@ public class JDB
             		}
 
         			newIteration = isNewIteration();
-        			System.out.println("---------");
-        			System.out.println(isInternalCommand);
-        			System.out.println(exitMethod);
-        			System.out.println(ignore);
-        			System.out.println(inMethod);
-        			System.out.println("---------");
         			
-            		
             		if (!isInternalCommand && !exitMethod && !ignore) {
 	        			if (inMethod) {
 	        				int lineNumber = jdb_getLine(line);
-	        				System.out.println();
-	        				System.out.println(lineNumber);
-	        				System.out.println(testMethodSignature);
-	        				System.out.println();
 	        				
 	        				// Checks if returned from the method
 	        				if (line.contains(testMethodSignature)) {
@@ -691,7 +680,6 @@ public class JDB
 	        			
 	        			
 	        			currentMethodSignature = line.substring(idx+1);
-	        			System.out.println("CURRENT SIG: "+currentMethodSignature);
 	        		}
 	        		
 	        		// Gets invocation signature
@@ -776,11 +764,6 @@ public class JDB
 		 */
 		private boolean isInternalMethod()
 		{
-			System.out.println("Internal?");
-			System.out.println(classSignature);
-			System.out.println(classInvocationSignature);
-			System.out.println(!line.contains(classSignature) && 
-					!line.contains(classInvocationSignature));
 			return 	!line.contains(classSignature) && 
 					!line.contains(classInvocationSignature);
 		}
