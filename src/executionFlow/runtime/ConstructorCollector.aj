@@ -45,6 +45,10 @@ public aspect ConstructorCollector extends RuntimeCollector
 		// Checks if it is a constructor signature
 		if (!signature.matches(constructorRegex)) { return; }
 		
+		// Gets correct signature of inner classes
+		signature = thisJoinPoint.getSignature().getDeclaringTypeName() 
+				+ signature.substring(signature.indexOf("("));
+		
 		// Extracts constructor data
 		if (thisJoinPoint.getArgs() == null || thisJoinPoint.getArgs().length == 0) {
 			paramTypes = new Class<?>[0];

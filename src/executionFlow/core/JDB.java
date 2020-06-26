@@ -642,10 +642,21 @@ public class JDB
             		}
 
         			newIteration = isNewIteration();
+        			System.out.println("---------");
+        			System.out.println(isInternalCommand);
+        			System.out.println(exitMethod);
+        			System.out.println(ignore);
+        			System.out.println(inMethod);
+        			System.out.println("---------");
+        			
             		
             		if (!isInternalCommand && !exitMethod && !ignore) {
 	        			if (inMethod) {
 	        				int lineNumber = jdb_getLine(line);
+	        				System.out.println();
+	        				System.out.println(lineNumber);
+	        				System.out.println(testMethodSignature);
+	        				System.out.println();
 	        				
 	        				// Checks if returned from the method
 	        				if (line.contains(testMethodSignature)) {
@@ -765,6 +776,11 @@ public class JDB
 		 */
 		private boolean isInternalMethod()
 		{
+			System.out.println("Internal?");
+			System.out.println(classSignature);
+			System.out.println(classInvocationSignature);
+			System.out.println(!line.contains(classSignature) && 
+					!line.contains(classInvocationSignature));
 			return 	!line.contains(classSignature) && 
 					!line.contains(classInvocationSignature);
 		}

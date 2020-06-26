@@ -58,7 +58,7 @@ public aspect MethodCollector extends RuntimeCollector
 		// Ignores native java methods
 		if (isNativeMethod(invocationSignature)) { return; }
 		
-		//System.out.println("__TES_SIG:"+invocationSignature);
+		System.out.println("__TES_SIG:"+invocationSignature);
 		
 	}
 	
@@ -79,13 +79,14 @@ public aspect MethodCollector extends RuntimeCollector
 	{
 		String invokedMethodSignature = thisJoinPoint.getSignature().toString();
 		
+		
 		// Checks if is a method signature
 		if (!isMethodSignature(invokedMethodSignature)) { return; }
 		
 		// Ignores native java methods
 		if (isNativeMethod(invokedMethodSignature)) { return; }
 
-		//System.out.println("__INV_SIG:"+invokedMethodSignature);
+		System.out.println("__INV_SIG:"+invokedMethodSignature);
 	}
 	
 	/**
@@ -112,6 +113,10 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Ignores methods in the method test (with @Test) (it will only consider internal calls)
 		if (testMethodSignature != null && signature.contains(testMethodSignature)) { return; }
+		
+		// Gets correct signature of inner classes
+		signature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
+				+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);

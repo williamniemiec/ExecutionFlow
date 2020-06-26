@@ -206,6 +206,10 @@ public class ConstructorInvokerInfo extends InvokerInfo
 			+ "]";
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
 	@Override
 	public String getClassSignature()
 	{
@@ -215,10 +219,6 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		return classSignature; 
 	}
 	
-	
-	//-------------------------------------------------------------------------
-	//		Getters
-	//-------------------------------------------------------------------------
 	public String getConstructorSignature()
 	{
 		return getInvokerSignature();

@@ -66,6 +66,7 @@ public abstract class InvokerInfo
 	{
 		StringBuilder response = new StringBuilder();
 		String[] terms = invokerSignature.split("\\.");
+
 		
 		// Appends all terms of signature, without the last
 		for (int i=0; i<terms.length-1; i++) {
