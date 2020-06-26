@@ -360,6 +360,9 @@ public class PreTestMethodFileParser extends FileParser
 		 */
 		public String parse(String line)
 		{
+			int lastCurlyBracketInSameLine = line.lastIndexOf("}");
+			
+			
 			// Checks if it is within a multiline assert
 			if (inAssert) {
 				roundBracketsBalance += getRoundBracketsBalance(line);
@@ -367,9 +370,17 @@ public class PreTestMethodFileParser extends FileParser
 				if (roundBracketsBalance == 0) {
 					inAssert = false;
 					endOfAssert = line.lastIndexOf(';') + 1;
-					line = line.substring(0, endOfAssert) 
-						+ "} catch(" + catchType + " e){" + try_catch_message + "}"
-						+ line.substring(endOfAssert);
+					
+					if (lastCurlyBracketInSameLine != -1) {
+						line = line.substring(0, lastCurlyBracketInSameLine) 
+							+ "} catch(" + catchType + " e){" + try_catch_message + "}"
+							+ line.substring(lastCurlyBracketInSameLine);
+					}
+					else {
+						line = line.substring(0, endOfAssert) 
+							+ "} catch(" + catchType + " e){" + try_catch_message + "}"
+							+ line.substring(endOfAssert);
+					}
 				}					
 			}
 			// Checks if it is an assert instruction
@@ -383,13 +394,26 @@ public class PreTestMethodFileParser extends FileParser
 					
 					// There is no comment next to the line
 					if (commentStart == -1)
-						line = "try {" + line + "} "
-							+ "catch(" + catchType + " e){" + try_catch_message + "}";
+						if (lastCurlyBracketInSameLine != -1) {
+							line = "try {" + line.substring(0, lastCurlyBracketInSameLine) + "} "
+								+ "catch(" + catchType + " e){" + try_catch_message + "}}";
+						}
+						else {
+							line = "try {" + line + "} "
+								+ "catch(" + catchType + " e){" + try_catch_message + "}";
+						}
 					// There is a comment next to the line
 					else {
-						line = "try {" + line.substring(0, commentStart)
+						if (lastCurlyBracketInSameLine != -1) {
+							line = "try {" + line.substring(0, lastCurlyBracketInSameLine)
 							+ "} catch(" + catchType + " e){" + try_catch_message + "}"
 							+ line.substring(commentStart);
+						}
+						else {
+							line = "try {" + line.substring(0, commentStart)
+								+ "} catch(" + catchType + " e){" + try_catch_message + "}"
+								+ line.substring(commentStart);
+						}
 					}
 				}
 				// Multiline assert

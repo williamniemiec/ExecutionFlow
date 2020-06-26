@@ -251,7 +251,14 @@ public class JDB
 		);
 		
 		pb.directory(testClassRootPath.toFile());
-
+		
+		// Avoids 2 instances of JDB, which can cause overlap and malfunction
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		return pb.start();
 	}
 	
@@ -534,6 +541,7 @@ public class JDB
 		private boolean inMethod;
 		private boolean withinConstructor;
 		private boolean withinOverloadCall;
+		boolean firstTime;
 		private int lastLineAdded = -1;
 		private String line;
 		private String srcLine;
@@ -615,6 +623,10 @@ public class JDB
             				ignore = true;
             			}
             		}
+            		else if (withinConstructor && firstTime) {
+            			firstTime = false;
+            			ignore = true;
+            		}
             		// Checks if it is still within a constructor
             		else if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
             			withinConstructor = false;
@@ -642,6 +654,7 @@ public class JDB
 	        					newIteration = false;
 	        					inMethod = false;
 	        					lastLineAdded = -1;
+	        					firstTime = true;
 	        				} 
 	        				// Checks if it is still in the method
 	        				else if (withinConstructor || isWithinMethod(lineNumber)) {	

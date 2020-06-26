@@ -58,7 +58,7 @@ public aspect MethodCollector extends RuntimeCollector
 		// Ignores native java methods
 		if (isNativeMethod(invocationSignature)) { return; }
 		
-		System.out.println("__TES_SIG:"+invocationSignature);
+		//System.out.println("__TES_SIG:"+invocationSignature);
 		
 	}
 	
@@ -85,7 +85,7 @@ public aspect MethodCollector extends RuntimeCollector
 		// Ignores native java methods
 		if (isNativeMethod(invokedMethodSignature)) { return; }
 
-		System.out.println("__INV_SIG:"+invokedMethodSignature);
+		//System.out.println("__INV_SIG:"+invokedMethodSignature);
 	}
 	
 	/**
