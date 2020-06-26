@@ -292,8 +292,9 @@ public class JDB
 				} 
 			}
 			// Checks if has exit the method
-			else if (exitMethod) {
-				currentSkip--; 
+			else if (exitMethod && !isInternalCommand) {
+				currentSkip--;
+				
 				// Checks if has to skip collected test path
 				if (currentSkip == -1) {
 					// Saves test path
@@ -613,6 +614,7 @@ public class JDB
             				line.contains("executionFlow.runtime") || srcLine.contains("package ")) {
             			isInternalCommand = true;
             			inMethod = false;
+            			ignore = true;
             		}
             		else if (withinOverloadCall) {
             			if (isEmptyMethod()) {
@@ -637,7 +639,7 @@ public class JDB
             		// Checks if last method was skipped
             		else if (skipped) {
             			newIteration = false;
-            			inMethod = true;
+            			//inMethod = true;
             			skipped = false;
             		}
 
@@ -709,8 +711,8 @@ public class JDB
 	    		
 	    		if (srcLine != null) {
 	    			// Checks if current line is a return instruction
-	    			if (srcLine.matches(regex_return))
-	    				exitMethod = true;
+//	    			if (srcLine.matches(regex_return))
+//	    				exitMethod = true;
 	    			
 	    			if (exitMethod)
 	    				inMethod = false;

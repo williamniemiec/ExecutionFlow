@@ -74,7 +74,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 		// -----{ DEBUG }-----
 		if (DEBUG) {
 			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-			ConsoleOutput.showDebug(collectedMethods.values().toString());
+			ConsoleOutput.showDebug(collectedMethods.toString());
 			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		}
 		// -----{ END DEBUG }-----
