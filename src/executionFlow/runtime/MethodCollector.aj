@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import executionFlow.info.MethodInvokerInfo;
+import executionFlow.InvokedSignature;
 import executionFlow.info.CollectorInfo;
 
 
@@ -58,7 +59,8 @@ public aspect MethodCollector extends RuntimeCollector
 		// Ignores native java methods
 		if (isNativeMethod(invocationSignature)) { return; }
 		
-		System.out.println("__TES_SIG:"+invocationSignature);
+		//System.out.println("__TES_SIG:"+invocationSignature);
+		InvokedSignature.tes_sig = invocationSignature;
 		
 	}
 	
@@ -86,7 +88,8 @@ public aspect MethodCollector extends RuntimeCollector
 		// Ignores native java methods
 		if (isNativeMethod(invokedMethodSignature)) { return; }
 
-		System.out.println("__INV_SIG:"+invokedMethodSignature);
+		//System.out.println("__INV_SIG:"+invokedMethodSignature);
+		InvokedSignature.inv_sig = invokedMethodSignature;
 	}
 	
 	/**

@@ -18,9 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Queue;
+import java.util.LinkedList; 
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
+import executionFlow.InvokedSignature;
 import executionFlow.info.InvokerInfo;
 
 
@@ -254,7 +257,7 @@ public class JDB
 		
 		// Avoids 2 instances of JDB, which can cause overlap and malfunction
 		try {
-			Thread.sleep(200);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -282,7 +285,11 @@ public class JDB
 		// Executes while inside the test method
 		while (!endOfMethod) {
 			// Checks if output has finished processing
-			while (!wasNewIteration && !out.read()) { continue; }  
+			while (!wasNewIteration && !out.read()) { continue; }
+//			if (wasNewIteration) {
+//				wasNewIteration = false;
+//				continue;
+//			}
 			
 			wasNewIteration = false;
 			if (endOfMethod) {
@@ -308,8 +315,6 @@ public class JDB
 					
 					// Checks if method is within a loop
 					in.send("cont");
-					
-					//inMethod = false;
 				} 
 				else {
 					testPath.clear();	// Discards computed test path
@@ -539,13 +544,14 @@ public class JDB
 		//		Attributes
 		//---------------------------------------------------------------------
 		private BufferedReader output;
+		//private InputStreamReader output;
 		private boolean inMethod;
 		private boolean withinConstructor;
 		private boolean withinOverloadCall;
 		boolean firstTime = true;
 		private int lastLineAdded = -1;
 		private String line;
-		private String srcLine;
+		private String srcLine = "";
 		
         
         //---------------------------------------------------------------------
@@ -560,7 +566,7 @@ public class JDB
 		public JDBOutput(Process p)
 		{
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//			firstTime = true;
+//			output = new InputStreamReader(p.getInputStream());
 		}
 		
 		
@@ -579,18 +585,65 @@ public class JDB
 		 */
 		public boolean read() throws IOException
 		{
-			boolean response = false;
+			boolean readyToReadInput = false;
 			boolean ignore = false;
 			final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
-			final String regex_return = "^[0-9]*(\\ |\\t)*return(\\ |\\t)+.*$";
+			char[] buff = new char[500];
+			Queue<String> buffer = new LinkedList<>();
+			String tmp = "";
 			
 			
+//			if (output.ready()) {
+//				while(output.ready()) {
+//					if (output.read(buff) != -1) {
+//						tmp += String.copyValueOf(buff);
+//					}
+//					
+//					// Delay to ensure that the output is get
+//					try {
+//						Thread.sleep(50);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//				}
+
+				/*System.out.println("="+tmp.replace("\r", "<r>").replace("\n", "<n>"));
+				Matcher m = Pattern.compile("bci=[0-9]+").matcher(tmp);
+				
+				
+				tmp = tmp.replace("\r\n\r\n", "\n").replace("\r\n__", "\n__").replace("\r\n.", "\n.").replace("\r\n", "");
+				int _idx = tmp.indexOf("Step ");
+				
+				if (_idx == -1) {
+					_idx = tmp.indexOf("Breakpoint ");
+				}
+				
+				if (_idx != -1) {
+					tmp = tmp.substring(0, _idx) + "\n" + tmp.substring(_idx);
+				}
+				
+				if (m.find()) {
+					tmp = tmp.substring(0, m.end()+1) + "\n" + tmp.substring(m.end()+1);  
+				}
+				
+				*/
+            	//for (String str : tmp.split("\\n")) {
+            	//	buffer.add(str);
+            	//}
+            	//System.out.println(buffer);
+//			}
+			
+			//if (output.ready()) {
+			//while (!buffer.isEmpty() && !readyToReadInput) {
 			if (output.ready()) {
-            	line = output.readLine();
+//				line = buffer.poll(); 	
+//            	
+				line = output.readLine();
             	isInternalCommand = false;
             	
             	if (isEmptyLine() || line.matches(regex_emptyOutput)) { 
-            		return false; 
+            		//continue;
+            		return false;
         		}
             	
             	// -----{ DEBUG }-----
@@ -603,9 +656,17 @@ public class JDB
             	// Checks if JDB has started and is ready to receive debug commands
         		if ( !endOfMethod && line.contains("thread=") &&
     				 (line.contains("Breakpoint hit") || line.contains("Step completed")) ) {
-        			response = true;
-            		srcLine = output.readLine();
-            		
+        			readyToReadInput = true;
+        			
+        			//srcLine = buffer.poll();
+        			try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        			srcLine = output.readLine();
+
             		// Checks if it is within a constructor
             		withinConstructor = line.contains(".<init>");
             		
@@ -632,14 +693,12 @@ public class JDB
             		// Checks if it is still within a constructor
             		else if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
             			withinConstructor = false;
-            			//inMethod = false;
             			exitMethod = true;
-            			response = true;
+            			readyToReadInput = true;
             		}
             		// Checks if last method was skipped
             		else if (skipped) {
             			newIteration = false;
-            			//inMethod = true;
             			skipped = false;
             		}
 
@@ -676,7 +735,25 @@ public class JDB
             			withinOverloadCall = withinConstructor && srcLine.contains("this(");
         		}
         		// Gets tested method signature
-        		else if (line.contains("main[")) {
+        		if (InvokedSignature.tes_sig != null) {
+        			currentMethodSignature = InvokedSignature.tes_sig;
+        			
+	        		if (invokedMethodsByTestedInvoker.containsKey(currentMethodSignature)) {
+	    				List<String> invokedMethods = invokedMethodsByTestedInvoker.get(currentMethodSignature);
+	    				
+	    				
+	    				invokedMethods.add(InvokedSignature.inv_sig);
+	    			}
+	    			else {
+	    				List<String> invokedMethods = new ArrayList<>();
+	    				
+	    				
+	    				invokedMethods.add(InvokedSignature.inv_sig);
+	    				invokedMethodsByTestedInvoker.put(currentMethodSignature, invokedMethods);
+	    			}
+        		}
+        		
+        		/*else if (line.contains("main[")) {
 	        		if (line.contains("__TES_SIG")) {
 	        			int idx = line.indexOf(":");
 	        			
@@ -703,17 +780,13 @@ public class JDB
 	        				invokedMethodsByTestedInvoker.put(currentMethodSignature, invokedMethods);
 	        			}
 	        		}
-        		}
+        		}*/
         		
 	    		if (endOfMethod) {
-	    			response = true;
+	    			readyToReadInput = true;
 	    		}
 	    		
-	    		if (srcLine != null) {
-	    			// Checks if current line is a return instruction
-//	    			if (srcLine.matches(regex_return))
-//	    				exitMethod = true;
-	    			
+	    		if (srcLine != null && !srcLine.isEmpty()) {
 	    			if (exitMethod)
 	    				inMethod = false;
 	    			
@@ -723,7 +796,7 @@ public class JDB
 	    		}
 			} 
 			
-			return response;
+			return readyToReadInput;
 		}
 		
 		/**
