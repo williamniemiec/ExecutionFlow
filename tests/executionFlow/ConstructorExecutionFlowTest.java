@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,9 +12,9 @@ import java.util.Map;
 import org.junit.Test;
 
 import executionFlow.core.file.FileManager;
-import executionFlow.core.file.MethodManager;
+import executionFlow.core.file.InvokerManager;
 import executionFlow.core.file.ParserType;
-import executionFlow.core.file.parser.factory.AssertFileParserFactory;
+import executionFlow.core.file.parser.factory.PreTestMethodFileParserFactory;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokerInfo;
 import executionFlow.info.MethodInvokerInfo;
@@ -31,7 +30,7 @@ import executionFlow.runtime.SkipCollection;
 public class ConstructorExecutionFlowTest 
 {
 	private FileManager testMethodFileManager;
-	private MethodManager testMethodManager;
+	private InvokerManager testMethodManager;
 	
 	
 	/**
@@ -41,6 +40,7 @@ public class ConstructorExecutionFlowTest
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found
+	 * 
 	 * @apiNote		{@link examples.controlFlow.ControlFlowTest} uses only one
 	 * constructor, so it is possible choose any test method that uses the
 	 * constructor
@@ -61,13 +61,13 @@ public class ConstructorExecutionFlowTest
 		
 		
 		// Creates backup from original files
-		testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
+		testMethodManager = new InvokerManager(ParserType.PRE_TEST_METHOD, false);
 		
 		testMethodFileManager = new FileManager(
 			testSrcPath,
 			MethodInvokerInfo.getCompiledFileDirectory(testClassPath),
 			testClassPackage,
-			new AssertFileParserFactory(),
+			new PreTestMethodFileParserFactory(),
 			"original_assert"
 		);
 		
@@ -130,7 +130,7 @@ public class ConstructorExecutionFlowTest
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found
 	 */
-	/*@Test
+	@Test
 	public void ComplexTests1() throws ClassNotFoundException, IOException
 	{
 		Map<String, Map<SignaturesInfo, List<Integer>>> testPaths;
@@ -146,13 +146,13 @@ public class ConstructorExecutionFlowTest
 		
 		
 		// Creates backup from original files
-		testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
+		testMethodManager = new InvokerManager(ParserType.PRE_TEST_METHOD, false);
 		
 		testMethodFileManager = new FileManager(
 			testSrcPath,
 			MethodInvokerInfo.getCompiledFileDirectory(testClassPath),
 			testClassPackage,
-			new AssertFileParserFactory(),
+			new PreTestMethodFileParserFactory(),
 			"original_assert"
 		);
 		
@@ -204,7 +204,7 @@ public class ConstructorExecutionFlowTest
 		testMethodManager.restoreAll();
 		testMethodManager.deleteBackup();
 	}
-	*/
+	
 	
 	/**
 	 * Gets all test paths obtained from {@link ExecutionFlow}. 
@@ -212,6 +212,7 @@ public class ConstructorExecutionFlowTest
 	 * @param		testPaths Test paths obtained from ExecutionFlow 
 	 * @param		testMethodSignature Signature of the test method
 	 * @param		constructorSignature Constructor signature
+	 * 
 	 * @return		Collection of all test paths
 	 */
 	private List<List<Integer>> getTestPaths(Map<SignaturesInfo, List<List<Integer>>> testPaths, 

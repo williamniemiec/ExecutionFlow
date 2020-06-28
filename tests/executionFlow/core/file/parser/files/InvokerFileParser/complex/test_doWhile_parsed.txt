@@ -9,7 +9,7 @@ public class test_doWhile
 	{
 		int i = 0, k = 0;
 
-		do  {int _f6dc4f0990e04e30c640b7811b2f3a4d=0;
+		do  {int _430181a4e751eb652ec0c7139b21a05c=0;
 
 			k++;
 		} while (i < num);
@@ -19,7 +19,7 @@ public class test_doWhile
 	{
 		int i = 0, k = 0;
 
-		do  {int _f9079eb895091c046535959e5ba3175=0;
+		do  {int _7802aacbf965c1560f388ae7fed442a7=0;
 
 			k++;
 		} 

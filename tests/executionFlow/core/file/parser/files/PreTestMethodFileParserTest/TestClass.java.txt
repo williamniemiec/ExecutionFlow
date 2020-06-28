@@ -9,6 +9,16 @@ import examples.testClasses.TestClass;
 public class TestClass 
 {
 	@Test
+	public void testLastCurlyBracketInSameLine() {
+		System.out.println("#####################################################################");
+		System.out.println("                    testLastCurlyBracketInSameLine                   ");
+		System.out.println("#####################################################################");
+
+		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
+
+		assertEquals(24, artc.factorial(4)); }
+
+	@Test
 	public void testFoo()
 	{
 		assertEquals("1", "1");

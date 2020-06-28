@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +15,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import executionFlow.core.file.FileManager;
-import executionFlow.core.file.MethodManager;
+import executionFlow.core.file.InvokerManager;
 import executionFlow.core.file.ParserType;
-import executionFlow.core.file.parser.factory.AssertFileParserFactory;
+import executionFlow.core.file.parser.factory.PreTestMethodFileParserFactory;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokerInfo;
 import executionFlow.info.SignaturesInfo;
@@ -37,7 +35,7 @@ import executionFlow.runtime.SkipCollection;
 public class MethodExecutionFlowTest 
 {
 	private static FileManager testMethodFileManager;
-	private static MethodManager testMethodManager;
+	private static InvokerManager testMethodManager;
 	private static final Path classPath = Path.of("bin/examples/controlFlow/TestClass_ControlFlow.class");
 	private static final Path testClassPath = Path.of("bin/examples/controlFlow/ControlFlowTest.class");
 	private static final Path srcPath = Path.of("examples/examples/controlFlow/TestClass_ControlFlow.java");
@@ -48,13 +46,13 @@ public class MethodExecutionFlowTest
 	@BeforeClass
 	public static void parseAssert() throws IOException, ClassNotFoundException
 	{
-		testMethodManager = new MethodManager(ParserType.ASSERT_TEST_METHOD, false);
+		testMethodManager = new InvokerManager(ParserType.PRE_TEST_METHOD, false);
 		
 		testMethodFileManager = new FileManager(
 			testSrcPath,
 			MethodInvokerInfo.getCompiledFileDirectory(testClassPath),
 			testClassPackage,
-			new AssertFileParserFactory(),
+			new PreTestMethodFileParserFactory(),
 			"original_assert"
 		);
 		
@@ -568,6 +566,7 @@ public class MethodExecutionFlowTest
 	 * @param		testPaths Test paths obtained from ExecutionFlow 
 	 * @param		testMethodSignature Signature of the test method
 	 * @param		constructorSignature Constructor signature
+	 * 
 	 * @return		Collection of all test paths
 	 */
 	private List<List<Integer>> getTestPaths(Map<SignaturesInfo, List<List<Integer>>> testPaths, 

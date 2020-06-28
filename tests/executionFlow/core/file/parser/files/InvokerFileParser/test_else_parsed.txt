@@ -8,14 +8,14 @@ public class test_else
 		}
 		
 		String response = "";
-		int w;int _3000e196c10212d7f3afd844d686fe2e=0;
-        int k;int _917604f2c4bee6f5d8edc794dba9cf05=0;
+		int w;int _a139363d33ee2b97122db3fe9ffb8c49=0;
+        int k;int _6a8c5c298de6fad933b81c70e55bb203=0;
 
 		if (num == 0) {
 			response = "Number zero";
 		} else if (num == 1) {
 			response = "Number one";
-		} else {int _de32f3b5e3d275237152a97ea19155a5=0;
+		} else {int _9d36fd8918af55e0599d6258296893b1=0;
 			response = "Number "+num;
 		}
 		

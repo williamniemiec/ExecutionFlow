@@ -5,7 +5,7 @@ import java.io.File;
 import org.junit.Test;
 
 import executionFlow.core.file.FileManager;
-import executionFlow.core.file.parser.factory.MethodFileParserFactory;
+import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.runtime.SkipCollection;
 
@@ -28,7 +28,7 @@ public class FileManagerTest
 			"examples/controlFlow/TestClass_ControlFlow.java",
 			new File("bin/controlFlow/").getAbsolutePath(),
 			"controlFlow",
-			new MethodFileParserFactory()
+			new InvokerFileParserFactory()
 		);
 		
 		try {

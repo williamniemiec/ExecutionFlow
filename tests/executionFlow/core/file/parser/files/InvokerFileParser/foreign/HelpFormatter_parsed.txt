@@ -482,7 +482,7 @@ public class HelpFormatter
      * @param autoUsage whether to print an automatically generated
      * usage statement
      */
-    public void printHelp(final int width, final String cmdLineSyntax, final String header,
+@executionFlow.runtime.CollectInvokedMethods     public void printHelp(final int width, final String cmdLineSyntax, final String header,
                           final Options options, final String footer, final boolean autoUsage)
     {
         final PrintWriter pw = new PrintWriter(System.out);
@@ -508,7 +508,7 @@ public class HelpFormatter
      *
      * @throws IllegalStateException if there is no room to print a line
      */
-    public void printHelp(final PrintWriter pw, final int width, final String cmdLineSyntax,
+@executionFlow.runtime.CollectInvokedMethods     public void printHelp(final PrintWriter pw, final int width, final String cmdLineSyntax,
                           final String header, final Options options, final int leftPad,
                           final int descPad, final String footer)
     {
@@ -535,7 +535,7 @@ public class HelpFormatter
      *
      * @throws IllegalStateException if there is no room to print a line
      */
-    public void printHelp(final PrintWriter pw, final int width, final String cmdLineSyntax,
+@executionFlow.runtime.CollectInvokedMethods     public void printHelp(final PrintWriter pw, final int width, final String cmdLineSyntax,
                           final String header, final Options options, final int leftPad,
                           final int descPad, final String footer, final boolean autoUsage)
     {
@@ -548,7 +548,7 @@ public class HelpFormatter
         {
             printUsage(pw, width, cmdLineSyntax, options);
         }
-        else {int _ec31e02d9af56dd4511ffcd90630f779=0;
+        else {int _fb479cd731c412b2802779a0453b3c66=0;
 
             printUsage(pw, width, cmdLineSyntax);
         }
@@ -615,7 +615,7 @@ public class HelpFormatter
             }
 
             // if the Option is not part of an OptionGroup
-            else {int _85ab91e908d5725ab87382864af62d1c=0;
+            else {int _64f78396ba9606b8b5115b846b86373e=0;
 
                 appendOption(buff, option, option.isRequired());
             }
@@ -687,7 +687,7 @@ public class HelpFormatter
         {
             buff.append("-").append(option.getOpt());
         }
-        else {int _b75434add0d6a9ca6bb23148be40b7eb=0;
+        else {int _4e2ac578ccb09f7cc2716f8c277d48a7=0;
 
             buff.append("--").append(option.getLongOpt());
         }
@@ -733,7 +733,7 @@ public class HelpFormatter
      * @param descPad the number of characters of padding to be prefixed
      * to each description line
      */
-    public void printOptions(final PrintWriter pw, final int width, final Options options,
+@executionFlow.runtime.CollectInvokedMethods     public void printOptions(final PrintWriter pw, final int width, final Options options,
                              final int leftPad, final int descPad)
     {
         final StringBuffer sb = new StringBuffer();
@@ -813,7 +813,7 @@ public class HelpFormatter
             {
                 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
             }
-            else {int _53c8e4f37a24204bec0dc6bdce3ce8fb=0;
+            else {int _7d449007d9703d8e832dc85d6ac3725e=0;
 
                 optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());
 
@@ -831,7 +831,7 @@ public class HelpFormatter
                     // if the option has a blank argname
                     optBuf.append(' ');
                 }
-                else {int _cd475e40f2136697285d33f046409741=0;
+                else {int _41f5cff3d5e47ebe6ed3e2a820447035=0;
 
                     optBuf.append(option.hasLongOpt() ? longOptSeparator : " ");
                     optBuf.append("<").append(argName != null ? option.getArgName() : getArgName()).append(">");
@@ -885,7 +885,7 @@ public class HelpFormatter
      *
      * @return the StringBuffer with the rendered Options contents.
      */
-    protected StringBuffer renderWrappedText(final StringBuffer sb, final int width,
+@executionFlow.runtime.CollectInvokedMethods     protected StringBuffer renderWrappedText(final StringBuffer sb, final int width,
                                              int nextLineTabStop, String text)
     {
         int pos = findWrapPos(text, width, 0);
@@ -942,7 +942,7 @@ public class HelpFormatter
         try
         {
             final BufferedReader in = new BufferedReader(new StringReader(text));
-            String line;int _c2b9cb2e5cba2db47a87e36b7b8fb363=0;
+            String line;int _bedfd880ac5c8d4c542b361bac71c72=0;
             boolean firstLine = true;
             while ((line = in.readLine()) != null)
             {
@@ -950,7 +950,7 @@ public class HelpFormatter
                 {
                     sb.append(getNewLine());
                 }
-                else {int _74bef941671653b422b8704aaf98b3a1=0;
+                else {int _41bc1cb585109da2423bff46c19197e7=0;
 
                     firstLine = false;
                 }
