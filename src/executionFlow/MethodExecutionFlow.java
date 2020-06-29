@@ -1,5 +1,9 @@
 package executionFlow;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -146,6 +150,22 @@ public class MethodExecutionFlow extends ExecutionFlow
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
+					
+					
+					
+					File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
+					Map<String, List<String>> m;
+					try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+						m = (Map<String, List<String>>)ois.readObject();
+						System.out.println("Invoked methods by tested method: "+m);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					f.delete();
+					
+					
+					
 					
 					// Exports invoked methods by tested method to a CSV
 					invokedMethodsExporter.export(jdb.getInvokedMethodsByTestedInvoker(), false);

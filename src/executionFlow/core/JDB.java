@@ -23,8 +23,9 @@ import java.util.LinkedList;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
-import executionFlow.InvokedSignature;
+//import executionFlow.InvokedSignature;
 import executionFlow.info.InvokerInfo;
+import executionFlow.runtime.MethodCollector;
 
 
 /**
@@ -255,13 +256,6 @@ public class JDB
 		
 		pb.directory(testClassRootPath.toFile());
 		
-		// Avoids 2 instances of JDB, which can cause overlap and malfunction
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		return pb.start();
 	}
 	
@@ -283,13 +277,9 @@ public class JDB
 		in.init();
 		
 		// Executes while inside the test method
-		while (!endOfMethod) {
+		while (!endOfMethod) {;
 			// Checks if output has finished processing
 			while (!wasNewIteration && !out.read()) { continue; }
-//			if (wasNewIteration) {
-//				wasNewIteration = false;
-//				continue;
-//			}
 			
 			wasNewIteration = false;
 			if (endOfMethod) {
@@ -544,7 +534,6 @@ public class JDB
 		//		Attributes
 		//---------------------------------------------------------------------
 		private BufferedReader output;
-		//private InputStreamReader output;
 		private boolean inMethod;
 		private boolean withinConstructor;
 		private boolean withinOverloadCall;
@@ -566,7 +555,6 @@ public class JDB
 		public JDBOutput(Process p)
 		{
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//			output = new InputStreamReader(p.getInputStream());
 		}
 		
 		
@@ -659,12 +647,12 @@ public class JDB
         			readyToReadInput = true;
         			
         			//srcLine = buffer.poll();
-        			try {
-						Thread.sleep(200);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+//        			try {
+//						Thread.sleep(200);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
         			srcLine = output.readLine();
 
             		// Checks if it is within a constructor
@@ -735,23 +723,23 @@ public class JDB
             			withinOverloadCall = withinConstructor && srcLine.contains("this(");
         		}
         		// Gets tested method signature
-        		if (InvokedSignature.tes_sig != null) {
+        		/*if (InvokedSignature.tes_sig != null) {
         			currentMethodSignature = InvokedSignature.tes_sig;
         			
 	        		if (invokedMethodsByTestedInvoker.containsKey(currentMethodSignature)) {
 	    				List<String> invokedMethods = invokedMethodsByTestedInvoker.get(currentMethodSignature);
 	    				
 	    				
-	    				invokedMethods.add(InvokedSignature.inv_sig);
+	    				//invokedMethods.add(InvokedSignature.inv_sig);
 	    			}
 	    			else {
 	    				List<String> invokedMethods = new ArrayList<>();
 	    				
 	    				
-	    				invokedMethods.add(InvokedSignature.inv_sig);
+	    				//invokedMethods.add(InvokedSignature.inv_sig);
 	    				invokedMethodsByTestedInvoker.put(currentMethodSignature, invokedMethods);
 	    			}
-        		}
+        		}*/
         		
         		/*else if (line.contains("main[")) {
 	        		if (line.contains("__TES_SIG")) {

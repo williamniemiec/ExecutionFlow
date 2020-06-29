@@ -80,7 +80,7 @@ public class InvokedMethodsByTestedInvokerExporter
 	 */
 	public void export(Map<String, List<String>> invokedMethodsByTestedInvoker, boolean isConstructor)
 	{
-		ConsoleOutput.showInfo("Exporting invoked methods by tested method...");
+		ConsoleOutput.showInfo("Exporting invoked methods by tested invoker...");
 		
 		for (Map.Entry<String, List<String>> e : invokedMethodsByTestedInvoker.entrySet()) {
 			String invokerSignature = InvokerInfo.getInvokerSignatureWithoutReturnType(e.getKey());
@@ -122,6 +122,10 @@ public class InvokedMethodsByTestedInvokerExporter
 			
 			ConsoleOutput.showInfo("The export was successful");
 			ConsoleOutput.showInfo("Location: "+output.getAbsolutePath());
+		}
+		
+		if (invokedMethodsByTestedInvoker.isEmpty()) {
+			ConsoleOutput.showWarning("There are no invoked methods by tested invoker");
 		}
 	}
 }

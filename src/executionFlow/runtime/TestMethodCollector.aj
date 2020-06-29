@@ -1,7 +1,11 @@
 package executionFlow.runtime;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 
 import executionFlow.ConsoleOutput;
@@ -48,6 +52,35 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
+//	pointcut x():
+//		execution(@org.junit.Test * *.*());
+//	
+//	after() returning(): x() {
+//		File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
+//		
+//		if (!f.exists()) {
+//			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
+//				oos.writeObject(invokedMethodsByTestedInvoker);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		else {
+//			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+//				ois.readObject();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+			
+			
+//			
+//		System.out.println("$$:"+invokedMethodsByTestedInvoker);
+//		invokedMethodsByTestedInvoker.clear();
+//	}
+	
 	/**
 	 * Intercepts JUnit 4 test methods.
 	 */
