@@ -203,6 +203,23 @@ public class InvokerFileParser extends FileParser
 					continue;
 				}
 				
+				// Checks if there are print's
+				if (line.contains("System.out.print")) {
+					String[] tmp = line.split(";");
+					StringBuilder response = new StringBuilder();
+					
+					
+					// Deletes print's from the line
+					for (String term : tmp) {
+						if (!term.contains("System.out.print")) {
+							response.append(term);
+							response.append(";");
+						}
+					}
+					
+					line = response.toString();
+				}
+				
 				// Checks if it is an invoker declaration line
 				if (withinInvoker) {
 					if (line.contains("{")) {

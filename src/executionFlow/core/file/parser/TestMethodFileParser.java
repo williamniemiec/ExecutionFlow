@@ -155,7 +155,8 @@ public class TestMethodFileParser extends FileParser
 
 		String line;
 		File outputFile;
-
+//		Pattern pattern_print = Pattern.compile("System\\.out\\.print(ln)?\\(.*\\);");
+//		Matcher matcher_print;
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -173,6 +174,22 @@ public class TestMethodFileParser extends FileParser
 				// Checks whether the line contains a test annotation
 				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
 					line += " @executionFlow.runtime._SkipInvoker";
+				}
+				// Checks if there are print's
+				else if (line.contains("System.out.print")) {
+					String[] tmp = line.split(";");
+					StringBuilder response = new StringBuilder();
+					
+					
+					// Deletes print's from the line
+					for (String term : tmp) {
+						if (!term.contains("System.out.print")) {
+							response.append(term);
+							response.append(";");
+						}
+					}
+					
+					line = response.toString();
 				}
 				
 				// -----{ DEBUG }-----
