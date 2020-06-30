@@ -73,8 +73,6 @@ public class DataUtils
 		String[] signatureFields = invokerSignature.split("\\.");
 		String folderPath = getFolderPath(signatureFields, isConstructor);
 		String folderName = getFolderName(signatureFields, isConstructor);
-		System.out.println("FP: "+folderPath);
-		System.out.println("FN: "+folderName);
 		
 		
 		return folderPath+"/"+folderName;

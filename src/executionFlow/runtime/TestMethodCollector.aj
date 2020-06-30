@@ -1,11 +1,7 @@
 package executionFlow.runtime;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 
 import executionFlow.ConsoleOutput;
@@ -43,7 +39,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static boolean finished = false;
 	private String testClassName;
 	private String testClassPackage;
-	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
+	public static Checkpoint checkpoint = new Checkpoint("Test_Method");
 	private boolean junit5NewTest;
 	private Path testClassPath;
 	private FileManager testMethodFileManager;
@@ -52,35 +48,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-//	pointcut x():
-//		execution(@org.junit.Test * *.*());
-//	
-//	after() returning(): x() {
-//		File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
-//		
-//		if (!f.exists()) {
-//			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
-//				oos.writeObject(invokedMethodsByTestedInvoker);
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		else {
-//			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-//				ois.readObject();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-			
-			
-//			
-//		System.out.println("$$:"+invokedMethodsByTestedInvoker);
-//		invokedMethodsByTestedInvoker.clear();
-//	}
-	
 	/**
 	 * Intercepts JUnit 4 test methods.
 	 */
@@ -207,14 +174,17 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	after(): testMethodCollector() 
 	{
+		if (finished)
+			return;
+		
 		// Runs a new process of the application. This code block must only be
 		// executed once per test file
 		if (firstTime) {
 			boolean hasError = false;
 			
-			firstTime = false;System.out.println("RUN");
+			
 			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
-			finished = true;System.out.println("END RUN");
+			finished = true;
 			
 			// Restores original test method file and its compiled file
 			try {
@@ -246,7 +216,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 				ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
 				e.printStackTrace();
 			}
-			
+
 			testMethodManager.restoreAll();
 			
 			// Deletes backup files
@@ -267,12 +237,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 			if (hasError)
 				System.exit(-1);
 			
-			if (junit5NewTest) {
-				firstTime = false;
-				junit5NewTest = false;
-				testMethodManager.remove(testMethodFileManager);
-				finished = false;
-			}
+//			if (junit5NewTest) {
+//				firstTime = false;
+//				junit5NewTest = false;
+//				testMethodManager.remove(testMethodFileManager);
+//				finished = false;
+//			}
 			
 			return;
 		}

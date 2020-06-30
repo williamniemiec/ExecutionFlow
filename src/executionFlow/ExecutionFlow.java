@@ -4,21 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.core.JDB;
-import executionFlow.core.file.FileManager;
 import executionFlow.core.file.InvokerManager;
 import executionFlow.core.file.ParserType;
-import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
-import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
-import executionFlow.exporter.*;
+import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
-import executionFlow.runtime.MethodCollector;
 
 
 /**
@@ -53,9 +47,9 @@ public abstract class ExecutionFlow
 	
 	private static String appRoot;
 	private static File currentProjectRoot;
-	public static InvokerManager invokerManager;
-	public static InvokerManager testMethodManager;
-	
+	public transient static InvokerManager invokerManager;
+	public transient static InvokerManager testMethodManager;
+
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -75,7 +69,6 @@ public abstract class ExecutionFlow
 	 */
 	static {
 		boolean error = false;
-		
 		try {
 			testMethodManager = new InvokerManager(ParserType.TEST_METHOD, true);
 		} catch (ClassNotFoundException e) {

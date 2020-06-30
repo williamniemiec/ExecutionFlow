@@ -140,8 +140,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 					ConsoleOutput.showInfo("Computing test path of method "
 						+ collector.getMethodInfo().getInvokerSignature()+"...");
 
-					JDB jdb = new JDB(collector.getOrder());					
-					tp_jdb = jdb.getTestPaths(collector.getMethodInfo(), collector.getTestMethodInfo());
+					JDB jdb = new JDB(collector.getOrder());	
+					tp_jdb = jdb.run(collector.getMethodInfo(), collector.getTestMethodInfo()).getTestPaths();
 					
 					if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())
 						ConsoleOutput.showWarning("Test path is empty");
@@ -150,22 +150,6 @@ public class MethodExecutionFlow extends ExecutionFlow
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
-					
-					
-					
-					File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
-					Map<String, List<String>> m;
-					try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-						m = (Map<String, List<String>>)ois.readObject();
-						System.out.println("Invoked methods by tested method: "+m);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					f.delete();
-					
-					
-					
 					
 					// Exports invoked methods by tested method to a CSV
 					invokedMethodsExporter.export(jdb.getInvokedMethodsByTestedInvoker(), false);

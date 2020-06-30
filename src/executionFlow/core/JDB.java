@@ -2,8 +2,11 @@ package executionFlow.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.file.FileVisitResult;
@@ -16,16 +19,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Queue;
-import java.util.LinkedList; 
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
 //import executionFlow.InvokedSignature;
 import executionFlow.info.InvokerInfo;
-import executionFlow.runtime.MethodCollector;
 
 
 /**
@@ -149,19 +150,49 @@ public class JDB
 	/**
 	 * Returns invoked methods by tested invoker
 	 * 
-	 * @return		Invoked methods by tested invoker in the following format:
+	 * @return		Null if file does not exist or it is corrupted; otherwise, 
+	 * returns invoked methods by tested invoker in the following format:
 	 * <ul>
 	 * 	<li><b>Key:</b> Invoker signature</li>
 	 * 	<li><b>Value:</b> List of invoked method signatures by tested invoker</li>
 	 * </ul>
+	 * 
+	 * @implSpec	After call this method, the file containing invoked methods
+	 * by tested invoker will be deleted. Therefore, this method can only be 
+	 * called once for each {@link #run JDB execution}
 	 */
+	@SuppressWarnings("unchecked")
 	public Map<String, List<String>> getInvokedMethodsByTestedInvoker()
 	{
-		return invokedMethodsByTestedInvoker;
+		File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
+		Map<String, List<String>> response;
+		
+		
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+			response = (Map<String, List<String>>) ois.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			response = null;
+			ConsoleOutput.showError("Invoked methods by tested invoker - " + e.getMessage());
+			e.printStackTrace();
+		}
+		
+		f.delete();
+		
+		return response;
 	}
 	
 	/**
-	 * Computes test paths from a method.
+	 * Gets computed test path.
+	 * 
+	 * @return		Computed test path
+	 */
+	public List<List<Integer>> getTestPaths()
+	{ 
+		return testPaths;
+	}
+	
+	/**
+	 * Computes test paths from an invoker along with the invoked methods by it.
 	 * 
 	 * @param		methodInfo Informations about this method
 	 * 
@@ -170,8 +201,9 @@ public class JDB
 	 * @throws		IOException If JDB cannot be initialized
 	 * @throws		Throwable If an error occurs
 	 */
-	public List<List<Integer>> getTestPaths(InvokerInfo invokerInfo, InvokerInfo testMethodInfo) throws IOException
-	{ 
+	public JDB run(InvokerInfo invokerInfo, InvokerInfo testMethodInfo) throws IOException
+	{
+		Process process;			// JDB process
 		Path classRootPath;			// Root path where the compiled file of invoker class is
 		Path srcRootPath;			// Root path where the source file of the invoker is
 		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
@@ -189,12 +221,12 @@ public class JDB
 		srcRootPath = extractRootPathDirectory(invokerInfo.getSrcPath(), invokerInfo.getPackage());
 		classRootPath = extractRootPathDirectory(invokerInfo.getClassPath(), invokerInfo.getPackage());
 		testClassRootPath = extractRootPathDirectory(testMethodInfo.getClassPath(), testMethodInfo.getPackage());
-				
-		Process process = jdb_start(testClassRootPath, srcRootPath, classRootPath);
 		
+		// Executes JDB
+		process = jdb_start(testClassRootPath, srcRootPath, classRootPath);
 		jdb_methodVisitor(process);
 		
-		return testPaths;
+		return this;
 	}
 	
 	/**
@@ -209,6 +241,9 @@ public class JDB
 	 * @return		Process running JDB
 	 * 
 	 * @throws		IOException If the process cannot be created
+	 * @throws		IllegalStateException If srcRootPath is null
+	 * 
+	 * @implNote	It will run JDB from a CMD process
 	 */
 	private Process jdb_start(Path testClassRootPath, Path srcRootPath, Path methodClassRootPath) throws IOException
 	{
@@ -272,6 +307,7 @@ public class JDB
 		int currentSkip = skip;
 		JDBOutput out = new JDBOutput(process);
 		JDBInput in = new JDBInput(process);
+		
 		
 		// Initializes JDB
 		in.init();
@@ -541,6 +577,7 @@ public class JDB
 		private int lastLineAdded = -1;
 		private String line;
 		private String srcLine = "";
+		private String lastSrcLine = "";
 		
         
         //---------------------------------------------------------------------
@@ -581,56 +618,11 @@ public class JDB
 			String tmp = "";
 			
 			
-//			if (output.ready()) {
-//				while(output.ready()) {
-//					if (output.read(buff) != -1) {
-//						tmp += String.copyValueOf(buff);
-//					}
-//					
-//					// Delay to ensure that the output is get
-//					try {
-//						Thread.sleep(50);
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-//				}
-
-				/*System.out.println("="+tmp.replace("\r", "<r>").replace("\n", "<n>"));
-				Matcher m = Pattern.compile("bci=[0-9]+").matcher(tmp);
-				
-				
-				tmp = tmp.replace("\r\n\r\n", "\n").replace("\r\n__", "\n__").replace("\r\n.", "\n.").replace("\r\n", "");
-				int _idx = tmp.indexOf("Step ");
-				
-				if (_idx == -1) {
-					_idx = tmp.indexOf("Breakpoint ");
-				}
-				
-				if (_idx != -1) {
-					tmp = tmp.substring(0, _idx) + "\n" + tmp.substring(_idx);
-				}
-				
-				if (m.find()) {
-					tmp = tmp.substring(0, m.end()+1) + "\n" + tmp.substring(m.end()+1);  
-				}
-				
-				*/
-            	//for (String str : tmp.split("\\n")) {
-            	//	buffer.add(str);
-            	//}
-            	//System.out.println(buffer);
-//			}
-			
-			//if (output.ready()) {
-			//while (!buffer.isEmpty() && !readyToReadInput) {
-			if (output.ready()) {
-//				line = buffer.poll(); 	
-//            	
+			if (output.ready()) {        	
 				line = output.readLine();
             	isInternalCommand = false;
             	
             	if (isEmptyLine() || line.matches(regex_emptyOutput)) { 
-            		//continue;
             		return false;
         		}
             	
@@ -645,14 +637,6 @@ public class JDB
         		if ( !endOfMethod && line.contains("thread=") &&
     				 (line.contains("Breakpoint hit") || line.contains("Step completed")) ) {
         			readyToReadInput = true;
-        			
-        			//srcLine = buffer.poll();
-//        			try {
-//						Thread.sleep(200);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
         			srcLine = output.readLine();
 
             		// Checks if it is within a constructor
@@ -722,53 +706,6 @@ public class JDB
             		if (!withinOverloadCall)
             			withinOverloadCall = withinConstructor && srcLine.contains("this(");
         		}
-        		// Gets tested method signature
-        		/*if (InvokedSignature.tes_sig != null) {
-        			currentMethodSignature = InvokedSignature.tes_sig;
-        			
-	        		if (invokedMethodsByTestedInvoker.containsKey(currentMethodSignature)) {
-	    				List<String> invokedMethods = invokedMethodsByTestedInvoker.get(currentMethodSignature);
-	    				
-	    				
-	    				//invokedMethods.add(InvokedSignature.inv_sig);
-	    			}
-	    			else {
-	    				List<String> invokedMethods = new ArrayList<>();
-	    				
-	    				
-	    				//invokedMethods.add(InvokedSignature.inv_sig);
-	    				invokedMethodsByTestedInvoker.put(currentMethodSignature, invokedMethods);
-	    			}
-        		}*/
-        		
-        		/*else if (line.contains("main[")) {
-	        		if (line.contains("__TES_SIG")) {
-	        			int idx = line.indexOf(":");
-	        			
-	        			
-	        			currentMethodSignature = line.substring(idx+1);
-	        		}
-	        		
-	        		// Gets invocation signature
-	        		else if (line.contains("__INV_SIG")) {
-	        			int idx = line.indexOf(":");
-	        			
-	        			
-	        			if (invokedMethodsByTestedInvoker.containsKey(currentMethodSignature)) {
-	        				List<String> invokedMethods = invokedMethodsByTestedInvoker.get(currentMethodSignature);
-	        				
-	        				
-	        				invokedMethods.add(line.substring(idx+1));
-	        			}
-	        			else {
-	        				List<String> invokedMethods = new ArrayList<>();
-	        				
-	        				
-	        				invokedMethods.add(line.substring(idx+1));
-	        				invokedMethodsByTestedInvoker.put(currentMethodSignature, invokedMethods);
-	        			}
-	        		}
-        		}*/
         		
 	    		if (endOfMethod) {
 	    			readyToReadInput = true;
@@ -777,6 +714,13 @@ public class JDB
 	    		if (srcLine != null && !srcLine.isEmpty()) {
 	    			if (exitMethod)
 	    				inMethod = false;
+	    			
+	    			if (srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && srcLine.equals(lastSrcLine)) {
+	    				exitMethod = true;
+	    				endOfMethod = true;
+	    			}
+	    			
+	    			lastSrcLine = srcLine;
 	    			
 	    			// -----{ DEBUG }-----
 	    			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }

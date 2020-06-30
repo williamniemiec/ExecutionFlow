@@ -131,7 +131,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 					+ collector.getConstructorInfo().getInvokerSignature()+"...");
 
 				JDB jdb = new JDB(collector.getOrder());					
-				tp_jdb = jdb.getTestPaths(collector.getConstructorInfo(), collector.getTestMethodInfo());
+				tp_jdb = jdb.run(collector.getConstructorInfo(), collector.getTestMethodInfo()).getTestPaths();
 				
 				if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())
 					ConsoleOutput.showWarning("Test path is empty");
