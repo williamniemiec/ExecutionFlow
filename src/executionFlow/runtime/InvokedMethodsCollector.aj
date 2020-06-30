@@ -56,6 +56,10 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 		// Ignores native java methods
 		if (isNativeMethod(signature)) { return; }
 		
+		// Gets correct signature of inner classes
+		invocationSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
+				+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
+		
 		// Stores current invoker signature without its return type
 		invocationSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 	}
@@ -87,6 +91,10 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 		if (invocationSignature == null) { return; }
 		
 		// Removes return type from invoked method signature
+		invokedMethodSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
+				+ thisJoinPoint.getSignature().getName() + invokedMethodSignature.substring(invokedMethodSignature.indexOf("("));
+		
+		// Stores current invoker signature without its return type
 		invokedMethodSignature = CollectorExecutionFlow.extractMethodSignature(invokedMethodSignature);
 		
 		// Stores invoked method in invokedMethodsByTestedInvoker
