@@ -174,7 +174,7 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Extracts method's class signature.
+	 * Extracts method's class signature without return type.
 	 * 
 	 * @param	signature Method signature
 	 * 

@@ -15,17 +15,14 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
-//import executionFlow.InvokedSignature;
 import executionFlow.info.InvokerInfo;
 
 
@@ -63,8 +60,6 @@ public class JDB
 	 */
 	private String testMethodSignature;
 	
-	private String currentMethodSignature;
-	
 	/**
 	 * Line of test method that the method is called.
 	 */
@@ -84,15 +79,6 @@ public class JDB
 	 * Stores all computed test paths.
 	 */
 	private List<List<Integer>> testPaths;
-	
-	/**
-	 * Stores invoked methods by tested invoker.
-	 * <ul>
-	 * 	<li><b>Key:</b> Invoker signature</li>
-	 * 	<li><b>Value:</b> List of invoked method signatures by tested invoker</li>
-	 * </ul>
-	 */
-	private Map<String, List<String>> invokedMethodsByTestedInvoker;
 	
 	/**
 	 * Path of application libraries.
@@ -133,7 +119,6 @@ public class JDB
 		
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
-		invokedMethodsByTestedInvoker = new HashMap<>();
 	}
 	
 	/**
@@ -178,7 +163,7 @@ public class JDB
 		
 			f.delete();
 		}
-		
+
 		return invokedMethods.containsKey(invokerSignature) ? invokedMethods.get(invokerSignature) : null;
 	}
 	
@@ -615,9 +600,6 @@ public class JDB
 			boolean readyToReadInput = false;
 			boolean ignore = false;
 			final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
-			char[] buff = new char[500];
-			Queue<String> buffer = new LinkedList<>();
-			String tmp = "";
 			
 			
 			if (output.ready()) {        	

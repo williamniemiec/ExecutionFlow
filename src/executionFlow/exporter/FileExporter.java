@@ -68,7 +68,7 @@ public class FileExporter implements ExporterExecutionFlow
 				
 				// Gets save path
 				Path savePath = Paths.get(ExecutionFlow.getAppRootPath(), dirName,
-						DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
+					DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
 				
 				// Writes test paths in the file
 				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
