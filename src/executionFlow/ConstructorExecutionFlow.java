@@ -142,7 +142,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				storeTestPath(tp_jdb, collector);
 				
 				// Exports invoked methods by tested constructor to a CSV
-				invokedMethodsExporter.export(jdb.getInvokedMethodsByTestedInvoker(), true);
+				invokedMethodsExporter.export(collector.getConstructorInfo().getInvokerSignature(),
+						jdb.getInvokedMethodsByTestedInvoker(), true);
 			} catch (Exception e) {
 				ConsoleOutput.showError(e.getMessage());
 				e.printStackTrace();

@@ -1,7 +1,18 @@
 package executionFlow.runtime;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import executionFlow.ExecutionFlow;
+
 
 /**
  * Captures all invoked methods within the tested invoker, where an invoker can
@@ -20,6 +31,7 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private String invocationSignature;
+	private Map<String, List<String>> invokedMethodsByTestedInvoker = new HashMap<>();
 	
 	
 	//-----------------------------------------------------------------------
@@ -73,6 +85,7 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 
 		if (invocationSignature == null) { return; }
 		
+		// Stores invoked method in invokedMethodsByTestedInvoker
 		if (!invokedMethodsByTestedInvoker.containsKey(invocationSignature)) {
 			List<String> invokedMethods = new ArrayList<>();
 			
@@ -97,30 +110,44 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 		!withincode(@executionFlow.runtime._SkipInvoker * *.*(..));
 	
 	after() returning(): writer() {
-		System.out.println("##");
+		File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
 		
-		/*File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
-		
-		if (!f.exists()) {
+		if (!invokedMethodsByTestedInvoker.isEmpty()) {
+			if (f.exists()) {
+				// Reads file (if exists)
+				try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+					@SuppressWarnings("unchecked")
+					Map<String, List<String>> map = (Map<String, List<String>>) ois.readObject();
+					
+					
+					for (Map.Entry<String, List<String>> e : map.entrySet()) {
+						// Merges collected invoked methods by tested invoker 
+						// with saved collection
+						if (invokedMethodsByTestedInvoker.containsKey(e.getKey())) {
+							List<String> invokedMethods = invokedMethodsByTestedInvoker.get(e.getKey());
+							
+							for (String invokedMethod : e.getValue())
+								invokedMethods.add(invokedMethod);
+						}
+						// Saves collected invoked methods by tested invoker
+						else {
+							invokedMethodsByTestedInvoker.put(e.getKey(), e.getValue());							
+						}
+					}
+				} catch (IOException | ClassNotFoundException e) {
+					
+				}
+			}
+			
+			// Writes file
 			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
 				oos.writeObject(invokedMethodsByTestedInvoker);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}*/
-//		else {
-//			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-//				ois.readObject();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
 			
-			
-//			
-//		System.out.println("$$:"+invokedMethodsByTestedInvoker);
-//		invokedMethodsByTestedInvoker.clear();
+		}
+		
+		invokedMethodsByTestedInvoker.clear();
 	}
 }

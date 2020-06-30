@@ -39,7 +39,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static boolean finished = false;
 	private String testClassName;
 	private String testClassPackage;
-	public static Checkpoint checkpoint = new Checkpoint("Test_Method");
+	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
 	private boolean junit5NewTest;
 	private Path testClassPath;
 	private FileManager testMethodFileManager;
@@ -97,7 +97,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			return;
 		
 		reset();
-
+		ExecutionFlow.init();
+		
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
 
 		// Gets information about test method

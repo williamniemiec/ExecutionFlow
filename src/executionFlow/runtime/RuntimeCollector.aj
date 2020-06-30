@@ -59,7 +59,6 @@ public abstract aspect RuntimeCollector
 	protected static int lastInvocationLine;
 	protected static int order;
 	protected static Object[] testMethodArgs;
-	protected static Map<String, List<String>> invokedMethodsByTestedInvoker = new HashMap<>();
 	
 	
 	//-------------------------------------------------------------------------

@@ -1,9 +1,5 @@
 package executionFlow;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +9,8 @@ import executionFlow.core.JDB;
 import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
-import executionFlow.exporter.*;
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.InvokedMethodsByTestedInvokerExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
 import executionFlow.runtime.MethodCollector;
@@ -152,7 +149,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 					storeTestPath(tp_jdb, collector);
 					
 					// Exports invoked methods by tested method to a CSV
-					invokedMethodsExporter.export(jdb.getInvokedMethodsByTestedInvoker(), false);
+					invokedMethodsExporter.export(collector.getMethodInfo().getInvokerSignature(), 
+							jdb.getInvokedMethodsByTestedInvoker(), false);
 				} catch (Exception e) {
 					ConsoleOutput.showError(e.getMessage());
 					e.printStackTrace();

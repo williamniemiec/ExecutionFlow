@@ -56,6 +56,8 @@ public class JDB
 	 */
 	private String classInvocationSignature;
 	
+	private String invokerSignature;
+	
 	/**
 	 * Stores signature of the test method.
 	 */
@@ -148,37 +150,36 @@ public class JDB
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Returns invoked methods by tested invoker
+	 * Gets invoked methods by tested invoker. It will return all invoked
+	 * methods from tested methods
 	 * 
-	 * @return		Null if file does not exist or it is corrupted; otherwise, 
-	 * returns invoked methods by tested invoker in the following format:
-	 * <ul>
-	 * 	<li><b>Key:</b> Invoker signature</li>
-	 * 	<li><b>Value:</b> List of invoked method signatures by tested invoker</li>
-	 * </ul>
+	 * @return		Null if tested invoker does not call methods; otherwise, 
+	 * returns list of invoked method signatures by tested invoker
 	 * 
 	 * @implSpec	After call this method, the file containing invoked methods
 	 * by tested invoker will be deleted. Therefore, this method can only be 
 	 * called once for each {@link #run JDB execution}
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, List<String>> getInvokedMethodsByTestedInvoker()
+	public List<String> getInvokedMethodsByTestedInvoker()
 	{
 		File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
-		Map<String, List<String>> response;
+		Map<String, List<String>> invokedMethods = null;
 		
 		
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-			response = (Map<String, List<String>>) ois.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			response = null;
-			ConsoleOutput.showError("Invoked methods by tested invoker - " + e.getMessage());
-			e.printStackTrace();
+		if (f.exists()) {
+			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+				invokedMethods = (Map<String, List<String>>) ois.readObject();
+			} catch (IOException | ClassNotFoundException e) {
+				invokedMethods = null;
+				ConsoleOutput.showError("Invoked methods by tested invoker - " + e.getMessage());
+				e.printStackTrace();
+			}
+		
+			f.delete();
 		}
 		
-		f.delete();
-		
-		return response;
+		return invokedMethods.containsKey(invokerSignature) ? invokedMethods.get(invokerSignature) : null;
 	}
 	
 	/**
@@ -216,6 +217,7 @@ public class JDB
 		testMethodSignature = testMethodInfo.getInvokerSignature();
 		classInvocationSignature = testMethodInfo.getClassSignature();
 		invocationLine = invokerInfo.getInvocationLine();
+		invokerSignature = invokerInfo.getInvokerSignature();
 		
 		// Gets paths
 		srcRootPath = extractRootPathDirectory(invokerInfo.getSrcPath(), invokerInfo.getPackage());

@@ -47,8 +47,8 @@ public abstract class ExecutionFlow
 	
 	private static String appRoot;
 	private static File currentProjectRoot;
-	public transient static InvokerManager invokerManager;
-	public transient static InvokerManager testMethodManager;
+	public static InvokerManager invokerManager;
+	public static InvokerManager testMethodManager;
 
 	
 	//-------------------------------------------------------------------------
@@ -63,41 +63,11 @@ public abstract class ExecutionFlow
 	}
 	
 	/**
-	 * Initializes method managers. If some exception is thrown, stop the
-	 * execution, otherwise the original files that have been modified in the 
-	 * last run may be lost.
+	 * 
 	 */
-	static {
-		boolean error = false;
-		try {
-			testMethodManager = new InvokerManager(ParserType.TEST_METHOD, true);
-		} catch (ClassNotFoundException e) {
-			error = true;
-			ConsoleOutput.showError("Class FileManager not found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			error = true;
-			ConsoleOutput.showError("Could not recover the backup file of the test method");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
-			e.printStackTrace();
-		}
-		
-		try {
-			invokerManager = new InvokerManager(ParserType.INVOKER, true);
-		} catch (ClassNotFoundException e) {
-			error = true;;
-			ConsoleOutput.showError("Class FileManager not found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			error = true;
-			ConsoleOutput.showError("Could not recover all backup files for methods");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
-			e.printStackTrace();
-		}
-		
-		if (error)
-			System.exit(-1);
-	}
+//	static {
+//		
+//	}
 	
 
 	//-------------------------------------------------------------------------
@@ -110,6 +80,53 @@ public abstract class ExecutionFlow
 	 * @return		This object to allow chained calls
 	 */
 	public abstract ExecutionFlow execute();
+	
+	/**
+	 * Initializes method managers. If some error occurs, should stop the
+	 * application execution; otherwise, the original files that have been 
+	 * modified in the last run may be lost.
+	 * 
+	 * @return		If an error occurred
+	 */
+	public static boolean init()
+	{
+		boolean error = false;
+		
+		
+		try {
+			if (testMethodManager == null)
+				testMethodManager = new InvokerManager(ParserType.TEST_METHOD, true);
+		} catch (ClassNotFoundException e) {
+			error = true;
+			ConsoleOutput.showError("Class FileManager not found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			error = true;
+			ConsoleOutput.showError("Could not recover the backup file of the test method");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+			e.printStackTrace();
+		}
+		
+		try {
+			if (invokerManager == null)
+				invokerManager = new InvokerManager(ParserType.INVOKER, true);
+		} catch (ClassNotFoundException e) {
+			error = true;;
+			ConsoleOutput.showError("Class FileManager not found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			error = true;
+			ConsoleOutput.showError("Could not recover all backup files for methods");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+			e.printStackTrace();
+		}
+		
+//		if (error)
+//			System.exit(-1);
+		return error;
+	}
+	
+	
 	
 	/**
 	 * Exports the result.
