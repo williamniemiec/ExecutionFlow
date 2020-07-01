@@ -206,12 +206,16 @@ public class InvokerFileParser extends FileParser
 					StringBuilder response = new StringBuilder();
 					
 					
-					// Deletes print's from the line
+					// Deletes print's from the line (it will replace it with 
+					// 'Boolean.parseBoolean("True")') to avoid problems with
+					// JDB
 					for (String term : tmp) {
 						if (!term.contains("System.out.print")) {
-							response.append(term);
+							response.append("Boolean.parseBoolean(\"True\")");
 							response.append(";");
 						}
+						response.append(term);
+						response.append(";");
 					}
 					
 					line = response.toString();
