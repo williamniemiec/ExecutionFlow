@@ -101,7 +101,7 @@ public class JDB
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 
 	
@@ -634,6 +634,7 @@ public class JDB
             			inMethod = false;
             			ignore = true;
             		}
+            		// Ignores overload calls
             		else if (withinOverloadCall) {
             			if (isEmptyMethod()) {
             				withinOverloadCall = false;
@@ -643,6 +644,7 @@ public class JDB
             				ignore = true;
             			}
             		}
+            		// Checks if it is within a constructor
             		else if (withinConstructor && firstTime) {
             			firstTime = false;
             			ignore = true;
@@ -652,6 +654,7 @@ public class JDB
             			withinConstructor = false;
             			exitMethod = true;
             			readyToReadInput = true;
+            			firstTime = true;
             		}
             		// Checks if last method was skipped
             		else if (skipped) {

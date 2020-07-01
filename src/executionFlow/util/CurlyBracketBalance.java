@@ -3,6 +3,15 @@ package executionFlow.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+/**
+ * Curly bracket balance, to which its balance is calculated as follows:
+ * <code>Current balance - Amount of open curly brackets - Amount of closed curly brackets</code>
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		1.5
+ * @since		1.5
+ */
 public class CurlyBracketBalance 
 {
 	//-------------------------------------------------------------------------
