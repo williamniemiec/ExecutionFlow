@@ -645,7 +645,7 @@ public class JDB
             			}
             		}
             		// Checks if it is within a constructor
-            		else if (withinConstructor && firstTime) {
+            		else if (withinConstructor && firstTime && !srcLine.contains("this(")) {
             			firstTime = false;
             			ignore = true;
             		}
