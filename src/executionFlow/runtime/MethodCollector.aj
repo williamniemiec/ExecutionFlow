@@ -45,7 +45,7 @@ public aspect MethodCollector extends RuntimeCollector
 	 * <code>@org.junit.jupiter.api.RepeatedTest</code>
 	 */
 	pointcut repeatedTest():
-		withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..));
+		withincode(@executionFlow.runtime.isRepeatedTest * *.*());
 	
 	before(): repeatedTest()
 	{
@@ -61,9 +61,8 @@ public aspect MethodCollector extends RuntimeCollector
 	 * </ul>
 	 */
 	pointcut noRepeatedTest():
-		withincode(@org.junit.Test * *.*()) ||
-		withincode(@org.junit.jupiter.api.Test * *.*()) ||
-		withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..));
+		withincode(@org.junit.Test * *.*()) && 
+		!withincode(@executionFlow.runtime.isRepeatedTest * *.*());
 	
 	before(): noRepeatedTest()
 	{
@@ -176,8 +175,9 @@ public aspect MethodCollector extends RuntimeCollector
 				List<CollectorInfo> list = methodCollector.get(invocationLine);
 				
 				
-				if (list.contains(ci) && !isRepeatedTest)
+				if (/*list.contains(ci) &&*/ !isRepeatedTest) {
 					list.add(ci);
+				}
 				else
 					order--;	// Undo order increment
 			} 
@@ -188,7 +188,7 @@ public aspect MethodCollector extends RuntimeCollector
 				
 				methodCollector.put(invocationLine, list);
 				list.add(ci);
-			}			
+			}
 		} catch(IllegalArgumentException e) {
 			System.err.println("[ERROR] MethodCollector - "+e.getMessage()+"\n");
 		}

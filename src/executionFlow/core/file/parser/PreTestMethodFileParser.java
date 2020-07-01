@@ -47,7 +47,7 @@ public class PreTestMethodFileParser extends FileParser
 	 * lines.
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	
@@ -319,7 +319,7 @@ public class PreTestMethodFileParser extends FileParser
 					
 					if (m.find()) {
 						String repeatedTestAnnotation = m.group();
-						line = line.replace(repeatedTestAnnotation, "@org.junit.Test");
+						line = line.replace(repeatedTestAnnotation, "@org.junit.Test @executionFlow.runtime.isRepeatedTest");
 						
 						// Gets number of repetitions
 						m = Pattern.compile("\\(.*\\)").matcher(repeatedTestAnnotation);

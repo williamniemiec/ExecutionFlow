@@ -7,9 +7,10 @@ import java.lang.annotation.Target;
 
 
 /**
- * Internal use annotation. When a method or a constructor has this annotation,
- * all collectors will ignore it.
- *  
+ * Internal use annotation. Should be be added by 
+ * {@link executionFlow.core.file.parser.PreTestMethodFileParser} when
+ * processing a repeated test method.
+ * 
  * @apiNote		Must be used exclusively by 
  * {@link executionFlow.core.file.parser.FileParser}
  * 
@@ -19,5 +20,5 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( {ElementType.METHOD, ElementType.CONSTRUCTOR} )
-public @interface _SkipInvoker 
+public @interface isRepeatedTest 
 { }
