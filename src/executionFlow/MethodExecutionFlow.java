@@ -189,11 +189,15 @@ public class MethodExecutionFlow extends ExecutionFlow
 		
 		// If test path is empty, stores test method and invoker with an empty list
 		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
-			classPathInfo = new ArrayList<>();
-			
-			
-			classPathInfo.add(new ArrayList<>());
-			classTestPaths.put(signaturesInfo, classPathInfo);
+			if (classTestPaths.containsKey(signaturesInfo)) {
+				classPathInfo = classTestPaths.get(signaturesInfo);
+				classTestPaths.put(signaturesInfo, classPathInfo);
+			}
+			else {
+				classPathInfo = new ArrayList<>();
+				classPathInfo.add(new ArrayList<>());
+				classTestPaths.put(signaturesInfo, classPathInfo);
+			}
 		}
 	}
 }

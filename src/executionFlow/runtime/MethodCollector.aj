@@ -34,11 +34,42 @@ public aspect MethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	private Path classPath;
 	private Path srcPath;
-
+	private boolean isRepeatedTest;
+	
 	
 	//-----------------------------------------------------------------------
 	//		Pointcuts
 	//-----------------------------------------------------------------------
+	/**
+	 * Intercepts repeated tests, that is, tests with 
+	 * <code>@org.junit.jupiter.api.RepeatedTest</code>
+	 */
+	pointcut repeatedTest():
+		withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..));
+	
+	before(): repeatedTest()
+	{
+		isRepeatedTest = true;
+	}
+	
+	/**
+	 * Intercepts the following test methods:
+	 * <ul>
+	 * 	<li><code>@org.junit.Test</code></li>
+	 * 	<li><code>@org.junit.jupiter.api.Test</code></li>
+	 * 	<li><code>@org.junit.jupiter.params.ParameterizedTest</code></li>
+	 * </ul>
+	 */
+	pointcut noRepeatedTest():
+		withincode(@org.junit.Test * *.*()) ||
+		withincode(@org.junit.jupiter.api.Test * *.*()) ||
+		withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..));
+	
+	before(): noRepeatedTest()
+	{
+		isRepeatedTest = false;
+	}
+	
 	/**
 	 * Intercepts methods within a test method.
 	 */
@@ -143,15 +174,21 @@ public aspect MethodCollector extends RuntimeCollector
 			// If the method is called in a loop, stores this method in a list with its arguments and constructor
 			if (methodCollector.containsKey(invocationLine)) {
 				List<CollectorInfo> list = methodCollector.get(invocationLine);
-				list.add(ci);
+				
+				
+				if (list.contains(ci) && !isRepeatedTest)
+					list.add(ci);
+				else
+					order--;	// Undo order increment
 			} 
 			// Else stores the method with its arguments and constructor
 			else {	
 				List<CollectorInfo> list = new ArrayList<>();
-				list.add(ci);
+				
+				
 				methodCollector.put(invocationLine, list);
-			}
-
+				list.add(ci);
+			}			
 		} catch(IllegalArgumentException e) {
 			System.err.println("[ERROR] MethodCollector - "+e.getMessage()+"\n");
 		}

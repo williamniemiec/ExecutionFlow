@@ -4,18 +4,15 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.core.file.FileEncoding;
+import executionFlow.util.DataUtils;
 
 
 /**
@@ -423,7 +420,7 @@ public class InvokerFileParser extends FileParser
 			response.append(line.substring(0, curlyBracketsIndex+1));
 			
 			// Appends in response variable assignment command
-			response.append("int "+generateVarName()+"=0;");
+			response.append("int "+DataUtils.generateVarName()+"=0;");
 			
 			// Appends in response everything after '{' 
 			response.append(line.substring(curlyBracketsIndex+1));
@@ -473,7 +470,7 @@ public class InvokerFileParser extends FileParser
 			sb.append(line.substring(0, curlyBracketsIndex+1));
 			
 			// Appends in response variable assignment command
-			sb.append("int "+generateVarName()+"=0;");
+			sb.append("int "+DataUtils.generateVarName()+"=0;");
 			
 			// Appends in response everything after '{' 
 			sb.append(line.substring(curlyBracketsIndex+1));
@@ -485,7 +482,7 @@ public class InvokerFileParser extends FileParser
 			sb.append(line.substring(0, indexAfterElse));
 			
 			// Appends in response variable assignment command
-			sb.append(" {"+"int "+generateVarName()+"=0;");
+			sb.append(" {"+"int "+DataUtils.generateVarName()+"=0;");
 			
 			String afterElse = line.substring(indexAfterElse);
 			
@@ -520,7 +517,7 @@ public class InvokerFileParser extends FileParser
 			response.append(line.substring(0, curlyBracketsIndex+1));
 			
 			// Appends in response variable assignment command
-			response.append("int "+generateVarName()+"=0;");
+			response.append("int "+DataUtils.generateVarName()+"=0;");
 
 			// Appends in response everything after '{'
 			response.append(line.substring(curlyBracketsIndex+1));
@@ -541,7 +538,7 @@ public class InvokerFileParser extends FileParser
 	 */
 	private String parse_varDeclaration(String line)
 	{
-		return line+"int "+generateVarName()+"=0;";
+		return line+"int "+DataUtils.generateVarName()+"=0;";
 	}
 	
 	/**
@@ -564,7 +561,7 @@ public class InvokerFileParser extends FileParser
 		response.append(line.substring(0, m.start()+1));
 		
 		// Appends in response variable assignment command
-		response.append("int "+generateVarName()+"=0;");
+		response.append("int "+DataUtils.generateVarName()+"=0;");
 		
 		// Appends in response everything after ':'
 		response.append(line.substring(m.start()+1));
@@ -673,39 +670,6 @@ public class InvokerFileParser extends FileParser
 		for (size = 0; openCBMatcher.find(); size++);
 		
 		return size;
-	}
-	
-	/**
-	 * Encrypts a text in MD5.
-	 * 
-	 * @param		text Text to be encrypted
-	 * 
-	 * @return		Encrypted text or the text if an error occurs
-	 */
-	private static String md5(String text)
-	{
-		String response;
-		
-		try {
-			MessageDigest m = MessageDigest.getInstance("MD5");
-			m.update(text.getBytes(),0,text.length());
-			response = new BigInteger(1,m.digest()).toString(16);
-		} catch (NoSuchAlgorithmException e) {
-			response = text;
-		}
-		
-		return response;
-	}
-	
-	/**
-	 * Generates a unique variable name. It will be:<br />
-	 * <code>MD5(current_time+random_number)</code>
-	 * 
-	 * @return		Variable name
-	 */
-	private static String generateVarName()
-	{
-		return "_"+md5(String.valueOf(new Date().getTime()+(Math.random()*9999+1)));
 	}
 
 	

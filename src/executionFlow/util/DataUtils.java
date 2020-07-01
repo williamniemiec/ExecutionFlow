@@ -1,6 +1,10 @@
 package executionFlow.util;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -146,5 +150,38 @@ public class DataUtils
 		}
 		
 		return response;
+	}
+	
+	/**
+	 * Encrypts a text in MD5.
+	 * 
+	 * @param		text Text to be encrypted
+	 * 
+	 * @return		Encrypted text or the text if an error occurs
+	 */
+	public static String md5(String text)
+	{
+		String response;
+		
+		try {
+			MessageDigest m = MessageDigest.getInstance("MD5");
+			m.update(text.getBytes(),0,text.length());
+			response = new BigInteger(1,m.digest()).toString(16);
+		} catch (NoSuchAlgorithmException e) {
+			response = text;
+		}
+		
+		return response;
+	}
+	
+	/**
+	 * Generates a unique variable name. It will be:<br />
+	 * <code>MD5(current_time+random_number)</code>
+	 * 
+	 * @return		Variable name
+	 */
+	public static String generateVarName()
+	{
+		return "_"+md5(String.valueOf(new Date().getTime()+(Math.random()*9999+1)));
 	}
 }

@@ -59,15 +59,8 @@ public abstract class ExecutionFlow
 	 * each test method executed.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
-	
-	/**
-	 * 
-	 */
-//	static {
-//		
-//	}
 	
 
 	//-------------------------------------------------------------------------
@@ -121,12 +114,8 @@ public abstract class ExecutionFlow
 			e.printStackTrace();
 		}
 		
-//		if (error)
-//			System.exit(-1);
 		return error;
 	}
-	
-	
 	
 	/**
 	 * Exports the result.

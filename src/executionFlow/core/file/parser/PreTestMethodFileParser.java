@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.core.file.FileEncoding;
+import executionFlow.util.CurlyBracketBalance;
+import executionFlow.util.DataUtils;
 
 
 /**
@@ -45,7 +47,7 @@ public class PreTestMethodFileParser extends FileParser
 	 * lines.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	
@@ -228,6 +230,10 @@ public class PreTestMethodFileParser extends FileParser
 		private final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
 		private String parameters = null;
 		private Object testMethodArg;
+		private boolean repeatedTest_putLoop;
+		private boolean withinRepeatedTest;
+		private String numRepetitions;
+		private CurlyBracketBalance curlyBracketBalance;
 		
 		
 		//---------------------------------------------------------------------
@@ -271,64 +277,116 @@ public class PreTestMethodFileParser extends FileParser
 		 */
 		public String parse(String line)
 		{
-			// Converts test annotation from JUnit 5 to JUnit 4
-			if (line.contains("@Test")) {
-				line = line.replace("@Test", "@org.junit.Test");
-			}
-			else if (line.contains("@org.junit.jupiter.api.Test")) {
-				line = line.replace("@org.junit.jupiter.api.Test", "@org.junit.Test");
-			}
-			else if (line.contains("@RepeatedTest")) {
-				Pattern p = Pattern.compile("@RepeatedTest\\(.*\\)");
-				Matcher m = p.matcher(line);
-				
-				if (m.find()) { 
-					line = line.replace(m.group(), "@org.junit.Test");
+			// Converts repeated test to while test
+			if (repeatedTest_putLoop) {
+				if (line.contains("{")) {
+					repeatedTest_putLoop = false;
+					line = repeatedTest_toLoop(line);
+					
+					curlyBracketBalance = new CurlyBracketBalance();
+					curlyBracketBalance.parse(line);
+					curlyBracketBalance.decreaseBalance();
 				}
 			}
 			
-			// If it is a parameterized test, converts it to a JUnit 4 test
-			if (testMethodArg != null) {
-				// Converts JUnit 5 parameterized test to JUnit 4 test
-				if (line.contains("@ParameterizedTest")) {
-					line = line.replace("@ParameterizedTest", "@org.junit.Test");
-					inTestMethodSignature = true;
+			// Checks if it is the end of repeated test
+			else if (withinRepeatedTest && curlyBracketBalance != null && line.contains("}")) {
+				curlyBracketBalance.parse(line);
+				
+				if (curlyBracketBalance.isBalanceEmpty()) {
+					int idx = line.lastIndexOf("}");
+					
+					
+					withinRepeatedTest = false;
+					curlyBracketBalance = null;
+					
+					line = line.substring(0, idx+1) + "}" + line.substring(idx+1);
 				}
-				// Checks if it is within parameterized test
-				else if (inTestMethodSignature) {
-					// Converts test method parameters to local variables 
-					if (line.matches(pattern_methodDeclaration.toString())) {
-						// Extracts parameters
-						Pattern p = Pattern.compile("\\(.*\\)");
-						Matcher m = p.matcher(line);
+			}
+			else {
+				// Converts test annotation from JUnit 5 to JUnit 4
+				if (line.contains("@Test")) {
+					line = line.replace("@Test", "@org.junit.Test");
+				}
+				else if (line.contains("@org.junit.jupiter.api.Test")) {
+					line = line.replace("@org.junit.jupiter.api.Test", "@org.junit.Test");
+				}
+				else if (line.contains("@RepeatedTest")) {
+					Pattern p = Pattern.compile("@RepeatedTest\\(.*\\)");
+					Matcher m = p.matcher(line);
+					numRepetitions = "0";
+					withinRepeatedTest = true;
+					
+					if (m.find()) {
+						String repeatedTestAnnotation = m.group();
+						line = line.replace(repeatedTestAnnotation, "@org.junit.Test");
 						
+						// Gets number of repetitions
+						m = Pattern.compile("\\(.*\\)").matcher(repeatedTestAnnotation);
 						
 						if (m.find()) {
-							parameters = m.group();
-							parameters = parameters.replace("(", "").replace(")", ""); // Removes parentheses
-							line = line.replace(parameters, ""); // Deletes params from method
+							numRepetitions = m.group().replace("(", "").replace(")", "");
 						}
 					}
-					// Converts parameters to local variables
-					else if (parameters != null) {
-						parameters = parameters + "=" + testMethodArg + ";";
-						
-						if (line.contains("{")) {
-							int index = line.indexOf("{");
-							
-							
-							line = line.substring(0, index+1) + parameters + line.substring(index+1);
-						}
-						else {
-							line = parameters + line;
-						}
-
-						inTestMethodSignature = false;
+					
+					repeatedTest_putLoop = true;
+				}
+				
+				// If it is a parameterized test, converts it to a JUnit 4 test
+				if (testMethodArg != null) {
+					// Converts JUnit 5 parameterized test to JUnit 4 test
+					if (line.contains("@ParameterizedTest")) {
+						line = line.replace("@ParameterizedTest", "@org.junit.Test");
+						inTestMethodSignature = true;
 					}
+					// Checks if it is within parameterized test
+					else if (inTestMethodSignature) {
+						// Converts test method parameters to local variables 
+						if (line.matches(pattern_methodDeclaration.toString())) {
+							// Extracts parameters
+							Matcher m = Pattern.compile("\\(.*\\)").matcher(line);
+							
+							
+							if (m.find()) {
+								parameters = m.group();
+								parameters = parameters.replace("(", "").replace(")", ""); // Removes parentheses
+								line = line.replace(parameters, ""); // Deletes params from method
+							}
+						}
+						// Converts parameters to local variables
+						else if (parameters != null) {
+							parameters = parameters + "=" + testMethodArg + ";";
+							
+							if (line.contains("{")) {
+								int index = line.indexOf("{");
+								
+								
+								line = line.substring(0, index+1) + parameters + line.substring(index+1);
+							}
+							else {
+								line = parameters + line;
+							}
+	
+							inTestMethodSignature = false;
+						}
+					}
+				}
+				
+				if (curlyBracketBalance != null && withinRepeatedTest) {
+					curlyBracketBalance.parse(line);
 				}
 			}
 			
 			return line;
+		}
+		
+		private String repeatedTest_toLoop(String line)
+		{
+			int idx = line.lastIndexOf("{");
+			String varname = DataUtils.generateVarName();
+			
+			
+			return line.substring(0, idx+1) + "int "+varname+"=0;while("+varname+"++ < " + numRepetitions + "){" + line.substring(idx+1);
 		}
 	}
 	
