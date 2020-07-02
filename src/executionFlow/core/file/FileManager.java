@@ -65,10 +65,15 @@ public class FileManager implements Serializable
 	 * @param		fileParserFactory Factory that will produce 
 	 * {@link FileParser} that will be used for parsing file
 	 * @param		backupExtensionName Backup file extension name
+	 * 
+	 * @throws		IllegalArgumentException If srcFilePath does not exist
 	 */
 	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
 			FileParserFactory fileParserFactory, String backupExtensionName)
 	{
+		if (Files.exists(srcFilePath))
+			throw new IllegalArgumentException("srcFilePath does not exist");
+		
 		this.srcFile = srcFilePath;
 		this.classOutput = classOutput;
 		this.classPackage = classPackage;
