@@ -62,7 +62,9 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		
 		/**
 		 * @param		classPath Constructor class file path
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If classPath is null
 		 */
 		public ConstructorInvokerInfoBuilder classPath(Path classPath)
@@ -77,7 +79,9 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		
 		/**
 		 * @param		srcPath Path where constructor's source file is
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If srcPath is null
 		 */
 		public ConstructorInvokerInfoBuilder srcPath(Path srcPath)
@@ -91,8 +95,19 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		}
 		
 		/**
-		 * @param		constructorSignature Constructor signature
+		 * @param		constructorSignature Constructor signature (if it is an
+		 * inner class constructor, there must be '$' between the class name and
+		 * the inner class name).
+		 * <h5>Example</h5>
+		 * <ul>
+		 * 	<li><b>Class name:</b> Person</li>
+		 * 	<li><b>Inner class name:</b> PersonBuilder</li>
+		 * 	<li><b>Class package:</b> examples.builderPattern</li>
+		 * 	<li><b>Inner class constructor signature:</b> examples.builderPattern.Person$PersonBuilder()</li>
+		 * </ul>
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If invokerSignature is null
 		 */
 		public ConstructorInvokerInfoBuilder constructorSignature(String constructorSignature)
@@ -108,7 +123,9 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		/**
 		 * @param		invocationLine Line of test method where constructor is 
 		 * called
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If invocationLine is less than
 		 * or equal to zero
 		 */
@@ -124,7 +141,9 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		
 		/**
 		 * @param		parameterTypes Types of constructor's parameters
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
 		public ConstructorInvokerInfoBuilder parameterTypes(Class<?>[] parameterTypes)
@@ -139,7 +158,9 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		
 		/**
 		 * @param		args Constructor's arguments
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If args is null
 		 */
 		public ConstructorInvokerInfoBuilder args(Object... args)
@@ -163,6 +184,7 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		 * </ul>
 		 * 
 		 * @return		ClassConstructorInfo with provided information
+		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
 		public ConstructorInvokerInfo build() throws IllegalArgumentException

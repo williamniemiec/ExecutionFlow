@@ -79,7 +79,9 @@ public class MethodInvokerInfo extends InvokerInfo
 		
 		/**
 		 * @param		methodName Method's name
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If methodName is null
 		 */
 		public MethodInvokerInfoBuilder methodName(String methodName)
@@ -87,14 +89,16 @@ public class MethodInvokerInfo extends InvokerInfo
 			if (methodName == null)
 				throw new IllegalArgumentException("Method's name cannot be null");
 			
-			this.methodName = methodName;
+			this.methodName = methodName.trim();
 			
 			return this;
 		}
 		
 		/**
 		 * @param		classPath Method class file path
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If classPath is null
 		 */
 		public MethodInvokerInfoBuilder classPath(Path classPath)
@@ -109,7 +113,9 @@ public class MethodInvokerInfo extends InvokerInfo
 		
 		/**
 		 * @param		srcPath Path where method's source file is
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If srcPath is null
 		 */
 		public MethodInvokerInfoBuilder srcPath(Path srcPath)
@@ -123,8 +129,20 @@ public class MethodInvokerInfo extends InvokerInfo
 		}
 		
 		/**
-		 * @param		methodSignature Method signature
+		 * @param		methodSignature Method signature (if it is an
+		 * inner class method, there must be '$' between the class name and
+		 * the inner class name).
+		 * <h5>Example</h5>
+		 * <ul>
+		 * 	<li><b>Method name along with its parameters:</b> firstName(String)</li>
+		 * 	<li><b>Class name:</b> Person</li>
+		 * 	<li><b>Inner class name:</b> PersonBuilder</li>
+		 * 	<li><b>Class package:</b> examples.builderPattern</li>
+		 * 	<li><b>Inner class method signature:</b> examples.builderPattern.Person$PersonBuilder.firstName(String)</li>
+		 * </ul>
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If invokerSignature is null
 		 */
 		public MethodInvokerInfoBuilder methodSignature(String methodSignature)
@@ -132,7 +150,7 @@ public class MethodInvokerInfo extends InvokerInfo
 			if (methodSignature == null)
 				throw new IllegalArgumentException("Method signature cannot be null");
 			
-			this.invokerSignature = methodSignature;
+			this.invokerSignature = methodSignature.trim();
 			
 			return this;
 		}
@@ -140,7 +158,9 @@ public class MethodInvokerInfo extends InvokerInfo
 		/**
 		 * @param		invocationLine Line of test method where method is 
 		 * called
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If invocationLine is less than
 		 * or equal to zero
 		 */
@@ -156,7 +176,9 @@ public class MethodInvokerInfo extends InvokerInfo
 		
 		/**
 		 * @param		parameterTypes Types of method's parameters
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
 		public MethodInvokerInfoBuilder parameterTypes(Class<?>[] parameterTypes)
@@ -171,7 +193,9 @@ public class MethodInvokerInfo extends InvokerInfo
 		
 		/**
 		 * @param		args Method's arguments
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If args is null
 		 */
 		public MethodInvokerInfoBuilder args(Object... args)
@@ -186,7 +210,9 @@ public class MethodInvokerInfo extends InvokerInfo
 
 		/**
 		 * @param		returnType Method return type
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If returnType is null
 		 */
 		public MethodInvokerInfoBuilder returnType(Class<?> returnType)
@@ -210,6 +236,7 @@ public class MethodInvokerInfo extends InvokerInfo
 		 * </ul>
 		 * 
 		 * @return		ClassMethodInfo with provided information
+		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
 		public MethodInvokerInfo build() throws IllegalArgumentException
