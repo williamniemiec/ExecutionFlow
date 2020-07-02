@@ -28,11 +28,11 @@ import executionFlow.runtime.SkipCollection;
 
 /**
  * Tests test path computation for the tested methods of 
- * {@link examples.complexTests.ComplexTests} class using 
+ * {@link examples.builderPattern.BuilderPatternTest} test using 
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class ComplexTests 
+public class BuilderPatternTest 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -40,14 +40,14 @@ public class ComplexTests
 	private static FileManager testMethodFileManager;
 	private static InvokerManager testMethodManager;
 	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/complexTests/ComplexTests.class");
+			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/builderPattern/BuilderPatternTest.class");
 	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/complexTests/ComplexTests.java");
-	private static final String PACKAGE_TEST_METHOD = "examples.complexTests";
+			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/builderPattern/BuilderPatternTest.java");
+	private static final String PACKAGE_TEST_METHOD = "examples.builderPattern";
 	private static final Path PATH_BIN_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/complexTests/TestClass_ComplexTests.class");
+			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/builderPattern/Person.class");
 	private static final Path PATH_SRC_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/complexTests/TestClass_ComplexTests.java");
+			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/builderPattern/Person.java");
 	
 	
 	//-------------------------------------------------------------------------
@@ -110,8 +110,13 @@ public class ComplexTests
 	//-------------------------------------------------------------------------
 	//		Tests
 	//-------------------------------------------------------------------------
+
+	/**
+	 * Tests {@link examples.builderPattern.Person#PersonBuilder.firstName(String)}
+	 * method.
+	 */
 	@Test
-	public void factorial_constructor() throws Throwable 
+	public void firstName() throws Throwable 
 	{
 		/**
 		 * Stores information about collected methods.
@@ -124,11 +129,11 @@ public class ComplexTests
 
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		int invocationLine = 19;
+		int invocationLine = 15;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.testForConstructorAndMethod()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial_constructor()";
+		String testMethodSignature = "examples.builderPattern.BuilderPatternTest.testBuilderPattern()";
+		String methodSignature = "examples.builderPattern.Person$PersonBuilder.firstName(String)";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(PATH_BIN_TEST_METHOD)
@@ -141,7 +146,7 @@ public class ComplexTests
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
-				.methodName("factorial_constructor")
+				.methodName("firstName")
 				.build();
 		
 		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
@@ -160,30 +165,28 @@ public class ComplexTests
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(90,92,93,92,96),
-				Arrays.asList(90,92,93,92,93,92,96),
-				Arrays.asList(90,92,93,92,93,92,93,92,96),
-				Arrays.asList(90,92,93,92,93,92,93,92,93,92,96)
-			), 
+				Arrays.asList(42,43)
+			),
 			testPaths
 		);
 	}
 	
 	/**
-	 * Tests first method used by 
-	 * {@link  examples.complexTests.ComplexTests.moreOneConstructor()} test.
+	 * Tests {@link examples.builderPattern.Person#PersonBuilder.lastName(String)}
+	 * method.
 	 */
 	@Test
-	public void moreOneConstructor_first() throws Throwable 
+	public void lastName() throws Throwable 
 	{
-		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+
+		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		int invocationLine = 34;
+		int invocationLine = 16;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructor()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial(long)";
+		String testMethodSignature = "examples.builderPattern.BuilderPatternTest.testBuilderPattern()";
+		String methodSignature = "examples.builderPattern.Person$PersonBuilder.lastName(String)";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(PATH_BIN_TEST_METHOD)
@@ -196,7 +199,7 @@ public class ComplexTests
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.methodName("lastName")
 				.build();
 		
 		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
@@ -213,24 +216,30 @@ public class ComplexTests
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(53,56,58,59,58,59,58,59,58,59,58,62), testPaths.get(0));
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(48,49)
+			),
+			testPaths
+		);
 	}
 	
 	/**
-	 * Tests second method used by 
-	 * {@link  examples.complexTests.ComplexTests.moreOneConstructor()} test.
+	 * Tests {@link examples.builderPattern.Person#PersonBuilder.age(int)}
+	 * method.
 	 */
 	@Test
-	public void moreOneConstructor_two() throws Throwable 
+	public void age() throws Throwable 
 	{
-		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+
+		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		int invocationLine = 35;
+		int invocationLine = 17;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructor()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial(long)";
+		String testMethodSignature = "examples.builderPattern.BuilderPatternTest.testBuilderPattern()";
+		String methodSignature = "examples.builderPattern.Person$PersonBuilder.age(int)";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(PATH_BIN_TEST_METHOD)
@@ -243,7 +252,7 @@ public class ComplexTests
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.methodName("age")
 				.build();
 		
 		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
@@ -260,24 +269,30 @@ public class ComplexTests
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(53,54), testPaths.get(0));
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(60,61)
+			),
+			testPaths
+		);
 	}
 	
 	/**
-	 * Tests second method used by 
-	 * {@link  examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()} test.
+	 * Tests {@link examples.builderPattern.Person#PersonBuilder.email(String)}
+	 * method.
 	 */
 	@Test
-	public void moreOneConstructorAndStaticMethod() throws Throwable 
+	public void email() throws Throwable 
 	{
-		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+
+		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		int invocationLine = 50;
+		int invocationLine = 18;
 		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.staticFactorial(int)";
+		String testMethodSignature = "examples.builderPattern.BuilderPatternTest.testBuilderPattern()";
+		String methodSignature = "examples.builderPattern.Person$PersonBuilder.email(String)";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(PATH_BIN_TEST_METHOD)
@@ -290,7 +305,7 @@ public class ComplexTests
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
-				.methodName("staticFactorial")
+				.methodName("email")
 				.build();
 		
 		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
@@ -307,6 +322,116 @@ public class ComplexTests
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(73,75,76,75,76,75,76,75,76,75,79), testPaths.get(0));
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(54,55)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.builderPattern.Person#PersonBuilder.build()}
+	 * method.
+	 */
+	@Test
+	public void build() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		int invocationLine = 19;
+		
+		// Defines which methods will be collected
+		String testMethodSignature = "examples.builderPattern.BuilderPatternTest.testBuilderPattern()";
+		String methodSignature = "examples.builderPattern.Person$PersonBuilder.build()";
+		
+		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
+				.classPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("build")
+				.build();
+		
+		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(66)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.builderPattern.Person#print()} method.
+	 */
+	@Test
+	public void print() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		int invocationLine = 21;
+		
+		// Defines which methods will be collected
+		String testMethodSignature = "examples.builderPattern.BuilderPatternTest.testBuilderPattern()";
+		String methodSignature = "examples.builderPattern.Person.print()";
+		
+		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
+				.classPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("print")
+				.build();
+		
+		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(76,77,78,79)
+			),
+			testPaths
+		);
 	}
 }

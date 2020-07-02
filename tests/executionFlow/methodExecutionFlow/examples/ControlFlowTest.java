@@ -27,7 +27,7 @@ import executionFlow.runtime.SkipCollection;
 
 
 /**
- * Tests test path computation for the methods of 
+ * Tests test path computation for the tested methods of 
  * {@link examples.controlFlow.ControlFlowTest} class using 
  * {@link MethodExecutionFlow} class.
  */
