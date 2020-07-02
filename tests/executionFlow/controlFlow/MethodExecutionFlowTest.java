@@ -1,4 +1,4 @@
-package executionFlow;
+package executionFlow.controlFlow;
 
 import static org.junit.Assert.assertEquals;
 
@@ -14,50 +14,72 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import executionFlow.ConsoleOutput;
+import executionFlow.ExecutionFlow;
+import executionFlow.MethodExecutionFlow;
 import executionFlow.core.file.FileManager;
 import executionFlow.core.file.InvokerManager;
 import executionFlow.core.file.ParserType;
 import executionFlow.core.file.parser.factory.PreTestMethodFileParserFactory;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokerInfo;
-import executionFlow.info.SignaturesInfo;
 import executionFlow.runtime.SkipCollection;
 
 
 /**
- * Tests test path computation from methods through 
+ * Tests test path computation for the methods of 
+ * {@link examples.controlFlow.ControlFlowTest} class using 
  * {@link MethodExecutionFlow} class.
- * 
- * @apiNote		Tests test path computation from methods of class 
- * {@link examples.controlFlow.ControlFlowTest}.
  */
 @SkipCollection
 public class MethodExecutionFlowTest 
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static FileManager testMethodFileManager;
 	private static InvokerManager testMethodManager;
-	private static final Path classPath = Path.of("bin/examples/controlFlow/TestClass_ControlFlow.class");
-	private static final Path testClassPath = Path.of("bin/examples/controlFlow/ControlFlowTest.class");
-	private static final Path srcPath = Path.of("examples/examples/controlFlow/TestClass_ControlFlow.java");
-	private static final Path testSrcPath = Path.of("examples/examples/controlFlow/ControlFlowTest.java");
-	private static final String testClassPackage = "examples.controlFlow";
+	private static final Path PATH_BIN_TEST_METHOD = 
+			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/controlFlow/ControlFlowTest.class");
+	private static final Path PATH_SRC_TEST_METHOD = 
+			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/controlFlow/ControlFlowTest.java");
+	private static final String PACKAGE_TEST_METHOD = "examples.controlFlow";
+	private static final Path PATH_BIN_METHOD = 
+			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/controlFlow/TestClass_ControlFlow.class");
+	private static final Path PATH_SRC_METHOD = 
+			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/controlFlow/TestClass_ControlFlow.java");
 	
 	
+	//-------------------------------------------------------------------------
+	//		Test preparers
+	//-------------------------------------------------------------------------
+	/**
+	 * @throws		IOException If an error occurs during file parsing
+	 * @throws		ClassNotFoundException If class {@link FileManager} was not
+	 * found
+	 */
 	@BeforeClass
-	public static void parseAssert() throws IOException, ClassNotFoundException
+	public static void init() throws IOException, ClassNotFoundException
 	{
+		// Initializes ExecutionFlow
+		ExecutionFlow.init();
+				
+		// Creates backup from original files
 		testMethodManager = new InvokerManager(ParserType.PRE_TEST_METHOD, false);
 		
 		testMethodFileManager = new FileManager(
-			testSrcPath,
-			MethodInvokerInfo.getCompiledFileDirectory(testClassPath),
-			testClassPackage,
+			PATH_SRC_TEST_METHOD,
+			MethodInvokerInfo.getCompiledFileDirectory(PATH_BIN_TEST_METHOD),
+			PACKAGE_TEST_METHOD,
 			new PreTestMethodFileParserFactory(),
-			"original_assert"
+			"original_pre_processing"
 		);
 		
+		// Parses test method
 		try {
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);			
+			ConsoleOutput.showInfo("Pre-processing test method...");
+			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
+			ConsoleOutput.showInfo("Pre-processing completed");
 		} catch (IOException e) {
 			testMethodManager.restoreAll();
 			testMethodManager.deleteBackup();
@@ -65,6 +87,9 @@ public class MethodExecutionFlowTest
 		}
 	}
 	
+	/**
+	 * Restores original files
+	 */
 	@AfterClass
 	public static void restore()
 	{
@@ -76,8 +101,14 @@ public class MethodExecutionFlowTest
 		
 		testMethodManager.restoreAll();
 		testMethodManager.deleteBackup();
+		
+		ExecutionFlow.destroy();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	public void ifElseTest_earlyReturn() throws Throwable 
 	{
@@ -99,14 +130,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod(int)";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("ifElseTest_earlyReturn")
@@ -121,10 +152,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(25,26), testPaths.get(0));
 	}
@@ -142,14 +173,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("ifElseMethod")
@@ -164,10 +195,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(25,29,31,32,39), testPaths.get(0));
 	}
@@ -185,14 +216,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("ifElseMethod2")
@@ -207,10 +238,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(25,29,31,33,34,39), testPaths.get(0));
 	}
@@ -228,14 +259,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("ifElseMethod3")
@@ -250,10 +281,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(25,29,31,33,35,36,39), testPaths.get(0));
 	}
@@ -271,14 +302,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_try()";
 		
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("tryCatchMethod_try")
@@ -293,10 +324,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(50,52,53,54,55,56,57,62), testPaths.get(0));
 	}
@@ -314,14 +345,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("tryCatchMethod_catch")
@@ -336,10 +367,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(73,75,76,77,78,79), testPaths.get(0));
 	}
@@ -357,14 +388,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.switchCaseMethod(char)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("switchCaseMethod")
@@ -379,10 +410,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(90,92,100,101,102,103,104,123), testPaths.get(0));
 	}
@@ -400,14 +431,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("doWhileMethod")
@@ -422,10 +453,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(135,137,140,141,142,143,140,141,142,143,140,141,142,143,140,141,142,143,140,141,142,143,145), testPaths.get(0));
 	}
@@ -443,14 +474,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineWhile(int)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("inlineWhile")
@@ -465,10 +496,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(156,158), testPaths.get(0));
 	}
@@ -486,14 +517,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineDoWhile(int)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("inlineDoWhile")
@@ -508,10 +539,10 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(180,183,185), testPaths.get(0));
 	}
@@ -529,14 +560,14 @@ public class MethodExecutionFlowTest
 		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineIfElse(int)";
 
 		MethodInvokerInfo testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(testClassPath)
+				.classPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
-				.srcPath(testSrcPath)
+				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
 		MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
-				.srcPath(srcPath)
+				.classPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("inlineIfElse")
@@ -551,28 +582,11 @@ public class MethodExecutionFlowTest
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = getTestPaths(ef.execute().getClassTestPaths(), testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(169), testPaths.get(0));
-	}
-
-	
-	/**
-	 * Gets all test paths obtained from {@link ExecutionFlow}. 
-	 * 
-	 * @param		testPaths Test paths obtained from ExecutionFlow 
-	 * @param		testMethodSignature Signature of the test method
-	 * @param		constructorSignature Constructor signature
-	 * 
-	 * @return		Collection of all test paths
-	 */
-	private List<List<Integer>> getTestPaths(Map<SignaturesInfo, List<List<Integer>>> testPaths, 
-			String testMethodSignature, String methodSignature)
-	{
-		SignaturesInfo si = new SignaturesInfo(methodSignature, testMethodSignature);
-		return testPaths.get(si);
 	}
 }
