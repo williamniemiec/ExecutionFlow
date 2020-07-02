@@ -566,6 +566,7 @@ public class JDB
 		private String line;
 		private String srcLine = "";
 		private String lastSrcLine = "";
+		private String invokerSignatureWithoutParameters;
 		
         
         //---------------------------------------------------------------------
@@ -580,6 +581,7 @@ public class JDB
 		public JDBOutput(Process p)
 		{
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			invokerSignatureWithoutParameters = invokerSignature.substring(0, invokerSignature.indexOf("("));
 		}
 		
 		
@@ -626,10 +628,11 @@ public class JDB
 
             		// Checks if it is within a constructor
             		withinConstructor = line.contains(".<init>");
-            		
+
             		// Ignores native calls
             		if (line.contains("jdk.") || line.contains("aspectj.") || 
-            				line.contains("executionFlow.runtime") || srcLine.contains("package ")) {
+            				line.contains("executionFlow.runtime") || srcLine.contains("package ") || 
+            				(!line.contains(invokerSignatureWithoutParameters) && !line.contains(testMethodSignature))) {
             			isInternalCommand = true;
             			inMethod = false;
             			ignore = true;
@@ -645,7 +648,7 @@ public class JDB
             			}
             		}
             		// Checks if it is within a constructor
-            		else if (withinConstructor && firstTime && !srcLine.contains("this(")) {
+            		else if (withinConstructor && firstTime && !srcLine.contains("this(") && !srcLine.contains("return")) {
             			firstTime = false;
             			ignore = true;
             		}
@@ -703,7 +706,7 @@ public class JDB
 	    			if (exitMethod)
 	    				inMethod = false;
 	    			
-	    			if (srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && srcLine.equals(lastSrcLine)) {
+	    			if (!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && srcLine.equals(lastSrcLine)) {
 	    				exitMethod = true;
 	    				endOfMethod = true;
 	    			}

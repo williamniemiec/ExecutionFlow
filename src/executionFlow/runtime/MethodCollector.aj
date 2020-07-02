@@ -95,8 +95,14 @@ public aspect MethodCollector extends RuntimeCollector
 		if (testMethodSignature != null && signature.contains(testMethodSignature)) { return; }
 		
 		// Gets correct signature of inner classes
-		signature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
-				+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
+		if (thisJoinPoint.getTarget() == null) {
+			signature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
+					+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
+		}
+		else {
+			signature = thisJoinPoint.getTarget().getClass().getName() + "." 
+					+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
+		}
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
