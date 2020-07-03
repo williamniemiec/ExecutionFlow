@@ -16,23 +16,24 @@ public class TestClass_ComplexTests
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
-	public TestClass_ComplexTests(boolean skip, int num)
+ 	public TestClass_ComplexTests(boolean skip, int num)
 	{
 		this.skip = skip;
 		this.num = num;
 	}
 	
-	public TestClass_ComplexTests(boolean skip)
+ 	public TestClass_ComplexTests(boolean skip)
 	{
 		this(skip, 0);
+		factorial(1);
 	}
 	
-	public TestClass_ComplexTests(int num)
+ 	public TestClass_ComplexTests(int num)
 	{
 		this(false, num);
 	}
 	
-	public TestClass_ComplexTests()
+ 	public TestClass_ComplexTests()
 	{
 		this(false, 0);
 	}

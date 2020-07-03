@@ -7,14 +7,14 @@ public class OverloadTest
 	@Test
 	public void testOverloadedMethod()
 	{
-		Overload oc = new Overload();
+		OverloadClass oc = new OverloadClass();
 		oc.overloadedMethod();
 	}
 	
 	@Test
 	public void testOverloadedMethod2()
 	{
-		Overload oc = new Overload();
+		OverloadClass oc = new OverloadClass();
 		oc.overloadedMethod(10);
 	}
 }

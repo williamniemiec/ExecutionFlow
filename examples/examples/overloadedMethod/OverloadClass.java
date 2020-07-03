@@ -4,7 +4,7 @@ package examples.overloadedMethod;
 /**
  * Class that has an overloaded method.
  */
-public class Overload 
+public class OverloadClass 
 {
 	//-----------------------------------------------------------------------
 	//		Attributes
@@ -15,12 +15,12 @@ public class Overload
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
-	public Overload(int num)
+	public OverloadClass(int num)
 	{
 		this.num = num;
 	}
 	
-	public Overload()
+	public OverloadClass()
 	{
 		this(0);
 	}

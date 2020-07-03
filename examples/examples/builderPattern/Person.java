@@ -30,32 +30,32 @@ public class Person
 	//-------------------------------------------------------------------------
 	//		Builder
 	//-------------------------------------------------------------------------
-	static class ContactBuilder
+	static class PersonBuilder
 	{
 		private String firstName;
 		private String lastName;
 		private String email;
 		private int age;
 		
-		public ContactBuilder firstName(String firstName)
+		public PersonBuilder firstName(String firstName)
 		{
 			this.firstName = firstName;
 			return this;
 		}
 		
-		public ContactBuilder lastName(String lastName)
+		public PersonBuilder lastName(String lastName)
 		{
 			this.lastName = lastName;
 			return this;
 		}
 		
-		public ContactBuilder email(String email)
+		public PersonBuilder email(String email)
 		{
 			this.email = email;
 			return this;
 		}
 		
-		public ContactBuilder age(int age)
+		public PersonBuilder age(int age)
 		{
 			this.age = age;
 			return this;

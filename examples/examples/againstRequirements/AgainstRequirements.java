@@ -15,28 +15,28 @@ public class AgainstRequirements
 	 * Test with curly bracket in the same line of last instruction. No test path
 	 * will be computed.
 	 */
-	@Test
-	public void testLastCurlyBracketInSameLine() {
-		System.out.println("#####################################################################");
-		System.out.println("                    testLastCurlyBracketInSameLine                   ");
-		System.out.println("#####################################################################");
-
-		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
-
-		assertEquals(24, artc.factorial(4)); }
+//	@Test
+//	public void testLastCurlyBracketInSameLine() {
+//		System.out.println("#####################################################################");
+//		System.out.println("                    testLastCurlyBracketInSameLine                   ");
+//		System.out.println("#####################################################################");
+//
+//		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
+//
+//		assertEquals(24, artc.factorial(4)); }
 
 	/**
 	 * Test without {@link Test} annotation.
 	 */
-	public void testWithoutTestAnnotation() {
-		System.out.println("#####################################################################");
-		System.out.println("                       testWithoutTestAnnotation                     ");
-		System.out.println("#####################################################################");
-
-		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
-
-		assertEquals(24, artc.factorial(4));
-	}
+//	public void testWithoutTestAnnotation() {
+//		System.out.println("#####################################################################");
+//		System.out.println("                       testWithoutTestAnnotation                     ");
+//		System.out.println("#####################################################################");
+//
+//		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
+//
+//		assertEquals(24, artc.factorial(4));
+//	}
 	
 	/**
 	 * Test a method defined within the test class. An error will be generated.

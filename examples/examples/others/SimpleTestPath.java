@@ -1,21 +1,21 @@
-package examples;
+package examples.others;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import examples.testClasses.TestClass;
+import examples.others.auxClasses.AuxClass;
 
 
-public class SimpleTest 
+public class SimpleTestPath 
 {
 	@Test
-	public void testFactorial() 
+	public void simpleTestPath() 
 	{
 		int num = 4;
 		long expectedResult = 24;
 		
-		TestClass tc = new TestClass(4);
+		AuxClass tc = new AuxClass(4);
 		long res = tc.factorial(num);
 		
 		assertEquals(expectedResult, res);

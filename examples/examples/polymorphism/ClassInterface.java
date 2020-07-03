@@ -1,8 +1,8 @@
-package examples.testClasses;
+package examples.polymorphism;
 
 
 /**
- * Created to test classes that implements an interface.
+ * Created for inheritance and polymorphism tests.
  */
 public class ClassInterface implements Interface
 {
@@ -25,9 +25,14 @@ public class ClassInterface implements Interface
 	//		Methods
 	//-----------------------------------------------------------------------
 	@Override
-	public String test()
+	public String interfaceMethod()
 	{
-		int x = 2;
+		System.out.println("test()");
 		return text;
+	}
+	
+	public static boolean testClassParam(ClassInterface ci)
+	{
+		return true;
 	}
 }

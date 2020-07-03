@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 
-import examples.testClasses.TestClass;
+import examples.others.auxClasses.AuxClass;
 
 
 /**
@@ -13,11 +13,13 @@ import examples.testClasses.TestClass;
  */
 public class RepeatedTestAnnotation 
 {
-	@RepeatedTest(5)
+	@RepeatedTest(2)
 	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
 	public void test1()
 	{
-		TestClass tc = new TestClass(4);
-		assertEquals(24999, tc.factorial(4));
+		AuxClass tc = new AuxClass(4);
+		
+		
+		assertEquals(24, tc.factorial(4));
 	}
 }

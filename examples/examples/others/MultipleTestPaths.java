@@ -1,10 +1,10 @@
-package examples;
+package examples.others;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import examples.testClasses.TestClass;
+import examples.others.auxClasses.AuxClass;
 
 
 /**
@@ -15,7 +15,9 @@ public class MultipleTestPaths
 	@Test
 	public void ThreeTestPathsTest() 
 	{
-		TestClass tc = new TestClass(99);
+		AuxClass tc = new AuxClass(99);
+		
+		
 		assertEquals("one", tc.threePaths(1));
 		assertEquals("two", tc.threePaths(2));
 		assertEquals("", tc.threePaths(3));

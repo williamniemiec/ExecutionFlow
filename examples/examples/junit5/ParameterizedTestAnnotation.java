@@ -1,12 +1,11 @@
 package examples.junit5;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import examples.testClasses.TestClass;
-import executionFlow.runtime.SkipMethod;
+import examples.others.auxClasses.AuxClass;
 
 
 /**
@@ -15,13 +14,13 @@ import executionFlow.runtime.SkipMethod;
  */
 public class ParameterizedTestAnnotation 
 {
-	//@SkipMethod
 	@ParameterizedTest
 	@ValueSource(ints = {-1,0,1})
 	public void test1(int num)
 	{
-		TestClass tc = new TestClass(4);
-		assertEquals(-1, tc.factorial(num));
+		AuxClass tc = new AuxClass(4);
+
+
 		assertEquals(1, tc.factorial(num));
 	}
 }

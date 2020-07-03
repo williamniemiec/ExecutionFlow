@@ -19,9 +19,9 @@ public class ControlFlowTest
 		String result = tccf.ifElseMethod(-1);
 		String expectedResult = "Negative value";
 		
-try {		assertEquals(expectedResult, result);} catch(Throwable e){}
+		assertEquals(expectedResult, result);
 	}
-
+	
 	@Test
 	public void ifElseTest() 
 	{
@@ -29,7 +29,7 @@ try {		assertEquals(expectedResult, result);} catch(Throwable e){}
 		String result = tccf.ifElseMethod(0);
 		String expectedResult = "Number zero";
 		
-try {		assertEquals(expectedResult, result);} catch(Throwable e){}
+		assertEquals(expectedResult, result);
 	}
 	
 	@Test
@@ -39,7 +39,7 @@ try {		assertEquals(expectedResult, result);} catch(Throwable e){}
 		String result = tccf.ifElseMethod(1);
 		String expectedResult = "Number one";
 		
-try {		assertEquals(expectedResult, result);} catch(Throwable e){}
+		assertEquals(expectedResult, result);
 	}
 	
 	@Test
@@ -49,21 +49,21 @@ try {		assertEquals(expectedResult, result);} catch(Throwable e){}
 		String result = tccf.ifElseMethod(2);
 		String expectedResult = "Number 2";
 		
-try {		assertEquals(expectedResult, result);} catch(Throwable e){}
+		assertEquals(expectedResult, result);
 	}
 	
 	@Test
 	public void tryCatchTest1() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-try {		assertTrue(tccf.tryCatchMethod_try());} catch(Throwable e){}
+		assertTrue(tccf.tryCatchMethod_try());
 	}
 
 	@Test
 	public void tryCatchTest2() 
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
-try {		assertFalse(tccf.tryCatchMethod_catch());} catch(Throwable e){}
+		assertFalse(tccf.tryCatchMethod_catch());
 	}
 	
 	@Test
@@ -71,7 +71,7 @@ try {		assertFalse(tccf.tryCatchMethod_catch());} catch(Throwable e){}
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
-try {		assertEquals('E', tccf.switchCaseMethod('É'));} catch(Throwable e){}
+		assertEquals('E', tccf.switchCaseMethod('É'));
 	}
 
 	@Test
@@ -79,15 +79,15 @@ try {		assertEquals('E', tccf.switchCaseMethod('É'));} catch(Throwable e){}
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
-try {		assertEquals(7, tccf.doWhileMethod(2,5));} catch(Throwable e){}
+		assertEquals(7, tccf.doWhileMethod(2,5));
 	}
-
+	
 	@Test
 	public void inlineWhile()
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
-try {		assertEquals(0, tccf.inlineWhile(2));} catch(Throwable e){}
+		assertEquals(0, tccf.inlineWhile(2));
 	}
 	
 	@Test
@@ -95,7 +95,7 @@ try {		assertEquals(0, tccf.inlineWhile(2));} catch(Throwable e){}
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
-try {		assertEquals(0, tccf.inlineDoWhile(2));} catch(Throwable e){}
+		assertEquals(0, tccf.inlineDoWhile(2));
 	}
 	
 	@Test
@@ -103,6 +103,6 @@ try {		assertEquals(0, tccf.inlineDoWhile(2));} catch(Throwable e){}
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
-try {		assertTrue(tccf.inlineIfElse(2));} catch(Throwable e){}
+		assertTrue(tccf.inlineIfElse(2));
 	}
 }

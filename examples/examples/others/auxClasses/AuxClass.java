@@ -1,10 +1,12 @@
-package examples.testClasses;
+package examples.others.auxClasses;
+
+import examples.polymorphism.ClassInterface;
 
 
 /**
  * Class created for aspect tests.
  */
-public class TestClass 
+public class AuxClass 
 {
 	//-----------------------------------------------------------------------
 	//		Attributes
@@ -16,7 +18,7 @@ public class TestClass
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
-	public TestClass(String t, int x) 
+	public AuxClass(String t, int x) 
 	{
 		this.text = t;
 	}
@@ -24,7 +26,7 @@ public class TestClass
 	/**
 	 * Random constructor.
 	 */
-	public TestClass(int x) 
+	public AuxClass(int x) 
 	{
 		this.x = x;
 	}
@@ -32,7 +34,7 @@ public class TestClass
 	/**
 	 * Random constructor.
 	 */
-	public TestClass(int x, int y) 
+	public AuxClass(int x, int y) 
 	{
 		x = 2;
 	}
@@ -40,7 +42,7 @@ public class TestClass
 	/**
 	 * Random constructor.
 	 */
-	public TestClass(String x) 
+	public AuxClass(String x) 
 	{
 		x = "2";
 	}
@@ -195,8 +197,5 @@ public class TestClass
 		return obj.hashCode();
 	}
 	
-	public boolean testClassParam(ClassInterface ci)
-	{
-		return true;
-	}
+	
 }

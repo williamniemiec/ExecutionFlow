@@ -1,10 +1,10 @@
-package examples.testClasses;
+package examples.polymorphism;
 
 
 /**
- * Interface created for aspect tests.
+ * Interface created for polymorphism tests.
  */
 public interface Interface 
 {
-	public String test();
+	public String interfaceMethod();
 }
