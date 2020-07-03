@@ -41,7 +41,7 @@ public abstract class ExecutionFlow
 	 * 	<li><b>Value:</b> List of test paths</li>
 	 * </ul>
 	 */
-	protected Map<SignaturesInfo, List<List<Integer>>> classTestPaths;
+	protected Map<SignaturesInfo, List<List<Integer>>> computedTestPaths;
 	
 	protected ExporterExecutionFlow exporter;
 	
@@ -68,7 +68,7 @@ public abstract class ExecutionFlow
 	//-------------------------------------------------------------------------
 	/**
 	 * Walks the invoker recording its test paths and save the result in
-	 * {@link #classTestPaths}.
+	 * {@link #computedTestPaths}.
 	 * 
 	 * @return		This object to allow chained calls
 	 */
@@ -127,12 +127,12 @@ public abstract class ExecutionFlow
 		if (exporter == null)
 			throw new IllegalArgumentException("Exporter cannot be null");
 		
-		exporter.export(classTestPaths);
+		exporter.export(computedTestPaths);
 	}
 	
 	/**
 	 * Stores test paths for an invoker. The test paths are stored in 
-	 * {@link #classTestPaths}.
+	 * {@link #computedTestPaths}.
 	 * 
 	 * @param		testPaths Test paths of this invoker
 	 * @param		collector Informations about this invoker
@@ -211,6 +211,15 @@ public abstract class ExecutionFlow
 		return currentProjectRoot;
 	}
 	
+	/**
+	 * Sets {@link #invokerManager} and {@link #testMethodManager} to null.
+	 */
+	public static void destroy()
+	{
+		invokerManager = null;
+		testMethodManager = null;
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
@@ -227,9 +236,26 @@ public abstract class ExecutionFlow
 	 * @implNote	It must only be called after method {@link #execute()} has 
 	 * been executed
 	 */
-	public Map<SignaturesInfo, List<List<Integer>>> getClassTestPaths()
+	public Map<SignaturesInfo, List<List<Integer>>> getTestPaths()
 	{
-		return classTestPaths;
+		return computedTestPaths;
+	}
+	
+	/**
+	 * Gets a specific computed test path.
+	 * 
+	 * @param		testMethodSignature Test method signature
+	 * @param		constructorSignature Invoker signature
+	 * 
+	 * @return		List of test paths for the specified invoker or empty list
+	 * if specified invoker has not a test path
+	 * 
+	 * @implNote	It must only be called after method {@link #execute()} has 
+	 * been executed
+	 */
+	public List<List<Integer>> getTestPaths(String testMethodSignature, String methodSignature)
+	{
+		return computedTestPaths.get(new SignaturesInfo(methodSignature, testMethodSignature));
 	}
 	
 	/**

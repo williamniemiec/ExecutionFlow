@@ -30,6 +30,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Stores information about collected constructors.
 	 */
 	private Collection<CollectorInfo> constructorCollector;
+	private boolean exportInvokedMethods;
 	
 	
 	//-------------------------------------------------------------------------
@@ -48,17 +49,32 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	//		Constructors
 	//-------------------------------------------------------------------------
 	/**
-	 * Computes test path for collected constructors.
+	 * Computes test path for collected constructors. Using this constructor,
+	 * the invoked methods by tested constructor will be exported to a CSV file.
 	 * 
 	 * @param		constructorCollector Collected constructors from 
 	 * {@link executionFlow.runtime.ConstructorCollector}
 	 */
 	public ConstructorExecutionFlow(Collection<CollectorInfo> constructorCollector)
 	{
-		this.constructorCollector = constructorCollector;
-		
-		classTestPaths = new HashMap<>();
+		this(constructorCollector, true);
 	}
+	
+	/**
+	 * Computes test path for collected constructors.
+	 * 
+	 * @param		constructorCollector Collected constructors from 
+	 * {@link executionFlow.runtime.ConstructorCollector}
+	 * @param
+	 */
+	public ConstructorExecutionFlow(Collection<CollectorInfo> constructorCollector, boolean exportInvokedMethods)
+	{
+		this.constructorCollector = constructorCollector;
+		this.exportInvokedMethods = exportInvokedMethods;
+		
+		computedTestPaths = new HashMap<>();
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -142,8 +158,10 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				storeTestPath(tp_jdb, collector);
 				
 				// Exports invoked methods by tested constructor to a CSV
-				invokedMethodsExporter.export(collector.getConstructorInfo().getInvokerSignature(),
-						jdb.getInvokedMethodsByTestedInvoker(), true);
+				if (exportInvokedMethods) {
+					invokedMethodsExporter.export(collector.getConstructorInfo().getInvokerSignature(),
+							jdb.getInvokedMethodsByTestedInvoker(), true);
+				}
 			} catch (Exception e) {
 				ConsoleOutput.showError(e.getMessage());
 				e.printStackTrace();
@@ -165,8 +183,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		
 		for (List<Integer> testPath : testPaths) {
 			// Checks if test path belongs to a stored test method and method
-			if (classTestPaths.containsKey(signaturesInfo)) {
-				classPathInfo = classTestPaths.get(signaturesInfo);
+			if (computedTestPaths.containsKey(signaturesInfo)) {
+				classPathInfo = computedTestPaths.get(signaturesInfo);
 				classPathInfo.add(testPath);
 			} 
 			// Else stores test path with its test method and method
@@ -175,7 +193,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				
 				
 				classPathInfo.add(testPath);
-				classTestPaths.put(signaturesInfo, classPathInfo);
+				computedTestPaths.put(signaturesInfo, classPathInfo);
 			}
 		}
 		
@@ -185,7 +203,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			
 			
 			classPathInfo.add(new ArrayList<>());
-			classTestPaths.put(signaturesInfo, classPathInfo);
+			computedTestPaths.put(signaturesInfo, classPathInfo);
 		}
 	}
 }

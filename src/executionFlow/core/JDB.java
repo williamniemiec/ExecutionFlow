@@ -201,6 +201,7 @@ public class JDB
 		
 		// Gets information about the test method of the invoker to be analyzed
 		testMethodSignature = testMethodInfo.getInvokerSignature();
+		testMethodSignature = testMethodSignature.substring(0, testMethodSignature.indexOf("(")+1);
 		classInvocationSignature = testMethodInfo.getClassSignature();
 		invocationLine = invokerInfo.getInvocationLine();
 		invokerSignature = invokerInfo.getInvokerSignature();

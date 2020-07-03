@@ -34,8 +34,8 @@ public class SignaturesInfo
 	 */
 	public SignaturesInfo(String invokerSignature, String testMethodSignature) 
 	{
-		this.invokerSignature = invokerSignature;
-		this.testMethodSignature = testMethodSignature;
+		this.invokerSignature = invokerSignature.trim();
+		this.testMethodSignature = testMethodSignature.trim();
 	}
 	
 	

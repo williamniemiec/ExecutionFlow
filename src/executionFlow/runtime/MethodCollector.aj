@@ -45,6 +45,7 @@ public aspect MethodCollector extends RuntimeCollector
 	 * <code>@org.junit.jupiter.api.RepeatedTest</code>
 	 */
 	pointcut repeatedTest():
+		!within(@SkipCollection *) &&
 		withincode(@executionFlow.runtime.isRepeatedTest * *.*());
 	
 	before(): repeatedTest()
@@ -61,6 +62,7 @@ public aspect MethodCollector extends RuntimeCollector
 	 * </ul>
 	 */
 	pointcut noRepeatedTest():
+		!within(@SkipCollection *) &&
 		withincode(@org.junit.Test * *.*()) && 
 		!withincode(@executionFlow.runtime.isRepeatedTest * *.*());
 	

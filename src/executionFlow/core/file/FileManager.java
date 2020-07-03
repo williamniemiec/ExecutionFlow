@@ -71,8 +71,8 @@ public class FileManager implements Serializable
 	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
 			FileParserFactory fileParserFactory, String backupExtensionName)
 	{
-		if (Files.exists(srcFilePath))
-			throw new IllegalArgumentException("srcFilePath does not exist");
+		if (!Files.exists(srcFilePath))
+			throw new IllegalArgumentException("srcFilePath does not exist: " + srcFilePath);
 		
 		this.srcFile = srcFilePath;
 		this.classOutput = classOutput;

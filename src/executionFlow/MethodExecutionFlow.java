@@ -37,6 +37,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 */
 	protected Map<Integer, List<CollectorInfo>> collectedMethods;
 	
+	private boolean exportInvokedMethods;
+	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -60,9 +62,21 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 */
 	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods)
 	{
+		this(collectedMethods, true);
+	}
+	
+	/**
+	 * Computes test path for collected methods. Using this constructor,
+	 * the invoked methods by tested constructor will be exported to a CSV file.
+	 * 
+	 * @param		collectedMethods Collected methods from {@link MethodCollector}
+	 */
+	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, boolean exportInvokedMethods)
+	{
 		this.collectedMethods = collectedMethods;
+		this.exportInvokedMethods = exportInvokedMethods;
 		
-		classTestPaths = new HashMap<>();
+		computedTestPaths = new HashMap<>();
 	}
 	
 	
@@ -143,14 +157,16 @@ public class MethodExecutionFlow extends ExecutionFlow
 					if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())
 						ConsoleOutput.showWarning("Test path is empty");
 					else
-						ConsoleOutput.showInfo("Test path has been successfully computed");
+						ConsoleOutput.showInfo("Test path has been successfully computed");				
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
 					
 					// Exports invoked methods by tested method to a CSV
-					invokedMethodsExporter.export(collector.getMethodInfo().getInvokerSignature(), 
-							jdb.getInvokedMethodsByTestedInvoker(), false);
+					if (exportInvokedMethods) {
+						invokedMethodsExporter.export(collector.getMethodInfo().getInvokerSignature(), 
+								jdb.getInvokedMethodsByTestedInvoker(), false);
+					}
 				} catch (Exception e) {
 					ConsoleOutput.showError(e.getMessage());
 					e.printStackTrace();
@@ -173,8 +189,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 		
 		for (List<Integer> testPath : testPaths) {
 			// Checks if test path belongs to a stored test method and method
-			if (classTestPaths.containsKey(signaturesInfo)) {
-				classPathInfo = classTestPaths.get(signaturesInfo);
+			if (computedTestPaths.containsKey(signaturesInfo)) {
+				classPathInfo = computedTestPaths.get(signaturesInfo);
 				classPathInfo.add(testPath);
 			} 
 			// Else stores test path with its test method and method
@@ -183,20 +199,20 @@ public class MethodExecutionFlow extends ExecutionFlow
 				
 				
 				classPathInfo.add(testPath);
-				classTestPaths.put(signaturesInfo, classPathInfo);
+				computedTestPaths.put(signaturesInfo, classPathInfo);
 			}
 		}
 		
 		// If test path is empty, stores test method and invoker with an empty list
 		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
-			if (classTestPaths.containsKey(signaturesInfo)) {
-				classPathInfo = classTestPaths.get(signaturesInfo);
-				classTestPaths.put(signaturesInfo, classPathInfo);
+			if (computedTestPaths.containsKey(signaturesInfo)) {
+				classPathInfo = computedTestPaths.get(signaturesInfo);
+				computedTestPaths.put(signaturesInfo, classPathInfo);
 			}
 			else {
 				classPathInfo = new ArrayList<>();
 				classPathInfo.add(new ArrayList<>());
-				classTestPaths.put(signaturesInfo, classPathInfo);
+				computedTestPaths.put(signaturesInfo, classPathInfo);
 			}
 		}
 	}
