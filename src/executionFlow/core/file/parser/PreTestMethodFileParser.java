@@ -450,6 +450,9 @@ public class PreTestMethodFileParser extends FileParser
 					// Checks if it is a comment next to the line
 					commentStart = line.indexOf("//");
 					
+					if (commentStart == -1)
+						commentStart = line.indexOf("*/");
+					
 					// There is no comment next to the line
 					if (commentStart == -1)
 						if (lastCurlyBracketInSameLine != -1) {
