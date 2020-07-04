@@ -35,9 +35,8 @@ public class TestMethodRunner
 	 */
 	public static void run(String testClassName, Path testClassPath, String testClassPackage)
 	{	
-		String appRoot = ExecutionFlow.getAppRootPath();
 		Path testClassRootPath = MethodInvokerInfo.extractClassRootDirectory(testClassPath, testClassPackage);
-		Path libPath = Path.of(appRoot + "\\lib");
+		Path libPath = ExecutionFlow.getLibPath();
 		String libPath_relative = testClassRootPath.relativize(libPath).toString() + "\\";
 		String cp_junitPlatformConsole = libPath_relative + "junit-platform-console-standalone-1.6.2.jar";
 		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
@@ -51,7 +50,6 @@ public class TestMethodRunner
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
 
-		
 		try {
 			ProcessBuilder pb = new ProcessBuilder(
 					"cmd.exe", "/c",

@@ -57,6 +57,9 @@ public class FileExporter implements ExporterExecutionFlow
 	@Override
 	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
 	{
+		if (classTestPaths == null || classTestPaths.isEmpty())
+			return;
+		
 		try {
 			// Removes test path folders that will be overwritten (avoids 
 			// creating duplicate files)

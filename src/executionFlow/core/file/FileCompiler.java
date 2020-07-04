@@ -37,7 +37,7 @@ public class FileCompiler
 	 * compilation (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	
@@ -57,7 +57,8 @@ public class FileCompiler
 		Main compiler = new Main();
 		MessageHandler m = new MessageHandler();
 		String appRootPath = ExecutionFlow.getAppRootPath();
-		String aspectsRootDirectory = appRootPath+"\\bin\\executionFlow\\runtime";
+		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
+				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
 		
 		compiler.run(
 			new String[] {
@@ -67,6 +68,8 @@ public class FileCompiler
 				"-encoding", 
 				encode.getName(),
 				"-classpath", outputDir.toAbsolutePath().toString()+";"
+						+ appRootPath + "\\..\\classes" + ";"
+						+ appRootPath + "\\..\\test-classes" + ";"
 						+ appRootPath + "\\lib\\aspectjrt-1.9.2.jar" + ";"
 						+ appRootPath + "\\lib\\junit-4.13.jar" + ";"
 						+ appRootPath + "\\lib\\hamcrest-all-1.3.jar" + ";"
@@ -84,15 +87,14 @@ public class FileCompiler
 			IMessage[] ms = m.getMessages(null, true);
 			
 			ConsoleOutput.showDebug("FileCompilator - start");
+			
 			for (var msg : ms) {
 				ConsoleOutput.showDebug(msg.toString());
 			}
-			ConsoleOutput.showDebug("FileCompilator - end");try {
-				Thread.sleep(9000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			ConsoleOutput.showDebug("Output dir: " + outputDir.toAbsolutePath().toString());
+			
+			ConsoleOutput.showDebug("FileCompilator - end");
 		}
 		// -----{ END DEBUG }----
 	}

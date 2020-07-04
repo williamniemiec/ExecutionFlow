@@ -3,7 +3,11 @@ package executionFlow;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +39,13 @@ public abstract class ExecutionFlow
 	protected static final boolean DEBUG;
 	
 	/**
+	 * Sets if environment is development. This will affect
+	 * {@link #getAppRootPath()} and 
+	 * {@link executionFlow.core.file.FileCompiler#compile()}.
+	 */
+	private static final boolean DEVELOPMENT;
+	
+	/**
 	 * Stores computed test paths from a class.<br />
 	 * <ul>
 	 * 	<li><b>Key:</b> Test method signature and invoker signature</li>
@@ -44,6 +55,11 @@ public abstract class ExecutionFlow
 	protected Map<SignaturesInfo, List<List<Integer>>> computedTestPaths;
 	
 	protected ExporterExecutionFlow exporter;
+	
+	/**
+	 * Path of application libraries.
+	 */
+	private static Path libPath;
 	
 	private static String appRoot;
 	private static File currentProjectRoot;
@@ -60,6 +76,14 @@ public abstract class ExecutionFlow
 	 */
 	static {
 		DEBUG = true;
+	}
+	
+	/**
+	 * Sets environment. If the code is executed outside project, that is,
+	 * through a jar file, it must be false.
+	 */
+	static {
+		DEVELOPMENT = false;
 	}
 	
 
@@ -153,12 +177,10 @@ public abstract class ExecutionFlow
 			return appRoot;
 		
 		try {
-			appRoot = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
-				    .toURI()).getPath();
-			
-			appRoot = appRoot.charAt(appRoot.length()-1) == '.' ? 
-					Path.of(appRoot).getParent().getParent().toAbsolutePath().toString() : 
-					Path.of(appRoot).getParent().toAbsolutePath().toString();
+			File executionFlowBinPath = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
+				    .toURI());
+			appRoot = DEVELOPMENT ? executionFlowBinPath.getAbsoluteFile().getParent() : executionFlowBinPath.getAbsolutePath();
+
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -220,6 +242,23 @@ public abstract class ExecutionFlow
 		testMethodManager = null;
 	}
 	
+	/**
+	 * Finds directory of application libraries and stores it in {@link #libPath}.
+	 * 
+	 * @param		appRoot Application root path
+	 * 
+	 * @implSpec	Lazy initialization
+	 */
+	public static Path getLibPath()
+	{
+		if (libPath != null)
+			return libPath;
+		
+		libPath = Path.of(appRoot + "\\lib");
+
+		return libPath;
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
@@ -270,5 +309,16 @@ public abstract class ExecutionFlow
 		this.exporter = exporter;
 		
 		return this;
+	}
+	
+	/**
+	 * Checks if it is development environment. If it is production environment,
+	 * it will return false; otherwise, true.
+	 * 
+	 * @return		If it is development environment
+	 */
+	public static boolean isDevelopment()
+	{
+		return DEVELOPMENT;
 	}
 }

@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Map;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
-import executionFlow.info.InvokerInfo;
 import executionFlow.util.CSV;
 import executionFlow.util.DataUtils;
 
@@ -79,50 +77,48 @@ public class InvokedMethodsByTestedInvokerExporter
 	{
 		if (invokedMethodsByTestedInvoker == null || invokedMethodsByTestedInvoker.isEmpty()) {
 			ConsoleOutput.showWarning("There are no invoked methods by tested invoker");
+			return;
 		}
-		else {
-			ConsoleOutput.showInfo("Exporting invoked methods by tested invoker...");
-			
+		
+		ConsoleOutput.showInfo("Exporting invoked methods by tested invoker...");
 
-				//List<String> content = e.getValue();
-				File dirPath = new File(ExecutionFlow.getAppRootPath(), dirName + "/" + DataUtils.generateDirectoryPath(invokerSignature, isConstructor));
-				File output = new File(dirPath, filename+".csv");
-				
-				
-				try {
-					Files.createDirectories(dirPath.toPath());
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				// Reads CSV file (if it exists)
-				if (output.exists()) {
-					try {
-						for (List<String> line : CSV.read(output)) {
-							// Merges CSV content with collected content
-							for (int i=1; i<line.size(); i++) {
-								if (!invokedMethodsByTestedInvoker.contains(line.get(i)))
-									invokedMethodsByTestedInvoker.add(line.get(i));
-							}
-						}
-						output.delete();
-					} catch (IOException e2) {
-						ConsoleOutput.showError("Failed to read CSV file - "+e2.getMessage());
-					}			
-				}
-				
-				// Writes tested method signature along with invoked methods by it
-				// to CSV file
-				try {
-					invokedMethodsByTestedInvoker.add(0, invokerSignature);
-					CSV.write(invokedMethodsByTestedInvoker, output);
-				} catch (IOException e2) {
-					ConsoleOutput.showError("Failed to write CSV file - "+e2.getMessage());
-				}
-				
-				ConsoleOutput.showInfo("The export was successful");
-				ConsoleOutput.showInfo("Location: "+output.getAbsolutePath());
-
+		//List<String> content = e.getValue();
+		File dirPath = new File(ExecutionFlow.getAppRootPath(), dirName + "/" + DataUtils.generateDirectoryPath(invokerSignature, isConstructor));
+		File output = new File(dirPath, filename+".csv");
+		
+		
+		try {
+			Files.createDirectories(dirPath.toPath());
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
+		
+		// Reads CSV file (if it exists)
+		if (output.exists()) {
+			try {
+				for (List<String> line : CSV.read(output)) {
+					// Merges CSV content with collected content
+					for (int i=1; i<line.size(); i++) {
+						if (!invokedMethodsByTestedInvoker.contains(line.get(i)))
+							invokedMethodsByTestedInvoker.add(line.get(i));
+					}
+				}
+				output.delete();
+			} catch (IOException e2) {
+				ConsoleOutput.showError("Failed to read CSV file - "+e2.getMessage());
+			}			
+		}
+		
+		// Writes tested method signature along with invoked methods by it
+		// to CSV file
+		try {
+			invokedMethodsByTestedInvoker.add(0, invokerSignature);
+			CSV.write(invokedMethodsByTestedInvoker, output);
+		} catch (IOException e2) {
+			ConsoleOutput.showError("Failed to write CSV file - "+e2.getMessage());
+		}
+		
+		ConsoleOutput.showInfo("The export was successful");
+		ConsoleOutput.showInfo("Location: "+output.getAbsolutePath());
 	}
 }

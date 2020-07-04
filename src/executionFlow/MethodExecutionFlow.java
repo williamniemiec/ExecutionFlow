@@ -35,7 +35,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 	 * <ul> 
 	 */
-	protected Map<Integer, List<CollectorInfo>> collectedMethods;
+	protected Map<Integer, List<CollectorInfo>> methodCollector;
 	
 	private boolean exportInvokedMethods;
 	
@@ -73,7 +73,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 */
 	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, boolean exportInvokedMethods)
 	{
-		this.collectedMethods = collectedMethods;
+		this.methodCollector = collectedMethods;
 		this.exportInvokedMethods = exportInvokedMethods;
 		
 		computedTestPaths = new HashMap<>();
@@ -89,10 +89,13 @@ public class MethodExecutionFlow extends ExecutionFlow
 		// -----{ DEBUG }-----
 		if (DEBUG) {
 			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-			ConsoleOutput.showDebug(collectedMethods.toString());
+			ConsoleOutput.showDebug("MEF: " + methodCollector.toString());
 			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		}
 		// -----{ END DEBUG }-----
+		
+		if (methodCollector == null || methodCollector.isEmpty())
+			return this;
 		
 		List<List<Integer>> tp_jdb;
 		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = 
@@ -100,9 +103,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 		
 		
 		// Generates test path for each collected method
-		for (List<CollectorInfo> collectors : collectedMethods.values()) { 
+		for (List<CollectorInfo> collectors : methodCollector.values()) { 
 			// Computes test path for each collected method that is invoked in the same line
-			for (CollectorInfo collector : collectors) {
+			for (CollectorInfo collector : collectors) {System.out.println("MEF: "+collector);
 				// Checks if collected method is within test method
 				if (collector.getMethodInfo().getClassPath().equals(collector.getTestMethodInfo().getClassPath())) {
 					ConsoleOutput.showError("The method to be tested cannot be within the test class");

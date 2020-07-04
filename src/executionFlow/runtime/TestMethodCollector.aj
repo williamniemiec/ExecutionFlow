@@ -86,7 +86,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	pointcut testMethodCollector():
 		!skipAnnotation() &&
 		(junit4() || junit5()) &&
-		!junit4_internal() && !junit5_internal();
+		!junit4_internal() && !junit5_internal() && !withincode(@org.junit.Test * *.*());
 	
 	/**
 	 * Executed before each test method.
@@ -184,7 +184,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			boolean hasError = false;
 			
 			
-			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
+			System.out.println("RUN");TestMethodRunner.run(testClassName, testClassPath, testClassPackage);System.out.println("END RUN");
 			finished = true;
 			
 			// Restores original test method file and its compiled file

@@ -85,10 +85,13 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		// -----{ DEBUG }-----
 		if (DEBUG) {
 			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-			ConsoleOutput.showDebug(constructorCollector.toString());
+			ConsoleOutput.showDebug("CEF: " + constructorCollector.toString());
 			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		}
 		// -----{ END DEBUG }-----
+		
+		if (constructorCollector == null || constructorCollector.isEmpty())
+			return this;
 		
 		List<List<Integer>> tp_jdb;
 		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = 

@@ -22,6 +22,9 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	@Override
 	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
 	{
+		if (classTestPaths == null || classTestPaths.isEmpty())
+			return;
+		
 		String currentTestMethodSignature = null;
 		String currentInvoker = "";
 		
