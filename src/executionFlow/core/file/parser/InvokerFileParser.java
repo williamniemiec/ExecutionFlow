@@ -633,7 +633,8 @@ public class InvokerFileParser extends FileParser
 	private boolean isMethodDeclaration(String line)
 	{
 				// Checks if it is an invoker whose parameters are all on the same line
-		return	line.matches("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))"
+		return	!line.contains("return ") && !line.contains(" new ") && 
+				line.matches("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))"
 					+ "+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*") || 
 				// Checks if it is an invoker whose parameters are broken on other lines
 				line.matches("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t?]+(\\s|\\t))+"
