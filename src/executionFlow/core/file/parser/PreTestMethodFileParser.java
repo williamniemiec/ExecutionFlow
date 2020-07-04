@@ -419,6 +419,7 @@ public class PreTestMethodFileParser extends FileParser
 		public String parse(String line)
 		{
 			int lastCurlyBracketInSameLine = line.lastIndexOf("}");
+			String varname = DataUtils.generateVarName();
 			
 			
 			// Checks if it is within a multiline assert
@@ -431,12 +432,12 @@ public class PreTestMethodFileParser extends FileParser
 					
 					if (lastCurlyBracketInSameLine != -1) {
 						line = line.substring(0, lastCurlyBracketInSameLine) 
-							+ "} catch(" + catchType + " e){" + try_catch_message + "}"
+							+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}"
 							+ line.substring(lastCurlyBracketInSameLine);
 					}
 					else {
 						line = line.substring(0, endOfAssert) 
-							+ "} catch(" + catchType + " e){" + try_catch_message + "}"
+							+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}"
 							+ line.substring(endOfAssert);
 					}
 				}					
@@ -457,22 +458,22 @@ public class PreTestMethodFileParser extends FileParser
 					if (commentStart == -1)
 						if (lastCurlyBracketInSameLine != -1) {
 							line = "try {" + line.substring(0, lastCurlyBracketInSameLine) + "} "
-								+ "catch(" + catchType + " e){" + try_catch_message + "}}";
+								+ "catch(" + catchType + " " + varname + "){" + try_catch_message + "}}";
 						}
 						else {
 							line = "try {" + line + "} "
-								+ "catch(" + catchType + " e){" + try_catch_message + "}";
+								+ "catch(" + catchType + " " + varname + "){" + try_catch_message + "}";
 						}
 					// There is a comment next to the line
 					else {
 						if (lastCurlyBracketInSameLine != -1) {
 							line = "try {" + line.substring(0, lastCurlyBracketInSameLine)
-							+ "} catch(" + catchType + " e){" + try_catch_message + "}"
+							+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}"
 							+ line.substring(commentStart);
 						}
 						else {
 							line = "try {" + line.substring(0, commentStart)
-								+ "} catch(" + catchType + " e){" + try_catch_message + "}"
+								+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}"
 								+ line.substring(commentStart);
 						}
 					}
