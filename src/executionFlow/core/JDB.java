@@ -562,6 +562,7 @@ public class JDB
 		private boolean inMethod;
 		private boolean withinConstructor;
 		private boolean withinOverloadCall;
+		private boolean lastAddWasReturn;
 		private int lastLineAdded = -1;
 		private String line;
 		private String srcLine = "";
@@ -677,9 +678,11 @@ public class JDB
 	        				} 
 	        				// Checks if it is still in the method
 	        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
-	        					if (!isEmptyMethod()) {
+	        					if (!isEmptyMethod() && !lastAddWasReturn) {
 	        						testPath.add(lineNumber);
 	        						lastLineAdded = lineNumber;
+	        						
+	        						lastAddWasReturn = srcLine.contains("return ");
 	        					}
 	        				}
 	            		}
@@ -698,8 +701,10 @@ public class JDB
 	    		}
 	    		
 	    		if (srcLine != null && !srcLine.isEmpty()) {
-	    			if (exitMethod)
+	    			if (exitMethod) {
 	    				inMethod = false;
+	    				lastAddWasReturn = false;
+	    			}
 	    			
 	    			if (!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && srcLine.equals(lastSrcLine)) {
 	    				exitMethod = true;
