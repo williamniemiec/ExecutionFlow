@@ -49,7 +49,7 @@ public class InvokerFileParser extends FileParser
 	 * lines.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	
@@ -253,7 +253,7 @@ public class InvokerFileParser extends FileParser
 				
 				// Checks if it is an invoker declaration
 				if (!line.matches(regex_new) && line.matches(pattern_invokerDeclaration.toString())) {
-					if (isMethodDeclaration(line)) {
+					if (isInvokerDeclaration(line)) {
 						line = "@executionFlow.runtime.CollectInvokedMethods " + line;
 						
 						bw.write(line);
@@ -630,7 +630,7 @@ public class InvokerFileParser extends FileParser
 	 * @param		line Line to be analyzed
 	 * @return		If the line contains an invoker declaration
 	 */
-	private boolean isMethodDeclaration(String line)
+	private boolean isInvokerDeclaration(String line)
 	{
 				// Checks if it is an invoker whose parameters are all on the same line
 		return	!line.contains("return ") && !line.contains(" new ") && (

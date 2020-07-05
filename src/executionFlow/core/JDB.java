@@ -568,6 +568,7 @@ public class JDB
 		private String srcLine = "";
 		private String lastSrcLine = "";
 		private String invokerSignatureWithoutParameters;
+		private int methodDeclarationLine;
 		
         
         //---------------------------------------------------------------------
@@ -604,6 +605,7 @@ public class JDB
 			boolean readyToReadInput = false;
 			boolean ignore = false;
 			final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
+			int currentLine;
 			
 			
 			if (output.ready()) {        	
@@ -626,6 +628,10 @@ public class JDB
     				 (line.contains("Breakpoint hit") || line.contains("Step completed")) ) {
         			readyToReadInput = true;
         			srcLine = output.readLine();
+        			currentLine = getSrcLine(srcLine);
+        			
+        			System.out.println("cl: "+currentLine);
+        			System.out.println("methodDeclarationLine: "+methodDeclarationLine);
 
             		// Checks if it is within a constructor
             		withinConstructor = line.contains(".<init>");
@@ -647,11 +653,19 @@ public class JDB
             			}
             		}
             		// Checks if it is in the constructor signature
-            		else if (srcLine.contains("@executionFlow.runtime.CollectInvokedMethods")) {
+            		if (srcLine.contains("@executionFlow.runtime.CollectInvokedMethods")) {
+            			ignore = true;
+            			methodDeclarationLine = currentLine;
+            		}
+            		else if (currentLine != -1 && currentLine < methodDeclarationLine) {
             			ignore = true;
             		}
+            		
+            		if (methodDeclarationLine == 0 && currentLine > 0)
+            			methodDeclarationLine = currentLine;
+            		
             		// Checks if it is still within a constructor
-            		else if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
+            		if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
             			withinConstructor = false;
             			exitMethod = true;
             			readyToReadInput = true;
@@ -704,6 +718,7 @@ public class JDB
 	    			if (exitMethod) {
 	    				inMethod = false;
 	    				lastAddWasReturn = false;
+	    				methodDeclarationLine = 0;
 	    			}
 	    			
 	    			if (!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && srcLine.equals(lastSrcLine)) {
@@ -743,6 +758,21 @@ public class JDB
 				output.close();
 			} catch (IOException e) 
 			{}
+		}
+		
+		/**
+		 * Gets executed line from source line.
+		 *  
+		 * @param		src Source line
+		 * 
+		 * @return		Executed line or -1 if src is empty or null
+		 */
+		private int getSrcLine(String src) 
+		{
+			if (src == null || src.isEmpty())
+				return -1;
+			
+			return Integer.valueOf(src.substring(0, src.indexOf(" ")));
 		}
 		
 		/**
