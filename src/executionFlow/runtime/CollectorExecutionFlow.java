@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import executionFlow.ExecutionFlow;
@@ -234,7 +235,23 @@ public class CollectorExecutionFlow
 	}
 	
 	/**
-	 * Extracts return type of a method.
+	 * Extracts the return type of a method.
+	 * 
+	 * @param	s Method signature
+	 * 
+	 * @return	Return type of the method
+	 */
+	public static String extractReturnType(Signature s)
+	{
+		String signature = s.toLongString();
+		String[] terms = signature.substring(0, signature.indexOf("(")).split(" ");
+		
+		
+		return terms[terms.length-2];
+	}
+	
+	/**
+	 * Extracts the return type of a method.
 	 * 
 	 * @param	jp JoinPoint with the method
 	 * 
@@ -243,13 +260,23 @@ public class CollectorExecutionFlow
 	public static Class<?> extractReturnType(JoinPoint jp)
 	{
 		Method method = ((MethodSignature) jp.getSignature()).getMethod();
+		
+		
 		return method.getReturnType();
 	}
 	
+	/**
+	 * Gets directory where a test method is.
+	 * 
+	 * @param		testClassPath Test method file path
+	 * 
+	 * @return		Directory where a test method is
+	 */
 	public static String getTestClassDirectory(String testClassPath)
 	{
 		StringBuilder response = new StringBuilder();
 		String[] terms = testClassPath.split("\\\\");
+		
 		
 		for (int i=0; i<terms.length-1; i++) {
 			response.append(terms[i]);
