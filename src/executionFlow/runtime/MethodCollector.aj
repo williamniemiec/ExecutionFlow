@@ -97,10 +97,7 @@ public aspect MethodCollector extends RuntimeCollector
 		if (testMethodSignature != null && signature.contains(testMethodSignature)) { return; }
 		
 		// Gets correct signature of inner classes
-		if (thisJoinPoint.getTarget() == null) {	// Static method
-			System.out.println("s: "+signature);
-			System.out.println("r: "+CollectorExecutionFlow.extractReturnType(thisJoinPoint.getSignature()));
-			
+		if (thisJoinPoint.getTarget() == null) {	// Static method			
 			signature = CollectorExecutionFlow.extractReturnType(thisJoinPoint.getSignature()) + " "
 					+ thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
 					+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
@@ -109,9 +106,6 @@ public aspect MethodCollector extends RuntimeCollector
 			signature = thisJoinPoint.getTarget().getClass().getName() + "." 
 					+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
 		}
-		
-		System.out.println("BEFORE EXTRACT: "+signature);
-		
 		
 		// Extracts the method name
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
@@ -156,7 +150,6 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Gets method signature
 		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
-		System.out.println("AFTER EXTRACT: "+methodSignature);
 		
 		if (lastInvocationLine != invocationLine) {
 			order = 0;

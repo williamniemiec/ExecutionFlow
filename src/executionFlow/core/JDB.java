@@ -302,7 +302,7 @@ public class JDB
 		in.init();
 		
 		// Executes while inside the test method
-		while (!endOfMethod) {;
+		while (!endOfMethod) {
 			// Checks if output has finished processing
 			while (!wasNewIteration && !out.read()) { continue; }
 			
@@ -315,12 +315,12 @@ public class JDB
 			}
 			// Checks if has exit the method
 			else if (exitMethod && !isInternalCommand) {
-				currentSkip--;
+				System.out.println("skip:"+currentSkip);currentSkip--;
 				
 				// Checks if has to skip collected test path
 				if (currentSkip == -1) {
 					// Saves test path
-					testPaths.add(testPath);
+					testPaths.add(testPath); System.out.println("added: "+testPath);
 					
 					// Prepare for next test path
 					testPath = new ArrayList<>();
@@ -562,7 +562,6 @@ public class JDB
 		private boolean inMethod;
 		private boolean withinConstructor;
 		private boolean withinOverloadCall;
-		boolean firstTime = true;
 		private int lastLineAdded = -1;
 		private String line;
 		private String srcLine = "";
@@ -631,9 +630,7 @@ public class JDB
             		withinConstructor = line.contains(".<init>");
 
             		// Ignores native calls
-            		if (line.contains("jdk.") || line.contains("aspectj.") || 
-            				line.contains("executionFlow.runtime") || srcLine.contains("package ") || 
-            				(!line.contains(invokerSignatureWithoutParameters) && !line.contains(testMethodSignature))) {
+            		if (isNativeCall()) {
             			isInternalCommand = true;
             			inMethod = false;
             			ignore = true;
@@ -648,9 +645,8 @@ public class JDB
             				ignore = true;
             			}
             		}
-            		// Checks if it is within a constructor
-            		else if (withinConstructor && firstTime && !srcLine.contains("this(") && !srcLine.contains("return")) {
-            			firstTime = false;
+            		// Checks if it is in the constructor signature
+            		else if (srcLine.contains("@executionFlow.runtime.CollectInvokedMethods")) {
             			ignore = true;
             		}
             		// Checks if it is still within a constructor
@@ -658,7 +654,6 @@ public class JDB
             			withinConstructor = false;
             			exitMethod = true;
             			readyToReadInput = true;
-            			firstTime = true;
             		}
             		// Checks if last method was skipped
             		else if (skipped) {
@@ -679,7 +674,6 @@ public class JDB
 	        					newIteration = false;
 	        					inMethod = false;
 	        					lastLineAdded = -1;
-	        					firstTime = true;
 	        				} 
 	        				// Checks if it is still in the method
 	        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
@@ -694,7 +688,7 @@ public class JDB
 	            		}
             		}
             		
-            		// Checks if it is a overload call
+            		// Checks if it is an internal call
             		if (!withinOverloadCall)
             			withinOverloadCall = withinConstructor && srcLine.contains("this(");
         		}
@@ -835,6 +829,24 @@ public class JDB
 			
 			return	srcLine.matches(regex_onlyCurlyBracket) ||
 					srcLine.matches(regex_emptyMethod);
+		}
+		
+		/**
+		 * Checks if current line of JDB is a native call.
+		 * 
+		 * @return		If current line of JDB is a native call.
+		 */
+		private boolean isNativeCall()
+		{
+			return	line.contains("line=1 ") || 
+					line.contains("jdk.") || 
+					line.contains("aspectj.") || 
+					line.contains("executionFlow.runtime") || 
+					srcLine.contains("package ") || 
+					(
+						!line.contains(invokerSignatureWithoutParameters) && 
+						!line.contains(testMethodSignature)
+					);
 		}
 	}
 }
