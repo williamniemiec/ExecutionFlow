@@ -315,12 +315,12 @@ public class JDB
 			}
 			// Checks if has exit the method
 			else if (exitMethod && !isInternalCommand) {
-				System.out.println("skip:"+currentSkip);currentSkip--;
+				currentSkip--;
 				
 				// Checks if has to skip collected test path
 				if (currentSkip == -1) {
 					// Saves test path
-					testPaths.add(testPath); System.out.println("added: "+testPath);
+					testPaths.add(testPath);
 					
 					// Prepare for next test path
 					testPath = new ArrayList<>();

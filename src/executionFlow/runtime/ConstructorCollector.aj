@@ -36,7 +36,10 @@ public aspect ConstructorCollector extends RuntimeCollector
 	before(): constructorCollector()
 	{
 		String signature = thisJoinPoint.getSignature().toString();
-		String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
+		final String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
+		
+		if (signature.contains("java."))
+			return;
 		
 		// Collect constructor data
 		Class<?>[] paramTypes;		// Constructor parameter types
