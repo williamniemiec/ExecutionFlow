@@ -105,10 +105,17 @@ public class MethodExecutionFlow extends ExecutionFlow
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : methodCollector.values()) { 
 			// Computes test path for each collected method that is invoked in the same line
-			for (CollectorInfo collector : collectors) {System.out.println("MEF: "+collector);
+			for (CollectorInfo collector : collectors) {
 				// Checks if collected method is within test method
-				if (collector.getMethodInfo().getClassPath().equals(collector.getTestMethodInfo().getClassPath())) {
+				//if (collector.getMethodInfo().getClassPath().equals(collector.getTestMethodInfo().getClassPath())) {
+				if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
 					ConsoleOutput.showError("The method to be tested cannot be within the test class");
+					ConsoleOutput.showError("This test path will be skipped");
+					continue;
+				}
+				
+				if (collector.getMethodInfo().belongsToAnonymousClass()) {
+					ConsoleOutput.showError("The method to be tested cannot belong to an anonymous class");
 					ConsoleOutput.showError("This test path will be skipped");
 					continue;
 				}

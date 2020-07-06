@@ -184,7 +184,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			boolean hasError = false;
 			
 			
-			System.out.println("RUN");TestMethodRunner.run(testClassName, testClassPath, testClassPackage);System.out.println("END RUN");
+			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
 			finished = true;
 			
 			// Restores original test method file and its compiled file

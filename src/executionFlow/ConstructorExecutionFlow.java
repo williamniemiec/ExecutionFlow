@@ -101,12 +101,13 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		// Generates test path for each collected method
 		for (CollectorInfo collector : constructorCollector) {
 			// Checks if collected constructor is within test method
-			if (collector.getConstructorInfo().getClassPath().equals(collector.getTestMethodInfo().getClassPath())) {
+			if (collector.getConstructorInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
 				ConsoleOutput.showError("The constructor to be tested cannot be within the test class");
+				ConsoleOutput.showError("Anonymous classes are not supported");
 				ConsoleOutput.showError("This test path will be skipped");
 				continue;
 			}
-			
+
 			// Gets FileManager for method file
 			FileManager constructorFileManager = new FileManager(
 				collector.getConstructorInfo().getSrcPath(), 

@@ -149,6 +149,25 @@ public abstract class InvokerInfo
 		return invokerSignature.substring(index+1);
 	}
 	
+	/**
+	 * Checks whether the invoker belongs to an anonymous class.
+	 * 
+	 * @return		If the invoker belongs to an anonymous class
+	 */
+	public boolean belongsToAnonymousClass()
+	{
+		String sig = getClassSignature();
+		String[] terms = sig.split("\\$");
+		boolean response = false;
+		
+		
+		if (terms.length > 1) {
+			response = terms[terms.length-1].matches("[0-9]+");
+		}
+
+		return response;
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Getters
