@@ -293,7 +293,7 @@ public class JDB
 	private void jdb_methodVisitor(Process process) throws IOException 
 	{
 		boolean wasNewIteration = false;
-		int currentSkip = skip;
+		//int currentSkip = skip;
 		JDBOutput out = new JDBOutput(process);
 		JDBInput in = new JDBInput(process);
 		
@@ -315,27 +315,27 @@ public class JDB
 			}
 			// Checks if has exit the method
 			else if (exitMethod && !isInternalCommand) {
-				currentSkip--;
+//				System.out.println("skip: "+currentSkip); currentSkip--; System.out.println("skip: "+currentSkip);
 				
 				// Checks if has to skip collected test path
-				if (currentSkip == -1) {
+//				if (currentSkip == -1) {
 					// Saves test path
-					testPaths.add(testPath);
+					testPaths.add(testPath);System.out.println("ADDED: "+testPath);
 					
 					// Prepare for next test path
 					testPath = new ArrayList<>();
 					
 					// Resets skip
-					currentSkip = skip;
+//					currentSkip = skip;
 					
 					// Checks if method is within a loop
 					in.send("cont");
-				} 
-				else {
-					testPath.clear();	// Discards computed test path
-					skipped = true;
-					in.send("step into");
-				}
+//				} 
+//				else {
+//					testPath.clear();	// Discards computed test path
+//					skipped = true;
+//					in.send("step into");
+//				}
 				
 				// Resets exit method
 				exitMethod = false;
@@ -661,8 +661,25 @@ public class JDB
             			ignore = true;
             		}
             		
-            		if (methodDeclarationLine == 0 && currentLine > 0)
+            		
+            		System.out.println("------ is: "+invokerSignature);
+            		
+            		
+            		
+            		if (methodDeclarationLine == 0 && currentLine > 0 && line.contains(invokerSignature))
             			methodDeclarationLine = currentLine;
+            		
+            		System.out.println("=======");
+            		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
+            		System.out.println(isInternalCommand);
+            		System.out.println(exitMethod);
+            		System.out.println(ignore);
+            		System.out.println(inMethod);
+            		System.out.println(jdb_getLine(line));
+            		System.out.println(isWithinMethod(jdb_getLine(line)));
+            		System.out.println(isEmptyMethod());
+            		System.out.println(lastAddWasReturn);
+            		System.out.println("=======");
             		
             		// Checks if it is still within a constructor
             		if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
@@ -693,7 +710,7 @@ public class JDB
 	        				// Checks if it is still in the method
 	        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
 	        					if (!isEmptyMethod() && !lastAddWasReturn) {
-	        						testPath.add(lineNumber);
+	        						testPath.add(lineNumber);System.out.println("add: "+lineNumber);
 	        						lastLineAdded = lineNumber;
 	        						
 	        						lastAddWasReturn = srcLine.contains("return ");
@@ -727,6 +744,9 @@ public class JDB
 	    			}
 	    			
 	    			lastSrcLine = srcLine;
+	    			
+	    			if (srcLine.contains("return ") && line.contains(invokerSignature))
+	    				exitMethod = true;
 	    			
 	    			// -----{ DEBUG }-----
 	    			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }

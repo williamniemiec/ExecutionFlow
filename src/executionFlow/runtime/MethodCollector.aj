@@ -132,6 +132,9 @@ public aspect MethodCollector extends RuntimeCollector
 		// Checks if the collected constructor is not the constructor of the test method
 		if (constructor != null && isTestMethodConstructor(key)) { return; }
 		
+		
+		key += invocationLine;
+		
 		// If the method has already been collected, skip it (avoids collect duplicate methods)
 		if (collectedMethods.contains(key)) {
 			order++;

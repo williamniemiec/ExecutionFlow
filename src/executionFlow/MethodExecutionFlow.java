@@ -172,6 +172,10 @@ public class MethodExecutionFlow extends ExecutionFlow
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
 					
+					
+					System.out.println("CPT: "+computedTestPaths);
+					
+					
 					// Exports invoked methods by tested method to a CSV
 					if (exportInvokedMethods) {
 						invokedMethodsExporter.export(collector.getMethodInfo().getInvokerSignature(), 
