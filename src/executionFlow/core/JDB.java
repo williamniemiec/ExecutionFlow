@@ -55,6 +55,7 @@ public class JDB
 	private String classInvocationSignature;
 	
 	private String invokerSignature;
+	private String invokerName;
 	
 	/**
 	 * Stores signature of the test method.
@@ -205,6 +206,12 @@ public class JDB
 		classInvocationSignature = testMethodInfo.getClassSignature();
 		invocationLine = invokerInfo.getInvocationLine();
 		invokerSignature = invokerInfo.getInvokerSignature();
+		
+		
+		
+		invokerName = invokerSignature.substring(invokerSignature.lastIndexOf("."), invokerSignature.indexOf("(")+1);
+		
+		
 		
 		// Gets paths
 		srcRootPath = extractRootPathDirectory(invokerInfo.getSrcPath(), invokerInfo.getPackage());
@@ -567,7 +574,7 @@ public class JDB
 		private String line;
 		private String srcLine = "";
 		private String lastSrcLine = "";
-		private String invokerSignatureWithoutParameters;
+		//private String invokerSignatureWithoutParameters;
 		private int methodDeclarationLine;
 		private int lastIfLine;
 		private boolean lastWasIf;
@@ -586,7 +593,7 @@ public class JDB
 		public JDBOutput(Process p)
 		{
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			invokerSignatureWithoutParameters = invokerSignature.substring(0, invokerSignature.indexOf("("));
+			//invokerSignatureWithoutParameters = invokerSignature.substring(0, invokerSignature.indexOf("("));
 		}
 		
 		
@@ -674,11 +681,12 @@ public class JDB
             		
             		
             		
-            		System.out.println("------ is: "+invokerSignature);
+            		//System.out.println("------ is: "+invokerSignature);
+            		System.out.println("----in: "+invokerName);
             		
             		
             		
-            		if (methodDeclarationLine == 0 && currentLine > 0 && line.contains(invokerSignature))
+            		if (methodDeclarationLine == 0 && currentLine > 0 && /*line.contains(invokerSignature)*/line.contains(invokerName))
             			methodDeclarationLine = currentLine;
             		
             		System.out.println("=======");
@@ -709,7 +717,7 @@ public class JDB
         			
             		if (!isInternalCommand && !exitMethod && !ignore) {
 	        			if (inMethod) {
-	        				int lineNumber = jdb_getLine(line);
+	        				int lineNumber = getSrcLine(line);
 	        				
 	        				// Checks if returned from the method
 	        				if (line.contains(testMethodSignature)) {
@@ -758,7 +766,7 @@ public class JDB
 	    			
 	    			lastSrcLine = srcLine;
 	    			
-	    			if (srcLine.contains("return ") && line.contains(invokerSignature))
+	    			if (srcLine.contains("return ") && /*line.contains(invokerSignature)*/line.contains(invokerName))
 	    				exitMethod = true;
 	    			
 	    			// -----{ DEBUG }-----
@@ -805,7 +813,7 @@ public class JDB
 			if (src == null || src.isEmpty())
 				return -1;
 			
-			return Integer.valueOf(src.replace(".", "").substring(0, src.indexOf(" ")));
+			return Integer.valueOf(src.replace(".", "").substring(0, src.indexOf(" ")).trim());
 		}
 		
 		/**
@@ -825,7 +833,7 @@ public class JDB
 		 */
 		private boolean isInternalMethod()
 		{
-			return 	!line.contains(classSignature) && 
+			return 	/*!line.contains(classSignature)*/!line.contains(invokerName) && 
 					!line.contains(classInvocationSignature);
 		}
 		
@@ -912,7 +920,7 @@ public class JDB
 					line.contains("executionFlow.runtime") || 
 					srcLine.contains("package ") || 
 					(
-						!line.contains(invokerSignatureWithoutParameters) && 
+						/*!line.contains(invokerSignatureWithoutParameters)*/!line.contains(invokerName) && 
 						!line.contains(testMethodSignature)
 					);
 		}
