@@ -50,6 +50,12 @@ public class TestMethodRunner
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
 
+		
+		System.out.println("----");
+		System.out.println(testClassRootPath);
+		System.out.println(libPath);
+		System.out.println("----");
+		
 		try {
 			ProcessBuilder pb = new ProcessBuilder(
 					"cmd.exe", "/c",

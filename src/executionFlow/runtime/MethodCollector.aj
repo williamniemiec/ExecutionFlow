@@ -98,8 +98,8 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Gets correct signature of inner classes
 		if (thisJoinPoint.getTarget() == null) {	// Static method			
-			signature = CollectorExecutionFlow.extractReturnType(thisJoinPoint.getSignature()) + " "
-					+ thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
+			signature = /*CollectorExecutionFlow.extractReturnType(thisJoinPoint.getSignature()) + " "*/
+					thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
 					+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
 		}
 		else { 	// Non-static method
@@ -112,7 +112,7 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Extracts class signature
 		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-		
+
 		// Extracts types of method parameters (if there is any)
 		Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint);
 		Class<?> returnType = CollectorExecutionFlow.extractReturnType(thisJoinPoint);		
@@ -152,7 +152,7 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 		
 		// Gets method signature
-		String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
+		//String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
 		
 		if (lastInvocationLine != invocationLine) {
 			order = 0;
@@ -162,7 +162,7 @@ public aspect MethodCollector extends RuntimeCollector
 		try {
 			MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
 				.classPath(classPath)
-				.methodSignature(methodSignature)
+				.methodSignature(signature)
 				.methodName(methodName)
 				.returnType(returnType)
 				.parameterTypes(paramTypes)
@@ -170,7 +170,7 @@ public aspect MethodCollector extends RuntimeCollector
 				.invocationLine(invocationLine)
 				.srcPath(srcPath)
 				.build();
-			
+
 			CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)

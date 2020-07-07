@@ -109,12 +109,14 @@ public class MethodExecutionFlow extends ExecutionFlow
 				// Checks if collected method is within test method
 				//if (collector.getMethodInfo().getClassPath().equals(collector.getTestMethodInfo().getClassPath())) {
 				if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
+					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokerSignature());
 					ConsoleOutput.showError("The method to be tested cannot be within the test class");
 					ConsoleOutput.showError("This test path will be skipped");
 					continue;
 				}
 				
 				if (collector.getMethodInfo().belongsToAnonymousClass()) {
+					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokerSignature());
 					ConsoleOutput.showError("The method to be tested cannot belong to an anonymous class");
 					ConsoleOutput.showError("This test path will be skipped");
 					continue;

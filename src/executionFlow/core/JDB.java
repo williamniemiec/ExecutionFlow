@@ -569,6 +569,9 @@ public class JDB
 		private String lastSrcLine = "";
 		private String invokerSignatureWithoutParameters;
 		private int methodDeclarationLine;
+		private int lastIfLine;
+		private boolean lastWasIf;
+		private boolean withinIf;
 		
         
         //---------------------------------------------------------------------
@@ -652,14 +655,23 @@ public class JDB
             				ignore = true;
             			}
             		}
+            		
+            		if (lastWasIf && !srcLine.contains("else if")) {
+            			withinIf = true;
+            			lastWasIf = false;
+            		}
+            		
             		// Checks if it is in the constructor signature
             		if (srcLine.contains("@executionFlow.runtime.CollectInvokedMethods")) {
             			ignore = true;
             			methodDeclarationLine = currentLine;
             		}
-            		else if (currentLine != -1 && currentLine < methodDeclarationLine) {
+            		else if ( 	(currentLine != -1 && currentLine < methodDeclarationLine) || 
+            					(withinIf && srcLine.contains("else if"))	) {		// Avoids catching incorrect test path
             			ignore = true;
+            			withinIf = false;
             		}
+            		
             		
             		
             		System.out.println("------ is: "+invokerSignature);
@@ -714,6 +726,7 @@ public class JDB
 	        						lastLineAdded = lineNumber;
 	        						
 	        						lastAddWasReturn = srcLine.contains("return ");
+	        						lastWasIf = (srcLine.contains("if ") || srcLine.contains("if(")) && !srcLine.contains(" else"); 
 	        					}
 	        				}
 	            		}
@@ -792,7 +805,7 @@ public class JDB
 			if (src == null || src.isEmpty())
 				return -1;
 			
-			return Integer.valueOf(src.substring(0, src.indexOf(" ")));
+			return Integer.valueOf(src.replace(".", "").substring(0, src.indexOf(" ")));
 		}
 		
 		/**

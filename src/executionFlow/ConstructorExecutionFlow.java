@@ -102,6 +102,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		for (CollectorInfo collector : constructorCollector) {
 			// Checks if collected constructor is within test method
 			if (collector.getConstructorInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
+				ConsoleOutput.showError("ConstructorExecutionFlow - " + collector.getConstructorInfo().getInvokerSignature());
 				ConsoleOutput.showError("The constructor to be tested cannot be within the test class");
 				ConsoleOutput.showError("Anonymous classes are not supported");
 				ConsoleOutput.showError("This test path will be skipped");
