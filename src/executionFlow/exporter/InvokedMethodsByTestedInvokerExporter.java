@@ -83,7 +83,7 @@ public class InvokedMethodsByTestedInvokerExporter
 		ConsoleOutput.showInfo("Exporting invoked methods by tested invoker...");
 
 		//List<String> content = e.getValue();
-		File dirPath = new File(ExecutionFlow.getAppRootPath(), dirName + "/" + DataUtils.generateDirectoryPath(invokerSignature, isConstructor));
+		File dirPath = new File(ExecutionFlow.getCurrentProjectRoot(), dirName + "/" + DataUtils.generateDirectoryPath(invokerSignature, isConstructor));
 		File output = new File(dirPath, filename+".csv");
 		
 		
