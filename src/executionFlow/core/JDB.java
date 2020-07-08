@@ -209,7 +209,7 @@ public class JDB
 		
 		
 		
-		invokerName = invokerSignature.substring(invokerSignature.lastIndexOf("."), invokerSignature.indexOf("(")+1);
+		invokerName = invokerSignature.substring(invokerSignature.lastIndexOf("."), invokerSignature.indexOf("("));
 		
 		
 		
@@ -218,8 +218,13 @@ public class JDB
 		classRootPath = extractRootPathDirectory(invokerInfo.getClassPath(), invokerInfo.getPackage());
 		testClassRootPath = extractRootPathDirectory(testMethodInfo.getClassPath(), testMethodInfo.getPackage());
 		
+		
+		
+		Path testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
+		
+		
 		// Executes JDB
-		process = jdb_start(testClassRootPath, srcRootPath, classRootPath);
+		process = jdb_start(testClassRootPath, srcRootPath, testMethodSrcPath, classRootPath);
 		jdb_methodVisitor(process);
 		
 		return this;
@@ -241,7 +246,7 @@ public class JDB
 	 * 
 	 * @implNote	It will run JDB from a CMD process
 	 */
-	private Process jdb_start(Path testClassRootPath, Path srcRootPath, Path methodClassRootPath) throws IOException
+	private Process jdb_start(Path testClassRootPath, Path srcRootPath, Path testMethodSrcPath, Path methodClassRootPath) throws IOException
 	{
 		if (srcRootPath == null)
 			throw new IllegalStateException("Source file path cannot be empty");
@@ -264,7 +269,7 @@ public class JDB
 		
 		
 		String jdb_classPath = ".;"+libs;
-		String jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString();
+		String jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString() + ";" + testClassRootPath.relativize(testMethodSrcPath).toString();
 		
 		if (!methodClassPath.isEmpty())
 			jdb_classPath += ";"+methodClassPath;
@@ -686,7 +691,7 @@ public class JDB
             		
             		
             		
-            		if (methodDeclarationLine == 0 && currentLine > 0 && /*line.contains(invokerSignature)*/line.contains(invokerName))
+            		if (methodDeclarationLine == 0 && currentLine > 0 && /*line.contains(invokerSignature)*/(line.contains(invokerName+".") || line.contains(invokerName+"(")))
             			methodDeclarationLine = currentLine;
             		
             		System.out.println("=======");
@@ -699,53 +704,62 @@ public class JDB
             		System.out.println(isWithinMethod(jdb_getLine(line)));
             		System.out.println(isEmptyMethod());
             		System.out.println(lastAddWasReturn);
+            		System.out.println(isNewIteration());
+            		System.out.println(willEnterInMethod());
             		System.out.println("=======");
             		
-            		// Checks if it is still within a constructor
-            		if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
-            			withinConstructor = false;
-            			exitMethod = true;
-            			readyToReadInput = true;
-            		}
-            		// Checks if last method was skipped
-            		else if (skipped) {
-            			newIteration = false;
-            			skipped = false;
-            		}
-
-        			newIteration = isNewIteration();
-        			
-            		if (!isInternalCommand && !exitMethod && !ignore) {
-	        			if (inMethod) {
-	        				int lineNumber = getSrcLine(line);
-	        				
-	        				// Checks if returned from the method
-	        				if (line.contains(testMethodSignature)) {
-	        					exitMethod = true;
-	        					
-	        					newIteration = false;
-	        					inMethod = false;
-	        					lastLineAdded = -1;
-	        				} 
-	        				// Checks if it is still in the method
-	        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
-	        					if (!isEmptyMethod() && !lastAddWasReturn) {
-	        						testPath.add(lineNumber);System.out.println("add: "+lineNumber);
-	        						lastLineAdded = lineNumber;
-	        						
-	        						lastAddWasReturn = srcLine.contains("return ");
-	        						lastWasIf = (srcLine.contains("if ") || srcLine.contains("if(")) && !srcLine.contains(" else"); 
-	        					}
-	        				}
-	            		}
-	        			else if (willEnterInMethod()) {
-	            			inMethod = true;
-	            		}
-            		}
             		
-            		// Checks if it is an internal call
-            		if (!withinOverloadCall)
-            			withinOverloadCall = withinConstructor && srcLine.contains("this(");
+            		if (inMethod && currentLine == invocationLine + 1) {
+            			inMethod = false;
+            		}
+        			else {
+	            		// Checks if it is still within a constructor
+	            		if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
+	            			withinConstructor = false;
+	            			exitMethod = true;
+	            			readyToReadInput = true;
+	            		}
+	            		// Checks if last method was skipped
+	            		else if (skipped) {
+	            			newIteration = false;
+	            			skipped = false;
+	            		}
+	
+	        			newIteration = isNewIteration();
+	        			
+	            		if (!isInternalCommand && !exitMethod && !ignore) {
+		        			if (inMethod) {
+		        				//int lineNumber = jdb_getLine(line);
+		        				int lineNumber = getSrcLine(srcLine);
+		        				
+		        				// Checks if returned from the method
+		        				if (line.contains(testMethodSignature)) {
+		        					exitMethod = true;
+		        					
+		        					newIteration = false;
+		        					inMethod = false;
+		        					lastLineAdded = -1;
+		        				} 
+		        				// Checks if it is still in the method
+		        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
+		        					if (!isEmptyMethod() && !lastAddWasReturn) {
+		        						testPath.add(lineNumber);System.out.println("add: "+lineNumber);
+		        						lastLineAdded = lineNumber;
+		        						
+		        						lastAddWasReturn = srcLine.contains("return ");
+		        						lastWasIf = (srcLine.contains("if ") || srcLine.contains("if(")) && !srcLine.contains(" else"); 
+		        					}
+		        				}
+		            		}
+		        			else if (willEnterInMethod()) {
+		            			inMethod = true;
+		            		}
+	            		}
+	            		
+	            		// Checks if it is an internal call
+	            		if (!withinOverloadCall)
+	            			withinOverloadCall = withinConstructor && srcLine.contains("this(");
+            		}
         		}
         		
 	    		if (endOfMethod) {
@@ -766,7 +780,7 @@ public class JDB
 	    			
 	    			lastSrcLine = srcLine;
 	    			
-	    			if (srcLine.contains("return ") && /*line.contains(invokerSignature)*/line.contains(invokerName))
+	    			if (srcLine.contains("return ") && /*line.contains(invokerSignature)*/(line.contains(invokerName+".") || line.contains(invokerName+"(")))
 	    				exitMethod = true;
 	    			
 	    			// -----{ DEBUG }-----
@@ -833,7 +847,8 @@ public class JDB
 		 */
 		private boolean isInternalMethod()
 		{
-			return 	/*!line.contains(classSignature)*/!line.contains(invokerName) && 
+			return 	/*!line.contains(classSignature)*/ /*!line.contains(invokerName)*/ 
+					(!line.contains(invokerName+".") && !line.contains(invokerName+"(")) && 
 					!line.contains(classInvocationSignature);
 		}
 		
@@ -879,7 +894,8 @@ public class JDB
 			return 	newIteration || 
 					( !inMethod && 
 					  line.contains("Step completed") && 
-					  line.contains(classInvocationSignature) ); 
+					  line.contains(classInvocationSignature) && 
+					  line.contains("line="+invocationLine) ); 
 		}
 		
 		/**
@@ -920,7 +936,8 @@ public class JDB
 					line.contains("executionFlow.runtime") || 
 					srcLine.contains("package ") || 
 					(
-						/*!line.contains(invokerSignatureWithoutParameters)*/!line.contains(invokerName) && 
+						/*!line.contains(invokerSignatureWithoutParameters)*/ 
+							(!line.contains(invokerName+".") && !line.contains(invokerName+"(")) && 
 						!line.contains(testMethodSignature)
 					);
 		}
