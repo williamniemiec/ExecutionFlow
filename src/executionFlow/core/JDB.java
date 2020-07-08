@@ -645,6 +645,7 @@ public class JDB
         			srcLine = output.readLine();
         			currentLine = getSrcLine(srcLine);
         			
+        			
         			System.out.println("cl: "+currentLine);
         			System.out.println("methodDeclarationLine: "+methodDeclarationLine);
 
@@ -683,7 +684,8 @@ public class JDB
             			ignore = true;
             			withinIf = false;
             		}
-            		
+            		else if (srcLine.contains(" class "))
+            			ignore = true;
             		
             		
             		//System.out.println("------ is: "+invokerSignature);
