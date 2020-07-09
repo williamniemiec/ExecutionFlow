@@ -1,13 +1,25 @@
 package executionFlow.util;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 
 /**
@@ -192,18 +204,78 @@ public class DataUtils
 	 * 
 	 * @param		pathList Path list
 	 * @param		delimiter Symbol that will be used to separate paths
+	 * @param		base All paths in the path list will be relativized with
+	 * the base
 	 * 
 	 * @return		String with paths separated by the specified delimiter or
 	 * '.' if there are no paths
 	 */
-	public static String pathListToString(List<Path> pathList, String delimiter)
+	public static String pathListToString(List<Path> pathList, String delimiter, Path base, boolean onlyDir)
 	{
 		StringBuilder response = new StringBuilder();
+		Set<String> addedPaths = new HashSet<>();
+		String currentPath;
 		
 		
 		for (Path dependency : pathList) {
-			response.append(dependency);
-			response.append(";");
+			if (onlyDir) {
+				currentPath = dependency.getParent().toString();
+				
+				if (!addedPaths.contains(currentPath)) {
+					addedPaths.add(currentPath);
+					response.append(currentPath + "\\*");
+					response.append(";");
+				}
+			}
+			else {
+				response.append(base.relativize(dependency));
+				response.append(";");
+			}
+//			response.append(base.relativize(dependency));
+//			response.append(";");
+		}
+		
+		if (response.length() > 1)
+			response.deleteCharAt(response.length()-1);
+		else
+			response.append(".");
+		
+		return response.toString();
+	}
+	
+	/**
+	 * Converts a path list to string using a delimiter. If path list is empty,
+	 * returns '.'.
+	 * 
+	 * @param		pathList Path list
+	 * @param		delimiter Symbol that will be used to separate paths
+	 * 
+	 * @return		String with paths separated by the specified delimiter or
+	 * '.' if there are no paths
+	 */
+	public static String pathListToString(List<Path> pathList, String delimiter, boolean onlyDir)
+	{
+		StringBuilder response = new StringBuilder();
+		Set<String> addedPaths = new HashSet<>();
+		String currentPath;
+		
+		
+		for (Path dependency : pathList) {
+			if (onlyDir) {
+				currentPath = dependency.getParent().toString();
+				
+				if (!addedPaths.contains(currentPath)) {
+					addedPaths.add(currentPath);
+					response.append(currentPath + "\\*");
+					response.append(";");
+				}
+			}
+			else {
+				response.append(dependency);
+				response.append(";");
+			}
+			//response.append(dependency);
+			//response.append(";");
 		}
 		
 		if (response.length() > 1)

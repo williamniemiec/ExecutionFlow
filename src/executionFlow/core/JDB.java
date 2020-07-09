@@ -27,6 +27,7 @@ import executionFlow.ExecutionFlow;
 import executionFlow.info.InvokerInfo;
 import executionFlow.util.DataUtils;
 import executionFlow.util.Extractors;
+import executionFlow.util.ZipManager;
 
 
 /**
@@ -257,45 +258,79 @@ public class JDB
 		findLibs(ExecutionFlow.getAppRootPath());
 		
 		// Configures JDB, indicating path of libraries, classes and source files
+		Path base = Path.of(System.getProperty("user.home"));
+		
+		//methodClassRootPath = methodClassRootPath.relativize(base);
+		
 		String methodClassPath = testClassRootPath.relativize(methodClassRootPath).toString();
 		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
-		String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";
+		
+//		String methodClassPath = base.relativize(methodClassRootPath).toString();
+//		String libPath_relative = base.relativize(libPath).toString()+"\\";
+		
+		//String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";
 		
 		// Gets maven dependencies (if any)
-		String mavenDependencies = DataUtils.pathListToString(Extractors.getMavenDependencies(), ";"); 
+		//String mavenDependencies = DataUtils.pathListToString(Extractors.getMavenDependencies(), ";", base, true);
+		// Gets maven dependencies (if any)
+		List<Path> dep = Extractors.getMavenDependencies();
+		File dependencies = base.resolve("dep.zip").toFile();
+		ZipManager zm = new ZipManager(dependencies);
+		//String mavenDependencies = DataUtils.pathListToString(dep, ";", base, false); 
 		
-		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
+		zm.put(dep);
+		
+		
+		/*String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
 			+ libPath_relative + "aspectjtools.jar" + ";"
 			+ mavenDependencies + ";"
 			+ libPath_relative + "junit-4.13.jar" + ";"
 			+ libPath_relative + "hamcrest-all-1.3.jar" + ";"
 			
 			+ cp_junitPlatformConsole;
-		
+		*/
+		String libs = libPath_relative + "*" + ";" + "\"" + testClassRootPath.relativize(base.resolve("dep.zip")).toString() + "\"";
 		
 		String jdb_classPath = ".;"+libs;
 		String jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString() + ";" + testClassRootPath.relativize(testMethodSrcPath).toString();
+		//String jdb_srcPath = base.relativize(srcRootPath).toString() + ";" + base.relativize(testMethodSrcPath).toString();
 		
 		if (!methodClassPath.isEmpty())
 			jdb_classPath += ";"+methodClassPath;
 		else
+//			jdb_classPath += ";" + base.relativize(testClassRootPath) + "\\" + "..\\classes\\";
 			jdb_classPath += ";..\\classes\\";
 		
-		String jdb_paths = "-sourcepath "+jdb_srcPath+" "+"-classpath "+jdb_classPath;
+		//String jdb_paths = "-sourcepath "+jdb_srcPath+" "+"-classpath "+jdb_classPath;
 		
 		// -----{ DEBUG }-----
 		if (DEBUG) {
 			ConsoleOutput.showDebug("testClassRootPath: "+testClassRootPath);
-			ConsoleOutput.showDebug("jdb_paths: "+jdb_paths);
+			//ConsoleOutput.showDebug("jdb_paths: "+jdb_paths);
 		}
 		// -----{ END DEBUG }-----
 		
+//		ProcessBuilder pb = new ProcessBuilder(
+//			"cmd.exe", "/c", "jdb " 
+//			+ "-sourcepath " + "\"" + jdb_srcPath + "\"" + " " 
+//			+ "-classpath " + "\"" + jdb_classPath + "\"",
+//			"org.junit.runner.JUnitCore", classInvocationSignature
+//		);
+		
 		ProcessBuilder pb = new ProcessBuilder(
-			"cmd.exe","/c","jdb "+jdb_paths,
-			"org.junit.runner.JUnitCore",classInvocationSignature
+			"cmd.exe", "/c", "jdb " 
+			+ "-sourcepath " + jdb_srcPath + " " 
+			+ "-classpath " + jdb_classPath,
+			"org.junit.runner.JUnitCore", classInvocationSignature
 		);
 		
+		
+		//System.out.println(jdb_paths);
+		System.out.println(classInvocationSignature);
+		
+		
 		pb.directory(testClassRootPath.toFile());
+//		pb.directory(base.toFile());
 		
 		return pb.start();
 	}
