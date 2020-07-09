@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
 import executionFlow.info.InvokerInfo;
+import executionFlow.util.DataUtils;
+import executionFlow.util.Extractors;
 
 
 /**
@@ -259,9 +261,12 @@ public class JDB
 		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
 		String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";
 		
+		// Gets maven dependencies (if any)
+		String mavenDependencies = DataUtils.pathListToString(Extractors.getMavenDependencies(), ";"); 
+		
 		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
 			+ libPath_relative + "aspectjtools.jar" + ";"
-			
+			+ mavenDependencies + ";"
 			+ libPath_relative + "junit-4.13.jar" + ";"
 			+ libPath_relative + "hamcrest-all-1.3.jar" + ";"
 			

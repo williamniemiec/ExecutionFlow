@@ -35,6 +35,7 @@ public class FileManager implements Serializable
 	private String classPackage;
 	private FileParser fp;
 	private boolean charsetError;
+	private boolean lastWasError;
 	
 	
 	//-------------------------------------------------------------------------
@@ -94,11 +95,28 @@ public class FileManager implements Serializable
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
+	public String toString() 
+	{
+		return "FileManager ["
+				+ "srcFile=" + srcFile 
+				+ ", originalSrcFile=" + originalSrcFile 
+				+ ", compiledFile="	+ compiledFile 
+				+ ", originalClassPath=" + originalClassPath 
+				+ ", filename=" + filename
+				+ ", classOutput=" + classOutput 
+				+ ", classPackage=" + classPackage 
+				+ ", fp=" + fp 
+				+ ", charsetError="	+ charsetError 
+				+ ", lastWasError=" + lastWasError 
+			+ "]";
+	}
+	
+	@Override
 	public int hashCode()
 	{
 		return srcFile.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) 
 	{
@@ -267,7 +285,11 @@ public class FileManager implements Serializable
 		} catch (IOException e) {			// If already exists a .original, this means
 			try {							// that last compiled file was not restored
 				revertCompilation();	
-				createClassBackupFile();	// So, restore this file and starts again
+				if (!lastWasError) {
+					lastWasError = true;
+					createClassBackupFile();	// So, restore this file and starts again
+					lastWasError = false;
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}			
@@ -293,8 +315,12 @@ public class FileManager implements Serializable
 			);
 		} catch (IOException e) {		// If already exists a .original, this means
 			try {						// that last parsed file was not restored
-				revertParse();			
-				createSrcBackupFile();	// So, restore this file and starts again
+				revertParse();
+				if (!lastWasError) {
+					lastWasError = true;
+					createSrcBackupFile();	// So, restore this file and starts again
+					lastWasError = false;
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}				

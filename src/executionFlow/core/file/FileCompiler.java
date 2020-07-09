@@ -1,7 +1,13 @@
 package executionFlow.core.file;
 
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.aspectj.bridge.IMessage;
 import org.aspectj.bridge.MessageHandler;
@@ -9,6 +15,8 @@ import org.aspectj.tools.ajc.Main;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
+import executionFlow.util.DataUtils;
+import executionFlow.util.Extractors;
 
 
 /**
@@ -37,7 +45,7 @@ public class FileCompiler
 	 * compilation (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	
@@ -60,6 +68,10 @@ public class FileCompiler
 		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
 				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
 		
+		// Gets maven dependencies (if any)
+		String mavenDependencies = DataUtils.pathListToString(Extractors.getMavenDependencies(), ";"); 
+		
+		
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 
@@ -68,6 +80,7 @@ public class FileCompiler
 				"-encoding", 
 				encode.getName(),
 				"-classpath", outputDir.toAbsolutePath().toString()+";"
+						+ mavenDependencies + ";"
 						+ appRootPath + "\\..\\classes" + ";"
 						+ appRootPath + "\\..\\test-classes" + ";"
 						+ appRootPath + "\\lib\\aspectjrt-1.9.2.jar" + ";"

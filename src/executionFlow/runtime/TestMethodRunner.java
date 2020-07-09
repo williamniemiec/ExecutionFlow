@@ -7,6 +7,8 @@ import java.nio.file.Path;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.info.MethodInvokerInfo;
+import executionFlow.util.DataUtils;
+import executionFlow.util.Extractors;
 
 
 /**
@@ -41,18 +43,25 @@ public class TestMethodRunner
 		String cp_junitPlatformConsole = libPath_relative + "junit-platform-console-standalone-1.6.2.jar";
 		String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
 				+ libPath_relative + "aspectjtools.jar" + ";"
-				
 				+ libPath_relative + "junit-4.13.jar" + ";"
 				+ libPath_relative + "hamcrest-all-1.3.jar" + ";"
 				
 				+ cp_junitPlatformConsole;
-		String classPath = ".;" + libs + ";..\\classes";
+		
+		// Gets maven dependencies (if any)
+		String mavenDependencies = DataUtils.pathListToString(Extractors.getMavenDependencies(), ";"); 
+		
+		String classPath = ".;" 
+				+ libs + ";"
+				+ mavenDependencies + ";"
+				+ "..\\classes";
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
 
 		
 		System.out.println("----");
 		System.out.println(testClassRootPath);
+		System.out.println(mavenDependencies);
 		System.out.println(libPath);
 		System.out.println("----");
 		

@@ -92,7 +92,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Executed before each test method.
 	 */
 	before(): testMethodCollector()
-	{
+	{System.out.println("bef");
 		if (finished)
 			return;
 		
@@ -150,8 +150,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Performs pre-processing of the file containing the test method so 
 			// that the collection of the methods is done even if an assert fails
-			if (firstTime) {
+			if (firstTime) {System.out.println(collectedMethods);
 				ConsoleOutput.showInfo("Pre-processing test method...");
+				
+				
+				System.out.println(testMethodFileManager);
+		
 				
 				// Enables checkpoint
 				checkpoint.enable();
@@ -174,7 +178,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Executed after the end of a test method.
 	 */
 	after(): testMethodCollector() 
-	{
+	{System.out.println("af");
 		if (finished)
 			return;
 		
@@ -184,7 +188,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			boolean hasError = false;
 			
 			
-			TestMethodRunner.run(testClassName, testClassPath, testClassPackage);
+			System.out.println("RUN");TestMethodRunner.run(testClassName, testClassPath, testClassPackage);System.out.println("END RUN");
 			finished = true;
 			
 			// Restores original test method file and its compiled file

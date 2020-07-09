@@ -1,6 +1,7 @@
 package executionFlow.util;
 
 import java.math.BigInteger;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -183,5 +184,33 @@ public class DataUtils
 	public static String generateVarName()
 	{
 		return "_"+md5(String.valueOf(new Date().getTime()+(Math.random()*9999+1)));
+	}
+	
+	/**
+	 * Converts a path list to string using a delimiter. If path list is empty,
+	 * returns '.'.
+	 * 
+	 * @param		pathList Path list
+	 * @param		delimiter Symbol that will be used to separate paths
+	 * 
+	 * @return		String with paths separated by the specified delimiter or
+	 * '.' if there are no paths
+	 */
+	public static String pathListToString(List<Path> pathList, String delimiter)
+	{
+		StringBuilder response = new StringBuilder();
+		
+		
+		for (Path dependency : pathList) {
+			response.append(dependency);
+			response.append(";");
+		}
+		
+		if (response.length() > 1)
+			response.deleteCharAt(response.length()-1);
+		else
+			response.append(".");
+		
+		return response.toString();
 	}
 }
