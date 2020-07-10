@@ -55,6 +55,12 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 
 		// Ignores native java methods
 		if (isNativeMethod(signature)) { return; }
+
+		if (signature.indexOf("(") == -1) { return; }
+		
+		System.out.println("s: "+signature);
+		System.out.println("idx: "+signature.indexOf("("));
+		
 		
 		// Gets correct signature of inner classes
 		invocationSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 

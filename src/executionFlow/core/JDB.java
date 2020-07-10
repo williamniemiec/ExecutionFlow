@@ -740,7 +740,8 @@ public class JDB
             		
             		
             		
-            		if (methodDeclarationLine == 0 && currentLine > 0 && /*line.contains(invokerSignature)*/(line.contains(invokerName+".") || line.contains(invokerName+"(")))
+            		if (methodDeclarationLine == 0 && currentLine > 0 && 
+            				(line.contains(invokerName+".") || line.contains(invokerName+"(")))
             			methodDeclarationLine = currentLine;
             		
             		System.out.println("=======");
@@ -755,6 +756,7 @@ public class JDB
             		System.out.println(lastAddWasReturn);
             		System.out.println(isNewIteration());
             		System.out.println(willEnterInMethod());
+            		System.out.println(newIteration);
             		System.out.println("=======");
             		
             		
@@ -829,7 +831,8 @@ public class JDB
 	    			
 	    			lastSrcLine = srcLine;
 	    			
-	    			if (srcLine.contains("return ") && /*line.contains(invokerSignature)*/(line.contains(invokerName+".") || line.contains(invokerName+"(")))
+	    			if ((srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
+	    					(line.contains(invokerName+".") || line.contains(invokerName+"(")))
 	    				exitMethod = true;
 	    			
 	    			// -----{ DEBUG }-----

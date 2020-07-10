@@ -92,7 +92,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Executed before each test method.
 	 */
 	before(): testMethodCollector()
-	{System.out.println("bef");
+	{
 		if (finished)
 			return;
 		
@@ -178,7 +178,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Executed after the end of a test method.
 	 */
 	after(): testMethodCollector() 
-	{System.out.println("af");
+	{
 		if (finished)
 			return;
 		
