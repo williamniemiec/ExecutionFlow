@@ -101,7 +101,7 @@ public class TestMethodRunner
 		
 		classPath = ".;" 
 				+ libs + ";"
-				+ testClassRootPath.relativize(DependencyManager.getPath()).toString() + ";"
+				+ testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*" + ";"
 				+ "..\\classes";
 		classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
@@ -112,6 +112,8 @@ public class TestMethodRunner
 			"java", "-cp", classPath, 
 			"org.junit.runner.JUnitCore", classSignature
 		);
+		
+		System.out.println("cp: "+classPath);
 		
 		pb.directory(testClassRootPath.toFile());
 		

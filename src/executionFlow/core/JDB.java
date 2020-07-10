@@ -296,7 +296,7 @@ public class JDB
 			
 			+ cp_junitPlatformConsole;
 		*/
-		String libs = libPath_relative + "*" + ";" + "\"" + testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\"";
+		String libs = libPath_relative + "*" + ";" + "\"" + testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*" + "\"";
 		
 		String jdb_classPath = ".;"+libs;
 		String jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString() + ";" + testClassRootPath.relativize(testMethodSrcPath).toString();
