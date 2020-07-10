@@ -1,25 +1,18 @@
 package executionFlow.util;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 
 /**
@@ -284,5 +277,21 @@ public class DataUtils
 			response.append(".");
 		
 		return response.toString();
+	}
+	
+	
+	public static void putFilesInFolder(List<Path> files, Path output) throws IOException
+	{
+		if (!Files.exists(output)) {
+			Files.createDirectories(output);
+		}
+		
+		for (Path p : files) {
+			Path target = output.resolve(p.getFileName());
+			
+			
+			if (Files.notExists(target))
+				Files.copy(p, target);
+		}
 	}
 }

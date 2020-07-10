@@ -1,13 +1,7 @@
 package executionFlow.core.file;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.aspectj.bridge.IMessage;
 import org.aspectj.bridge.MessageHandler;
@@ -15,15 +9,16 @@ import org.aspectj.tools.ajc.Main;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
+import executionFlow.dependencies.DependencyManager;
+import executionFlow.dependencies.MavenDependencyExtractor;
 import executionFlow.util.DataUtils;
-import executionFlow.util.Extractors;
 
 
 /**
  * Responsible for compiling .java files.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.3
  */
 public class FileCompiler 
@@ -68,9 +63,14 @@ public class FileCompiler
 		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
 				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
 		
-		// Gets maven dependencies (if any)
-		String mavenDependencies = DataUtils.pathListToString(Extractors.getMavenDependencies(), ";", false); 
+		// Gets dependencies (if any)
+		if (!DependencyManager.hasDependencies()) {
+			DependencyManager.register(new MavenDependencyExtractor());
+			DependencyManager.fetch();
+		}
 		
+		String mavenDependencies = DataUtils.pathListToString(DependencyManager.getDependencies(), ";", false);
+
 		
 		compiler.run(
 			new String[] {
@@ -81,16 +81,14 @@ public class FileCompiler
 				encode.getName(),
 				"-classpath", outputDir.toAbsolutePath().toString()+";"
 						+ mavenDependencies + ";"
+						+ DependencyManager.getPath() + ";"
 						+ appRootPath + "\\..\\classes" + ";"
 						+ appRootPath + "\\..\\test-classes" + ";"
-						
-						+ appRootPath + "\\lib\\" + ";",
-						
-//						+ appRootPath + "\\lib\\aspectjrt-1.9.2.jar" + ";"
-//						+ appRootPath + "\\lib\\junit-4.13.jar" + ";"
-//						+ appRootPath + "\\lib\\hamcrest-all-1.3.jar" + ";"
-//						+ appRootPath + "\\lib\\junit-jupiter-api-5.6.2.jar" + ";"
-//						+ appRootPath + "\\lib\\junit-jupiter-params-5.6.2.jar",
+						+ appRootPath + "\\lib\\aspectjrt-1.9.2.jar" + ";"
+						+ appRootPath + "\\lib\\junit-4.13.jar" + ";"
+						+ appRootPath + "\\lib\\hamcrest-all-1.3.jar" + ";"
+						+ appRootPath + "\\lib\\junit-jupiter-api-5.6.2.jar" + ";"
+						+ appRootPath + "\\lib\\junit-jupiter-params-5.6.2.jar",
 				"-d", 
 				outputDir.toAbsolutePath().toString(), 
 				fileToCompile.toAbsolutePath().toString()

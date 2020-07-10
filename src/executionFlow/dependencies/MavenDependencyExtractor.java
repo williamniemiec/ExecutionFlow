@@ -1,4 +1,4 @@
-package executionFlow.util;
+package executionFlow.dependencies;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -11,17 +11,14 @@ import java.util.List;
 
 
 /**
- * Extracts project dependencies.
+ * Extracts Maven project dependencies.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0
- * @since		2.0
+ * @version		2.0.0
+ * @since		2.0.0
  */
-public class Extractors 
+public class MavenDependencyExtractor implements DependencyExtractor
 {
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
 	/**
 	 * Extracts maven dependencies.
 	 * 
@@ -30,7 +27,8 @@ public class Extractors
 	 * @implNote 	It will get all JAR files from 
 	 * <code>System.getProperty("user.home")\.m2\repository</code>
 	 */
-	public static List<Path> getMavenDependencies()
+	@Override
+	public List<Path> extract() 
 	{
 		final List<Path> dependencies = new ArrayList<>();
 		

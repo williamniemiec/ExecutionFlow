@@ -24,10 +24,9 @@ import java.util.regex.Pattern;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
+import executionFlow.dependencies.DependencyManager;
+import executionFlow.dependencies.MavenDependencyExtractor;
 import executionFlow.info.InvokerInfo;
-import executionFlow.util.DataUtils;
-import executionFlow.util.Extractors;
-import executionFlow.util.ZipManager;
 
 
 /**
@@ -258,7 +257,8 @@ public class JDB
 		findLibs(ExecutionFlow.getAppRootPath());
 		
 		// Configures JDB, indicating path of libraries, classes and source files
-		Path base = Path.of(System.getProperty("user.home"));
+		//Path base = Path.of(System.getProperty("user.home"));
+//		Path path_dependencies = Path.of(System.getProperty("user.home"), ".ef_dependencies");
 		
 		//methodClassRootPath = methodClassRootPath.relativize(base);
 		
@@ -273,12 +273,19 @@ public class JDB
 		// Gets maven dependencies (if any)
 		//String mavenDependencies = DataUtils.pathListToString(Extractors.getMavenDependencies(), ";", base, true);
 		// Gets maven dependencies (if any)
-		List<Path> dep = Extractors.getMavenDependencies();
-		File dependencies = base.resolve("dep.zip").toFile();
-		ZipManager zm = new ZipManager(dependencies);
+		//List<Path> dep = Extractors.getMavenDependencies();
+		//File file_dependencies = base.resolve("dep.zip").toFile();
+		//ZipManager zm = new ZipManager(file_dependencies);
 		//String mavenDependencies = DataUtils.pathListToString(dep, ";", base, false); 
 		
-		zm.put(dep);
+		if (!DependencyManager.hasDependencies()) {
+			ConsoleOutput.showInfo("Fetching dependencies...");
+			DependencyManager.register(new MavenDependencyExtractor());
+			DependencyManager.fetch();
+			//DependencyManager dm = new DependencyManager();
+			//zm.put(dep);
+			ConsoleOutput.showInfo("Fetch completed");
+		}
 		
 		
 		/*String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
@@ -289,7 +296,7 @@ public class JDB
 			
 			+ cp_junitPlatformConsole;
 		*/
-		String libs = libPath_relative + "*" + ";" + "\"" + testClassRootPath.relativize(base.resolve("dep.zip")).toString() + "\"";
+		String libs = libPath_relative + "*" + ";" + "\"" + testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\"";
 		
 		String jdb_classPath = ".;"+libs;
 		String jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString() + ";" + testClassRootPath.relativize(testMethodSrcPath).toString();
