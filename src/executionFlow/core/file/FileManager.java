@@ -282,7 +282,7 @@ public class FileManager implements Serializable
 				originalClassPath, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
-		} catch (IOException e) {			// If already exists a .original, this means
+		} catch (IOException e) {e.printStackTrace();			// If already exists a .original, this means
 			try {							// that last compiled file was not restored
 				revertCompilation();	
 				if (!lastWasError) {

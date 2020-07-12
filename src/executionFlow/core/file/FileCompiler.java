@@ -53,15 +53,18 @@ public class FileCompiler
 	 * @param		fileToCompile Path of source file to be compiled
 	 * @param		outputDir Path where generated .class will be saved
 	 * @param		encode File encoding
+	 * 
 	 * @throws		IOException If an error occurs during compilation
 	 */
 	public static void compile(Path fileToCompile, Path outputDir, FileEncoding encode) throws IOException
 	{
 		Main compiler = new Main();
 		MessageHandler m = new MessageHandler();
+		String mavenDependencies;
 		String appRootPath = ExecutionFlow.getAppRootPath();
 		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
 				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
+		
 		
 		// Gets dependencies (if any)
 		if (!DependencyManager.hasDependencies()) {
@@ -69,8 +72,7 @@ public class FileCompiler
 			DependencyManager.fetch();
 		}
 		
-		String mavenDependencies = DataUtils.pathListToString(DependencyManager.getDependencies(), ";", false);
-
+		mavenDependencies = DataUtils.pathListToString(DependencyManager.getDependencies(), ";", false);
 		
 		compiler.run(
 			new String[] {

@@ -760,10 +760,10 @@ public class JDB
             		System.out.println("=======");
             		
             		
-            		if (inMethod && currentLine == invocationLine + 1) {
-            			inMethod = false;
-            		}
-        			else {
+//            		if (inMethod && currentLine == invocationLine + 1) {
+//            			inMethod = false;
+//            		}
+//        			else {
 	            		// Checks if it is still within a constructor
 	            		if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
 	            			withinConstructor = false;
@@ -810,7 +810,7 @@ public class JDB
 	            		// Checks if it is an internal call
 	            		if (!withinOverloadCall)
 	            			withinOverloadCall = withinConstructor && srcLine.contains("this(");
-            		}
+//            		}
         		}
         		
 	    		if (endOfMethod) {

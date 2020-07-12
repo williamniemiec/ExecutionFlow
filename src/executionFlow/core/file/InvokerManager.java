@@ -21,8 +21,8 @@ import executionFlow.ExecutionFlow;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public class InvokerManager 
 {
@@ -61,6 +61,7 @@ public class InvokerManager
 	 * {@link #parse(FileManager)}
 	 * @param		autoDelete If true, if there are backup files, it will 
 	 * delete them after restore them
+	 * 
 	 * @throws		IOException If an error occurs during class deserialization
 	 * (while restoring backup files)
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
@@ -94,8 +95,10 @@ public class InvokerManager
 	 * 
 	 * @param		autoDelete If true, if there are backup files, it will 
 	 * delete them after restore them
+	 * 
 	 * @throws		IOException If an error occurs during class deserialization
 	 * (while restoring backup files)
+	 * 
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found  
 	 */
@@ -112,7 +115,9 @@ public class InvokerManager
 	 * Parses file from its {@link FileManager}.
 	 * 
 	 * @param		fm File manager of the file
+	 * 
 	 * @return		This object to allow chained calls
+	 * 
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
@@ -130,7 +135,9 @@ public class InvokerManager
 			save();
 		}
 		
+		ConsoleOutput.showInfo("Parsing...");
 		fm.parseFile();
+		ConsoleOutput.showInfo("Parse completed!");
 		
 		return this;
 	}
@@ -139,7 +146,9 @@ public class InvokerManager
 	 * Compiles file from its {@link FileManager}.
 	 * 
 	 * @param		fm File manager of the file
+	 * 
 	 * @return		This object to allow chained calls
+	 * 
 	 * @throws		IOException If an error occurs during compilation or during
 	 * class serialization
 	 */
@@ -157,7 +166,9 @@ public class InvokerManager
 			save();
 		}
 
+		ConsoleOutput.showInfo("Compiling...");
 		fm.createClassBackupFile().compileFile();
+		ConsoleOutput.showInfo("Compilation completed!");
 		
 		return this;
 	}
@@ -166,6 +177,7 @@ public class InvokerManager
 	 * Checks if the file has already been parsed.
 	 * 
 	 * @param		fm File manager of the file
+	 * 
 	 * @return		If the file has already been parsed
 	 */
 	public boolean wasParsed(FileManager fm)
@@ -177,6 +189,7 @@ public class InvokerManager
 	 * Checks if the file has already been compiled.
 	 * 
 	 * @param		fm File manager of the file
+	 * 
 	 * @return		If the file has already been compiled
 	 */
 	public boolean wasCompiled(FileManager fm)
@@ -230,6 +243,7 @@ public class InvokerManager
 	 * will be saved in {@link #files}.
 	 * 
 	 * @return		If the lists of file managers were retrieved
+	 * 
 	 * @throws 		IOException If an error occurs while deserializing the list
 	 * of file managers 
 	 * @throws 		ClassNotFoundException If class {@link FileManager} is not
@@ -278,6 +292,7 @@ public class InvokerManager
 	 * Restores all original files that have been modified.
 	 * 
 	 * @param		files List of modified files
+	 * 
 	 * @return		If the restore was successful
 	 */
 	private boolean restoreAll(Set<FileManager> files)
