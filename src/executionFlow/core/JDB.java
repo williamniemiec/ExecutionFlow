@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 
 import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
-import executionFlow.dependencies.DependencyManager;
-import executionFlow.dependencies.MavenDependencyExtractor;
+import executionFlow.dependency.DependencyManager;
+import executionFlow.dependency.MavenDependencyExtractor;
 import executionFlow.info.InvokerInfo;
 
 
@@ -630,7 +630,9 @@ public class JDB
 		private int methodDeclarationLine;
 		private int lastIfLine;
 		private boolean lastWasIf;
-		private boolean withinIf;
+//		private boolean withinIf;
+		boolean lastWasElseIf;
+		boolean withinElseIf;
 		
         
         //---------------------------------------------------------------------
@@ -716,35 +718,50 @@ public class JDB
             			}
             		}
             		
-            		if (lastWasIf && !srcLine.contains("else if")) {
-            			withinIf = true;
-            			lastWasIf = false;
-            		}
+//            		if (srcLine.contains("if ") || srcLine.contains("if(")) {
+//            			lastWasIf = false;
+//            			withinIf = false;
+//            		}
+//            		
+//            		if (lastWasIf && !srcLine.contains("else if")) {
+//            			withinIf = true;
+//            			lastWasIf = false;
+//            		}
+            		
+            		// se entrar no else if ignorar bloco seguinte contendo else if ou else
+//            		if (lastWasElseIf && !srcLine.contains("else ") && !srcLine.contains("else{")) {
+//            			withinElseIf = true;
+//            			lastWasElseIf = false;
+//            		}
+//            		
+//            		else if (withinElseIf && (srcLine.contains("else ") || srcLine.contains("else{") )) {
+//            			lastWasElseIf = false;
+//            			ignore = true;
+//            		}
+//            		
+//            		if (srcLine.contains("else if"))
+//            			lastWasElseIf = true;
+            		
             		
             		// Checks if it is in the constructor signature
             		if (srcLine.contains("@executionFlow.runtime.CollectInvokedMethods")) {
             			ignore = true;
             			methodDeclarationLine = currentLine;
             		}
-            		else if ( 	(currentLine != -1 && currentLine < methodDeclarationLine) || 
-            					(withinIf && srcLine.contains("else if"))	) {		// Avoids catching incorrect test path
+            		else if ( 	(currentLine != -1 && currentLine < methodDeclarationLine) //|| 
+            					/*(withinIf && srcLine.contains("else if"))*/	) {		// Avoids catching incorrect test path
             			ignore = true;
-            			withinIf = false;
+//            			withinIf = false;
             		}
             		else if (srcLine.contains(" class "))
             			ignore = true;
-            		
-            		
-            		//System.out.println("------ is: "+invokerSignature);
-            		System.out.println("----in: "+invokerName);
-            		
-            		
             		
             		if (methodDeclarationLine == 0 && currentLine > 0 && 
             				(line.contains(invokerName+".") || line.contains(invokerName+"(")))
             			methodDeclarationLine = currentLine;
             		
             		System.out.println("=======");
+            		System.out.println("in: "+invokerName);
             		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
             		System.out.println(isInternalCommand);
             		System.out.println(exitMethod);
