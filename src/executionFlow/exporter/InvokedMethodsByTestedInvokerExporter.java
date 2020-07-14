@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
 import executionFlow.util.CSV;
+import executionFlow.util.ConsoleOutput;
 import executionFlow.util.DataUtils;
 
 

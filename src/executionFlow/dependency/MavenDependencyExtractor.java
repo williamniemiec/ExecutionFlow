@@ -1,4 +1,4 @@
-package executionFlow.dependencies;
+package executionFlow.dependency;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

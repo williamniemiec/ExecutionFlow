@@ -5,7 +5,7 @@ package executionFlow.info;
  * Stores information about a method and the test method it belongs to.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.0
  */
 public class CollectorInfo 
@@ -29,12 +29,6 @@ public class CollectorInfo
 	 */
 	private InvokerInfo constructorInfo;
 	
-	/**
-	 * The order of a method is how many methods are called in this line before
-	 * it.
-	 */
-	private int order;
-	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
@@ -46,17 +40,13 @@ public class CollectorInfo
 	 * @param		methodInfo Information about a method
 	 * @param		testMethodInfo Information about the test method to which 
 	 * the method is called
-	 * @param		order Order in which the method is called. It is used when more
-	 * than one method is called in a single line. The order of a method is how
-	 * many methods are called in this line before it
 	 */
 	private CollectorInfo(InvokerInfo methodInfo, InvokerInfo constructorInfo, 
-			InvokerInfo testMethodInfo, int order)
+			InvokerInfo testMethodInfo)
 	{
 		this.methodInfo = methodInfo;
 		this.constructorInfo = constructorInfo;
 		this.testMethodInfo = testMethodInfo;
-		this.order = order;
 	}
 	
 	
@@ -77,7 +67,6 @@ public class CollectorInfo
 		private InvokerInfo methodInfo;
 		private InvokerInfo testMethodInfo;
 		private InvokerInfo constructorInfo;
-		private int order;
 		
 		
 		/**
@@ -126,23 +115,6 @@ public class CollectorInfo
 		}
 		
 		/**
-		 * @param		order Order in which the method is called. It is used
-		 * when more than one method is called in a single line. The order of a
-		 * method is how many methods are called in this line before it
-		 * @return		Builder to allow chained calls
-		 * @throws		IllegalArgumentException If order is less then zero
-		 */
-		public CollectorInfoBuilder order(int order)
-		{
-			if (order < 0)
-				throw new IllegalArgumentException("Order cannot be less then zero");
-			
-			this.order = order;
-			
-			return this;
-		}
-		
-		/**
 		 * Creates {@link CollectorInfo} instance. It is necessary to provide 
 		 * at least one of the following fields: <br />
 		 * <ul>
@@ -160,7 +132,7 @@ public class CollectorInfo
 						+ "at least one of the following fields: methodInfo, "
 						+ "testMethodInfo or constructorInfo");
 				
-			return new CollectorInfo(methodInfo, constructorInfo, testMethodInfo, order);
+			return new CollectorInfo(methodInfo, constructorInfo, testMethodInfo);
 		}
 	}
 	
@@ -174,8 +146,7 @@ public class CollectorInfo
 		return "CollectorInfo ["
 				+ "methodInfo=" + methodInfo 
 				+ ", testMethodInfo=" + testMethodInfo 
-				+ ", constructorInfo=" + constructorInfo 
-				+ ", order=" + order 
+				+ ", constructorInfo=" + constructorInfo
 			+ "]";
 	}
 
@@ -196,10 +167,5 @@ public class CollectorInfo
 	public InvokerInfo getConstructorInfo() 
 	{
 		return constructorInfo;
-	}
-	
-	public int getOrder()
-	{
-		return this.order;
 	}
 }

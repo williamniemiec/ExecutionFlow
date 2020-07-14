@@ -22,18 +22,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
 import executionFlow.dependency.DependencyManager;
 import executionFlow.dependency.MavenDependencyExtractor;
 import executionFlow.info.InvokerInfo;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
  * Computes test path from code debugging.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.2
  */
 public class JDB 
@@ -45,11 +45,6 @@ public class JDB
 	 * If true, displays shell output.
 	 */
 	private static final boolean DEBUG; 
-	
-	/**
-	 * Stores signature of the class of the method.
-	 */
-	private String classSignature;
 	
 	/**
 	 * Stores signature of the class of the test method.
@@ -68,11 +63,6 @@ public class JDB
 	 * Line of test method that the method is called.
 	 */
 	private int invocationLine;
-	
-	/**
-	 * Number of method invocations to be ignored before computing test path.
-	 */
-	private int skip;
 	
 	/**
 	 * Stores current test path.
@@ -110,28 +100,14 @@ public class JDB
 	
 	//-------------------------------------------------------------------------
 	//		Constructors
-	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------	
 	/**
-	 * Computes test path from code debugging. 
-	 * 
-	 * @param		skip Number of method invocations to be ignored before
-	 * computing test path
-	 */
-	public JDB(int skip)
-	{
-		this.skip = skip;
-		
-		testPath = new ArrayList<>();
-		testPaths = new ArrayList<>();
-	}
-	
-	/**
-	 * Computes test path from code debugging. Use this constructor if there is
-	 * no methods to be ignored before computing test path.
+	 * Computes test path from code debugging.
 	 */
 	public JDB()
 	{
-		this(0);
+		testPath = new ArrayList<>();
+		testPaths = new ArrayList<>();
 	}
 	
 	
@@ -196,11 +172,11 @@ public class JDB
 		Process process;			// JDB process
 		Path classRootPath;			// Root path where the compiled file of invoker class is
 		Path srcRootPath;			// Root path where the source file of the invoker is
+		Path testMethodSrcPath;		// Root path where the source file of test method class is. It 
+									// will be used as JDB root directory
 		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
 									// will be used as JDB root directory
 		
-		// Gets information about the invoker to be analyzed
-		classSignature = invokerInfo.getClassSignature();
 		
 		// Gets information about the test method of the invoker to be analyzed
 		testMethodSignature = testMethodInfo.getInvokerSignature();
@@ -208,22 +184,13 @@ public class JDB
 		classInvocationSignature = testMethodInfo.getClassSignature();
 		invocationLine = invokerInfo.getInvocationLine();
 		invokerSignature = invokerInfo.getInvokerSignature();
-		
-		
-		
 		invokerName = invokerSignature.substring(invokerSignature.lastIndexOf("."), invokerSignature.indexOf("("));
-		
-		
 		
 		// Gets paths
 		srcRootPath = extractRootPathDirectory(invokerInfo.getSrcPath(), invokerInfo.getPackage());
 		classRootPath = extractRootPathDirectory(invokerInfo.getClassPath(), invokerInfo.getPackage());
 		testClassRootPath = extractRootPathDirectory(testMethodInfo.getClassPath(), testMethodInfo.getPackage());
-		
-		
-		
-		Path testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
-		
+		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
 		
 		// Executes JDB
 		process = jdb_start(testClassRootPath, srcRootPath, testMethodSrcPath, classRootPath);
@@ -253,91 +220,40 @@ public class JDB
 		if (srcRootPath == null)
 			throw new IllegalStateException("Source file path cannot be empty");
 		
+		String jdb_classPath, jdb_srcPath, methodClassPath, libPath_relative;
+		ProcessBuilder pb;
+		
 		// Gets paths
 		findLibs(ExecutionFlow.getAppRootPath());
 		
 		// Configures JDB, indicating path of libraries, classes and source files
-		//Path base = Path.of(System.getProperty("user.home"));
-//		Path path_dependencies = Path.of(System.getProperty("user.home"), ".ef_dependencies");
+		methodClassPath = testClassRootPath.relativize(methodClassRootPath).toString();
+		libPath_relative = testClassRootPath.relativize(libPath).toString() + "\\";
 		
-		//methodClassRootPath = methodClassRootPath.relativize(base);
-		
-		String methodClassPath = testClassRootPath.relativize(methodClassRootPath).toString();
-		String libPath_relative = testClassRootPath.relativize(libPath).toString()+"\\";
-		
-//		String methodClassPath = base.relativize(methodClassRootPath).toString();
-//		String libPath_relative = base.relativize(libPath).toString()+"\\";
-		
-		//String cp_junitPlatformConsole = libPath_relative+"junit-platform-console-standalone-1.6.2.jar";
-		
-		// Gets maven dependencies (if any)
-		//String mavenDependencies = DataUtils.pathListToString(Extractors.getMavenDependencies(), ";", base, true);
-		// Gets maven dependencies (if any)
-		//List<Path> dep = Extractors.getMavenDependencies();
-		//File file_dependencies = base.resolve("dep.zip").toFile();
-		//ZipManager zm = new ZipManager(file_dependencies);
-		//String mavenDependencies = DataUtils.pathListToString(dep, ";", base, false); 
-		
+		// Fetch dependencies
 		if (!DependencyManager.hasDependencies()) {
 			ConsoleOutput.showInfo("Fetching dependencies...");
 			DependencyManager.register(new MavenDependencyExtractor());
 			DependencyManager.fetch();
-			//DependencyManager dm = new DependencyManager();
-			//zm.put(dep);
 			ConsoleOutput.showInfo("Fetch completed");
 		}
 		
+		jdb_classPath = ".;" + libPath_relative + "*" + ";" 
+				+ "\"" + testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*" + "\"";
+		jdb_classPath += methodClassPath.isEmpty() ? ";..\\classes\\" : ";" + methodClassPath;		
 		
-		/*String libs = libPath_relative + "aspectjrt-1.9.2.jar" + ";"
-			+ libPath_relative + "aspectjtools.jar" + ";"
-			+ mavenDependencies + ";"
-			+ libPath_relative + "junit-4.13.jar" + ";"
-			+ libPath_relative + "hamcrest-all-1.3.jar" + ";"
-			
-			+ cp_junitPlatformConsole;
-		*/
-		String libs = libPath_relative + "*" + ";" + "\"" + testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*" + "\"";
+		jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString() + ";" 
+				+ testClassRootPath.relativize(testMethodSrcPath).toString();		
 		
-		String jdb_classPath = ".;"+libs;
-		String jdb_srcPath = testClassRootPath.relativize(srcRootPath).toString() + ";" + testClassRootPath.relativize(testMethodSrcPath).toString();
-		//String jdb_srcPath = base.relativize(srcRootPath).toString() + ";" + base.relativize(testMethodSrcPath).toString();
-		
-		if (!methodClassPath.isEmpty())
-			jdb_classPath += ";"+methodClassPath;
-		else
-//			jdb_classPath += ";" + base.relativize(testClassRootPath) + "\\" + "..\\classes\\";
-			jdb_classPath += ";..\\classes\\";
-		
-		//String jdb_paths = "-sourcepath "+jdb_srcPath+" "+"-classpath "+jdb_classPath;
-		
-		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("testClassRootPath: "+testClassRootPath);
-			//ConsoleOutput.showDebug("jdb_paths: "+jdb_paths);
-		}
-		// -----{ END DEBUG }-----
-		
-//		ProcessBuilder pb = new ProcessBuilder(
-//			"cmd.exe", "/c", "jdb " 
-//			+ "-sourcepath " + "\"" + jdb_srcPath + "\"" + " " 
-//			+ "-classpath " + "\"" + jdb_classPath + "\"",
-//			"org.junit.runner.JUnitCore", classInvocationSignature
-//		);
-		
-		ProcessBuilder pb = new ProcessBuilder(
-			"cmd.exe", "/c", "jdb " 
-			+ "-sourcepath " + jdb_srcPath + " " 
-			+ "-classpath " + jdb_classPath,
+		pb = new ProcessBuilder(
+			"cmd.exe", "/c", 
+			"jdb " 
+				+ "-sourcepath " + jdb_srcPath + " " 
+				+ "-classpath " + jdb_classPath,
 			"org.junit.runner.JUnitCore", classInvocationSignature
 		);
 		
-		
-		//System.out.println(jdb_paths);
-		System.out.println(classInvocationSignature);
-		
-		
 		pb.directory(testClassRootPath.toFile());
-//		pb.directory(base.toFile());
 		
 		return pb.start();
 	}
@@ -351,10 +267,9 @@ public class JDB
 	 */
 	private void jdb_methodVisitor(Process process) throws IOException 
 	{
-		boolean wasNewIteration = false;
-		//int currentSkip = skip;
 		JDBOutput out = new JDBOutput(process);
 		JDBInput in = new JDBInput(process);
+		boolean wasNewIteration = false;
 		
 		
 		// Initializes JDB
@@ -366,6 +281,7 @@ public class JDB
 			while (!wasNewIteration && !out.read()) { continue; }
 			
 			wasNewIteration = false;
+			
 			if (endOfMethod) {
 				// Checks if there is unsaved test path
 				if (testPath.size() > 0) {	// If there is one, save it
@@ -374,27 +290,14 @@ public class JDB
 			}
 			// Checks if has exit the method
 			else if (exitMethod && !isInternalCommand) {
-//				System.out.println("skip: "+currentSkip); currentSkip--; System.out.println("skip: "+currentSkip);
+				// Saves test path
+				testPaths.add(testPath);
 				
-				// Checks if has to skip collected test path
-//				if (currentSkip == -1) {
-					// Saves test path
-					testPaths.add(testPath);System.out.println("ADDED: "+testPath);
-					
-					// Prepare for next test path
-					testPath = new ArrayList<>();
-					
-					// Resets skip
-//					currentSkip = skip;
-					
-					// Checks if method is within a loop
-					in.send("cont");
-//				} 
-//				else {
-//					testPath.clear();	// Discards computed test path
-//					skipped = true;
-//					in.send("step into");
-//				}
+				// Prepare for next test path
+				testPath = new ArrayList<>();
+				
+				// Checks if method is within a loop
+				in.send("cont");
 				
 				// Resets exit method
 				exitMethod = false;
@@ -623,16 +526,10 @@ public class JDB
 		private boolean withinOverloadCall;
 		private boolean lastAddWasReturn;
 		private int lastLineAdded = -1;
+		private int methodDeclarationLine;
 		private String line;
 		private String srcLine = "";
 		private String lastSrcLine = "";
-		//private String invokerSignatureWithoutParameters;
-		private int methodDeclarationLine;
-		private int lastIfLine;
-		private boolean lastWasIf;
-//		private boolean withinIf;
-		boolean lastWasElseIf;
-		boolean withinElseIf;
 		
         
         //---------------------------------------------------------------------
@@ -647,7 +544,6 @@ public class JDB
 		public JDBOutput(Process p)
 		{
 			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			//invokerSignatureWithoutParameters = invokerSignature.substring(0, invokerSignature.indexOf("("));
 		}
 		
 		
@@ -718,40 +614,13 @@ public class JDB
             			}
             		}
             		
-//            		if (srcLine.contains("if ") || srcLine.contains("if(")) {
-//            			lastWasIf = false;
-//            			withinIf = false;
-//            		}
-//            		
-//            		if (lastWasIf && !srcLine.contains("else if")) {
-//            			withinIf = true;
-//            			lastWasIf = false;
-//            		}
-            		
-            		// se entrar no else if ignorar bloco seguinte contendo else if ou else
-//            		if (lastWasElseIf && !srcLine.contains("else ") && !srcLine.contains("else{")) {
-//            			withinElseIf = true;
-//            			lastWasElseIf = false;
-//            		}
-//            		
-//            		else if (withinElseIf && (srcLine.contains("else ") || srcLine.contains("else{") )) {
-//            			lastWasElseIf = false;
-//            			ignore = true;
-//            		}
-//            		
-//            		if (srcLine.contains("else if"))
-//            			lastWasElseIf = true;
-            		
-            		
             		// Checks if it is in the constructor signature
             		if (srcLine.contains("@executionFlow.runtime.CollectInvokedMethods")) {
             			ignore = true;
             			methodDeclarationLine = currentLine;
             		}
-            		else if ( 	(currentLine != -1 && currentLine < methodDeclarationLine) //|| 
-            					/*(withinIf && srcLine.contains("else if"))*/	) {		// Avoids catching incorrect test path
+            		else if (currentLine != -1 && currentLine < methodDeclarationLine) {
             			ignore = true;
-//            			withinIf = false;
             		}
             		else if (srcLine.contains(" class "))
             			ignore = true;
@@ -777,57 +646,50 @@ public class JDB
             		System.out.println("=======");
             		
             		
-//            		if (inMethod && currentLine == invocationLine + 1) {
-//            			inMethod = false;
-//            		}
-//        			else {
-	            		// Checks if it is still within a constructor
-	            		if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
-	            			withinConstructor = false;
-	            			exitMethod = true;
-	            			readyToReadInput = true;
+            		// Checks if it is still within a constructor
+            		if (inMethod && withinConstructor && (isEmptyMethod() || line.contains(testMethodSignature))) {
+            			withinConstructor = false;
+            			exitMethod = true;
+            			readyToReadInput = true;
+            		}
+            		// Checks if last method was skipped
+            		else if (skipped) {
+            			newIteration = false;
+            			skipped = false;
+            		}
+
+        			newIteration = isNewIteration();
+        			
+            		if (!isInternalCommand && !exitMethod && !ignore) {
+	        			if (inMethod) {
+	        				int lineNumber = getSrcLine(srcLine);
+	        				
+	        				// Checks if returned from the method
+	        				if (line.contains(testMethodSignature)) {
+	        					exitMethod = true;
+	        					
+	        					newIteration = false;
+	        					inMethod = false;
+	        					lastLineAdded = -1;
+	        				} 
+	        				// Checks if it is still in the method
+	        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
+	        					if (!isEmptyMethod() && !lastAddWasReturn) {
+	        						testPath.add(lineNumber);System.out.println("add: "+lineNumber);
+	        						lastLineAdded = lineNumber;
+	        						
+	        						lastAddWasReturn = srcLine.contains("return "); 
+	        					}
+	        				}
 	            		}
-	            		// Checks if last method was skipped
-	            		else if (skipped) {
-	            			newIteration = false;
-	            			skipped = false;
+	        			else if (willEnterInMethod()) {
+	            			inMethod = true;
 	            		}
-	
-	        			newIteration = isNewIteration();
-	        			
-	            		if (!isInternalCommand && !exitMethod && !ignore) {
-		        			if (inMethod) {
-		        				//int lineNumber = jdb_getLine(line);
-		        				int lineNumber = getSrcLine(srcLine);
-		        				
-		        				// Checks if returned from the method
-		        				if (line.contains(testMethodSignature)) {
-		        					exitMethod = true;
-		        					
-		        					newIteration = false;
-		        					inMethod = false;
-		        					lastLineAdded = -1;
-		        				} 
-		        				// Checks if it is still in the method
-		        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
-		        					if (!isEmptyMethod() && !lastAddWasReturn) {
-		        						testPath.add(lineNumber);System.out.println("add: "+lineNumber);
-		        						lastLineAdded = lineNumber;
-		        						
-		        						lastAddWasReturn = srcLine.contains("return ");
-		        						lastWasIf = (srcLine.contains("if ") || srcLine.contains("if(")) && !srcLine.contains(" else"); 
-		        					}
-		        				}
-		            		}
-		        			else if (willEnterInMethod()) {
-		            			inMethod = true;
-		            		}
-	            		}
-	            		
-	            		// Checks if it is an internal call
-	            		if (!withinOverloadCall)
-	            			withinOverloadCall = withinConstructor && srcLine.contains("this(");
-//            		}
+            		}
+            		
+            		// Checks if it is an internal call
+            		if (!withinOverloadCall)
+            			withinOverloadCall = withinConstructor && srcLine.contains("this(");
         		}
         		
 	    		if (endOfMethod) {
@@ -916,8 +778,8 @@ public class JDB
 		 */
 		private boolean isInternalMethod()
 		{
-			return 	/*!line.contains(classSignature)*/ /*!line.contains(invokerName)*/ 
-					(!line.contains(invokerName+".") && !line.contains(invokerName+"(")) && 
+			return 	!line.contains(invokerName+".") && 
+					!line.contains(invokerName+"(") && 
 					!line.contains(classInvocationSignature);
 		}
 		
@@ -1003,10 +865,9 @@ public class JDB
 					line.contains("jdk.") || 
 					line.contains("aspectj.") || 
 					line.contains("executionFlow.runtime") || 
-					srcLine.contains("package ") || 
-					(
-						/*!line.contains(invokerSignatureWithoutParameters)*/ 
-							(!line.contains(invokerName+".") && !line.contains(invokerName+"(")) && 
+					srcLine.contains("package ") || (
+						!line.contains(invokerName+".") && 
+						!line.contains(invokerName+"(") && 
 						!line.contains(testMethodSignature)
 					);
 		}

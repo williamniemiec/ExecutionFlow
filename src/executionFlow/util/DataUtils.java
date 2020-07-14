@@ -2,7 +2,6 @@ package executionFlow.util;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -19,8 +18,8 @@ import java.util.Set;
  * Contains methods that perform data manipulation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public class DataUtils 
 {
@@ -224,8 +223,6 @@ public class DataUtils
 				response.append(base.relativize(dependency));
 				response.append(";");
 			}
-//			response.append(base.relativize(dependency));
-//			response.append(";");
 		}
 		
 		if (response.length() > 1)
@@ -267,8 +264,6 @@ public class DataUtils
 				response.append(dependency);
 				response.append(";");
 			}
-			//response.append(dependency);
-			//response.append(";");
 		}
 		
 		if (response.length() > 1)

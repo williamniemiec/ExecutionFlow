@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import executionFlow.ConsoleOutput;
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
@@ -15,6 +14,7 @@ import executionFlow.core.file.parser.factory.PreTestMethodFileParserFactory;
 import executionFlow.exporter.TestedInvokersExporter;
 import executionFlow.info.InvokerInfo;
 import executionFlow.info.MethodInvokerInfo;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -150,12 +150,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Performs pre-processing of the file containing the test method so 
 			// that the collection of the methods is done even if an assert fails
-			if (firstTime) {System.out.println(collectedMethods);
+			if (firstTime) {
 				ConsoleOutput.showInfo("Pre-processing test method...");
-				
-				
-				System.out.println(testMethodFileManager);
-		
 				
 				// Enables checkpoint
 				checkpoint.enable();

@@ -12,14 +12,15 @@ import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.*;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
  * Computes test path for collected constructors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
 {
@@ -151,7 +152,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				ConsoleOutput.showInfo("Computing test path of constructor "
 					+ collector.getConstructorInfo().getInvokerSignature()+"...");
 
-				JDB jdb = new JDB(collector.getOrder());					
+				JDB jdb = new JDB();					
 				tp_jdb = jdb.run(collector.getConstructorInfo(), collector.getTestMethodInfo()).getTestPaths();
 				
 				if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())

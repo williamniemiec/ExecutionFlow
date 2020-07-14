@@ -15,8 +15,8 @@ import java.util.List;
  * Responsible for reading and writing CSV files.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public class CSV
 {

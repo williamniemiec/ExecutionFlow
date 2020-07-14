@@ -17,6 +17,7 @@ import executionFlow.core.file.ParserType;
 import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -24,7 +25,7 @@ import executionFlow.info.SignaturesInfo;
  * or a constructor. This is the main class of the application.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -83,7 +84,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 

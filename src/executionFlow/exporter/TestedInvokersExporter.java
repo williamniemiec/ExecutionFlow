@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.ConsoleOutput;
 import executionFlow.info.SignaturesInfo;
 import executionFlow.util.CSV;
+import executionFlow.util.ConsoleOutput;
 import executionFlow.util.DataUtils;
 
 

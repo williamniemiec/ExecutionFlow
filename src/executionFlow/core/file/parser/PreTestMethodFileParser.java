@@ -9,8 +9,8 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.ConsoleOutput;
 import executionFlow.core.file.FileEncoding;
+import executionFlow.util.ConsoleOutput;
 import executionFlow.util.CurlyBracketBalance;
 import executionFlow.util.DataUtils;
 

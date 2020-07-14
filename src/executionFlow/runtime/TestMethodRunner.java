@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 
-import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
-import executionFlow.dependencies.DependencyManager;
-import executionFlow.dependencies.MavenDependencyExtractor;
+import executionFlow.dependency.DependencyManager;
+import executionFlow.dependency.MavenDependencyExtractor;
 import executionFlow.info.MethodInvokerInfo;
+import executionFlow.util.ConsoleOutput;
 
 
 /**

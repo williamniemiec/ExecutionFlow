@@ -7,10 +7,10 @@ import org.aspectj.bridge.IMessage;
 import org.aspectj.bridge.MessageHandler;
 import org.aspectj.tools.ajc.Main;
 
-import executionFlow.ConsoleOutput;
 import executionFlow.ExecutionFlow;
-import executionFlow.dependencies.DependencyManager;
-import executionFlow.dependencies.MavenDependencyExtractor;
+import executionFlow.dependency.DependencyManager;
+import executionFlow.dependency.MavenDependencyExtractor;
+import executionFlow.util.ConsoleOutput;
 import executionFlow.util.DataUtils;
 
 
@@ -73,7 +73,7 @@ public class FileCompiler
 		}
 		
 		mavenDependencies = DataUtils.pathListToString(DependencyManager.getDependencies(), ";", false);
-		
+
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 

@@ -3,8 +3,8 @@ package executionFlow.exporter;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.ConsoleOutput;
 import executionFlow.info.SignaturesInfo;
+import executionFlow.util.ConsoleOutput;
 
 
 /**

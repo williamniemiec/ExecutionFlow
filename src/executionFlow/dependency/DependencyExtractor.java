@@ -1,4 +1,4 @@
-package executionFlow.dependencies;
+package executionFlow.dependency;
 
 import java.nio.file.Path;
 import java.util.List;

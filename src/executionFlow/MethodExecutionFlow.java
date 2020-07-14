@@ -14,14 +14,15 @@ import executionFlow.exporter.InvokedMethodsByTestedInvokerExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
 import executionFlow.runtime.MethodCollector;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
  * Computes test path for collected methods.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
 {
@@ -163,7 +164,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					ConsoleOutput.showInfo("Computing test path of method "
 						+ collector.getMethodInfo().getInvokerSignature()+"...");
 
-					JDB jdb = new JDB(collector.getOrder());	
+					JDB jdb = new JDB();	
 					tp_jdb = jdb.run(collector.getMethodInfo(), collector.getTestMethodInfo()).getTestPaths();
 					
 					if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())
