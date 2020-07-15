@@ -46,6 +46,8 @@ public abstract class ExecutionFlow
 	 */
 	private static final boolean DEVELOPMENT;
 	
+	protected static final Export EXPORT;
+	
 	/**
 	 * Stores computed test paths from a class.<br />
 	 * <ul>
@@ -85,6 +87,14 @@ public abstract class ExecutionFlow
 	 */
 	static {
 		DEVELOPMENT = true;
+	}
+	
+	/**
+	 * Sets test path export type.
+	 */
+	static {
+		EXPORT = Export.CONSOLE;
+		//EXPORT = Export.FILE;
 	}
 	
 

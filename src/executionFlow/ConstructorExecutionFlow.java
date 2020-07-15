@@ -41,8 +41,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = new ConsoleExporter();
-		//exporter = new FileExporter("testPaths", true);
+		exporter = EXPORT.equals(Export.CONSOLE) ? new ConsoleExporter() : 
+			new FileExporter("results", true);
 	}
 	
 	
@@ -95,8 +95,9 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			return this;
 		
 		List<List<Integer>> tp_jdb;
-		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = 
-				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedConstructor", "testPaths");
+		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = isDevelopment() ?
+				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedConstructor", "examples\\results") :
+				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedConstructor", "results");
 		
 		
 		// Generates test path for each collected method

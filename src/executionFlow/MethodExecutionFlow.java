@@ -10,6 +10,7 @@ import executionFlow.core.file.FileManager;
 import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
 import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.FileExporter;
 import executionFlow.exporter.InvokedMethodsByTestedInvokerExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
@@ -48,8 +49,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = new ConsoleExporter();
-		//exporter = new FileExporter("testPaths", false);
+		exporter = EXPORT.equals(Export.CONSOLE) ? new ConsoleExporter() : 
+			new FileExporter("results", false);
 	}
 	
 	
@@ -99,8 +100,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 			return this;
 		
 		List<List<Integer>> tp_jdb;
-		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = 
-				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedMethod", "testPaths");
+		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = isDevelopment() ?
+				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedMethod", "examples\\results") :
+				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedMethod", "results");
 		
 		
 		// Generates test path for each collected method
@@ -174,10 +176,6 @@ public class MethodExecutionFlow extends ExecutionFlow
 					
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
-					
-					
-					System.out.println("CPT: "+computedTestPaths);
-					
 					
 					// Exports invoked methods by tested method to a CSV
 					if (exportInvokedMethods) {
