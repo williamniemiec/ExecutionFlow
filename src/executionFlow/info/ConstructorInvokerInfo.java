@@ -29,7 +29,7 @@ public class ConstructorInvokerInfo extends InvokerInfo
 	private ConstructorInvokerInfo(Path classPath, Path srcPath, int invocationLine,
 			String constructorSignature, Class<?>[] parameterTypes, Object[] args) 
 	{
-		this.classPath = classPath;
+		this.binPath = classPath;
 		this.srcPath = srcPath;
 		this.invokerSignature = constructorSignature;
 		this.parameterTypes = parameterTypes;
@@ -217,7 +217,7 @@ public class ConstructorInvokerInfo extends InvokerInfo
 	public String toString() 
 	{
 		return "ConstructorInvokerInfo ["
-				+ "classPath=" + classPath 
+				+ "classPath=" + binPath 
 				+ ", srcPath=" + srcPath
 				+ ", classSignature=" + getClassSignature()
 				+ ", classPackage=" + getPackage()

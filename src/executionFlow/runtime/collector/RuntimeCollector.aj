@@ -1,4 +1,4 @@
-package executionFlow.runtime;
+package executionFlow.runtime.collector;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -7,6 +7,8 @@ import java.util.Map;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokerInfo;
+import executionFlow.runtime.SkipCollection;
+import executionFlow.runtime.SkipInvoker;
 
 
 /**
@@ -18,7 +20,7 @@ import executionFlow.info.MethodInvokerInfo;
  * @apiNote		It will ignore methods with {@link SkipInvoker} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.0
  */
 public abstract aspect RuntimeCollector 
@@ -56,7 +58,6 @@ public abstract aspect RuntimeCollector
 	protected static MethodInvokerInfo testMethodInfo;
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
-	protected static int order;
 	protected static Object[] testMethodArgs;
 	
 	
@@ -142,7 +143,6 @@ public abstract aspect RuntimeCollector
 		testMethodSignature = null;
 		skipCollection = false;
 		lastInvocationLine = 0;
-		order = 0;
 	}
 	
 	/**

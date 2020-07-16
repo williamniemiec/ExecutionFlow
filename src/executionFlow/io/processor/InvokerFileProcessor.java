@@ -1,4 +1,4 @@
-package executionFlow.core.file.parser;
+package executionFlow.io.processor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,21 +10,21 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.core.file.FileEncoding;
+import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.CurlyBracketBalance;
 import executionFlow.util.DataUtils;
 
 
 /**
- * Parses java file adding instructions in parts of the code that does not 
+ * Processes java file adding instructions in parts of the code that does not 
  * exist when converting it to bytecode.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
- * @since 		1.4
+ * @since 		2.0.0
  */
-public class InvokerFileParser extends FileParser
+public class InvokerFileProcessor extends FileProcessor
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -66,7 +66,7 @@ public class InvokerFileParser extends FileParser
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public InvokerFileParser(Path filepath, String outputFilename)
+	public InvokerFileProcessor(Path filepath, String outputFilename)
 	{
 		this(filepath, null, outputFilename);
 	}
@@ -80,7 +80,7 @@ public class InvokerFileParser extends FileParser
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public InvokerFileParser(Path filepath, Path outputDir, String outputFilename)
+	public InvokerFileProcessor(Path filepath, Path outputDir, String outputFilename)
 	{
 		this.file = filepath;
 		this.outputDir = outputDir;
@@ -98,7 +98,7 @@ public class InvokerFileParser extends FileParser
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public InvokerFileParser(Path filepath, Path outputDir, String outputFilename, 
+	public InvokerFileProcessor(Path filepath, Path outputDir, String outputFilename, 
 			String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -114,7 +114,7 @@ public class InvokerFileParser extends FileParser
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
 	 */ 
-	public InvokerFileParser(Path filepath, Path outputDir, String outputFilename,
+	public InvokerFileProcessor(Path filepath, Path outputDir, String outputFilename,
 			FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -132,7 +132,7 @@ public class InvokerFileParser extends FileParser
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public InvokerFileParser(Path filepath, Path outputDir, String outputFilename,
+	public InvokerFileProcessor(Path filepath, Path outputDir, String outputFilename,
 			FileEncoding encode, String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename, encode);
@@ -144,15 +144,15 @@ public class InvokerFileParser extends FileParser
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Parses file adding instructions in parts of the code that does not exist 
-	 * when converting it to bytecode. Besides, modifies the code so that
+	 * Processes the file adding instructions in parts of the code that does not
+	 * exist when converting it to bytecode. Besides, modifies the code so that
 	 * {@link executionFlow.core.JDB} computes the test path correctly.
 	 * 
 	 * @throws		IOException If file encoding is incorrect or if file cannot
 	 * be read / written
 	 */
 	@Override
-	public String parseFile() throws IOException
+	public String processFile() throws IOException
 	{
 		if (file == null) { return ""; }
 

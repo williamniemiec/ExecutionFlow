@@ -1,4 +1,4 @@
-package executionFlow.core;
+package executionFlow;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.ExecutionFlow;
 import executionFlow.dependency.DependencyManager;
 import executionFlow.dependency.MavenDependencyExtractor;
 import executionFlow.info.InvokerInfo;

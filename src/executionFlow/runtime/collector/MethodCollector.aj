@@ -1,4 +1,4 @@
-package executionFlow.runtime;
+package executionFlow.runtime.collector;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -8,6 +8,9 @@ import java.util.List;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokerInfo;
+import executionFlow.runtime.SkipCollection;
+import executionFlow.runtime.SkipInvoker;
+import executionFlow.runtime._SkipInvoker;
 
 
 /**
@@ -24,7 +27,7 @@ import executionFlow.info.MethodInvokerInfo;
  * and all methods from classes with {@link SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
@@ -137,7 +140,6 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// If the method has already been collected, skip it (avoids collect duplicate methods)
 		if (collectedMethods.contains(key)) {
-			order++;
 			return; 
 		}
 		
@@ -151,17 +153,10 @@ public aspect MethodCollector extends RuntimeCollector
 			e1.printStackTrace();
 		}
 		
-		// Gets method signature
-		//String methodSignature = CollectorExecutionFlow.extractMethodSignature(signature);
-		
-		if (lastInvocationLine != invocationLine) {
-			order = 0;
-		}
-		
 		// Collects the method
 		try {
 			MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-				.classPath(classPath)
+				.binPath(classPath)
 				.methodSignature(signature)
 				.methodName(methodName)
 				.returnType(returnType)
@@ -174,7 +169,6 @@ public aspect MethodCollector extends RuntimeCollector
 			CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
-				.order(order++)
 				.build();
 			
 			lastInvocationLine = invocationLine;
@@ -186,12 +180,10 @@ public aspect MethodCollector extends RuntimeCollector
 			if (methodCollector.containsKey(invocationLine)) {
 				List<CollectorInfo> list = methodCollector.get(invocationLine);
 				
-				
-				if (/*list.contains(ci) &&*/ !isRepeatedTest) {
+	
+				if (!isRepeatedTest) {
 					list.add(ci);
 				}
-				else
-					order--;	// Undo order increment
 			} 
 			// Else stores the method with its arguments and constructor
 			else {	

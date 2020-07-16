@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * all collectors will ignore it.
  *  
  * @apiNote		Must be used exclusively by 
- * {@link executionFlow.core.file.parser.FileParser}
+ * {@link executionFlow.io.processor.FileParser}
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5

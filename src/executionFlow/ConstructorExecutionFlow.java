@@ -5,13 +5,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import executionFlow.core.JDB;
-import executionFlow.core.file.FileManager;
-import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
-import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.*;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
+import executionFlow.io.FileManager;
+import executionFlow.io.processor.factory.InvokerFileProcessorFactory;
+import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.util.ConsoleOutput;
 
 
@@ -41,7 +40,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = EXPORT.equals(Export.CONSOLE) ? new ConsoleExporter() : 
+		exporter = EXPORT.equals(TestPathExport.CONSOLE) ? new ConsoleExporter() : 
 			new FileExporter("results", true);
 	}
 	
@@ -116,7 +115,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				collector.getConstructorInfo().getSrcPath(), 
 				collector.getConstructorInfo().getClassDirectory(),
 				collector.getConstructorInfo().getPackage(),
-				new InvokerFileParserFactory()
+				new InvokerFileProcessorFactory()
 			);
 			
 			// Gets FileManager for test method file
@@ -124,7 +123,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				collector.getTestMethodInfo().getSrcPath(), 
 				collector.getTestMethodInfo().getClassDirectory(),
 				collector.getTestMethodInfo().getPackage(),
-				new TestMethodFileParserFactory()
+				new TestMethodFileProcessorFactory()
 			);
 			
 			

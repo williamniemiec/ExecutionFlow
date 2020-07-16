@@ -1,4 +1,4 @@
-package executionFlow.core.file.parser;
+package executionFlow.io.processor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,20 +7,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import executionFlow.core.file.FileEncoding;
+import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
 
 
 /**
- * Parses test java file adding {@link executionFlow.runtime._SkipMethod
+ * Processes test java file adding {@link executionFlow.runtime._SkipMethod
  * _SkipMethod} annotation in all tests to disable collectors during the 
  * execution of {@link executionFlow.core.JDB JDB}.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.4
+ * @version		2.0.0
+ * @since		2.0.0
  */
-public class TestMethodFileParser extends FileParser
+public class TestMethodFileProcessor extends FileProcessor
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -60,7 +60,7 @@ public class TestMethodFileParser extends FileParser
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public TestMethodFileParser(Path filepath, String outputFilename)
+	public TestMethodFileProcessor(Path filepath, String outputFilename)
 	{
 		this(filepath, null, outputFilename);
 	}
@@ -74,7 +74,7 @@ public class TestMethodFileParser extends FileParser
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename)
+	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename)
 	{
 		this.file = filepath;
 		this.outputDir = outputDir;
@@ -92,7 +92,7 @@ public class TestMethodFileParser extends FileParser
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename, 
+	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename, 
 			String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -109,7 +109,7 @@ public class TestMethodFileParser extends FileParser
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
 	 */ 
-	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename, 
+	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename, 
 			FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -128,7 +128,7 @@ public class TestMethodFileParser extends FileParser
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public TestMethodFileParser(Path filepath, Path outputDir, String outputFilename, 
+	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename, 
 			FileEncoding encode, String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename, encode);
@@ -143,20 +143,18 @@ public class TestMethodFileParser extends FileParser
 	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
 	 * test methods.
 	 * 
-	 * @return		Path to parsed file
+	 * @return		Path to processed file
 	 * 
 	 * @throws		IOException If file encoding is incorrect or if file cannot
 	 * be read / written
 	 */
 	@Override
-	public String parseFile() throws IOException
+	public String processFile() throws IOException
 	{
 		if (file == null) { return ""; }
 
 		String line;
 		File outputFile;
-//		Pattern pattern_print = Pattern.compile("System\\.out\\.print(ln)?\\(.*\\);");
-//		Matcher matcher_print;
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)

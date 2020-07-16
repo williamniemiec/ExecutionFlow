@@ -11,8 +11,8 @@ import java.util.Arrays;
  * Stores information about a method.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public class MethodInvokerInfo extends InvokerInfo
 {
@@ -29,7 +29,7 @@ public class MethodInvokerInfo extends InvokerInfo
 	/**
 	 * Stores information about a method.
 	 * 
-	 * @param		classPath Method class file path
+	 * @param		binPath Method compiled file path
 	 * @param		srcPath Path where source file is
 	 * @param		invocationLine Line of test method where method is called
 	 * @param		methodSignature Signature of the method
@@ -38,11 +38,11 @@ public class MethodInvokerInfo extends InvokerInfo
 	 * @param		parameterTypes Types of method's parameters
 	 * @param		args Method's arguments
 	 */
-	private MethodInvokerInfo(Path classPath, Path srcPath, int invocationLine,
+	private MethodInvokerInfo(Path binPath, Path srcPath, int invocationLine,
 			String methodSignature, String methodName,
 			Class<?> returnType, Class<?>[] parameterTypes, Object[] args) 
 	{
-		this.classPath = classPath;
+		this.binPath = binPath;
 		this.srcPath = srcPath;
 		this.invokerSignature = methodSignature;
 		this.methodName = methodName;
@@ -60,7 +60,7 @@ public class MethodInvokerInfo extends InvokerInfo
 	 * Builder for {@link MethodInvokerInfo}. It is necessary to fill all 
 	 * required fields. The required fields are: <br />
 	 * <ul>
-	 * 	<li>classPath</li>
+	 * 	<li>binPath</li>
 	 * 	<li>srcPath</li>
 	 * 	<li>methodSignature</li>
 	 * </ul>
@@ -68,7 +68,7 @@ public class MethodInvokerInfo extends InvokerInfo
 	public static class MethodInvokerInfoBuilder
 	{
 		private String methodName;
-		private Path classPath;
+		private Path binPath;
 		private Path srcPath;
 		private String invokerSignature;
 		private int invocationLine;
@@ -95,18 +95,18 @@ public class MethodInvokerInfo extends InvokerInfo
 		}
 		
 		/**
-		 * @param		classPath Method class file path
+		 * @param		binPath Path where method's compiled file is
 		 * 
 		 * @return		Builder to allow chained calls
 		 * 
-		 * @throws		IllegalArgumentException If classPath is null
+		 * @throws		IllegalArgumentException If binPath is null
 		 */
-		public MethodInvokerInfoBuilder classPath(Path classPath)
+		public MethodInvokerInfoBuilder binPath(Path binPath)
 		{
-			if (classPath == null)
-				throw new IllegalArgumentException("Method class file path cannot be null");
+			if (binPath == null)
+				throw new IllegalArgumentException("Method compiled file path cannot be null");
 			
-			this.classPath = classPath.isAbsolute() ? classPath : classPath.toAbsolutePath();
+			this.binPath = binPath.isAbsolute() ? binPath : binPath.toAbsolutePath();
 			
 			return this;
 		}
@@ -243,7 +243,7 @@ public class MethodInvokerInfo extends InvokerInfo
 		{
 			StringBuilder nullFields = new StringBuilder();
 			
-			if (classPath == null)
+			if (binPath == null)
 				nullFields.append("classPath").append(", ");
 			if (srcPath == null)
 				nullFields.append("srcPath").append(", ");
@@ -255,7 +255,7 @@ public class MethodInvokerInfo extends InvokerInfo
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
 			return new MethodInvokerInfo(
-				classPath, srcPath, invocationLine, invokerSignature, 
+				binPath, srcPath, invocationLine, invokerSignature, 
 				methodName, returnType, parameterTypes, args
 			);
 		}
@@ -270,7 +270,7 @@ public class MethodInvokerInfo extends InvokerInfo
 	{
 		return "MethodInvoker ["
 				+ "methodName=" + methodName 
-				+ ", classPath=" + classPath 
+				+ ", classPath=" + binPath 
 				+ ", srcPath=" + srcPath
 				+ ", classSignature=" + getClassSignature()
 				+ ", classPackage=" + getPackage()

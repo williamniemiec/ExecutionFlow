@@ -8,11 +8,11 @@ import java.lang.annotation.Target;
 
 /**
  * Internal use annotation. Should be be added by 
- * {@link executionFlow.core.file.parser.PreTestMethodFileParser} when
+ * {@link executionFlow.io.processor.PreTestMethodFileParser} when
  * processing a repeated test method.
  * 
  * @apiNote		Must be used exclusively by 
- * {@link executionFlow.core.file.parser.FileParser}
+ * {@link executionFlow.io.processor.FileParser}
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		1.5

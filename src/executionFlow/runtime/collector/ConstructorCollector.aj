@@ -1,4 +1,4 @@
-package executionFlow.runtime;
+package executionFlow.runtime.collector;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokerInfo;
+import executionFlow.runtime.SkipCollection;
 
 
 /**
@@ -16,7 +17,7 @@ import executionFlow.info.ConstructorInvokerInfo;
  * with {@link SkipCollection} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.0
  */
 public aspect ConstructorCollector extends RuntimeCollector

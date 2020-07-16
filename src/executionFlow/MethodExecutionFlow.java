@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.core.JDB;
-import executionFlow.core.file.FileManager;
-import executionFlow.core.file.parser.factory.InvokerFileParserFactory;
-import executionFlow.core.file.parser.factory.TestMethodFileParserFactory;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
 import executionFlow.exporter.InvokedMethodsByTestedInvokerExporter;
+import executionFlow.exporter.TestPathExport;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
-import executionFlow.runtime.MethodCollector;
+import executionFlow.io.FileManager;
+import executionFlow.io.processor.factory.InvokerFileProcessorFactory;
+import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
+import executionFlow.runtime.collector.MethodCollector;
 import executionFlow.util.ConsoleOutput;
 
 
@@ -49,7 +49,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = EXPORT.equals(Export.CONSOLE) ? new ConsoleExporter() : 
+		exporter = EXPORT.equals(TestPathExport.CONSOLE) ? new ConsoleExporter() : 
 			new FileExporter("results", false);
 	}
 	
@@ -130,7 +130,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
-					new InvokerFileParserFactory()
+					new InvokerFileProcessorFactory()
 				);
 
 				// Gets FileManager for test method file
@@ -138,7 +138,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getTestMethodInfo().getSrcPath(), 
 					collector.getTestMethodInfo().getClassDirectory(),
 					collector.getTestMethodInfo().getPackage(),
-					new TestMethodFileParserFactory()
+					new TestMethodFileProcessorFactory()
 				);
 				
 				try {

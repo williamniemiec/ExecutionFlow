@@ -12,11 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.core.file.InvokerManager;
-import executionFlow.core.file.ParserType;
 import executionFlow.exporter.ExporterExecutionFlow;
+import executionFlow.exporter.TestPathExport;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.SignaturesInfo;
+import executionFlow.io.InvokerManager;
+import executionFlow.io.ParserType;
 import executionFlow.util.ConsoleOutput;
 
 
@@ -42,11 +43,11 @@ public abstract class ExecutionFlow
 	/**
 	 * Sets if environment is development. This will affect
 	 * {@link #getAppRootPath()} and 
-	 * {@link executionFlow.core.file.FileCompiler#compile()}.
+	 * {@link executionFlow.io.FileCompiler#compile()}.
 	 */
 	private static final boolean DEVELOPMENT;
 	
-	protected static final Export EXPORT;
+	protected static final TestPathExport EXPORT;
 	
 	/**
 	 * Stores computed test paths from a class.<br />
@@ -86,14 +87,14 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
 	}
 	
 	/**
 	 * Sets test path export type.
 	 */
 	static {
-		EXPORT = Export.CONSOLE;
+		EXPORT = TestPathExport.CONSOLE;
 		//EXPORT = Export.FILE;
 	}
 	

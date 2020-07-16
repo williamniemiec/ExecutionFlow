@@ -8,15 +8,15 @@ import java.nio.file.Path;
  * method or a constructor. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public abstract class InvokerInfo 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected Path classPath;
+	protected Path binPath;
 	protected Path srcPath;
 	protected String invokerSignature;
 	protected String classSignature;
@@ -33,6 +33,7 @@ public abstract class InvokerInfo
 	 * Extracts the types of parameters from the invoker.
 	 * 
 	 * @param		parametersTypes Types of each invoker's parameter
+	 * 
 	 * @return		String with the name of each type separated by commas
 	 */
 	public String extractParameterTypes()
@@ -179,7 +180,7 @@ public abstract class InvokerInfo
 	 */
 	public Path getClassPath()
 	{
-		return this.classPath;
+		return this.binPath;
 	}
 	
 	/**
@@ -258,7 +259,7 @@ public abstract class InvokerInfo
 	 */
 	public Path getClassDirectory()
 	{
-		return classPath.getParent();
+		return binPath.getParent();
 	}
 	
 	/**

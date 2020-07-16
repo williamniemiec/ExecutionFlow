@@ -1,4 +1,4 @@
-package executionFlow.runtime;
+package executionFlow.runtime.collector;
 
 import java.io.IOException;
 import java.lang.reflect.Method;

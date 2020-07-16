@@ -1,4 +1,4 @@
-package executionFlow.runtime;
+package executionFlow.runtime.collector;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,13 +7,15 @@ import java.nio.file.Path;
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.core.file.FileManager;
-import executionFlow.core.file.InvokerManager;
-import executionFlow.core.file.ParserType;
-import executionFlow.core.file.parser.factory.PreTestMethodFileParserFactory;
 import executionFlow.exporter.TestedInvokersExporter;
 import executionFlow.info.InvokerInfo;
 import executionFlow.info.MethodInvokerInfo;
+import executionFlow.io.FileManager;
+import executionFlow.io.InvokerManager;
+import executionFlow.io.ParserType;
+import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionFlow.runtime.TestMethodRunner;
+import executionFlow.util.Checkpoint;
 import executionFlow.util.ConsoleOutput;
 
 
@@ -43,6 +45,11 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private boolean junit5NewTest;
 	private Path testClassPath;
 	private FileManager testMethodFileManager;
+	private static String outputDir;
+	
+	static {
+		outputDir = ExecutionFlow.isDevelopment() ? "examples\\results" : "results";
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -117,7 +124,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			try {
 				testMethodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
-					.classPath(testClassPath)
+					.binPath(testClassPath)
 					.methodSignature(testMethodSignature)
 					.args(testMethodArgs)
 					.srcPath(testSrcPath)
@@ -131,8 +138,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 				testSrcPath,
 				MethodInvokerInfo.getCompiledFileDirectory(testClassPath),
 				testClassPackage,
-				new PreTestMethodFileParserFactory(testMethodArgs),
-				"original_pre_processing"
+				new PreTestMethodFileProcessorFactory(testMethodArgs),
+				"pre_processing.original"
 			);
 			
 			// Checks if it the first execution
@@ -258,7 +265,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested methods to a CSV
-		ef.setExporter(new TestedInvokersExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), "testPaths")))
+		ef.setExporter(new TestedInvokersExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), outputDir)))
 			.export();
 		
 		// Gets test paths of the collected constructors and export them
@@ -266,7 +273,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested constructors to a CSV
-		ef.setExporter(new TestedInvokersExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), "testPaths")))
+		ef.setExporter(new TestedInvokersExporter("Invokers_TestMethods", new File(ExecutionFlow.getCurrentProjectRoot(), outputDir)))
 			.export();
 		
 		reset();	// Prepares for next test

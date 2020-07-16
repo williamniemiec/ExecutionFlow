@@ -1,12 +1,12 @@
-package executionFlow.core.file;
+package executionFlow.io;
 
 
 /**
  * Contains all types of parser supported.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public enum ParserType 
 {

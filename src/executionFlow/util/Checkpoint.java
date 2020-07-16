@@ -1,4 +1,4 @@
-package executionFlow.runtime;
+package executionFlow.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,8 +18,8 @@ import executionFlow.ExecutionFlow;
  * from the others. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public class Checkpoint
 {

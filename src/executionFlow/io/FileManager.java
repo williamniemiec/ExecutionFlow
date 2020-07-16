@@ -1,4 +1,4 @@
-package executionFlow.core.file;
+package executionFlow.io;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,8 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-import executionFlow.core.file.parser.FileParser;
-import executionFlow.core.file.parser.factory.FileParserFactory;
+import executionFlow.io.processor.FileProcessor;
+import executionFlow.io.processor.factory.FileProcessorFactory;
 
 
 /**
@@ -33,7 +33,7 @@ public class FileManager implements Serializable
 	private String filename;
 	private transient Path classOutput;
 	private String classPackage;
-	private FileParser fp;
+	private FileProcessor fp;
 	private boolean charsetError;
 	private boolean lastWasError;
 	
@@ -49,10 +49,10 @@ public class FileManager implements Serializable
 	 * @param		classOutput Path of directory where .class of java file is
 	 * @param		classPackage Package of the class of the java file
 	 * @param		fileParserFactory Factory that will produce 
-	 * {@link FileParser} that will be used for parsing file
+	 * {@link FileProcessor} that will be used for parsing file
 	 */
 	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
-			FileParserFactory fileParserFactory)
+			FileProcessorFactory fileParserFactory)
 	{
 		this(srcFilePath, classOutput, classPackage, fileParserFactory, "original");
 	}
@@ -64,13 +64,13 @@ public class FileManager implements Serializable
 	 * @param		classOutput Path of directory where .class of java file is
 	 * @param		classPackage Package of the class of the java file
 	 * @param		fileParserFactory Factory that will produce 
-	 * {@link FileParser} that will be used for parsing file
+	 * {@link FileProcessor} that will be used for parsing file
 	 * @param		backupExtensionName Backup file extension name
 	 * 
 	 * @throws		IllegalArgumentException If srcFilePath does not exist
 	 */
 	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
-			FileParserFactory fileParserFactory, String backupExtensionName)
+			FileProcessorFactory fileParserFactory, String backupExtensionName)
 	{
 		if (!Files.exists(srcFilePath))
 			throw new IllegalArgumentException("srcFilePath does not exist: " + srcFilePath);
@@ -79,7 +79,7 @@ public class FileManager implements Serializable
 		this.classOutput = classOutput;
 		this.classPackage = classPackage;
 		this.filename = srcFilePath.getName(srcFilePath.getNameCount()-1).toString().split("\\.")[0];
-		this.fp = fileParserFactory.newFileParser(
+		this.fp = fileParserFactory.newFileProcessor(
 			srcFile, 
 			classOutput, 
 			filename+"_parsed", 
@@ -149,13 +149,13 @@ public class FileManager implements Serializable
 		// Tries to parse file using UTF-8 encoding. If an error occurs, tries 
 		// to parse the file using ISO-8859-1 encoding
 		try {	
-			out = Path.of(fp.parseFile());
+			out = Path.of(fp.processFile());
 		} catch(IOException e) {	
 			charsetError = true;
 			fp.setEncoding(FileEncoding.ISO_8859_1);
 			
 			try {
-				out = Path.of(fp.parseFile());
+				out = Path.of(fp.processFile());
 			} catch (IOException e1) {
 				throw new IOException("Parsing failed");
 			}

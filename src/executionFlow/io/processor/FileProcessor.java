@@ -1,4 +1,4 @@
-package executionFlow.core.file.parser;
+package executionFlow.io.processor;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -6,19 +6,19 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 
-import executionFlow.core.file.FileEncoding;
+import executionFlow.io.FileEncoding;
 
 
 /**
- * A file parser will add some code to an existing code if some conditions are 
- * met. Who will define these conditions will be the classes that implement
- * this class.
+ * A file processor will add some code to an existing code if some conditions
+ * are met. Who will define these conditions will be the classes that 
+ * implement this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.4
+ * @version		2.0.0
+ * @since		2.0.0
  */
-public abstract class FileParser implements Serializable 
+public abstract class FileProcessor implements Serializable 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -35,14 +35,14 @@ public abstract class FileParser implements Serializable
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Parses file, adding some code to an existing code if some conditions are 
-	 * met
+	 * Processes the file, adding some code to an existing code if some 
+	 * conditions are met.
 	 * 
 	 * @return		Location of parsed file
 	 * 
 	 * @throws		IOException If it cannot parse the file
 	 */
-	public abstract String parseFile() throws IOException;
+	public abstract String processFile() throws IOException;
 	
 	
 	//-------------------------------------------------------------------------
