@@ -1,0 +1,13 @@
+package executionFlow.core.file.parser.files;
+public class test_prints
+{
+@executionFlow.runtime.CollectInvokedMethods 	public String prints()
+	{
+
+int x = 2;
+x++;
+		x--;
+		
+		return x;
+	}
+}

@@ -1,0 +1,57 @@
+package executionFlow.core.file.parser.files.complex;
+public class test_else 
+{
+@executionFlow.runtime.CollectInvokedMethods 	public String ifElseMethod(int num)
+	{
+		if (num < 0) 
+		{
+			return "";
+		}
+		
+		String response = "";
+		int w;int _f68cfe0a794e957db8a114b42d5b370e=0;
+        int k;int _29317cb8d014d9b8ea686d7f7c73167c=0;
+
+		if (num == 0) 
+		{
+			response = "Number zero";
+		} 
+		else if (num == 1) 
+		{
+			response = "Number one";
+		} 
+
+		{
+			response = "Number "+num;
+		}
+		
+		return response;
+	}
+	
+@executionFlow.runtime.CollectInvokedMethods 	public String ifElseMethod2(int num)
+	{
+		if (num < 0) 
+		{
+			return "";
+		}
+		
+		String response = "";
+		int w;int _cea32c474a1886a302cd1947891cc20f=0;
+        int k;int _9f31f73138d6157e25b0c36458418e82=0;
+
+		if (num == 0) 
+		{
+			response = "Number zero";
+		} 
+		else if (num == 1) 
+		{
+			response = "Number one";
+		} 
+
+		{
+			response = "Number "+num;
+		}
+		
+		return response;
+	}
+}

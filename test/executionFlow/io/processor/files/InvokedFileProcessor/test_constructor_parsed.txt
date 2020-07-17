@@ -1,0 +1,37 @@
+package executionFlow.core.file.parser.files;
+
+
+public class test_constructor 
+{
+@executionFlow.runtime.CollectInvokedMethods 	public test_constructor(boolean callMethods)
+	{
+		if (callMethods) {
+			C();
+			D();
+		}
+	}
+	
+@executionFlow.runtime.CollectInvokedMethods 	public void A()
+	{
+		System.out.println("a");
+		B();
+		C();
+	}
+	
+	
+@executionFlow.runtime.CollectInvokedMethods 	public void B()
+	{
+		System.out.println("b");
+	}
+	
+@executionFlow.runtime.CollectInvokedMethods 	public void C()
+	{
+		System.out.println("c");
+		D();
+	}
+	
+@executionFlow.runtime.CollectInvokedMethods 	public void D()
+	{
+		System.out.println("d");
+	}
+}
