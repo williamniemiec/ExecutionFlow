@@ -24,7 +24,7 @@ import executionFlow.util.DataUtils;
  * @version		2.0.0
  * @since 		2.0.0
  */
-public class InvokerFileProcessor extends FileProcessor
+public class InvokedFileProcessor extends FileProcessor
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -66,7 +66,7 @@ public class InvokerFileProcessor extends FileProcessor
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public InvokerFileProcessor(Path filepath, String outputFilename)
+	public InvokedFileProcessor(Path filepath, String outputFilename)
 	{
 		this(filepath, null, outputFilename);
 	}
@@ -80,7 +80,7 @@ public class InvokerFileProcessor extends FileProcessor
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 */ 
-	public InvokerFileProcessor(Path filepath, Path outputDir, String outputFilename)
+	public InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename)
 	{
 		this.file = filepath;
 		this.outputDir = outputDir;
@@ -98,7 +98,7 @@ public class InvokerFileProcessor extends FileProcessor
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public InvokerFileProcessor(Path filepath, Path outputDir, String outputFilename, 
+	public InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename, 
 			String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -114,7 +114,7 @@ public class InvokerFileProcessor extends FileProcessor
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
 	 */ 
-	public InvokerFileProcessor(Path filepath, Path outputDir, String outputFilename,
+	public InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename,
 			FileEncoding encode)
 	{
 		this(filepath, outputDir, outputFilename);
@@ -132,7 +132,7 @@ public class InvokerFileProcessor extends FileProcessor
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public InvokerFileProcessor(Path filepath, Path outputDir, String outputFilename,
+	public InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename,
 			FileEncoding encode, String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename, encode);
@@ -350,7 +350,7 @@ public class InvokerFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		/**
 		 * Parses invoker declaration, adding
-		 *  {@link executionFlow.runtime.CollectInvokedMethods} annotation.
+		 *  {@link executionFlow.runtime.CollectCalls} annotation.
 		 * 
 		 * @param		line Line to be parsed
 		 * 
@@ -374,7 +374,7 @@ public class InvokerFileProcessor extends FileProcessor
 			else if (	!line.matches(regex_new) && 
 						line.matches(pattern_invokerDeclaration) &&
 						isInvokerDeclaration(line)	) {
-				line = "@executionFlow.runtime.CollectInvokedMethods " + line;
+				line = "@executionFlow.runtime.CollectCalls " + line;
 				withinInvoker = !line.contains("{");
 				wasParsed = true;
 			}

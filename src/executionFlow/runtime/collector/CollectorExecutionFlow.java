@@ -21,9 +21,9 @@ import executionFlow.ExecutionFlow;
  * Helper class used to extract the collected data that will be relevant to 
  * {@link ExecutionFlow} class.
  * 
- * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version	1.5
- * @since	1.0
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		2.0.0
+ * @since		1.0
  */
 public class CollectorExecutionFlow 
 {

@@ -3,15 +3,15 @@ package executionFlow.exporter;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.info.SignaturesInfo;
 import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Pair;
 
 
 /**
  * Displays the results on the console.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.0
  */
 public class ConsoleExporter implements ExporterExecutionFlow 
@@ -20,40 +20,40 @@ public class ConsoleExporter implements ExporterExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
+	public void export(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) 
 	{
 		if (classTestPaths == null || classTestPaths.isEmpty())
 			return;
 		
 		String currentTestMethodSignature = null;
-		String currentInvoker = "";
+		String currentInvoked = "";
 		
 		
 		ConsoleOutput.showHeader("EXPORT", '-');
 		
-		for (Map.Entry<SignaturesInfo, List<List<Integer>>> e : classTestPaths.entrySet()) {
-			SignaturesInfo signatures = e.getKey();
-			String testMethodSignature = signatures.getTestMethodSignature();
+		for (Map.Entry<Pair<String, String>, List<List<Integer>>> e : classTestPaths.entrySet()) {
+			Pair<String, String> signatures = e.getKey();
+			String testMethodSignature = signatures.first;
 			
 			
 			if (testMethodSignature == null) { testMethodSignature = ""; }
 			
 			// Test path from another test method
 			if (!testMethodSignature.equals(currentTestMethodSignature)) {
-				System.out.println(signatures.getTestMethodSignature());	// Test method signature
-				System.out.println(signatures.getInvokerSignature());		// Invoker signature
-				currentTestMethodSignature = signatures.getTestMethodSignature();
-				currentInvoker = signatures.getInvokerSignature();
+				System.out.println(signatures.first);	// Test method signature
+				System.out.println(signatures.second);		// Invoked signature
+				currentTestMethodSignature = signatures.first;
+				currentInvoked = signatures.second;
 			} 
 			// It is the same test method
 			else {	
-				// Checks if the test path belongs to current invoker
-				if (!signatures.getInvokerSignature().equals(currentInvoker)) {
+				// Checks if the test path belongs to current invoked
+				if (!signatures.second.equals(currentInvoked)) {
 					System.out.println();
-					System.out.println(signatures.getTestMethodSignature());
-					System.out.println(signatures.getInvokerSignature());
+					System.out.println(signatures.first);
+					System.out.println(signatures.second);
 					
-					currentInvoker = signatures.getInvokerSignature();
+					currentInvoked = signatures.second;
 				}
 			}
 			

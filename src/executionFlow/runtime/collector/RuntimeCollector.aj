@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.MethodInvokerInfo;
-import executionFlow.runtime.SkipCollection;
-import executionFlow.runtime.SkipInvoker;
+import executionFlow.info.MethodInvokedInfo;
 
 
 /**
@@ -16,8 +14,9 @@ import executionFlow.runtime.SkipInvoker;
  * tests.
  * 
  * @apiNote		It will ignore all methods of a class if it has 
- * {@link SkipCollection} annotation
- * @apiNote		It will ignore methods with {@link SkipInvoker} annotation
+ * {@link executionFlow.runtime.SkipCollection} annotation
+ * @apiNote		It will ignore methods with 
+ * {@link executionFlow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -55,7 +54,7 @@ public abstract aspect RuntimeCollector
 	protected static Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
 
 	protected static String testMethodSignature;
-	protected static MethodInvokerInfo testMethodInfo;
+	protected static MethodInvokedInfo testMethodInfo;
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
 	protected static Object[] testMethodArgs;
@@ -68,11 +67,11 @@ public abstract aspect RuntimeCollector
 	 * Intercepts methods and classes with skip annotations.
 	 */
 	pointcut skipAnnotation():
-		within(@SkipCollection *) ||
-		withincode(@executionFlow.runtime.SkipInvoker * *.*(..)) ||
-		withincode(@executionFlow.runtime._SkipInvoker * *.*(..)) ||
-		execution(@executionFlow.runtime.SkipInvoker * *.*(..)) ||
-		execution(@executionFlow.runtime._SkipInvoker * *.*(..)); 
+		within(@executionFlow.runtime.SkipCollection *) ||
+		withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) ||
+		withincode(@executionFlow.runtime._SkipInvoked * *.*(..)) ||
+		execution(@executionFlow.runtime.SkipInvoked * *.*(..)) ||
+		execution(@executionFlow.runtime._SkipInvoked * *.*(..)); 
 	
 	/**
 	 * Intercepts test methods with JUnit 4 test annotation.

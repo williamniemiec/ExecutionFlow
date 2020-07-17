@@ -8,45 +8,45 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.info.SignaturesInfo;
 import executionFlow.util.CSV;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.DataUtils;
+import executionFlow.util.Pair;
 
 
 /**
- * Responsible for exporting invokers along with the test method that tests it
+ * Responsible for exporting invoked along with the test method that tests it
  * in CSV file with the following format: 
  * <br /> <br />
  * 
  * <code>
- * InvokerSignature1, TestMethodSignature11, TestMethodSignature12,...
- * InvokerSignature2, TestMethodSignature21, TestMethodSignature22,... <br /> 
+ * InvokedSignature1, TestMethodSignature11, TestMethodSignature12,...
+ * InvokedSignature2, TestMethodSignature21, TestMethodSignature22,... <br /> 
  * ...
  * </code>
  * 
  * <br />
  * 
- * <b>Note:</b> An invoker can be a method or a constructor
+ * <b>Note:</b> An invoked can be a method or a constructor
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
-public class TestedInvokersExporter implements ExporterExecutionFlow
+public class TestedInvokedExporter implements ExporterExecutionFlow
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores the signature of the tested invokers along with test methods that
-	 * tests these invokers.
+	 * Stores the signature of the tested invoked along with test methods that
+	 * tests these invoked.
 	 * <ul>
-	 * 	<li><b>Key:</b> Invoker signature</li>
-	 * 	<li><b>Value:</b> List of test methods that tests an invoker</li>
+	 * 	<li><b>Key:</b> Invoked signature</li>
+	 * 	<li><b>Value:</b> List of test methods that tests the invoked</li>
 	 * </ul>
 	 */
-	private Map<String, List<String>> invoker_testMethods;
+	private Map<String, List<String>> invoked_testMethods;
 	
 	private File output;
 	
@@ -55,13 +55,13 @@ public class TestedInvokersExporter implements ExporterExecutionFlow
 	//		Constructor
 	//-------------------------------------------------------------------------	
 	/**
-	 * Exports tested invokers along with test methods that tests these
-	 * invokers.
+	 * Exports tested invoked along with test methods that tests these
+	 * invoked.
 	 * 
 	 * @param		filename Filename without extension
 	 * @param		output Path where the file will be saved
 	 */
-	public TestedInvokersExporter(String filename, File output)
+	public TestedInvokedExporter(String filename, File output)
 	{
 		if (!output.exists()) {
 			output.mkdir();
@@ -75,20 +75,20 @@ public class TestedInvokersExporter implements ExporterExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
+	public void export(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) 
 	{
 		if (classTestPaths == null || classTestPaths.isEmpty())
 			return;
 		
-		Set<SignaturesInfo> signatures = classTestPaths.keySet();
+		Set<Pair<String, String>> signatures = classTestPaths.keySet();
 		
 		/**
-		 * Stores tested invoker signature along with its invoked method
+		 * Stores tested invoked signature along with its invoked method
 		 * signatures.
 		 * 
 		 * <ul>
-		 * 	<li><b>Key:</b> Invoker signature</li>
-		 * 	<li><b>Value:</b> List of test methods that tests an invoker</li>
+		 * 	<li><b>Key:</b> Invoked signature</li>
+		 * 	<li><b>Value:</b> List of test methods that tests an invoked</li>
 		 * </ul>
 		 */
 		Map<String, List<String>> invokedMethodSignatures = new HashMap<>();
@@ -96,8 +96,8 @@ public class TestedInvokersExporter implements ExporterExecutionFlow
 		
 		ConsoleOutput.showInfo("Exporting invokers along with test methods that test them to CSV...");
 		
-		// Gets invoker along with test methods that test it
-		invoker_testMethods = extractTestedInvokers(signatures);
+		// Gets invoked along with test methods that test it
+		invoked_testMethods = extractTestedInvoked(signatures);
 		
 		// Reads CSV (if it already exists)
 		try {
@@ -116,10 +116,10 @@ public class TestedInvokersExporter implements ExporterExecutionFlow
 		// Erases CSV file
 		output.delete();
 		
-		// Merges current CSV file with new collected invokers and its test methods
-		DataUtils.mergesMaps(invoker_testMethods, invokedMethodSignatures);
+		// Merges current CSV file with new collected invoked and its test methods
+		DataUtils.mergesMaps(invoked_testMethods, invokedMethodSignatures);
 		
-		// Writes collected invokers along with a list of test methods that 
+		// Writes collected invoked along with a list of test methods that 
 		// call them to a CSV file
 		try {
 			for (Map.Entry<String, List<String>> e : invokedMethodSignatures.entrySet()) {
@@ -142,39 +142,39 @@ public class TestedInvokersExporter implements ExporterExecutionFlow
 	/**
 	 * Converts a set of {@link SignaturesInfo} in the following Map:
 	 * <ul>
-	 * 	<li><b>Key:</b> Invoker signature</li>
-	 * 	<li><b>Value:</b> List of test methods that tests an invoker</li>
+	 * 	<li><b>Key:</b> Invoked signature</li>
+	 * 	<li><b>Value:</b> List of test methods that tests the invoked</li>
 	 * </ul>
 	 * 
 	 * @param		signatures Set of {@link SignaturesInfo} to be converted
 	 * 
 	 * @return		Map with the above structure
 	 */
-	private Map<String, List<String>> extractTestedInvokers(Set<SignaturesInfo> signatures)
+	private Map<String, List<String>> extractTestedInvoked(Set<Pair<String, String>> signatures)
 	{
 		Map<String, List<String>> response = new HashMap<>();
 		
 		
 		// Converts Set<SignaturesInfo> -> Map<String, List<String>>, where:
-		// 		Key:	Invoker signature
-		//		Value:	List of test methods that tests an invoker
-		for (SignaturesInfo signaturesInfo : signatures) {
-			// If the invoker signature is already in response, add the 
+		// 		Key:	Invoked signature
+		//		Value:	List of test methods that tests an invoked
+		for (Pair<String, String> signaturesInfo : signatures) {
+			// If the invoked signature is already in response, add the 
 			// test method signature in it
-			if (response.containsKey(signaturesInfo.getInvokerSignature())) {
-				List<String> testMethodSignatures = response.get(signaturesInfo.getInvokerSignature());
+			if (response.containsKey(signaturesInfo.second)) {
+				List<String> testMethodSignatures = response.get(signaturesInfo.second);
 				
 				
-				testMethodSignatures.add(signaturesInfo.getTestMethodSignature());
+				testMethodSignatures.add(signaturesInfo.first);
 			}
-			// Else adds the invoker signature along with the test method
+			// Else adds the invoked signature along with the test method
 			// signatures
 			else {
 				List<String> testMethodSignatures = new ArrayList<>();
 				
 				
-				testMethodSignatures.add(signaturesInfo.getTestMethodSignature());
-				response.put(signaturesInfo.getInvokerSignature(), testMethodSignatures);
+				testMethodSignatures.add(signaturesInfo.first);
+				response.put(signaturesInfo.second, testMethodSignatures);
 			}
 		}
 		

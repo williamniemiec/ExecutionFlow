@@ -4,21 +4,21 @@ import java.nio.file.Path;
 
 
 /**
- * Stores information about an invoker, where an invoker can be a 
+ * Stores information about an invoked, where an invoked can be a 
  * method or a constructor. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
  * @since		2.0.0
  */
-public abstract class InvokerInfo 
+public abstract class InvokedInfo 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	protected Path binPath;
 	protected Path srcPath;
-	protected String invokerSignature;
+	protected String invokedSignature;
 	protected String classSignature;
 	protected String classPackage;
 	protected int invocationLine;
@@ -30,9 +30,9 @@ public abstract class InvokerInfo
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Extracts the types of parameters from the invoker.
+	 * Extracts the types of parameters from the invoked.
 	 * 
-	 * @param		parametersTypes Types of each invoker's parameter
+	 * @param		parametersTypes Types of each invoked's parameter
 	 * 
 	 * @return		String with the name of each type separated by commas
 	 */
@@ -58,15 +58,16 @@ public abstract class InvokerInfo
 	}
 	
 	/**
-	 * Extracts class signature from a invoker signature.
+	 * Extracts class signature from an invoked signature.
 	 * 
-	 * @param		invokerSignature Signature of the invoker
+	 * @param		invokedSignature Invoked signature
+	 * 
 	 * @return		Class signature
 	 */
-	public static String extractClassSignature(String invokerSignature)
+	public static String extractClassSignature(String invokedSignature)
 	{
 		StringBuilder response = new StringBuilder();
-		String[] terms = invokerSignature.split("\\.");
+		String[] terms = invokedSignature.split("\\.");
 
 		
 		// Appends all terms of signature, without the last
@@ -136,24 +137,24 @@ public abstract class InvokerInfo
 	}
 	
 	/**
-	 * Gets invoker signature without return type.
+	 * Gets invoked signature without return type.
 	 * 
-	 * @param		invokerSignature Invoker signature
+	 * @param		invokedSignature Invoked signature
 	 * 
-	 * @return		Invoker signature without return type
+	 * @return		Invoked signature without return type
 	 */
-	public static String getInvokerSignatureWithoutReturnType(String invokerSignature)
+	public static String getInvokedSignatureWithoutReturnType(String invokedSignature)
 	{
-		int index = invokerSignature.indexOf(" ");
+		int index = invokedSignature.indexOf(" ");
 		
 		
-		return invokerSignature.substring(index+1);
+		return invokedSignature.substring(index+1);
 	}
 	
 	/**
-	 * Checks whether the invoker belongs to an anonymous class.
+	 * Checks whether the invoked belongs to an anonymous class.
 	 * 
-	 * @return		If the invoker belongs to an anonymous class
+	 * @return		If the invoked belongs to an anonymous class
 	 */
 	public boolean belongsToAnonymousClass()
 	{
@@ -194,13 +195,13 @@ public abstract class InvokerInfo
 	}
 	
 	/**
-	 * Gets invoker's signature.
+	 * Gets invoked's signature.
 	 * 
-	 * @return		invoker signature
+	 * @return		Invoked signature
 	 */
-	public String getInvokerSignature()
+	public String getInvokedSignature()
 	{
-		return this.invokerSignature;
+		return this.invokedSignature;
 	}
 	
 	/**
@@ -212,15 +213,15 @@ public abstract class InvokerInfo
 	public String getClassSignature()
 	{
 		if (classSignature == null)
-			classSignature = extractClassSignature(invokerSignature);
+			classSignature = extractClassSignature(invokedSignature);
 		
 		return classSignature; 
 	}
 	
 	/**
-	 * Gets line where the invoker is invoked in the test method.
+	 * Gets line where the invoked is called in the test method.
 	 * 
-	 * @return		Line where the invoker is invoked in the test method
+	 * @return		Line where the invoked is called in the test method
 	 */
 	public int getInvocationLine()
 	{
@@ -228,9 +229,10 @@ public abstract class InvokerInfo
 	}
 	
 	/**
-	 * Gets package of the invoker.
+	 * Gets package of the invoked.
 	 * 
-	 * @return		Package to which the invoker's class belongs
+	 * @return		Package to which the invoked's class belongs
+	 * 
 	 * @implNote	Lazy initialization
 	 */
 	public String getPackage()
@@ -245,6 +247,7 @@ public abstract class InvokerInfo
 	 * Gets directory where a compiled file is.
 	 * 
 	 * @param		compiledFilePath Compiled file path
+	 * 
 	 * @return		Directory where the compiled test method file is
 	 */
 	public static Path getCompiledFileDirectory(Path compiledFilePath)
@@ -253,9 +256,9 @@ public abstract class InvokerInfo
 	}
 	
 	/**
-	 * Gets directory where the invoker's compiled file is.
+	 * Gets directory where the invoked's compiled file is.
 	 * 
-	 * @return		Directory where the invoker's source file is.
+	 * @return		Directory where the invoked's source file is.
 	 */
 	public Path getClassDirectory()
 	{
@@ -263,9 +266,9 @@ public abstract class InvokerInfo
 	}
 	
 	/**
-	 * Gets directory where the invoker's source file is.
+	 * Gets directory where the invoked's source file is.
 	 * 
-	 * @return		Directory where the invoker's source file is.
+	 * @return		Directory where the invoked's source file is.
 	 */
 	public Path getSrcDirectory()
 	{
@@ -273,9 +276,9 @@ public abstract class InvokerInfo
 	}
 	
 	/**
-	 * Gets values from the invoker's arguments.
+	 * Gets values from the invoked's arguments.
 	 * 
-	 * @return		Values from the invoker's arguments
+	 * @return		Values from the invoked's arguments
 	 */
 	public Object[] getArgs() 
 	{

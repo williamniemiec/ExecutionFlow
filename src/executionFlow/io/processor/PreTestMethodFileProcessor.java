@@ -231,7 +231,9 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//		Attributes
 		//---------------------------------------------------------------------
 		private boolean inTestMethodSignature = false;
-		private final Pattern pattern_methodDeclaration = Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
+		private final Pattern pattern_methodDeclaration = 
+				Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
+						+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
 		private String parameters = null;
 		private Object testMethodArg;
 		private boolean repeatedTest_putLoop;
@@ -390,7 +392,8 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			String varname = DataUtils.generateVarName();
 			
 			
-			return line.substring(0, idx+1) + "int "+varname+"=0;while("+varname+"++ < " + numRepetitions + "){" + line.substring(idx+1);
+			return line.substring(0, idx + 1) + "int "+ varname + "=0;while(" +
+				varname + "++ < " + numRepetitions + "){" + line.substring(idx + 1);
 		}
 	}
 	

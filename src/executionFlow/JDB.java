@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import executionFlow.dependency.DependencyManager;
 import executionFlow.dependency.MavenDependencyExtractor;
-import executionFlow.info.InvokerInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.util.ConsoleOutput;
 
 
@@ -50,8 +50,8 @@ public class JDB
 	 */
 	private String classInvocationSignature;
 	
-	private String invokerSignature;
-	private String invokerName;
+	private String invokedSignature;
+	private String invokedName;
 	
 	/**
 	 * Stores signature of the test method.
@@ -114,18 +114,18 @@ public class JDB
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Gets invoked methods by tested invoker. It will return all invoked
-	 * methods from tested methods
+	 * Gets methods called by tested invoked. It will return signature of all 
+	 * called methods from tested methods.
 	 * 
-	 * @return		Null if tested invoker does not call methods; otherwise, 
-	 * returns list of invoked method signatures by tested invoker
+	 * @return		Null if tested invoked does not call methods; otherwise, 
+	 * returns list of signature of methods called by tested invoked
 	 * 
-	 * @implSpec	After call this method, the file containing invoked methods
-	 * by tested invoker will be deleted. Therefore, this method can only be 
+	 * @implSpec	After call this method, the file containing methods called
+	 * by tested invoked will be deleted. Therefore, this method can only be 
 	 * called once for each {@link #run JDB execution}
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getInvokedMethodsByTestedInvoker()
+	public List<String> getMethodsCalledByTestedInvoked()
 	{
 		File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
 		Map<String, List<String>> invokedMethods = new HashMap<>();
@@ -136,14 +136,14 @@ public class JDB
 				invokedMethods = (Map<String, List<String>>) ois.readObject();
 			} catch (IOException | ClassNotFoundException e) {
 				invokedMethods = null;
-				ConsoleOutput.showError("Invoked methods by tested invoker - " + e.getMessage());
+				ConsoleOutput.showError("Called methods by tested invoked - " + e.getMessage());
 				e.printStackTrace();
 			}
 		
 			f.delete();
 		}
 
-		return invokedMethods.containsKey(invokerSignature) ? invokedMethods.get(invokerSignature) : null;
+		return invokedMethods.containsKey(invokedSignature) ? invokedMethods.get(invokedSignature) : null;
 	}
 	
 	/**
@@ -157,7 +157,7 @@ public class JDB
 	}
 	
 	/**
-	 * Computes test paths from an invoker along with the invoked methods by it.
+	 * Computes test paths from an invoked along with methods called by it.
 	 * 
 	 * @param		methodInfo Informations about this method
 	 * 
@@ -166,28 +166,28 @@ public class JDB
 	 * @throws		IOException If JDB cannot be initialized
 	 * @throws		Throwable If an error occurs
 	 */
-	public JDB run(InvokerInfo invokerInfo, InvokerInfo testMethodInfo) throws IOException
+	public JDB run(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException
 	{
 		Process process;			// JDB process
-		Path classRootPath;			// Root path where the compiled file of invoker class is
-		Path srcRootPath;			// Root path where the source file of the invoker is
+		Path classRootPath;			// Root path where the compiled file of invoked class is
+		Path srcRootPath;			// Root path where the source file of the invoked is
 		Path testMethodSrcPath;		// Root path where the source file of test method class is. It 
 									// will be used as JDB root directory
 		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
 									// will be used as JDB root directory
 		
 		
-		// Gets information about the test method of the invoker to be analyzed
-		testMethodSignature = testMethodInfo.getInvokerSignature();
+		// Gets information about the test method of the invoked to be analyzed
+		testMethodSignature = testMethodInfo.getInvokedSignature();
 		testMethodSignature = testMethodSignature.substring(0, testMethodSignature.indexOf("(")+1);
 		classInvocationSignature = testMethodInfo.getClassSignature();
-		invocationLine = invokerInfo.getInvocationLine();
-		invokerSignature = invokerInfo.getInvokerSignature();
-		invokerName = invokerSignature.substring(invokerSignature.lastIndexOf("."), invokerSignature.indexOf("("));
+		invocationLine = invokedInfo.getInvocationLine();
+		invokedSignature = invokedInfo.getInvokedSignature();
+		invokedName = invokedSignature.substring(invokedSignature.lastIndexOf("."), invokedSignature.indexOf("("));
 		
 		// Gets paths
-		srcRootPath = extractRootPathDirectory(invokerInfo.getSrcPath(), invokerInfo.getPackage());
-		classRootPath = extractRootPathDirectory(invokerInfo.getClassPath(), invokerInfo.getPackage());
+		srcRootPath = extractRootPathDirectory(invokedInfo.getSrcPath(), invokedInfo.getPackage());
+		classRootPath = extractRootPathDirectory(invokedInfo.getClassPath(), invokedInfo.getPackage());
 		testClassRootPath = extractRootPathDirectory(testMethodInfo.getClassPath(), testMethodInfo.getPackage());
 		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
 		
@@ -214,7 +214,8 @@ public class JDB
 	 * 
 	 * @implNote	It will run JDB from a CMD process
 	 */
-	private Process jdb_start(Path testClassRootPath, Path srcRootPath, Path testMethodSrcPath, Path methodClassRootPath) throws IOException
+	private Process jdb_start(Path testClassRootPath, Path srcRootPath, 
+			Path testMethodSrcPath, Path methodClassRootPath) throws IOException
 	{
 		if (srcRootPath == null)
 			throw new IllegalStateException("Source file path cannot be empty");
@@ -475,7 +476,7 @@ public class JDB
 		public void exit(JDBOutput out) throws IOException
 		{
 			input.flush();
-			send("clear "+classInvocationSignature+":"+invocationLine);
+			send("clear " + classInvocationSignature + ":" + invocationLine);
 			out.read();
 			send("exit");
 			out.read();
@@ -588,10 +589,6 @@ public class JDB
         			readyToReadInput = true;
         			srcLine = output.readLine();
         			currentLine = getSrcLine(srcLine);
-        			
-        			
-        			System.out.println("cl: "+currentLine);
-        			System.out.println("methodDeclarationLine: "+methodDeclarationLine);
 
             		// Checks if it is within a constructor
             		withinConstructor = line.contains(".<init>");
@@ -625,24 +622,24 @@ public class JDB
             			ignore = true;
             		
             		if (methodDeclarationLine == 0 && currentLine > 0 && 
-            				(line.contains(invokerName+".") || line.contains(invokerName+"(")))
+            				(line.contains(invokedName+".") || line.contains(invokedName+"(")))
             			methodDeclarationLine = currentLine;
             		
-            		System.out.println("=======");
-            		System.out.println("in: "+invokerName);
-            		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
-            		System.out.println(isInternalCommand);
-            		System.out.println(exitMethod);
-            		System.out.println(ignore);
-            		System.out.println(inMethod);
-            		System.out.println(jdb_getLine(line));
-            		System.out.println(isWithinMethod(jdb_getLine(line)));
-            		System.out.println(isEmptyMethod());
-            		System.out.println(lastAddWasReturn);
-            		System.out.println(isNewIteration());
-            		System.out.println(willEnterInMethod());
-            		System.out.println(newIteration);
-            		System.out.println("=======");
+//            		System.out.println("=======");
+//            		System.out.println("in: "+invokedName);
+//            		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
+//            		System.out.println(isInternalCommand);
+//            		System.out.println(exitMethod);
+//            		System.out.println(ignore);
+//            		System.out.println(inMethod);
+//            		System.out.println(jdb_getLine(line));
+//            		System.out.println(isWithinMethod(jdb_getLine(line)));
+//            		System.out.println(isEmptyMethod());
+//            		System.out.println(lastAddWasReturn);
+//            		System.out.println(isNewIteration());
+//            		System.out.println(willEnterInMethod());
+//            		System.out.println(newIteration);
+//            		System.out.println("=======");
             		
             		
             		// Checks if it is still within a constructor
@@ -710,7 +707,7 @@ public class JDB
 	    			lastSrcLine = srcLine;
 	    			
 	    			if ((srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
-	    					(line.contains(invokerName+".") || line.contains(invokerName+"(")))
+	    					(line.contains(invokedName+".") || line.contains(invokedName+"(")))
 	    				exitMethod = true;
 	    			
 	    			// -----{ DEBUG }-----
@@ -777,8 +774,8 @@ public class JDB
 		 */
 		private boolean isInternalMethod()
 		{
-			return 	!line.contains(invokerName+".") && 
-					!line.contains(invokerName+"(") && 
+			return 	!line.contains(invokedName+".") && 
+					!line.contains(invokedName+"(") && 
 					!line.contains(classInvocationSignature);
 		}
 		
@@ -865,8 +862,8 @@ public class JDB
 					line.contains("aspectj.") || 
 					line.contains("executionFlow.runtime") || 
 					srcLine.contains("package ") || (
-						!line.contains(invokerName+".") && 
-						!line.contains(invokerName+"(") && 
+						!line.contains(invokedName+".") && 
+						!line.contains(invokedName+"(") && 
 						!line.contains(testMethodSignature)
 					);
 		}

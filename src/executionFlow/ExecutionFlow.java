@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.exporter.ExporterExecutionFlow;
-import executionFlow.exporter.TestPathExport;
+import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.SignaturesInfo;
-import executionFlow.io.InvokerManager;
-import executionFlow.io.ParserType;
+import executionFlow.io.InvokedManager;
+import executionFlow.io.ProcessorType;
 import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Pair;
 
 
 /**
- * Computes test path for collected invokers, where an invoker can be a method
- * or a constructor. This is the main class of the application.
+ * Computes test path for collected invoked, where an invoked can be a method
+ * or a constructor.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -36,7 +36,7 @@ public abstract class ExecutionFlow
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * If true, displays collected invokers for each test method executed.
+	 * If true, displays collected invoked for each test method executed.
 	 */
 	protected static final boolean DEBUG;
 	
@@ -47,16 +47,16 @@ public abstract class ExecutionFlow
 	 */
 	private static final boolean DEVELOPMENT;
 	
-	protected static final TestPathExport EXPORT;
+	protected static final TestPathExportType EXPORT;
 	
 	/**
 	 * Stores computed test paths from a class.<br />
 	 * <ul>
-	 * 	<li><b>Key:</b> Test method signature and invoker signature</li>
+	 * 	<li><b>Key:</b> {@link Pair} (test method signature, invoked signature)</li>
 	 * 	<li><b>Value:</b> List of test paths</li>
 	 * </ul>
 	 */
-	protected Map<SignaturesInfo, List<List<Integer>>> computedTestPaths;
+	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
 	
 	protected ExporterExecutionFlow exporter;
 	
@@ -67,15 +67,15 @@ public abstract class ExecutionFlow
 	
 	private static String appRoot;
 	private static File currentProjectRoot;
-	public static InvokerManager invokerManager;
-	public static InvokerManager testMethodManager;
+	public static InvokedManager invokedManager;
+	public static InvokedManager testMethodManager;
 
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	/**
-	 * Enables or disables debug. If activated, displays collected invokers for
+	 * Enables or disables debug. If activated, displays collected invoked for
 	 * each test method executed.
 	 */
 	static {
@@ -94,7 +94,7 @@ public abstract class ExecutionFlow
 	 * Sets test path export type.
 	 */
 	static {
-		EXPORT = TestPathExport.CONSOLE;
+		EXPORT = TestPathExportType.CONSOLE;
 		//EXPORT = Export.FILE;
 	}
 	
@@ -103,7 +103,7 @@ public abstract class ExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Walks the invoker recording its test paths and save the result in
+	 * Walks the invoked recording its test paths and save the result in
 	 * {@link #computedTestPaths}.
 	 * 
 	 * @return		This object to allow chained calls
@@ -111,7 +111,7 @@ public abstract class ExecutionFlow
 	public abstract ExecutionFlow execute();
 	
 	/**
-	 * Initializes method managers. If some error occurs, should stop the
+	 * Initializes invoked managers. If some error occurs, should stop the
 	 * application execution; otherwise, the original files that have been 
 	 * modified in the last run may be lost.
 	 * 
@@ -124,7 +124,7 @@ public abstract class ExecutionFlow
 		
 		try {
 			if (testMethodManager == null)
-				testMethodManager = new InvokerManager(ParserType.TEST_METHOD, true);
+				testMethodManager = new InvokedManager(ProcessorType.TEST_METHOD, true);
 		} catch (ClassNotFoundException e) {
 			error = true;
 			ConsoleOutput.showError("Class FileManager not found");
@@ -132,13 +132,14 @@ public abstract class ExecutionFlow
 		} catch (IOException e) {
 			error = true;
 			ConsoleOutput.showError("Could not recover the backup file of the test method");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
+					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
 			e.printStackTrace();
 		}
 		
 		try {
-			if (invokerManager == null)
-				invokerManager = new InvokerManager(ParserType.INVOKER, true);
+			if (invokedManager == null)
+				invokedManager = new InvokedManager(ProcessorType.INVOKED, true);
 		} catch (ClassNotFoundException e) {
 			error = true;;
 			ConsoleOutput.showError("Class FileManager not found");
@@ -146,7 +147,8 @@ public abstract class ExecutionFlow
 		} catch (IOException e) {
 			error = true;
 			ConsoleOutput.showError("Could not recover all backup files for methods");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
+					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
 			e.printStackTrace();
 		}
 		
@@ -167,11 +169,11 @@ public abstract class ExecutionFlow
 	}
 	
 	/**
-	 * Stores test paths for an invoker. The test paths are stored in 
+	 * Stores test paths for an invoked. The test paths are stored in 
 	 * {@link #computedTestPaths}.
 	 * 
-	 * @param		testPaths Test paths of this invoker
-	 * @param		collector Informations about this invoker
+	 * @param		testPaths Test paths of this invoked
+	 * @param		collector Informations about this invoked
 	 */
 	protected abstract void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector);
 	
@@ -189,9 +191,10 @@ public abstract class ExecutionFlow
 			return appRoot;
 		
 		try {
-			File executionFlowBinPath = new File(ExecutionFlow.class.getProtectionDomain().getCodeSource().getLocation()
-				    .toURI());
-			appRoot = DEVELOPMENT ? executionFlowBinPath.getAbsoluteFile().getParent() : executionFlowBinPath.getAbsolutePath();
+			File executionFlowBinPath = new File(ExecutionFlow.class
+					.getProtectionDomain().getCodeSource().getLocation().toURI());
+			appRoot = DEVELOPMENT ? executionFlowBinPath.getAbsoluteFile().getParent() : 
+				executionFlowBinPath.getAbsolutePath();
 
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
@@ -246,11 +249,11 @@ public abstract class ExecutionFlow
 	}
 	
 	/**
-	 * Sets {@link #invokerManager} and {@link #testMethodManager} to null.
+	 * Sets {@link #invokedManager} and {@link #testMethodManager} to null.
 	 */
 	public static void destroy()
 	{
-		invokerManager = null;
+		invokedManager = null;
 		testMethodManager = null;
 	}
 	
@@ -278,7 +281,7 @@ public abstract class ExecutionFlow
 	/**
 	 * Gets computed test path.It will return the following map:
 	 * <ul>
-	 * 	<li><b>Key:</b> Test method signature and invoker signature</li>
+	 * 	<li><b>Key:</b> Test method signature and invoked signature</li>
 	 * 	<li><b>Value:</b> List of test paths</li>
 	 * </ul>
 	 * 
@@ -287,7 +290,7 @@ public abstract class ExecutionFlow
 	 * @implNote	It must only be called after method {@link #execute()} has 
 	 * been executed
 	 */
-	public Map<SignaturesInfo, List<List<Integer>>> getTestPaths()
+	public Map<Pair<String, String>, List<List<Integer>>> getTestPaths()
 	{
 		return computedTestPaths;
 	}
@@ -296,17 +299,17 @@ public abstract class ExecutionFlow
 	 * Gets a specific computed test path.
 	 * 
 	 * @param		testMethodSignature Test method signature
-	 * @param		constructorSignature Invoker signature
+	 * @param		invokedSignature Invoked signature
 	 * 
-	 * @return		List of test paths for the specified invoker or empty list
-	 * if specified invoker has not a test path
+	 * @return		List of test paths for the specified invoked or empty list
+	 * if specified invoked has not a test path
 	 * 
 	 * @implNote	It must only be called after method {@link #execute()} has 
 	 * been executed
 	 */
-	public List<List<Integer>> getTestPaths(String testMethodSignature, String methodSignature)
+	public List<List<Integer>> getTestPaths(String testMethodSignature, String invokedSignature)
 	{
-		return computedTestPaths.get(new SignaturesInfo(methodSignature, testMethodSignature));
+		return computedTestPaths.get(Pair.of(invokedSignature, testMethodSignature));
 	}
 	
 	/**

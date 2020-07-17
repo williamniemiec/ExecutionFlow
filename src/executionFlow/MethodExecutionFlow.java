@@ -7,15 +7,15 @@ import java.util.Map;
 
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
-import executionFlow.exporter.InvokedMethodsByTestedInvokerExporter;
-import executionFlow.exporter.TestPathExport;
+import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.SignaturesInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.processor.factory.InvokerFileProcessorFactory;
+import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.MethodCollector;
 import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Pair;
 
 
 /**
@@ -39,7 +39,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 */
 	protected Map<Integer, List<CollectorInfo>> methodCollector;
 	
-	private boolean exportInvokedMethods;
+	private boolean exportCalledMethods;
 	
 	
 	//-------------------------------------------------------------------------
@@ -49,7 +49,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = EXPORT.equals(TestPathExport.CONSOLE) ? new ConsoleExporter() : 
+		exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
 			new FileExporter("results", false);
 	}
 	
@@ -72,11 +72,13 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * the invoked methods by tested constructor will be exported to a CSV file.
 	 * 
 	 * @param		collectedMethods Collected methods from {@link MethodCollector}
+	 * @param		exportCalledMethods If true, signature of methods called by tested 
+	 * method will be exported to a CSV file
 	 */
-	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, boolean exportInvokedMethods)
+	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, boolean exportCalledMethods)
 	{
 		this.methodCollector = collectedMethods;
-		this.exportInvokedMethods = exportInvokedMethods;
+		this.exportCalledMethods = exportCalledMethods;
 		
 		computedTestPaths = new HashMap<>();
 	}
@@ -100,9 +102,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 			return this;
 		
 		List<List<Integer>> tp_jdb;
-		InvokedMethodsByTestedInvokerExporter invokedMethodsExporter = isDevelopment() ?
-				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedMethod", "examples\\results") :
-				new InvokedMethodsByTestedInvokerExporter("InvokedMethodsByTestedMethod", "results");
+		MethodsCalledByTestedInvokedExporter invokedMethodsExporter = isDevelopment() ?
+				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "examples\\results") :
+				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "results");
 		
 		
 		// Generates test path for each collected method
@@ -110,16 +112,15 @@ public class MethodExecutionFlow extends ExecutionFlow
 			// Computes test path for each collected method that is invoked in the same line
 			for (CollectorInfo collector : collectors) {
 				// Checks if collected method is within test method
-				//if (collector.getMethodInfo().getClassPath().equals(collector.getTestMethodInfo().getClassPath())) {
 				if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
-					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokerSignature());
+					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokedSignature());
 					ConsoleOutput.showError("The method to be tested cannot be within the test class");
 					ConsoleOutput.showError("This test path will be skipped");
 					continue;
 				}
 				
 				if (collector.getMethodInfo().belongsToAnonymousClass()) {
-					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokerSignature());
+					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokedSignature());
 					ConsoleOutput.showError("The method to be tested cannot belong to an anonymous class");
 					ConsoleOutput.showError("This test path will be skipped");
 					continue;
@@ -130,7 +131,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
-					new InvokerFileProcessorFactory()
+					new InvokedFileProcessorFactory()
 				);
 
 				// Gets FileManager for test method file
@@ -146,7 +147,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					// not been processed yet
 					if (!testMethodManager.wasParsed(testMethodFileManager)) {
 						ConsoleOutput.showInfo("Processing source file of test method "
-							+ collector.getTestMethodInfo().getInvokerSignature()+"...");
+							+ collector.getTestMethodInfo().getInvokedSignature()+"...");
 						
 						testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 						ConsoleOutput.showInfo("Processing completed");	
@@ -154,17 +155,17 @@ public class MethodExecutionFlow extends ExecutionFlow
 
 					// Processes the source file of the method if it has not 
 					// been processed yet
-					if (!invokerManager.wasParsed(methodFileManager)) {
+					if (!invokedManager.wasParsed(methodFileManager)) {
 						ConsoleOutput.showInfo("Processing source file of method " 
-							+ collector.getMethodInfo().getInvokerSignature()+"...");
+							+ collector.getMethodInfo().getInvokedSignature()+"...");
 						
-						invokerManager.parse(methodFileManager).compile(methodFileManager);
+						invokedManager.parse(methodFileManager).compile(methodFileManager);
 						ConsoleOutput.showInfo("Processing completed");
 					}
 					
 					// Computes test path from JDB
 					ConsoleOutput.showInfo("Computing test path of method "
-						+ collector.getMethodInfo().getInvokerSignature()+"...");
+						+ collector.getMethodInfo().getInvokedSignature()+"...");
 
 					JDB jdb = new JDB();	
 					tp_jdb = jdb.run(collector.getMethodInfo(), collector.getTestMethodInfo()).getTestPaths();
@@ -177,10 +178,10 @@ public class MethodExecutionFlow extends ExecutionFlow
 					// Stores each computed test path
 					storeTestPath(tp_jdb, collector);
 					
-					// Exports invoked methods by tested method to a CSV
-					if (exportInvokedMethods) {
-						invokedMethodsExporter.export(collector.getMethodInfo().getInvokerSignature(), 
-								jdb.getInvokedMethodsByTestedInvoker(), false);
+					// Exports methods called by tested method to a CSV
+					if (exportCalledMethods) {
+						invokedMethodsExporter.export(collector.getMethodInfo().getInvokedSignature(), 
+								jdb.getMethodsCalledByTestedInvoked(), false);
 					}
 				} catch (Exception e) {
 					ConsoleOutput.showError(e.getMessage());
@@ -196,9 +197,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 	protected void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
 	{
 		List<List<Integer>> classPathInfo;
-		SignaturesInfo signaturesInfo = new SignaturesInfo(
-			collector.getMethodInfo().getInvokerSignature(), 
-			collector.getTestMethodInfo().getInvokerSignature()
+		Pair<String, String> signaturesInfo = new Pair<>(
+			collector.getTestMethodInfo().getInvokedSignature(),
+			collector.getMethodInfo().getInvokedSignature()
 		);
 
 		
@@ -218,7 +219,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 			}
 		}
 		
-		// If test path is empty, stores test method and invoker with an empty list
+		// If test path is empty, stores test method and method with an empty list
 		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
 			if (computedTestPaths.containsKey(signaturesInfo)) {
 				classPathInfo = computedTestPaths.get(signaturesInfo);

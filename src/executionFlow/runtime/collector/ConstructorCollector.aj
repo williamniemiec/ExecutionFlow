@@ -5,16 +5,29 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.ConstructorInvokerInfo;
-import executionFlow.runtime.SkipCollection;
+import executionFlow.info.ConstructorInvokedInfo;
 
 
 /**
  * Captures class instantiation within test methods.
  * 
- * @apiNote		Excludes calls to native java methods, ExecutionFlow's classes,
- * methods with {@link SkipMethod]} signature and all methods from classes
- * with {@link SkipCollection} annotation
+ * Collects various information about constructors called by a JUnit test.
+ * 
+ * <h1>Collected information</h1>
+ * <ul>
+ * 	<li>Compiled file path</li>
+ *	<li>Source file path</li>
+ *	<li>Constructor signature</li>
+ *	<li>Parameter types</li>
+ *	<li>Constructor arguments</li>
+ *	<li>Test method line that calls the constructor</li>
+ * </ul>
+ * 
+ * 
+ * @apiNote		Excludes calls to native java methods, methods with 
+ * {@link executionFlow.runtime.SkipInvoked]} annotation and all 
+ * methods from classes with {@link executionFlow.runtime.SkipCollection} 
+ * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -73,7 +86,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 			Path classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
 			Path srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
-			ConstructorInvokerInfo cii = new ConstructorInvokerInfo.ConstructorInvokerInfoBuilder()
+			ConstructorInvokedInfo cii = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
 				.classPath(classPath)
 				.srcPath(srcPath)
 				.constructorSignature(signature)

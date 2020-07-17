@@ -15,15 +15,15 @@ import executionFlow.ExecutionFlow;
 
 
 /**
- * Captures all invoked methods within the tested invoker, where an invoker can
+ * Captures all methods called within the tested invoked, where an invoked can
  * be a method or a constructor.
  * 
  * @apiNote		Test method, that is, the method that calls the tested method
- * must have {@link executionFlow.runtime._SkipInvoker} annotation
+ * must have {@link executionFlow.runtime._SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 public aspect InvokedMethodsCollector extends RuntimeCollector
 {
@@ -31,7 +31,7 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private String invocationSignature;
-	private Map<String, List<String>> invokedMethodsByTestedInvoker = new HashMap<>();
+	private Map<String, List<String>> methodsCalledByTestedInvoked = new HashMap<>();
 	
 	
 	//-----------------------------------------------------------------------
@@ -39,16 +39,17 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 	//-----------------------------------------------------------------------
 	/**
 	 * Gets tested method signatures by a JUnit test that has 
-	 * {@link @executionFlow.runtime._SkipMethod} annotation.
+	 * {@link @executionFlow.runtime._SkipInvoked} annotation.
 	 */
-	pointcut invokerSignature(): 
-		!within(@SkipCollection *) &&
-		cflow(execution(@executionFlow.runtime._SkipInvoker * *.*(..))) && 
+	pointcut invokedSignature(): 
+		!within(@executionFlow.runtime.SkipCollection *) &&
+		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
+		cflow(execution(@executionFlow.runtime._SkipInvoked * *.*(..))) && 
 		(junit4() || junit5()) &&
 		!junit4_internal() && !junit5_internal() &&
 		!execution(public int hashCode());
 	
-	before(): invokerSignature()
+	before(): invokedSignature()
 	{
 		String signature = thisJoinPoint.getSignature().toString();
 		
@@ -57,10 +58,6 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 		if (isNativeMethod(signature)) { return; }
 
 		if (signature.indexOf("(") == -1) { return; }
-		
-		System.out.println("s: "+signature);
-		System.out.println("idx: "+signature.indexOf("("));
-		
 		
 		// Gets correct signature of inner classes
 		invocationSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
@@ -71,66 +68,68 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 	}
 	
 	/**
-	 * Gets invoked method signatures within an invoker with 
-	 * {@link @executionFlow.runtime.CollectInvokedMethods} annotation.
+	 * Intercepts methods called within an invoked with 
+	 * {@link @executionFlow.runtime.CollectCalls} annotation.
 	 */
 	pointcut invokedMethodsByTestedInvoker():
+		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
 		// Within a constructor
-		( withincode(@executionFlow.runtime.CollectInvokedMethods *.new(..)) && 
-		  !cflowbelow(withincode(@executionFlow.runtime.CollectInvokedMethods * *(..))) ) ||
+		( withincode(@executionFlow.runtime.CollectCalls *.new(..)) && 
+		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..))) ) ||
 		// Within a method
-		( withincode(@executionFlow.runtime.CollectInvokedMethods * *(..)) && 
-		  !cflowbelow(withincode(@executionFlow.runtime.CollectInvokedMethods *.new(..))) && 
-		  !cflowbelow(withincode(@executionFlow.runtime.CollectInvokedMethods * *(..))) );
+		( withincode(@executionFlow.runtime.CollectCalls * *(..)) && 
+		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls *.new(..))) && 
+		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..))) );
 	
 	before(): invokedMethodsByTestedInvoker()
 	{
-		String invokedMethodSignature = thisJoinPoint.getSignature().toString();
+		String methodCalledSignature = thisJoinPoint.getSignature().toString();
 		
 		
 		// Checks if is a method signature
-		if (!isMethodSignature(invokedMethodSignature)) { return; }
+		if (!isMethodSignature(methodCalledSignature)) { return; }
 		
 		// Ignores native java methods
-		if (isNativeMethod(invokedMethodSignature)) { return; }
+		if (isNativeMethod(methodCalledSignature)) { return; }
 
 		if (invocationSignature == null) { return; }
 		
-		// Removes return type from invoked method signature
-		invokedMethodSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
-				+ thisJoinPoint.getSignature().getName() + invokedMethodSignature.substring(invokedMethodSignature.indexOf("("));
+		// Removes return type from the signature of the method called
+		methodCalledSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
+				+ thisJoinPoint.getSignature().getName() + methodCalledSignature.substring(methodCalledSignature.indexOf("("));
 		
-		// Stores current invoker signature without its return type
-		invokedMethodSignature = CollectorExecutionFlow.extractMethodSignature(invokedMethodSignature);
+		// Stores current signature of the method called without its return type
+		methodCalledSignature = CollectorExecutionFlow.extractMethodSignature(methodCalledSignature);
 		
-		// Stores invoked method in invokedMethodsByTestedInvoker
-		if (!invokedMethodsByTestedInvoker.containsKey(invocationSignature)) {
+		// Stores method called in methodsCalledByTestedInvoked
+		if (!methodsCalledByTestedInvoked.containsKey(invocationSignature)) {
 			List<String> invokedMethods = new ArrayList<>();
 			
 			
-			invokedMethods.add(invokedMethodSignature);
-			invokedMethodsByTestedInvoker.put(invocationSignature, invokedMethods);
+			invokedMethods.add(methodCalledSignature);
+			methodsCalledByTestedInvoked.put(invocationSignature, invokedMethods);
 		}
 		else {
-			List<String> invokedMethods = invokedMethodsByTestedInvoker.get(invocationSignature);
+			List<String> invokedMethods = methodsCalledByTestedInvoked.get(invocationSignature);
 			
 			
-			invokedMethods.add(invokedMethodSignature);
+			invokedMethods.add(methodCalledSignature);
 		}
 	}
 	
 	/**
-	 * Saves invoked methods by tested invoker. It will save to a file named
-	 * 'imti.ef' (Invoked Methods by Tested Invoker).
+	 * Saves methods called by tested invoked. It will save to a file named
+	 * 'mcti.ef' (Methods Called by Tested Invoker).
 	 */
 	pointcut writer():
-		execution(@executionFlow.runtime._SkipInvoker * *.*(..)) && 
-		!withincode(@executionFlow.runtime._SkipInvoker * *.*(..));
+		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
+		execution(@executionFlow.runtime._SkipInvoked * *.*(..)) && 
+		!withincode(@executionFlow.runtime._SkipInvoked * *.*(..));
 	
 	after() returning(): writer() {
-		File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
+		File f = new File(ExecutionFlow.getAppRootPath(), "mcti.ef");
 		
-		if (!invokedMethodsByTestedInvoker.isEmpty()) {
+		if (!methodsCalledByTestedInvoked.isEmpty()) {
 			if (f.exists()) {
 				// Reads file (if exists)
 				try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
@@ -139,17 +138,17 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 					
 					
 					for (Map.Entry<String, List<String>> e : map.entrySet()) {
-						// Merges collected invoked methods by tested invoker 
-						// with saved collection
-						if (invokedMethodsByTestedInvoker.containsKey(e.getKey())) {
-							List<String> invokedMethods = invokedMethodsByTestedInvoker.get(e.getKey());
+						// Merges methods called by tested invoked with saved
+						// collection
+						if (methodsCalledByTestedInvoked.containsKey(e.getKey())) {
+							List<String> methodsCalled = methodsCalledByTestedInvoked.get(e.getKey());
 							
 							for (String invokedMethod : e.getValue())
-								invokedMethods.add(invokedMethod);
+								methodsCalled.add(invokedMethod);
 						}
-						// Saves collected invoked methods by tested invoker
+						// Saves collected methods called by tested invoked
 						else {
-							invokedMethodsByTestedInvoker.put(e.getKey(), e.getValue());							
+							methodsCalledByTestedInvoked.put(e.getKey(), e.getValue());							
 						}
 					}
 				} catch (IOException | ClassNotFoundException e) {
@@ -159,13 +158,13 @@ public aspect InvokedMethodsCollector extends RuntimeCollector
 			
 			// Writes file
 			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
-				oos.writeObject(invokedMethodsByTestedInvoker);
+				oos.writeObject(methodsCalledByTestedInvoked);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
 		}
 		
-		invokedMethodsByTestedInvoker.clear();
+		methodsCalledByTestedInvoked.clear();
 	}
 }

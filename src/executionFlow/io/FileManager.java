@@ -16,7 +16,7 @@ import executionFlow.io.processor.factory.FileProcessorFactory;
  * Responsible for managing file parser and compiler for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.3
  */
 public class FileManager implements Serializable

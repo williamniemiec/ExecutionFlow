@@ -24,7 +24,7 @@ import executionFlow.util.ConsoleOutput;
  * @version		2.0.0
  * @since		2.0.0
  */
-public class InvokerManager 
+public class InvokedManager 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -49,7 +49,7 @@ public class InvokerManager
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Manages invoker file (an invoker can be a method or a constructor),
+	 * Manages invoked file (an invoked can be a method or a constructor),
 	 * being responsible for its processing and compilation. It will avoid 
 	 * processing files that have already been processed. Also, if the 
 	 * application ends before the original files are restored, it will restore
@@ -67,7 +67,7 @@ public class InvokerManager
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found  
 	 */
-	public InvokerManager(ParserType type, boolean autoDelete) throws ClassNotFoundException, IOException
+	public InvokedManager(ProcessorType type, boolean autoDelete) throws ClassNotFoundException, IOException
 	{
 		files = new HashSet<>(); 
 		parsedFiles = new HashSet<>();
@@ -83,15 +83,15 @@ public class InvokerManager
 	}
 	
 	/**
-	 * Manages invoker file (an invoker can be a method or a constructor), 
+	 * Manages invoked file (an invoked can be a method or a constructor), 
 	 * being responsible for its processing and compilation. It will avoid
 	 * processing files that have already been processed. Also, if the 
 	 * application ends before the original files are restored, it will restore
-	 * them. Using this constructor, {@link ParserType} will be 
-	 * {@link ParserType#INVOKER}. Also, it will create a backup file with the 
+	 * them. Using this constructor, {@link ProcessorType} will be 
+	 * {@link ProcessorType#INVOKED}. Also, it will create a backup file with the 
 	 * following name: <br /> <br />
 	 * 
-	 * <code>_EF_ + {@link ParserType#INVOKER}.getName() + _FILES.ef</code>
+	 * <code>_EF_ + {@link ProcessorType#INVOKED}.getName() + _FILES.ef</code>
 	 * 
 	 * @param		autoDelete If true, if there are backup files, it will 
 	 * delete them after restore them
@@ -102,9 +102,9 @@ public class InvokerManager
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found  
 	 */
-	public InvokerManager(boolean autoDelete) throws ClassNotFoundException, IOException
+	public InvokedManager(boolean autoDelete) throws ClassNotFoundException, IOException
 	{
-		this(ParserType.INVOKER, autoDelete);
+		this(ProcessorType.INVOKED, autoDelete);
 	}
 	
 	
@@ -121,7 +121,7 @@ public class InvokerManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public InvokerManager parse(FileManager fm) throws IOException
+	public InvokedManager parse(FileManager fm) throws IOException
 	{
 		int key = fm.hashCode();
 		
@@ -152,7 +152,7 @@ public class InvokerManager
 	 * @throws		IOException If an error occurs during compilation or during
 	 * class serialization
 	 */
-	public InvokerManager compile(FileManager fm) throws IOException
+	public InvokedManager compile(FileManager fm) throws IOException
 	{	
 		int key = fm.hashCode();
 		

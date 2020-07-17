@@ -12,20 +12,20 @@ import executionFlow.util.DataUtils;
 
 
 /**
- * Exports invoked method signatures by a tested invoker in a CSV file with the
- * following format: <br /> <br /> 
+ * Exports signature of methods called by a tested invoked in a CSV file with
+ * the following format: <br /> <br /> 
  * 
  * <code>
- * 	TestedMethodSignature1,invokedMethod11, invokedMethod12, ...
- * 	TestedMethodSignature2,invokedMethod21, invokedMethod22, ... <br />
+ * 	TestedMethodSignature1, calledMethod11, calledMethod12, ...
+ * 	TestedMethodSignature2, calledMethod21, calledMethod22, ... <br />
  * 	...
  * </code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
-public class InvokedMethodsByTestedInvokerExporter 
+public class MethodsCalledByTestedInvokedExporter 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -38,24 +38,24 @@ public class InvokedMethodsByTestedInvokerExporter
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Exports invoked method signatures by a tested invoker in a CSV file with
+	 * Exports signature of method called by a tested invoked in a CSV file with
 	 * the following format: <br /> <br /> 
 	 * 
 	 * <code>
-	 * 	TestedMethodSignature1,invokedMethod11, invokedMethod12, ...
-	 * 	TestedMethodSignature2,invokedMethod21, invokedMethod22, ... <br />
+	 * 	TestedMethodSignature1, calledMethod11, calledMethod12, ...
+	 * 	TestedMethodSignature2, calledMethod21, calledMethod22, ... <br />
 	 * 	...
 	 * </code>
 	 * 
 	 * <br /> <br />
 	 * 
 	 * The file will be exported to the following path:
-	 * <code>dirName/package1/package2/.../className.invokerName(parameterTypes)/filename.csv</code>
+	 * <code>dirName/package1/package2/.../className.invokedName(parameterTypes)/filename.csv</code>
 	 * 
 	 * @param		filename CSV filename (without '.csv')
 	 * @param		dirName Directory name
 	 */
-	public InvokedMethodsByTestedInvokerExporter(String filename, String dirName)
+	public MethodsCalledByTestedInvokedExporter(String filename, String dirName)
 	{
 		this.filename = filename;
 		this.dirName = dirName;
@@ -66,24 +66,24 @@ public class InvokedMethodsByTestedInvokerExporter
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Exports invoked method signatures by a tested invoker in a CSV file.
+	 * Exports signature of methods called by a tested invoked in a CSV file.
 	 * 
-	 * @param		invokerSignature Invoker signature
-	 * @param		invokedMethodsByTestedInvoker List of invoked method 
-	 * signatures by a tested invoker
-	 * @param		isConstructor If the invoker is a constructor
+	 * @param		invokedSignature Invoked signature
+	 * @param		methodsCalledByTestedInvoked List of signature of methods 
+	 * called by a tested invoked
+	 * @param		isConstructor If the invoked is a constructor
 	 */
-	public void export(String invokerSignature, List<String> invokedMethodsByTestedInvoker, boolean isConstructor)
+	public void export(String invokedSignature, List<String> methodsCalledByTestedInvoked, boolean isConstructor)
 	{
-		if (invokedMethodsByTestedInvoker == null || invokedMethodsByTestedInvoker.isEmpty()) {
-			ConsoleOutput.showWarning("There are no invoked methods by tested invoker");
+		if (methodsCalledByTestedInvoked == null || methodsCalledByTestedInvoked.isEmpty()) {
+			ConsoleOutput.showWarning("There are no methods called by tested invoked");
 			return;
 		}
 		
-		ConsoleOutput.showInfo("Exporting invoked methods by tested invoker...");
+		ConsoleOutput.showInfo("Exporting methods called by tested invoked...");
 
-		//List<String> content = e.getValue();
-		File dirPath = new File(ExecutionFlow.getCurrentProjectRoot(), dirName + "/" + DataUtils.generateDirectoryPath(invokerSignature, isConstructor));
+		File dirPath = new File(ExecutionFlow.getCurrentProjectRoot(), 
+				dirName + "/" + DataUtils.generateDirectoryPath(invokedSignature, isConstructor));
 		File output = new File(dirPath, filename+".csv");
 		
 		
@@ -99,8 +99,8 @@ public class InvokedMethodsByTestedInvokerExporter
 				for (List<String> line : CSV.read(output)) {
 					// Merges CSV content with collected content
 					for (int i=1; i<line.size(); i++) {
-						if (!invokedMethodsByTestedInvoker.contains(line.get(i)))
-							invokedMethodsByTestedInvoker.add(line.get(i));
+						if (!methodsCalledByTestedInvoked.contains(line.get(i)))
+							methodsCalledByTestedInvoked.add(line.get(i));
 					}
 				}
 				output.delete();
@@ -109,11 +109,11 @@ public class InvokedMethodsByTestedInvokerExporter
 			}			
 		}
 		
-		// Writes tested method signature along with invoked methods by it
+		// Writes tested invoked signature along with methods called by it
 		// to CSV file
 		try {
-			invokedMethodsByTestedInvoker.add(0, invokerSignature);
-			CSV.write(invokedMethodsByTestedInvoker, output);
+			methodsCalledByTestedInvoked.add(0, invokedSignature);
+			CSV.write(methodsCalledByTestedInvoked, output);
 		} catch (IOException e2) {
 			ConsoleOutput.showError("Failed to write CSV file - "+e2.getMessage());
 		}

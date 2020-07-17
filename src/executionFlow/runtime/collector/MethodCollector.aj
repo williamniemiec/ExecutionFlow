@@ -7,24 +7,29 @@ import java.util.Arrays;
 import java.util.List;
 
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.MethodInvokerInfo;
+import executionFlow.info.MethodInvokedInfo;
 import executionFlow.runtime.SkipCollection;
-import executionFlow.runtime.SkipInvoker;
-import executionFlow.runtime._SkipInvoker;
 
 
 /**
- * Collects various information about methods tested by a JUnit test.
+ * Collects various information about methods called by a JUnit test.
  * 
  * <h1>Collected information</h1>
  * <ul>
- * 	<li>Tested methods by a JUnit test</li>
- * 	<li>Invoked methods by a tested method</li>
+ * 	<li>Compiled file path</li>
+ *	<li>Source file path</li>
+ *	<li>Method signature</li>
+ *	<li>Method name</li>
+ *	<li>Return type</li>
+ *	<li>Parameter types</li>
+ *	<li>Method arguments</li>
+ *	<li>Test method line that calls the method</li>
  * </ul>
  * 
- * @apiNote		Excludes calls to native java methods, ExecutionFlow's classes,
- * methods with {@link SkipInvoker} annotation, methods with {@link _SkipInvoker}
- * and all methods from classes with {@link SkipCollection} annotation.
+ * @apiNote		Excludes calls to native java methods, methods with 
+ * {@link executionFlow.runtime.SkipInvoked} annotation, methods
+ * with {@link executionFlow.runtime._SkipInvoked} and all methods from classes
+ * with {@link executionFlow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -101,8 +106,7 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Gets correct signature of inner classes
 		if (thisJoinPoint.getTarget() == null) {	// Static method			
-			signature = /*CollectorExecutionFlow.extractReturnType(thisJoinPoint.getSignature()) + " "*/
-					thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
+			signature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
 					+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
 		}
 		else { 	// Non-static method
@@ -155,7 +159,7 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Collects the method
 		try {
-			MethodInvokerInfo methodInfo = new MethodInvokerInfo.MethodInvokerInfoBuilder()
+			MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
 				.binPath(classPath)
 				.methodSignature(signature)
 				.methodName(methodName)

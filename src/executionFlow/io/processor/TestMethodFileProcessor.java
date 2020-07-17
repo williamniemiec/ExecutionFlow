@@ -12,9 +12,9 @@ import executionFlow.util.ConsoleOutput;
 
 
 /**
- * Processes test java file adding {@link executionFlow.runtime._SkipMethod
- * _SkipMethod} annotation in all tests to disable collectors during the 
- * execution of {@link executionFlow.core.JDB JDB}.
+ * Processes test java file adding {@link executionFlow.runtime._SkipInvoked}
+ * annotation in all tests to disable collectors while running 
+ * {@link executionFlow.core.JDB JDB}. Also, removes print functions.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -51,11 +51,11 @@ public class TestMethodFileProcessor extends FileProcessor
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in
-	 * test methods to disable collectors during {@link executionFlow.core.JDB
-	 * JDB} execution. Using this constructor, the directory where parsed file
-	 * will be saved will be in current directory. Also, file encoding will be
-	 * UTF-8.
+	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation 
+	 * in test methods to disable collectors during 
+	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * functions. Using this constructor, the directory where parsed file will
+	 * be saved will be in current directory. Also, file encoding will be UTF-8.
 	 * 
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputFilename Name of the parsed file
@@ -66,9 +66,10 @@ public class TestMethodFileProcessor extends FileProcessor
 	}
 	
 	/**
-	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
-	 * test methods to disable collectors during {@link executionFlow.core.JDB 
-	 * JDB} execution. Using this constructor, file encoding will be UTF-8.
+	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
+	 * in test methods to disable collectors during 
+	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * functions. Using this constructor, file encoding will be UTF-8.
 	 * 
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
@@ -82,9 +83,10 @@ public class TestMethodFileProcessor extends FileProcessor
 	}
 	
 	/**
-	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
-	 * test methods to disable collectors during {@link executionFlow.core.JDB 
-	 * JDB} execution. Using this constructor, file encoding will be UTF-8.
+	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
+	 * in test methods to disable collectors during 
+	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * functions. Using this constructor, file encoding will be UTF-8.
 	 * 
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
@@ -100,9 +102,10 @@ public class TestMethodFileProcessor extends FileProcessor
 	}
 	
 	/**
-	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
-	 * test methods to disable collectors during {@link executionFlow.core.JDB
-	 * JDB} execution.
+	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
+	 * in test methods to disable collectors during 
+	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * functions.
 	 * 
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
@@ -117,9 +120,10 @@ public class TestMethodFileProcessor extends FileProcessor
 	}
 	
 	/**
-	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
-	 * test methods to disable collectors during {@link executionFlow.core.JDB
-	 * JDB} execution.
+	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
+	 * in test methods to disable collectors during 
+	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * functions.
 	 * 
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
@@ -140,8 +144,8 @@ public class TestMethodFileProcessor extends FileProcessor
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Adds {@link executionFlow.runtime.SkipMethod SkipMethod} annotation in 
-	 * test methods.
+	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
+	 * in test methods and deletes print functions.
 	 * 
 	 * @return		Path to processed file
 	 * 
@@ -155,6 +159,7 @@ public class TestMethodFileProcessor extends FileProcessor
 
 		String line;
 		File outputFile;
+		
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -171,7 +176,7 @@ public class TestMethodFileProcessor extends FileProcessor
 			while ((line = br.readLine()) != null) {
 				// Checks whether the line contains a test annotation
 				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-					line += " @executionFlow.runtime._SkipInvoker";
+					line += " @executionFlow.runtime._SkipInvoked";
 				}
 				// Checks if there are print's
 				else if (line.contains("System.out.print")) {

@@ -8,16 +8,21 @@ import java.lang.annotation.Target;
 
 /**
  * Internal use annotation. When a method or a constructor has this annotation,
- * all collectors will ignore it.
+ * the following collectors will ignore it:
+ * <ul>
+ * 	<li>{@link executionFlow.runtime.collector.ConstructorCollector}</li>
+ * 	<li>{@link executionFlow.runtime.collector.MethodCollector}</li>
+ * 	<li>{@link executionFlow.runtime.collector.TestMethodCollector}</li>
+ * </ul>
  *  
  * @apiNote		Must be used exclusively by 
- * {@link executionFlow.io.processor.FileParser}
+ * {@link executionFlow.io.processor.FileProcessor}
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( {ElementType.METHOD, ElementType.CONSTRUCTOR} )
-public @interface _SkipInvoker 
+public @interface _SkipInvoked 
 { }

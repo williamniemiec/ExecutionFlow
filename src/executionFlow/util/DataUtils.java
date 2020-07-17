@@ -60,26 +60,26 @@ public class DataUtils
 	}
 	
 	/**
-	 * Generates a path based on an invoker signature with the following format:
+	 * Generates a path based on an invoked signature with the following format:
 	 * <ul>
-	 * 	<li><b>Invoker = method:</b> <code>package/className.methodName(parameterTypes)</code></li>
-	 * 	<li><b>Invoker = constructor:</b> <code>package/className(parameterTypes)</code></li>
+	 * 	<li><b>Invoked = method:</b> <code>package/className.methodName(parameterTypes)</code></li>
+	 * 	<li><b>Invoked = constructor:</b> <code>package/className(parameterTypes)</code></li>
 	 * </ul>
 	 * 
 	 * <h1>Example</h1>
 	 * <ul>
-	 * 	<li><b>Invoker signature (method):</b> controlFlow.TestClass_ControlFlow.ifElseMethod(int)</li>
+	 * 	<li><b>Invoked signature (method):</b> controlFlow.TestClass_ControlFlow.ifElseMethod(int)</li>
 	 * 	<li><b>Generated path:</b> controlFlow/TestClass_ControlFlow.ifElseMethod(int)</li>
 	 * </ul>
 	 * 
-	 * @param		invokerSignature Invoker signature
-	 * @param		isConstructor If the invoker is a constructor
+	 * @param		invokedSignature Invoked signature
+	 * @param		isConstructor If the invoked is a constructor
 	 * 
 	 * @return		Generated path
 	 */
-	public static String generateDirectoryPath(String invokerSignature, boolean isConstructor)
+	public static String generateDirectoryPath(String invokedSignature, boolean isConstructor)
 	{
-		String[] signatureFields = invokerSignature.split("\\.");
+		String[] signatureFields = invokedSignature.split("\\.");
 		String folderPath = getFolderPath(signatureFields, isConstructor);
 		String folderName = getFolderName(signatureFields, isConstructor);
 		
@@ -88,17 +88,17 @@ public class DataUtils
 	}
 	
 	/**
-	 * Generates folder's path based on invoker's signature. It will generates
-	 * path following the package of this invoker.
+	 * Generates folder's path based on invoked's signature. It will generates
+	 * path following the package of this invoked.
 	 * 
 	 * <h1>Format</h1>
 	 * <ul>
-	 * 	<li><b>Invoker signature (method):</b> package1.package2.package3.className.methodName(parameter types)</li>
+	 * 	<li><b>Invoked signature (method):</b> package1.package2.package3.className.methodName(parameter types)</li>
 	 * 	<li><b>Folder path:</b> package1/packag2/package3</li>
 	 * </ul>
 	 * 
-	 * @param		signatureFields Fields of the invoker signature
-	 * @param		isConstructor If the invoker is a constructor
+	 * @param		signatureFields Fields of the invoked signature
+	 * @param		isConstructor If the invoked is a constructor
 	 * 
 	 * @return		Folder's path
 	 */
@@ -123,10 +123,11 @@ public class DataUtils
 	}
 	
 	/**
-	 * Generates folder's name based on invoker's signature. This name will be:
-	 * <code>className.invokerName(parameter types)</code>
+	 * Generates folder's name based on invoked's signature. This name will be:
+	 * <code>className.invokedName(parameter types)</code>
 	 * 
-	 * @param		signatureFields Fields of the invoker signature
+	 * @param		signatureFields Fields of the invoked signature
+	 * @param		If signatureFields referes to a constructor signature
 	 * 
 	 * @return		Folder's name
 	 */
@@ -145,13 +146,16 @@ public class DataUtils
 			response = className;
 		}
 		else {
+			String className, methodName;
+			
+			
 			// Extracts class name
-			String className = signatureFields[signatureFields.length-2];
+			className = signatureFields[signatureFields.length-2];
 			
-			// Extracts invoker name with parameter types
-			String invokerName = signatureFields[signatureFields.length-1];
+			// Extracts invoked name with parameter types
+			methodName = signatureFields[signatureFields.length-1];
 			
-			response = className+"."+invokerName;
+			response = className+"."+methodName;
 		}
 		
 		return response;
@@ -167,9 +171,11 @@ public class DataUtils
 	public static String md5(String text)
 	{
 		String response;
+		MessageDigest m;
+		
 		
 		try {
-			MessageDigest m = MessageDigest.getInstance("MD5");
+			m = MessageDigest.getInstance("MD5");
 			m.update(text.getBytes(),0,text.length());
 			response = new BigInteger(1,m.digest()).toString(16);
 		} catch (NoSuchAlgorithmException e) {
@@ -274,7 +280,14 @@ public class DataUtils
 		return response.toString();
 	}
 	
-	
+	/**
+	 * Copies files to a directory;
+	 * 
+	 * @param		files Files to be copied
+	 * @param		output Destination directory
+	 * 
+	 * @throws		IOException If a failure occurs during copying
+	 */
 	public static void putFilesInFolder(List<Path> files, Path output) throws IOException
 	{
 		if (!Files.exists(output)) {

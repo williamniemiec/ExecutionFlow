@@ -8,15 +8,15 @@ import java.lang.annotation.Target;
 
 /**
  * Internal use annotation. Should be be added by 
- * {@link executionFlow.io.processor.PreTestMethodFileParser} when
+ * {@link executionFlow.io.processor.PreTestMethodFileProcessor} when
  * processing a repeated test method.
  * 
  * @apiNote		Must be used exclusively by 
- * {@link executionFlow.io.processor.FileParser}
+ * {@link executionFlow.io.processor.FileProcessor}
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( {ElementType.METHOD, ElementType.CONSTRUCTOR} )

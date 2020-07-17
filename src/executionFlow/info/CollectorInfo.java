@@ -2,7 +2,7 @@ package executionFlow.info;
 
 
 /**
- * Stores information about a method and the test method it belongs to.
+ * Stores information about a method, constructor and a test method.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -14,35 +14,33 @@ public class CollectorInfo
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores {@link MethodInvokerInfo information} about a method.
+	 * Stores {@link MethodInvokedInfo information} about a method.
 	 */
-	private InvokerInfo methodInfo;
+	private InvokedInfo methodInfo;
 	
 	/**
-	 * Stores {@link MethodInvokerInfo information} about a test method.
+	 * Stores {@link MethodInvokedInfo information} about a test method.
 	 */
-	private InvokerInfo testMethodInfo;
+	private InvokedInfo testMethodInfo;
 	
 	/**
-	 * Stores {@link ConstructorInvokerInfo information} about the constructor of
-	 * {@link #methodInfo the method}.
+	 * Stores {@link ConstructorInvokedInfo information} about a constructor.
 	 */
-	private InvokerInfo constructorInfo;
+	private InvokedInfo constructorInfo;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores information about a method, its constructor, along with its order
-	 * and test method to which this method is called.
+	 * Stores information about a method, constructor and test method.
 	 * 
 	 * @param		methodInfo Information about a method
-	 * @param		testMethodInfo Information about the test method to which 
-	 * the method is called
+	 * @param		constructorInfo Information about a constructor
+	 * @param		testMethodInfo Information about a test method
 	 */
-	private CollectorInfo(InvokerInfo methodInfo, InvokerInfo constructorInfo, 
-			InvokerInfo testMethodInfo)
+	private CollectorInfo(InvokedInfo methodInfo, InvokedInfo constructorInfo, 
+			InvokedInfo testMethodInfo)
 	{
 		this.methodInfo = methodInfo;
 		this.constructorInfo = constructorInfo;
@@ -64,17 +62,19 @@ public class CollectorInfo
 	 */
 	public static class CollectorInfoBuilder
 	{
-		private InvokerInfo methodInfo;
-		private InvokerInfo testMethodInfo;
-		private InvokerInfo constructorInfo;
+		private InvokedInfo methodInfo;
+		private InvokedInfo testMethodInfo;
+		private InvokedInfo constructorInfo;
 		
 		
 		/**
 		 * @param		methodInfo Informations about a method
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If methodInfo is null
 		 */
-		public CollectorInfoBuilder methodInfo(InvokerInfo methodInfo)
+		public CollectorInfoBuilder methodInfo(InvokedInfo methodInfo)
 		{
 			if (methodInfo == null)
 				throw new IllegalArgumentException("Method's info cannot be null");
@@ -86,10 +86,12 @@ public class CollectorInfo
 		
 		/**
 		 * @param		testMethodInfo Informations about a test method
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If testMethodInfo is null
 		 */
-		public CollectorInfoBuilder testMethodInfo(InvokerInfo testMethodInfo)
+		public CollectorInfoBuilder testMethodInfo(InvokedInfo testMethodInfo)
 		{
 			if (testMethodInfo == null)
 				throw new IllegalArgumentException("Test method's info cannot be null");
@@ -101,10 +103,12 @@ public class CollectorInfo
 		
 		/**
 		 * @param		constructorInfo Informations about a constructor
+		 * 
 		 * @return		Builder to allow chained calls
+		 * 
 		 * @throws		IllegalArgumentException If constructorInfo is null
 		 */
-		public CollectorInfoBuilder constructorInfo(InvokerInfo constructorInfo)
+		public CollectorInfoBuilder constructorInfo(InvokedInfo constructorInfo)
 		{
 			if (constructorInfo == null)
 				throw new IllegalArgumentException("Constructor's info cannot be null");
@@ -154,17 +158,17 @@ public class CollectorInfo
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
-	public InvokerInfo getMethodInfo() 
+	public InvokedInfo getMethodInfo() 
 	{
 		return methodInfo;
 	}
 	
-	public InvokerInfo getTestMethodInfo() 
+	public InvokedInfo getTestMethodInfo() 
 	{
 		return testMethodInfo;
 	}
 	
-	public InvokerInfo getConstructorInfo() 
+	public InvokedInfo getConstructorInfo() 
 	{
 		return constructorInfo;
 	}

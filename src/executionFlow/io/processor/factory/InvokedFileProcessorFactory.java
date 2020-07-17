@@ -4,17 +4,17 @@ import java.nio.file.Path;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.FileProcessor;
-import executionFlow.io.processor.InvokerFileProcessor;
+import executionFlow.io.processor.InvokedFileProcessor;
 
 
 /**
- * Responsible for generating {@link InvokerFileProcessor} classes.
+ * Responsible for generating {@link InvokedFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
  * @since		2.0.0
  */
-public class InvokerFileProcessorFactory extends FileProcessorFactory
+public class InvokedFileProcessorFactory extends FileProcessorFactory
 {
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -23,6 +23,6 @@ public class InvokerFileProcessorFactory extends FileProcessorFactory
 	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
 			String outputFilename, FileEncoding encode) 
 	{
-		return new InvokerFileProcessor(filepath, outputDir, outputFilename, encode);
+		return new InvokedFileProcessor(filepath, outputDir, outputFilename, encode);
 	}
 }

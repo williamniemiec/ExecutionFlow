@@ -13,16 +13,16 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.info.SignaturesInfo;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.DataUtils;
+import executionFlow.util.Pair;
 
 
 /**
  * Exports computed test path to a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.0
  */
 public class FileExporter implements ExporterExecutionFlow 
@@ -38,11 +38,11 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
-	 * Exports computed test paths from collected invokers, where an invoker
+	 * Exports computed test paths from collected invoked, where an invoked
 	 * can be a method or a constructor.
 	 * 
 	 * @param		dirName Name of the directory
-	 * @param		isConstructor If the invoker is a constructor
+	 * @param		isConstructor If the invoked is a constructor
 	 */
 	public FileExporter(String dirName, boolean isConstructor)
 	{
@@ -55,7 +55,7 @@ public class FileExporter implements ExporterExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) 
+	public void export(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) 
 	{
 		if (classTestPaths == null || classTestPaths.isEmpty())
 			return;
@@ -65,16 +65,16 @@ public class FileExporter implements ExporterExecutionFlow
 			// creating duplicate files)
 			prepareExport(classTestPaths);
 		
-			for (Map.Entry<SignaturesInfo, List<List<Integer>>> e : classTestPaths.entrySet()) {
-				SignaturesInfo signatures = e.getKey();
+			for (Map.Entry<Pair<String, String>, List<List<Integer>>> e : classTestPaths.entrySet()) {
+				Pair<String, String> signatures = e.getKey();
 	
 				
 				// Gets save path
 				Path savePath = Paths.get(ExecutionFlow.getCurrentProjectRoot().toString(), dirName,
-					DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
+					DataUtils.generateDirectoryPath(signatures.second, isConstructor));
 				
 				// Writes test paths in the file
-				writeFile(e.getValue(), savePath, signatures.getTestMethodSignature());
+				writeFile(e.getValue(), savePath, signatures.first);
 			}
 
 			ConsoleOutput.showInfo("Test paths have been successfully exported!");
@@ -85,11 +85,11 @@ public class FileExporter implements ExporterExecutionFlow
 	}
 	
 	/**
-	 * Writes test paths of an invoker to a file.
+	 * Writes test paths of an invoked to a file.
 	 * 
-	 * @param		testPaths Test paths of the invoker
+	 * @param		testPaths Test paths of the invoked
 	 * @param		savePath Location where the file will be saved
-	 * @param		testMethodSignature Signature of the test method the invoker is in
+	 * @param		testMethodSignature Signature of the test method the invoked is in
 	 * 
 	 * @throws		IOException If it is not possible to write some test path file
 	 */
@@ -126,12 +126,12 @@ public class FileExporter implements ExporterExecutionFlow
 	 * 
 	 * @throws		IOException If any test path file to be removed is in use
 	 */
-	private void prepareExport(Map<SignaturesInfo, List<List<Integer>>> classTestPaths) throws IOException
+	private void prepareExport(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) throws IOException
 	{
-		for (SignaturesInfo signatures : classTestPaths.keySet()) {	
+		for (Pair<String, String> signatures : classTestPaths.keySet()) {	
 			// Gets save path
 			Path savePath = Paths.get(ExecutionFlow.getAppRootPath(), dirName,
-					DataUtils.generateDirectoryPath(signatures.getInvokerSignature(), isConstructor));
+					DataUtils.generateDirectoryPath(signatures.second, isConstructor));
 			
 			File dir = savePath.toFile(), testPathFile;
 			String[] files;
@@ -149,7 +149,7 @@ public class FileExporter implements ExporterExecutionFlow
 			for (String filename : files) {
 				testPathFile = new File(dir, filename);
 				
-				if (willBeOverwritten(testPathFile, signatures.getTestMethodSignature())) {
+				if (willBeOverwritten(testPathFile, signatures.first)) {
 					testPathFile.getAbsoluteFile().delete();
 				}
 			}

@@ -7,14 +7,14 @@ import java.lang.annotation.Target;
 
 
 /**
- * When a method or a constructor has this annotation, all invoked method
- * signatures within it will be collected.
+ * When a method or a constructor has this annotation,
+ * all collectors will ignore it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
- * @since		1.5
+ * @version		2.0.0
+ * @since		2.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( {ElementType.METHOD, ElementType.CONSTRUCTOR} )
-public @interface CollectInvokedMethods 
+public @interface SkipInvoked 
 { }

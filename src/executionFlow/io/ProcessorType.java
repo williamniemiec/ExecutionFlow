@@ -2,24 +2,24 @@ package executionFlow.io;
 
 
 /**
- * Contains all types of parser supported.
+ * Contains all types of supported processors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
  * @since		2.0.0
  */
-public enum ParserType 
+public enum ProcessorType 
 {
 	//-------------------------------------------------------------------------
 	//		Enumerations
 	//-------------------------------------------------------------------------
-	INVOKER("INVOKER"), 
+	INVOKED("INVOKED"), 
 	TEST_METHOD("TEST_METHOD"),
 	PRE_TEST_METHOD("PRE_TEST_METHOD");
 	
 	
 	//-------------------------------------------------------------------------
-	//		Attributes
+	//		Attributes'
 	//-------------------------------------------------------------------------
 	private String name;
 	
@@ -27,7 +27,7 @@ public enum ParserType
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private ParserType(String name)
+	private ProcessorType(String name)
 	{
 		this.name = name;
 	}

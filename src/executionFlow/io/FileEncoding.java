@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
  * Contains all supported file encodings.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		1.5
+ * @version		2.0.0
  * @since		1.4
  */
 public enum FileEncoding implements Serializable

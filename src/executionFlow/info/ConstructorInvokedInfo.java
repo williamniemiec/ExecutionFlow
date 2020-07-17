@@ -7,11 +7,11 @@ import java.util.Arrays;
 /**
  * Stores information about a class' constructor.
  * 
- * @author	William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version	1.5
- * @since	1.5
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		2.0.0
+ * @since		2.0.0
  */
-public class ConstructorInvokerInfo extends InvokerInfo
+public class ConstructorInvokedInfo extends InvokedInfo
 {
 	//-------------------------------------------------------------------------
 	//		Constructor
@@ -26,12 +26,12 @@ public class ConstructorInvokerInfo extends InvokerInfo
 	 * @param		parameterTypes Types of constructor's parameters
 	 * @param		args Constructor's arguments
 	 */
-	private ConstructorInvokerInfo(Path classPath, Path srcPath, int invocationLine,
+	private ConstructorInvokedInfo(Path classPath, Path srcPath, int invocationLine,
 			String constructorSignature, Class<?>[] parameterTypes, Object[] args) 
 	{
 		this.binPath = classPath;
 		this.srcPath = srcPath;
-		this.invokerSignature = constructorSignature;
+		this.invokedSignature = constructorSignature;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
 		this.invocationLine = invocationLine;
@@ -42,7 +42,7 @@ public class ConstructorInvokerInfo extends InvokerInfo
 	//		Builder
 	//-------------------------------------------------------------------------
 	/**
-	 * Builder for {@link ConstructorInvokerInfo}. It is necessary to fill all 
+	 * Builder for {@link ConstructorInvokedInfo}. It is necessary to fill all 
 	 * required fields. The required fields are: <br />
 	 * <ul>
 	 * 	<li>classPath</li>
@@ -108,7 +108,7 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		 * 
 		 * @return		Builder to allow chained calls
 		 * 
-		 * @throws		IllegalArgumentException If invokerSignature is null
+		 * @throws		IllegalArgumentException If constructorSignature is null
 		 */
 		public ConstructorInvokerInfoBuilder constructorSignature(String constructorSignature)
 		{
@@ -174,7 +174,7 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		}
 		
 		/**
-		 * Creates {@link ConstructorInvokerInfo} with provided information. It is
+		 * Creates {@link ConstructorInvokedInfo} with provided information. It is
 		 * necessary that required fields must be filled. The required 
 		 * fields are: <br />
 		 * <ul>
@@ -187,7 +187,7 @@ public class ConstructorInvokerInfo extends InvokerInfo
 		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public ConstructorInvokerInfo build() throws IllegalArgumentException
+		public ConstructorInvokedInfo build() throws IllegalArgumentException
 		{
 			StringBuilder nullFields = new StringBuilder();
 			
@@ -202,7 +202,7 @@ public class ConstructorInvokerInfo extends InvokerInfo
 				throw new IllegalArgumentException("Required fields cannot be null: "
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
-			return new ConstructorInvokerInfo(
+			return new ConstructorInvokedInfo(
 				classPath, srcPath, invocationLine, invokerSignature, 
 				parameterTypes, args
 			);
@@ -216,12 +216,12 @@ public class ConstructorInvokerInfo extends InvokerInfo
 	@Override
 	public String toString() 
 	{
-		return "ConstructorInvokerInfo ["
+		return "ConstructorInvokedInfo ["
 				+ "classPath=" + binPath 
 				+ ", srcPath=" + srcPath
 				+ ", classSignature=" + getClassSignature()
 				+ ", classPackage=" + getPackage()
-				+ ", constructorSignature=" + invokerSignature 
+				+ ", constructorSignature=" + invokedSignature 
 				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
 				+ ", args="	+ Arrays.toString(args) 
@@ -236,14 +236,14 @@ public class ConstructorInvokerInfo extends InvokerInfo
 	public String getClassSignature()
 	{
 		if (classSignature == null)
-			classSignature = invokerSignature.split("\\(")[0];
+			classSignature = invokedSignature.split("\\(")[0];
 		
 		return classSignature; 
 	}
 	
 	public String getConstructorSignature()
 	{
-		return getInvokerSignature();
+		return getInvokedSignature();
 	}
 	
 	/**
