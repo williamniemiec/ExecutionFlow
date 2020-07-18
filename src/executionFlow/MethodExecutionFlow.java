@@ -19,7 +19,12 @@ import executionFlow.util.Pair;
 
 
 /**
- * Computes test path for collected methods.
+ * Generates data for collected methods. Among these data:
+ * <ul>
+ * 	<li>Test path</li>
+ * 	<li>Methods called by this method</li>
+ * 	<li>Test methods that call this method</li>
+ * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -101,7 +106,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 		if (methodCollector == null || methodCollector.isEmpty())
 			return this;
 		
-		List<List<Integer>> tp_jdb;
+		List<List<Integer>> tp;
 		MethodsCalledByTestedInvokedExporter invokedMethodsExporter = isDevelopment() ?
 				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "examples\\results") :
 				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "results");
@@ -167,21 +172,21 @@ public class MethodExecutionFlow extends ExecutionFlow
 					ConsoleOutput.showInfo("Computing test path of method "
 						+ collector.getMethodInfo().getInvokedSignature()+"...");
 
-					JDB jdb = new JDB();	
-					tp_jdb = jdb.run(collector.getMethodInfo(), collector.getTestMethodInfo()).getTestPaths();
+					Analyzer analyzer = new Analyzer(collector.getMethodInfo(), collector.getTestMethodInfo());
+					tp = analyzer.run().getTestPaths();
 					
-					if (tp_jdb.isEmpty() || tp_jdb.get(0).isEmpty())
+					if (tp.isEmpty() || tp.get(0).isEmpty())
 						ConsoleOutput.showWarning("Test path is empty");
 					else
 						ConsoleOutput.showInfo("Test path has been successfully computed");				
 					
 					// Stores each computed test path
-					storeTestPath(tp_jdb, collector);
+					storeTestPath(tp, collector);
 					
 					// Exports methods called by tested method to a CSV
 					if (exportCalledMethods) {
 						invokedMethodsExporter.export(collector.getMethodInfo().getInvokedSignature(), 
-								jdb.getMethodsCalledByTestedInvoked(), false);
+								analyzer.getMethodsCalledByTestedInvoked(), false);
 					}
 				} catch (Exception e) {
 					ConsoleOutput.showError(e.getMessage());

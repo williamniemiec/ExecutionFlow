@@ -15,15 +15,20 @@ import java.util.Map;
 import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
-import executionFlow.io.InvokedManager;
+import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.Pair;
 
 
 /**
- * Computes test path for collected invoked, where an invoked can be a method
- * or a constructor.
+ * Generates data for each collected invoked, where an invoked can be a method
+ * or a constructor. Among these data:
+ * <ul>
+ * 	<li>Test path</li>
+ * 	<li>Methods called by this method</li>
+ * 	<li>Test methods that call this method</li>
+ * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -67,8 +72,8 @@ public abstract class ExecutionFlow
 	
 	private static String appRoot;
 	private static File currentProjectRoot;
-	public static InvokedManager invokedManager;
-	public static InvokedManager testMethodManager;
+	public static FilesManager invokedManager;
+	public static FilesManager testMethodManager;
 
 	
 	//-------------------------------------------------------------------------
@@ -87,7 +92,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
@@ -124,7 +129,7 @@ public abstract class ExecutionFlow
 		
 		try {
 			if (testMethodManager == null)
-				testMethodManager = new InvokedManager(ProcessorType.TEST_METHOD, true);
+				testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true);
 		} catch (ClassNotFoundException e) {
 			error = true;
 			ConsoleOutput.showError("Class FileManager not found");
@@ -139,7 +144,7 @@ public abstract class ExecutionFlow
 		
 		try {
 			if (invokedManager == null)
-				invokedManager = new InvokedManager(ProcessorType.INVOKED, true);
+				invokedManager = new FilesManager(ProcessorType.INVOKED, true);
 		} catch (ClassNotFoundException e) {
 			error = true;;
 			ConsoleOutput.showError("Class FileManager not found");
