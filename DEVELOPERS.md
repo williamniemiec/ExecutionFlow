@@ -16,6 +16,7 @@ Para que seja possível executar algum arquivo do projeto é necessário importa
 * [JUnit 4](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/junit-4.13.jar)
 * [Hamcrest](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar): Necessário para a execução de métodos de teste dentro do JDB.
 * [AspectJ Tools](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar): É utilizado para a compilação dos arquivos processados durante a execução da aplicação. Essa compilação é referente a execução da aplicação em outros projetos, e não a compilação do projeto da aplicação em si.
+* [junit-jupiter-api-5.6.2.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/junit-jupiter-api-5.6.2.jar) e [junit-jupiter-params-5.6.2.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/junit-jupiter-params-5.6.2.jar): Necessário para a execução de testes JUnit 5 pela aplicação. Apesar dela converter esses testes em JUnit 4, elas são necessárias para não ocorrer erro caso haja elementos e anotações do JUnit 5 no código.
 
 
 ### <a name="setup-run"></a> Rodando o projeto no Eclipse
