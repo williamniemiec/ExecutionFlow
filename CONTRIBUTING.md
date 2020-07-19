@@ -198,9 +198,8 @@ Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário b
 De maneira resumida, para criar um novo branch:
 
 <code>
-	
-	git branch -a nome-branch
-	git checkout nome-branch
+
+	git checkout -b nome-branch
 </code>
 
 Para adicionar ao repositório remoto:
@@ -211,9 +210,8 @@ Para adicionar ao repositório remoto:
 
 #### Exemplo
 <code>
-	
-	git branch -a v1.x
-	git checkout v1.x
+
+	git checkout -b v1.x
 	git push -u origin v1.x
 </code>
 
@@ -221,7 +219,7 @@ Veja mais detalhes [aqui](https://git-scm.com/book/en/v2/Git-Branching-Basic-Bra
 
 ### <a name="new-tag"></a> Criando tags
 <code>
-	
+
 	git tag -a nome-tag -m descricao
 </code>
 
