@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.dependency.DependencyManager;
-import executionFlow.dependency.MavenDependencyExtractor;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.JDB;
@@ -86,7 +85,7 @@ public class Analyzer
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 
 	
@@ -131,7 +130,6 @@ public class Analyzer
 		// Fetch dependencies
 		if (!DependencyManager.hasDependencies()) {
 			ConsoleOutput.showInfo("Fetching dependencies...");
-			DependencyManager.register(new MavenDependencyExtractor());
 			DependencyManager.fetch();
 			ConsoleOutput.showInfo("Fetch completed");
 		}
@@ -268,7 +266,7 @@ public class Analyzer
 	@SuppressWarnings("unchecked")
 	public List<String> getMethodsCalledByTestedInvoked()
 	{
-		File f = new File(ExecutionFlow.getAppRootPath(), "imti.ef");
+		File f = new File(ExecutionFlow.getAppRootPath(), "mcti.ef");
 		Map<String, List<String>> invokedMethods = new HashMap<>();
 		
 		
@@ -406,24 +404,7 @@ public class Analyzer
         		
         		if (methodDeclarationLine == 0 && currentLine > 0 && 
         				(line.contains(invokedName+".") || line.contains(invokedName+"(")))
-        			methodDeclarationLine = currentLine;
-        		
-//        		System.out.println("=======");
-//        		System.out.println("in: "+invokedName);
-//        		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
-//        		System.out.println(isInternalCommand);
-//        		System.out.println(exitMethod);
-//        		System.out.println(ignore);
-//        		System.out.println(inMethod);
-//        		System.out.println(jdb_getLine(line));
-//        		System.out.println(isWithinMethod(jdb_getLine(line)));
-//        		System.out.println(isEmptyMethod());
-//        		System.out.println(lastAddWasReturn);
-//        		System.out.println(isNewIteration());
-//        		System.out.println(willEnterInMethod());
-//        		System.out.println(newIteration);
-//        		System.out.println("=======");
-        		
+        			methodDeclarationLine = currentLine;        		
         		
         		// Checks if it is still within a constructor
         		if (inMethod && withinConstructor && (isEmptyMethod(srcLine) || line.contains(testMethodSignature))) {
@@ -449,7 +430,7 @@ public class Analyzer
         				// Checks if it is still in the method
         				else if (withinConstructor || isWithinMethod(lineNumber)) {	
         					if (!isEmptyMethod(srcLine) && !lastAddWasReturn) {
-        						testPath.add(lineNumber);System.out.println("add: "+lineNumber);
+        						testPath.add(lineNumber);
         						lastLineAdded = lineNumber;
         						
         						lastAddWasReturn = srcLine.contains("return "); 
