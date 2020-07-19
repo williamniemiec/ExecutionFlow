@@ -5,7 +5,7 @@
 <hr />
 
 ## Introdução
-Computa test path de métodos testados em testes JUnit.
+Computa test path de métodos testados em testes JUnit. [Veja como usar nos seus projetos](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar).
 
 ## Documentação
 Veja a documentação na [wiki](https://github.com/williamniemiec/ExecutionFlow/wiki).
