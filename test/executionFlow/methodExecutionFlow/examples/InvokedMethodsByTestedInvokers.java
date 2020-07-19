@@ -28,7 +28,7 @@ import executionFlow.util.ConsoleOutput;
 
 /**
  * Tests test path computation for the tested methods of 
- * {@link examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Test} test using 
+ * {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Test} test using 
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
@@ -111,7 +111,7 @@ public class InvokedMethodsByTestedInvokers
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests {@link examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Class#A()}
+	 * Tests {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Class#A()}
 	 * method.
 	 */
 	@Test

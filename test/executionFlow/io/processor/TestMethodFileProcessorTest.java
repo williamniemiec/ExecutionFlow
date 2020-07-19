@@ -17,7 +17,7 @@ public class TestMethodFileProcessorTest
 	@Test
 	public void testClassTest() throws IOException
 	{
-		File currentDir = new File("tests/executionFlow/io/processor/files/TestMethodFileProcessorTest");
+		File currentDir = new File("test/executionFlow/io/processor/files/TestMethodFileProcessorTest");
 		String filename = "TestClass";
 		File f = new File(currentDir, filename+".java.txt");
 		

@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class test_doWhile
 {
-@executionFlow.runtime.CollectInvokedMethods 	public void doWhile(int num)
+@executionFlow.runtime.CollectCalls 	public void doWhile(int num)
 	{
 		int i = 0, k = 0;
 
@@ -15,7 +15,7 @@ public class test_doWhile
 		} while (i < num);
 	}
 	
-@executionFlow.runtime.CollectInvokedMethods 	public void doWhile2(int num)
+@executionFlow.runtime.CollectCalls 	public void doWhile2(int num)
 	{
 		int i = 0, k = 0;
 

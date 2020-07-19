@@ -17,7 +17,7 @@ public class PreTestMethodFileProcessorTest
 	@Test
 	public void testClassTest() throws IOException
 	{
-		File currentDir = new File("tests/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
+		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
 		String filename = "TestClass";
 		File f = new File(currentDir, filename+".java.txt");
 		
@@ -28,7 +28,7 @@ public class PreTestMethodFileProcessorTest
 	@Test
 	public void parameterizedTestMethodTest() throws IOException
 	{
-		File currentDir = new File("tests/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
+		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
 		String filename = "ParameterizedTestMethod";
 		File f = new File(currentDir, filename+".java.txt");
 		

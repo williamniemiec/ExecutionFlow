@@ -28,7 +28,7 @@ import executionFlow.util.ConsoleOutput;
 
 /**
  * Tests test path computation for the constructors of 
- * {@link examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Class} class using 
+ * {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Class} class using 
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
@@ -104,7 +104,7 @@ public class InvokedMethodsByTestedInvokers
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests constructor used by {@link examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Test#T()}
+	 * Tests constructor used by {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Test#T()}
 	 * test.
 	 */
 	@Test
@@ -152,7 +152,7 @@ public class InvokedMethodsByTestedInvokers
 	}
 	
 	/**
-	 * Tests constructor used by {@link examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Test#T2()}
+	 * Tests constructor used by {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Test#T2()}
 	 * test.
 	 */
 	@Test

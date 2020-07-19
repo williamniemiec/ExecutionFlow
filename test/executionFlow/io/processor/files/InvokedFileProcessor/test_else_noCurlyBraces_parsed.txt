@@ -1,20 +1,20 @@
 package executionFlow.core.file.parser.files.noCurlyBraces;
 public class test_else_noCurlyBraces 
 {
-@executionFlow.runtime.CollectInvokedMethods 	public String ifElseMethod(int num)
+@executionFlow.runtime.CollectCalls 	public String ifElseMethod(int num)
 	{
-		int w;int _a20012e21b3445b8d9a1a49bf642e601=0;
+		int w;int _6baec25bdc6e7f9314c64d115f8a28ad=0;
 		
 		if (false)	w++;
-		else {int _7907f9ae3190079d6c1224dc69a6c58f=0;
+		else {int _403316e492f0044bf93b8fc320341adb=0;
 			for(;;)}
 				while (w == 0) {
 					if (false) w++;
-					else {int _76b634954a69e733397b755522b3123b=0;
-						try {int _63c5c42877bfd3e9eec1169f6befead8=0;
+					else {int _e4b97cde02a58ec4ad0720c60495caad=0;
+						try {int _415e7901ea7c4cbbccc201b831f29fb3=0;
 							w++;
 							if (false) w++;
-							else {int _90a14ef7480f706b5169f2f2f8780a90=0;
+							else {int _21ff418696508c65aae24e4fb7102f78=0;
 								w--;}}
  catch(Exception e) {
 							w--;
@@ -27,22 +27,22 @@ public class test_else_noCurlyBraces
 		return w;
 	}
 
-@executionFlow.runtime.CollectInvokedMethods 	public String ifElseMethod_complex(int num)
+@executionFlow.runtime.CollectCalls 	public String ifElseMethod_complex(int num)
 	{
-		int w;int _a2339b0297fc946178a046948f2244f5=0;
+		int w;int _46e8f4f1e2a6dfa86ed5f97f7eb9cbc9=0;
 		
 		if (false)	w++;
-		else {int _49e8300f2f8ee9e253efc7bee2782aef=0;
+		else {int _67cc80e527102a98b887929abd82ec3d=0;
 			for(;;)}
 				while (w == 0) 
 				{
 					if (false) w++;
-					else {int _c883d48b6e6c8a7cd6cf53b9874ac772=0;
+					else {int _a5a7a17201b0af53d381557b454d205c=0;
 
 						{
 							w++;
 							if (false) w++;
-							else {int _124946bfbf1ad0b9c3f4d5f1102c59a1=0;
+							else {int _e72102497177a5a3118ff8d593f0efc6=0;
 								w--;}
 						} 
 						catch(Exception e) 
