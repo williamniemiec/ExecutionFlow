@@ -134,16 +134,18 @@ Para gerar arquivo jar:
 * Analyzer
 * ExecutionFlow
 * FileCompiler
-* InvokerFileProcessor
+* InvokedFileProcessor
 * PreTestMethodFileProcessor
 * TestMethodFileProcessor
 
 2) Certifique-se que a variável `ENVIRONMENT` na classe `ExecutionFlow` seja `false`
 
 3) Exporte o projeto
+
 ![jar-export-1](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig1.png?raw=true)
 
 4) Na janela de exportação, selecione `Java` -> `JAR file with AspectJ support`.
+
 ![jar-export-2](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig2.png?raw=true)
 
 5) Salve o jar no diretório `dist/X.Y/<NOME_ARQUIVO>`, onde X e Y são os números da versão atual e o \<NOME_ARQUIVO\> é definido da seguinte maneira:
@@ -151,6 +153,7 @@ Para gerar arquivo jar:
 onde:
 * X, Y, Z: Números da versão da aplicação
 * \<TYPE\>: Tipo de exportação dos test paths, podendo ser `Console` ou `File`
+
 ![jar-export-3](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig3.png?raw=true)
 
 ### <a name="jar-generation-console"></a> Geração da versão ConsoleExporter
@@ -161,7 +164,6 @@ onde:
 ### <a name="jar-generation-file"></a> Geração da versão FileExporter
 1) Na classe `ExecutionFlow` comente a linha `EXPORT = Export.CONSOLE;` e retire o comentário da linha `EXPORT = Export.FILE;`
 2) Siga os [passos da geração do jar acima](#jar-generation).
-
 
 
 ## <a name="uml"></a> Alteração no diagrama UML
@@ -177,13 +179,12 @@ Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário b
 |lib   |`Diretório`|Bibliotecas que o projeto depende   |
 |src     |`Diretório`| Arquivos fonte|
 |test|`Diretório`|Testes dos arquivos fonte|
-|.classpath|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
-|.project|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
-|build.ajproperties|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
 
 
 ### <a name="project-structure-uml"></a> UML
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/uml.png?raw=true)
+
+<b>OBS:</b> Não esta representada as classes do pacote [executionFlow.util](https://github.com/williamniemiec/ExecutionFlow/tree/master/src/executionFlow/util) para evitar que o diagrama fique poluido - com pouco legibilidade.
 
 <hr />
 
@@ -193,17 +194,20 @@ Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário b
 De maneira resumida, para criar um novo branch:
 
 <code>
+	
 	git branch -a nome-branch
 	git checkout nome-branch
 </code>
 
 Para adicionar ao repositório remoto:
 <code>
+	
 	git push -u origin nome-branch
 </code>
 
 #### Exemplo
 <code>
+	
 	git branch -a v1.x
 	git checkout v1.x
 	git push -u origin v1.x
@@ -213,6 +217,7 @@ Veja mais detalhes [aqui](https://git-scm.com/book/en/v2/Git-Branching-Basic-Bra
 
 ### <a name="new-tag"></a> Criação de tags
 <code>
+	
 	git tag -a nome-tag -m descricao
 </code>
 
@@ -223,6 +228,7 @@ Para adicionar ao repositório remoto:
 
 #### Exemplo
 <code>
+	
 	git tag -a v1.0.1 -m "Melhoria de performance"
 	git push -u origin v1.0.1
 </code>
