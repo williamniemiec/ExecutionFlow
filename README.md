@@ -25,7 +25,8 @@ Caso você tenha usado a versão 1 em algum momento em seu projeto, certifique-s
 
 ### Warning durante a execução
 Se for exibida essa mensagem durante a execução da aplicação, apenas clique em `continue` (informa que o código foi alterado durante a execução)
-![eclipse_msg](https://github.com/williamniemiec/ExecutionFlow/raw/master/docs/img/others/eclipse_msg.png?raw=true)
+
+![eclipse_msg](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/others/eclipse_msg.PNG?raw=true)
 
 ## Changelog
 Detalhes sobre cada versão estão documentadas na [seção releases](https://github.com/williamniemiec/ExecutionFlow/releases).
@@ -37,7 +38,7 @@ Veja a documentação sobre como é possível contribuir com o projeto [aqui](ht
 Veja a documentação específica para programadores que buscam alterar o código fonte [aqui](https://github.com/williamniemiec/ExecutionFlow/DEVELOPERS.md).
 
 ## Organização do projeto
-![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/UML.png?raw=true)
+![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/uml.png?raw=true)
 
 Veja a descrição de cada classe do projeto [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Classes,-Interfaces-e-Aspectos).
 
@@ -75,8 +76,5 @@ Veja mais exemplos de test paths gerados [aqui](https://github.com/williamniemie
 |lib   |`Diretório`|Bibliotecas que o projeto depende   |
 |src     |`Diretório`| Arquivos fonte|
 |test|`Diretório`|Testes dos arquivos fonte|
-|.classpath|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
-|.project|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
-|build.ajproperties|`Arquivo`|Arquivo gerado por IDE (Eclipse)|
 
 Veja a descrição de todos os arquivos [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Arquivos).
