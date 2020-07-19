@@ -70,6 +70,8 @@ onde:
 * \<TYPE\>: Tipo de exportação dos test paths, podendo ser `Console` ou `File`
 ![jar-export-3](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig3.png?raw=true)
 
+<b>OBS:</b> Ao gerar o jar será exibido uma mensagem avisando que o arquivo [InvokedMethodsCollector](LINK) contém warning. Ignore essa mensagem, pois este warning é devido ao fato de não ter nenhum arquivo corrente no projeto em que aspectos desse arquivo se aplicam.
+
 ## <a name="submit"> Salvar modificações do projeto
 Para contribuir com o projeto, basta ter uma conta no GitHub, clonar o projeto (fork) na sua conta, realizar as alterações no código e abrir um [pull request](https://github.com/williamniemiec/ExecutionFlow/pulls). É recomendado olhar a documentação voltada para contribuições antes de realizar um pull request. Ela pode ser acessada [aqui](https://github.com/williamniemiec/ExecutionFlow/CONTRIBUTING.md).
 

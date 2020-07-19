@@ -15,7 +15,24 @@
 
 
 ## <a name="pull-request-guide"></a> Pull Request - Guia
-- O branch `master` deve conter exclusivamente os arquivos da última versão lançada. Qualquer outra versão não lançada deve ser criada em um branch diferente. O nome recomendado é `vX.Y`, onde X e Y são os números da versão seguinte a última versão lançada.
+
+### Branch
+- Caso as alterações que foram feitas não alteram a estrutura da aplicação e nem o modo de usar alguma funcionalidade, use o branch atual. Caso contrário, [crie um novo branch](#new-branch) no seguinte formato:
+
+> Se o branch atual for `N.x`, o novo branch deve se chamar `N+1.x`, onde N é um número
+
+### Tag
+- Sempre, antes de criar um pull request, crie uma tag
+- Só crie a tag ao final de suas alterações - deve ser criada apenas uma tag por pull request
+- Escolha uma tag diferente da tag atual. Se a tag atual for X.Y.Z, onde X, Y e Z são números, [crie uma nova tag](#new-tag) usando o seguinte critério:
+<ul>
+	<li>Se as alterações feitas são pequenas, isto é, pequenas modificações que não modificam a forma de utilização de uma funcionalidade ou mesmo para correções de bugs, crie a tag `X.Y.Z+1`</li>
+	<li>Se for adicionado novas funcionalidades, crie a tag `X.Y+1.0`</li>
+	<li>Se for alterada a forma de usar uma ou mais funcionalidades, ou mesmo se uma funcionalidade for excluída, crie um novo branch como o nome `X+1.x` e crie uma nova tag com o nome `X+1.0.0`</li>
+</ul>
+
+<b>OBS:</b> A criação de tags deve ser do tipo `Annotated Tags`.
+
 
 - As versões lançadas devem ser colocadas no diretório `dist/X.Y`, onde X e Y são os números da versão lançada
 
@@ -31,7 +48,7 @@
 Após realizada as modificações no projeto, crie um pull request com o projeto que você modificou. Procure adicionar uma descrição detalhada do que você alterou com relação ao projeto original. Evite ao máximo alterar a estrutura do projeto, a fim de evitar quebra de código.
 <b>ATENÇÃO:</b> Antes de realizar o pull request, certifique-se de:
 * Deixar as variáveis `DEBUG` como `false`;
-* Deixar a variável `ExecutionFlow.ENVIRONMENT` como `false`;
+* Deixar a variável `ExecutionFlow.ENVIRONMENT` como `true`;
 * Gerar jar da versão `ConsoleExporter` e da versão `FileExporter`;
 * Documentar as alterações de acordo com o [padrão de documentação citado acima](#doc-standard).
 * [Atualizar diagrama UML](#uml), se necessário.
@@ -74,10 +91,9 @@ As classes devem conter a seguinte padrão:
 
 <pre>
 /**
- * Computes test path for collected invokers, where an invoker can be a method
- * or a constructor. This is the main class of the application.
+ * Descrição da classe.
  * 
- * @author    YourName &lt; your@email.com &gt;
+ * @author    SeuNome &lt; seuemail@email.com &gt;
  * @version   X.Y.Z
  * @since   A.B.C
  */
@@ -87,11 +103,11 @@ Além disso, internamente, a classe deve ser dividida em seções, sendo estas i
 
 <pre>
 //-------------------------------------------------------------------------
-//    [Nome da seção]
+//    [Nome_seção]
 //-------------------------------------------------------------------------
 </pre>
 
-Onde [Nome da seção] pode ser:
+Onde [Nome_seção] pode ser:
 * Attributes
 * Constructor(s)
 * Methods
@@ -115,12 +131,12 @@ Os métodos devem ser documentados usando javadoc. É altamente recomendado adic
 Para gerar arquivo jar:
 1) Certifique-se que todas as variáveis `DEBUG` são `false`. Lembre-se que as as classes em que ela se encontra são:
 
-* JDB
+* Analyzer
 * ExecutionFlow
 * FileCompiler
-* InvokerFileParser
-* PreTestMethodFileParser
-* TestMethodFileParser
+* InvokerFileProcessor
+* PreTestMethodFileProcessor
+* TestMethodFileProcessor
 
 2) Certifique-se que a variável `ENVIRONMENT` na classe `ExecutionFlow` seja `false`
 
@@ -149,7 +165,7 @@ onde:
 
 
 ## <a name="uml"></a> Alteração no diagrama UML
-Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário baixar o programa [Dia Diagram Editor](http://dia-installer.de/index.html). Ao editar o diagrama, salve o arquivo .dia no diretório e também exporte o diagrama como png, salvando também no mesmo diretório. O nome dos arquivos deve ser `uml`.
+Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário baixar o programa [Dia Diagram Editor](http://dia-installer.de/index.html). Ao editar o diagrama, salve o arquivo .dia no diretório e também exporte o diagrama como png, salvando também no mesmo diretório. O nome dos arquivos deve ser `uml`. Não se esqueça de salvar o arquivo do projeto uml alterado (`.dia`) junto com exportações do uml no formato `.png` e `.svg`.
 
 
 ## <a name="project-structure"></a> Estrutura do projeto
@@ -168,3 +184,47 @@ Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário b
 
 ### <a name="project-structure-uml"></a> UML
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/uml.png?raw=true)
+
+<hr />
+
+## Apendice
+
+### <a name="new-branch"></a> Criação de branchs
+De maneira resumida, para criar um novo branch:
+
+<code>
+	git branch -a nome-branch
+	git checkout nome-branch
+</code>
+
+Para adicionar ao repositório remoto:
+<code>
+	git push -u origin nome-branch
+</code>
+
+#### Exemplo
+<code>
+	git branch -a v1.x
+	git checkout v1.x
+	git push -u origin v1.x
+</code>
+
+Veja mais detalhes [aqui](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging).
+
+### <a name="new-tag"></a> Criação de tags
+<code>
+	git tag -a nome-tag -m descricao
+</code>
+
+Para adicionar ao repositório remoto:
+<code>
+	git push -u origin nome-tag
+</code>
+
+#### Exemplo
+<code>
+	git tag -a v1.0.1 -m "Melhoria de performance"
+	git push -u origin v1.0.1
+</code>
+
+Veja mais detalhes [aqui](https://git-scm.com/book/en/v2/Git-Basics-Tagging).
