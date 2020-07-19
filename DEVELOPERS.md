@@ -61,9 +61,11 @@ Para gerar arquivo jar:
 2) Certifique-se que a variável `ENVIRONMENT` na classe `ExecutionFlow` seja `false`
 
 3) Exporte o projeto
+
 ![jar-export-1](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig1.png?raw=true)
 
 4) Na janela de exportação, selecione `Java` -> `JAR file with AspectJ support`.
+
 ![jar-export-2](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig2.png?raw=true)
 
 5) Salve o jar no diretório `dist/X.Y/<NOME_ARQUIVO>`, onde X e Y são os números da versão atual e o \<NOME_ARQUIVO\> é definido da seguinte maneira:
