@@ -3,15 +3,18 @@ package executionFlow.runtime.collector;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
+import executionFlow.dependency.DependencyManager;
 import executionFlow.exporter.TestedInvokedExporter;
 import executionFlow.info.InvokedInfo;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.InvokedManager;
+import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.util.Checkpoint;
@@ -20,7 +23,7 @@ import executionFlow.util.JUnit4Runner;
 
 
 /**
- * Captures all test methods, not including internal calls.
+ * Run in each test method
  * 
  * @apiNote		Ignores methods with {@link executionFlow.runtime.SkipInvoked}
  * annotation, methods with {@link executionFlow.runtime._SkipInvoked} and all
@@ -37,10 +40,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static boolean firstTime = true;
-	private static boolean finished = false;
+	private static boolean finished;
 	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
 	private static String outputDir;
-	private InvokedManager testMethodManager;
+	private FilesManager testMethodManager;
 	private String testClassName;
 	private String testClassPackage;
 	private boolean junit5NewTest;
@@ -148,7 +151,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Checks if it the first execution
 			if (testMethodManager == null && !checkpoint.isActive())
-				testMethodManager = new InvokedManager(ProcessorType.PRE_TEST_METHOD, false);
+				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false);
 
 			// Checks if there are files that were not restored in the last execution
 			if (checkpoint.exists() && !checkpoint.isActive()) {
@@ -162,6 +165,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			// Performs pre-processing of the file containing the test method
 			if (firstTime) {
 				ConsoleOutput.showInfo("Pre-processing test method...");
+				ConsoleOutput.showWarning("On the first run this process can be slow");
 				
 				// Enables checkpoint
 				checkpoint.enable();
@@ -190,9 +194,23 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// executed once per test file
 		if (firstTime) {
 			boolean hasError = false;
+			List<String> classPath = new ArrayList<>();
+			Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
+			String libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
+			String classSignature = testClassPackage.isEmpty() ? 
+					testClassName : testClassPackage + "." + testClassName;
 			
+		
+			classPath.add(".");
+			classPath.add(libPath + "aspectjrt-1.9.2.jar");
+			classPath.add(libPath + "aspectjtools.jar");
+			classPath.add(libPath + "junit-4.13.jar");
+			classPath.add(libPath + "hamcrest-all-1.3.jar");
+			classPath.add(libPath + "..\\classes");
+			classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
+					
+			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 			
-			System.out.println("RUN");JUnit4Runner.run(testClassName, testClassPath, testClassPackage);System.out.println("END RUN");
 			finished = true;
 			
 			// Restores original test method file and its compiled file

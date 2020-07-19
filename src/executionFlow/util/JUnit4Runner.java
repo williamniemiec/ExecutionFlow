@@ -4,11 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-
-import executionFlow.ExecutionFlow;
-import executionFlow.dependency.DependencyManager;
-import executionFlow.dependency.MavenDependencyExtractor;
-import executionFlow.info.MethodInvokedInfo;
+import java.util.List;
 
 
 /**
@@ -28,14 +24,15 @@ public class JUnit4Runner
 	/**
 	 * Runs a JUnit 4 test file. 
 	 * 
-	 * @param		testClassName Class name containing the test
-	 * @param		testClassPath File path containing JUnit 4 test
-	 * @param		testClassPackage Class package containing the test 
+	 * @param		workingDirectory Directory that will serve as a reference
+	 * for the execution of the process
+	 * @param		classPath Class path list that will be used in JUnit 4 runner
+	 * @param		classSignature Class signature to begin execution 
 	 */
-	public static void run(String testClassName, Path testClassPath, String testClassPackage)
+	public static void run(Path workingDirectory, List<String> classPath, String classSignature)
 	{	
 		try {
-			Process p = init(testClassName, testClassPath, testClassPackage);
+			Process p = init(workingDirectory, classPath, classSignature);
 			BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			BufferedReader outputError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 			String line;
@@ -52,7 +49,8 @@ public class JUnit4Runner
 					System.err.println(line);
 				}
 				
-				System.out.println(line);
+				if (!line.contains("JUnit version"))
+					System.out.println(line);
 			}
 			
 			// Closes process
@@ -67,50 +65,88 @@ public class JUnit4Runner
 	/**
 	 * Initializes CMD with JUnit 4 running a test file.
 	 * 
-	 * @param		testClassName Class name containing the test
-	 * @param		testClassPath File path containing JUnit 4 test
-	 * @param		testClassPackage Class package containing the test
+	 * @param		workingDirectory Directory that will serve as a reference
+	 * for the execution of the process
+	 * @param		classPath Class path list that will be used in JUnit 4 runner
+	 * @param		classSignature Class signature to begin execution 
 	 * 
-	 * @return		CMD process
+	 * @return		CMD process running JUnit 4 test
 	 * 
 	 * @throws		IOException If process cannot be created 
 	 */
-	private static Process init(String testClassName, Path testClassPath, String testClassPackage) throws IOException
+//	private static Process init(String testClassName, Path testClassPath, String testClassPackage) throws IOException
+	private static Process init(Path workingDirectory, List<String> classPath, String classSignature) throws IOException
 	{
-		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
-		String classPath, classSignature, libPath;
+		//Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
+//		String classPath, classSignature, libPath;
 		ProcessBuilder pb;
 		
 		
-		libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
+//		libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
+//		
+//		// Gets dependencies (if any)
+//		if (!DependencyManager.hasDependencies()) {		
+//			ConsoleOutput.showInfo("Fetching dependencies...");
+//			DependencyManager.fetch();
+//			ConsoleOutput.showInfo("Fetch completed");
+//		}
 		
-		// Gets dependencies (if any)
-		if (!DependencyManager.hasDependencies()) {		
-			ConsoleOutput.showInfo("Fetching dependencies...");
-			DependencyManager.register(new MavenDependencyExtractor());
-			DependencyManager.fetch();
-			ConsoleOutput.showInfo("Fetch completed");
-		}
-		
-		classPath = ".;" 
-				+ libPath + "aspectjrt-1.9.2.jar;"
-				+ libPath + "aspectjtools.jar;"
-				+ libPath + "junit-4.13.jar;"
-				+ libPath + "hamcrest-all-1.3.jar;"
-				+ testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*;"
-				+ "..\\classes";
-		
-		classSignature = testClassPackage.isEmpty() ? 
-				testClassName : testClassPackage + "." + testClassName;
+//		classPath = ".;" 
+//				+ libPath + "aspectjrt-1.9.2.jar;"
+//				+ libPath + "aspectjtools.jar;"
+//				+ libPath + "junit-4.13.jar;"
+//				+ libPath + "hamcrest-all-1.3.jar;"
+//				+ testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*;"
+//				+ "..\\classes";
+//		
+//		classSignature = testClassPackage.isEmpty() ? 
+//				testClassName : testClassPackage + "." + testClassName;
 
 		pb = new ProcessBuilder(
 			"cmd.exe", "/c",
-			"java", "-cp", classPath, 
+			"java", "-cp", DataUtils.implode(classPath, ";"), 
 			"org.junit.runner.JUnitCore", classSignature
 		);
 		
-		pb.directory(testClassRootPath.toFile());
+		pb.directory(workingDirectory.toFile());
 		
 		return pb.start();
+		
+		
+		
+//		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
+//		String classPath, classSignature, libPath;
+//		ProcessBuilder pb;
+//		
+//		
+//		libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
+//		
+//		// Gets dependencies (if any)
+//		if (!DependencyManager.hasDependencies()) {		
+//			ConsoleOutput.showInfo("Fetching dependencies...");
+//			DependencyManager.fetch();
+//			ConsoleOutput.showInfo("Fetch completed");
+//		}
+//		
+//		classPath = ".;" 
+//				+ libPath + "aspectjrt-1.9.2.jar;"
+//				+ libPath + "aspectjtools.jar;"
+//				+ libPath + "junit-4.13.jar;"
+//				+ libPath + "hamcrest-all-1.3.jar;"
+//				+ testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*;"
+//				+ "..\\classes";
+//		
+//		classSignature = testClassPackage.isEmpty() ? 
+//				testClassName : testClassPackage + "." + testClassName;
+//
+//		pb = new ProcessBuilder(
+//			"cmd.exe", "/c",
+//			"java", "-cp", classPath, 
+//			"org.junit.runner.JUnitCore", classSignature
+//		);
+//		
+//		pb.directory(testClassRootPath.toFile());
+//		
+//		return pb.start();
 	}
 }
