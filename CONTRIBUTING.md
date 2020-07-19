@@ -7,6 +7,8 @@
 -  [Geração jar ](#jar-generation)
 -  [Alteração no diagrama UML](#uml)
 - [Estrutura do projeto](#project-structure)
+- [Criando branch](#new-branch)
+- [Criando tags](#new-tag)
 
 
 ## <a name="issues"></a> Problemas
@@ -192,7 +194,7 @@ Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário b
 
 ## Apendice
 
-### <a name="new-branch"></a> Criação de branchs
+### <a name="new-branch"></a> Criando branch
 De maneira resumida, para criar um novo branch:
 
 <code>
@@ -217,7 +219,7 @@ Para adicionar ao repositório remoto:
 
 Veja mais detalhes [aqui](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging).
 
-### <a name="new-tag"></a> Criação de tags
+### <a name="new-tag"></a> Criando tags
 <code>
 	
 	git tag -a nome-tag -m descricao
