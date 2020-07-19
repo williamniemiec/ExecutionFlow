@@ -21,6 +21,8 @@
 
 > Se o branch atual for `N.x`, o novo branch deve se chamar `N+1.x`, onde N é um número
 
+<b>OBS:</b> Não faça nenhuma alteração usando o branch `master`, pois ele será resultado do merge com a última versão lançada
+
 ### Tag
 - Sempre, antes de criar um pull request, crie uma tag
 - Só crie a tag ao final de suas alterações - deve ser criada apenas uma tag por pull request
