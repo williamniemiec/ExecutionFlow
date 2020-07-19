@@ -1,2 +1,0 @@
-JUnitSimulation.testFactorial()
-[89, 91, 92, 91, 92, 91, 92, 91, 92, 91, 95]

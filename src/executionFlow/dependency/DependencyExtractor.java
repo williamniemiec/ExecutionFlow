@@ -18,5 +18,5 @@ public interface DependencyExtractor
 	 * 
 	 * @return		Dependencies list
 	 */
-	List<Path> extract();
+	public List<Path> extract();
 }

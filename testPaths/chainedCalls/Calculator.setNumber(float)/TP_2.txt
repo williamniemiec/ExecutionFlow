@@ -1,2 +1,0 @@
-chainedCalls.ChainedMethods.testChainedMethodsInForLoop()
-[43, 44]

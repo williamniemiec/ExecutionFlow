@@ -11,178 +11,338 @@
 | complexTests			|`Diretório`	|	Exemplos de códigos mais sofisticados, como o uso de construtores em um loop, além de conter códigos que não funcionavam nas versões anteriores da aplicação	|
 | controlFlow 			|`Diretório`	|	Exemplos relacionados ao fluxo de controle (if, if-else, try-catch,...)	|
 | junit5 			|`Diretório`	|	Exemplos de testes JUnit 5	|
+|methodCalledByTestedInvokeds|`Diretório`	| Exemplos de teste em que o método / construtor testado chama outros métodos |
+|others|`Diretório`	| Contém testes de diversos tipos |
 | overloadedMethod		|`Diretório`	|	Exemplos de códigos que utilizam chamadas para métodos sobrecarregados	|
 | override 			|`Diretório`	|	Exemplos contendo sobrescrita	|
 | polymorphism 			|`Diretório`	|	Exemplos de códigos que usam polimorfismo	|
 
-
 <hr />
 
 ### Exemplo
-- [JUnitSimulation.java e MultipleTestPaths.java - output em arquivo](https://github.com/williamniemiec/ExecutionFlow/tree/master/testPaths/testClasses)
-- JUnitSimulation.java - output no console
+- [others/OthersTest.java e others/MultipleTestPaths.java - output em arquivo](https://github.com/williamniemiec/ExecutionFlow/tree/master/examples/results)
+- others/OthersTest.java - output no console
 <code>
 	
-	#####################################################################
-	                      testParamSignature_object                      
-	#####################################################################
-	[INFO] Processing source file of method testClasses.TestClass.testObjParam(Object)...
-	[INFO] Processing source file of test method JUnitSimulation.testParamSignature_object()...
+	[INFO] Pre-processing test method...
+	[WARN] On the first run this process can be slow
+	[INFO] Fetching dependencies...
+	[INFO] Fetch completed
+	[INFO] Pre-processing completed
+	.[INFO] Processing source file of test method examples.others.OthersTest.testParamSignature_object()...
+	[INFO] Fetching dependencies...
+	[INFO] Fetch completed
 	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.testObjParam(Object)...
+	[INFO] Processing source file of invoked - examples.others.auxClasses.AuxClass.testObjParam(Object)...
+	[INFO] Processing completed
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass.testObjParam(Object)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testParamSignature_object()
-	testClasses.TestClass.testObjParam(Object)
-	[195]
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testParamSignature_object()
+	examples.others.auxClasses.AuxClass.testObjParam(Object)
+	[197]
 
-	#####################################################################
-	                             testEmptyTest                           
-	#####################################################################
-	[INFO] Processing source file of method testClasses.TestClass.test2()...
-	[INFO] Processing source file of test method JUnitSimulation.testEmptyTest()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.test2()...
-	[INFO] Test path is empty
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testEmptyTest()
-	testClasses.TestClass.test2()
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testParamSignature_object()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.factorial(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass.fibonacci(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testingMultipleMethods()
+	examples.others.auxClasses.AuxClass.factorial(int)
+	[91, 93, 94, 93, 94, 93, 94, 93, 94, 93, 97]
+
+	examples.others.OthersTest.testingMultipleMethods()
+	examples.others.auxClasses.AuxClass.fibonacci(int)
+	[108, 109, 110, 112, 113, 114, 115, 112, 113, 114, 115, 112, 118]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testingMultipleMethods()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.getNumber()...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.onlyOneMethod()
+	examples.others.auxClasses.AuxClass.getNumber()
+	[202]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.onlyOneMethod()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.fibonacci(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass.factorial(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testMethodWithAuxMethods()
+	examples.others.auxClasses.AuxClass.fibonacci(int)
+	[108, 109, 110, 112, 113, 114, 115, 112, 113, 114, 115, 112, 118]
+
+	examples.others.OthersTest.testMethodWithAuxMethods()
+	examples.others.auxClasses.AuxClass.factorial(int)
+	[91, 93, 94, 93, 94, 93, 94, 93, 97]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testMethodWithAuxMethods()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
+	[29, 31]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.test2()...
+	[WARN] Test path is empty
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testEmptyTest()
+	examples.others.auxClasses.AuxClass.test2()
 	[]
 
-	#####################################################################
-	                             testFactorial                           
-	#####################################################################
-	[INFO] Processing source file of method testClasses.TestClass.factorial(int)...
-	[INFO] Processing source file of test method JUnitSimulation.testFactorial()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.factorial(int)...
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testFactorial()
-	testClasses.TestClass.factorial(int)
-	[89, 91, 92, 91, 92, 91, 92, 91, 92, 91, 95]
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testEmptyTest()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
 
-	#####################################################################
-	                            testFibonacci                            
-	#####################################################################
-	[INFO] Processing source file of method testClasses.TestClass.fibonacci(int)...
-	[INFO] Processing source file of test method JUnitSimulation.testFibonacci()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.fibonacci(int)...
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.factorial(int)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testFibonacci()
-	testClasses.TestClass.fibonacci(int)
-	[106, 107, 108, 110, 111, 112, 113, 110, 111, 112, 113, 110, 111, 112, 113, 110, 116]
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testFactorial()
+	examples.others.auxClasses.AuxClass.factorial(int)
+	[91, 93, 94, 93, 94, 93, 94, 93, 94, 93, 97]
 
-	#####################################################################
-	                    testStaticMethod_charSequence                    
-	#####################################################################
-	[INFO] Processing source file of method testClasses.TestClass.parseLetters_noInternalCall(CharSequence)...
-	[INFO] Processing source file of test method JUnitSimulation.testStaticMethod_charSequence()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.parseLetters_noInternalCall(CharSequence)...
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testStaticMethod_charSequence()
-	testClasses.TestClass.parseLetters_noInternalCall(CharSequence)
-	[127, 128, 130, 131, 132, 130, 131, 132, 130, 131, 132, 130, 131, 132, 130, 131, 132, 130, 131, 133, 134, 130, 131, 133, 134, 130, 131, 133, 134, 130, 131, 133, 134, 130, 131, 133, 134, 130, 137]
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testFactorial()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
 
-	#####################################################################
-	                           testFactorial_zero                       
-	#####################################################################
-	[INFO] Processing source file of method testClasses.TestClass.factorial(int)...
-	[INFO] Processing source file of test method JUnitSimulation.testFactorial_zero()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.factorial(int)...
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.fibonacci(int)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testFactorial_zero()
-	testClasses.TestClass.factorial(int)
-	[89, 91, 95]
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testFibonacci()
+	examples.others.auxClasses.AuxClass.fibonacci(int)
+	[108, 109, 110, 112, 113, 114, 115, 112, 113, 114, 115, 112, 113, 114, 115, 112, 118]
 
-	#####################################################################
-	                      testParamSignature_createdObject               
-	#####################################################################
-	[INFO] Processing source file of method testClasses.TestClass.testClassParam(ClassInterface)...
-	[INFO] Processing source file of test method JUnitSimulation.testParamSignature_createdObject()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.testClassParam(ClassInterface)...
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testParamSignature_createdObject()
-	testClasses.TestClass.testClassParam(ClassInterface)
-	[200]
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testFibonacci()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
 
-	#####################################################################
-	                          testInternalCall                           
-	#####################################################################
-	[INFO] Processing source file of method testClasses.TestClass.parseLetters_withInternalCall(char[])...
-	[INFO] Processing source file of test method JUnitSimulation.testInternalCall()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.parseLetters_withInternalCall(char[])...
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.parseLetters_noInternalCall(CharSequence)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testInternalCall()
-	testClasses.TestClass.parseLetters_withInternalCall(char[])
-	[149, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 153, 151, 156]
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testStaticMethod_charSequence()
+	examples.others.auxClasses.AuxClass.parseLetters_noInternalCall(CharSequence)
+	[129, 130, 132, 133, 134, 132, 133, 134, 132, 133, 134, 132, 133, 134, 132, 133, 134, 132, 133, 135, 136, 132, 133, 135, 136, 132, 133, 135, 136, 132, 133, 135, 136, 132, 133, 135, 136, 132, 139]
 
-	#####################################################################
-	                             testInterface                           
-	#####################################################################
-	[INFO] Processing source file of method testClasses.Interface.test()...
-	[INFO] Processing source file of test method JUnitSimulation.testInterface()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.Interface.test()...
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.factorial(int)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	JUnitSimulation.testInterface()
-	testClasses.Interface.test()
-	[30, 31]
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testFactorial_zero()
+	examples.others.auxClasses.AuxClass.factorial(int)
+	[91, 93, 97]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testFactorial_zero()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	.[INFO] Computing test path of method examples.others.auxClasses.AuxClass.parseLetters_withInternalCall(char[])...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.OthersTest.testInternalCall()
+	examples.others.auxClasses.AuxClass.parseLetters_withInternalCall(char[])
+	[151, 153, 155, 153, 155, 153, 155, 153, 155, 153, 155, 153, 155, 153, 155, 153, 155, 153, 155, 153, 155, 153, 158]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+
+	Time: 81,126
+
+	OK (10 tests)
 </code>
 
-- MultipleTestPaths.java - output no console
+- others/MultipleTestPaths.java - output no console
 <code>
 	
-	[INFO] Processing source file of method testClasses.TestClass.threePaths(int)...
-	[INFO] Processing source file of test method MultipleTestPaths.ThreeTestPathsTest()...
+	[INFO] Pre-processing test method...
+	[WARN] On the first run this process can be slow
+	[INFO] Fetching dependencies...
+	[INFO] Fetch completed
+	[INFO] Pre-processing completed
+	.[INFO] Processing source file of test method examples.others.MultipleTestPaths.ThreeTestPathsTest()...
+	[INFO] Fetching dependencies...
+	[INFO] Fetch completed
 	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.threePaths(int)...
-	[INFO] Test path has been successfully computed
-	[INFO] Processing source file of method testClasses.TestClass.threePaths(int)...
-	[INFO] Processing source file of test method MultipleTestPaths.ThreeTestPathsTest()...
+	[INFO] Processing source file of invoked - examples.others.auxClasses.AuxClass.threePaths(int)...
 	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.threePaths(int)...
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass.threePaths(int)...
 	[INFO] Test path has been successfully computed
-	[INFO] Processing source file of method testClasses.TestClass.threePaths(int)...
-	[INFO] Processing source file of test method MultipleTestPaths.ThreeTestPathsTest()...
-	[INFO] Processing completed
-	[INFO] Computing test path of method testClasses.TestClass.threePaths(int)...
+	[WARN] There are no methods called by tested invoked
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass.threePaths(int)...
 	[INFO] Test path has been successfully computed
-	---------------------------------------------------------------------
-	                                EXPORT                               
-	---------------------------------------------------------------------
-	MultipleTestPaths.ThreeTestPathsTest()
-	testClasses.TestClass.threePaths(int)
-	[182, 186, 190]
-	[182, 183]
-	[182, 186, 187]
+	[WARN] There are no methods called by tested invoked
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass.threePaths(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.MultipleTestPaths.ThreeTestPathsTest()
+	examples.others.auxClasses.AuxClass.threePaths(int)
+	[184, 185]
+	[184, 188, 189]
+	[184, 188, 192]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+	[INFO] Computing test path of method examples.others.auxClasses.AuxClass(int)...
+	[INFO] Test path has been successfully computed
+	[WARN] There are no methods called by tested invoked
+	--------------------------------------------------------------------------------
+	                                     EXPORT
+	--------------------------------------------------------------------------------
+	examples.others.MultipleTestPaths.ThreeTestPathsTest()
+	examples.others.auxClasses.AuxClass(int)
+	[29, 31]
+
+	[INFO] Exporting invokers along with test methods that test them to CSV...
+	[INFO] The export was successful
+	[INFO] Location: C:\Users\William Niemiec\Documents\IC.local\workspace_ec12\ExecutionFlow\examples\results\Invokers_TestMethods.csv
+
+	Time: 26,211
+
+	OK (1 test)
 </code>

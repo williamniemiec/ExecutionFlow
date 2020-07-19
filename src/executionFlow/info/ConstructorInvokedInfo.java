@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 
 /**
- * Stores information about a class' constructor.
+ * Stores information about a constructor.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0

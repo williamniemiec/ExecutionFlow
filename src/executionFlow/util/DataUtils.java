@@ -27,6 +27,32 @@ public class DataUtils
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
+	 * Converts elements of a list into a string by separating each element
+	 * with a delimiter. 
+	 * 
+	 * @param		list List to be converted
+	 * 
+	 * @return		List elements separated by the given delimiter
+	 */
+	public static <T> String implode(List<T> list, String delimiter)
+	{
+		StringBuilder response = new StringBuilder();
+		
+		
+		for (T p : list) {
+			response.append(p);
+			response.append(delimiter);
+		}
+		
+		// Removes last semicolon
+		if (response.length() > 1) {
+			response.deleteCharAt(response.length()-1);
+		}
+		
+		return response.toString();
+	}
+	
+	/**
 	 * Given two Maps, adds all content from the first Map to the second.
 	 * 
 	 * @param		map1 Some map

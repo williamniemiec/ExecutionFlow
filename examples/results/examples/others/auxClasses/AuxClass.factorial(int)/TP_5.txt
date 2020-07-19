@@ -1,0 +1,3 @@
+examples.others.OthersTest.testFactorial_zero()
+[91, 93, 97]
+

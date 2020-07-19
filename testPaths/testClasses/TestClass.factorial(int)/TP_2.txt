@@ -1,2 +1,0 @@
-JUnitSimulation.testFactorial_zero()
-[89, 91, 95]

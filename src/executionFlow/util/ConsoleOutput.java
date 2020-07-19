@@ -2,7 +2,7 @@ package executionFlow.util;
 
 
 /**
- * Responsible for the console outputs.
+ * Responsible for displaying information on the console.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0

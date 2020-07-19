@@ -1,1 +1,3 @@
-examples/AnnotationsTest.java
+.settings
+bin
+docs/uml/*.dia~

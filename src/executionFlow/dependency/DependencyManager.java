@@ -20,10 +20,16 @@ public abstract class DependencyManager
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static List<DependencyExtractor> dependencyExtractors;
+	private static List<DependencyExtractor> dependencyExtractors = new ArrayList<>();
 	private static List<Path> dependencies;
 	private static final Path PATH_DEPENDENCIES = 
 			Path.of(System.getProperty("user.home"), ".ef_dependencies");
+	
+	
+	static {
+		dependencyExtractors.add(new MavenDependencyExtractor());
+	}
+	
 	
 	
 	//-------------------------------------------------------------------------

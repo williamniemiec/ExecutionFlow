@@ -13,7 +13,7 @@ import executionFlow.io.processor.factory.FileProcessorFactory;
 
 
 /**
- * Responsible for managing file parser and compiler for a file.
+ * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -24,12 +24,12 @@ public class FileManager implements Serializable
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 105L;
+	private static final long serialVersionUID = 200L;
 	
 	private transient Path srcFile;
 	private transient Path originalSrcFile; 
 	private transient Path compiledFile;
-	private transient Path originalClassPath;
+	private transient Path originalCompiledFile;
 	private String filename;
 	private transient Path classOutput;
 	private String classPackage;
@@ -87,7 +87,7 @@ public class FileManager implements Serializable
 		);
 		this.compiledFile = Path.of(classOutput+"/"+filename+".class");
 		this.originalSrcFile = Path.of(srcFilePath.toAbsolutePath().toString()+"."+backupExtensionName); 
-		this.originalClassPath = Path.of(classOutput+"/"+filename+".class."+backupExtensionName);
+		this.originalCompiledFile = Path.of(classOutput+"/"+filename+".class."+backupExtensionName);
 	}
 	
 	
@@ -101,7 +101,7 @@ public class FileManager implements Serializable
 				+ "srcFile=" + srcFile 
 				+ ", originalSrcFile=" + originalSrcFile 
 				+ ", compiledFile="	+ compiledFile 
-				+ ", originalClassPath=" + originalClassPath 
+				+ ", originalClassPath=" + originalCompiledFile 
 				+ ", filename=" + filename
 				+ ", classOutput=" + classOutput 
 				+ ", classPackage=" + classPackage 
@@ -232,13 +232,13 @@ public class FileManager implements Serializable
 	public FileManager revertCompilation() throws IOException
 	{
 		try {
-			if (Files.exists(originalClassPath)) {
+			if (Files.exists(originalCompiledFile)) {
 				
 				try {
 					Files.delete(compiledFile);
 				} catch (IOException e) { }
 				
-				Files.move(originalClassPath, compiledFile);
+				Files.move(originalCompiledFile, compiledFile);
 			}
 		} catch (IOException e) {
 			throw new IOException("Revert compilation without backup");
@@ -254,7 +254,7 @@ public class FileManager implements Serializable
 	 */
 	public boolean hasClassBackupStored()
 	{
-		return Files.exists(originalClassPath);
+		return Files.exists(originalCompiledFile);
 	}
 	
 	/**
@@ -271,15 +271,17 @@ public class FileManager implements Serializable
 	 * Creates a copy of class file passed to the constructor to allow to 
 	 * restore it after.
 	 * 
+	 * @return		Itself to allow chained calls
+	 * 
 	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.class&gt;.
 	 * It will be saved in the same directory of the original file
 	 */
-	public FileManager createClassBackupFile()
+	public FileManager createBackupCompiledFile()
 	{
 		try {
 			Files.copy(
 				compiledFile,
-				originalClassPath, 
+				originalCompiledFile, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
 		} catch (IOException e) {e.printStackTrace();			// If already exists a .original, this means
@@ -287,7 +289,7 @@ public class FileManager implements Serializable
 				revertCompilation();	
 				if (!lastWasError) {
 					lastWasError = true;
-					createClassBackupFile();	// So, restore this file and starts again
+					createBackupCompiledFile();	// So, restore this file and starts again
 					lastWasError = false;
 				}
 			} catch (IOException e1) {
@@ -302,10 +304,12 @@ public class FileManager implements Serializable
 	 * Creates a copy of source file passed to the constructor to allow to 
 	 * restore it after.
 	 * 
+	 * @return		Itself to allow chained calls
+	 * 
 	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
 	 * It will be saved in the same directory of the original file
 	 */
-	private void createSrcBackupFile()
+	public FileManager createSrcBackupFile()
 	{
 		try {
 			Files.copy(
@@ -325,6 +329,8 @@ public class FileManager implements Serializable
 				e1.printStackTrace();
 			}				
 		}
+		
+		return this;
 	}
 	
 	
@@ -353,7 +359,7 @@ public class FileManager implements Serializable
 			oos.writeUTF(classOutput.toAbsolutePath().toString());
 			oos.writeUTF(compiledFile.toAbsolutePath().toString());
 			oos.writeUTF(originalSrcFile.toAbsolutePath().toString());
-			oos.writeUTF(originalClassPath.toAbsolutePath().toString());
+			oos.writeUTF(originalCompiledFile.toAbsolutePath().toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -367,7 +373,7 @@ public class FileManager implements Serializable
 			this.classOutput = Path.of(ois.readUTF());
 			this.compiledFile = Path.of(ois.readUTF());;
 			this.originalSrcFile = Path.of(ois.readUTF());;
-			this.originalClassPath = Path.of(ois.readUTF());;
+			this.originalCompiledFile = Path.of(ois.readUTF());;
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}

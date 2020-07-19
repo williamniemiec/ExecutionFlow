@@ -13,7 +13,6 @@ import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
-import executionFlow.runtime.collector.MethodCollector;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.Pair;
 
@@ -36,7 +35,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Collected methods from {@link MethodCollector}.
+	 * Collected methods from {@link executionFlow.runtime.MethodCollector}.
 	 * <ul>
 	 * 	<li><b>Key:</b> Method invocation line</li>
 	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
@@ -54,8 +53,14 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-			new FileExporter("results", false);
+		if (isDevelopment()) {
+			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
+				new FileExporter("examples\\results", false);
+		}
+		else {
+			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
+				new FileExporter("results", false);
+		}
 	}
 	
 	
@@ -148,32 +153,10 @@ public class MethodExecutionFlow extends ExecutionFlow
 				);
 				
 				try {
-					// Processes the source file of the test method if it has
-					// not been processed yet
-					if (!testMethodManager.wasParsed(testMethodFileManager)) {
-						ConsoleOutput.showInfo("Processing source file of test method "
-							+ collector.getTestMethodInfo().getInvokedSignature()+"...");
-						
-						testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-						ConsoleOutput.showInfo("Processing completed");	
-					}
-
-					// Processes the source file of the method if it has not 
-					// been processed yet
-					if (!invokedManager.wasParsed(methodFileManager)) {
-						ConsoleOutput.showInfo("Processing source file of method " 
-							+ collector.getMethodInfo().getInvokedSignature()+"...");
-						
-						invokedManager.parse(methodFileManager).compile(methodFileManager);
-						ConsoleOutput.showInfo("Processing completed");
-					}
+					Analyzer analyzer = analyze(collector.getTestMethodInfo(), testMethodFileManager, 
+							collector.getMethodInfo(), methodFileManager);
+					tp = analyzer.getTestPaths();
 					
-					// Computes test path from JDB
-					ConsoleOutput.showInfo("Computing test path of method "
-						+ collector.getMethodInfo().getInvokedSignature()+"...");
-
-					Analyzer analyzer = new Analyzer(collector.getMethodInfo(), collector.getTestMethodInfo());
-					tp = analyzer.run().getTestPaths();
 					
 					if (tp.isEmpty() || tp.get(0).isEmpty())
 						ConsoleOutput.showWarning("Test path is empty");

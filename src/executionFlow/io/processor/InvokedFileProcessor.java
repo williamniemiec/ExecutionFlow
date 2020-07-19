@@ -18,7 +18,8 @@ import executionFlow.util.DataUtils;
 
 /**
  * Processes java file adding instructions in parts of the code that does not 
- * exist when converting it to bytecode.
+ * exist when converting it to bytecode. Also, replaces print calls with 
+ * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -29,7 +30,7 @@ public class InvokedFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 105L;
+	private static final long serialVersionUID = 200L;
 	
 	/**
 	 * If true, displays processed lines.
@@ -50,7 +51,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * lines.
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	
@@ -146,7 +147,7 @@ public class InvokedFileProcessor extends FileProcessor
 	/**
 	 * Processes the file adding instructions in parts of the code that does not
 	 * exist when converting it to bytecode. Besides, modifies the code so that
-	 * {@link executionFlow.core.JDB} computes the test path correctly.
+	 * {@link executionFlow.util.core.JDB} computes the test path correctly.
 	 * 
 	 * @throws		IOException If file encoding is incorrect or if file cannot
 	 * be read / written
@@ -277,7 +278,7 @@ public class InvokedFileProcessor extends FileProcessor
 	/**
 	 * Modifies the code in a way that eliminates print statements and put in
 	 * place another method, since print statements interfere with 
-	 * {@link executionFlow.core.JDB} execution.
+	 * {@link executionFlow.util.core.JDB} execution.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 * @version		2.0.0
@@ -405,7 +406,7 @@ public class InvokedFileProcessor extends FileProcessor
 	
 	/**
 	 * Responsible for handling if-else and else statements, being useful to
-	 * ensure that {@link executionFlow.core.JDB} compute test paths correctly.
+	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 * @version		2.0.0
@@ -604,7 +605,7 @@ public class InvokedFileProcessor extends FileProcessor
 	
 	/**
 	 * Responsible for handling try-catch-finally statements, being useful to
-	 * ensure that {@link executionFlow.core.JDB} compute test paths correctly.
+	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 * @version		2.0.0
@@ -703,7 +704,7 @@ public class InvokedFileProcessor extends FileProcessor
 	
 	/**
 	 * Responsible for handling continue and break instructions, being useful to
-	 * ensure that {@link executionFlow.core.JDB} compute test paths correctly.
+	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 * @version		2.0.0
@@ -752,7 +753,7 @@ public class InvokedFileProcessor extends FileProcessor
 	
 	/**
 	 * Responsible for handling do-while statements, being useful to ensure 
-	 * that {@link executionFlow.core.JDB} compute test paths correctly.
+	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 * @version		2.0.0
@@ -825,7 +826,7 @@ public class InvokedFileProcessor extends FileProcessor
 	
 	/**
 	 * Responsible for handling switch statements, being useful to ensure 
-	 * that {@link executionFlow.core.JDB} compute test paths correctly.
+	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 * @version		2.0.0
@@ -897,7 +898,7 @@ public class InvokedFileProcessor extends FileProcessor
 	
 	/**
 	 * Responsible for handling variable declarations, being useful to ensure 
-	 * that {@link executionFlow.core.JDB} compute test paths correctly.
+	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 * @version		2.0.0

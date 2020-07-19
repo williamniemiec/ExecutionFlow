@@ -23,27 +23,10 @@ public class JDB
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * If true, displays shell output.
-	 */
-	private static final boolean DEBUG; 
-	
 	private Process process;
 	private ProcessBuilder processBuilder;
 	private JDBInput in;
 	private JDBOutput out;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	/**
-	 * Enables or disables debug. If activated, displays shell output during 
-	 * JDB execution (performance can be worse).
-	 */
-	static {
-		DEBUG = true;
-	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -341,10 +324,6 @@ public class JDB
 		 */
 		public void send(String command)
 		{
-			// -----{ DEBUG }-----
-			if (DEBUG) { ConsoleOutput.showDebug("COMMAND: "+command); }
-			// -----{ END DEBUG }-----
-			
 			input.println(command);
 			input.flush();
 		}
@@ -361,10 +340,6 @@ public class JDB
 		public void send(String... commands)
 		{
 			for (String command : commands) {
-				// -----{ DEBUG }-----
-				if (DEBUG) { ConsoleOutput.showDebug("COMMAND: "+command); }
-				// -----{ END DEBUG }-----
-				
 			    input.println(command);
 			}
 			

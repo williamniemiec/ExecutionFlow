@@ -9,13 +9,14 @@ import org.aspectj.tools.ajc.Main;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.dependency.DependencyManager;
-import executionFlow.dependency.MavenDependencyExtractor;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.DataUtils;
 
 
 /**
- * Responsible for compiling .java files.
+ * Responsible for compiling Java files.
+ * 
+ * @apiNote		Compatible with AspectJ
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -40,7 +41,7 @@ public class FileCompiler
 	 * compilation (performance can get worse).
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	
@@ -68,12 +69,12 @@ public class FileCompiler
 		
 		// Gets dependencies (if any)
 		if (!DependencyManager.hasDependencies()) {
-			DependencyManager.register(new MavenDependencyExtractor());
+			ConsoleOutput.showInfo("Fetching dependencies...");
 			DependencyManager.fetch();
+			ConsoleOutput.showInfo("Fetch completed");
 		}
 		
 		mavenDependencies = DataUtils.pathListToString(DependencyManager.getDependencies(), ";", false);
-
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 

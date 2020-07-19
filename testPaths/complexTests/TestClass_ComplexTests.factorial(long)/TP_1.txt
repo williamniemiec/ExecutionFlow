@@ -1,3 +1,0 @@
-complexTests.ComplexTests.moreOneConstructorAndMethod()
-[52, 53]
-[52, 55, 57, 58, 57, 58, 57, 58, 57, 58, 57, 61]

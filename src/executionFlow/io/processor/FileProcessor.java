@@ -10,9 +10,9 @@ import executionFlow.io.FileEncoding;
 
 
 /**
- * A file processor will add some code to an existing code if some conditions
- * are met. Who will define these conditions will be the classes that 
- * implement this class.
+ * A file processor will add or replace some code to an existing code if some
+ * condition(s) is(are) met. Who will define these conditions will be the
+ * classes that implement this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -23,7 +23,7 @@ public abstract class FileProcessor implements Serializable
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 105L;
+	private static final long serialVersionUID = 200L;
 	
 	protected FileEncoding encode = FileEncoding.UTF_8;
 	protected transient Path file;

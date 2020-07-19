@@ -1,2 +1,0 @@
-chainedCalls.ChainedMethods.testChainedMethods()
-[55, 56]

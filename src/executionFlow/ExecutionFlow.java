@@ -15,6 +15,8 @@ import java.util.Map;
 import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedInfo;
+import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.util.ConsoleOutput;
@@ -84,7 +86,7 @@ public abstract class ExecutionFlow
 	 * each test method executed.
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	/**
@@ -100,7 +102,7 @@ public abstract class ExecutionFlow
 	 */
 	static {
 		EXPORT = TestPathExportType.CONSOLE;
-		//EXPORT = Export.FILE;
+		//EXPORT = TestPathExportType.FILE;
 	}
 	
 
@@ -277,6 +279,52 @@ public abstract class ExecutionFlow
 		libPath = Path.of(appRoot + "\\lib");
 
 		return libPath;
+	}
+	
+	/**
+	 * Runs {@link Analyzer} on an invoked.
+	 * 
+	 * @param		testMethodInfo Test method information
+	 * @param		testMethodFileManager Test method file information
+	 * @param		invokedInfo Invoked information
+	 * @param		invokedFileManager Invoked file information
+	 * 
+	 * @return		Analyzer after finishing its execution
+	 * 
+	 * @throws		IOException If an error occurs during the instantiation of
+	 * the analyzer
+	 * 
+	 * @implNote	This method will instantiate an Analyzer and call the 
+	 * {@link Analyzer#run()} method
+	 */
+	protected Analyzer analyze(InvokedInfo testMethodInfo, FileManager testMethodFileManager, 
+			InvokedInfo invokedInfo, FileManager invokedFileManager) throws IOException
+	{
+		// Processes the source file of the test method if it has
+		// not been processed yet
+		if (!testMethodManager.wasProcessed(testMethodFileManager)) {
+			ConsoleOutput.showInfo("Processing source file of test method "
+				+ testMethodInfo.getInvokedSignature()+"...");
+			
+			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
+			ConsoleOutput.showInfo("Processing completed");	
+		}
+
+		// Processes the source file of the method if it has not 
+		// been processed yet
+		if (!invokedManager.wasProcessed(invokedFileManager)) {
+			ConsoleOutput.showInfo("Processing source file of invoked - " 
+				+ invokedInfo.getInvokedSignature()+"...");
+			
+			invokedManager.parse(invokedFileManager).compile(invokedFileManager);
+			ConsoleOutput.showInfo("Processing completed");
+		}
+		
+		// Computes test path from JDB
+		ConsoleOutput.showInfo("Computing test path of method "
+			+ invokedInfo.getInvokedSignature()+"...");
+
+		return new Analyzer(invokedInfo, testMethodInfo).run();
 	}
 	
 	

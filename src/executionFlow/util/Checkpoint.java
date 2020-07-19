@@ -12,10 +12,9 @@ import executionFlow.ExecutionFlow;
 
 
 /**
- * Responsible for checkpoints. A checkpoint is a class and method marker, and
- * it is used when you want to know if a method or class is being executed more
- * than once, allowing the program to behave in the first execution different 
- * from the others. 
+ * A checkpoint is a class and method marker, and it is used when you want  
+ * a piece of code, even if executed by several independent processes, to be
+ * executed only once. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0

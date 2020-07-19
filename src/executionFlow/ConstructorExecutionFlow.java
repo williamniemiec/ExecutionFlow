@@ -45,8 +45,14 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Defines how the export will be done.
 	 */
 	{
-		exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-			new FileExporter("results", true);
+		if (isDevelopment()) {
+			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
+				new FileExporter("examples\\results", true);
+		}
+		else {
+			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
+				new FileExporter("results", true);
+		}
 	}
 	
 	
@@ -134,32 +140,9 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			
 			
 			try {
-				// Processes the source file of the test method if it has
-				// not been processed yet
-				if (!testMethodManager.wasParsed(testMethodFileManager)) {
-					ConsoleOutput.showInfo("Processing source file of test method "
-						+ collector.getTestMethodInfo().getInvokedSignature()+"...");
-					
-					testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-					ConsoleOutput.showInfo("Processing completed");	
-				}
-
-				// Processes the source file of the method if it has not 
-				// been processed yet
-				if (!invokedManager.wasParsed(constructorFileManager)) {
-					ConsoleOutput.showInfo("Processing source file of constructor " 
-						+ collector.getConstructorInfo().getInvokedSignature()+"...");
-					
-					invokedManager.parse(constructorFileManager).compile(constructorFileManager);
-					ConsoleOutput.showInfo("Processing completed");
-				}
-				
-				// Computes test path from JDB
-				ConsoleOutput.showInfo("Computing test path of constructor "
-					+ collector.getConstructorInfo().getInvokedSignature()+"...");
-
-				Analyzer analyzer = new Analyzer(collector.getConstructorInfo(), collector.getTestMethodInfo());					
-				tp = analyzer.run().getTestPaths();
+				Analyzer analyzer = analyze(collector.getTestMethodInfo(), testMethodFileManager, 
+						collector.getConstructorInfo(), constructorFileManager);
+				tp = analyzer.getTestPaths();
 				
 				if (tp.isEmpty() || tp.get(0).isEmpty())
 					ConsoleOutput.showWarning("Test path is empty");

@@ -1,2 +1,0 @@
-JUnitSimulation.testParamSignature_createdObject()
-[200]

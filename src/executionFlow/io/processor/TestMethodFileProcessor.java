@@ -14,7 +14,7 @@ import executionFlow.util.ConsoleOutput;
 /**
  * Processes test java file adding {@link executionFlow.runtime._SkipInvoked}
  * annotation in all tests to disable collectors while running 
- * {@link executionFlow.core.JDB JDB}. Also, removes print functions.
+ * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		2.0.0
@@ -25,7 +25,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 105L;
+	private static final long serialVersionUID = 200L;
 	
 	/**
 	 * If true, displays processed lines.
@@ -53,7 +53,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	/**
 	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation 
 	 * in test methods to disable collectors during 
-	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
 	 * functions. Using this constructor, the directory where parsed file will
 	 * be saved will be in current directory. Also, file encoding will be UTF-8.
 	 * 
@@ -68,7 +68,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	/**
 	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
 	 * in test methods to disable collectors during 
-	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
 	 * functions. Using this constructor, file encoding will be UTF-8.
 	 * 
 	 * @param		filename Path of the file to be parsed
@@ -85,7 +85,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	/**
 	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
 	 * in test methods to disable collectors during 
-	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
 	 * functions. Using this constructor, file encoding will be UTF-8.
 	 * 
 	 * @param		filename Path of the file to be parsed
@@ -104,7 +104,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	/**
 	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
 	 * in test methods to disable collectors during 
-	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
 	 * functions.
 	 * 
 	 * @param		filename Path of the file to be parsed
@@ -122,7 +122,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	/**
 	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
 	 * in test methods to disable collectors during 
-	 * {@link executionFlow.core.JDB JDB} execution. Also, removes print
+	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
 	 * functions.
 	 * 
 	 * @param		filename Path of the file to be parsed

@@ -28,7 +28,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 105L;
+	private static final long serialVersionUID = 200L;
 	
 	/**
 	 * If true, displays processed lines.
@@ -230,7 +230,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private boolean inTestMethodSignature = false;
+		private boolean inTestMethodSignature;
 		private final Pattern pattern_methodDeclaration = 
 				Pattern.compile("(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
 						+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*");
@@ -408,8 +408,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		private final Pattern pattern_assert = Pattern.compile("^(\\ |\\t)+assert[A-z]+(\\ |\\t)*\\((.+\\);)?");
 		private String try_catch_message = "", catchType = "Throwable";
-		private int endOfAssert, commentStart, roundBracketsBalance = 0;
-		private boolean inAssert = false;
+		private int endOfAssert;
+		private int commentStart;
+		private int roundBracketsBalance = 0;
+		private boolean inAssert;
 		
 		
 		//---------------------------------------------------------------------
