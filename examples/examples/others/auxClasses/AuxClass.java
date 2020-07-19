@@ -12,7 +12,7 @@ public class AuxClass
 	//		Attributes
 	//-----------------------------------------------------------------------
 	public String text;
-	private int x;
+	private int num;
 	
 	
 	//-----------------------------------------------------------------------
@@ -26,9 +26,9 @@ public class AuxClass
 	/**
 	 * Random constructor.
 	 */
-	public AuxClass(int x) 
+	public AuxClass(int num) 
 	{
-		this.x = x;
+		this.num = num;
 	}
 	
 	/**
@@ -197,5 +197,8 @@ public class AuxClass
 		return obj.hashCode();
 	}
 	
-	
+	public int getNumber()
+	{
+		return num;
+	}
 }

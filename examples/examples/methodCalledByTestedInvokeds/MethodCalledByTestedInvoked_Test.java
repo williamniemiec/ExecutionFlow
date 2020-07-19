@@ -1,4 +1,4 @@
-package examples.invokedMethodsByTestedInvokers;
+package examples.methodCalledByTestedInvokeds;
 
 import org.junit.Test;
 
@@ -6,7 +6,7 @@ import org.junit.Test;
 /**
  * Tests export of invoked methods by tested invoker.
  */
-public class InvokedMethodsByTestedInvoker_Test 
+public class MethodCalledByTestedInvoked_Test 
 {
 	/**
 	 * T():	Test method
@@ -16,7 +16,7 @@ public class InvokedMethodsByTestedInvoker_Test
 	@Test
 	public void T()
 	{
-		InvokedMethodsByTestedInvoker_Class testClass = new InvokedMethodsByTestedInvoker_Class(false);
+		MethodCalledByTestedInvoked_Class testClass = new MethodCalledByTestedInvoked_Class(false);
 		testClass.A();	
 	}
 	
@@ -29,6 +29,6 @@ public class InvokedMethodsByTestedInvoker_Test
 	@Test
 	public void T2()
 	{
-		InvokedMethodsByTestedInvoker_Class testClass = new InvokedMethodsByTestedInvoker_Class(true);
+		MethodCalledByTestedInvoked_Class testClass = new MethodCalledByTestedInvoked_Class(true);
 	}
 }

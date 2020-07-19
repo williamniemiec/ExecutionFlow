@@ -1,9 +1,9 @@
-package examples.invokedMethodsByTestedInvokers;
+package examples.methodCalledByTestedInvokeds;
 
 
-public class InvokedMethodsByTestedInvoker_Class 
+public class MethodCalledByTestedInvoked_Class 
 {
-	public InvokedMethodsByTestedInvoker_Class(boolean callMethods)
+	public MethodCalledByTestedInvoked_Class(boolean callMethods)
 	{
 		if (callMethods) {
 			A();

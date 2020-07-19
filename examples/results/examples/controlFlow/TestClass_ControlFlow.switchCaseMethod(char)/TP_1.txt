@@ -1,0 +1,3 @@
+examples.controlFlow.ControlFlowTest.switchCaseTest()
+[90, 92, 100, 101, 102, 103, 104, 123]
+

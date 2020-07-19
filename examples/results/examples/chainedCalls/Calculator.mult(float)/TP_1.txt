@@ -1,0 +1,3 @@
+examples.chainedCalls.ChainedCalls.testChainedMethods()
+[61, 62]
+

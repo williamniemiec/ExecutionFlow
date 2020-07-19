@@ -1,0 +1,4 @@
+examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()
+[53, 54]
+[53, 56, 58, 59, 58, 59, 58, 59, 58, 59, 58, 62]
+
