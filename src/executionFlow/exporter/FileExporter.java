@@ -110,7 +110,8 @@ public class FileExporter implements ExporterExecutionFlow
 		}
 		
 		for (List<Integer> testPath : testPaths) {
-			bfw.write(testPath.toString());		// Writes test path in the file		
+			bfw.write(testPath.toString());		// Writes test path in the file	
+			bfw.newLine();
 		}
 			
 		bfw.newLine();
