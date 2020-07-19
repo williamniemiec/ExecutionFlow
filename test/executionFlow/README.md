@@ -5,5 +5,6 @@
 ## /tests/executionFlow
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
-| core|`Diretório`|Testes relativos as classes do pacote `executionFlow.core`|
-| EF_ControlFlowTest.java|`Arquivo`|Testes relativos a classe [ExecutionFlow](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/ExecutionFlow.java)|
+| constructorExecutionFlow|`Diretório`|Testes relativos a classe [ConstructorExecutionFlow](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/ConstructorExecutionFlow.java)|
+| io|`Diretório`|Testes relativos ao [pacote io](https://github.com/williamniemiec/ExecutionFlow/tree/master/src/executionFlow/io)|
+| methodExecutionFlow|`Diretório`|Testes relativos a classe [MethodExecutionFlow](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/MethodExecutionFlow.java)|

@@ -33,12 +33,14 @@ Antes de executar a aplicação é necessário configurar seu ambiente. Existem 
 
 ### <a name="setup-debug"></a> Debug
 A aplicação fornece uma função de depuração para as seguintes classes:
-* JDB
+
+* Analyzer
 * ExecutionFlow
 * FileCompiler
-* InvokerFileParser
-* PreTestMethodFileParser
-* TestMethodFileParser
+* InvokedFileProcessor
+* PreTestMethodFileProcessor
+* TestMethodFileProcessor
+
 Essa funcionalidade pode ser ativada ou desativada através da variável `DEBUG`. Quando ativa, ela exibirá informações que podem ser uteis na detecção de bugs ou mesmo para facilitar o entendimento do funcionamento da aplicação.
 
 ### <a name="export"></a> Exportação
@@ -48,7 +50,7 @@ Existem 2 formas de exportas o test path: via console e via arquivo. A definiç�
 Para gerar arquivo jar:
 1) Certifique-se que todas as variáveis `DEBUG` são `false`. Lembre-se que as as classes em que ela se encontra são:
 
-* JDB
+* Analyzer
 * ExecutionFlow
 * FileCompiler
 * InvokerFileParser
@@ -68,14 +70,15 @@ Para gerar arquivo jar:
 onde:
 * X, Y, Z: Números da versão da aplicação
 * \<TYPE\>: Tipo de exportação dos test paths, podendo ser `Console` ou `File`
+
 ![jar-export-3](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig3.png?raw=true)
 
-<b>OBS:</b> Ao gerar o jar será exibido uma mensagem avisando que o arquivo [InvokedMethodsCollector](LINK) contém warning. Ignore essa mensagem, pois este warning é devido ao fato de não ter nenhum arquivo corrente no projeto em que aspectos desse arquivo se aplicam.
+<b>OBS:</b> Ao gerar o jar será exibido uma mensagem avisando que o arquivo [MethodCallsCollector](https://github.com/williamniemiec/ExecutionFlow/blob/master/src/executionFlow/runtime/collector/MethodCallsCollector.aj) contém warning. Ignore essa mensagem, pois este warning é devido ao fato de não ter nenhum arquivo corrente no projeto em que aspectos desse arquivo se aplicam.
 
 ## <a name="submit"> Salvar modificações do projeto
-Para contribuir com o projeto, basta ter uma conta no GitHub, clonar o projeto (fork) na sua conta, realizar as alterações no código e abrir um [pull request](https://github.com/williamniemiec/ExecutionFlow/pulls). É recomendado olhar a documentação voltada para contribuições antes de realizar um pull request. Ela pode ser acessada [aqui](https://github.com/williamniemiec/ExecutionFlow/CONTRIBUTING.md).
+Para contribuir com o projeto, basta ter uma conta no GitHub, clonar o projeto (fork) na sua conta, realizar as alterações no código e abrir um [pull request](https://github.com/williamniemiec/ExecutionFlow/pulls). É recomendado olhar a documentação voltada para contribuições antes de realizar um pull request. Ela pode ser acessada [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/CONTRIBUTING.md).
 
 ## <a name="tests"> Testes
 
 ### <a name="unit-tests"></a> Testes unitários
-Os testes foram feitos com base em códigos de exemplo (presentes no diretório [examples]()). Eles testam se o test path destes códigos estão corretos ou não. Os testes pertencentes ao pacote `executionFlow.core.file.parser` realizam o processamento de códigos presentes no diretório [files]() presente dentro do pacote. Os arquivos resultantes do processamento possuem o sufixo `_parsed`.
+Os testes foram feitos com base em códigos de exemplo (presentes no diretório [examples](https://github.com/williamniemiec/ExecutionFlow/tree/master/examples)). Eles testam se o test path destes códigos estão corretos ou não. Os testes pertencentes ao pacote `executionFlow.io.processor` realizam o processamento de códigos presentes no diretório [files](https://github.com/williamniemiec/ExecutionFlow/tree/master/test/executionFlow/io/processor/files) presente dentro do pacote. Os arquivos resultantes do processamento possuem o sufixo `_parsed`.
