@@ -2,7 +2,7 @@ package executionFlow.util;
 
 
 /**
- * Represents pairs of two elements. This implementation was based on std::lib
+ * Represents pairs of two elements. This implementation was based on std::pair
  * (from C++). You can see more here: 
  * {@link https://www.geeksforgeeks.org/pair-in-cpp-stl/}
  * 
