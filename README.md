@@ -22,6 +22,7 @@ Caso você encontre algum problema na aplicação, certifique-se de verificar a 
 
 ### Migração da versão 1.x para 2.x
 Caso você tenha usado a versão 1 em algum momento em seu projeto, certifique-se de excluir o diretório com o nome `executionFlow` dos arquivos de seu projeto. Além disso, use apenas uma versão no classpath / buildpath de seu projeto, pois caso contrário pode haver conflito entre as versões.
+![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/gif/migration.gif)
 
 ### Warning durante a execução
 Se for exibida essa mensagem durante a execução da aplicação, apenas clique em `continue` (informa que o código foi alterado durante a execução)
