@@ -74,34 +74,11 @@ public class JUnit4Runner
 	 * 
 	 * @throws		IOException If process cannot be created 
 	 */
-//	private static Process init(String testClassName, Path testClassPath, String testClassPackage) throws IOException
 	private static Process init(Path workingDirectory, List<String> classPath, String classSignature) throws IOException
 	{
-		//Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
-//		String classPath, classSignature, libPath;
 		ProcessBuilder pb;
 		
 		
-//		libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
-//		
-//		// Gets dependencies (if any)
-//		if (!DependencyManager.hasDependencies()) {		
-//			ConsoleOutput.showInfo("Fetching dependencies...");
-//			DependencyManager.fetch();
-//			ConsoleOutput.showInfo("Fetch completed");
-//		}
-		
-//		classPath = ".;" 
-//				+ libPath + "aspectjrt-1.9.2.jar;"
-//				+ libPath + "aspectjtools.jar;"
-//				+ libPath + "junit-4.13.jar;"
-//				+ libPath + "hamcrest-all-1.3.jar;"
-//				+ testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*;"
-//				+ "..\\classes";
-//		
-//		classSignature = testClassPackage.isEmpty() ? 
-//				testClassName : testClassPackage + "." + testClassName;
-
 		pb = new ProcessBuilder(
 			"cmd.exe", "/c",
 			"java", "-cp", DataUtils.implode(classPath, ";"), 
@@ -111,42 +88,5 @@ public class JUnit4Runner
 		pb.directory(workingDirectory.toFile());
 		
 		return pb.start();
-		
-		
-		
-//		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
-//		String classPath, classSignature, libPath;
-//		ProcessBuilder pb;
-//		
-//		
-//		libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
-//		
-//		// Gets dependencies (if any)
-//		if (!DependencyManager.hasDependencies()) {		
-//			ConsoleOutput.showInfo("Fetching dependencies...");
-//			DependencyManager.fetch();
-//			ConsoleOutput.showInfo("Fetch completed");
-//		}
-//		
-//		classPath = ".;" 
-//				+ libPath + "aspectjrt-1.9.2.jar;"
-//				+ libPath + "aspectjtools.jar;"
-//				+ libPath + "junit-4.13.jar;"
-//				+ libPath + "hamcrest-all-1.3.jar;"
-//				+ testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*;"
-//				+ "..\\classes";
-//		
-//		classSignature = testClassPackage.isEmpty() ? 
-//				testClassName : testClassPackage + "." + testClassName;
-//
-//		pb = new ProcessBuilder(
-//			"cmd.exe", "/c",
-//			"java", "-cp", classPath, 
-//			"org.junit.runner.JUnitCore", classSignature
-//		);
-//		
-//		pb.directory(testClassRootPath.toFile());
-//		
-//		return pb.start();
 	}
 }

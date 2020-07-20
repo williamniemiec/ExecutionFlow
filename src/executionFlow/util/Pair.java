@@ -58,6 +58,7 @@ public class Pair<T1, T2>
         	return first.hashCode() * 31 + second.hashCode();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object o)
 	{

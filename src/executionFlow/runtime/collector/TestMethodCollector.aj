@@ -31,7 +31,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		2.0.1
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -202,6 +202,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 		
 			classPath.add(".");
+			classPath.add(testClassRootPath.relativize(Path.of(ExecutionFlow.getAppRootPath())).toString());
 			classPath.add(libPath + "aspectjrt-1.9.2.jar");
 			classPath.add(libPath + "aspectjtools.jar");
 			classPath.add(libPath + "junit-4.13.jar");
