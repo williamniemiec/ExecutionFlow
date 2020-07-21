@@ -412,7 +412,7 @@ public class Analyzer
         			exitMethod = true;
         			readyToReadInput = true;
         		}
-
+        		
     			newIteration = isNewIteration(line);
     			
         		if (!isInternalCommand && !exitMethod && !ignore) {
@@ -466,7 +466,8 @@ public class Analyzer
     			lastSrcLine = srcLine;
     			
     			if ((srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
-    					(line.contains(invokedName+".") || line.contains(invokedName+"(")))
+    					(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
+    					(ignore == true && getSrcLine(srcLine) > invocationLine))
     				exitMethod = true;
     			
     			// -----{ DEBUG }-----
