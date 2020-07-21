@@ -16,7 +16,7 @@ import executionFlow.io.processor.factory.FileProcessorFactory;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		2.0.2
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -284,7 +284,7 @@ public class FileManager implements Serializable
 				originalCompiledFile, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
-		} catch (IOException e) {e.printStackTrace();			// If already exists a .original, this means
+		} catch (IOException e) {			// If already exists a .original, this means
 			try {							// that last compiled file was not restored
 				revertCompilation();	
 				if (!lastWasError) {
