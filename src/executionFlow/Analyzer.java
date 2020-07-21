@@ -351,12 +351,10 @@ public class Analyzer
 	 */
 	private boolean parseOutput() throws IOException
 	{
-		boolean readyToReadInput = false;
-		boolean ignore = false;
+		boolean readyToReadInput = false, ignore = false, isEmptyMethod = false;
 		final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
 		int currentLine;
-		String line;
-		String srcLine = null;
+		String line, srcLine = null;
 		
 		
 		if (jdb.isReady()) {        	
@@ -375,11 +373,11 @@ public class Analyzer
         	isInternalCommand = isInternalMethod(line);
         	
         	// Checks if JDB has started and is ready to receive debug commands
-    		if ( !endOfMethod && line.contains("thread=") &&
-				 (line.contains("Breakpoint hit") || line.contains("Step completed")) ) {
+    		if ( !endOfMethod && hasStarted(line)) {
     			readyToReadInput = true;
     			srcLine = jdb.read();
     			currentLine = getSrcLine(srcLine);
+    			isEmptyMethod = isEmptyMethod(srcLine);
 
         		// Checks if it is within a constructor
         		withinConstructor = line.contains(".<init>");
@@ -392,8 +390,7 @@ public class Analyzer
         		}
         		// Ignores overload calls
         		else if (withinOverloadCall) {
-        			if (isEmptyMethod(srcLine)) {
-        				withinOverloadCall = false;
+        			if (isEmptyMethod) {
         				ignore = false;
         			}
         			else {
@@ -407,14 +404,15 @@ public class Analyzer
         			methodDeclarationLine = currentLine;
         		}
         		
-        		ignore = shouldIgnore(srcLine, currentLine);
+        		ignore = withinOverloadCall || ignore || shouldIgnore(srcLine, currentLine);
         		
         		if (methodDeclarationLine == 0 && currentLine > 0 && 
         				(line.contains(invokedName+".") || line.contains(invokedName+"(")))
         			methodDeclarationLine = currentLine;        		
         		
         		// Checks if it is still within a constructor
-        		if (inMethod && withinConstructor && (isEmptyMethod(srcLine) || line.contains(testMethodSignature))) {
+        		if (inMethod && withinConstructor && !withinOverloadCall && 
+        				(isEmptyMethod || line.contains(testMethodSignature))) {
         			withinConstructor = false;
         			exitMethod = true;
         			readyToReadInput = true;
@@ -436,7 +434,7 @@ public class Analyzer
         				} 
         				// Checks if it is still in the method
         				else if (withinConstructor || isWithinMethod(lineNumber)) {	
-        					if (!isEmptyMethod(srcLine) && !lastAddWasReturn) {
+        					if (!isEmptyMethod && !lastAddWasReturn) {
         						testPath.add(lineNumber);
         						lastLineAdded = lineNumber;
         						
@@ -449,7 +447,7 @@ public class Analyzer
             		}
         		}
         		
-        		// Checks if it is an internal call
+        		// Checks whether it is a constructor overloaded call
         		if (!withinOverloadCall)
         			withinOverloadCall = withinConstructor && srcLine.contains("this(");
     		}
@@ -459,23 +457,26 @@ public class Analyzer
     		}
     		
     		if (srcLine != null && !srcLine.isEmpty()) {
-    			if (exitMethod) {
-    				inMethod = false;
-    				lastAddWasReturn = false;
-    				methodDeclarationLine = 0;
+    			if (!withinOverloadCall) {
+	    			if (exitMethod) {
+	    				inMethod = false;
+	    				lastAddWasReturn = false;
+	    				methodDeclarationLine = 0;
+	    			}
+	    			
+	    			if (!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && srcLine.equals(lastSrcLine)) {
+	    				exitMethod = true;
+	    				endOfMethod = true;
+	    			}
+	    			
+	    			lastSrcLine = srcLine;
+	    			
+	    			if (isInsideMethod(line, srcLine, ignore))
+	    				exitMethod = true;
     			}
-    			
-    			if (!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && srcLine.equals(lastSrcLine)) {
-    				exitMethod = true;
-    				endOfMethod = true;
-    			}
-    			
-    			lastSrcLine = srcLine;
-    			
-    			if ((srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
-    					(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
-    					(ignore == true && line.contains(testMethodSignature) && getSrcLine(srcLine) > invocationLine))
-    				exitMethod = true;
+    			else if (isEmptyMethod) {
+    				withinOverloadCall = false;
+				}
     			
     			// -----{ DEBUG }-----
     			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }
@@ -642,5 +643,34 @@ public class Analyzer
 				currentLine == 1 ||
 				srcLine.contains(" class ") ||
 				srcLine.matches(regex_multiLineArg);
+	}
+	
+	/**
+	 * Checks whether it is inside a method.
+	 * 
+	 * @param		line Current line
+	 * @param		srcLine Current source line
+	 * @param		ignoreFlag Current value of the ignore flag
+	 * 
+	 * @return		If it is inside a method
+	 */
+	private boolean isInsideMethod(String line, String srcLine, boolean ignoreFlag)
+	{
+		return	(srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
+				(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
+				(ignoreFlag == true && line.contains(testMethodSignature) && getSrcLine(srcLine) > invocationLine);
+	}
+	
+	/**
+	 * Checks whether JDB has started executing the method / constructor.
+	 * 
+	 * @param		jdbOutput JDB output
+	 * 
+	 * @return		If JDB has started executing the method / constructor
+	 */
+	private boolean hasStarted(String line)
+	{
+		return	line.contains("thread=") &&
+				(line.contains("Breakpoint hit") || line.contains("Step completed"));
 	}
 }
