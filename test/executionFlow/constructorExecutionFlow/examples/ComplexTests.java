@@ -108,7 +108,7 @@ public class ComplexTests
 	 * test.
 	 */
 	@Test
-	public void testForConstructor()
+	public void testForConstructorAndMethod()
 	{
 		List<List<Integer>> testPaths;
 		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
@@ -133,7 +133,7 @@ public class ComplexTests
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
-			.invocationLine(21)
+			.invocationLine(18)
 			.build();
 		
 		// Saves extracted data
@@ -189,7 +189,7 @@ public class ComplexTests
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
-			.invocationLine(38)
+			.invocationLine(31)
 			.build();
 		
 		// Saves extracted data
@@ -257,57 +257,6 @@ public class ComplexTests
 		
 		assertEquals(
 			Arrays.asList(Arrays.asList(27, 28)), 
-			testPaths
-		);
-	}
-	
-	/**
-	 * Tests first constructor used by 
-	 * {@link examples.complexTests.ComplexTests#testMethodWithAuxMethods()} test.
-	 */
-	@Test
-	public void testMethodWithAuxMethods()
-	{
-		List<List<Integer>> testPaths;
-		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
-		Object[] paramValues = {10};
-		Class<?>[] paramTypes = {int.class};
-		String signature = "examples.complexTests.TestClass_ComplexTests(int)";
-		String testMethodSignature = "examples.complexTests.ComplexTests.testMethodWithAuxMethods()"; 
-		String key = signature + Arrays.toString(paramValues);
-		
-		
-		// Informations about test method
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-			.binPath(PATH_BIN_TEST_METHOD)
-			.srcPath(PATH_SRC_TEST_METHOD)
-			.methodSignature(testMethodSignature)
-			.build();
-		
-		// Informations about constructor
-		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
-			.classPath(Path.of("bin/examples/complexTests/TestClass_ComplexTests.class"))
-			.srcPath(Path.of("examples/examples/complexTests/TestClass_ComplexTests.java"))
-			.constructorSignature(signature)
-			.parameterTypes(paramTypes)
-			.args(paramValues)
-			.invocationLine(63)
-			.build();
-		
-		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
-			.constructorInfo(cii)
-			.testMethodInfo(testMethodInfo)
-			.build();
-		
-		constructorCollector.put(key, ci);
-		
-		// Gets test paths of the collected constructors and export them
-		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
-		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
-		
-		assertEquals(
-			Arrays.asList(Arrays.asList(33)), 
 			testPaths
 		);
 	}
