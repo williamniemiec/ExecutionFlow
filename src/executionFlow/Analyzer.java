@@ -21,7 +21,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		2.0.2
  * @since		2.0.0
  */
 public class Analyzer 
@@ -396,11 +396,8 @@ public class Analyzer
         			ignore = true;
         			methodDeclarationLine = currentLine;
         		}
-        		else if (currentLine != -1 && currentLine < methodDeclarationLine) {
-        			ignore = true;
-        		}
-        		else if (srcLine.contains(" class "))
-        			ignore = true;
+        		
+        		ignore = shouldIgnore(srcLine, currentLine);
         		
         		if (methodDeclarationLine == 0 && currentLine > 0 && 
         				(line.contains(invokedName+".") || line.contains(invokedName+"(")))
@@ -467,7 +464,7 @@ public class Analyzer
     			
     			if ((srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
     					(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
-    					(ignore == true && getSrcLine(srcLine) > invocationLine))
+    					(ignore == true && line.contains(testMethodSignature) && getSrcLine(srcLine) > invocationLine))
     				exitMethod = true;
     			
     			// -----{ DEBUG }-----
@@ -595,6 +592,7 @@ public class Analyzer
 		final String regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}"
 				+ ".+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
 		
+		
 		return	srcLine.matches(regex_onlyCurlyBracket) ||
 				srcLine.matches(regex_emptyMethod);
 	}
@@ -615,5 +613,24 @@ public class Analyzer
 					!line.contains(invokedName+"(") && 
 					!line.contains(testMethodSignature)
 				);
+	}
+	
+	/**
+	 * Checks whether current line should be ignored.
+	 * 
+	 * @param		srcLine Line to be analyzed
+	 * @param		currentLine Line number in the source file
+	 * 
+	 * @return		If line should be ignored
+	 */
+	private boolean shouldIgnore(String srcLine, int currentLine)
+	{
+		final String regex_multiLineArg = "^[0-9]*(\\t|\\ )+[A-z0-9$\\-_\\.\\,\\ \\:]+(\\);)?$";
+		
+		
+		return	(currentLine != -1 && currentLine < methodDeclarationLine) ||
+				currentLine == 1 ||
+				srcLine.contains(" class ") ||
+				srcLine.matches(regex_multiLineArg);
 	}
 }
