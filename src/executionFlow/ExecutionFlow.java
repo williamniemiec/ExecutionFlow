@@ -362,7 +362,7 @@ public abstract class ExecutionFlow
 	 */
 	public List<List<Integer>> getTestPaths(String testMethodSignature, String invokedSignature)
 	{
-		return computedTestPaths.get(Pair.of(invokedSignature, testMethodSignature));
+		return computedTestPaths.get(Pair.of(testMethodSignature, invokedSignature));
 	}
 	
 	/**
