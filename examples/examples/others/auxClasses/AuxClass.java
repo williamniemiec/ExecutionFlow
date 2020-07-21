@@ -1,6 +1,8 @@
 package examples.others.auxClasses;
 
-import examples.polymorphism.ClassInterface;
+import java.util.Arrays;
+import java.util.List;
+
 
 
 /**
@@ -200,5 +202,18 @@ public class AuxClass
 	public int getNumber()
 	{
 		return num;
+	}
+	
+	public List<Integer> identity(int num1, int num2, int num3, int num4, int num5)
+	{
+		List<Integer> response = Arrays.asList(
+				num1,
+				num2,
+				num3,
+				num4,
+				num5
+		);
+		
+		return response;
 	}
 }

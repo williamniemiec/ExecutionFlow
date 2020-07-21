@@ -3,6 +3,8 @@ package examples.others;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import examples.others.auxClasses.AuxClass;
@@ -16,8 +18,8 @@ public class OthersTest
 	@Test
 	public void testEmptyTest()
 	{
-		AuxClass tc = new AuxClass(4);
-		tc.test2();
+		AuxClass ac = new AuxClass(4);
+		ac.test2();
 	}
 
 	@Test
@@ -26,8 +28,8 @@ public class OthersTest
 		int num = 4;
 		long expectedResult = 24;
 		
-		AuxClass tc = new AuxClass(4);
-		long res = tc.factorial(num);
+		AuxClass ac = new AuxClass(4);
+		long res = ac.factorial(num);
 		
 		assertEquals(expectedResult, res);
 	}
@@ -38,8 +40,8 @@ public class OthersTest
 		int num = 0;
 		long expectedResult = 1;
 		
-		AuxClass tc = new AuxClass(4);
-		long res = tc.factorial(num);
+		AuxClass ac = new AuxClass(4);
+		long res = ac.factorial(num);
 		
 		assertEquals(expectedResult, res);
 	}
@@ -50,8 +52,8 @@ public class OthersTest
 		int num = 5;
 		long expectedResult = 5; 
 		
-		AuxClass tc = new AuxClass(4);
-		long res = tc.fibonacci(num);
+		AuxClass ac = new AuxClass(4);
+		long res = ac.fibonacci(num);
 		
 		assertEquals(expectedResult, res);
 	}
@@ -78,8 +80,8 @@ public class OthersTest
 	@Test
 	public void testParamSignature_object()
 	{
-		AuxClass tc = new AuxClass(2);
-		int hashCode = tc.testObjParam("test");
+		AuxClass ac = new AuxClass(2);
+		int hashCode = ac.testObjParam("test");
 		
 		assertEquals(3556498, hashCode);
 	}
@@ -94,11 +96,11 @@ public class OthersTest
 		long expectedResult = 6;
 		
 		// Calculates factorial of n-th fibonacci term
-		AuxClass tcct = new AuxClass(10);
-		AuxClass tcct2 = new AuxClass(12);
+		AuxClass ac = new AuxClass(10);
+		AuxClass ac2 = new AuxClass(12);
 		
-		int resp = (int)tcct.fibonacci(num);
-		resp = (int)tcct2.factorial(resp);
+		int resp = (int)ac.fibonacci(num);
+		resp = (int)ac2.factorial(resp);
 		
 		assertEquals(expectedResult, resp);
 	}
@@ -109,17 +111,24 @@ public class OthersTest
 	@Test
 	public void testingMultipleMethods()
 	{
-		AuxClass tcct = new AuxClass(1);
+		AuxClass ac = new AuxClass(1);
 		
-		assertEquals(24, tcct.factorial(4));
-		assertEquals(3, tcct.fibonacci(4));
+		assertEquals(24, ac.factorial(4));
+		assertEquals(3, ac.fibonacci(4));
 	}
 	
 	@Test
 	public void onlyOneMethod()
 	{
-		AuxClass tcct = new AuxClass(1);
+		AuxClass ac = new AuxClass(1);
 		
-		assertEquals(24, tcct.getNumber());
+		assertEquals(24, ac.getNumber());
+	}
+	
+	@Test
+	public void methodCallMultiLineArgs()
+	{
+		AuxClass ac = new AuxClass(1);
+		assertEquals(Arrays.asList(1, 2, 3, 4, 5), ac.identity(1,2,3,4,5));
 	}
 }
