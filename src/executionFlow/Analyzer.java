@@ -296,6 +296,16 @@ public class Analyzer
 	}
 	
 	/**
+	 * Deletes file containing methods called by tested invoked.
+	 * 
+	 * @return		If file was successfully removed
+	 */
+	public boolean deleteMethodsCalledByTestedInvoked()
+	{
+		return new File(ExecutionFlow.getAppRootPath(), "mcti.ef").delete();
+	}
+	
+	/**
 	 * Gets computed test path.
 	 * 
 	 * @return		Computed test path

@@ -26,7 +26,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		2.0.2
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -170,6 +170,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 					if (exportCalledMethods) {
 						invokedMethodsExporter.export(collector.getMethodInfo().getInvokedSignature(), 
 								analyzer.getMethodsCalledByTestedInvoked(), false);
+					}
+					else {
+						analyzer.deleteMethodsCalledByTestedInvoked();
 					}
 				} catch (Exception e) {
 					ConsoleOutput.showError(e.getMessage());

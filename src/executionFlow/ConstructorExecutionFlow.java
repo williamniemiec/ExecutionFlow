@@ -23,7 +23,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		2.0.2
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
@@ -156,6 +156,9 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				if (exportCalledMethods) {
 					methodsCalledExporter.export(collector.getConstructorInfo().getInvokedSignature(),
 							analyzer.getMethodsCalledByTestedInvoked(), true);
+				}
+				else {
+					analyzer.deleteMethodsCalledByTestedInvoked();
 				}
 			} catch (Exception e) {
 				ConsoleOutput.showError(e.getMessage());
