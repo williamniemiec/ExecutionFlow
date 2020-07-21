@@ -176,6 +176,14 @@ public class Analyzer
 		
 		
 		// Runs JDB
+		// -----{ DEBUG }-----
+		if (DEBUG) {
+			ConsoleOutput.showDebug("COMMAND: " + "clear ");
+			ConsoleOutput.showDebug("COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
+			ConsoleOutput.showDebug("COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
+		}
+		// -----{ END DEBUG }-----
+		
 		jdb.start().send("clear", "stop at " + classInvocationSignature + ":" + invocationLine,
 				"run org.junit.runner.JUnitCore "+classInvocationSignature);
 		
@@ -241,9 +249,11 @@ public class Analyzer
 
 		// Exits JDB
 		// -----{ DEBUG }-----
-		if (DEBUG)
-			ConsoleOutput.showDebug("COMMAND: " + "clear " + classInvocationSignature 
-					+ ":" + invocationLine + " exit exit");
+		if (DEBUG) {
+			ConsoleOutput.showDebug("COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
+			ConsoleOutput.showDebug("COMMAND: " + "exit");
+			ConsoleOutput.showDebug("COMMAND: " + "exit");
+		}
 		// -----{ END DEBUG }-----
 		
 		jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
