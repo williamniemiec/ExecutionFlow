@@ -30,7 +30,7 @@ public class Person
 	//-------------------------------------------------------------------------
 	//		Builder
 	//-------------------------------------------------------------------------
-	static class PersonBuilder
+	public static class PersonBuilder
 	{
 		private String firstName;
 		private String lastName;
