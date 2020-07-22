@@ -106,6 +106,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			return this;
 		
 		List<List<Integer>> tp;
+		FileManager constructorFileManager, testMethodFileManager;
+		Analyzer analyzer;
 		MethodsCalledByTestedInvokedExporter methodsCalledExporter = isDevelopment() ?
 				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedConstructor", "examples\\results") :
 				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedConstructor", "results");
@@ -123,7 +125,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			}
 
 			// Gets FileManager for method file
-			FileManager constructorFileManager = new FileManager(
+			constructorFileManager = new FileManager(
 				collector.getConstructorInfo().getSrcPath(), 
 				collector.getConstructorInfo().getClassDirectory(),
 				collector.getConstructorInfo().getPackage(),
@@ -131,16 +133,15 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			);
 			
 			// Gets FileManager for test method file
-			FileManager testMethodFileManager = new FileManager(
+			testMethodFileManager = new FileManager(
 				collector.getTestMethodInfo().getSrcPath(), 
 				collector.getTestMethodInfo().getClassDirectory(),
 				collector.getTestMethodInfo().getPackage(),
 				new TestMethodFileProcessorFactory()
 			);
 			
-			
 			try {
-				Analyzer analyzer = analyze(collector.getTestMethodInfo(), testMethodFileManager, 
+				analyzer = analyze(collector.getTestMethodInfo(), testMethodFileManager, 
 						collector.getConstructorInfo(), constructorFileManager);
 				tp = analyzer.getTestPaths();
 				

@@ -2,7 +2,6 @@ package executionFlow.runtime.collector;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
@@ -30,7 +29,7 @@ import executionFlow.info.ConstructorInvokedInfo;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		2.0.3
  * @since		1.0
  */
 public aspect ConstructorCollector extends RuntimeCollector
@@ -49,19 +48,20 @@ public aspect ConstructorCollector extends RuntimeCollector
 		
 	before(): constructorCollector()
 	{
-		String signature = thisJoinPoint.getSignature().toString();
 		final String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
-		
-		if (signature.contains("java."))
-			return;
-		
-		// Collect constructor data
+		String key, signature, classSignature, className;
+		ConstructorInvokedInfo constructorInvokedInfo;
+		CollectorInfo collectorInfo;
+		Path classPath, srcPath;
+		int invocationLine;
 		Class<?>[] paramTypes;		// Constructor parameter types
 		Object[] paramValues;		// Constructor parameter values
 		
-		// Checks if it is a constructor signature
-		if (!signature.matches(constructorRegex)) { return; }
+		signature = thisJoinPoint.getSignature().toString();
 		
+		if (signature.contains("java.") || !signature.matches(constructorRegex))
+			return;
+
 		// Gets correct signature of inner classes
 		signature = thisJoinPoint.getSignature().getDeclaringTypeName() 
 				+ signature.substring(signature.indexOf("("));
@@ -76,32 +76,34 @@ public aspect ConstructorCollector extends RuntimeCollector
 			paramValues = thisJoinPoint.getArgs();			
 		}
 		
-		String key = signature + Arrays.toString(paramValues);
-		String classSignature = signature.split("\\(")[0];
+		invocationLine = thisJoinPoint.getSourceLocation().getLine();	
+		key = invocationLine + signature;
+		classSignature = signature.split("\\(")[0];
 		
 		// Gets class path and source path
 		try {
 			// Class path and source path from method
-			String className = CollectorExecutionFlow.extractMethodName(signature);
-			Path classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
-			Path srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
+			className = CollectorExecutionFlow.extractMethodName(signature);
+			classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
+			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
-			ConstructorInvokedInfo cii = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
+			constructorInvokedInfo = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
 				.classPath(classPath)
 				.srcPath(srcPath)
 				.constructorSignature(signature)
 				.parameterTypes(paramTypes)
 				.args(paramValues)
-				.invocationLine(thisJoinPoint.getSourceLocation().getLine())
+				.invocationLine(invocationLine)
 				.build();
 			
 			// Saves extracted data
-			CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
-				.constructorInfo(cii)
+			collectorInfo = new CollectorInfo.CollectorInfoBuilder()
+				.constructorInfo(constructorInvokedInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
 			
-			constructorCollector.put(key, ci);
+			if (!constructorCollector.containsKey(key))
+				constructorCollector.put(key, collectorInfo);
 		
 		} catch (IOException e1) {
 			e1.printStackTrace();

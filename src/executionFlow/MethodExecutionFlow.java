@@ -26,7 +26,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.2
+ * @version		2.0.3
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -111,16 +111,22 @@ public class MethodExecutionFlow extends ExecutionFlow
 		if (methodCollector == null || methodCollector.isEmpty())
 			return this;
 		
+		boolean gotoNextLine = false;
 		List<List<Integer>> tp;
+		FileManager methodFileManager, testMethodFileManager;
+		Analyzer analyzer;
 		MethodsCalledByTestedInvokedExporter invokedMethodsExporter = isDevelopment() ?
 				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "examples\\results") :
 				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "results");
 		
 		
 		// Generates test path for each collected method
-		for (List<CollectorInfo> collectors : methodCollector.values()) { 
+		for (List<CollectorInfo> collectors : methodCollector.values()) {
 			// Computes test path for each collected method that is invoked in the same line
 			for (CollectorInfo collector : collectors) {
+				if (gotoNextLine)
+					break;
+				
 				// Checks if collected method is within test method
 				if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
 					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokedSignature());
@@ -137,7 +143,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 				}
 				
 				// Gets FileManager for method file
-				FileManager methodFileManager = new FileManager(
+				methodFileManager = new FileManager(
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
@@ -145,7 +151,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 				);
 
 				// Gets FileManager for test method file
-				FileManager testMethodFileManager = new FileManager(
+				testMethodFileManager = new FileManager(
 					collector.getTestMethodInfo().getSrcPath(), 
 					collector.getTestMethodInfo().getClassDirectory(),
 					collector.getTestMethodInfo().getPackage(),
@@ -153,15 +159,19 @@ public class MethodExecutionFlow extends ExecutionFlow
 				);
 				
 				try {
-					Analyzer analyzer = analyze(collector.getTestMethodInfo(), testMethodFileManager, 
+					analyzer = analyze(collector.getTestMethodInfo(), testMethodFileManager, 
 							collector.getMethodInfo(), methodFileManager);
 					tp = analyzer.getTestPaths();
-					
 					
 					if (tp.isEmpty() || tp.get(0).isEmpty())
 						ConsoleOutput.showWarning("Test path is empty");
 					else
 						ConsoleOutput.showInfo("Test path has been successfully computed");				
+					
+					// Checks whether test path was generated inside a loop
+					if (tp.size() > 1) {
+						gotoNextLine = true;
+					}
 					
 					// Stores each computed test path
 					storeTestPath(tp, collector);

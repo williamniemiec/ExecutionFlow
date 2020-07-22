@@ -19,7 +19,7 @@ import executionFlow.info.MethodInvokedInfo;
  * {@link executionFlow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		2.0.3
  * @since		1.0
  */
 public abstract aspect RuntimeCollector 
@@ -46,8 +46,8 @@ public abstract aspect RuntimeCollector
 	/**
 	 * Stores information about collected constructor.<hr/>
 	 * <ul>
-	 * 	<li><b>Key(with arguments):</b>		<code>classSignature[arg1,arg2,...]</code></li>
-	 * 	<li><b>Key(without arguments):</b>	<code>classSignature[]</code></li>
+	 * 	<li><b>Key(with arguments):</b>		<code>invocationLine + classSignature[arg1,arg2,...]</code></li>
+	 * 	<li><b>Key(without arguments):</b>	<code>invocationLine + classSignature[]</code></li>
 	 * 	<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
@@ -157,9 +157,13 @@ public abstract aspect RuntimeCollector
 	{
 		if (constructorSignature == null) { return true; }
 		
-		String testMethodClassName = CollectorExecutionFlow.getClassName(testMethodSignature);
-		String[] tmp = constructorSignature.split("\\@")[0].split("\\.");
-		String methodName = tmp[tmp.length-1];
+		String testMethodClassName, methodName;
+		String[] tmp;
+		
+		
+		testMethodClassName = CollectorExecutionFlow.getClassName(testMethodSignature);
+		tmp = constructorSignature.split("\\@")[0].split("\\.");
+		methodName = tmp[tmp.length-1];
 		
 		return methodName.equals(testMethodClassName);
 	}
@@ -174,6 +178,8 @@ public abstract aspect RuntimeCollector
 	protected boolean isBuilderClass(String signature)
 	{
 		String[] tmp = signature.split("\\.");
+		
+		
 		return tmp[tmp.length-2].toLowerCase().contains("builder");
 	}
 }

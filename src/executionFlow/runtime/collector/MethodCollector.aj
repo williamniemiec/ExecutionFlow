@@ -92,14 +92,18 @@ public aspect MethodCollector extends RuntimeCollector
 	{
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
+		String signature, methodName, classSignature, className, key;
+		Class<?>[] paramTypes;
+		Class<?> returnType;
+		Object constructor = null;
+		MethodInvokedInfo methodInfo;
+		CollectorInfo ci;
+		List<CollectorInfo> list;
 		
-		String signature = thisJoinPoint.getSignature().toString();
+		
+		signature = thisJoinPoint.getSignature().toString();
 
-		// Checks if is a method signature
-		if (!isMethodSignature(signature)) { return; }
-		
-		// Ignores native java methods
-		if (isNativeMethod(signature)) { return; }
+		if (!isMethodSignature(signature) || isNativeMethod(signature)) { return; }
 		
 		// Ignores methods in the method test (with @Test) (it will only consider internal calls)
 		if (testMethodSignature != null && signature.contains(testMethodSignature)) { return; }
@@ -115,18 +119,17 @@ public aspect MethodCollector extends RuntimeCollector
 		}
 		
 		// Extracts the method name
-		String methodName = CollectorExecutionFlow.extractMethodName(signature);
+		methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
 		// Extracts class signature
-		String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
+		classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
 
 		// Extracts types of method parameters (if there is any)
-		Class<?>[] paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint);
-		Class<?> returnType = CollectorExecutionFlow.extractReturnType(thisJoinPoint);		
+		paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint);
+		returnType = CollectorExecutionFlow.extractReturnType(thisJoinPoint);		
 		
 		// Key is method's signature + values of method's parameters
-		String key = signature+Arrays.toString(thisJoinPoint.getArgs());
-		Object constructor = null;
+		key = signature+Arrays.toString(thisJoinPoint.getArgs());
 		
 		// Checks if there is a constructor (if it is a static method or not)
 		if (thisJoinPoint.getTarget() != null) {
@@ -139,27 +142,19 @@ public aspect MethodCollector extends RuntimeCollector
 		// Checks if the collected constructor is not the constructor of the test method
 		if (constructor != null && isTestMethodConstructor(key)) { return; }
 		
-		
 		key += invocationLine;
 		
 		// If the method has already been collected, skip it (avoids collect duplicate methods)
-		if (collectedMethods.contains(key)) {
-			return; 
-		}
-		
-		// Gets class path and source path
-		try {
-			// Class path and source path from method
-			String className = CollectorExecutionFlow.getClassName(classSignature);
-			classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
-			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		if (collectedMethods.contains(key)) { return; }
 		
 		// Collects the method
 		try {
-			MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+			// Gets class path and source path
+			className = CollectorExecutionFlow.getClassName(classSignature);
+			classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
+			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
+			
+			methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
 				.binPath(classPath)
 				.methodSignature(signature)
 				.methodName(methodName)
@@ -170,7 +165,7 @@ public aspect MethodCollector extends RuntimeCollector
 				.srcPath(srcPath)
 				.build();
 
-			CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+			ci = new CollectorInfo.CollectorInfoBuilder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -182,22 +177,19 @@ public aspect MethodCollector extends RuntimeCollector
 			
 			// If the method is called in a loop, stores this method in a list with its arguments and constructor
 			if (methodCollector.containsKey(invocationLine)) {
-				List<CollectorInfo> list = methodCollector.get(invocationLine);
-				
-	
+				list = methodCollector.get(invocationLine);
+
 				if (!isRepeatedTest) {
 					list.add(ci);
 				}
 			} 
 			// Else stores the method with its arguments and constructor
 			else {	
-				List<CollectorInfo> list = new ArrayList<>();
-				
-				
+				list = new ArrayList<>();
 				methodCollector.put(invocationLine, list);
 				list.add(ci);
 			}
-		} catch(IllegalArgumentException e) {
+		} catch(IllegalArgumentException | IOException e) {
 			System.err.println("[ERROR] MethodCollector - "+e.getMessage()+"\n");
 		}
 	}

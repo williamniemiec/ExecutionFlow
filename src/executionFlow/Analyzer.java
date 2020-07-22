@@ -21,7 +21,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.2
+ * @version		2.0.3
  * @since		2.0.0
  */
 public class Analyzer 
@@ -213,10 +213,12 @@ public class Analyzer
 				if (DEBUG) { ConsoleOutput.showDebug("COMMAND: cont"); }
 				// -----{ END DEBUG }-----
 				
-				jdb.send("cont");
-				
 				// Resets exit method
 				exitMethod = false;
+				inMethod = false;
+				lastAddWasReturn = false;
+				
+				jdb.send("cont");
 			} 
 			else if (newIteration) {
 				wasNewIteration = true;
@@ -388,8 +390,8 @@ public class Analyzer
     			srcLine = jdb.read();
     			currentLine = getSrcLine(srcLine);
     			isEmptyMethod = isEmptyMethod(srcLine);
-
-        		// Checks if it is within a constructor
+    			inMethod = isWithinMethod(line, getSrcLine(srcLine));
+    			newIteration = isNewIteration(line);
         		withinConstructor = line.contains(".<init>");
 
         		// Ignores native calls
@@ -400,12 +402,7 @@ public class Analyzer
         		}
         		// Ignores overload calls
         		else if (withinOverloadCall) {
-        			if (isEmptyMethod) {
-        				ignore = false;
-        			}
-        			else {
-        				ignore = true;
-        			}
+        			ignore = !isEmptyMethod;
         		}
         		
         		// Checks if it is in the constructor signature
@@ -427,30 +424,25 @@ public class Analyzer
         			exitMethod = true;
         			readyToReadInput = true;
         		}
-        		
-    			newIteration = isNewIteration(line);
     			
         		if (!isInternalCommand && !exitMethod && !ignore) {
-        			if (inMethod) {
+        			if (inMethod || withinConstructor) {
         				int lineNumber = getSrcLine(srcLine);
         				
         				// Checks if returned from the method
         				if (line.contains(testMethodSignature)) {
         					exitMethod = true;
-        					
         					newIteration = false;
         					inMethod = false;
         					lastLineAdded = -1;
         				} 
-        				// Checks if it is still in the method
-        				else if (withinConstructor || isWithinMethod(lineNumber)) {	
-        					if (!isEmptyMethod && !lastAddWasReturn) {
-        						testPath.add(lineNumber);
-        						lastLineAdded = lineNumber;
-        						
-        						lastAddWasReturn = srcLine.contains("return "); 
-        					}
-        				}
+        				// Checks if it is still inside the method
+        				else if (!isEmptyMethod && !lastAddWasReturn) {
+    						testPath.add(lineNumber);
+    						lastLineAdded = lineNumber;
+    						
+    						lastAddWasReturn = srcLine.contains("return "); 
+    					}
             		}
         			else if (willEnterInMethod(line)) {
             			inMethod = true;
@@ -512,20 +504,22 @@ public class Analyzer
 	/**
 	 * Gets executed line from source line.
 	 *  
-	 * @param		src Source line
+	 * @param		srcLine JDB output - source line
 	 * 
-	 * @return		Executed line or -1 if src is empty or null
+	 * @return		Executed line or -1 if srcLine is empty or null
 	 */
-	private int getSrcLine(String src) 
+	private int getSrcLine(String srcLine) 
 	{
-		if (src == null || src.isEmpty())
+		if (srcLine == null || srcLine.isEmpty())
 			return -1;
 		
-		return Integer.valueOf(src.replace(".", "").substring(0, src.indexOf(" ")).trim());
+		return Integer.valueOf(srcLine.replace(".", "").substring(0, srcLine.indexOf(" ")).trim());
 	}
 	
 	/**
 	 * Checks if current line of JDB has reached the end of the test method.
+	 * 
+	 * @param		line JDB output
 	 * 
 	 * @return		If current line of JDB has reached the end of the test method
 	 */
@@ -536,6 +530,8 @@ public class Analyzer
 	
 	/**
 	 * Checks if current line of JDB is an internal method.
+	 * 
+	 * @param		line JDB output
 	 * 
 	 * @return		If current line of JDB is an internal method
 	 */
@@ -548,6 +544,8 @@ public class Analyzer
 	
 	/**
 	 * Checks if current line of JDB is an empty line.
+	 * 
+	 * @param		line JDB output
 	 * 
 	 * @return		If current line of JDB is an empty line
 	 */
@@ -563,6 +561,8 @@ public class Analyzer
 	
 	/**
 	 * Checks if current line of JDB is an empty line.
+	 * 
+	 * @param		line JDB output
 	 * 
 	 * @return		If current line of JDB is an empty line
 	 */
@@ -581,6 +581,8 @@ public class Analyzer
 	/**
 	 * Checks if next line of JDB will be within a method.
 	 * 
+	 * @param		line JDB output
+	 * 
 	 * @return		If next line of JDB will be within a method
 	 */
 	private boolean willEnterInMethod(String line)
@@ -595,15 +597,22 @@ public class Analyzer
 	/**
 	 * Checks if current line of JDB is within a method.
 	 * 
+	 * @param		line JDB output
+	 * @param		lineNumber Line number in the source file
+	 * 
 	 * @return		If current line of JDB is within a method
 	 */
-	private boolean isWithinMethod(int lineNumber)
+	private boolean isWithinMethod(String line, int lineNumber)
 	{
-		return	!exitMethod && lineNumber != lastLineAdded;
+		return	line.contains(invokedName+"(") && 
+				!exitMethod && 
+				lineNumber != lastLineAdded;
 	}
 	
 	/**
 	 * Checks if current line of JDB is an empty method.
+	 * 
+	 * @param		srcLine JDB output - source line
 	 * 
 	 * @return		If current line of JDB is an empty method
 	 */
@@ -620,6 +629,9 @@ public class Analyzer
 	
 	/**
 	 * Checks if current line of JDB is a native call.
+	 * 
+	 * @param		line JDB output
+	 * @param		srcLine JDB output - source line
 	 * 
 	 * @return		If current line of JDB is a native call.
 	 */
@@ -639,7 +651,7 @@ public class Analyzer
 	/**
 	 * Checks whether current line should be ignored.
 	 * 
-	 * @param		srcLine Line to be analyzed
+	 * @param		srcLine JDB output - source line
 	 * @param		currentLine Line number in the source file
 	 * 
 	 * @return		If line should be ignored
@@ -658,8 +670,8 @@ public class Analyzer
 	/**
 	 * Checks whether it is inside a method.
 	 * 
-	 * @param		line Current line
-	 * @param		srcLine Current source line
+	 * @param		line JDB output
+	 * @param		srcLine JDB output - source line
 	 * @param		ignoreFlag Current value of the ignore flag
 	 * 
 	 * @return		If it is inside a method
@@ -674,7 +686,7 @@ public class Analyzer
 	/**
 	 * Checks whether JDB has started executing the method / constructor.
 	 * 
-	 * @param		jdbOutput JDB output
+	 * @param		line JDB output - source line
 	 * 
 	 * @return		If JDB has started executing the method / constructor
 	 */
