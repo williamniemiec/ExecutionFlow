@@ -21,7 +21,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.3
+ * @version		2.0.4
  * @since		2.0.0
  */
 public class Analyzer 
@@ -53,8 +53,8 @@ public class Analyzer
 	 */
 	private int invocationLine;
 	
-	private int lastLineAdded = -1;
 	private int methodDeclarationLine;
+	private int lineOverloadedCall;
 	
 	/**
 	 * Stores current test path.
@@ -365,7 +365,7 @@ public class Analyzer
 	{
 		boolean readyToReadInput = false, ignore = false, isEmptyMethod = false;
 		final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
-		int currentLine;
+		int currentLine = -1;
 		String line, srcLine = null;
 		
 		
@@ -373,9 +373,8 @@ public class Analyzer
         	isInternalCommand = false;
         	line = jdb.read();
         	
-        	if (isEmptyLine(line) || line.matches(regex_emptyOutput)) { 
+        	if (isEmptyLine(line) || line.matches(regex_emptyOutput)) 
         		return false;
-    		}
         	
         	// -----{ DEBUG }-----
         	if (DEBUG) { ConsoleOutput.showDebug("LINE: "+line); }
@@ -388,11 +387,11 @@ public class Analyzer
     		if ( !endOfMethod && hasStarted(line)) {
     			readyToReadInput = true;
     			srcLine = jdb.read();
-    			currentLine = getSrcLine(srcLine);
     			isEmptyMethod = isEmptyMethod(srcLine);
-    			inMethod = isWithinMethod(line, getSrcLine(srcLine));
+    			inMethod = isInsideMethod(line);
     			newIteration = isNewIteration(line);
         		withinConstructor = line.contains(".<init>");
+        		currentLine = getSrcLine(srcLine);
 
         		// Ignores native calls
         		if (isNativeCall(line, srcLine)) {
@@ -427,20 +426,15 @@ public class Analyzer
     			
         		if (!isInternalCommand && !exitMethod && !ignore) {
         			if (inMethod || withinConstructor) {
-        				int lineNumber = getSrcLine(srcLine);
-        				
         				// Checks if returned from the method
         				if (line.contains(testMethodSignature)) {
         					exitMethod = true;
         					newIteration = false;
         					inMethod = false;
-        					lastLineAdded = -1;
         				} 
         				// Checks if it is still inside the method
         				else if (!isEmptyMethod && !lastAddWasReturn) {
-    						testPath.add(lineNumber);
-    						lastLineAdded = lineNumber;
-    						
+    						testPath.add(currentLine);
     						lastAddWasReturn = srcLine.contains("return "); 
     					}
             		}
@@ -450,8 +444,10 @@ public class Analyzer
         		}
         		
         		// Checks whether it is a constructor overloaded call
-        		if (!withinOverloadCall)
+        		if (!withinOverloadCall) {
         			withinOverloadCall = withinConstructor && srcLine.contains("this(");
+        			lineOverloadedCall = currentLine;
+        		}
     		}
     		
     		if (endOfMethod) {
@@ -459,6 +455,10 @@ public class Analyzer
     		}
     		
     		if (srcLine != null && !srcLine.isEmpty()) {
+    			if (withinOverloadCall && currentLine == lineOverloadedCall + 1) {
+					withinOverloadCall = false;
+    			}
+    			
     			if (!withinOverloadCall) {
 	    			if (exitMethod) {
 	    				inMethod = false;
@@ -595,21 +595,6 @@ public class Analyzer
 	}
 	
 	/**
-	 * Checks if current line of JDB is within a method.
-	 * 
-	 * @param		line JDB output
-	 * @param		lineNumber Line number in the source file
-	 * 
-	 * @return		If current line of JDB is within a method
-	 */
-	private boolean isWithinMethod(String line, int lineNumber)
-	{
-		return	line.contains(invokedName+"(") && 
-				!exitMethod && 
-				lineNumber != lastLineAdded;
-	}
-	
-	/**
 	 * Checks if current line of JDB is an empty method.
 	 * 
 	 * @param		srcLine JDB output - source line
@@ -681,6 +666,20 @@ public class Analyzer
 		return	(srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
 				(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
 				(ignoreFlag == true && line.contains(testMethodSignature) && getSrcLine(srcLine) > invocationLine);
+	}
+	
+	/**
+	 * Checks if current line of JDB is within a method.
+	 * 
+	 * @param		line JDB output
+	 * 
+	 * @return		If current line of JDB is within a method
+	 */
+	private boolean isInsideMethod(String line)
+	{
+		return	!line.contains(testMethodSignature) &&
+				line.contains(invokedName+"(") && 
+				!exitMethod;
 	}
 	
 	/**
