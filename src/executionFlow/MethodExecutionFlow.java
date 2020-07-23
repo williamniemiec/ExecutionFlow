@@ -26,7 +26,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.3
+ * @version		2.0.4
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -122,6 +122,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 		
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : methodCollector.values()) {
+			gotoNextLine = false;
+			
 			// Computes test path for each collected method that is invoked in the same line
 			for (CollectorInfo collector : collectors) {
 				if (gotoNextLine)
@@ -167,7 +169,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 						ConsoleOutput.showWarning("Test path is empty");
 					else
 						ConsoleOutput.showInfo("Test path has been successfully computed");				
-					
+
 					// Checks whether test path was generated inside a loop
 					if (tp.size() > 1) {
 						gotoNextLine = true;
