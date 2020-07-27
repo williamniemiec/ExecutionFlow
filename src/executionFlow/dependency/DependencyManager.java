@@ -26,10 +26,12 @@ public abstract class DependencyManager
 			Path.of(System.getProperty("user.home"), ".ef_dependencies");
 	
 	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
 	static {
 		dependencyExtractors.add(new MavenDependencyExtractor());
 	}
-	
 	
 	
 	//-------------------------------------------------------------------------
@@ -66,6 +68,8 @@ public abstract class DependencyManager
 	
 	/**
 	 * Registers a dependency extractor.
+	 * 
+	 * @param		extractor Dependency extractor
 	 */
 	public static void register(DependencyExtractor extractor)
 	{
@@ -77,11 +81,9 @@ public abstract class DependencyManager
 	}
 	
 	/**
-	 * Checks whether dependencies for Maven and Gradle projects have been
-	 * obtained.
+	 * Checks whether dependencies have been obtained.
 	 * 
-	 * @return		If dependencies for Maven and Gradle projects have been
-	 * obtained
+	 * @return		If dependencies have been obtained
 	 */
 	public static boolean hasDependencies()
 	{
