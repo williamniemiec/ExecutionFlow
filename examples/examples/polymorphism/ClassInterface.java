@@ -27,7 +27,7 @@ public class ClassInterface implements Interface
 	@Override
 	public String interfaceMethod()
 	{
-		System.out.println("test()");
+		System.out.println("interfaceMethod()");
 		return text;
 	}
 	

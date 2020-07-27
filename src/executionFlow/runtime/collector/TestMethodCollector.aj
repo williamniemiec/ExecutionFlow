@@ -46,7 +46,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private FilesManager testMethodManager;
 	private String testClassName;
 	private String testClassPackage;
-	private String currentTestMethodSignature; 
+	private static String currentTestMethodSrcFilename = "";
 	private boolean junit5NewTest;
 	private Path testClassPath;
 	private FileManager testMethodFileManager;
@@ -108,13 +108,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{
-		String currentSignature = thisJoinPoint.getSignature().toString();
+		String currentFile = thisJoinPoint.getSourceLocation() == null ? "" : 
+			thisJoinPoint.getSourceLocation().getFileName();
 
 		
-		if (finished && !currentTestMethodSignature.equals(currentSignature)) {
+		if (finished && !currentTestMethodSrcFilename.equals(currentFile)) {
 			finished = false;
 			firstTime = false;
-			currentTestMethodSignature = currentSignature;
+			currentTestMethodSrcFilename = currentFile;
 		}
 		
 		if (finished)
@@ -123,7 +124,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		reset();
 		ExecutionFlow.init();
 		
-		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(currentSignature);
+		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
 
 		// Gets information about test method
 		try {
@@ -230,7 +231,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 			
 			finished = true;
-			currentTestMethodSignature = testMethodSignature;
+			currentTestMethodSrcFilename = thisJoinPoint.getSourceLocation() == null ? "" : 
+				thisJoinPoint.getSourceLocation().getFileName();
 			
 			// Restores original test method file and its compiled file
 			try {
