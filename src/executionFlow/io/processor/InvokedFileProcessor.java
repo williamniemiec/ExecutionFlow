@@ -409,7 +409,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
+	 * @version		2.0.5
 	 * @since 		2.0.0
 	 */
 	private class ElseParser
@@ -538,6 +538,7 @@ public class InvokedFileProcessor extends FileProcessor
 					// Checks if parsed else is an else without curly brackets
 					if (elseNoCurlyBrackets) {
 						elseBlockManager.createNewElseBlock();
+						elseBlockManager.parse(line);
 						
 						if (!nextLine.contains("{")) {	// Checks if there are not curly brackets in else nor next line
 							// Checks if it is one line command
