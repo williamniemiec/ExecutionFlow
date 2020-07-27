@@ -31,7 +31,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.1
+ * @version		2.0.5
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -46,6 +46,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private FilesManager testMethodManager;
 	private String testClassName;
 	private String testClassPackage;
+	private String currentTestMethodSignature; 
 	private boolean junit5NewTest;
 	private Path testClassPath;
 	private FileManager testMethodFileManager;
@@ -107,26 +108,39 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{
+		String currentSignature = thisJoinPoint.getSignature().toString();
+
+		
+		if (finished && !currentTestMethodSignature.equals(currentSignature)) {
+			finished = false;
+			firstTime = false;
+			currentTestMethodSignature = currentSignature;
+		}
+		
 		if (finished)
 			return;
 		
 		reset();
 		ExecutionFlow.init();
 		
-		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
+		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(currentSignature);
 
 		// Gets information about test method
 		try {
+			String className, classSignature, testClassSignature;
+			Path testSrcPath;
+			
+			
 			// Gets compiled file path of the test method
-			String className = thisJoinPoint.getTarget().getClass().getSimpleName();
-			String classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
+			className = thisJoinPoint.getTarget().getClass().getSimpleName();
+			classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
 			testClassPath = CollectorExecutionFlow.findClassPath(className, classSignature);
 			
 			// Gets source file path of the test method
-			String testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
+			testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
 			testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
 			testClassPackage = MethodInvokedInfo.extractPackage(testClassSignature);
-			Path testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
+			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
 			testMethodArgs = thisJoinPoint.getArgs();
 			
 			try {
@@ -187,6 +201,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	after(): testMethodCollector() 
 	{
+		ExecutionFlow ef;
+
+		
 		if (finished)
 			return;
 		
@@ -213,6 +230,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 			
 			finished = true;
+			currentTestMethodSignature = testMethodSignature;
 			
 			// Restores original test method file and its compiled file
 			try {
@@ -276,7 +294,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			return;
 
 		// Gets test paths of the collected methods and export them
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector);
+		ef = new MethodExecutionFlow(methodCollector);
 		ef.execute().export();
 		
 		// Exports tested methods to a CSV
