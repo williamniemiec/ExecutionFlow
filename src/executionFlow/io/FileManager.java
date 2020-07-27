@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.factory.FileProcessorFactory;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -189,11 +190,17 @@ public class FileManager implements Serializable
 		
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding
-		if (charsetError)	
-			FileCompiler.compile(srcFile, classOutput, FileEncoding.ISO_8859_1);
-		else
-			FileCompiler.compile(srcFile, classOutput, FileEncoding.UTF_8);
-
+		try {
+			if (charsetError)	
+				FileCompiler.compile(srcFile, classOutput, FileEncoding.ISO_8859_1);
+			else
+				FileCompiler.compile(srcFile, classOutput, FileEncoding.UTF_8);
+		} 
+		catch (java.lang.NoClassDefFoundError e) {
+			ConsoleOutput.showError("aspectjtools.jar not found");
+			throw e;
+		}
+		
 		return this;
 	}
 	
