@@ -144,12 +144,12 @@
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1871.75" y="-2225.4" width="441.2" height="8"/>
   </g>
   <g>
-    <rect style="fill: #ffffff" x="2034.36" y="-2110.46" width="279.5" height="44"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2034.36" y="-2110.46" width="279.5" height="44"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="2174.11" y="-2095.26">&lt;&lt;Aspect&gt;&gt;</text>
-    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="2174.11" y="-2074.46">TestMethodCollector</text>
-    <rect style="fill: #ffffff" x="2034.36" y="-2066.46" width="279.5" height="180"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2034.36" y="-2066.46" width="279.5" height="180"/>
+    <rect style="fill: #ffffff" x="2034.36" y="-2110.46" width="294.9" height="44"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2034.36" y="-2110.46" width="294.9" height="44"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="2181.81" y="-2095.26">&lt;&lt;Aspect&gt;&gt;</text>
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="2181.81" y="-2074.46">TestMethodCollector</text>
+    <rect style="fill: #ffffff" x="2034.36" y="-2066.46" width="294.9" height="180"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2034.36" y="-2066.46" width="294.9" height="180"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-2053.26">-firstTime: boolean = true</text>
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2037.36" y1="-2046.86" x2="2237.56" y2="-2046.86"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-2037.26">-finished: boolean</text>
@@ -160,12 +160,13 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-1989.26">-testMethodManager: FilesManager</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-1973.26">-testClassName: String</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-1957.26">-testClassPackage: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-1941.26">-currentTestMethodSignature: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-1941.26">-currentTestMethodSrcFilename: String</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2037.36" y1="-1934.86" x2="2322.26" y2="-1934.86"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-1925.26">-junit5NewTest: boolean</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-1909.26">-testClassPath: Path</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2037.36" y="-1893.26">-testMethodFileManager: FileManager</text>
-    <rect style="fill: #ffffff" x="2034.36" y="-1886.46" width="279.5" height="8"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2034.36" y="-1886.46" width="279.5" height="8"/>
+    <rect style="fill: #ffffff" x="2034.36" y="-1886.46" width="294.9" height="8"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2034.36" y="-1886.46" width="294.9" height="8"/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="2034.36,-2088.46 -1083.26,-2088.46 -1083.26,-602.683 "/>
@@ -255,9 +256,9 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-631.381,-463.146 -615.381,-468.146 -631.381,-473.146 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2332.1,-2088.46 2517.7,-2088.46 2517.7,-1474.7 2687.18,-1474.7 "/>
-    <polygon style="fill: #ffffff" points="2332.1,-2096.46 2316.1,-2088.46 2332.1,-2080.46 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2332.1,-2096.46 2316.1,-2088.46 2332.1,-2080.46 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2347.5,-2088.46 2517.7,-2088.46 2517.7,-1474.7 2687.18,-1474.7 "/>
+    <polygon style="fill: #ffffff" points="2347.5,-2096.46 2331.5,-2088.46 2347.5,-2080.46 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2347.5,-2096.46 2331.5,-2088.46 2347.5,-2080.46 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2331.18,-2283.4 2517.7,-2283.4 2517.7,-1474.7 2687.18,-1474.7 "/>
@@ -1124,7 +1125,7 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-640.24,-1084.38 -645.24,-1100.38 -650.24,-1084.38 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="2174.11,-1878.46 2174.11,-1873.45 1671.19,-1873.45 1671.19,-1975.76 920.921,-1975.76 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="2181.81,-1878.46 2181.81,-1873.45 1671.19,-1873.45 1671.19,-1975.76 920.921,-1975.76 "/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="933.569,-1980.76 917.569,-1975.76 933.569,-1970.76 "/>
   </g>
   <g>
