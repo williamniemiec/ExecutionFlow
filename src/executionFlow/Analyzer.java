@@ -21,7 +21,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.4
+ * @version		2.0.5
  * @since		2.0.0
  */
 public class Analyzer 
@@ -151,6 +151,14 @@ public class Analyzer
 		jdb = new JDB(testClassRootPath, classPath, srcPath);
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
+		
+		// -----{ DEBUG }-----
+		if (DEBUG) {
+			ConsoleOutput.showInfo("Classpath: " + classPath);
+			ConsoleOutput.showInfo("Srcpath: " + srcPath);
+			ConsoleOutput.showInfo("Working directory: " + testClassRootPath);
+		}
+		// -----{ END DEBUG }-----
 	}
 	
 	
