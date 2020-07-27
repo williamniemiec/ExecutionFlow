@@ -105,4 +105,13 @@ public class ControlFlowTest
 		
 		assertTrue(tccf.inlineIfElse(2));
 	}
+	
+	@Test
+	public void ifElseSameLine()
+	{
+		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
+		
+		assertEquals(0, tccf.ifElseSameLine(2));
+		assertEquals(10, tccf.ifElseSameLine(-2));
+	}
 }

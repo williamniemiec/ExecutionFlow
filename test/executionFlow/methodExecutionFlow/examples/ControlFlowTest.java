@@ -589,4 +589,98 @@ public class ControlFlowTest
 		
 		assertEquals(Arrays.asList(169), testPaths.get(0));
 	}
+	
+	/**
+	 * Tests first method used by 
+	 * {@link  examples.complexTests.ComplexTests.ifElseSameLine()} test.
+	 */
+	@Test
+	public void ifElseSameLine() throws Throwable 
+	{
+		List<List<Integer>> testPaths;
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		int invocationLine = 114;
+		
+		// Defines which methods will be collected
+		String testMethodSignature = "examples.complexTests.ComplexTests.ifElseSameLine()";
+		String methodSignature = "examples.complexTests.TestClass_ComplexTests.ifElseSameLine(int)";
+		
+		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("ifElseSameLine")
+				.build();
+		
+		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(Arrays.asList(197, 201), testPaths.get(0));
+	}
+	
+	/**
+	 * Tests second method used by 
+	 * {@link  examples.complexTests.ComplexTests.ifElseSameLine()} test.
+	 */
+	@Test
+	public void ifElseSameLine2() throws Throwable 
+	{
+		List<List<Integer>> testPaths;
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		int invocationLine = 115;
+		
+		// Defines which methods will be collected
+		String testMethodSignature = "examples.complexTests.ComplexTests.ifElseSameLine()";
+		String methodSignature = "examples.complexTests.TestClass_ComplexTests.ifElseSameLine(int)";
+		
+		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("ifElseSameLine")
+				.build();
+		
+		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(Arrays.asList(197, 198, 201), testPaths.get(0));
+	}
 }
