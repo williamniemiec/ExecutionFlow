@@ -17,7 +17,7 @@ import executionFlow.util.ConsoleOutput;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.2
+ * @version		2.1.0
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -31,8 +31,9 @@ public class FileManager implements Serializable
 	private transient Path originalSrcFile; 
 	private transient Path compiledFile;
 	private transient Path originalCompiledFile;
+	private transient Path binDirectory;
+	private String classSignature;
 	private String filename;
-	private transient Path classOutput;
 	private String classPackage;
 	private FileProcessor fp;
 	private boolean charsetError;
@@ -46,23 +47,25 @@ public class FileManager implements Serializable
 	 * Manages file analyzer and compiler. Using this constructor, backup files
 	 * will end with '.original'.
 	 * 
+	 * @param		classSignature Signature of the public class of the file
 	 * @param		srcFilePath Path of java file
-	 * @param		classOutput Path of directory where .class of java file is
+	 * @param		binDirectory Path of directory where .class of java file is
 	 * @param		classPackage Package of the class of the java file
 	 * @param		fileParserFactory Factory that will produce 
 	 * {@link FileProcessor} that will be used for parsing file
 	 */
-	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
+	public FileManager(String classSignature, Path srcFilePath, Path binDirectory, String classPackage, 
 			FileProcessorFactory fileParserFactory)
 	{
-		this(srcFilePath, classOutput, classPackage, fileParserFactory, "original");
+		this(classSignature, srcFilePath, binDirectory, classPackage, fileParserFactory, "original");
 	}
 	
 	/**
 	 * Manages file analyzer and compiler.
 	 * 
+	 * @param		classSignature Signature of the public class of the file
 	 * @param		srcFilePath Path of java file
-	 * @param		classOutput Path of directory where .class of java file is
+	 * @param		binDirectory Path of directory where .class of java file is
 	 * @param		classPackage Package of the class of the java file
 	 * @param		fileParserFactory Factory that will produce 
 	 * {@link FileProcessor} that will be used for parsing file
@@ -70,25 +73,26 @@ public class FileManager implements Serializable
 	 * 
 	 * @throws		IllegalArgumentException If srcFilePath does not exist
 	 */
-	public FileManager(Path srcFilePath, Path classOutput, String classPackage, 
+	public FileManager(String classSignature, Path srcFilePath, Path binDirectory, String classPackage, 
 			FileProcessorFactory fileParserFactory, String backupExtensionName)
 	{
 		if (!Files.exists(srcFilePath))
 			throw new IllegalArgumentException("srcFilePath does not exist: " + srcFilePath);
 		
 		this.srcFile = srcFilePath;
-		this.classOutput = classOutput;
+		this.binDirectory = binDirectory;
 		this.classPackage = classPackage;
 		this.filename = srcFilePath.getName(srcFilePath.getNameCount()-1).toString().split("\\.")[0];
 		this.fp = fileParserFactory.newFileProcessor(
 			srcFile, 
-			classOutput, 
+			binDirectory, 
 			filename+"_parsed", 
 			FileEncoding.UTF_8
 		);
-		this.compiledFile = Path.of(classOutput+"/"+filename+".class");
+		this.compiledFile = Path.of(binDirectory+"/"+filename+".class");
 		this.originalSrcFile = Path.of(srcFilePath.toAbsolutePath().toString()+"."+backupExtensionName); 
-		this.originalCompiledFile = Path.of(classOutput+"/"+filename+".class."+backupExtensionName);
+		this.originalCompiledFile = Path.of(binDirectory+"/"+filename+".class."+backupExtensionName);
+		this.classSignature = classSignature;
 	}
 	
 	
@@ -99,12 +103,13 @@ public class FileManager implements Serializable
 	public String toString() 
 	{
 		return "FileManager ["
-				+ "srcFile=" + srcFile 
+				+ "classSignature=" + classSignature
+				+ ", srcFile=" + srcFile 
 				+ ", originalSrcFile=" + originalSrcFile 
 				+ ", compiledFile="	+ compiledFile 
 				+ ", originalClassPath=" + originalCompiledFile 
 				+ ", filename=" + filename
-				+ ", classOutput=" + classOutput 
+				+ ", classOutput=" + binDirectory 
 				+ ", classPackage=" + classPackage 
 				+ ", fp=" + fp 
 				+ ", charsetError="	+ charsetError 
@@ -115,7 +120,7 @@ public class FileManager implements Serializable
 	@Override
 	public int hashCode()
 	{
-		return srcFile.hashCode();
+		return classSignature.hashCode();
 	}
 
 	@Override
@@ -125,7 +130,7 @@ public class FileManager implements Serializable
 		if (obj == this)						{ return true;	}
 		if (this.getClass() != obj.getClass())	{ return false;	}
 		
-		return this.srcFile.equals(((FileManager)obj).getSrcFile());
+		return this.classSignature.equals(((FileManager)obj).getClassSignature());
 	}
 
 	/**
@@ -185,16 +190,16 @@ public class FileManager implements Serializable
 		
 		// Sets path to the compiler
 		for (int i=0; i<packageFolders; i++) {
-			classOutput = classOutput.getParent();
+			binDirectory = binDirectory.getParent();
 		}
 		
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding
 		try {
 			if (charsetError)	
-				FileCompiler.compile(srcFile, classOutput, FileEncoding.ISO_8859_1);
+				FileCompiler.compile(srcFile, binDirectory, FileEncoding.ISO_8859_1);
 			else
-				FileCompiler.compile(srcFile, classOutput, FileEncoding.UTF_8);
+				FileCompiler.compile(srcFile, binDirectory, FileEncoding.UTF_8);
 		} 
 		catch (java.lang.NoClassDefFoundError e) {
 			ConsoleOutput.showError("aspectjtools.jar not found");
@@ -354,6 +359,10 @@ public class FileManager implements Serializable
 		return compiledFile;
 	}
 	
+	public String getClassSignature()
+	{
+		return classSignature;
+	}
 	
 	//-------------------------------------------------------------------------
 	//		Serialization and deserialization methods
@@ -363,7 +372,7 @@ public class FileManager implements Serializable
 		try {
 			oos.defaultWriteObject();
 			oos.writeUTF(srcFile.toAbsolutePath().toString());
-			oos.writeUTF(classOutput.toAbsolutePath().toString());
+			oos.writeUTF(binDirectory.toAbsolutePath().toString());
 			oos.writeUTF(compiledFile.toAbsolutePath().toString());
 			oos.writeUTF(originalSrcFile.toAbsolutePath().toString());
 			oos.writeUTF(originalCompiledFile.toAbsolutePath().toString());
@@ -377,7 +386,7 @@ public class FileManager implements Serializable
 		try {
 			ois.defaultReadObject();
 			this.srcFile = Path.of(ois.readUTF());
-			this.classOutput = Path.of(ois.readUTF());
+			this.binDirectory = Path.of(ois.readUTF());
 			this.compiledFile = Path.of(ois.readUTF());;
 			this.originalSrcFile = Path.of(ois.readUTF());;
 			this.originalCompiledFile = Path.of(ois.readUTF());;

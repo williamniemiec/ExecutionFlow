@@ -26,7 +26,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.4
+ * @version		2.1.0
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -146,6 +146,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 				
 				// Gets FileManager for method file
 				methodFileManager = new FileManager(
+					collector.getMethodInfo().getClassSignature(),
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
@@ -154,6 +155,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 
 				// Gets FileManager for test method file
 				testMethodFileManager = new FileManager(
+					collector.getTestMethodInfo().getClassSignature(),
 					collector.getTestMethodInfo().getSrcPath(), 
 					collector.getTestMethodInfo().getClassDirectory(),
 					collector.getTestMethodInfo().getPackage(),
