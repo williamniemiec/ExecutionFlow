@@ -84,6 +84,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Intercepts JUnit 5 new tests (parameterized test and repeated test).
 	 */
 	pointcut junit5_newTests():
+		!skipAnnotation() &&
 		execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
 		execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
 	
