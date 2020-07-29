@@ -17,7 +17,7 @@ import executionFlow.util.ConsoleOutput;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor
@@ -49,22 +49,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
-	//-------------------------------------------------------------------------
-	/**
-	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation 
-	 * in test methods to disable collectors during 
-	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
-	 * functions. Using this constructor, the directory where parsed file will
-	 * be saved will be in current directory. Also, file encoding will be UTF-8.
-	 * 
-	 * @param		filename Path of the file to be parsed
-	 * @param		outputFilename Name of the parsed file
-	 */ 
-	public TestMethodFileProcessor(Path filepath, String outputFilename)
-	{
-		this(filepath, null, outputFilename);
-	}
-	
+	//-------------------------------------------------------------------------		
 	/**
 	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
 	 * in test methods to disable collectors during 
@@ -74,30 +59,15 @@ public class TestMethodFileProcessor extends FileProcessor
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
+	 * @param		fileExtension Output file extension (without dot)
+	 * (default is java)
 	 */ 
-	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename)
+	public TestMethodFileProcessor(Path filepath, Path outputDir, 
+			String outputFilename, String fileExtension)
 	{
 		this.file = filepath;
 		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
-	}
-	
-	/**
-	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
-	 * in test methods to disable collectors during 
-	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
-	 * functions. Using this constructor, file encoding will be UTF-8.
-	 * 
-	 * @param		filename Path of the file to be parsed
-	 * @param		outputDir Directory where parsed file will be saved
-	 * @param		outputFilename Name of the parsed file
-	 * @param		fileExtension Output file extension (without dot)
-	 * (default is java)
-	 */ 
-	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename, 
-			String fileExtension)
-	{
-		this(filepath, outputDir, outputFilename);
 		this.fileExtension = fileExtension;
 	}
 	
@@ -110,33 +80,151 @@ public class TestMethodFileProcessor extends FileProcessor
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
+	 * @param		fileExtension Output file extension (without dot)
+	 * (default is java)
 	 * @param		encode File encoding
 	 */ 
-	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename, 
-			FileEncoding encode)
+	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename,
+			String fileExtension, FileEncoding encode)
 	{
-		this(filepath, outputDir, outputFilename);
+		this(filepath, outputDir, outputFilename, fileExtension);
 		this.encode = encode;
-	}
+	}	
 	
+	
+	//-------------------------------------------------------------------------
+	//		Builder
+	//-------------------------------------------------------------------------
 	/**
-	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
-	 * in test methods to disable collectors during 
-	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
-	 * functions.
-	 * 
-	 * @param		filename Path of the file to be parsed
-	 * @param		outputDir Directory where parsed file will be saved
-	 * @param		outputFilename Name of the parsed file
-	 * @param		encode File encoding
-	 * @param		fileExtension Output file extension (without dot)
-	 * (default is java)
-	 */ 
-	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename, 
-			FileEncoding encode, String fileExtension)
+	 * Builder for {@link TestMethodFileProcessor}. It is necessary to provide
+	 * all required fields. The required fields are: <br />
+	 * <ul>
+	 * 	<li>file</li>
+	 * 	<li>outputDir</li>
+	 * 	<li>outputFilename</li>
+	 * </ul>
+	 */
+	public static class Builder
 	{
-		this(filepath, outputDir, outputFilename, encode);
-		this.fileExtension = fileExtension;
+		private FileEncoding encode;
+		private String fileExtension = "java";
+		private Path file;
+		private Path outputDir;
+		private String outputFilename;
+
+		
+		/**
+		 * @param		file Path of the file to be parsed
+		 * 
+		 * @return		Itself to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If file is null
+		 */
+		public Builder file(Path file)
+		{
+			if (file == null)
+				throw new IllegalArgumentException("File cannot be null");
+			
+			this.file = file;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		outputDir Directory where parsed file will be saved
+		 * 
+		 * @return		Itself to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If Output directory is null
+		 */
+		public Builder outputDir(Path outputDir)
+		{
+			if (file == null)
+				throw new IllegalArgumentException("Output directory cannot be null");
+			
+			this.outputDir = outputDir;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		outputFilename Processed file name
+		 * 
+		 * @return		Itself to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If output filename is null
+		 */
+		public Builder outputFilename(String outputFilename)
+		{
+			if (outputFilename == null)
+				throw new IllegalArgumentException("Output filename cannot be null");
+			
+			this.outputFilename = outputFilename;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		encode File encoding (default is UTF-8)
+		 * 
+		 * @return		Itself to allow chained calls
+		 */
+		public Builder encode(FileEncoding encode)
+		{
+			if (encode != null)
+				this.encode = encode;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		fileExtension Output file extension (without dot)
+		 * (default is java)
+		 * 
+		 * @return		Itself to allow chained calls
+		 */
+		public Builder fileExtension(String fileExtension)
+		{
+			if (fileExtension != null)
+				this.fileExtension = fileExtension;
+			
+			return this;
+		}
+		
+		/**
+		 * Creates {@link TestMethodFileProcessor} with provided information.
+		 * It is necessary to provide all required fields. The required fields
+		 * are: <br />
+		 * <ul>
+		 * 	<li>file</li>
+		 * 	<li>outputDir</li>
+		 * 	<li>outputFilename</li>
+		 * </ul>
+		 * 
+		 * @return		TestMethodFileProcessor with provided information
+		 * 
+		 * @throws		IllegalArgumentException If any required field is null
+		 */
+		public TestMethodFileProcessor build()
+		{
+			StringBuilder nullFields = new StringBuilder();
+			
+			
+			if (file == null)
+				nullFields.append("file").append(", ");
+			if (outputDir == null)
+				nullFields.append("outputDir").append(", ");
+			if (outputFilename == null)
+				nullFields.append("outputFilename").append(", ");
+			
+			if (nullFields.length() > 0)
+				throw new IllegalArgumentException("Required fields cannot be null: "
+						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
+			
+			return	encode == null ? 
+					new TestMethodFileProcessor(file, outputDir, outputFilename,fileExtension) : 
+					new TestMethodFileProcessor(file, outputDir, outputFilename, fileExtension, encode);
+		}
 	}
 	
 	
@@ -157,6 +245,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 
+		final String regex_commentLine = "^(\\t|\\ )*(\\/\\/|\\/\\*).*";
 		String line;
 		File outputFile;
 		
@@ -174,25 +263,27 @@ public class TestMethodFileProcessor extends FileProcessor
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
-				// Checks whether the line contains a test annotation
-				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-					line += " @executionFlow.runtime._SkipInvoked";
-				}
-				// Checks if there are print's
-				else if (line.contains("System.out.print")) {
-					String[] tmp = line.split(";");
-					StringBuilder response = new StringBuilder();
-					
-					
-					// Deletes print's from the line
-					for (String term : tmp) {
-						if (!term.contains("System.out.print")) {
-							response.append(term);
-							response.append(";");
-						}
+				if (!line.matches(regex_commentLine)) {
+					// Checks whether the line contains a test annotation
+					if (line.contains("@Test") || line.contains("@org.junit.Test")) {
+						line += " @executionFlow.runtime._SkipInvoked";
 					}
-					
-					line = response.toString();
+					// Checks if there are print's
+					else if (line.contains("System.out.print")) {
+						String[] tmp = line.split(";");
+						StringBuilder response = new StringBuilder();
+						
+						
+						// Deletes print's from the line
+						for (String term : tmp) {
+							if (!term.contains("System.out.print")) {
+								response.append(term);
+								response.append(";");
+							}
+						}
+						
+						line = response.toString();
+					}
 				}
 				
 				// -----{ DEBUG }-----

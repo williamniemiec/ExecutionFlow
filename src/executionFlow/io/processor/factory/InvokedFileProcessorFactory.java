@@ -11,7 +11,7 @@ import executionFlow.io.processor.InvokedFileProcessor;
  * Responsible for generating {@link InvokedFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class InvokedFileProcessorFactory extends FileProcessorFactory
@@ -23,6 +23,11 @@ public class InvokedFileProcessorFactory extends FileProcessorFactory
 	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
 			String outputFilename, FileEncoding encode) 
 	{
-		return new InvokedFileProcessor(filepath, outputDir, outputFilename, encode);
+		return new InvokedFileProcessor.Builder()
+				.file(filepath)
+				.outputDir(outputDir)
+				.outputFilename(outputFilename)
+				.encode(encode)
+				.build();
 	}
 }

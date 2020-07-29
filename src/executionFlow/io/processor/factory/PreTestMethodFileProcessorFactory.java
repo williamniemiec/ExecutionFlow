@@ -11,7 +11,7 @@ import executionFlow.io.processor.PreTestMethodFileProcessor;
  * Responsible for generating {@link PreTestMethodFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.1.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class PreTestMethodFileProcessorFactory extends FileProcessorFactory

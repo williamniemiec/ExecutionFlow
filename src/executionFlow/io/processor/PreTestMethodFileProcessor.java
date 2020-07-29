@@ -167,7 +167,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		public Builder outputDir(Path outputDir)
 		{
-			if (file == null)
+			if (outputDir == null)
 				throw new IllegalArgumentException("Output directory cannot be null");
 			
 			this.outputDir = outputDir;
@@ -242,7 +242,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		public Builder fileExtension(String fileExtension)
 		{
-			if (testMethodSignature != null)
+			if (fileExtension != null)
 				this.fileExtension = fileExtension;
 			
 			return this;
@@ -250,8 +250,8 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		
 		/**
 		 * Creates {@link PreTestMethodFileProcessor} with provided information.
-		 * It is necessary to
-		 * provide all required fields. The required fields are: <br />
+		 * It is necessary to provide all required fields. The required fields 
+		 * are: <br />
 		 * <ul>
 		 * 	<li>file</li>
 		 * 	<li>outputDir</li>

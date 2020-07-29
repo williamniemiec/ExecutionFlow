@@ -11,7 +11,7 @@ import executionFlow.io.processor.TestMethodFileProcessor;
  * Responsible for generating {@link TestMethodFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessorFactory extends FileProcessorFactory
@@ -23,6 +23,11 @@ public class TestMethodFileProcessorFactory extends FileProcessorFactory
 	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
 			String outputFilename, FileEncoding encode) 
 	{
-		return new TestMethodFileProcessor(filepath, outputDir, outputFilename, encode);
+		return new TestMethodFileProcessor.Builder()
+				.file(filepath)
+				.outputDir(outputDir)
+				.outputFilename(outputFilename)
+				.encode(encode)
+				.build();
 	}
 }

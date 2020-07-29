@@ -59,49 +59,21 @@ public class InvokedFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	/**
 	 * Adds instructions in parts of the code that does not exist when 
-	 * converting it to bytecode. Using this constructor, the directory where 
-	 * parsed file will be saved will be in current directory. Also, file 
-	 * encoding will be UTF-8.
-	 * 
-	 * @param		filename Path of the file to be parsed
-	 * @param		outputFilename Name of the parsed file
-	 */ 
-	public InvokedFileProcessor(Path filepath, String outputFilename)
-	{
-		this(filepath, null, outputFilename);
-	}
-	
-	/**
-	 * Adds instructions in parts of the code that does not exist when 
 	 * converting it to bytecode. Using this constructor, file encoding will be 
 	 * UTF-8.
 	 * 
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
+	 * @param		fileExtension Output file extension (without dot)
+	 * (default is java)
 	 */ 
-	public InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename)
+	private InvokedFileProcessor(Path filepath, Path outputDir, 
+			String outputFilename, String fileExtension)
 	{
 		this.file = filepath;
 		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
-	}
-	
-	/**
-	 * Adds instructions in parts of the code that does not exist when 
-	 * converting it to bytecode. Using this constructor, file encoding will be 
-	 * UTF-8.
-	 * 
-	 * @param		filename Path of the file to be parsed
-	 * @param		outputDir Directory where parsed file will be saved
-	 * @param		outputFilename Name of the parsed file
-	 * @param		fileExtension Output file extension (without dot)
-	 * (default is java)
-	 */ 
-	public InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename, 
-			String fileExtension)
-	{
-		this(filepath, outputDir, outputFilename);
 		this.fileExtension = fileExtension;
 	}
 	
@@ -113,30 +85,150 @@ public class InvokedFileProcessor extends FileProcessor
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
+	 * @param		fileExtension Output file extension (without dot)
+	 * (default is java)
 	 */ 
-	public InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename,
-			FileEncoding encode)
+	private InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename,
+			String fileExtension, FileEncoding encode)
 	{
-		this(filepath, outputDir, outputFilename);
+		this(filepath, outputDir, outputFilename, fileExtension);
 		this.encode = encode;
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Builder
+	//-------------------------------------------------------------------------
 	/**
-	 * Adds instructions in parts of the code that does not exist when 
-	 * converting it to bytecode.
-	 * 
-	 * @param		filename Path of the file to be parsed
-	 * @param		outputDir Directory where parsed file will be saved
-	 * @param		outputFilename Name of the parsed file
-	 * @param		encode File encoding
-	 * @param		fileExtension Output file extension (without dot)
-	 * (default is java)
-	 */ 
-	public InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename,
-			FileEncoding encode, String fileExtension)
+	 * Builder for {@link InvokedFileProcessor}. It is necessary to provide all
+	 * required fields. The required fields are: <br />
+	 * <ul>
+	 * 	<li>file</li>
+	 * 	<li>outputDir</li>
+	 * 	<li>outputFilename</li>
+	 * </ul>
+	 */
+	public static class Builder
 	{
-		this(filepath, outputDir, outputFilename, encode);
-		this.fileExtension = fileExtension;
+		private FileEncoding encode;
+		private String fileExtension = "java";
+		private Path file;
+		private Path outputDir;
+		private String outputFilename;
+
+		
+		/**
+		 * @param		file Path of the file to be parsed
+		 * 
+		 * @return		Itself to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If file is null
+		 */
+		public Builder file(Path file)
+		{
+			if (file == null)
+				throw new IllegalArgumentException("File cannot be null");
+			
+			this.file = file;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		outputDir Directory where parsed file will be saved
+		 * 
+		 * @return		Itself to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If Output directory is null
+		 */
+		public Builder outputDir(Path outputDir)
+		{
+			if (file == null)
+				throw new IllegalArgumentException("Output directory cannot be null");
+			
+			this.outputDir = outputDir;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		outputFilename Processed file name
+		 * 
+		 * @return		Itself to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If output filename is null
+		 */
+		public Builder outputFilename(String outputFilename)
+		{
+			if (outputFilename == null)
+				throw new IllegalArgumentException("Output filename cannot be null");
+			
+			this.outputFilename = outputFilename;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		encode File encoding (default is UTF-8)
+		 * 
+		 * @return		Itself to allow chained calls
+		 */
+		public Builder encode(FileEncoding encode)
+		{
+			if (encode != null)
+				this.encode = encode;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		fileExtension Output file extension (without dot)
+		 * (default is java)
+		 * 
+		 * @return		Itself to allow chained calls
+		 */
+		public Builder fileExtension(String fileExtension)
+		{
+			if (fileExtension != null)
+				this.fileExtension = fileExtension;
+			
+			return this;
+		}
+		
+		/**
+		 * Creates {@link InvokedFileProcessor} with provided information.
+		 * It is necessary to provide all required fields. The required 
+		 * fields are: <br />
+		 * <ul>
+		 * 	<li>file</li>
+		 * 	<li>outputDir</li>
+		 * 	<li>outputFilename</li>
+		 * </ul>
+		 * 
+		 * @return		InvokedFileProcessor with provided information
+		 * 
+		 * @throws		IllegalArgumentException If any required field is null
+		 */
+		public InvokedFileProcessor build()
+		{
+			StringBuilder nullFields = new StringBuilder();
+			
+			
+			if (file == null)
+				nullFields.append("file").append(", ");
+			if (outputDir == null)
+				nullFields.append("outputDir").append(", ");
+			if (outputFilename == null)
+				nullFields.append("outputFilename").append(", ");
+			
+			if (nullFields.length() > 0)
+				throw new IllegalArgumentException("Required fields cannot be null: "
+						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
+			
+			return	encode == null ? 
+					new InvokedFileProcessor(file, outputDir, outputFilename,fileExtension) : 
+					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension, encode);
+		}
 	}
 	
 	
