@@ -19,8 +19,8 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Object[] testMethodArgs;
 	private String testMethodSignature;	
+	private Object[] testMethodArgs;
 	
 	
 	//-------------------------------------------------------------------------
@@ -30,10 +30,10 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	 * Generates {@link PreTestMethodFileProcessor} factory. It will generates 
 	 * {@link PreTestMethodFileProcessor} ready to handle parameterized tests.
 	 * 
-	 * @param		args Test method arguments
 	 * @param		testMethodSignature Test method signature
+	 * @param		args Test method arguments
 	 */
-	public PreTestMethodFileProcessorFactory(Object[] args, String testMethodSignature)
+	public PreTestMethodFileProcessorFactory(String testMethodSignature, Object[] args)
 	{
 		this(testMethodSignature);
 		
@@ -42,8 +42,8 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	}
 	
 	/**
-	 * Generates {@link PreTestMethodFileProcessor} factory. Use this constructor if 
-	 * the method to be tested is not a parameterized test.
+	 * Generates {@link PreTestMethodFileProcessor} factory. Use this 
+	 * constructor if the method to be tested is not a parameterized test.
 	 * 
 	 * @param		testMethodSignature Test method signature
 	 */
@@ -60,7 +60,13 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
 			String outputFilename, FileEncoding encode) 
 	{
-		return new PreTestMethodFileProcessor(filepath, outputDir, outputFilename, 
-				encode, testMethodArgs, testMethodSignature);
+		return new PreTestMethodFileProcessor.Builder()
+				.file(filepath)
+				.outputDir(outputDir)
+				.outputFilename(outputFilename)
+				.testMethodSignature(testMethodSignature)
+				.testMethodArgs(testMethodArgs)
+				.encode(encode)
+				.build();
 	}
 }
