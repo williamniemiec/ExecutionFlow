@@ -22,7 +22,7 @@ import executionFlow.util.DataUtils;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -39,7 +39,6 @@ public class InvokedFileProcessor extends FileProcessor
 	
 	private String fileExtension = "java";
 	private boolean skipNextLine;
-	private boolean inComment;
 	private boolean wasParsed;
 	
 	
@@ -156,7 +155,8 @@ public class InvokedFileProcessor extends FileProcessor
 	public String processFile() throws IOException
 	{
 		if (file == null) { return ""; }
-
+		
+		final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*).*";
 		String line, nextLine;
 		File outputFile;
 		PrintParser printParser = new PrintParser();
@@ -191,7 +191,7 @@ public class InvokedFileProcessor extends FileProcessor
 					nextLine = "";
 				
 				// Checks if it is a comment line
-				if (!skipNextLine && !isComment(line)) {
+				if (!skipNextLine && !line.matches(regex_commentFullLine)) {
 					line = printParser.parse(line);
 					line = invokerParser.parse(line);
 					line = elseParser.parse(line, nextLine);
@@ -239,36 +239,6 @@ public class InvokedFileProcessor extends FileProcessor
 		}
 		
 		return line;
-	}
-	
-	/**
-	 * Checks if a line is a comment line.
-	 * 
-	 * @param		line Line to be analyzed
-	 * 
-	 * @return		If line is a comment line
-	 */
-	private boolean isComment(String line)
-	{
-		boolean response = false;
-		
-		// Checks if parser is in a comment block
-		if (inComment) {
-			if (line.contains("*/"))
-				inComment = false;
-			
-			response = true;
-		} 
-		else if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;	// Parser is in a comment block
-			
-			response = true;
-		} 
-		else if (line.contains("//") || (line.contains("/*") && line.contains("*/"))) {
-			response = true;
-		}
-		
-		return response;
 	}
 
 	
