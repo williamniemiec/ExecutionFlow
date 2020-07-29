@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +46,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	
 	
 	private String testMethodSignature;
-	private Object testMethodArg;
+	private Object[] testMethodArgs;
 	private int currentLine;
 	private final String regex_methodDeclaration = 
 			"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
@@ -168,13 +171,13 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
-	 * @param		testMethodArg Test method argument (for parameterized tests)
+	 * @param		testMethodArgs Test method arguments (for parameterized tests)
 	 */ 
 	public PreTestMethodFileProcessor(Path filepath, Path outputDir, 
-			String outputFilename, Object testMethodArg, String testMethodSignature)
+			String outputFilename, Object[] testMethodArgs, String testMethodSignature)
 	{
 		this(filepath, outputDir, outputFilename);
-		this.testMethodArg = testMethodArg;
+		this.testMethodArgs = testMethodArgs;
 		this.testMethodSignature = testMethodSignature;
 	}
 	
@@ -188,13 +191,13 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
-	 * @param		testMethodArg Test method argument (for parameterized tests)
+	 * @param		testMethodArgs Test method arguments (for parameterized tests)
 	 */ 
 	public PreTestMethodFileProcessor(Path filepath, Path outputDir, 
-			String outputFilename, Object testMethodArg, String testMethodSignature, String fileExtension)
+			String outputFilename, Object[] testMethodArgs, String testMethodSignature, String fileExtension)
 	{
 		this(filepath, outputDir, outputFilename);
-		this.testMethodArg = testMethodArg;
+		this.testMethodArgs = testMethodArgs;
 		this.testMethodSignature = testMethodSignature;
 		this.fileExtension = fileExtension;
 	}
@@ -210,14 +213,14 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
-	 * @param		testMethodArg Test method argument (for parameterized tests)
+	 * @param		testMethodArgs Test method arguments (for parameterized tests)
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
 	public PreTestMethodFileProcessor(Path filepath, Path outputDir, 
-			String outputFilename, FileEncoding encode, Object testMethodArg, String testMethodSignature)
+			String outputFilename, FileEncoding encode, Object[] testMethodArgs, String testMethodSignature)
 	{
-		this(filepath, outputDir, outputFilename, testMethodArg, testMethodSignature);
+		this(filepath, outputDir, outputFilename, testMethodArgs, testMethodSignature);
 		this.encode = encode;
 	}
 	
@@ -229,15 +232,15 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * @param		filename Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
-	 * @param		testMethodArg Test method argument (for parameterized tests)
+	 * @param		testMethodArgs Test method arguments (for parameterized tests)
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
 	public PreTestMethodFileProcessor(Path filepath, Path outputDir, 
-			String outputFilename, FileEncoding encode, Object testMethodArg, String testMethodSignature,
+			String outputFilename, FileEncoding encode, Object[] testMethodArgs, String testMethodSignature,
 			String fileExtension)
 	{
-		this(filepath, outputDir, outputFilename, testMethodArg, testMethodSignature);
+		this(filepath, outputDir, outputFilename, testMethodArgs, testMethodSignature);
 		this.encode = encode;
 		this.fileExtension = fileExtension;
 	}
@@ -269,7 +272,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		AssertParser assertParser = new AssertParser();
 //		AnnotationParser annotationParser = testMethodArg == null ? new AnnotationParser() : 
 //			new AnnotationParser(testMethodArg, testMethodSignature);
-		AnnotationParser annotationParser = new AnnotationParser(testMethodArg, testMethodSignature);
+		AnnotationParser annotationParser = new AnnotationParser(testMethodArgs, testMethodSignature);
 
 		
 		// If an output directory is specified, processed file will be saved to it
@@ -396,10 +399,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		private boolean repeatedTest_putLoop;
 		private boolean withinRepeatedTest;
 		private boolean ignoreMethod;
-		private String parameters = null;
+		private String[] parameters = null;
 		private String numRepetitions;
 		private String testMethodName;
-		private Object testMethodArg;
+		private Object[] testMethodArgs;
 		private CurlyBracketBalance curlyBracketBalance;
 		
 		/**
@@ -424,14 +427,15 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * Responsible for disabling collectors in a test method and converting
 		 * JUnit 5 test annotation to JUnit 4 test annotation. 
 		 * 
-		 * @param		testMethodArg Test method argument (for parameterized
+		 * @param		testMethodArgs Test method argumentS (for parameterized
 		 * tests)
 		 * @param		testMethodSignature Test method signature
 		 */
-		public AnnotationParser(Object testMethodArg, String testMethodSignature)
+		public AnnotationParser(Object[] testMethodArgs, String testMethodSignature)
 		{
 			this(testMethodSignature);
-			this.testMethodArg = testMethodArg == null ? "null" : testMethodArg  ;
+			this.testMethodArgs = testMethodArgs;
+			//this.testMethodArgs = testMethodArg == null ? "null" : testMethodArg  ;
 		}
 		
 		/**
@@ -444,6 +448,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		public AnnotationParser(String testMethodSignature)
 		{ 
 			this.testMethodName = CollectorExecutionFlow.extractMethodName(testMethodSignature);
+//			parameters = new String[];
 		}
 		
 		
@@ -546,7 +551,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				}
 				
 				// If it is a parameterized test, converts it to a JUnit 4 test
-				if (testMethodArg != null) {
+				if (testMethodArgs != null) {
 					if (curlyBracketBalance == null)
 						curlyBracketBalance = new CurlyBracketBalance();
 					
@@ -569,40 +574,44 @@ public class PreTestMethodFileProcessor extends FileProcessor
 							else {
 								// Extracts parameters
 								Matcher m = Pattern.compile("\\(.*\\)").matcher(line);
+								String params;
 								
 								
 								if (m.find()) {
-									parameters = m.group();
-									parameters = parameters.replace("(", "").replace(")", ""); // Removes parentheses
-									line = line.replace(parameters, ""); // Deletes params from method
+									params = m.group().replace("(", "").replace(")", "");
+									parameters = params.split(","); // Removes parentheses
+									line = line.replace(params, ""); // Deletes params from method
 								}
 							}
 						}
 						// Converts parameters to local variables
 						else if (parameters != null && !line.contains("@")) {
-							if (parameters.contains("String ")) {
-								parameters = parameters + "=";
-								
-								if (testMethodArg.equals("null")) {
-									parameters += ((String)testMethodArg).replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
-								}
-								else {
-									parameters += "\""+ ((String)testMethodArg).replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r") + "\"";
-								}
-								
-								parameters += ";";
-							}
-							else
-								parameters = parameters + "=" + testMethodArg  + ";";
+							StringBuilder localVars = new StringBuilder();
 							
+							
+							// Converts each parameter with its value into a local variable
+							for (int i=0; i<parameters.length; i++) {
+								localVars.append(parameters[i] + "=");
+								
+								if (testMethodArgs[i] == null)
+									localVars.append("null");
+								else if (parameters[i].contains("String "))
+									localVars.append("\""+ ((String)testMethodArgs[i]).replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r") + "\"");
+								else
+									localVars.append(testMethodArgs[i]);
+								
+								localVars.append(";");
+							}
+							
+							// Puts converted parameters on the source file line
 							if (line.contains("{")) {
 								int index = line.indexOf("{");
 								
 								
-								line = line.substring(0, index+1) + parameters + line.substring(index+1);
+								line = line.substring(0, index+1) + localVars + line.substring(index+1);
 							}
 							else {
-								line = parameters + line;
+								line = localVars + line;
 							}
 	
 							inTestMethodSignature = false;

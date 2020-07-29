@@ -11,7 +11,7 @@ import executionFlow.io.processor.PreTestMethodFileProcessor;
  * Responsible for generating {@link PreTestMethodFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		2.1.0
  * @since		2.0.0
  */
 public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
@@ -19,7 +19,8 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Object testMethodArg;
+	private Object[] testMethodArgs;
+	private String testMethodSignature;	
 	
 	
 	//-------------------------------------------------------------------------
@@ -30,19 +31,26 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	 * {@link PreTestMethodFileProcessor} ready to handle parameterized tests.
 	 * 
 	 * @param		args Test method arguments
+	 * @param		testMethodSignature Test method signature
 	 */
-	public PreTestMethodFileProcessorFactory(Object[] args)
+	public PreTestMethodFileProcessorFactory(Object[] args, String testMethodSignature)
 	{
-		if (args.length > 0)
-			this.testMethodArg = args[0];
+		this(testMethodSignature);
+		
+		if (args != null && args.length > 0)
+			this.testMethodArgs = args;
 	}
 	
 	/**
 	 * Generates {@link PreTestMethodFileProcessor} factory. Use this constructor if 
 	 * the method to be tested is not a parameterized test.
+	 * 
+	 * @param		testMethodSignature Test method signature
 	 */
-	public PreTestMethodFileProcessorFactory()
-	{ }
+	public PreTestMethodFileProcessorFactory(String testMethodSignature)
+	{ 
+		this.testMethodSignature = testMethodSignature;
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -52,9 +60,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
 			String outputFilename, FileEncoding encode) 
 	{
-		if (testMethodArg == null)
-			return new PreTestMethodFileProcessor(filepath, outputDir, outputFilename, encode);
-		
-		return new PreTestMethodFileProcessor(filepath, outputDir, outputFilename, encode, testMethodArg);
+		return new PreTestMethodFileProcessor(filepath, outputDir, outputFilename, 
+				encode, testMethodArgs, testMethodSignature);
 	}
 }
