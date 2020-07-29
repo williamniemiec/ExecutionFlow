@@ -1,14 +1,11 @@
 package executionFlow.util;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import executionFlow.ExecutionFlow;
 
 
 /**
@@ -17,7 +14,7 @@ import executionFlow.ExecutionFlow;
  * executed only once. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class Checkpoint
@@ -37,11 +34,12 @@ public class Checkpoint
 	 * A checkpoint is used when it is necessary to mark a class or method to 
 	 * see if it is being executed more than once.
 	 * 
+	 * @param		location Path where checkpoint will be created
 	 * @param		name Checkpoint name
 	 */
-	public Checkpoint(String name)
+	public Checkpoint(Path location, String name)
 	{
-		checkpointFile = new File(ExecutionFlow.getAppRootPath(), name+".checkpoint").toPath();
+		checkpointFile = Path.of(location.toAbsolutePath().toString(), name+".checkpoint");
 	}
 	
 	
@@ -61,6 +59,7 @@ public class Checkpoint
 		end = false;
 		
 		try {
+			Files.deleteIfExists(checkpointFile);
 			Files.createFile(checkpointFile);
 		} catch(FileAlreadyExistsException e) { }
 		
