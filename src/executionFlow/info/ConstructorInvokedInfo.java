@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Stores information about a constructor.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class ConstructorInvokedInfo extends InvokedInfo
@@ -50,7 +50,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 	 * 	<li>constructorSignature</li>
 	 * </ul>
 	 */
-	public static class ConstructorInvokerInfoBuilder
+	public static class Builder
 	{
 		private Path classPath;
 		private Path srcPath;
@@ -67,7 +67,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If classPath is null
 		 */
-		public ConstructorInvokerInfoBuilder classPath(Path classPath)
+		public Builder classPath(Path classPath)
 		{
 			if (classPath == null)
 				throw new IllegalArgumentException("Constructor class file path cannot be null");
@@ -84,7 +84,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If srcPath is null
 		 */
-		public ConstructorInvokerInfoBuilder srcPath(Path srcPath)
+		public Builder srcPath(Path srcPath)
 		{
 			if (srcPath == null)
 				throw new IllegalArgumentException("Constructor's source file cannot be null");
@@ -110,7 +110,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If constructorSignature is null
 		 */
-		public ConstructorInvokerInfoBuilder constructorSignature(String constructorSignature)
+		public Builder constructorSignature(String constructorSignature)
 		{
 			if (constructorSignature == null)
 				throw new IllegalArgumentException("Constructor signature cannot be null");
@@ -129,7 +129,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		 * @throws		IllegalArgumentException If invocationLine is less than
 		 * or equal to zero
 		 */
-		public ConstructorInvokerInfoBuilder invocationLine(int invocationLine)
+		public Builder invocationLine(int invocationLine)
 		{
 			if (invocationLine <= 0)
 				throw new IllegalArgumentException("Invocation line must be a number greater than zero");
@@ -146,7 +146,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
-		public ConstructorInvokerInfoBuilder parameterTypes(Class<?>[] parameterTypes)
+		public Builder parameterTypes(Class<?>[] parameterTypes)
 		{
 			if (parameterTypes == null)
 				throw new IllegalArgumentException("Types of constructor's parameters cannot be null");
@@ -163,7 +163,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If args is null
 		 */
-		public ConstructorInvokerInfoBuilder args(Object... args)
+		public Builder args(Object... args)
 		{
 			if (args == null)
 				throw new IllegalArgumentException("Constructor's arguments cannot be null");

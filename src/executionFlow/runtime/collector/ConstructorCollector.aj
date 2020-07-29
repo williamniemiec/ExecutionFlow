@@ -29,7 +29,7 @@ import executionFlow.info.ConstructorInvokedInfo;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.3
+ * @version		3.0.0
  * @since		1.0
  */
 public aspect ConstructorCollector extends RuntimeCollector
@@ -87,7 +87,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 			classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
-			constructorInvokedInfo = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
+			constructorInvokedInfo = new ConstructorInvokedInfo.Builder()
 				.classPath(classPath)
 				.srcPath(srcPath)
 				.constructorSignature(signature)
