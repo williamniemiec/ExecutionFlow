@@ -11,7 +11,7 @@ import java.util.Arrays;
  * Stores information about a method.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class MethodInvokedInfo extends InvokedInfo
@@ -57,7 +57,7 @@ public class MethodInvokedInfo extends InvokedInfo
 	//		Builder
 	//-------------------------------------------------------------------------
 	/**
-	 * Builder for {@link MethodInvokedInfo}. It is necessary to fill all 
+	 * Builder for {@link MethodInvokedInfo}. It is necessary to provide all 
 	 * required fields. The required fields are: <br />
 	 * <ul>
 	 * 	<li>binPath</li>
@@ -65,7 +65,7 @@ public class MethodInvokedInfo extends InvokedInfo
 	 * 	<li>methodSignature</li>
 	 * </ul>
 	 */
-	public static class MethodInvokedInfoBuilder
+	public static class Builder
 	{
 		private String methodName;
 		private Path binPath;
@@ -84,7 +84,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If methodName is null
 		 */
-		public MethodInvokedInfoBuilder methodName(String methodName)
+		public Builder methodName(String methodName)
 		{
 			if (methodName == null)
 				throw new IllegalArgumentException("Method's name cannot be null");
@@ -101,7 +101,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If binPath is null
 		 */
-		public MethodInvokedInfoBuilder binPath(Path binPath)
+		public Builder binPath(Path binPath)
 		{
 			if (binPath == null)
 				throw new IllegalArgumentException("Method compiled file path cannot be null");
@@ -118,7 +118,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If srcPath is null
 		 */
-		public MethodInvokedInfoBuilder srcPath(Path srcPath)
+		public Builder srcPath(Path srcPath)
 		{
 			if (srcPath == null)
 				throw new IllegalArgumentException("Method's source file cannot be null");
@@ -145,7 +145,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If methodSignature is null
 		 */
-		public MethodInvokedInfoBuilder methodSignature(String methodSignature)
+		public Builder methodSignature(String methodSignature)
 		{
 			if (methodSignature == null)
 				throw new IllegalArgumentException("Method signature cannot be null");
@@ -164,7 +164,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		 * @throws		IllegalArgumentException If invocationLine is less than
 		 * or equal to zero
 		 */
-		public MethodInvokedInfoBuilder invocationLine(int invocationLine)
+		public Builder invocationLine(int invocationLine)
 		{
 			if (invocationLine <= 0)
 				throw new IllegalArgumentException("Invocation line must be a number greater than zero");
@@ -181,7 +181,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
-		public MethodInvokedInfoBuilder parameterTypes(Class<?>[] parameterTypes)
+		public Builder parameterTypes(Class<?>[] parameterTypes)
 		{
 			if (parameterTypes == null)
 				throw new IllegalArgumentException("Types of method's parameters cannot be null");
@@ -198,7 +198,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If args is null
 		 */
-		public MethodInvokedInfoBuilder args(Object... args)
+		public Builder args(Object... args)
 		{
 			if (args == null)
 				throw new IllegalArgumentException("Method's arguments cannot be null");
@@ -215,7 +215,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If returnType is null
 		 */
-		public MethodInvokedInfoBuilder returnType(Class<?> returnType)
+		public Builder returnType(Class<?> returnType)
 		{
 			if (returnType == null)
 				throw new IllegalArgumentException("Method return type cannot be null");
@@ -226,9 +226,9 @@ public class MethodInvokedInfo extends InvokedInfo
 		}
 		
 		/**
-		 * Creates {@link MethodInvokedInfo} with provided information. It is
-		 * necessary that required fields must be filled. The required 
-		 * fields are: <br />
+		 * Creates {@link MethodInvokedInfo} with provided information. It is 
+		 * necessary to provide all required fields.. The required fields 
+		 * are: <br />
 		 * <ul>
 		 * 	<li>classPath</li>
 		 * 	<li>srcPath</li>

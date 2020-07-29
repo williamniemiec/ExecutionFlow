@@ -32,7 +32,7 @@ import executionFlow.runtime.SkipCollection;
  * with {@link executionFlow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
@@ -154,7 +154,7 @@ public aspect MethodCollector extends RuntimeCollector
 			classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
-			methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+			methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(classPath)
 				.methodSignature(signature)
 				.methodName(methodName)

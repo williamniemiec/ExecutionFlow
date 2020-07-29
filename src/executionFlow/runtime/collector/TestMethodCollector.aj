@@ -16,6 +16,7 @@ import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
+import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.util.Checkpoint;
 import executionFlow.util.ConsoleOutput;
@@ -31,7 +32,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.5
+ * @version		3.0.0
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -41,15 +42,18 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	private static boolean firstTime = true;
 	private static boolean finished;
-	private static Checkpoint checkpoint = new Checkpoint("Test_Method");
+	private static Checkpoint checkpoint =
+			new Checkpoint(Path.of(ExecutionFlow.getAppRootPath()), "Test_Method");
+	private static Checkpoint checkpoint_initial = 
+			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
 	private static String outputDir;
 	private FilesManager testMethodManager;
 	private String testClassName;
 	private String testClassPackage;
-	private static String currentTestMethodSrcFilename = "";
 	private boolean junit5NewTest;
 	private Path testClassPath;
 	private FileManager testMethodFileManager;
+	public static int totalTests = -1;
 	
 	
 	//-------------------------------------------------------------------------
@@ -108,23 +112,23 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Executed before each test method.
 	 */
 	before(): testMethodCollector()
-	{
-		String currentFile = thisJoinPoint.getSourceLocation() == null ? "" : 
-			thisJoinPoint.getSourceLocation().getFileName();
-
-		
-		if (finished && !currentTestMethodSrcFilename.equals(currentFile)) {
+	{		
+		if (finished && !firstTime) {
 			finished = false;
 			firstTime = false;
-			currentTestMethodSrcFilename = currentFile;
 		}
 		
 		if (finished)
 			return;
 		
 		reset();
-		ExecutionFlow.init();
-		
+
+		// Checks if it is not the first run
+		if (checkpoint_initial.isActive())
+				ExecutionFlow.init(false);
+		else
+			ExecutionFlow.init(true);
+
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
 
 		// Gets information about test method
@@ -144,9 +148,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 			testClassPackage = MethodInvokedInfo.extractPackage(testClassSignature);
 			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
 			testMethodArgs = thisJoinPoint.getArgs();
-			
+
 			try {
-				testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+				testMethodInfo = new MethodInvokedInfo.Builder()
 					.binPath(testClassPath)
 					.methodSignature(testMethodSignature)
 					.args(testMethodArgs)
@@ -158,16 +162,17 @@ public aspect TestMethodCollector extends RuntimeCollector
 			}
 			
 			testMethodFileManager = new FileManager(
+				classSignature,
 				testSrcPath,
 				MethodInvokedInfo.getCompiledFileDirectory(testClassPath),
 				testClassPackage,
-				new PreTestMethodFileProcessorFactory(testMethodArgs),
+				new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs),
 				"pre_processing.original"
 			);
 			
 			// Checks if it the first execution
 			if (testMethodManager == null && !checkpoint.isActive())
-				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false);
+				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
 
 			// Checks if there are files that were not restored in the last execution
 			if (checkpoint.exists() && !checkpoint.isActive()) {
@@ -229,12 +234,19 @@ public aspect TestMethodCollector extends RuntimeCollector
 			classPath.add(libPath + "..\\classes");
 			classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
 					
+			if (!checkpoint_initial.isActive()) {
+				try {
+					checkpoint_initial.enable();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
 			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
-			
+
 			finished = true;
-			currentTestMethodSrcFilename = thisJoinPoint.getSourceLocation() == null ? "" : 
-				thisJoinPoint.getSourceLocation().getFileName();
-			
+			firstTime = false;
+
 			// Restores original test method file and its compiled file
 			try {
 				if (ExecutionFlow.testMethodManager.load())
@@ -252,28 +264,44 @@ public aspect TestMethodCollector extends RuntimeCollector
 				e.printStackTrace();
 			}
 			
-			// Restores original method files and its compiled files
-			try {
-				if (ExecutionFlow.invokedManager.load())
-					ExecutionFlow.invokedManager.restoreAll();		
-			} catch (ClassNotFoundException e) {
-				hasError = true;
-				ConsoleOutput.showError("Class FileManager not found");
-				e.printStackTrace();
-			} catch (IOException e) {
-				hasError = true;
-				ConsoleOutput.showError("Could not recover all backup files for methods");
-				ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
-						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
-				e.printStackTrace();
+			// Checks if there are still tests to be performed
+			if (totalTests < 0) {
+				totalTests = PreTestMethodFileProcessor.getTotalAnnotations() - 1;
 			}
+			else {
+				totalTests--;
+			}
+				
+				if (totalTests == 0) {
+					// Restores original method files and its compiled files
+					try {
+						if (ExecutionFlow.invokedManager.load())
+							ExecutionFlow.invokedManager.restoreAll();	
+					} catch (ClassNotFoundException e) {
+						hasError = true;
+						ConsoleOutput.showError("Class FileManager not found");
+						e.printStackTrace();
+					} catch (IOException e) {
+						hasError = true;
+						ConsoleOutput.showError("Could not recover all backup files for methods");
+						ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
+								+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+						e.printStackTrace();
+					}
+
+					ExecutionFlow.invokedManager.deleteBackup();
+					
+					// Resets totalTests
+					totalTests = -1;
+				}
 
 			testMethodManager.restoreAll();
 			
 			// Deletes backup files
-			ExecutionFlow.invokedManager.deleteBackup();
 			ExecutionFlow.testMethodManager.deleteBackup();
 			testMethodManager.deleteBackup();
+			testMethodManager = null;
+			ExecutionFlow.testMethodManager = null;
 			
 			// Disables checkpoint
 			try {
