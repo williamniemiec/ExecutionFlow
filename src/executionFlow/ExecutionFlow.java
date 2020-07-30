@@ -72,8 +72,8 @@ public abstract class ExecutionFlow
 	 */
 	private static Path libPath;
 	
-	private static String appRoot;
-	private static File currentProjectRoot;
+	private static Path appRoot;
+	private static Path currentProjectRoot;
 	
 	/**
 	 * Stores computed test paths from a class.<br />
@@ -170,32 +170,6 @@ public abstract class ExecutionFlow
 	}
 	
 	/**
-	 * Computes and stores application root path, based on class 
-	 * {@link ExecutionFlow} location.
-	 * 
-	 * @return		Application root path
-	 * 
-	 * @implSpec	Lazy initialization
-	 */
-	public static String getAppRootPath()
-	{
-		if (appRoot != null)
-			return appRoot;
-		
-		try {
-			File executionFlowBinPath = new File(ExecutionFlow.class
-					.getProtectionDomain().getCodeSource().getLocation().toURI());
-			appRoot = DEVELOPMENT ? executionFlowBinPath.getAbsoluteFile().getParent() : 
-				executionFlowBinPath.getAbsolutePath();
-
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		
-		return appRoot;
-	}
-	
-	/**
 	 * Sets {@link #testMethodManager} to null.
 	 */
 	public static void destroyTestMethodManager()
@@ -209,6 +183,17 @@ public abstract class ExecutionFlow
 	public static void destroyInvokedManager()
 	{
 		invokedManager = null;
+	}
+	
+	/**
+	 * Checks if it is development environment. If it is production environment,
+	 * it will return false; otherwise, true.
+	 * 
+	 * @return		If it is development environment
+	 */
+	public static boolean isDevelopment()
+	{
+		return DEVELOPMENT;
 	}
 	
 	/**
@@ -318,17 +303,6 @@ public abstract class ExecutionFlow
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	/**
-	 * Checks if it is development environment. If it is production environment,
-	 * it will return false; otherwise, true.
-	 * 
-	 * @return		If it is development environment
-	 */
-	public static boolean isDevelopment()
-	{
-		return DEVELOPMENT;
-	}
-	
-	/**
 	 * Finds current project root (project that is running the application). It
 	 * will return the path that contains a directory with name 'src'. 
 	 * 
@@ -336,21 +310,22 @@ public abstract class ExecutionFlow
 	 * 
 	 * @implSpec	Lazy initialization
 	 */
-	public static File getCurrentProjectRoot()
+	public static Path getCurrentProjectRoot()
 	{
 		if (currentProjectRoot != null)
 			return currentProjectRoot;
 		
+		File tmpFile;
 		String[] allFiles;
 		boolean hasSrcFolder = false;
 		int i=0;
 		
 		
-		currentProjectRoot = new File(System.getProperty("user.dir"));
+		tmpFile = new File(System.getProperty("user.dir"));
 		
 		// Searches for a path containing a directory named 'src'
 		while (!hasSrcFolder) {
-			allFiles = currentProjectRoot.list();
+			allFiles = tmpFile.list();
 			
 			// Checks the name of every file in current path
 			i=0;
@@ -366,11 +341,36 @@ public abstract class ExecutionFlow
 			// If there is not a directory named 'src', it searches in the 
 			// parent folder
 			if (!hasSrcFolder) {
-				currentProjectRoot = new File(currentProjectRoot.getParent());
+				currentProjectRoot = currentProjectRoot.getParent();
 			}
 		}
 		
 		return currentProjectRoot;
+	}
+	
+	/**
+	 * Gets application root path, based on class {@link ExecutionFlow} location.
+	 * 
+	 * @return		Application root path
+	 * 
+	 * @implSpec	Lazy initialization
+	 */
+	public static Path getAppRootPath()
+	{
+		if (appRoot != null)
+			return appRoot;
+		
+		try {
+			File executionFlowBinPath = new File(ExecutionFlow.class
+					.getProtectionDomain().getCodeSource().getLocation().toURI());
+			appRoot = DEVELOPMENT ? executionFlowBinPath.getAbsoluteFile().getParentFile().toPath() : 
+				executionFlowBinPath.getAbsoluteFile().toPath();
+
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		return appRoot;
 	}
 	
 	/**

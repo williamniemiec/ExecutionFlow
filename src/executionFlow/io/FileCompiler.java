@@ -19,7 +19,7 @@ import executionFlow.util.DataUtils;
  * @apiNote		Compatible with AspectJ
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		1.3
  */
 public class FileCompiler 
@@ -62,7 +62,7 @@ public class FileCompiler
 		Main compiler = new Main();
 		MessageHandler m = new MessageHandler();
 		String mavenDependencies;
-		String appRootPath = ExecutionFlow.getAppRootPath();
+		String appRootPath = ExecutionFlow.getAppRootPath().toString();
 		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
 				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
 		

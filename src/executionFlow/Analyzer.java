@@ -21,7 +21,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.5
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class Analyzer 
@@ -286,7 +286,7 @@ public class Analyzer
 	@SuppressWarnings("unchecked")
 	public List<String> getMethodsCalledByTestedInvoked()
 	{
-		File f = new File(ExecutionFlow.getAppRootPath(), "mcti.ef");
+		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		Map<String, List<String>> invokedMethods = new HashMap<>();
 		
 		
@@ -308,11 +308,11 @@ public class Analyzer
 	/**
 	 * Deletes file containing methods called by tested invoked.
 	 * 
-	 * @return		If file was successfully removed
+	 * @return		If file has been successfully removed
 	 */
 	public boolean deleteMethodsCalledByTestedInvoked()
 	{
-		return new File(ExecutionFlow.getAppRootPath(), "mcti.ef").delete();
+		return new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
 	}
 	
 	/**

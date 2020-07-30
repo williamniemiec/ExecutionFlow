@@ -22,7 +22,7 @@ import executionFlow.util.Pair;
  * Exports computed test path to a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		1.0
  */
 public class FileExporter implements ExporterExecutionFlow 
@@ -78,7 +78,7 @@ public class FileExporter implements ExporterExecutionFlow
 			}
 
 			ConsoleOutput.showInfo("Test paths have been successfully exported!");
-			ConsoleOutput.showInfo("Location: "+new File(ExecutionFlow.getAppRootPath(), dirName).getAbsolutePath());
+			ConsoleOutput.showInfo("Location: "+new File(ExecutionFlow.getAppRootPath().toFile(), dirName).getAbsolutePath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -131,7 +131,7 @@ public class FileExporter implements ExporterExecutionFlow
 	{
 		for (Pair<String, String> signatures : classTestPaths.keySet()) {	
 			// Gets save path
-			Path savePath = Paths.get(ExecutionFlow.getAppRootPath(), dirName,
+			Path savePath = Paths.get(ExecutionFlow.getAppRootPath().toString(), dirName,
 					DataUtils.generateDirectoryPath(signatures.second, isConstructor));
 			
 			File dir = savePath.toFile(), testPathFile;

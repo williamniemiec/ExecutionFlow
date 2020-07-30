@@ -22,7 +22,7 @@ import executionFlow.util.DataUtils;
  * </code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class MethodsCalledByTestedInvokedExporter 
@@ -82,7 +82,7 @@ public class MethodsCalledByTestedInvokedExporter
 		
 		ConsoleOutput.showInfo("Exporting methods called by tested invoked...");
 
-		File dirPath = new File(ExecutionFlow.getCurrentProjectRoot(), 
+		File dirPath = new File(ExecutionFlow.getCurrentProjectRoot().toFile(), 
 				dirName + "/" + DataUtils.generateDirectoryPath(invokedSignature, isConstructor));
 		File output = new File(dirPath, filename+".csv");
 		

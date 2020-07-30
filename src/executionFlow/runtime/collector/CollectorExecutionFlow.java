@@ -22,7 +22,7 @@ import executionFlow.ExecutionFlow;
  * {@link ExecutionFlow} class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		1.0
  */
 public class CollectorExecutionFlow 
@@ -125,7 +125,7 @@ public class CollectorExecutionFlow
 		String path = extractPathFromSignature(classSignature);
 		
 		// Finds absolute path where the class file is
-		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot().toPath(), new SimpleFileVisitor<Path>() {
+		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+className+".class")) {
@@ -159,7 +159,7 @@ public class CollectorExecutionFlow
 		
 		
 		// Finds absolute path where the source file is
-		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot().toPath(), new SimpleFileVisitor<Path>() {
+		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+effectiveClassName+".java")) {

@@ -73,7 +73,7 @@ public class FilesManager
 		files = new HashSet<>(); 
 		parsedFiles = new HashSet<>();
 		compiledFiles = new HashSet<>();
-		backupFile = new File(ExecutionFlow.getCurrentProjectRoot(), 
+		backupFile = new File(ExecutionFlow.getCurrentProjectRoot().toFile(), 
 				"_EF_"+type.getName()+"_FILES.ef");
 		this.autoDelete = autoDelete;
 
