@@ -130,7 +130,7 @@ public abstract class ExecutionFlow
 	 */
 	public static void init(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException
 	{
-		if (testMethodManager != null) {
+		if (testMethodManager == null) {
 			try {
 					testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true, restoreOriginalFiles);
 			} 
@@ -146,8 +146,8 @@ public abstract class ExecutionFlow
 				);
 			}
 		}
-		
-		if (invokedManager != null) {
+
+		if (invokedManager == null) {
 			try {
 				invokedManager = new FilesManager(ProcessorType.INVOKED, true, restoreOriginalFiles);
 				
@@ -337,13 +337,14 @@ public abstract class ExecutionFlow
 					i++;
 				}
 			}
-			
 			// If there is not a directory named 'src', it searches in the 
 			// parent folder
 			if (!hasSrcFolder) {
-				currentProjectRoot = currentProjectRoot.getParent();
+				tmpFile = new File(tmpFile.getParent());
 			}
 		}
+		
+		currentProjectRoot = tmpFile.toPath();
 		
 		return currentProjectRoot;
 	}
@@ -384,6 +385,9 @@ public abstract class ExecutionFlow
 	{
 		if (libPath != null)
 			return libPath;
+		
+		if (appRoot == null)
+			getAppRootPath();
 		
 		libPath = Path.of(appRoot + "\\lib");
 
