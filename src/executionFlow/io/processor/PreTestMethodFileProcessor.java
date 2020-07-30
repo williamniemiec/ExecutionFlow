@@ -338,10 +338,6 @@ public class PreTestMethodFileProcessor extends FileProcessor
 					line = annotationParser.parse(line);
 				}
 				
-				// -----{ DEBUG }-----
-				if (DEBUG) { ConsoleOutput.showDebug(line); }
-				// -----{ END DEBUG }-----
-				
 				bw.write(line);
 				bw.newLine();
 				currentLine++;
@@ -356,7 +352,6 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		if (!testAnnotations.isEmpty()) {
 			Path tmp = Path.of(outputFile.getAbsolutePath()+".tmp");
 			boolean insideMethod = false;
-			
 			
 			currentLine = 1;
 			
@@ -374,6 +369,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 						line = "//" + line;
 						insideMethod = true;
 					}
+					
+					// -----{ DEBUG }-----
+					if (DEBUG) { ConsoleOutput.showDebug(line); }
+					// -----{ END DEBUG }-----
 					
 					bw.write(line);
 					bw.newLine();
@@ -438,13 +437,16 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		private boolean inTestMethodSignature;
 		private boolean repeatedTest_putLoop;
-		private boolean withinRepeatedTest;
+		private boolean insideRepeatedTest;
 		private boolean ignoreMethod;
+		private final String regex_repeatedTest = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
 		private String numRepetitions;
 		private String testMethodName;
 		private String[] testMethodParams = null;
 		private Object[] testMethodArgs;
-		private CurlyBracketBalance curlyBracketBalance;
+		private CurlyBracketBalance curlyBracketBalance_ignore;
+		private CurlyBracketBalance curlyBracketBalance_repeatedTest;
+		private CurlyBracketBalance curlyBracketBalance_parameterizedTest;
 		
 		
 		/**
@@ -514,16 +516,12 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				line = parseAnnotations(line);
 			}
 			
-			if (curlyBracketBalance != null && withinRepeatedTest) {
-				curlyBracketBalance.parse(line);
-			}
-			
 			return line;
-			
 		}
 		
 		/**
-		 * Parses test annotations.
+		 * Parses test annotations. It will convert JUnit 5 annotations to 
+		 * JUnit 4 test annotation ({@link org.junit.Test}).
 		 * 
 		 * @param		line Current source file line
 		 * 
@@ -533,7 +531,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		{
 			return	line.contains("@Test") 						 ?	parseTestAnnotation(line, false) :
 					line.contains("@org.junit.jupiter.api.Test") ?	parseTestAnnotation(line, true) :
-					line.contains("@RepeatedTest") 				 ?	parseRepeatedTest(line) :
+					line.matches(regex_repeatedTest) 			 ?	parseRepeatedTest(line) :
 					testMethodArgs != null						 ?	parseParameterizedTest(line) : 
 					line;
 		}
@@ -556,19 +554,22 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		{
 			// If it is inside a method that should be ignored, comment its code
 			if (ignoreMethod) {
-				if (curlyBracketBalance == null)
-					curlyBracketBalance = new CurlyBracketBalance();
+				if (curlyBracketBalance_ignore == null)
+					curlyBracketBalance_ignore = new CurlyBracketBalance();
 				
-				curlyBracketBalance.parse(line);
+				curlyBracketBalance_ignore.parse(line);
 				
-				ignoreMethod = !curlyBracketBalance.isBalanceEmpty();
-				
+				ignoreMethod = !curlyBracketBalance_ignore.isBalanceEmpty();
 				line = "//" + line;
 			}
 			
 			// If current method it is not the given test method, ignores it		
 			else if (line.matches(regex_methodDeclaration) && !line.contains("private") && 
 					!line.contains(testMethodName+"(")) {
+				if (curlyBracketBalance_ignore == null)
+					curlyBracketBalance_ignore = new CurlyBracketBalance();
+				
+				curlyBracketBalance_ignore.parse(line);
 				inTestMethodSignature = false;
 				ignoreMethod = true;
 				testAnnotationLine.put(lastAnnotationInserted, false);
@@ -597,21 +598,21 @@ public class PreTestMethodFileProcessor extends FileProcessor
 					repeatedTest_putLoop = false;
 					line = repeatedTest_putWhileLoop(line);
 					
-					curlyBracketBalance = new CurlyBracketBalance();
-					curlyBracketBalance.parse(line);
-					curlyBracketBalance.decreaseBalance();
+					curlyBracketBalance_repeatedTest = new CurlyBracketBalance();
+					curlyBracketBalance_repeatedTest.parse(line);
+					curlyBracketBalance_repeatedTest.decreaseBalance();
 				}
 			}
 			// Checks if it is the end of repeated test
-			else if (withinRepeatedTest && curlyBracketBalance != null && line.contains("}")) {
-				curlyBracketBalance.parse(line);
+			else if (insideRepeatedTest && curlyBracketBalance_repeatedTest != null && line.contains("}")) {
+				curlyBracketBalance_repeatedTest.parse(line);
 				
-				if (curlyBracketBalance.isBalanceEmpty()) {
+				if (curlyBracketBalance_repeatedTest.isBalanceEmpty()) {
 					int idx = line.lastIndexOf("}");
 					
 					
-					withinRepeatedTest = false;
-					curlyBracketBalance = null;
+					insideRepeatedTest = false;
+					curlyBracketBalance_repeatedTest = null;
 					
 					line = line.substring(0, idx+1) + "}" + line.substring(idx+1);
 				}
@@ -651,15 +652,17 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		private String parseRepeatedTest(String line)
 		{
-			Pattern p = Pattern.compile("@RepeatedTest\\(.*\\)");
+			Pattern p = Pattern.compile(regex_repeatedTest);
 			Matcher m = p.matcher(line);
 			
 			
 			numRepetitions = "0";
-			withinRepeatedTest = true;
+			insideRepeatedTest = true;
 			
 			if (m.find()) {
 				String repeatedTestAnnotation = m.group();
+				
+				
 				line = line.replace(repeatedTestAnnotation, "@org.junit.Test @executionFlow.runtime.isRepeatedTest");
 				testAnnotationLine.put(currentLine, true);
 				lastAnnotationInserted = currentLine;
@@ -668,7 +671,18 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				m = Pattern.compile("\\(.*\\)").matcher(repeatedTestAnnotation);
 				
 				if (m.find()) {
-					numRepetitions = m.group().replace("(", "").replace(")", "");
+					String annotationParams = m.group().replace("(", "").replace(")", "");
+					
+					
+					if (annotationParams.contains("value")) {
+						m = Pattern.compile("[0-9]+").matcher(annotationParams);
+						
+						if (m.find())
+							numRepetitions = m.group();
+					}
+					else {
+						numRepetitions = annotationParams;						
+					}
 				}
 			}
 			
@@ -685,10 +699,11 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @return		Processed line
 		 */
+		@SuppressWarnings("rawtypes")
 		private String parseParameterizedTest(String line)
 		{
-			if (curlyBracketBalance == null)
-				curlyBracketBalance = new CurlyBracketBalance();
+			if (curlyBracketBalance_parameterizedTest == null)
+				curlyBracketBalance_parameterizedTest = new CurlyBracketBalance();
 			
 			// Converts JUnit 5 parameterized test to JUnit 4 test
 			if (line.contains("@ParameterizedTest")) {
@@ -721,7 +736,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				if (line.matches(regex_methodDeclaration)) {
 					if (!line.contains(testMethodName)) {
 						inTestMethodSignature = false;
-						curlyBracketBalance.parse(line);
+						curlyBracketBalance_parameterizedTest.parse(line);
 						ignoreMethod = true;
 					}
 					else {
@@ -751,9 +766,9 @@ public class PreTestMethodFileProcessor extends FileProcessor
 							
 							// Checks if parameterized test contains 'EnumType' annotation without arguments
 							if (param_enumType.isEmpty())
-								testMethodArgs[i] = testMethodParams[i] + "." + (String.valueOf(testMethodArgs[i])).toUpperCase();
+								testMethodArgs[i] = testMethodParams[i] + "." + ((Enum)testMethodArgs[i]).name();
 							else
-								testMethodArgs[i] = param_enumType + "." + (String.valueOf(testMethodArgs[i])).toUpperCase();
+								testMethodArgs[i] = param_enumType + "." + ((Enum)testMethodArgs[i]).name();
 						}
 						
 						localVars.append(testMethodParams[i] + "=");
