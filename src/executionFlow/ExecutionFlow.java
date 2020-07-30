@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.2
+ * @version		3.0.0
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -110,79 +111,55 @@ public abstract class ExecutionFlow
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Walks the invoked recording its test paths and save the result in
-	 * {@link #computedTestPaths}.
-	 * 
-	 * @return		This object to allow chained calls
-	 */
-	public abstract ExecutionFlow execute();
-	
-	/**
 	 * Initializes invoked managers. If some error occurs, should stop the
 	 * application execution; otherwise, the original files that have been 
 	 * modified in the last run may be lost.
 	 * 
-	 * @return		If an error occurred
+	 * @param		restoreOriginalFiles If true and if there are backup files,
+	 * restore them
+	 * @throws		ClassNotFoundException If FileManager class has not been found
+	 * @throws		IOException If backup files could not be restored
 	 */
-	public static boolean init()
+	public static void init(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException
 	{
-		boolean error = false;
-		
-		
-		try {
-			if (testMethodManager == null)
-				testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true);
-		} catch (ClassNotFoundException e) {
-			error = true;
-			ConsoleOutput.showError("Class FileManager not found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			error = true;
-			ConsoleOutput.showError("Could not recover the backup file of the test method");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
-					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
-			e.printStackTrace();
+		if (testMethodManager != null) {
+			try {
+					testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true, restoreOriginalFiles);
+			} 
+			catch (ClassNotFoundException e) {
+				throw new ClassNotFoundException("Class FileManager not found");
+			} 
+			catch (IOException e) {
+				throw new IOException(
+						"Could not recover the backup file of the test method\n"
+						+ "See more: https://github.com/williamniemiec/"
+						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+						+ "#could-not-recover-all-backup-files"
+				);
+			}
 		}
 		
-		try {
-			if (invokedManager == null)
-				invokedManager = new FilesManager(ProcessorType.INVOKED, true);
-		} catch (ClassNotFoundException e) {
-			error = true;;
-			ConsoleOutput.showError("Class FileManager not found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			error = true;
-			ConsoleOutput.showError("Could not recover all backup files for methods");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
-					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
-			e.printStackTrace();
+		if (invokedManager != null) {
+			try {
+				invokedManager = new FilesManager(ProcessorType.INVOKED, true, restoreOriginalFiles);
+				
+				// Loads files that have already been processed
+				if (!restoreOriginalFiles)
+					invokedManager.load();
+			} 
+			catch (ClassNotFoundException e) {
+				throw new ClassNotFoundException("Class FileManager not found");
+			} 
+			catch (IOException e) {
+				throw new IOException(
+						"Could not recover all backup files for methods\n"
+						+ "See more: https://github.com/williamniemiec/"
+						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+						+ "#could-not-recover-all-backup-files"
+				);
+			}
 		}
-		
-		return error;
 	}
-	
-	/**
-	 * Exports the result.
-	 * 
-	 * @throws		IllegalArgumentException If exporter is null
-	 */
-	public void export() 
-	{
-		if (exporter == null)
-			throw new IllegalArgumentException("Exporter cannot be null");
-		
-		exporter.export(computedTestPaths);
-	}
-	
-	/**
-	 * Stores test paths for an invoked. The test paths are stored in 
-	 * {@link #computedTestPaths}.
-	 * 
-	 * @param		testPaths Test paths of this invoked
-	 * @param		collector Informations about this invoked
-	 */
-	protected abstract void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector);
 	
 	/**
 	 * Computes and stores application root path, based on class 
@@ -211,51 +188,6 @@ public abstract class ExecutionFlow
 	}
 	
 	/**
-	 * Finds current project root (project that is running the application). It
-	 * will return the path that contains a directory with name 'src'. 
-	 * 
-	 * @return		Project root path
-	 * 
-	 * @implSpec	Lazy initialization
-	 */
-	public static File getCurrentProjectRoot()
-	{
-		if (currentProjectRoot != null)
-			return currentProjectRoot;
-		
-		String[] allFiles;
-		boolean hasSrcFolder = false;
-		int i=0;
-		
-		
-		currentProjectRoot = new File(System.getProperty("user.dir"));
-		
-		// Searches for a path containing a directory named 'src'
-		while (!hasSrcFolder) {
-			allFiles = currentProjectRoot.list();
-			
-			// Checks the name of every file in current path
-			i=0;
-			while (!hasSrcFolder && i < allFiles.length) {
-				// If there is a directory named 'src' stop the search
-				if (allFiles[i].equals("src")) {
-					hasSrcFolder = true;
-				} else {
-					i++;
-				}
-			}
-			
-			// If there is not a directory named 'src', it searches in the 
-			// parent folder
-			if (!hasSrcFolder) {
-				currentProjectRoot = new File(currentProjectRoot.getParent());
-			}
-		}
-		
-		return currentProjectRoot;
-	}
-	
-	/**
 	 * Sets {@link #invokedManager} and {@link #testMethodManager} to null.
 	 */
 	public static void destroy()
@@ -265,20 +197,59 @@ public abstract class ExecutionFlow
 	}
 	
 	/**
-	 * Finds directory of application libraries and stores it in {@link #libPath}.
+	 * Walks the invoked recording its test paths and save the result in
+	 * {@link #computedTestPaths}.
 	 * 
-	 * @param		appRoot Application root path
-	 * 
-	 * @implSpec	Lazy initialization
+	 * @return		This object to allow chained calls
 	 */
-	public static Path getLibPath()
+	public abstract ExecutionFlow execute();
+	
+	/**
+	 * Exports the result.
+	 * 
+	 * @throws		IllegalArgumentException If exporter is null
+	 */
+	public void export() 
 	{
-		if (libPath != null)
-			return libPath;
+		if (exporter == null)
+			throw new IllegalArgumentException("Exporter cannot be null");
 		
-		libPath = Path.of(appRoot + "\\lib");
+		exporter.export(computedTestPaths);
+	}
+	
+	/**
+	 * Stores test paths for an invoked. The test paths are stored in 
+	 * {@link #computedTestPaths}.
+	 * 
+	 * @param		testPaths Test paths of this invoked
+	 * @param		signaturesInfo Informations about test method along with 
+	 * the invoked
+	 */
+	protected void storeTestPath(List<List<Integer>> testPaths, Pair<String, String> signaturesInfo)
+	{
+		List<List<Integer>> classTestPathInfo;
 
-		return libPath;
+		
+		for (List<Integer> testPath : testPaths) {
+			// Checks if test path belongs to a stored test method and invoked
+			if (computedTestPaths.containsKey(signaturesInfo)) {
+				classTestPathInfo = computedTestPaths.get(signaturesInfo);
+				classTestPathInfo.add(testPath);
+			} 
+			// Else stores test path with its test method and invoked
+			else {	
+				classTestPathInfo = new ArrayList<>();
+				classTestPathInfo.add(testPath);
+				computedTestPaths.put(signaturesInfo, classTestPathInfo);
+			}
+		}
+		
+		// If test path is empty, stores test method and invoked with an empty list
+		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
+			classTestPathInfo = new ArrayList<>();
+			classTestPathInfo.add(new ArrayList<>());
+			computedTestPaths.put(signaturesInfo, classTestPathInfo);
+		}
 	}
 	
 	/**
@@ -332,6 +303,79 @@ public abstract class ExecutionFlow
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	/**
+	 * Checks if it is development environment. If it is production environment,
+	 * it will return false; otherwise, true.
+	 * 
+	 * @return		If it is development environment
+	 */
+	public static boolean isDevelopment()
+	{
+		return DEVELOPMENT;
+	}
+	
+	/**
+	 * Finds current project root (project that is running the application). It
+	 * will return the path that contains a directory with name 'src'. 
+	 * 
+	 * @return		Project root path
+	 * 
+	 * @implSpec	Lazy initialization
+	 */
+	public static File getCurrentProjectRoot()
+	{
+		if (currentProjectRoot != null)
+			return currentProjectRoot;
+		
+		String[] allFiles;
+		boolean hasSrcFolder = false;
+		int i=0;
+		
+		
+		currentProjectRoot = new File(System.getProperty("user.dir"));
+		
+		// Searches for a path containing a directory named 'src'
+		while (!hasSrcFolder) {
+			allFiles = currentProjectRoot.list();
+			
+			// Checks the name of every file in current path
+			i=0;
+			while (!hasSrcFolder && i < allFiles.length) {
+				// If there is a directory named 'src' stop the search
+				if (allFiles[i].equals("src")) {
+					hasSrcFolder = true;
+				} else {
+					i++;
+				}
+			}
+			
+			// If there is not a directory named 'src', it searches in the 
+			// parent folder
+			if (!hasSrcFolder) {
+				currentProjectRoot = new File(currentProjectRoot.getParent());
+			}
+		}
+		
+		return currentProjectRoot;
+	}
+	
+	/**
+	 * Finds directory of application libraries and stores it in {@link #libPath}.
+	 * 
+	 * @param		appRoot Application root path
+	 * 
+	 * @implSpec	Lazy initialization
+	 */
+	public static Path getLibPath()
+	{
+		if (libPath != null)
+			return libPath;
+		
+		libPath = Path.of(appRoot + "\\lib");
+
+		return libPath;
+	}
+	
+	/**
 	 * Gets computed test path.It will return the following map:
 	 * <ul>
 	 * 	<li><b>Key:</b> Test method signature and invoked signature</li>
@@ -377,16 +421,5 @@ public abstract class ExecutionFlow
 		this.exporter = exporter;
 		
 		return this;
-	}
-	
-	/**
-	 * Checks if it is development environment. If it is production environment,
-	 * it will return false; otherwise, true.
-	 * 
-	 * @return		If it is development environment
-	 */
-	public static boolean isDevelopment()
-	{
-		return DEVELOPMENT;
 	}
 }

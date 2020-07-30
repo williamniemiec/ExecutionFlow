@@ -1,6 +1,5 @@
 package executionFlow;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.1.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
@@ -143,8 +142,10 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			);
 			
 			try {
-				analyzer = analyze(collector.getTestMethodInfo(), testMethodFileManager, 
-						collector.getConstructorInfo(), constructorFileManager);
+				analyzer = analyze(
+						collector.getTestMethodInfo(), testMethodFileManager, 
+						collector.getConstructorInfo(), constructorFileManager
+				);
 				tp = analyzer.getTestPaths();
 				
 				if (tp.isEmpty() || tp.get(0).isEmpty())
@@ -153,12 +154,17 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 					ConsoleOutput.showInfo("Test path has been successfully computed");
 				
 				// Stores each computed test path
-				storeTestPath(tp, collector);
+				storeTestPath(tp, Pair.of(
+						collector.getTestMethodInfo().getInvokedSignature(),
+						collector.getConstructorInfo().getInvokedSignature()
+				));
 				
 				// Exports called methods by tested constructor to a CSV
 				if (exportCalledMethods) {
-					methodsCalledExporter.export(collector.getConstructorInfo().getInvokedSignature(),
-							analyzer.getMethodsCalledByTestedInvoked(), true);
+					methodsCalledExporter.export(
+							collector.getConstructorInfo().getInvokedSignature(),
+							analyzer.getMethodsCalledByTestedInvoked(), true
+					);
 				}
 				else {
 					analyzer.deleteMethodsCalledByTestedInvoked();
@@ -170,41 +176,5 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		}
 		
 		return this;
-	}
-	
-	@Override
-	protected void storeTestPath(List<List<Integer>> testPaths, CollectorInfo collector)
-	{
-		List<List<Integer>> classPathInfo;
-		Pair<String, String> signaturesInfo = new Pair<>(
-			collector.getTestMethodInfo().getInvokedSignature(),
-			collector.getConstructorInfo().getInvokedSignature() 
-		);
-
-		
-		for (List<Integer> testPath : testPaths) {
-			// Checks if test path belongs to a stored test method and constructor
-			if (computedTestPaths.containsKey(signaturesInfo)) {
-				classPathInfo = computedTestPaths.get(signaturesInfo);
-				classPathInfo.add(testPath);
-			} 
-			// Else stores test path with its test method and constructor
-			else {	
-				classPathInfo = new ArrayList<>();
-				
-				
-				classPathInfo.add(testPath);
-				computedTestPaths.put(signaturesInfo, classPathInfo);
-			}
-		}
-		
-		// If test path is empty, stores test method and constructor with an empty list
-		if (testPaths.isEmpty() || testPaths.get(0).isEmpty()) {
-			classPathInfo = new ArrayList<>();
-			
-			
-			classPathInfo.add(new ArrayList<>());
-			computedTestPaths.put(signaturesInfo, classPathInfo);
-		}
 	}
 }

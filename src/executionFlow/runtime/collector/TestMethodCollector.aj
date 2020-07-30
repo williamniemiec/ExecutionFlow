@@ -129,20 +129,20 @@ public aspect TestMethodCollector extends RuntimeCollector
 			return;
 		
 		reset();
-
-		// Checks if it is not the first run
-		if (checkpoint_initial.isActive())
-				ExecutionFlow.init(false);
-		else
-			ExecutionFlow.init(true);
-
-		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
+		testMethodSignature = 
+				CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
 
 		// Gets information about test method
 		try {
 			String className, classSignature, testClassSignature;
 			Path testSrcPath;
 			
+			
+			// Checks if it is not the first run
+			if (checkpoint_initial.isActive())
+					ExecutionFlow.init(false);
+			else
+				ExecutionFlow.init(true);
 			
 			// Gets compiled file path of the test method
 			className = thisJoinPoint.getTarget().getClass().getSimpleName();
