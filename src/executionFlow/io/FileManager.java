@@ -17,7 +17,7 @@ import executionFlow.util.ConsoleOutput;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.1.0
+ * @version		3.0.0
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -54,8 +54,8 @@ public class FileManager implements Serializable
 	 * @param		fileParserFactory Factory that will produce 
 	 * {@link FileProcessor} that will be used for parsing file
 	 */
-	public FileManager(String classSignature, Path srcFilePath, Path binDirectory, String classPackage, 
-			FileProcessorFactory fileParserFactory)
+	public FileManager(String classSignature, Path srcFilePath, Path binDirectory, 
+			String classPackage, FileProcessorFactory fileParserFactory)
 	{
 		this(classSignature, srcFilePath, binDirectory, classPackage, fileParserFactory, "original");
 	}
@@ -73,8 +73,8 @@ public class FileManager implements Serializable
 	 * 
 	 * @throws		IllegalArgumentException If srcFilePath does not exist
 	 */
-	public FileManager(String classSignature, Path srcFilePath, Path binDirectory, String classPackage, 
-			FileProcessorFactory fileParserFactory, String backupExtensionName)
+	public FileManager(String classSignature, Path srcFilePath, Path binDirectory, 
+			String classPackage, FileProcessorFactory fileParserFactory, String backupExtensionName)
 	{
 		if (!Files.exists(srcFilePath))
 			throw new IllegalArgumentException("srcFilePath does not exist: " + srcFilePath);
@@ -363,6 +363,7 @@ public class FileManager implements Serializable
 	{
 		return classSignature;
 	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Serialization and deserialization methods
