@@ -55,6 +55,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private FileManager testMethodFileManager;
 	public static int totalTests = -1;
 	
+	boolean isRepeatedTest;
+	String lastRepeatedTestSignature;
+	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -85,19 +88,15 @@ public aspect TestMethodCollector extends RuntimeCollector
 		);
 	
 	/**
-	 * Intercepts JUnit 5 new tests (parameterized test and repeated test).
+	 * Intercepts repeated tests.
 	 */
-	pointcut junit5_newTests():
+	pointcut junit5_repeatedTest():
 		!skipAnnotation() &&
-		execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
 		execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
 	
-	/**
-	 * Executed on test not supported by the application.
-	 */
-	before(): junit5_newTests()
+	before(): junit5_repeatedTest()
 	{
-		junit5NewTest = true;
+		isRepeatedTest = true;
 	}
 	
 	/**
@@ -112,8 +111,16 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Executed before each test method.
 	 */
 	before(): testMethodCollector()
-	{		
-		if (finished && !firstTime) {
+	{	
+		// Prevents repeated tests from being performed more than once
+		if (finished && isRepeatedTest && 
+				!thisJoinPoint.getSignature().toString().equals(lastRepeatedTestSignature)) {
+			isRepeatedTest = false;
+		}
+		
+		// If it is in another test method and it it is not a repeated test 
+		// then should run the application
+		if (finished && !firstTime && !isRepeatedTest) {
 			finished = false;
 			firstTime = false;
 		}
@@ -246,7 +253,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 
 			finished = true;
 			firstTime = false;
-
+			
+			
+			isRepeatedTest = false;
+			lastRepeatedTestSignature = thisJoinPoint.getSignature().toString();
+			
+			
 			// Restores original test method file and its compiled file
 			try {
 				if (ExecutionFlow.testMethodManager.load())

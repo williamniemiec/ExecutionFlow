@@ -663,7 +663,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				String repeatedTestAnnotation = m.group();
 				
 				
-				line = line.replace(repeatedTestAnnotation, "@org.junit.Test @executionFlow.runtime.isRepeatedTest");
+				line = line.replace(repeatedTestAnnotation, "@org.junit.Test");
 				testAnnotationLine.put(currentLine, true);
 				lastAnnotationInserted = currentLine;
 				
