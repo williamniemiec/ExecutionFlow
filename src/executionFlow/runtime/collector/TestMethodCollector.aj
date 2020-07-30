@@ -261,8 +261,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Restores original test method file and its compiled file
 			try {
-				if (ExecutionFlow.testMethodManager.load())
-					ExecutionFlow.testMethodManager.restoreAll();	
+				if (ExecutionFlow.getTestMethodManager().load())
+					ExecutionFlow.getTestMethodManager().restoreAll();	
 				
 			} catch (ClassNotFoundException e) {
 				hasError = true;
@@ -287,8 +287,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 				if (totalTests == 0) {
 					// Restores original method files and its compiled files
 					try {
-						if (ExecutionFlow.invokedManager.load())
-							ExecutionFlow.invokedManager.restoreAll();	
+						if (ExecutionFlow.getInvokedManager().load())
+							ExecutionFlow.getInvokedManager().restoreAll();	
 					} catch (ClassNotFoundException e) {
 						hasError = true;
 						ConsoleOutput.showError("Class FileManager not found");
@@ -301,7 +301,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 						e.printStackTrace();
 					}
 
-					ExecutionFlow.invokedManager.deleteBackup();
+					ExecutionFlow.getInvokedManager().deleteBackup();
 					
 					// Resets totalTests
 					totalTests = -1;
@@ -310,10 +310,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 			testMethodManager.restoreAll();
 			
 			// Deletes backup files
-			ExecutionFlow.testMethodManager.deleteBackup();
+			ExecutionFlow.getTestMethodManager().deleteBackup();
 			testMethodManager.deleteBackup();
 			testMethodManager = null;
-			ExecutionFlow.testMethodManager = null;
+			ExecutionFlow.destroyTestMethodManager();
 			
 			// Disables checkpoint
 			try {

@@ -48,6 +48,8 @@ public abstract class ExecutionFlow
 	 */
 	protected static final boolean DEBUG;
 	
+	protected static final TestPathExportType EXPORT;
+	
 	/**
 	 * Sets if environment is development. This will affect
 	 * {@link #getAppRootPath()} and 
@@ -55,7 +57,23 @@ public abstract class ExecutionFlow
 	 */
 	private static final boolean DEVELOPMENT;
 	
-	protected static final TestPathExportType EXPORT;
+	/**
+	 * Manages test method files.
+	 */
+	private static FilesManager testMethodManager;
+	
+	/**
+	 * Manages invoked files.
+	 */
+	private static FilesManager invokedManager;
+	
+	/**
+	 * Path of application libraries.
+	 */
+	private static Path libPath;
+	
+	private static String appRoot;
+	private static File currentProjectRoot;
 	
 	/**
 	 * Stores computed test paths from a class.<br />
@@ -67,16 +85,6 @@ public abstract class ExecutionFlow
 	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
 	
 	protected ExporterExecutionFlow exporter;
-	
-	/**
-	 * Path of application libraries.
-	 */
-	private static Path libPath;
-	
-	private static String appRoot;
-	private static File currentProjectRoot;
-	public static FilesManager invokedManager;
-	public static FilesManager testMethodManager;
 
 	
 	//-------------------------------------------------------------------------
@@ -188,12 +196,19 @@ public abstract class ExecutionFlow
 	}
 	
 	/**
-	 * Sets {@link #invokedManager} and {@link #testMethodManager} to null.
+	 * Sets {@link #testMethodManager} to null.
 	 */
-	public static void destroy()
+	public static void destroyTestMethodManager()
+	{
+		testMethodManager = null;
+	}
+	
+	/**
+	 * Sets {@link #invokedManager} to null.
+	 */
+	public static void destroyInvokedManager()
 	{
 		invokedManager = null;
-		testMethodManager = null;
 	}
 	
 	/**
@@ -373,6 +388,16 @@ public abstract class ExecutionFlow
 		libPath = Path.of(appRoot + "\\lib");
 
 		return libPath;
+	}
+	
+	public static FilesManager getTestMethodManager()
+	{
+		return testMethodManager;
+	}
+	
+	public static FilesManager getInvokedManager()
+	{
+		return invokedManager;
 	}
 	
 	/**

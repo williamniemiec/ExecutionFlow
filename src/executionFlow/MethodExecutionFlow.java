@@ -40,7 +40,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 	 * <ul> 
 	 */
-	protected Map<Integer, List<CollectorInfo>> methodCollector;
+	private Map<Integer, List<CollectorInfo>> methodCollector;
 	
 	private boolean exportCalledMethods;
 	
