@@ -85,7 +85,7 @@ public class Analyzer
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 
 	
@@ -192,69 +192,77 @@ public class Analyzer
 		}
 		// -----{ END DEBUG }-----
 		
-		jdb.start().send("clear", "stop at " + classInvocationSignature + ":" + invocationLine,
-				"run org.junit.runner.JUnitCore "+classInvocationSignature);
-		
-		// Executes while inside the test method
-		while (!endOfMethod) {
-			// Checks if output has finished processing
-			while (!wasNewIteration && !parseOutput()) { continue; }
+		try {
+			jdb.start().send("clear", "stop at " + classInvocationSignature + ":" + invocationLine,
+					"run org.junit.runner.JUnitCore "+classInvocationSignature);
 			
-			wasNewIteration = false;
-			
-			if (endOfMethod) {
-				// Checks if there is unsaved test path
-				if (testPath.size() > 0) {	// If there is one, save it
+			// Executes while inside the test method
+			while (!endOfMethod) {
+				// Checks if output has finished processing
+				while (!wasNewIteration && !parseOutput()) { continue; }
+				
+				wasNewIteration = false;
+				
+				if (endOfMethod) {
+					// Checks if there is unsaved test path
+					if (testPath.size() > 0) {	// If there is one, save it
+						testPaths.add(testPath);
+					} 
+				}
+				// Checks if has exit the method
+				else if (exitMethod && !isInternalCommand) {
+					// Saves test path
 					testPaths.add(testPath);
+					
+					// Prepare for next test path
+					testPath = new ArrayList<>();
+					
+					// Checks if method is within a loop
+					// -----{ DEBUG }-----
+					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: cont"); }
+					// -----{ END DEBUG }-----
+					
+					// Resets exit method
+					exitMethod = false;
+					inMethod = false;
+					lastAddWasReturn = false;
+					
+					jdb.send("cont");
 				} 
-			}
-			// Checks if has exit the method
-			else if (exitMethod && !isInternalCommand) {
-				// Saves test path
-				testPaths.add(testPath);
-				
-				// Prepare for next test path
-				testPath = new ArrayList<>();
-				
-				// Checks if method is within a loop
-				// -----{ DEBUG }-----
-				if (DEBUG) { ConsoleOutput.showDebug("COMMAND: cont"); }
-				// -----{ END DEBUG }-----
-				
-				// Resets exit method
-				exitMethod = false;
-				inMethod = false;
-				lastAddWasReturn = false;
-				
-				jdb.send("cont");
-			} 
-			else if (newIteration) {
-				wasNewIteration = true;
-				
-				// Enters the method, ignoring native methods
-				// -----{ DEBUG }-----
-				if (DEBUG) { ConsoleOutput.showDebug("COMMAND: step into"); }
-				// -----{ END DEBUG }-----
-				
-				jdb.send("step into");
-				parseAll();
-				
-				while (isInternalCommand) {
+				else if (newIteration) {
+					wasNewIteration = true;
+					
+					// Enters the method, ignoring native methods
+					// -----{ DEBUG }-----
+					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: step into"); }
+					// -----{ END DEBUG }-----
+					
+					jdb.send("step into");
+					parseAll();
+					
+					while (isInternalCommand) {
+						// -----{ DEBUG }-----
+						if (DEBUG) { ConsoleOutput.showDebug("COMMAND: next"); }
+						// -----{ END DEBUG }-----
+						
+						jdb.send("next");
+						parseAll();
+					}
+				} 
+				else if (!endOfMethod) {
 					// -----{ DEBUG }-----
 					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: next"); }
 					// -----{ END DEBUG }-----
 					
 					jdb.send("next");
-					parseAll();
 				}
-			} 
-			else if (!endOfMethod) {
-				// -----{ DEBUG }-----
-				if (DEBUG) { ConsoleOutput.showDebug("COMMAND: next"); }
-				// -----{ END DEBUG }-----
-				
-				jdb.send("next");
 			}
+		}
+		catch (IOException e) {
+			// Exits jdb
+			jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
+			jdb.quit();
+			throw e;
 		}
 
 		// Exits JDB
@@ -380,6 +388,9 @@ public class Analyzer
 		if (jdb.isReady()) {        	
         	isInternalCommand = false;
         	line = jdb.read();
+        	
+        	if ( line.contains("Stopping due to deferred breakpoint errors"))
+        		throw new IOException("Incorrect invocation line");
         	
         	if (isEmptyLine(line) || line.matches(regex_emptyOutput)) 
         		return false;
