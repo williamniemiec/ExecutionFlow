@@ -21,7 +21,7 @@ import executionFlow.util.ConsoleOutput;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public class FilesManager 
@@ -51,6 +51,42 @@ public class FilesManager
 	/**
 	 * Manages invoked file (an invoked can be a method or a constructor),
 	 * being responsible for its processing and compilation. It will avoid 
+	 * processing files that have already been processed. It will create a 
+	 * backup file with the following name: <br /> <br />
+	 * 
+	 * <code>_EF_ + type.getName() + _FILES.ef</code>
+	 * 
+	 * @param		type Type of parser that will be used in 
+	 * {@link #parse(FileManager)}
+	 * @param		autoDelete If true, if there are backup files, it will 
+	 * delete them after restore them
+	 * @param		restore If true and if there are backup files, restore them
+	 * 
+	 * @throws		IOException If an error occurs during class deserialization
+	 * (while restoring backup files)
+	 * @throws		ClassNotFoundException If class {@link FileManager} is not
+	 * found  
+	 */
+	public FilesManager(ProcessorType type, boolean autoDelete, boolean restore) 
+			throws ClassNotFoundException, IOException
+	{
+		files = new HashSet<>(); 
+		parsedFiles = new HashSet<>();
+		compiledFiles = new HashSet<>();
+		backupFile = new File(ExecutionFlow.getCurrentProjectRoot(), 
+				"_EF_"+type.getName()+"_FILES.ef");
+		this.autoDelete = autoDelete;
+
+		// If there are files modified from the last execution that were not
+		// restored, restore them
+		if (restore && this.hasBackupStored()) {
+			restoreFromBackup();
+		}		
+	}
+	
+	/**
+	 * Manages invoked file (an invoked can be a method or a constructor),
+	 * being responsible for its processing and compilation. It will avoid 
 	 * processing files that have already been processed. Also, if the 
 	 * application ends before the original files are restored, it will restore
 	 * them. It will create a backup file with the following name: <br /> <br />
@@ -61,25 +97,17 @@ public class FilesManager
 	 * {@link #parse(FileManager)}
 	 * @param		autoDelete If true, if there are backup files, it will 
 	 * delete them after restore them
+	 * @param		restore If true and if there are backup files, restore them
 	 * 
 	 * @throws		IOException If an error occurs during class deserialization
 	 * (while restoring backup files)
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found  
 	 */
-	public FilesManager(ProcessorType type, boolean autoDelete) throws ClassNotFoundException, IOException
+	public FilesManager(ProcessorType type, boolean autoDelete)
+			throws ClassNotFoundException, IOException
 	{
-		files = new HashSet<>(); 
-		parsedFiles = new HashSet<>();
-		compiledFiles = new HashSet<>();
-		backupFile = new File(ExecutionFlow.getCurrentProjectRoot(), "_EF_"+type.getName()+"_FILES.ef");
-		this.autoDelete = autoDelete;
-
-		// If there are files modified from the last execution that were not
-		// restored, restore them
-		if (this.hasBackupStored()) {
-			restoreFromBackup();
-		}		
+		this(type, autoDelete, true);
 	}
 	
 	/**
@@ -87,7 +115,8 @@ public class FilesManager
 	 * being responsible for its processing and compilation. It will avoid
 	 * processing files that have already been processed. Also, if the 
 	 * application ends before the original files are restored, it will restore
-	 * them. Using this constructor, {@link ProcessorType} will be 
+	 * them. Using this constructor, if there are backup files, they will be 
+	 * restored. Besides, {@link ProcessorType} will be 
 	 * {@link ProcessorType#INVOKED}. Also, it will create a backup file with the 
 	 * following name: <br /> <br />
 	 * 
@@ -104,13 +133,25 @@ public class FilesManager
 	 */
 	public FilesManager(boolean autoDelete) throws ClassNotFoundException, IOException
 	{
-		this(ProcessorType.INVOKED, autoDelete);
+		this(ProcessorType.INVOKED, autoDelete, true);
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	@Override
+	public String toString() 
+	{
+		return "FilesManager ["
+				+ "backupFile=" + backupFile 
+				+ ", files=" + files 
+				+ ", parsedFiles=" + parsedFiles
+				+ ", compiledFiles=" + compiledFiles 
+				+ ", autoDelete=" + autoDelete 
+			+ "]";
+	}
+
 	/**
 	 * Parses file from its {@link FileManager}.
 	 * 
@@ -124,7 +165,7 @@ public class FilesManager
 	public FilesManager parse(FileManager fm) throws IOException
 	{
 		int key = fm.hashCode();
-		
+
 		if (parsedFiles.contains(key))
 			return this;
 		
@@ -135,9 +176,7 @@ public class FilesManager
 			save();
 		}
 		
-//		ConsoleOutput.showInfo("Parsing...");
 		fm.parseFile();
-//		ConsoleOutput.showInfo("Parse completed!");
 		
 		return this;
 	}
@@ -166,9 +205,7 @@ public class FilesManager
 			save();
 		}
 
-//		ConsoleOutput.showInfo("Compiling...");
 		fm.createBackupCompiledFile().compileFile();
-//		ConsoleOutput.showInfo("Compilation completed!");
 		
 		return this;
 	}
@@ -235,6 +272,8 @@ public class FilesManager
 	{
 		ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFile));
 		ois.writeObject(files);
+		ois.writeObject(parsedFiles);
+		ois.writeObject(compiledFiles);
 		ois.close();
 	}
 	
@@ -261,6 +300,8 @@ public class FilesManager
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile));
 			this.files = (HashSet<FileManager>)ois.readObject();
+			this.parsedFiles = (Set<Integer>)ois.readObject();
+			this.compiledFiles = (Set<Integer>)ois.readObject();
 			ois.close();
 		} catch (FileNotFoundException e) {
 			this.files = null;
@@ -308,8 +349,8 @@ public class FilesManager
 			try {
 				fm.revertParse();
 			} catch (IOException e) {
-				ConsoleOutput.showError("Restore parse - "+fm.getCompiledFile().toString());
-				ConsoleOutput.showError("Restore parse - "+e.getMessage());
+				ConsoleOutput.showError("Restore parse - " + fm.getCompiledFile().toString());
+				ConsoleOutput.showError("Restore parse - " + e.getMessage());
 				response = false;
 			}
 			
