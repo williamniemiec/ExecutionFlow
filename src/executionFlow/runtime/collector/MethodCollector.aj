@@ -165,7 +165,7 @@ public aspect MethodCollector extends RuntimeCollector
 				.srcPath(srcPath)
 				.build();
 
-			ci = new CollectorInfo.CollectorInfoBuilder()
+			ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();

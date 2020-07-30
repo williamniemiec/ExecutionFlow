@@ -175,11 +175,23 @@ public abstract class InvokedInfo
 	//		Getters
 	//-------------------------------------------------------------------------
 	/**
-	 * Gets the compiled file path.
+	 * Gets directory where a compiled file is.
+	 * 
+	 * @param		compiledFilePath Compiled file path
+	 * 
+	 * @return		Directory where the compiled test method file is
+	 */
+	public static Path getCompiledFileDirectory(Path compiledFilePath)
+	{
+		return compiledFilePath.getParent();
+	}
+	
+	/**
+	 * Gets compiled file path.
 	 * 
 	 * @return		Compiled file path
 	 */
-	public Path getClassPath()
+	public Path getBinPath()
 	{
 		return this.binPath;
 	}
@@ -241,18 +253,6 @@ public abstract class InvokedInfo
 			classPackage = extractPackage(getClassSignature());
 
 		return classPackage;
-	}
-
-	/**
-	 * Gets directory where a compiled file is.
-	 * 
-	 * @param		compiledFilePath Compiled file path
-	 * 
-	 * @return		Directory where the compiled test method file is
-	 */
-	public static Path getCompiledFileDirectory(Path compiledFilePath)
-	{
-		return compiledFilePath.getParent();
 	}
 	
 	/**

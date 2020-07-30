@@ -44,12 +44,12 @@ public class MethodInvokedInfo extends InvokedInfo
 	{
 		this.binPath = binPath;
 		this.srcPath = srcPath;
+		this.invocationLine = invocationLine;
 		this.invokedSignature = methodSignature;
 		this.methodName = methodName;
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
-		this.invocationLine = invocationLine;
 	}
 
 	
@@ -242,6 +242,7 @@ public class MethodInvokedInfo extends InvokedInfo
 		public MethodInvokedInfo build() throws IllegalArgumentException
 		{
 			StringBuilder nullFields = new StringBuilder();
+			
 			
 			if (binPath == null)
 				nullFields.append("classPath").append(", ");

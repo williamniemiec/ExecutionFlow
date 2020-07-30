@@ -43,7 +43,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static boolean firstTime = true;
 	private static boolean finished;
 	private static Checkpoint checkpoint =
-			new Checkpoint(Path.of(ExecutionFlow.getAppRootPath()), "Test_Method");
+			new Checkpoint(ExecutionFlow.getAppRootPath(), "Test_Method");
 	private static Checkpoint checkpoint_initial = 
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
 	private static String outputDir;
@@ -233,7 +233,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 		
 			classPath.add(".");
-			classPath.add(testClassRootPath.relativize(Path.of(ExecutionFlow.getAppRootPath())).toString());
+			classPath.add(testClassRootPath.relativize(ExecutionFlow.getAppRootPath()).toString());
 			classPath.add(libPath + "aspectjrt-1.9.2.jar");
 			classPath.add(libPath + "aspectjtools.jar");
 			classPath.add(libPath + "junit-4.13.jar");
@@ -341,7 +341,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested methods to a CSV
-		ef.setExporter(new TestedInvokedExporter("Testers", new File(ExecutionFlow.getCurrentProjectRoot(), outputDir)))
+		ef.setExporter(new TestedInvokedExporter("Testers", new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
 		
 		// Gets test paths of the collected constructors and export them
@@ -349,7 +349,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested constructors to a CSV
-		ef.setExporter(new TestedInvokedExporter("Testers", new File(ExecutionFlow.getCurrentProjectRoot(), outputDir)))
+		ef.setExporter(new TestedInvokedExporter("Testers", new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
 		
 		reset();	// Prepares for next test

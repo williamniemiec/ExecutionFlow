@@ -119,8 +119,8 @@ public class Analyzer
 		
 		// Gets paths
 		srcRootPath = extractRootPathDirectory(invokedInfo.getSrcPath(), invokedInfo.getPackage());
-		classRootPath = extractRootPathDirectory(invokedInfo.getClassPath(), invokedInfo.getPackage());
-		testClassRootPath = extractRootPathDirectory(testMethodInfo.getClassPath(), testMethodInfo.getPackage());
+		classRootPath = extractRootPathDirectory(invokedInfo.getBinPath(), invokedInfo.getPackage());
+		testClassRootPath = extractRootPathDirectory(testMethodInfo.getBinPath(), testMethodInfo.getPackage());
 		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
 				
 		// Configures JDB, indicating path of libraries, classes and source files

@@ -60,7 +60,7 @@ public class CollectorInfo
 	 * 	<li>constructorInfo</li>
 	 * </ul>
 	 */
-	public static class CollectorInfoBuilder
+	public static class Builder
 	{
 		private InvokedInfo methodInfo;
 		private InvokedInfo testMethodInfo;
@@ -74,7 +74,7 @@ public class CollectorInfo
 		 * 
 		 * @throws		IllegalArgumentException If methodInfo is null
 		 */
-		public CollectorInfoBuilder methodInfo(InvokedInfo methodInfo)
+		public Builder methodInfo(InvokedInfo methodInfo)
 		{
 			if (methodInfo == null)
 				throw new IllegalArgumentException("Method's info cannot be null");
@@ -91,7 +91,7 @@ public class CollectorInfo
 		 * 
 		 * @throws		IllegalArgumentException If testMethodInfo is null
 		 */
-		public CollectorInfoBuilder testMethodInfo(InvokedInfo testMethodInfo)
+		public Builder testMethodInfo(InvokedInfo testMethodInfo)
 		{
 			if (testMethodInfo == null)
 				throw new IllegalArgumentException("Test method's info cannot be null");
@@ -108,7 +108,7 @@ public class CollectorInfo
 		 * 
 		 * @throws		IllegalArgumentException If constructorInfo is null
 		 */
-		public CollectorInfoBuilder constructorInfo(InvokedInfo constructorInfo)
+		public Builder constructorInfo(InvokedInfo constructorInfo)
 		{
 			if (constructorInfo == null)
 				throw new IllegalArgumentException("Constructor's info cannot be null");

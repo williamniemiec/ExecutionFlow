@@ -88,7 +88,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
 			constructorInvokedInfo = new ConstructorInvokedInfo.Builder()
-				.classPath(classPath)
+				.binPath(classPath)
 				.srcPath(srcPath)
 				.constructorSignature(signature)
 				.parameterTypes(paramTypes)
@@ -97,7 +97,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 				.build();
 			
 			// Saves extracted data
-			collectorInfo = new CollectorInfo.CollectorInfoBuilder()
+			collectorInfo = new CollectorInfo.Builder()
 				.constructorInfo(constructorInvokedInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();

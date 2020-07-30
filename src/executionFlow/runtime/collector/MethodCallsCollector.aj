@@ -22,7 +22,7 @@ import executionFlow.ExecutionFlow;
  * must have {@link executionFlow.runtime._SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.0.0
  * @since		2.0.0
  */
 public aspect MethodCallsCollector extends RuntimeCollector
@@ -127,7 +127,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 		!withincode(@executionFlow.runtime._SkipInvoked * *.*(..));
 	
 	after() returning(): writer() {
-		File f = new File(ExecutionFlow.getAppRootPath(), "mcti.ef");
+		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		
 		if (!methodsCalledByTestedInvoked.isEmpty()) {
 			if (f.exists()) {

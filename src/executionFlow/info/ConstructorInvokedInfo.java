@@ -19,22 +19,22 @@ public class ConstructorInvokedInfo extends InvokedInfo
 	/**
 	 * Stores information about a method.
 	 * 
-	 * @param		classPath Method class file path
+	 * @param		binPath Method compiled file path
 	 * @param		srcPath Path where source file is
 	 * @param		invocationLine Line of test method where constructor is called
 	 * @param		constructorSignature Signature of the constructor
 	 * @param		parameterTypes Types of constructor's parameters
 	 * @param		args Constructor's arguments
 	 */
-	private ConstructorInvokedInfo(Path classPath, Path srcPath, int invocationLine,
+	private ConstructorInvokedInfo(Path binPath, Path srcPath, int invocationLine,
 			String constructorSignature, Class<?>[] parameterTypes, Object[] args) 
 	{
-		this.binPath = classPath;
+		this.binPath = binPath;
 		this.srcPath = srcPath;
+		this.invocationLine = invocationLine;
 		this.invokedSignature = constructorSignature;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
-		this.invocationLine = invocationLine;
 	}
 	
 	
@@ -52,27 +52,27 @@ public class ConstructorInvokedInfo extends InvokedInfo
 	 */
 	public static class Builder
 	{
-		private Path classPath;
+		private Path binPath;
 		private Path srcPath;
-		private String invokerSignature; 
+		private String invokedSignature; 
 		private int invocationLine;
 		private Class<?>[] parameterTypes;
 		private Object[] args;
 		
 		
 		/**
-		 * @param		classPath Constructor class file path
+		 * @param		binPath Constructor compiled file path
 		 * 
 		 * @return		Builder to allow chained calls
 		 * 
-		 * @throws		IllegalArgumentException If classPath is null
+		 * @throws		IllegalArgumentException If binPath is null
 		 */
-		public Builder classPath(Path classPath)
+		public Builder binPath(Path binPath)
 		{
-			if (classPath == null)
-				throw new IllegalArgumentException("Constructor class file path cannot be null");
+			if (binPath == null)
+				throw new IllegalArgumentException("Constructor compiled file path cannot be null");
 			
-			this.classPath = classPath.isAbsolute() ? classPath : classPath.toAbsolutePath();
+			this.binPath = binPath.isAbsolute() ? binPath : binPath.toAbsolutePath();
 			
 			return this;
 		}
@@ -115,7 +115,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 			if (constructorSignature == null)
 				throw new IllegalArgumentException("Constructor signature cannot be null");
 			
-			this.invokerSignature = constructorSignature;
+			this.invokedSignature = constructorSignature;
 			
 			return this;
 		}
@@ -191,11 +191,12 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		{
 			StringBuilder nullFields = new StringBuilder();
 			
-			if (classPath == null)
+			
+			if (binPath == null)
 				nullFields.append("classPath").append(", ");
 			if (srcPath == null)
 				nullFields.append("srcPath").append(", ");
-			if (invokerSignature == null)
+			if (invokedSignature == null)
 				nullFields.append("constructorSignature").append(", ");
 			
 			if (nullFields.length() > 0)
@@ -203,7 +204,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
 			return new ConstructorInvokedInfo(
-				classPath, srcPath, invocationLine, invokerSignature, 
+				binPath, srcPath, invocationLine, invokedSignature, 
 				parameterTypes, args
 			);
 		}
@@ -217,7 +218,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 	public String toString() 
 	{
 		return "ConstructorInvokedInfo ["
-				+ "classPath=" + binPath 
+				+ "binPath=" + binPath 
 				+ ", srcPath=" + srcPath
 				+ ", classSignature=" + getClassSignature()
 				+ ", classPackage=" + getPackage()
