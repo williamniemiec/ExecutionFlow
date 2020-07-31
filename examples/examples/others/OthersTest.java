@@ -2,12 +2,14 @@ package examples.others;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.junit.Test;
 
 import examples.others.auxClasses.AuxClass;
+import examples.polymorphism.ClassInterface;
 
 
 /**
@@ -130,5 +132,13 @@ public class OthersTest
 	{
 		AuxClass ac = new AuxClass(1);
 		assertEquals(Arrays.asList(1, 2, 3, 4, 5), ac.identity(1,2,3,4,5));
+	}
+	
+	@Test
+	public void anonymousObjectReturn()
+	{
+		AuxClass ac = new AuxClass(1);
+		assertTrue(ac.anonymousObjectReturn() instanceof ClassInterface);
+		ac.anonymousObjectReturn().interfaceMethod();
 	}
 }

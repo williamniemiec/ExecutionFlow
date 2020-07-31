@@ -3,6 +3,8 @@ package examples.others.auxClasses;
 import java.util.Arrays;
 import java.util.List;
 
+import examples.polymorphism.ClassInterface;
+
 
 
 /**
@@ -215,5 +217,30 @@ public class AuxClass
 		);
 		
 		return response;
+	}
+	
+	public ClassInterface anonymousObjectReturn()
+	{
+		return new ClassInterface("test") {
+			@Override
+			public String interfaceMethod() {
+				String str = "test";
+				
+				return str;
+			}
+		};
+	}
+	
+	public static String trim(String text)
+	{
+		if (text == null)
+			return "";
+		
+		return text.trim();
+	}
+	
+	public static String concatStrNum(String str, int num)
+	{
+		return str + num;
 	}
 }

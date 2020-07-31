@@ -16,10 +16,6 @@ public class AgainstRequirements
 	 * Test without {@link Test} annotation.
 	 */
 	public void testWithoutTestAnnotation() {
-		System.out.println("#####################################################################");
-		System.out.println("                       testWithoutTestAnnotation                     ");
-		System.out.println("#####################################################################");
-
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
 		assertEquals(24, artc.factorial(4));
@@ -31,10 +27,6 @@ public class AgainstRequirements
 	 */
 	@Test
     public void methodInSameFileOfTestMethod() {
-		System.out.println("#####################################################################");
-		System.out.println("                       methodInSameFileOfTestMethod                  ");
-		System.out.println("#####################################################################");
-		
 		int a = 2, b = 3;
 		
         Assert.assertEquals(5, sum(a, b));

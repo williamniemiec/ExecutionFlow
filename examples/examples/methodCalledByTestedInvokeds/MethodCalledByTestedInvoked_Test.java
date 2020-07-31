@@ -25,8 +25,8 @@ public class MethodCalledByTestedInvoked_Test
 	 * A():	Tested invoker (invoker)
 	 * C(), D():	Invoked methods by tested invoker
 	 */
-	@SuppressWarnings("unused")
 	@Test
+	@SuppressWarnings("unused")
 	public void T2()
 	{
 		MethodCalledByTestedInvoked_Class testClass = new MethodCalledByTestedInvoked_Class(true);
