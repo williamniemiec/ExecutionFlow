@@ -304,7 +304,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 
-		final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*).*";
+		final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 		String line;
 		File outputFile;
 		Map<Integer, Boolean> testAnnotations;
@@ -512,7 +512,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		private String parseAnnotations(String line)
 		{
-			return	line.contains("@Test") 						 ?	parseTestAnnotation(line, false) :
+			final String regex_junit4_test = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*";
+			
+			
+			return	line.matches(regex_junit4_test) 			 ?	parseTestAnnotation(line, false) :
 					line.contains("@org.junit.jupiter.api.Test") ?	parseTestAnnotation(line, true) :
 					line.matches(regex_repeatedTest) 			 ?	parseRepeatedTest(line) :
 					testMethodArgs != null						 ?	parseParameterizedTest(line) : 
