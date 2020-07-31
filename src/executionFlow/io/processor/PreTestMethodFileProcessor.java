@@ -55,7 +55,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * lines.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	
@@ -420,7 +420,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*(\\ |\\t)*";
 		private final String regex_repeatedTest = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
 		private String numRepetitions;
-		private String testMethodName;
+		private String testMethodSignature;
 		private String[] testMethodParams;
 		private Object[] testMethodArgs;
 		private CurlyBracketBalance curlyBracketBalance_ignore;
@@ -473,7 +473,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		public AnnotationParser(String testMethodSignature)
 		{ 
-			this.testMethodName = CollectorExecutionFlow.extractMethodName(testMethodSignature);
+//			this.testMethodName = CollectorExecutionFlow.extractMethodName(testMethodSignature);
+			
+			this.testMethodSignature = CollectorExecutionFlow.extractMethodName(testMethodSignature) + 
+					testMethodSignature.substring(testMethodSignature.indexOf("(")).replace(" ", "");
 		}
 		
 		
@@ -525,7 +528,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		/**
 		 * Checks whether current source file line should be ignored. If yes,
 		 * comments the entire line. It will be ignored methods other than the 
-		 * provided test method ({@link #testMethodName}).
+		 * provided test method ({@link #testMethodSignature}).
 		 * 
 		 * @param		line Current source file line
 		 * 
@@ -537,7 +540,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * declaration of the methods as well as their annotations.
 		 */
 		private String parseIgnore(String line)
-		{
+		{						
 			// If it is inside a method that should be ignored, comment its code
 			if (ignoreMethod) {
 				if (curlyBracketBalance_ignore == null)
@@ -551,7 +554,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			
 			// If current method it is not the given test method, ignores it		
 			else if (line.matches(regex_methodDeclaration) && !line.contains("private") && 
-					!line.contains(testMethodName+"(")) {
+					!extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
 				if (curlyBracketBalance_ignore == null)
 					curlyBracketBalance_ignore = new CurlyBracketBalance();
 				
@@ -562,6 +565,43 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			}
 			
 			return line;
+		}
+		
+		/**
+		 * Gets method signature from a source file line;
+		 * 
+		 * @param		line Source file line
+		 * 
+		 * @return		Method signature
+		 */
+		private String extractMethodSignatureFromLine(String line)
+		{
+			StringBuilder methodParams = new StringBuilder();
+			String methodName = line.substring(
+					line.substring(0, line.indexOf("(")).lastIndexOf(" "), 
+					line.lastIndexOf("(")
+			);
+			String methodParamsAndArgs = line.substring(line.indexOf("(")+1, line.lastIndexOf(")"));
+			String response;
+			
+			
+			if (methodParamsAndArgs.isBlank()) {
+				response = methodName + "()";
+			}
+			else {
+				for (String param : methodParamsAndArgs.split(",")) {
+					methodParams.append(param.trim().split(" ")[0]);
+					methodParams.append(",");
+				}
+				
+				if (methodParams.length() > 1) {
+					methodParams.deleteCharAt(methodParams.length()-1);
+				}
+				
+				response = methodName + "(" + methodParams.toString() + ")";
+			}
+			
+			return response;
 		}
 		
 		/**
@@ -720,7 +760,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			else if (inTestMethodSignature) {
 				// Converts test method parameters to local variables 
 				if (line.matches(regex_methodDeclaration)) {
-					if (!line.contains(testMethodName)) {
+					if (!extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
 						inTestMethodSignature = false;
 						curlyBracketBalance_parameterizedTest.parse(line);
 						ignoreMethod = true;
