@@ -16,49 +16,49 @@ public class TestClass
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
-try {		assertEquals(24, artc.factorial(4)); } catch(Throwable e){}}
+try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _9eca55ac767232f312325508b05c6f3d){}}
 
-	@org.junit.Test
-	public void testFoo()
-	{
-try {		assertEquals("1", "1");} catch(Throwable e){}
-try {		assertEquals("1", "2");	} catch(Throwable e){}// It will fail
-	}
+//	@org.junit.Test
+//	public void testFoo()
+//	{
+//try {		assertEquals("1", "1");} catch(Throwable _f7fca69a9e909bcecac82b289d8d4198){}
+//try {		assertEquals("1", "2");	} catch(Throwable _935511ca7592eeb34bf6f438b040f1fe){}// It will fail
+//	}
 	
-	@org.junit.Test
-	public void assertFailInTheMiddleTest() 
-	{
-		TestClass tc = new TestClass(99);
-try {		assertEquals("one", tc.threePaths(1));} catch(Throwable e){}
-try {		assertEquals("nine", 
-				tc.threePaths(3));} catch(Throwable e){}		// It will fail
-try {		assertEquals("two", tc.threePaths(2));} catch(Throwable e){}
-	}
+//	@org.junit.Test
+//	public void assertFailInTheMiddleTest() 
+//	{
+//		TestClass tc = new TestClass(99);
+//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _7fb987a4bf8266d1f924ed8b0fde8d40){}
+//try {		assertEquals("nine", 
+//				tc.threePaths(3));} catch(Throwable _21672378ab33eb2715542bfeb2dd2c79){}		// It will fail
+//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _b9099002c24b4489fc72fb1aaba58cd6){}
+//	}
 	
-	@org.junit.Test
-	public void multilineAssert1()
-	{
-try {		assertEquals(param1, 			// Comment 1
-				param2,					// Comment 2
-				param3);} catch(Throwable e){}				// Comment 3
-	}
+//	@org.junit.Test
+//	public void multilineAssert1()
+//	{
+//try {		assertEquals(param1, 			// Comment 1
+//				param2,					// Comment 2
+//				param3);} catch(Throwable _ab4669d3b1248b9a59136d6cda66d826){}				// Comment 3
+//	}
 	
-	@org.junit.Test
-	public void multilineAssert2()
-	{
-try {		assertEquals (
-				param1, 				// Comment 1
-				param2,					// Comment 2
-				param3);} catch(Throwable e){}				// Comment 3
-	}
+//	@org.junit.Test
+//	public void multilineAssert2()
+//	{
+//try {		assertEquals (
+//				param1, 				// Comment 1
+//				param2,					// Comment 2
+//				param3);} catch(Throwable _75401329f84927b9d66c8d7875f2846b){}				// Comment 3
+//	}
 	
-	@org.junit.Test
-	public void multilineAssert3()
-	{
-try {		assertEquals (
-				param1, 				// Comment 1
-				param2,					// Comment 2
-				param3					// Comment 3
-		);} catch(Throwable e){}								// Comment 4
-	}
+//	@org.junit.Test
+//	public void multilineAssert3()
+//	{
+//try {		assertEquals (
+//				param1, 				// Comment 1
+//				param2,					// Comment 2
+//				param3					// Comment 3
+//		);} catch(Throwable _e339f05bcde322e75544086fc87bc14){}								// Comment 4
+//	}
 }

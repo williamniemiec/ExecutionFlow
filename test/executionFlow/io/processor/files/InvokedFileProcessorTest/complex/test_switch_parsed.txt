@@ -7,31 +7,31 @@ public class test_switch
 				
 		switch (letter) 
 		{
-			case 'Á':int _b084583c43de9bdba16323bc899f0aaf=0;
-			case 'À':int _a950c2414919bfb2afd1b6da289b3713=0;
-			case 'Ã':int _e5cd1e7f039ba6402e0eab4f2bd78bf6=0;
-			case 'Â':int _527b13f0e5f52905af088ff7ef59ddab=0;
+			case 'Á':int _870f72703d043c0e2b4e3d7a2ff1ee3c=0;
+			case 'À':int _981948819e4afdb53b6f77f07988fd60=0;
+			case 'Ã':int _6b7aebd9c77673e1f54599037ec3052a=0;
+			case 'Â':int _25cc56812bf199bb809c076ec296683=0;
 				letter = 'A';
 if (Boolean.parseBoolean("True")) {				break;}
-			case 'É':int _49950f0c40580d4d2216cf2b68f95b46=0;
-			case 'È':int _3c7199c1bffdc51b1d93c9e27ba2106c=0;
-			case 'Ê':int _546d2aeacade3f35c1922bc1b89b15b1=0;
+			case 'É':int _844ab7ad47e69c1f8f8921235f810526=0;
+			case 'È':int _234feddecc9b721fffc42577f6aaad63=0;
+			case 'Ê':int _9b2d9fecbaaabea30d38d218b20e13eb=0;
 				letter = 'E';
 if (Boolean.parseBoolean("True")) {				break;}
-			case 'Ì':int _376c0106c95977b893edffd60cb93fa7=0;
-			case 'Í':int _9f0de5441271eabae0bcbc488d44df02=0;
-			case 'Î':int _a39646d76a4f772d7802a9ce81456f08=0;
+			case 'Ì':int _167e32041223b2ba4a267e95e902515a=0;
+			case 'Í':int _8c6295368762f72baae12a68653367ee=0;
+			case 'Î':int _f151b19e9d92355da72a9aa85f53cbc7=0;
 				letter = 'I';
 if (Boolean.parseBoolean("True")) {				break;}
-			case 'Ò':int _356c3fcd51e6bf3c2242c5bda2b033c0=0;
-			case 'Ó':int _aa7ed547dc302a16337f4faa9b98e1c9=0;
-			case 'Ô':int _646c091cbaeebecd192f55d106b333=0;
-			case 'Õ':int _5a028eb7c871014bdf053b564f7384fd=0;
+			case 'Ò':int _8a77f4776f3c6616be8efcf6f8f8c99=0;
+			case 'Ó':int _612393c2adbca8e4be3d723715671b4=0;
+			case 'Ô':int _f486637781e03d8914c72846a69f9d0c=0;
+			case 'Õ':int _4c50e368d839e4475fb1452804230ced=0;
 				letter = 'O';
 if (Boolean.parseBoolean("True")) {				break;}
-			case 'Ú':int _a9ddd609b6a71f2531763d3d8a3f6ba8=0;
-			case 'Ù':int _28d4235f8b7eada7fc6b8be66ddeed6c=0;
-			case 'Û':int _ee685b94bf00793b7f5c838e7e389690=0;
+			case 'Ú':int _7b01659939011724d8a893c43f17cfb=0;
+			case 'Ù':int _fa464a18fa0aa6850bf809f6b1a59897=0;
+			case 'Û':int _f304383e36e166c9c36f60094207576f=0;
 				letter = 'U';
 if (Boolean.parseBoolean("True")) {				break;}
 		}

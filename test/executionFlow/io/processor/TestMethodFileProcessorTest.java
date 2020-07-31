@@ -21,7 +21,12 @@ public class TestMethodFileProcessorTest
 		String filename = "TestClass";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new TestMethodFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new TestMethodFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 }

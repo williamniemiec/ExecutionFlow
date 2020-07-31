@@ -9,8 +9,8 @@ public class test_else
 		}
 		
 		String response = "";
-		int w;int _bba26affd760e47fa0368eb3d87a47a1=0;
-        int k;int _bb81c79bcd501db5b77f498fdf58f461=0;
+		int w;int _4f05f79c491c197ace51c2777f9d684b=0;
+        int k;int _9873f51c83d5db908ace8585e0b9a86c=0;
 
 		if (num == 0) 
 		{
@@ -36,8 +36,8 @@ public class test_else
 		}
 		
 		String response = "";
-		int w;int _df2e86786eb46015fa82a14f2e15f31b=0;
-        int k;int _b9ff11c07663cbe9782a2758f5fd83ca=0;
+		int w;int _9f657a2fb626c309db742e6d08fd51f3=0;
+        int k;int _4b5be13768d7114297d77acdef7111db=0;
 
 		if (num == 0) 
 		{

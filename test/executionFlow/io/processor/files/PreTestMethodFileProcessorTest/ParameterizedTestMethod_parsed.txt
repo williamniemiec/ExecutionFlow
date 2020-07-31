@@ -1,20 +1,47 @@
-package executionFlow.core.file.parser.tests;
+package examples.junit5;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.temporal.ChronoUnit;
+import java.util.EnumSet;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import examples.testClasses.TestClass;
+import examples.others.auxClasses.AuxClass;
+import executionFlow.runtime.SkipCollection;
 
-public class ParameterizedTestMethod {
-	@ParameterizedTest
+
+/**
+ * Tests that use the {@link ParameterizedTest} annotation belonging to 
+ * JUnit 5.
+ */
+public class ParameterizedTestAnnotation 
+{
+	@org.junit.Test
 	@ValueSource(ints = {-1,0,1})
-	public void test1(int num)
-	{
-		TestClass tc = new TestClass(4);
-		
-try {		assertEquals(1, tc.factorial(num));} catch(Throwable e){}
-try {		assertEquals(1, tc.factorial(num));} catch(Throwable e){}
+	public void test1()
+	{int num=-1;
+		AuxClass tc = new AuxClass(4);
+
+
+try {		assertEquals(1, tc.factorial(num));} catch(Throwable _db17e6f24ab8ad1bca4722d0ca1a03a1){}
 	}
+	
+//	@org.junit.Test
+//	@ValueSource(strings = {" ", "   ", "\t", "\n"})
+//	void nullEmptyAndBlankStrings(String text) 
+//	{
+//try {	    assertTrue(text == null || text.trim().isEmpty());} catch(Throwable _346584178e580cfd376138d200e15b49){}
+//	}
+	
+//	@org.junit.Test
+//	@EnumSource(names = {"DAYS", "HOURS"}, value = ChronoUnit.class)
+//	void testWithEnumSourceInclude(ChronoUnit unit) 
+//	{
+//try {	    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));} catch(Throwable _c46095be317d7e1536959b7cdfe1fa56){}
+//	}
 }

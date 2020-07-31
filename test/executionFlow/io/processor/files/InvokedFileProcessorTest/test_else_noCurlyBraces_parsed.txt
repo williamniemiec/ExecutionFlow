@@ -3,23 +3,23 @@ public class test_else_noCurlyBraces
 {
 @executionFlow.runtime.CollectCalls 	public String ifElseMethod(int num)
 	{
-		int w;int _6baec25bdc6e7f9314c64d115f8a28ad=0;
+		int w;int _d0f40a86c83b8c808dcbed16fff20d2c=0;
 		
 		if (false)	w++;
-		else {int _403316e492f0044bf93b8fc320341adb=0;
-			for(;;)}
+		else {int _14191e2cba1be69e93d96a29c5586cde=0;
+			for(;;)
 				while (w == 0) {
 					if (false) w++;
-					else {int _e4b97cde02a58ec4ad0720c60495caad=0;
-						try {int _415e7901ea7c4cbbccc201b831f29fb3=0;
+					else {int _6c7015b00bc9339ba72038ebbd16a0eb=0;
+						try {int _2eb30f9ad043e99127d5b646547ffd7d=0;
 							w++;
 							if (false) w++;
-							else {int _21ff418696508c65aae24e4fb7102f78=0;
+							else {int _1e0cd3b4e2b4ff08a5db54a98ca16179=0;
 								w--;}}
  catch(Exception e) {
 							w--;
 						}
-				}
+				}}
 				for(;;)
 					w++;
 
@@ -29,31 +29,31 @@ public class test_else_noCurlyBraces
 
 @executionFlow.runtime.CollectCalls 	public String ifElseMethod_complex(int num)
 	{
-		int w;int _46e8f4f1e2a6dfa86ed5f97f7eb9cbc9=0;
+		int w;int _61909dcf97b9b866dbe1abb2c809f470=0;
 		
 		if (false)	w++;
-		else {int _67cc80e527102a98b887929abd82ec3d=0;
-			for(;;)}
+		else {int _7af21cb16395c321842f63d18d241e1=0;
+			for(;;)
 				while (w == 0) 
 				{
 					if (false) w++;
-					else {int _a5a7a17201b0af53d381557b454d205c=0;
+					else {int _c5f6574a3fa4dd643ec61c446a86f7c4=0;
 
 						{
 							w++;
 							if (false) w++;
-							else {int _e72102497177a5a3118ff8d593f0efc6=0;
+							else {int _8b3d52a0f30e5eda23c20a68900618e3=0;
 								w--;}
 						} 
 						catch(Exception e) 
 						{
 							w--;
 						}
-				}
+				}}
 				for(;;)
 					w++;
 
 
 		return w;
 	}
-}
+}}

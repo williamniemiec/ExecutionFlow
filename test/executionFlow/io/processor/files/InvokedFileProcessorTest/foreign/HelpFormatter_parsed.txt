@@ -942,7 +942,7 @@ public class HelpFormatter
         try
         {
             final BufferedReader in = new BufferedReader(new StringReader(text));
-            String line;int _cf137e1c8d8cef2fbd717e956765cd4=0;
+            String line;int _4ce6f3627c8484731906673fffc54ba9=0;
             boolean firstLine = true;
             while ((line = in.readLine()) != null)
             {

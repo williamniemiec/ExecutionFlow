@@ -19,7 +19,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_empty";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 
@@ -30,7 +35,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_else";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 
@@ -41,7 +51,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_try";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -52,7 +67,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_catch";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -63,7 +83,13 @@ public class InvokedFileProcessorTest
 		String filename = "test_switch";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		InvokedFileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", FileEncoding.ISO_8859_1, "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.encode(FileEncoding.ISO_8859_1)
+				.build();
 		fp.processFile();
 	}
 	
@@ -74,7 +100,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_doWhile";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -85,7 +116,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_else";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -96,7 +132,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_try";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -107,7 +148,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_catch";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -118,7 +164,13 @@ public class InvokedFileProcessorTest
 		String filename = "test_switch";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", FileEncoding.ISO_8859_1, "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.encode(FileEncoding.ISO_8859_1)
+				.build();
 		fp.processFile();
 	}
 	
@@ -129,7 +181,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_doWhile";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -140,7 +197,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_else_noCurlyBraces";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -151,7 +213,12 @@ public class InvokedFileProcessorTest
 		String filename = "HelpFormatter";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 
@@ -162,7 +229,12 @@ public class InvokedFileProcessorTest
 		String filename = "MathArrays";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 	
@@ -173,7 +245,12 @@ public class InvokedFileProcessorTest
 		String filename = "test_constructor";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new InvokedFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
 		fp.processFile();
 	}
 }

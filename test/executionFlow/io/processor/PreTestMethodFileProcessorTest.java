@@ -15,24 +15,37 @@ import executionFlow.runtime.SkipCollection;
 public class PreTestMethodFileProcessorTest 
 {
 	@Test
-	public void testClassTest() throws IOException
+	public void testClassTest_firstMethod() throws IOException
 	{
 		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
 		String filename = "TestClass";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new PreTestMethodFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.testMethodSignature("executionFlow.core.file.parser.tests.TestClass.testLastCurlyBracketInSameLine()")
+				.build();
 		fp.processFile();
 	}
 	
 	@Test
-	public void parameterizedTestMethodTest() throws IOException
+	public void parameterizedTestMethodTest_firstMethod() throws IOException
 	{
 		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
 		String filename = "ParameterizedTestMethod";
 		File f = new File(currentDir, filename+".java.txt");
 		
-		FileProcessor fp = new PreTestMethodFileProcessor(f.toPath(), currentDir.toPath(), filename+"_parsed", "txt");
+		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.testMethodSignature("examples.junit5.ParameterizedTestAnnotation.test1(int num)")
+				.testMethodArgs(-1)
+				.build();
 		fp.processFile();
 	}
 }
