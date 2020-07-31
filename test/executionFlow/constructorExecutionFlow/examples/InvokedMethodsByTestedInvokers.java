@@ -9,21 +9,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
+import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.FilesManager;
-import executionFlow.io.ProcessorType;
-import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.runtime.SkipCollection;
-import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -32,71 +27,36 @@ import executionFlow.util.ConsoleOutput;
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
-public class InvokedMethodsByTestedInvokers 
+public class InvokedMethodsByTestedInvokers extends ConstructorExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static FileManager testMethodFileManager;
-	private static FilesManager testMethodManager;
 	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Test.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), 
+					"examples/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Test.java");
 	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Test.class");
-	private static final String PACKAGE_TEST_METHOD = "examples.invokedMethodsByTestedInvokers";
+			Path.of(ExecutionFlow.getAppRootPath().toString(), 
+					"bin/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Test.class");
+	private static final String PACKAGE_TEST_METHOD = "examples.methodCalledByTestedInvokeds";
 	
 	
 	//-------------------------------------------------------------------------
 	//		Test preparers
 	//-------------------------------------------------------------------------
 	/**
+	 * @param		classSignature Test class signature
+	 * @param		testMethodSignature Test method signature
+	 * 
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} was not
 	 * found
 	 */
-	@BeforeClass
-	public static void init() throws ClassNotFoundException, IOException
+	public void init(String classSignature, String testMethodSignature) 
+			throws IOException, ClassNotFoundException
 	{
-		// Initializes ExecutionFlow
-		ExecutionFlow.init();
-		
-		// Creates backup from original files
-		testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, false);
-		
-		testMethodFileManager = new FileManager(
-			PATH_SRC_TEST_METHOD,
-			MethodInvokedInfo.getCompiledFileDirectory(PATH_BIN_TEST_METHOD),
-			PACKAGE_TEST_METHOD,
-			new PreTestMethodFileProcessorFactory(),
-			"original_pre_processing"
-		);
-		
-		// Parses test method
-		try {
-			ConsoleOutput.showInfo("Pre-processing test method...");
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-			ConsoleOutput.showInfo("Pre-processing completed");
-		} catch (IOException e) {
-			testMethodManager.restoreAll();
-			testMethodManager.deleteBackup();
-			throw e;
-		}
-	}
-	
-	@AfterClass
-	public static void clean()
-	{
-		// Restore original files
-		ExecutionFlow.testMethodManager.restoreAll();
-		ExecutionFlow.testMethodManager.deleteBackup();
-		
-		ExecutionFlow.invokedManager.restoreAll();
-		ExecutionFlow.invokedManager.deleteBackup();
-		
-		testMethodManager.restoreAll();
-		testMethodManager.deleteBackup();
-		
-		ExecutionFlow.destroy();
+		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
+				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
 	}
 	
 	
@@ -108,28 +68,30 @@ public class InvokedMethodsByTestedInvokers
 	 * test.
 	 */
 	@Test
-	public void T()
+	public void T() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
 		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {false};
 		Class<?>[] paramTypes = {boolean.class};
-		String signature = "examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Class(boolean)";
-		String testMethodSignature = "examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Test.T()"; 
+		String signature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Class(boolean)";
+		String testMethodSignature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test.T()"; 
 		String key = signature + Arrays.toString(paramValues);
 		
 		
+		init("examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test", testMethodSignature);
+		
 		// Informations about test method
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
 			.binPath(PATH_BIN_TEST_METHOD)
 			.srcPath(PATH_SRC_TEST_METHOD)
 			.methodSignature(testMethodSignature)
 			.build();
 		
 		// Informations about constructor
-		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
-			.classPath(Path.of("bin/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Class.class"))
-			.srcPath(Path.of("examples/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Class.java"))
+		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
+			.binPath(Path.of("bin/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.class"))
+			.srcPath(Path.of("examples/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.java"))
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
@@ -137,7 +99,7 @@ public class InvokedMethodsByTestedInvokers
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		CollectorInfo ci = new CollectorInfo.Builder()
 			.constructorInfo(cii)
 			.testMethodInfo(testMethodInfo)
 			.build();
@@ -156,28 +118,30 @@ public class InvokedMethodsByTestedInvokers
 	 * test.
 	 */
 	@Test
-	public void T2()
+	public void T2() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
 		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {true};
 		Class<?>[] paramTypes = {boolean.class};
-		String signature = "examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Class(boolean)";
-		String testMethodSignature = "examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Test.T2()"; 
+		String signature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Class(boolean)";
+		String testMethodSignature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test.T2()"; 
 		String key = signature + Arrays.toString(paramValues);
 		
 		
+		init("examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test", testMethodSignature);
+		
 		// Informations about test method
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
 			.binPath(PATH_BIN_TEST_METHOD)
 			.srcPath(PATH_SRC_TEST_METHOD)
 			.methodSignature(testMethodSignature)
 			.build();
 		
 		// Informations about constructor
-		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
-			.classPath(Path.of("bin/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Class.class"))
-			.srcPath(Path.of("examples/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Class.java"))
+		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
+			.binPath(Path.of("bin/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.class"))
+			.srcPath(Path.of("examples/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.java"))
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
@@ -185,7 +149,7 @@ public class InvokedMethodsByTestedInvokers
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		CollectorInfo ci = new CollectorInfo.Builder()
 			.constructorInfo(cii)
 			.testMethodInfo(testMethodInfo)
 			.build();

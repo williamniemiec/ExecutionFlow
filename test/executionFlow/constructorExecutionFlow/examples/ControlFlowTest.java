@@ -9,21 +9,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
+import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.FilesManager;
-import executionFlow.io.ProcessorType;
-import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.runtime.SkipCollection;
-import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -32,17 +27,15 @@ import executionFlow.util.ConsoleOutput;
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
-public class ControlFlowTest 
+public class ControlFlowTest extends ConstructorExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static FileManager testMethodFileManager;
-	private static FilesManager testMethodManager;
 	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/controlFlow/ControlFlowTest.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/controlFlow/ControlFlowTest.java");
 	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/controlFlow/ControlFlowTest.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/controlFlow/ControlFlowTest.class");
 	private static final String PACKAGE_TEST_METHOD = "examples.controlFlow";
 	
 
@@ -50,55 +43,18 @@ public class ControlFlowTest
 	//		Test preparers
 	//-------------------------------------------------------------------------
 	/**
+	 * @param		classSignature Test class signature
+	 * @param		testMethodSignature Test method signature
+	 * 
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} was not
 	 * found
 	 */
-	@BeforeClass
-	public static void init() throws ClassNotFoundException, IOException
+	public void init(String classSignature, String testMethodSignature) 
+			throws IOException, ClassNotFoundException
 	{
-		// Initializes ExecutionFlow
-		ExecutionFlow.init();
-		
-		// Creates backup from original files
-		testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, false);
-		
-		testMethodFileManager = new FileManager(
-			PATH_SRC_TEST_METHOD,
-			MethodInvokedInfo.getCompiledFileDirectory(PATH_BIN_TEST_METHOD),
-			PACKAGE_TEST_METHOD,
-			new PreTestMethodFileProcessorFactory(),
-			"original_pre_processing"
-		);
-		
-		// Parses test method
-		try {
-			ConsoleOutput.showInfo("Pre-processing test method...");
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-			ConsoleOutput.showInfo("Pre-processing completed");
-		} catch (IOException e) {
-			testMethodManager.restoreAll();
-			testMethodManager.deleteBackup();
-			throw e;
-		}
-	}
-	
-	/**
-	 * Restores original files
-	 */
-	@AfterClass
-	public static void restore()
-	{
-		ExecutionFlow.testMethodManager.restoreAll();
-		ExecutionFlow.testMethodManager.deleteBackup();
-		
-		ExecutionFlow.invokedManager.restoreAll();
-		ExecutionFlow.invokedManager.deleteBackup();
-		
-		testMethodManager.restoreAll();
-		testMethodManager.deleteBackup();
-		
-		ExecutionFlow.destroy();
+		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
+				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
 	}
 		
 	
@@ -114,7 +70,7 @@ public class ControlFlowTest
 	 * constructor
 	 */
 	@Test
-	public void controlFlowTest()
+	public void controlFlowTest() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
 		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
@@ -125,16 +81,18 @@ public class ControlFlowTest
 		String key = signature + Arrays.toString(paramValues);
 		
 		
+		init("examples.controlFlow.ControlFlowTest", testMethodSignature);
+		
 		// Informations about test method
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
 			.binPath(PATH_BIN_TEST_METHOD)
 			.srcPath(PATH_SRC_TEST_METHOD)
 			.methodSignature(testMethodSignature)
 			.build();
 		
 		// Informations about constructor
-		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
-			.classPath(Path.of("bin/examples/controlFlow/TestClass_ControlFlow.class"))
+		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
+			.binPath(Path.of("bin/examples/controlFlow/TestClass_ControlFlow.class"))
 			.srcPath(Path.of("examples/examples/controlFlow/TestClass_ControlFlow.java"))
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
@@ -143,7 +101,7 @@ public class ControlFlowTest
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		CollectorInfo ci = new CollectorInfo.Builder()
 			.constructorInfo(cii)
 			.testMethodInfo(testMethodInfo)
 			.build();

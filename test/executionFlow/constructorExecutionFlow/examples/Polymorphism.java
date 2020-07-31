@@ -9,12 +9,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
+import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.MethodInvokedInfo;
@@ -32,17 +34,15 @@ import executionFlow.util.ConsoleOutput;
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
-public class Polymorphism 
+public class Polymorphism extends ConstructorExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static FileManager testMethodFileManager;
-	private static FilesManager testMethodManager;
 	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/polymorphism/PolymorphismTest.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/polymorphism/PolymorphismTest.java");
 	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/polymorphism/PolymorphismTest.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/polymorphism/PolymorphismTest.class");
 	private static final String PACKAGE_TEST_METHOD = "examples.polymorphism";
 	
 	
@@ -50,53 +50,18 @@ public class Polymorphism
 	//		Test preparers
 	//-------------------------------------------------------------------------
 	/**
+	 * @param		classSignature Test class signature
+	 * @param		testMethodSignature Test method signature
+	 * 
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} was not
 	 * found
 	 */
-	@BeforeClass
-	public static void init() throws ClassNotFoundException, IOException
+	public void init(String classSignature, String testMethodSignature) 
+			throws IOException, ClassNotFoundException
 	{
-		// Initializes ExecutionFlow
-		ExecutionFlow.init();
-		
-		// Creates backup from original files
-		testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, false);
-		
-		testMethodFileManager = new FileManager(
-			PATH_SRC_TEST_METHOD,
-			MethodInvokedInfo.getCompiledFileDirectory(PATH_BIN_TEST_METHOD),
-			PACKAGE_TEST_METHOD,
-			new PreTestMethodFileProcessorFactory(),
-			"original_pre_processing"
-		);
-		
-		// Parses test method
-		try {
-			ConsoleOutput.showInfo("Pre-processing test method...");
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-			ConsoleOutput.showInfo("Pre-processing completed");
-		} catch (IOException e) {
-			testMethodManager.restoreAll();
-			testMethodManager.deleteBackup();
-			throw e;
-		}
-	}
-	
-	@AfterClass
-	public static void clean()
-	{
-		// Restore original files
-		ExecutionFlow.testMethodManager.restoreAll();
-		ExecutionFlow.testMethodManager.deleteBackup();
-		
-		ExecutionFlow.invokedManager.restoreAll();
-		ExecutionFlow.invokedManager.deleteBackup();
-		
-		testMethodManager.restoreAll();
-		testMethodManager.deleteBackup();
-		
-		ExecutionFlow.destroy();
+		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
+				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
 	}
 	
 	
@@ -108,7 +73,7 @@ public class Polymorphism
 	 * test.
 	 */
 	@Test
-	public void testChainedMethods()
+	public void testChainedMethods() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
 		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
@@ -119,16 +84,18 @@ public class Polymorphism
 		String key = signature + Arrays.toString(paramValues);
 		
 		
+		init("examples.polymorphism.PolymorphismTest", testMethodSignature);
+		
 		// Informations about test method
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
 			.binPath(PATH_BIN_TEST_METHOD)
 			.srcPath(PATH_SRC_TEST_METHOD)
 			.methodSignature(testMethodSignature)
 			.build();
 		
 		// Informations about constructor
-		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.ConstructorInvokerInfoBuilder()
-			.classPath(Path.of("bin/examples/polymorphism/ClassInterface.class"))
+		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
+			.binPath(Path.of("bin/examples/polymorphism/ClassInterface.class"))
 			.srcPath(Path.of("examples/examples/polymorphism/ClassInterface.java"))
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
@@ -137,7 +104,7 @@ public class Polymorphism
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		CollectorInfo ci = new CollectorInfo.Builder()
 			.constructorInfo(cii)
 			.testMethodInfo(testMethodInfo)
 			.build();
