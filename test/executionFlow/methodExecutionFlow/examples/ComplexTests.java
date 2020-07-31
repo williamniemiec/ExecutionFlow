@@ -10,8 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
@@ -19,11 +17,8 @@ import executionFlow.MethodExecutionFlow;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.FilesManager;
-import executionFlow.io.ProcessorType;
-import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
-import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -32,78 +27,38 @@ import executionFlow.util.ConsoleOutput;
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class ComplexTests 
+public class ComplexTests extends MethodExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static FileManager testMethodFileManager;
-	private static FilesManager testMethodManager;
 	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/complexTests/ComplexTests.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/complexTests/ComplexTests.class");
 	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/complexTests/ComplexTests.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/complexTests/ComplexTests.java");
 	private static final String PACKAGE_TEST_METHOD = "examples.complexTests";
 	private static final Path PATH_BIN_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/complexTests/TestClass_ComplexTests.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/complexTests/TestClass_ComplexTests.class");
 	private static final Path PATH_SRC_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/complexTests/TestClass_ComplexTests.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/complexTests/TestClass_ComplexTests.java");
 	
 	
 	//-------------------------------------------------------------------------
 	//		Test preparers
 	//-------------------------------------------------------------------------
 	/**
+	 * @param		classSignature Test class signature
+	 * @param		testMethodSignature Test method signature
+	 * 
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} was not
 	 * found
 	 */
-	@BeforeClass
-	public static void init() throws IOException, ClassNotFoundException
+	public void init(String classSignature, String testMethodSignature) 
+			throws IOException, ClassNotFoundException
 	{
-		// Initializes ExecutionFlow
-		ExecutionFlow.destroy();
-		ExecutionFlow.init();
-				
-		// Creates backup from original files
-		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false);
-		
-		testMethodFileManager = new FileManager(
-			PATH_SRC_TEST_METHOD,
-			MethodInvokedInfo.getCompiledFileDirectory(PATH_BIN_TEST_METHOD),
-			PACKAGE_TEST_METHOD,
-			new PreTestMethodFileProcessorFactory(),
-			"original_pre_processing"
-		);
-		
-		// Parses test method
-		try {
-			ConsoleOutput.showInfo("Pre-processing test method...");
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-			ConsoleOutput.showInfo("Pre-processing completed");
-		} catch (IOException e) {
-			testMethodManager.restoreAll();
-			testMethodManager.deleteBackup();
-			throw e;
-		}
-	}
-	
-	/**
-	 * Restores original files
-	 */
-	@AfterClass
-	public static void restore()
-	{
-		ExecutionFlow.testMethodManager.restoreAll();
-		ExecutionFlow.testMethodManager.deleteBackup();
-		
-		ExecutionFlow.invokedManager.restoreAll();
-		ExecutionFlow.invokedManager.deleteBackup();
-		
-		testMethodManager.restoreAll();
-		testMethodManager.deleteBackup();
-		
-		ExecutionFlow.destroy();
+		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
+				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
 	}
 	
 	
@@ -124,19 +79,25 @@ public class ComplexTests
 
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 19;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.testForConstructorAndMethod()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial_constructor()";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.complexTests.ComplexTests.testForConstructorAndMethod()";
+		methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial_constructor()";
+		
+		init("examples.chainedCalls.TestClass_ComplexTests", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -144,7 +105,7 @@ public class ComplexTests
 				.methodName("factorial_constructor")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -179,19 +140,25 @@ public class ComplexTests
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 34;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructor()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial(long)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructor()";
+		methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial(long)";
+		
+		init("examples.chainedCalls.TestClass_ComplexTests", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -199,7 +166,7 @@ public class ComplexTests
 				.methodName("factorial")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -226,19 +193,25 @@ public class ComplexTests
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 35;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructor()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial(long)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructor()";
+		methodSignature = "examples.complexTests.TestClass_ComplexTests.factorial(long)";
+		
+		init("examples.chainedCalls.TestClass_ComplexTests", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -246,7 +219,7 @@ public class ComplexTests
 				.methodName("factorial")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -273,19 +246,25 @@ public class ComplexTests
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 50;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.staticFactorial(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()";
+		methodSignature = "examples.complexTests.TestClass_ComplexTests.staticFactorial(int)";
+		
+		init("examples.chainedCalls.TestClass_ComplexTests", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -293,7 +272,7 @@ public class ComplexTests
 				.methodName("staticFactorial")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();

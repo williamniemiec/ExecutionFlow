@@ -22,6 +22,7 @@ import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 import executionFlow.util.ConsoleOutput;
 
@@ -32,77 +33,38 @@ import executionFlow.util.ConsoleOutput;
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class ControlFlowTest 
+public class ControlFlowTest extends MethodExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static FileManager testMethodFileManager;
-	private static FilesManager testMethodManager;
 	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/controlFlow/ControlFlowTest.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/controlFlow/ControlFlowTest.class");
 	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/controlFlow/ControlFlowTest.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/controlFlow/ControlFlowTest.java");
 	private static final String PACKAGE_TEST_METHOD = "examples.controlFlow";
 	private static final Path PATH_BIN_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/controlFlow/TestClass_ControlFlow.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/controlFlow/TestClass_ControlFlow.class");
 	private static final Path PATH_SRC_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/controlFlow/TestClass_ControlFlow.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/controlFlow/TestClass_ControlFlow.java");
 	
 	
 	//-------------------------------------------------------------------------
 	//		Test preparers
 	//-------------------------------------------------------------------------
 	/**
+	 * @param		classSignature Test class signature
+	 * @param		testMethodSignature Test method signature
+	 * 
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} was not
 	 * found
 	 */
-	@BeforeClass
-	public static void init() throws IOException, ClassNotFoundException
+	public void init(String classSignature, String testMethodSignature) 
+			throws IOException, ClassNotFoundException
 	{
-		// Initializes ExecutionFlow
-		ExecutionFlow.init();
-				
-		// Creates backup from original files
-		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false);
-		
-		testMethodFileManager = new FileManager(
-			PATH_SRC_TEST_METHOD,
-			MethodInvokedInfo.getCompiledFileDirectory(PATH_BIN_TEST_METHOD),
-			PACKAGE_TEST_METHOD,
-			new PreTestMethodFileProcessorFactory(),
-			"original_pre_processing"
-		);
-		
-		// Parses test method
-		try {
-			ConsoleOutput.showInfo("Pre-processing test method...");
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-			ConsoleOutput.showInfo("Pre-processing completed");
-		} catch (IOException e) {
-			testMethodManager.restoreAll();
-			testMethodManager.deleteBackup();
-			throw e;
-		}
-	}
-	
-	/**
-	 * Restores original files
-	 */
-	@AfterClass
-	public static void restore()
-	{
-		ExecutionFlow.testMethodManager.restoreAll();
-		ExecutionFlow.testMethodManager.deleteBackup();
-		
-		ExecutionFlow.invokedManager.restoreAll();
-		ExecutionFlow.invokedManager.deleteBackup();
-		
-		testMethodManager.restoreAll();
-		testMethodManager.deleteBackup();
-		
-		ExecutionFlow.destroy();
+		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
+				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
 	}
 	
 	
@@ -123,19 +85,25 @@ public class ControlFlowTest
 
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 19;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod(int)";
+		
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -143,7 +111,7 @@ public class ControlFlowTest
 				.methodName("ifElseTest_earlyReturn")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -166,19 +134,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 29;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
+		
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -186,7 +160,7 @@ public class ControlFlowTest
 				.methodName("ifElseMethod")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -209,19 +183,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 39;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest2()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest2()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
+		
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -229,7 +209,7 @@ public class ControlFlowTest
 				.methodName("ifElseMethod2")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -252,19 +232,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 49;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest3()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest3()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
+		
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -272,7 +258,7 @@ public class ControlFlowTest
 				.methodName("ifElseMethod3")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -295,19 +281,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 59;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.tryCatchTest1()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_try()";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.tryCatchTest1()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_try()";
+		
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -315,7 +307,7 @@ public class ControlFlowTest
 				.methodName("tryCatchMethod_try")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -338,19 +330,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 66;
 		
+		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.tryCatchTest2()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()";
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.tryCatchTest2()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()";
 
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);		
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -358,7 +356,7 @@ public class ControlFlowTest
 				.methodName("tryCatchMethod_catch")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -381,19 +379,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 74;
 		
+		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.switchCaseTest()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.switchCaseMethod(char)";
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.switchCaseTest()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.switchCaseMethod(char)";
 
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -401,7 +405,7 @@ public class ControlFlowTest
 				.methodName("switchCaseMethod")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -424,19 +428,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 82;
 		
+		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.doWhileTest()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)";
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.doWhileTest()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)";
 
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -444,7 +454,7 @@ public class ControlFlowTest
 				.methodName("doWhileMethod")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -467,19 +477,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 90;
 		
+		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineWhile()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineWhile(int)";
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineWhile()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineWhile(int)";
 
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -487,7 +503,7 @@ public class ControlFlowTest
 				.methodName("inlineWhile")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -510,19 +526,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 98;
 		
+		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineDoWhile()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineDoWhile(int)";
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineDoWhile()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineDoWhile(int)";
 
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -530,7 +552,7 @@ public class ControlFlowTest
 				.methodName("inlineDoWhile")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -553,19 +575,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 106;
 		
+		
 		// Defines which methods will be collected
-		String testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineIfElse()";
-		String methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineIfElse(int)";
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineIfElse()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineIfElse(int)";
 
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -573,7 +601,7 @@ public class ControlFlowTest
 				.methodName("inlineIfElse")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -600,19 +628,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 114;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.ifElseSameLine()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.ifElseSameLine(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.complexTests.ComplexTests.ifElseSameLine()";
+		methodSignature = "examples.complexTests.TestClass_ComplexTests.ifElseSameLine(int)";
+		
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -620,7 +654,7 @@ public class ControlFlowTest
 				.methodName("ifElseSameLine")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -647,19 +681,25 @@ public class ControlFlowTest
 		List<List<Integer>> testPaths;
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 115;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.complexTests.ComplexTests.ifElseSameLine()";
-		String methodSignature = "examples.complexTests.TestClass_ComplexTests.ifElseSameLine(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		// Defines which methods will be collected
+		testMethodSignature = "examples.complexTests.ComplexTests.ifElseSameLine()";
+		methodSignature = "examples.complexTests.TestClass_ComplexTests.ifElseSameLine(int)";
+		
+		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
+		methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
@@ -667,7 +707,7 @@ public class ControlFlowTest
 				.methodName("ifElseSameLine")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();

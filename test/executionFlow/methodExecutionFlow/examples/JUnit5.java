@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
@@ -18,11 +17,8 @@ import executionFlow.MethodExecutionFlow;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.FilesManager;
-import executionFlow.io.ProcessorType;
-import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
-import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -35,13 +31,11 @@ import executionFlow.util.ConsoleOutput;
  * </ul>
  */
 @SkipCollection
-public class JUnit5 
+public class JUnit5 extends MethodExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static FileManager testMethodFileManager;
-	private static FilesManager testMethodManager;
 	private static final String PACKAGE_TEST_METHOD = "examples.junit5";
 	
 	
@@ -51,59 +45,23 @@ public class JUnit5
 	/**
 	 * Initializes a test method.
 	 * 
+	 * @param		classSignature Test class signature
+	 * @param		testMethodSignature Test method signature
 	 * @param		pathBinTestMethod Test method compiled file path
 	 * @param		pathSrcTestMethod Test method source file path
-	 * @param		testMethodArgs Test method args (when it is a parameterized test)
+	 * @param		testMethodArgs Test method arguments (when it is a parameterized test)
 	 * 
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} was not
 	 * found
 	 */
-	private static void init(Path pathBinTestMethod, Path pathSrcTestMethod, Object... testMethodArgs) throws IOException, ClassNotFoundException
+	private void init(String classSignature, String testMethodSignature, 
+			Path pathBinTestMethod, Path pathSrcTestMethod, Object... testMethodArgs) 
+			throws IOException, ClassNotFoundException
 	{
-		// Initializes ExecutionFlow
-		ExecutionFlow.destroy();
-		ExecutionFlow.init();
-				
-		// Creates backup from original files
-		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false);
+		init(classSignature, testMethodSignature, pathSrcTestMethod, 
+				pathBinTestMethod, PACKAGE_TEST_METHOD, testMethodArgs);
 		
-		testMethodFileManager = new FileManager(
-				pathSrcTestMethod,
-			MethodInvokedInfo.getCompiledFileDirectory(pathBinTestMethod),
-			PACKAGE_TEST_METHOD,
-			new PreTestMethodFileProcessorFactory(testMethodArgs),
-			"original_pre_processing"
-		);
-		
-		// Parses test method
-		try {
-			ConsoleOutput.showInfo("Pre-processing test method...");
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-			ConsoleOutput.showInfo("Pre-processing completed");
-		} catch (IOException e) {
-			testMethodManager.restoreAll();
-			testMethodManager.deleteBackup();
-			throw e;
-		}
-	}
-	
-	/**
-	 * Restores original files
-	 */
-	@After
-	public void restore()
-	{
-		ExecutionFlow.testMethodManager.restoreAll();
-		ExecutionFlow.testMethodManager.deleteBackup();
-		
-		ExecutionFlow.invokedManager.restoreAll();
-		ExecutionFlow.invokedManager.deleteBackup();
-		
-		testMethodManager.restoreAll();
-		testMethodManager.deleteBackup();
-		
-		ExecutionFlow.destroy();
 	}
 	
 	
@@ -117,10 +75,6 @@ public class JUnit5
 	@Test
 	public void parameterizedTestAnnotation_test1_firstArg() throws Throwable 
 	{
-		init(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
-			 Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-			 -1);
-		
 		/**
 		 * Stores information about collected methods.
 		 * <ul>
@@ -132,28 +86,40 @@ public class JUnit5
 
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 24;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.test1(int)";
-		String methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
+		// Defines which methods will be collected
+		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.test1(int)";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init(
+				"examples.others.auxClasses.AuxClass", 
+				testMethodSignature,
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
+				-1
+		 );
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
 				.methodSignature(testMethodSignature)
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(-1)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/others/auxClasses/AuxClass.class"))
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/others/auxClasses/AuxClass.java"))
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("factorial")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -182,36 +148,43 @@ public class JUnit5
 	@Test
 	public void parameterizedTestAnnotation_test1_secondArg() throws Throwable 
 	{
-		init(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
-			 Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-			 0);
-		
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 24;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.test1(int)";
-		String methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
+		// Defines which methods will be collected
+		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.test1(int)";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init(
+				"examples.others.auxClasses.AuxClass", 
+				testMethodSignature,
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
+				0
+		 );
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
 				.methodSignature(testMethodSignature)
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(0)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/others/auxClasses/AuxClass.class"))
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/others/auxClasses/AuxClass.java"))
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("factorial")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -240,37 +213,43 @@ public class JUnit5
 	@Test
 	public void parameterizedTestAnnotation_test1_thirdArg() throws Throwable 
 	{
-		init(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
-			 Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-			 1
-		);
-		
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 24;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.test1(int)";
-		String methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
+		// Defines which methods will be collected
+		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.test1(int)";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init(
+				"examples.others.auxClasses.AuxClass", 
+				testMethodSignature,
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
+				1
+		 );
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
 				.methodSignature(testMethodSignature)
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(1)
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/others/auxClasses/AuxClass.class"))
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/others/auxClasses/AuxClass.java"))
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("factorial")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -299,35 +278,41 @@ public class JUnit5
 	@Test
 	public void repeatedTestAnnotation_test1() throws Throwable 
 	{
-		init(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/RepeatedTestAnnotation.class"),
-			 Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/RepeatedTestAnnotation.java")
-		);
-		
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 23;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.junit5.RepeatedTestAnnotation.test1()";
-		String methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/RepeatedTestAnnotation.class"))
+		// Defines which methods will be collected
+		testMethodSignature = "examples.junit5.RepeatedTestAnnotation.test1()";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init(
+				"examples.others.auxClasses.AuxClass", 
+				testMethodSignature,
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/RepeatedTestAnnotation.class"),
+				 Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/RepeatedTestAnnotation.java")
+		 );
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/RepeatedTestAnnotation.class"))
 				.methodSignature(testMethodSignature)
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/RepeatedTestAnnotation.java"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/RepeatedTestAnnotation.java"))
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/others/auxClasses/AuxClass.class"))
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/others/auxClasses/AuxClass.java"))
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("factorial")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
@@ -357,35 +342,42 @@ public class JUnit5
 	@Test
 	public void testAnnotation_test1() throws Throwable 
 	{
-		init(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/TestAnnotation.class"),
-			 Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/TestAnnotation.java")
-		);
-		
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
 		int invocationLine = 28;
 		
-		// Defines which methods will be collected
-		String testMethodSignature = "examples.junit5.TestAnnotation.test1()";
-		String methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/junit5/TestAnnotation.class"))
+		// Defines which methods will be collected
+		testMethodSignature = "examples.junit5.TestAnnotation.test1()";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init(
+				"examples.others.auxClasses.AuxClass", 
+				testMethodSignature,
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/TestAnnotation.class"),
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/TestAnnotation.java")
+		 );
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/TestAnnotation.class"))
 				.methodSignature(testMethodSignature)
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/junit5/TestAnnotation.java"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/TestAnnotation.java"))
 				.build();
 		
-		MethodInvokedInfo methodInfo = new MethodInvokedInfo.MethodInvokedInfoBuilder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath(), "bin/examples/others/auxClasses/AuxClass.class"))
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath(), "examples/examples/others/auxClasses/AuxClass.java"))
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("factorial")
 				.build();
 		
-		CollectorInfo ci = new CollectorInfo.CollectorInfoBuilder()
+		ci = new CollectorInfo.Builder()
 				.methodInfo(methodInfo)
 				.testMethodInfo(testMethodInfo)
 				.build();
