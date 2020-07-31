@@ -62,16 +62,16 @@ public class InvokedFileProcessor extends FileProcessor
 	 * converting it to bytecode. Using this constructor, file encoding will be 
 	 * UTF-8.
 	 * 
-	 * @param		filename Path of the file to be parsed
+	 * @param		file Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	private InvokedFileProcessor(Path filepath, Path outputDir, 
+	private InvokedFileProcessor(Path file, Path outputDir, 
 			String outputFilename, String fileExtension)
 	{
-		this.file = filepath;
+		this.file = file;
 		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
 		this.fileExtension = fileExtension;
@@ -81,17 +81,17 @@ public class InvokedFileProcessor extends FileProcessor
 	 * Adds instructions in parts of the code that does not exist when 
 	 * converting it to bytecode.
 	 * 
-	 * @param		filename Path of the file to be parsed
+	 * @param		file Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	private InvokedFileProcessor(Path filepath, Path outputDir, String outputFilename,
+	private InvokedFileProcessor(Path file, Path outputDir, String outputFilename,
 			String fileExtension, FileEncoding encode)
 	{
-		this(filepath, outputDir, outputFilename, fileExtension);
+		this(file, outputDir, outputFilename, fileExtension);
 		this.encode = encode;
 	}
 	
@@ -248,7 +248,7 @@ public class InvokedFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 		
-		final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*).*";
+		final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 		String line, nextLine;
 		File outputFile;
 		PrintParser printParser = new PrintParser();

@@ -39,16 +39,11 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 */
 	private static final boolean DEBUG;
 	
+	private static int totalAnnotations;
+	private int currentLine;
 	private String fileExtension = "java";
-	
-	private final String regex_methodDeclaration = 
-			"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
-			+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*(\\ |\\t)*";
-	
 	private String testMethodSignature;
 	private Object[] testMethodArgs;
-	private int currentLine;
-	private static int totalAnnotations;
 	private String param_enumType;
 	
 	
@@ -60,7 +55,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * lines.
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	
@@ -227,7 +222,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder testMethodArgs(Object[] testMethodArgs)
+		public Builder testMethodArgs(Object... testMethodArgs)
 		{
 			this.testMethodArgs = testMethodArgs;
 			
@@ -386,6 +381,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		return outputFile.getAbsolutePath();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
 	/**
 	 * Gets total test annotation in the file.
 	 * 
@@ -397,25 +396,6 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	public static int getTotalAnnotations()
 	{
 		return totalAnnotations;
-	}
-	
-	/**
-	 * Gets amount of '(' minus amount of ')' in a line.
-	 * 
-	 * @param		line Line to be analyzed
-	 * 
-	 * @return		Amount of '(' minus amount of ')' in the line
-	 */
-	private int getRoundBracketsBalance(String line)
-	{
-		return (int) (
-			line.chars()
-				.filter(c -> c == '(')
-				.count() - 
-			line.chars()
-				.filter(c -> c == ')')
-				.count()
-		);
 	}
 	
 	
@@ -435,18 +415,21 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private boolean inTestMethodSignature;
-		private boolean repeatedTest_putLoop;
-		private boolean insideRepeatedTest;
-		private boolean ignoreMethod;
+		private final String regex_methodDeclaration = 
+				"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
+				+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*(\\ |\\t)*";
 		private final String regex_repeatedTest = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
 		private String numRepetitions;
 		private String testMethodName;
-		private String[] testMethodParams = null;
+		private String[] testMethodParams;
 		private Object[] testMethodArgs;
 		private CurlyBracketBalance curlyBracketBalance_ignore;
 		private CurlyBracketBalance curlyBracketBalance_repeatedTest;
 		private CurlyBracketBalance curlyBracketBalance_parameterizedTest;
+		private boolean inTestMethodSignature;
+		private boolean repeatedTest_putLoop;
+		private boolean insideRepeatedTest;
+		private boolean ignoreMethod;
 		
 		
 		/**
@@ -851,7 +834,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * stop if an assert fails.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
+	 * @version		3.0.0
 	 * @since 		2.0.0
 	 */
 	private class AssertParser
@@ -948,6 +931,25 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			}
 			
 			return line;
+		}
+		
+		/**
+		 * Gets amount of '(' minus amount of ')' in a line.
+		 * 
+		 * @param		line Line to be analyzed
+		 * 
+		 * @return		Amount of '(' minus amount of ')' in the line
+		 */
+		private int getRoundBracketsBalance(String line)
+		{
+			return (int) (
+				line.chars()
+					.filter(c -> c == '(')
+					.count() - 
+				line.chars()
+					.filter(c -> c == ')')
+					.count()
+			);
 		}
 	}
 }

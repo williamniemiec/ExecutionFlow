@@ -56,16 +56,16 @@ public class TestMethodFileProcessor extends FileProcessor
 	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
 	 * functions. Using this constructor, file encoding will be UTF-8.
 	 * 
-	 * @param		filename Path of the file to be parsed
+	 * @param		file Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
-	public TestMethodFileProcessor(Path filepath, Path outputDir, 
+	private TestMethodFileProcessor(Path file, Path outputDir, 
 			String outputFilename, String fileExtension)
 	{
-		this.file = filepath;
+		this.file = file;
 		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
 		this.fileExtension = fileExtension;
@@ -77,17 +77,17 @@ public class TestMethodFileProcessor extends FileProcessor
 	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
 	 * functions.
 	 * 
-	 * @param		filename Path of the file to be parsed
+	 * @param		file Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 * @param		encode File encoding
 	 */ 
-	public TestMethodFileProcessor(Path filepath, Path outputDir, String outputFilename,
+	private TestMethodFileProcessor(Path file, Path outputDir, String outputFilename,
 			String fileExtension, FileEncoding encode)
 	{
-		this(filepath, outputDir, outputFilename, fileExtension);
+		this(file, outputDir, outputFilename, fileExtension);
 		this.encode = encode;
 	}	
 	
@@ -245,7 +245,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 
-		final String regex_commentLine = "^(\\t|\\ )*(\\/\\/|\\/\\*).*";
+		final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 		String line;
 		File outputFile;
 		
@@ -263,7 +263,7 @@ public class TestMethodFileProcessor extends FileProcessor
 			
 			// Parses file line by line
 			while ((line = br.readLine()) != null) {
-				if (!line.matches(regex_commentLine)) {
+				if (!line.matches(regex_commentFullLine)) {
 					// Checks whether the line contains a test annotation
 					if (line.contains("@Test") || line.contains("@org.junit.Test")) {
 						line += " @executionFlow.runtime._SkipInvoked";
