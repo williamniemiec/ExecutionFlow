@@ -264,6 +264,7 @@ public abstract class ExecutionFlow
 	 * 
 	 * @throws		IOException If an error occurs during the instantiation of
 	 * the analyzer
+	 * @throws		IllegalStateException If test method manager is null
 	 * 
 	 * @implNote	This method will instantiate an Analyzer and call the 
 	 * {@link Analyzer#run()} method
@@ -271,6 +272,10 @@ public abstract class ExecutionFlow
 	protected Analyzer analyze(InvokedInfo testMethodInfo, FileManager testMethodFileManager, 
 			InvokedInfo invokedInfo, FileManager invokedFileManager) throws IOException
 	{
+		if (testMethodManager == null)
+			throw new IllegalStateException("testMethodManager cannot be null. "
+					+ "Make sure that the 'init' method has been called before.");
+		
 		// Processes the source file of the test method if it has
 		// not been processed yet
 		if (!testMethodManager.wasProcessed(testMethodFileManager)) {
