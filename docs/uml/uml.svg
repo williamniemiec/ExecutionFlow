@@ -987,54 +987,56 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2987" y="2824.58">-hasBalanceAlreadyPassedTwo(): boolean</text>
   </g>
   <g>
-    <rect style="fill: #ffffff" x="2063.62" y="1698.83" width="464.3" height="28"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1698.83" width="464.3" height="28"/>
-    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="2295.77" y="1718.83">AnnotationParser</text>
-    <rect style="fill: #ffffff" x="2063.62" y="1726.83" width="464.3" height="212"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1726.83" width="464.3" height="212"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1740.03">-regex_methodDeclaration: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1756.03">-regex_repeatedTest: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1772.03">-numRepetitions: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1788.03">-testMethodSignature: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1804.03">-testMethodParams: String[]</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1820.03">-testMethodArgs: Object[]</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1836.03">-curlyBracketBalance_ignore: CurlyBracketBalance</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1852.03">-curlyBracketBalance_repeatedTest: CurlyBracketBalance</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1868.03">-curlyBracketBalance_parameterizedTest: CurlyBracketBalance</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1884.03">-inTestMethodSignature: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1900.03">-repeatedTest_putLoop: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1916.03">-insideRepeatedTest: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1932.03">-ignoreMethod: boolean</text>
-    <rect style="fill: #ffffff" x="2063.62" y="1938.83" width="464.3" height="212"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1938.83" width="464.3" height="212"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1952.03">+AnnotationParser(testMethodSignature:String,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1968.03">                  testMethodArg:Object[])</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1984.03">+AnnotationParser(testMethodSignature:String)</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2000.03">+parse(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2016.03">+getMarkedAnnotations(): Map&lt;Integer, Boolean&gt;</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2032.03">-parseAnnotations(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2048.03">-parseIgnore(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2064.03">-extractMethodSignatureFromLine(): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2080.03">-parseInsideRepeatedTest(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2096.03">-parseTestAnnotation(line:String,isJunit5:boolean): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2112.03">-parseRepeatedTest(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2128.03">-parseParameterizedTest(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2144.03">-repeatedTest_toLoop(line:String): String</text>
+    <rect style="fill: #ffffff" x="2063.62" y="1679.64" width="464.3" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1679.64" width="464.3" height="28"/>
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="2295.77" y="1699.64">AnnotationParser</text>
+    <rect style="fill: #ffffff" x="2063.62" y="1707.64" width="464.3" height="244"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1707.64" width="464.3" height="244"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1720.84">-regex_methodDeclaration: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1736.84">-regex_repeatedTest: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1752.84">-regex_junit4_test: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1768.84">-numRepetitions: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1784.84">-testMethodSignature: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1800.84">-testMethodParams: String[]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1816.84">-testMethodArgs: Object[]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1832.84">-curlyBracketBalance_ignore: CurlyBracketBalance</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1848.84">-curlyBracketBalance_repeatedTest: CurlyBracketBalance</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1864.84">-curlyBracketBalance_parameterizedTest: CurlyBracketBalance</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1880.84">-inTestMethodSignature: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1896.84">-repeatedTest_putLoop: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1912.84">-insideRepeatedTest: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1928.84">-ignoreMethod: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1944.84">-inTestAnnotationScope: boolean</text>
+    <rect style="fill: #ffffff" x="2063.62" y="1951.64" width="464.3" height="212"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1951.64" width="464.3" height="212"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1964.84">+AnnotationParser(testMethodSignature:String,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1980.84">                  testMethodArg:Object[])</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1996.84">+AnnotationParser(testMethodSignature:String)</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2012.84">+parse(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2028.84">+getMarkedAnnotations(): Map&lt;Integer, Boolean&gt;</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2044.84">-parseAnnotations(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2060.84">-parseIgnore(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2076.84">-extractMethodSignatureFromLine(): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2092.84">-parseInsideRepeatedTest(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2108.84">-parseTestAnnotation(line:String,isJunit5:boolean): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2124.84">-parseRepeatedTest(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2140.84">-parseParameterizedTest(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2156.84">-repeatedTest_toLoop(line:String): String</text>
   </g>
   <g>
-    <rect style="fill: #ffffff" x="1601" y="1698.3" width="333.4" height="28"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1601" y="1698.3" width="333.4" height="28"/>
-    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="1767.7" y="1718.3">AssertParser</text>
-    <rect style="fill: #ffffff" x="1601" y="1726.3" width="333.4" height="100"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1601" y="1726.3" width="333.4" height="100"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1739.5">-pattern_assert: Pattern</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1755.5">-try_catch_message: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1771.5">-endOfAssert: int</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1787.5">-commentStart: int</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1803.5">-roundBracketsBalance: int = 0</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1819.5">-inAssert: boolean</text>
-    <rect style="fill: #ffffff" x="1601" y="1826.3" width="333.4" height="8"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1601" y="1826.3" width="333.4" height="8"/>
+    <rect style="fill: #ffffff" x="1601" y="1681.11" width="333.4" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1601" y="1681.11" width="333.4" height="28"/>
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="1767.7" y="1701.11">AssertParser</text>
+    <rect style="fill: #ffffff" x="1601" y="1709.11" width="333.4" height="100"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1601" y="1709.11" width="333.4" height="100"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1722.31">-pattern_assert: Pattern</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1738.31">-try_catch_message: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1754.31">-endOfAssert: int</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1770.31">-commentStart: int</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1786.31">-roundBracketsBalance: int = 0</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1604" y="1802.31">-inAssert: boolean</text>
+    <rect style="fill: #ffffff" x="1601" y="1809.11" width="333.4" height="8"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1601" y="1809.11" width="333.4" height="8"/>
   </g>
   <g>
     <rect style="fill: #ffffff" x="1873.29" y="-1668.8" width="441.2" height="44"/>
@@ -1277,12 +1279,12 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1795,1258.57 1811,1253.57 1795,1248.57 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2031.11,1629.81 2031.11,1663.2 2295.77,1663.2 2295.77,1698.83 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2031.11,1629.81 2031.11,1653.6 2295.77,1653.6 2295.77,1679.64 "/>
     <polygon style="fill: #ffffff" points="2039.11,1629.81 2031.11,1613.81 2023.11,1629.81 "/>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2039.11,1629.81 2031.11,1613.81 2023.11,1629.81 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2031.11,1629.81 2031.11,1662.94 1767.7,1662.94 1767.7,1698.3 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2031.11,1629.81 2031.11,1654.34 1767.7,1654.34 1767.7,1681.11 "/>
     <polygon style="fill: #ffffff" points="2039.11,1629.81 2031.11,1613.81 2023.11,1629.81 "/>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2039.11,1629.81 2031.11,1613.81 2023.11,1629.81 "/>
   </g>

@@ -419,6 +419,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
 				+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*(\\ |\\t)*";
 		private final String regex_repeatedTest = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
+		private final String regex_junit4_test = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*";
 		private String numRepetitions;
 		private String testMethodSignature;
 		private String[] testMethodParams;
@@ -430,6 +431,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		private boolean repeatedTest_putLoop;
 		private boolean insideRepeatedTest;
 		private boolean ignoreMethod;
+		private boolean inTestAnnotationScope;
 		
 		
 		/**
@@ -473,8 +475,6 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		public AnnotationParser(String testMethodSignature)
 		{ 
-//			this.testMethodName = CollectorExecutionFlow.extractMethodName(testMethodSignature);
-			
 			this.testMethodSignature = CollectorExecutionFlow.extractMethodName(testMethodSignature) + 
 					testMethodSignature.substring(testMethodSignature.indexOf("(")).replace(" ", "");
 		}
@@ -493,13 +493,25 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		public String parse(String line)
 		{
-			line = parseIgnore(line);
+			final String regex_parameterizedTest = 
+					".*@(.*\\.)?(org\\.junit\\.jupiter\\.params\\.)?ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
 			
-			if (!ignoreMethod) {
-				line = parseInsideRepeatedTest(line);
+			if (line.contains("@") && !inTestAnnotationScope) {
+				inTestAnnotationScope =	line.matches(regex_junit4_test) || 
+										line.matches(regex_repeatedTest) || 
+										line.matches(regex_parameterizedTest) || 
+										line.contains("@org.junit.jupiter.api.Test");
+			}
+			
+			if (inTestAnnotationScope) {
+				line = parseIgnore(line);
 				
-				// Converts test annotation from JUnit 5 to JUnit 4
-				line = parseAnnotations(line);
+				if (!ignoreMethod) {
+					line = parseInsideRepeatedTest(line);
+					
+					// Converts test annotation from JUnit 5 to JUnit 4
+					line = parseAnnotations(line);
+				}
 			}
 			
 			return line;
@@ -515,8 +527,6 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		private String parseAnnotations(String line)
 		{
-			final String regex_junit4_test = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*";
-			
 			
 			return	line.matches(regex_junit4_test) 			 ?	parseTestAnnotation(line, false) :
 					line.contains("@org.junit.jupiter.api.Test") ?	parseTestAnnotation(line, true) :
@@ -549,6 +559,8 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				curlyBracketBalance_ignore.parse(line);
 				
 				ignoreMethod = !curlyBracketBalance_ignore.isBalanceEmpty();
+				inTestAnnotationScope = ignoreMethod;
+				
 				line = "//" + line;
 			}
 			
