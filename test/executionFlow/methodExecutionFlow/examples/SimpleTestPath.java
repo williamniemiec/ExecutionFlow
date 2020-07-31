@@ -125,7 +125,7 @@ public class SimpleTestPath extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(91,93,94,93,94,93,94,93,94,93,97)
+				Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
 			),
 			testPaths
 		);

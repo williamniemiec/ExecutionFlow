@@ -125,7 +125,7 @@ public class MultipleTestPaths extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(184,185)
+				Arrays.asList(188,189)
 			),
 			testPaths
 		);
@@ -184,7 +184,7 @@ public class MultipleTestPaths extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(184,188,189)
+				Arrays.asList(188,192,193)
 			),
 			testPaths
 		);
@@ -243,7 +243,7 @@ public class MultipleTestPaths extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(184,188,192)
+				Arrays.asList(188,192,196)
 			),
 			testPaths
 		);

@@ -86,7 +86,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 21;
+		int invocationLine = 24;
 		
 		
 		// Defines which methods will be collected
@@ -144,7 +144,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 31;
+		int invocationLine = 34;
 		
 		
 		// Defines which methods will be collected
@@ -183,7 +183,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(91,93,94,93,94,93,94,93,94,93,97)
+				Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
 			),
 			testPaths
 		);
@@ -202,7 +202,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 43;
+		int invocationLine = 46;
 		
 		
 		// Defines which methods will be collected
@@ -241,7 +241,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(91,93,97)
+				Arrays.asList(95,97,101)
 			),
 			testPaths
 		);
@@ -260,7 +260,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 55;
+		int invocationLine = 58;
 		
 		
 		// Defines which methods will be collected
@@ -299,7 +299,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(108,109,110,112,113,114,115,112,113,114,115,112,113,114,115,112,113,114,115,112,118)
+				Arrays.asList(112,113,114,116,117,118,119,116,117,118,119,116,117,118,119,116,122)
 			),
 			testPaths
 		);
@@ -319,7 +319,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 64;
+		int invocationLine = 67;
 		
 		
 		// Defines which methods will be collected
@@ -358,7 +358,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(151,153,155,153,155,153,155,153,155,153,155,153,155,153,155,153,155,153,155,153,155,153,158)
+				Arrays.asList(155,157,159,157,159,157,159,157,159,157,159,157,159,157,159,157,159,157,159,157,159,157,162)
 			),
 			testPaths
 		);
@@ -377,7 +377,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 73;
+		int invocationLine = 76;
 		
 		
 		// Defines which methods will be collected
@@ -416,7 +416,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(129,130,132,133,134,132,133,134,132,133,134,132,133,134,132,133,134,132,133,135,136,132,133,135,136,132,133,135,136,132,133,135,136,132,133,135,136,132,139)
+				Arrays.asList(133,134,136,137,138,136,137,138,136,137,138,136,137,138,136,137,138,136,137,139,140,136,137,139,140,136,137,139,140,136,137,139,140,136,137,139,140,136,143)
 			),
 			testPaths
 		);
@@ -435,7 +435,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 83;
+		int invocationLine = 86;
 		
 		
 		// Defines which methods will be collected
@@ -474,7 +474,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(197)
+				Arrays.asList(201)
 			),
 			testPaths
 		);
@@ -493,7 +493,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 101;
+		int invocationLine = 104;
 		
 		
 		// Defines which methods will be collected
@@ -532,7 +532,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(108,109,110,112,113,114,115,112,113,114,115,112,113,114,115,112,118)
+				Arrays.asList(112,113,114,116,117,118,119,116,117,118,119,116,122)
 			),
 			testPaths
 		);
@@ -551,7 +551,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 102;
+		int invocationLine = 105;
 		
 		
 		// Defines which methods will be collected
@@ -590,7 +590,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(91,93,94,93,94,93,94,93,94,93,97)
+				Arrays.asList(95,97,98,97,98,97,98,97,101)
 			),
 			testPaths
 		);
@@ -609,7 +609,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 115;
+		int invocationLine = 118;
 		
 		
 		// Defines which methods will be collected
@@ -648,7 +648,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(91,93,94,93,94,93,94,93,94,93,97)
+				Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
 			),
 			testPaths
 		);
@@ -667,7 +667,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 116;
+		int invocationLine = 119;
 		
 		
 		// Defines which methods will be collected
@@ -706,7 +706,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(108,109,110,112,113,114,115,112,113,114,115,112,113,114,115,112,118)
+				Arrays.asList(112,113,114,116,117,118,119,116,117,118,119,116,122)
 			),
 			testPaths
 		);

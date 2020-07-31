@@ -93,6 +93,8 @@ public class Polymorphism extends MethodExecutionFlowTest
 		testMethodSignature = "examples.polymorphism.PolymorphismTest.testParam()";
 		methodSignature = "examples.polymorphism.ClassInterface.testClassParam(ClassInterface)";
 		
+		init("examples.polymorphism.ClassInterface", testMethodSignature);
+		
 		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
 				.methodSignature(testMethodSignature)

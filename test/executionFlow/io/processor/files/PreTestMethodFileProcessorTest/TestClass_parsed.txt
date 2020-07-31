@@ -16,23 +16,23 @@ public class TestClass
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
-try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _9eca55ac767232f312325508b05c6f3d){}}
+try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _b72806d54f835f53e9225fb43ad1b51a){}}
 
 //	@org.junit.Test
 //	public void testFoo()
 //	{
-//try {		assertEquals("1", "1");} catch(Throwable _f7fca69a9e909bcecac82b289d8d4198){}
-//try {		assertEquals("1", "2");	} catch(Throwable _935511ca7592eeb34bf6f438b040f1fe){}// It will fail
+//try {		assertEquals("1", "1");} catch(Throwable _bfc54fb81bb80dca2903b88a483fa3e1){}
+//try {		assertEquals("1", "2");	} catch(Throwable _9a79f3ecc80c5fddb6be97ba1ae9d036){}// It will fail
 //	}
 	
 //	@org.junit.Test
 //	public void assertFailInTheMiddleTest() 
 //	{
 //		TestClass tc = new TestClass(99);
-//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _7fb987a4bf8266d1f924ed8b0fde8d40){}
+//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _9b77172200543e48fccf63e618208f9d){}
 //try {		assertEquals("nine", 
-//				tc.threePaths(3));} catch(Throwable _21672378ab33eb2715542bfeb2dd2c79){}		// It will fail
-//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _b9099002c24b4489fc72fb1aaba58cd6){}
+//				tc.threePaths(3));} catch(Throwable _972d0024f7ebd67409b47562960bec33){}		// It will fail
+//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _852ea840a2882ea4c769ed9d8ffda30a){}
 //	}
 	
 //	@org.junit.Test
@@ -40,7 +40,7 @@ try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _9eca55ac767232f31
 //	{
 //try {		assertEquals(param1, 			// Comment 1
 //				param2,					// Comment 2
-//				param3);} catch(Throwable _ab4669d3b1248b9a59136d6cda66d826){}				// Comment 3
+//				param3);} catch(Throwable _d47a62872d36cdff488c84323f5a3c1b){}				// Comment 3
 //	}
 	
 //	@org.junit.Test
@@ -49,7 +49,7 @@ try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _9eca55ac767232f31
 //try {		assertEquals (
 //				param1, 				// Comment 1
 //				param2,					// Comment 2
-//				param3);} catch(Throwable _75401329f84927b9d66c8d7875f2846b){}				// Comment 3
+//				param3);} catch(Throwable _8fa6c1b9bdbae9895a0fe5ccb4127b83){}				// Comment 3
 //	}
 	
 //	@org.junit.Test
@@ -59,6 +59,6 @@ try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _9eca55ac767232f31
 //				param1, 				// Comment 1
 //				param2,					// Comment 2
 //				param3					// Comment 3
-//		);} catch(Throwable _e339f05bcde322e75544086fc87bc14){}								// Comment 4
+//		);} catch(Throwable _e53b12863c00eea89c2c934ea0eb1db2){}								// Comment 4
 //	}
 }

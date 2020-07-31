@@ -47,7 +47,9 @@ public class MethodExecutionFlowTest
 			Path srcTestMethod, Path binTestMethod, String packageTestMethod, 
 			Object... testMethodArgs) throws IOException, ClassNotFoundException
 	{
-		// Initializes ExecutionFlow
+		// Initializes ExecutionFlow and loads invoked manager
+		ExecutionFlow.init(false);
+		ExecutionFlow.destroyTestMethodManager();
 		ExecutionFlow.init(true);
 				
 		// Creates backup from original files
@@ -107,25 +109,29 @@ public class MethodExecutionFlowTest
 	}
 	
 	@After
-	public void restoreTestMethod()
+	public void restoreTestMethod() throws ClassNotFoundException, IOException
 	{
-		ExecutionFlow.getTestMethodManager().restoreAll();
-		ExecutionFlow.getTestMethodManager().deleteBackup();
+		if (ExecutionFlow.getTestMethodManager().load())
+			ExecutionFlow.getTestMethodManager().restoreAll();	
 		
-		ExecutionFlow.destroyTestMethodManager();
+		testMethodManager.restoreAll();
+		
+		ExecutionFlow.getTestMethodManager().deleteBackup();
+		testMethodManager.deleteBackup();
+		testMethodManager = null;
+		ExecutionFlow.destroyTestMethodManager();		
 	}
 	
 	/**
 	 * Restores original files
 	 */
 	@AfterClass
-	public static void restoreInvoked()
+	public static void restoreInvoked() throws ClassNotFoundException, IOException
 	{
-		ExecutionFlow.getInvokedManager().restoreAll();
-		ExecutionFlow.getInvokedManager().deleteBackup();
+		if (ExecutionFlow.getInvokedManager().load())
+			ExecutionFlow.getInvokedManager().restoreAll();	
 		
-		testMethodManager.restoreAll();
-		testMethodManager.deleteBackup();
+		ExecutionFlow.getInvokedManager().deleteBackup();
 		
 		ExecutionFlow.destroyInvokedManager();
 	}

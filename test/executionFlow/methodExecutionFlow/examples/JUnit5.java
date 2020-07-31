@@ -72,74 +72,74 @@ public class JUnit5 extends MethodExecutionFlowTest
 	 * Tests {@link examples.junit5.ParameterizedTestAnnotation#test1()} test
 	 * method with its first argument.
 	 */
-	@Test
-	public void parameterizedTestAnnotation_test1_firstArg() throws Throwable 
-	{
-		/**
-		 * Stores information about collected methods.
-		 * <ul>
-		 * 	<li><b>Key:</b> Method invocation line</li>
-		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-		 * </ul>
-		 */
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-
-		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
-		int invocationLine = 24;
-		
-		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.test1(int)";
-		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
-		
-		init(
-				"examples.others.auxClasses.AuxClass", 
-				testMethodSignature,
-				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
-				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				-1
-		 );
-		
-		testMethodInfo = new MethodInvokedInfo.Builder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
-				.args(-1)
-				.build();
-		
-		methodInfo = new MethodInvokedInfo.Builder()
-				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
-				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
-				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
-				.build();
-		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-		
-		assertEquals(
-			Arrays.asList(
-				Arrays.asList(91,93,97)
-			),
-			testPaths
-		);
-	}
+//	@Test
+//	public void parameterizedTestAnnotation_test1_firstArg() throws Throwable 
+//	{
+//		/**
+//		 * Stores information about collected methods.
+//		 * <ul>
+//		 * 	<li><b>Key:</b> Method invocation line</li>
+//		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
+//		 * </ul>
+//		 */
+//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+//
+//		List<List<Integer>> testPaths;
+//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+//		String testMethodSignature, methodSignature;
+//		MethodInvokedInfo testMethodInfo, methodInfo;
+//		CollectorInfo ci;
+//		int invocationLine = 38;
+//		
+//		
+//		// Defines which methods will be collected
+//		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.test1(int)";
+//		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+//		
+//		init(
+//				"examples.junit5.ParameterizedTestAnnotation", 
+//				testMethodSignature,
+//				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
+//				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
+//				-1
+//		 );
+//		
+//		testMethodInfo = new MethodInvokedInfo.Builder()
+//				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
+//				.methodSignature(testMethodSignature)
+//				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
+//				.args(-1)
+//				.build();
+//		
+//		methodInfo = new MethodInvokedInfo.Builder()
+//				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
+//				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
+//				.invocationLine(invocationLine)
+//				.methodSignature(methodSignature)
+//				.methodName("factorial")
+//				.build();
+//		
+//		ci = new CollectorInfo.Builder()
+//				.methodInfo(methodInfo)
+//				.testMethodInfo(testMethodInfo)
+//				.build();
+//		
+//		methodsInvoked.add(ci);
+//		methodCollector.put(invocationLine, methodsInvoked);
+//		
+//		// Computes test path
+//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+//		
+//		// Gets test path
+//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+//		
+//		assertEquals(
+//			Arrays.asList(
+//				Arrays.asList(95,97,101)
+//			),
+//			testPaths
+//		);
+//	}
 	
 	/**
 	 * Tests {@link examples.junit5.ParameterizedTestAnnotation#test1()} test
@@ -154,7 +154,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 24;
+		int invocationLine = 38;
 		
 		
 		// Defines which methods will be collected
@@ -162,7 +162,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
 		init(
-				"examples.others.auxClasses.AuxClass", 
+				"examples.junit5.ParameterizedTestAnnotation", 
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
@@ -200,7 +200,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(91,93,97)
+				Arrays.asList(95,97,101)
 			),
 			testPaths
 		);
@@ -219,7 +219,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 24;
+		int invocationLine = 38;
 		
 		
 		// Defines which methods will be collected
@@ -227,7 +227,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
 		init(
-				"examples.others.auxClasses.AuxClass", 
+				"examples.junit5.ParameterizedTestAnnotation", 
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
@@ -265,7 +265,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(91,93,94,93,97)
+				Arrays.asList(95,97,98,97,101)
 			),
 			testPaths
 		);
@@ -284,7 +284,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 23;
+		int invocationLine = 25;
 		
 		
 		// Defines which methods will be collected
@@ -292,7 +292,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
 		init(
-				"examples.others.auxClasses.AuxClass", 
+				"examples.junit5.RepeatedTestAnnotation", 
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/RepeatedTestAnnotation.class"),
 				 Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/RepeatedTestAnnotation.java")
@@ -328,8 +328,8 @@ public class JUnit5 extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(91,93,94,93,94,93,94,93,94,93,97),
-				Arrays.asList(91,93,94,93,94,93,94,93,94,93,97)
+				Arrays.asList(95,97,98,97,98,97,98,97,98,97,101),
+				Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
 			),
 			testPaths
 		);
@@ -357,7 +357,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
 		init(
-				"examples.others.auxClasses.AuxClass", 
+				"examples.junit5.TestAnnotation", 
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/TestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/TestAnnotation.java")
@@ -393,7 +393,7 @@ public class JUnit5 extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-					Arrays.asList(91,93,94,93,94,93,94,93,94,93,97)
+					Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
 			),
 			testPaths
 		);

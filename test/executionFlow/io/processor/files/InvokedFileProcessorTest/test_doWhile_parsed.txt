@@ -9,7 +9,7 @@ public class test_doWhile
 	{
 		int i = num;
 
-		do {int _60891a050af5cba95d2aa1f8c22f7e14=0;
+		do {int _2d04ec1d71afb3782d476c2c967351df=0;
 			if (i < 0)
 if (Boolean.parseBoolean("True")) {				break;}
 			i--;

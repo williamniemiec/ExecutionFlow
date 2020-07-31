@@ -23,11 +23,11 @@ import executionFlow.runtime.SkipCollection;
 
 /**
  * Tests test path computation for the constructors of 
- * {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Class} class using 
+ * {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoked_Class} class using 
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
-public class InvokedMethodsByTestedInvokers extends ConstructorExecutionFlowTest
+public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes

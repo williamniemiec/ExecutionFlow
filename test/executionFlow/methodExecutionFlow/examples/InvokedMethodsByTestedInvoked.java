@@ -23,24 +23,28 @@ import executionFlow.runtime.SkipCollection;
 
 /**
  * Tests test path computation for the tested methods of 
- * {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Test} test using 
+ * {@link examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test} test using 
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class InvokedMethodsByTestedInvokers extends MethodExecutionFlowTest
+public class InvokedMethodsByTestedInvoked extends MethodExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Test.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), 
+					"bin/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Test.class");
 	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Test.java");
-	private static final String PACKAGE_TEST_METHOD = "examples.invokedMethodsByTestedInvokers";
+			Path.of(ExecutionFlow.getAppRootPath().toString(), 
+					"examples/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Test.java");
+	private static final String PACKAGE_TEST_METHOD = "examples.methodCalledByTestedInvokeds";
 	private static final Path PATH_BIN_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Class.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), 
+					"bin/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.class");
 	private static final Path PATH_SRC_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/invokedMethodsByTestedInvokers/InvokedMethodsByTestedInvoker_Class.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), 
+					"examples/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.java");
 	
 	
 	//-------------------------------------------------------------------------
@@ -90,10 +94,10 @@ public class InvokedMethodsByTestedInvokers extends MethodExecutionFlowTest
 		
 		
 		// Defines which methods will be collected
-		testMethodSignature = "examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Test.T()";
-		methodSignature = "examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Class.A()";
+		testMethodSignature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test.T()";
+		methodSignature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Class.A()";
 		
-		init("examples.invokedMethodsByTestedInvokers.InvokedMethodsByTestedInvoker_Class", testMethodSignature);
+		init("examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test", testMethodSignature);
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
