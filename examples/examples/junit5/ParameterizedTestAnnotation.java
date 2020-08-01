@@ -56,10 +56,7 @@ public class ParameterizedTestAnnotation
 	@CsvSource({"I, -1", "II, 0", "III, 1"})
 	public void test1(String word, int num)
 	{
-		AuxClass tc = new AuxClass(4);
-
-
-		assertEquals(1, tc.factorial(num));
+		assertEquals(2, AuxClass.countTotalArguments(word, num));
 	}
 	
 	@ParameterizedTest
@@ -80,14 +77,14 @@ public class ParameterizedTestAnnotation
 	@EnumSource(names = {"DAYS", "HOURS"}, value = ChronoUnit.class)
 	public void testWithEnumSourceInclude(ChronoUnit unit) 
 	{
-	    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));
+		assertEquals(1, AuxClass.countTotalArguments(unit));
 	}
 	
 	@ParameterizedTest
 	@EnumSource(names = {"DAYS", "HOURS"}, value = ChronoUnit.class)
 	public void testWithEnumSourceIncludeUsingInterface(TemporalUnit unit) 
 	{
-	    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));
+		assertEquals(1, AuxClass.countTotalArguments(unit));
 	}
 	
 	@ParameterizedTest

@@ -46,17 +46,15 @@ public aspect TestMethodCollector extends RuntimeCollector
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "Test_Method");
 	private static Checkpoint checkpoint_initial = 
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
+	public static int totalTests = -1;
 	private static String outputDir;
-	private FilesManager testMethodManager;
+	private String lastRepeatedTestSignature;
 	private String testClassName;
 	private String testClassPackage;
-	private boolean junit5NewTest;
 	private Path testClassPath;
+	private FilesManager testMethodManager;
 	private FileManager testMethodFileManager;
-	public static int totalTests = -1;
-	
-	boolean isRepeatedTest;
-	String lastRepeatedTestSignature;
+	private boolean isRepeatedTest;
 	
 	
 	//-------------------------------------------------------------------------
@@ -140,14 +138,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Checks if it is not the first run
 			if (checkpoint_initial.isActive())
-					ExecutionFlow.init(false);
+				ExecutionFlow.init(false);
 			else
 				ExecutionFlow.init(true);
 			
 			// Gets compiled file path of the test method
 			className = thisJoinPoint.getTarget().getClass().getSimpleName();
 			classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-			testClassPath = CollectorExecutionFlow.findClassPath(className, classSignature);
+			testClassPath = CollectorExecutionFlow.findBinPath(className, classSignature);
 			
 			// Gets source file path of the test method
 			testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
@@ -217,7 +215,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	{
 		ExecutionFlow ef;
 
-		
 		if (finished)
 			return;
 		
@@ -231,7 +228,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			String classSignature = testClassPackage.isEmpty() ? 
 					testClassName : testClassPackage + "." + testClassName;
 			
-		
+			
 			classPath.add(".");
 			classPath.add(testClassRootPath.relativize(ExecutionFlow.getAppRootPath()).toString());
 			classPath.add(libPath + "aspectjrt-1.9.2.jar");
@@ -248,16 +245,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 					e.printStackTrace();
 				}
 			}
-			
+
 			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 
 			finished = true;
 			firstTime = false;
-			
-			
 			isRepeatedTest = false;
 			lastRepeatedTestSignature = thisJoinPoint.getSignature().toString();
-			
 			
 			// Restores original test method file and its compiled file
 			try {
@@ -272,7 +266,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 				hasError = true;
 				ConsoleOutput.showError("Could not recover the backup file of the test method");
 				ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
-						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+						+ "#could-not-recover-all-backup-files");
 				e.printStackTrace();
 			}
 			
@@ -297,7 +292,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 						hasError = true;
 						ConsoleOutput.showError("Could not recover all backup files for methods");
 						ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
-								+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas#could-not-recover-all-backup-files");
+								+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+								+ "#could-not-recover-all-backup-files");
 						e.printStackTrace();
 					}
 
@@ -333,15 +329,15 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		// If the execution of the process of the application has been 
 		// completed all test paths have been computed
-		if (finished && !junit5NewTest)
+		if (finished)
 			return;
-
+		
 		// Gets test paths of the collected methods and export them
 		ef = new MethodExecutionFlow(methodCollector);
 		ef.execute().export();
-		
 		// Exports tested methods to a CSV
-		ef.setExporter(new TestedInvokedExporter("Testers", new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
+		ef.setExporter(new TestedInvokedExporter("Testers", 
+				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
 		
 		// Gets test paths of the collected constructors and export them
@@ -349,7 +345,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.execute().export();
 		
 		// Exports tested constructors to a CSV
-		ef.setExporter(new TestedInvokedExporter("Testers", new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
+		ef.setExporter(new TestedInvokedExporter("Testers", 
+				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
 		
 		reset();	// Prepares for next test

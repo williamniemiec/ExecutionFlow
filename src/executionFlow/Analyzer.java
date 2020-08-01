@@ -85,7 +85,7 @@ public class Analyzer
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 
 	

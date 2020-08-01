@@ -724,7 +724,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 119;
+		int invocationLine = 127;
 		
 		
 		// Defines which methods will be collected

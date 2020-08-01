@@ -29,8 +29,8 @@ public class FileManager implements Serializable
 	
 	private transient Path srcFile;
 	private transient Path originalSrcFile; 
-	private transient Path compiledFile;
-	private transient Path originalCompiledFile;
+	private transient Path binFile;
+	private transient Path originalBinFile;
 	private transient Path binDirectory;
 	private String classSignature;
 	private String filename;
@@ -89,9 +89,9 @@ public class FileManager implements Serializable
 			filename+"_parsed", 
 			FileEncoding.UTF_8
 		);
-		this.compiledFile = Path.of(binDirectory+"/"+filename+".class");
+		this.binFile = Path.of(binDirectory+"/"+filename+".class");
 		this.originalSrcFile = Path.of(srcFilePath.toAbsolutePath().toString()+"."+backupExtensionName); 
-		this.originalCompiledFile = Path.of(binDirectory+"/"+filename+".class."+backupExtensionName);
+		this.originalBinFile = Path.of(binDirectory+"/"+filename+".class."+backupExtensionName);
 		this.classSignature = classSignature;
 	}
 	
@@ -106,8 +106,8 @@ public class FileManager implements Serializable
 				+ "classSignature=" + classSignature
 				+ ", srcFile=" + srcFile 
 				+ ", originalSrcFile=" + originalSrcFile 
-				+ ", compiledFile="	+ compiledFile 
-				+ ", originalClassPath=" + originalCompiledFile 
+				+ ", compiledFile="	+ binFile 
+				+ ", originalClassPath=" + originalBinFile 
 				+ ", filename=" + filename
 				+ ", classOutput=" + binDirectory 
 				+ ", classPackage=" + classPackage 
@@ -244,13 +244,13 @@ public class FileManager implements Serializable
 	public FileManager revertCompilation() throws IOException
 	{
 		try {
-			if (Files.exists(originalCompiledFile)) {
+			if (Files.exists(originalBinFile)) {
 				
 				try {
-					Files.delete(compiledFile);
+					Files.delete(binFile);
 				} catch (IOException e) { }
 				
-				Files.move(originalCompiledFile, compiledFile);
+				Files.move(originalBinFile, binFile);
 			}
 		} catch (IOException e) {
 			throw new IOException("Revert compilation without backup");
@@ -260,13 +260,13 @@ public class FileManager implements Serializable
 	}
 	
 	/**
-	 * Checks whether file has class backup file.
+	 * Checks whether file has binary backup files (compiled files).
 	 * 
 	 * @return		If file has class backup file
 	 */
-	public boolean hasClassBackupStored()
+	public boolean hasBinBackupStored()
 	{
-		return Files.exists(originalCompiledFile);
+		return Files.exists(originalBinFile);
 	}
 	
 	/**
@@ -280,7 +280,7 @@ public class FileManager implements Serializable
 	}
 	
 	/**
-	 * Creates a copy of class file passed to the constructor to allow to 
+	 * Creates a copy of binary file passed to the constructor to allow to 
 	 * restore it after.
 	 * 
 	 * @return		Itself to allow chained calls
@@ -288,12 +288,12 @@ public class FileManager implements Serializable
 	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.class&gt;.
 	 * It will be saved in the same directory of the original file
 	 */
-	public FileManager createBackupCompiledFile()
+	public FileManager createBackupBinFile()
 	{
 		try {
 			Files.copy(
-				compiledFile,
-				originalCompiledFile, 
+				binFile,
+				originalBinFile, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
 		} catch (IOException e) {			// If already exists a .original, this means
@@ -301,7 +301,7 @@ public class FileManager implements Serializable
 				revertCompilation();	
 				if (!lastWasError) {
 					lastWasError = true;
-					createBackupCompiledFile();	// So, restore this file and starts again
+					createBackupBinFile();	// So, restore this file and starts again
 					lastWasError = false;
 				}
 			} catch (IOException e1) {
@@ -356,7 +356,7 @@ public class FileManager implements Serializable
 	
 	public Path getCompiledFile()
 	{
-		return compiledFile;
+		return binFile;
 	}
 	
 	public String getClassSignature()
@@ -374,9 +374,9 @@ public class FileManager implements Serializable
 			oos.defaultWriteObject();
 			oos.writeUTF(srcFile.toAbsolutePath().toString());
 			oos.writeUTF(binDirectory.toAbsolutePath().toString());
-			oos.writeUTF(compiledFile.toAbsolutePath().toString());
+			oos.writeUTF(binFile.toAbsolutePath().toString());
 			oos.writeUTF(originalSrcFile.toAbsolutePath().toString());
-			oos.writeUTF(originalCompiledFile.toAbsolutePath().toString());
+			oos.writeUTF(originalBinFile.toAbsolutePath().toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -388,9 +388,9 @@ public class FileManager implements Serializable
 			ois.defaultReadObject();
 			this.srcFile = Path.of(ois.readUTF());
 			this.binDirectory = Path.of(ois.readUTF());
-			this.compiledFile = Path.of(ois.readUTF());;
+			this.binFile = Path.of(ois.readUTF());;
 			this.originalSrcFile = Path.of(ois.readUTF());;
-			this.originalCompiledFile = Path.of(ois.readUTF());;
+			this.originalBinFile = Path.of(ois.readUTF());;
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}

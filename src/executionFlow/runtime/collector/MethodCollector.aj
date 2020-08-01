@@ -8,7 +8,6 @@ import java.util.List;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
-import executionFlow.runtime.SkipCollection;
 
 
 /**
@@ -42,43 +41,11 @@ public aspect MethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	private Path classPath;
 	private Path srcPath;
-	private boolean isRepeatedTest;
 	
 	
 	//-----------------------------------------------------------------------
 	//		Pointcuts
 	//-----------------------------------------------------------------------
-	/**
-	 * Intercepts repeated tests, that is, tests with 
-	 * <code>@org.junit.jupiter.api.RepeatedTest</code>
-	 */
-	pointcut repeatedTest():
-		!within(@SkipCollection *) &&
-		withincode(@executionFlow.runtime.isRepeatedTest * *.*());
-	
-	before(): repeatedTest()
-	{
-		isRepeatedTest = true;
-	}
-	
-	/**
-	 * Intercepts the following test methods:
-	 * <ul>
-	 * 	<li><code>@org.junit.Test</code></li>
-	 * 	<li><code>@org.junit.jupiter.api.Test</code></li>
-	 * 	<li><code>@org.junit.jupiter.params.ParameterizedTest</code></li>
-	 * </ul>
-	 */
-	pointcut noRepeatedTest():
-		!within(@SkipCollection *) &&
-		withincode(@org.junit.Test * *.*()) && 
-		!withincode(@executionFlow.runtime.isRepeatedTest * *.*());
-	
-	before(): noRepeatedTest()
-	{
-		isRepeatedTest = false;
-	}
-	
 	/**
 	 * Intercepts methods within a test method.
 	 */
@@ -151,7 +118,7 @@ public aspect MethodCollector extends RuntimeCollector
 		try {
 			// Gets class path and source path
 			className = CollectorExecutionFlow.getClassName(classSignature);
-			classPath = CollectorExecutionFlow.findClassPath(className, classSignature);
+			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
 			methodInfo = new MethodInvokedInfo.Builder()
@@ -178,10 +145,7 @@ public aspect MethodCollector extends RuntimeCollector
 			// If the method is called in a loop, stores this method in a list with its arguments and constructor
 			if (methodCollector.containsKey(invocationLine)) {
 				list = methodCollector.get(invocationLine);
-
-				if (!isRepeatedTest) {
-					list.add(ci);
-				}
+				list.add(ci);
 			} 
 			// Else stores the method with its arguments and constructor
 			else {	

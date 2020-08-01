@@ -111,7 +111,7 @@ public abstract class ExecutionFlow
 	 */
 	static {
 		EXPORT = TestPathExportType.CONSOLE;
-		//EXPORT = TestPathExportType.FILE;
+//		EXPORT = TestPathExportType.FILE;
 	}
 	
 

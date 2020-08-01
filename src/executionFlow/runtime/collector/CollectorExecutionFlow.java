@@ -33,7 +33,7 @@ public class CollectorExecutionFlow
 	/**
 	 * Necessary for {@link #findClassPath} method;
 	 */
-	private static Path classPath;
+	private static Path binPath;
 	
 	private static Path srcPath;
 	
@@ -119,24 +119,25 @@ public class CollectorExecutionFlow
 	 * 
 	 * @throws		IOException If class does not exist
 	 */
-	public static Path findClassPath(String className, String classSignature) throws IOException 
+	public static Path findBinPath(String className, String classSignature) throws IOException 
 	{
 		// Gets folder where .class is
 		String path = extractPathFromSignature(classSignature);
+		
 		
 		// Finds absolute path where the class file is
 		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+className+".class")) {
-		        	classPath = file;
+		        	binPath = file;
 		        }
 		        
 		        return FileVisitResult.CONTINUE;
 		    }
 		});
 		
-		return classPath;
+		return binPath;
 	}
 	
 	/**

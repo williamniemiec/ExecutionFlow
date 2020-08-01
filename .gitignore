@@ -1,3 +1,4 @@
 .settings
 bin
 docs/uml/*.dia~
+*.checkpoint

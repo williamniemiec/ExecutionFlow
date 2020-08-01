@@ -205,7 +205,7 @@ public class FilesManager
 			save();
 		}
 
-		fm.createBackupCompiledFile().compileFile();
+		fm.createBackupBinFile().compileFile();
 		
 		return this;
 	}

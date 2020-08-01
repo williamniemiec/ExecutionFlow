@@ -82,8 +82,13 @@ public class JUnit4Runner
 					m.find();
 					totalTests = Integer.valueOf(m.group());
 				}
-				else if (line.contains("JUnit version") && displayVersion)
+				else if (line.contains("JUnit version")) {
+					if (displayVersion)
+						System.out.println(line);
+				}
+				else {
 					System.out.println(line);
+				}
 			}
 			
 			// Closes process

@@ -243,4 +243,15 @@ public class AuxClass
 	{
 		return str + num;
 	}
+	
+	public static int countTotalArguments(Object... args)
+	{
+		int i;
+		
+		for (i=0; i<args.length; i++) {
+			continue;
+		}
+		
+		return i;
+	}
 }

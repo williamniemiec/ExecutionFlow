@@ -51,13 +51,13 @@ public class FileCompiler
 	/**
 	 * Compiles .java file.
 	 * 
-	 * @param		fileToCompile Path of source file to be compiled
+	 * @param		target Path of source file to be compiled
 	 * @param		outputDir Path where generated .class will be saved
 	 * @param		encode File encoding
 	 * 
 	 * @throws		IOException If an error occurs during compilation
 	 */
-	public static void compile(Path fileToCompile, Path outputDir, FileEncoding encode) throws IOException
+	public static void compile(Path target, Path outputDir, FileEncoding encode) throws IOException
 	{
 		Main compiler = new Main();
 		MessageHandler m = new MessageHandler();
@@ -94,7 +94,7 @@ public class FileCompiler
 						+ appRootPath + "\\lib\\junit-jupiter-params-5.6.2.jar",
 				"-d", 
 				outputDir.toAbsolutePath().toString(), 
-				fileToCompile.toAbsolutePath().toString()
+				target.toAbsolutePath().toString()
 			},m);
 		
 		compiler.quit();

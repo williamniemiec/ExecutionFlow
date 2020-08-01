@@ -55,7 +55,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * lines.
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 	
 	
