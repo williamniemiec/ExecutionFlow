@@ -293,7 +293,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				" "
+				new Object[] {" "}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -358,7 +358,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"   "
+				new Object[] {"   "}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -423,7 +423,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"\t"
+				new Object[] {"\t"}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -488,7 +488,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"\n"
+				new Object[] {"\n"}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -545,7 +545,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		
 		// Defines which methods will be collected
-		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.nullEmptyAndBlankStrings(String)";
+		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.nullTest(String)";
 		methodSignature = "examples.others.auxClasses.AuxClass.trim(String)";
 		
 		init(
@@ -553,14 +553,14 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"\n"
+				new Object[] {null}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
 				.methodSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
-				.args("\n")
+				.args(new Object[] {null})
 				.build();
 		
 		methodInfo = new MethodInvokedInfo.Builder()
@@ -626,7 +626,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"I", -1
+				new Object[] {"I", -1}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -660,7 +660,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(249,251,252,251,255)
+				Arrays.asList(249,251,252,251,252,251,255)
 			),
 			testPaths
 		);
@@ -691,7 +691,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"II", 0
+				new Object[] {"II", 0}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -756,7 +756,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"III", 1
+				new Object[] {"III", 1}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -790,7 +790,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(249,251,252,251,252,251,252,251,255)
+				Arrays.asList(249,251,252,251,252,251,255)
 			),
 			testPaths
 		);
@@ -821,7 +821,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"Hello", 5
+				new Object[] {"Hello", 5}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -886,7 +886,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				testMethodSignature,
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"),
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"),
-				"Hello", 5
+				new Object[] {"Hello", 5}
 		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
@@ -1057,7 +1057,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	}
 	
 	/**
-	 * Tests {@link examples.junit5.ParameterizedTestAnnotation#testWithEnumSourceIncludeUsingInterface(ChronoUnit)} test
+	 * Tests {@link examples.junit5.ParameterizedTestAnnotation#testWithEnumSourceIncludeUsingInterface(TemporalUnit)} test
 	 * method with its first argument.
 	 */
 	@Test
@@ -1073,7 +1073,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		
 		// Defines which methods will be collected
-		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.testWithEnumSourceIncludeUsingInterface(ChronoUnit)";
+		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.testWithEnumSourceIncludeUsingInterface(TemporalUnit)";
 		methodSignature = "examples.others.auxClasses.AuxClass.countTotalArguments(Object[])";
 		
 		init(
@@ -1122,7 +1122,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	}
 	
 	/**
-	 * Tests {@link examples.junit5.ParameterizedTestAnnotation#testWithEnumSourceIncludeUsingInterface(ChronoUnit)} test
+	 * Tests {@link examples.junit5.ParameterizedTestAnnotation#testWithEnumSourceIncludeUsingInterface(TemporalUnit)} test
 	 * method with its second argument.
 	 */
 	@Test
@@ -1138,7 +1138,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		
 		// Defines which methods will be collected
-		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.testWithEnumSourceIncludeUsingInterface(ChronoUnit)";
+		testMethodSignature = "examples.junit5.ParameterizedTestAnnotation.testWithEnumSourceIncludeUsingInterface(TemporalUnit)";
 		methodSignature = "examples.others.auxClasses.AuxClass.countTotalArguments(Object[])";
 		
 		init(
