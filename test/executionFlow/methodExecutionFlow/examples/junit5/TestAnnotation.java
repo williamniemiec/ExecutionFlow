@@ -1,4 +1,4 @@
-package executionFlow.methodExecutionFlow.examples;
+package executionFlow.methodExecutionFlow.examples.junit5;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,42 +23,41 @@ import executionFlow.runtime.SkipCollection;
 
 /**
  * Tests test path computation for the tested methods of 
- * {@link examples.others.SimpleTestPath} test using 
- * {@link MethodExecutionFlow} class.
+ * {@link examples.junit5.TestAnnotation} test using 
+ * {@link MethodExecutionFlow}.
  */
 @SkipCollection
-public class SimpleTestPath extends MethodExecutionFlowTest
+public class TestAnnotation extends MethodExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/SimpleTestPath.class");
-	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/SimpleTestPath.java");
-	private static final String PACKAGE_TEST_METHOD = "examples.others";
-	private static final Path PATH_BIN_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class");
-	private static final Path PATH_SRC_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java");
+	private static final String PACKAGE_TEST_METHOD = "examples.junit5";
 	
 	
 	//-------------------------------------------------------------------------
 	//		Test preparers
 	//-------------------------------------------------------------------------
 	/**
+	 * Initializes a test method.
+	 * 
 	 * @param		classSignature Test class signature
 	 * @param		testMethodSignature Test method signature
+	 * @param		pathBinTestMethod Test method compiled file path
+	 * @param		pathSrcTestMethod Test method source file path
+	 * @param		testMethodArgs Test method arguments (when it is a parameterized test)
 	 * 
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} was not
 	 * found
 	 */
-	public void init(String classSignature, String testMethodSignature) 
+	private void init(String classSignature, String testMethodSignature, 
+			Path pathBinTestMethod, Path pathSrcTestMethod, Object... testMethodArgs) 
 			throws IOException, ClassNotFoundException
 	{
-		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
-				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
+		init(classSignature, testMethodSignature, pathSrcTestMethod, 
+				pathBinTestMethod, PACKAGE_TEST_METHOD, testMethodArgs);
+		
 	}
 	
 	
@@ -66,44 +65,41 @@ public class SimpleTestPath extends MethodExecutionFlowTest
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests {@link examples.others.SimpleTestPath#simpleTestPath()} 
-	 * test method.
+	 * Tests {@link examples.junit5.TestAnnotation#test1()} test
+	 * method.
 	 */
 	@Test
-	public void simpleTestPath() throws Throwable 
+	public void testAnnotation_test1() throws Throwable 
 	{
-		/**
-		 * Stores information about collected methods.
-		 * <ul>
-		 * 	<li><b>Key:</b> Method invocation line</li>
-		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-		 * </ul>
-		 */
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 19;
+		int invocationLine = 28;
 		
 		
 		// Defines which methods will be collected
-		testMethodSignature = "examples.others.SimpleTestPath.simpleTestPath()";
+		testMethodSignature = "examples.junit5.TestAnnotation.test1()";
 		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
 		
-		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		init(
+				"examples.junit5.TestAnnotation", 
+				testMethodSignature,
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/TestAnnotation.class"),
+				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/TestAnnotation.java")
+		 );
 		
 		testMethodInfo = new MethodInvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/TestAnnotation.class"))
 				.methodSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/TestAnnotation.java"))
 				.build();
 		
 		methodInfo = new MethodInvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
+				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
+				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
 				.methodName("factorial")
@@ -125,7 +121,7 @@ public class SimpleTestPath extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
+					Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
 			),
 			testPaths
 		);

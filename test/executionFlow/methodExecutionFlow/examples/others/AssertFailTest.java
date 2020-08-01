@@ -1,4 +1,4 @@
-package executionFlow.methodExecutionFlow.examples;
+package executionFlow.methodExecutionFlow.examples.others;
 
 import static org.junit.Assert.assertEquals;
 

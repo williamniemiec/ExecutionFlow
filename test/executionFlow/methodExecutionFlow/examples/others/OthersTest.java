@@ -1,4 +1,4 @@
-package executionFlow.methodExecutionFlow.examples;
+package executionFlow.methodExecutionFlow.examples.others;
 
 import static org.junit.Assert.assertEquals;
 
@@ -707,6 +707,177 @@ public class OthersTest extends MethodExecutionFlowTest
 		assertEquals(
 			Arrays.asList(
 				Arrays.asList(112,113,114,116,117,118,119,116,117,118,119,116,122)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.onlyOneMethod()} test method.
+	 */
+	@Test
+	public void onlyOneMethod() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 119;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.onlyOneMethod()";
+		methodSignature = "examples.others.auxClasses.AuxClass.getNumber()";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("getNumber")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(206)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.methodCallMultiLineArgs()} test method.
+	 */
+	@Test
+	public void methodCallMultiLineArgs() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 134;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.methodCallMultiLineArgs()";
+		methodSignature = "examples.others.auxClasses.AuxClass.identity(Object[])";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("identity")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(211)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.methodCallMultiLineArgs()} test method.
+	 */
+	@Test
+	public void methodCallMultiLineArgs_1() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 141;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.anonymousObjectReturn()";
+		methodSignature = "examples.others.auxClasses.AuxClass.anonymousObjectReturn()";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("anonymousObjectReturn")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(224)
 			),
 			testPaths
 		);
