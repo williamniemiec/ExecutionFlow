@@ -187,12 +187,12 @@ public class FileManager implements Serializable
 	{
 		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
 								0 : classPackage.split("\\.").length;
-		
+
 		// Sets path to the compiler
 		for (int i=0; i<packageFolders; i++) {
 			binDirectory = binDirectory.getParent();
 		}
-		
+
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding
 		try {

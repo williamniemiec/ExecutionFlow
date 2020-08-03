@@ -10,7 +10,7 @@ import java.util.Set;
 
 import executionFlow.util.CSV;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.DataUtils;
+import executionFlow.util.DataUtil;
 import executionFlow.util.Pair;
 
 
@@ -117,7 +117,7 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 		output.delete();
 		
 		// Merges current CSV file with new collected invoked and its test methods
-		DataUtils.mergesMaps(invoked_testMethods, invokedMethodSignatures);
+		DataUtil.mergesMaps(invoked_testMethods, invokedMethodSignatures);
 		
 		// Writes collected invoked along with a list of test methods that 
 		// call them to a CSV file

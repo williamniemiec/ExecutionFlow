@@ -5,14 +5,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import executionFlow.util.DataUtils;
+import executionFlow.util.FileUtil;
 
 
 /**
  * Responsible for gathering project dependencies. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.1.0
  * @since		2.0.0
  */
 public abstract class DependencyManager 
@@ -52,7 +52,7 @@ public abstract class DependencyManager
 		if (dependencies == null) {
 			dependencies = new ArrayList<>();
 			pull();
-			DataUtils.putFilesInFolder(dependencies, PATH_DEPENDENCIES);
+			FileUtil.putFilesInFolder(dependencies, PATH_DEPENDENCIES);
 		}
 	}
 	

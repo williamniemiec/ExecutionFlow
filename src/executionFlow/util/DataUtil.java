@@ -1,8 +1,6 @@
 package executionFlow.util;
 
-import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -18,10 +16,10 @@ import java.util.Set;
  * Contains methods that perform data manipulation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.1.0
  * @since		2.0.0
  */
-public class DataUtils 
+public class DataUtil 
 {
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -304,28 +302,5 @@ public class DataUtils
 			response.append(".");
 		
 		return response.toString();
-	}
-	
-	/**
-	 * Copies files to a directory;
-	 * 
-	 * @param		files Files to be copied
-	 * @param		output Destination directory
-	 * 
-	 * @throws		IOException If a failure occurs during copying
-	 */
-	public static void putFilesInFolder(List<Path> files, Path output) throws IOException
-	{
-		if (!Files.exists(output)) {
-			Files.createDirectories(output);
-		}
-		
-		for (Path p : files) {
-			Path target = output.resolve(p.getFileName());
-			
-			
-			if (Files.notExists(target))
-				Files.copy(p, target);
-		}
 	}
 }

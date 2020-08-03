@@ -16,7 +16,7 @@ import executionFlow.io.FileEncoding;
 import executionFlow.runtime.collector.CollectorExecutionFlow;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.CurlyBracketBalance;
-import executionFlow.util.DataUtils;
+import executionFlow.util.DataUtil;
 
 
 /**
@@ -854,7 +854,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		private String repeatedTest_putWhileLoop(String line)
 		{
 			int idx = line.lastIndexOf("{");
-			String varname = DataUtils.generateVarName();
+			String varname = DataUtil.generateVarName();
 			
 			
 			return line.substring(0, idx + 1) + "int "+ varname + "=0;while(" +
@@ -919,7 +919,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		public String parse(String line)
 		{
 			int lastCurlyBracketInSameLine = line.lastIndexOf("}");
-			String varname = DataUtils.generateVarName();
+			String varname = DataUtil.generateVarName();
 			
 			
 			// Checks if it is within a multiline assert

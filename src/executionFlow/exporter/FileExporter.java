@@ -14,7 +14,7 @@ import java.util.Map;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.DataUtils;
+import executionFlow.util.DataUtil;
 import executionFlow.util.Pair;
 
 
@@ -71,7 +71,7 @@ public class FileExporter implements ExporterExecutionFlow
 				
 				// Gets save path
 				Path savePath = Paths.get(ExecutionFlow.getCurrentProjectRoot().toString(), dirName,
-					DataUtils.generateDirectoryPath(signatures.second, isConstructor));
+					DataUtil.generateDirectoryPath(signatures.second, isConstructor));
 				
 				// Writes test paths in the file
 				writeFile(e.getValue(), savePath, signatures.first);
@@ -132,7 +132,7 @@ public class FileExporter implements ExporterExecutionFlow
 		for (Pair<String, String> signatures : classTestPaths.keySet()) {	
 			// Gets save path
 			Path savePath = Paths.get(ExecutionFlow.getAppRootPath().toString(), dirName,
-					DataUtils.generateDirectoryPath(signatures.second, isConstructor));
+					DataUtil.generateDirectoryPath(signatures.second, isConstructor));
 			
 			File dir = savePath.toFile(), testPathFile;
 			String[] files;

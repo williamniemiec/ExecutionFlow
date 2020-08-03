@@ -10,7 +10,7 @@ import org.aspectj.tools.ajc.Main;
 import executionFlow.ExecutionFlow;
 import executionFlow.dependency.DependencyManager;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.DataUtils;
+import executionFlow.util.DataUtil;
 
 
 /**
@@ -74,7 +74,7 @@ public class FileCompiler
 			ConsoleOutput.showInfo("Fetch completed");
 		}
 		
-		mavenDependencies = DataUtils.pathListToString(DependencyManager.getDependencies(), ";", false);
+		mavenDependencies = DataUtil.pathListToString(DependencyManager.getDependencies(), ";", false);
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 

@@ -8,7 +8,7 @@ import java.util.List;
 import executionFlow.ExecutionFlow;
 import executionFlow.util.CSV;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.DataUtils;
+import executionFlow.util.DataUtil;
 
 
 /**
@@ -83,7 +83,7 @@ public class MethodsCalledByTestedInvokedExporter
 		ConsoleOutput.showInfo("Exporting methods called by tested invoked...");
 
 		File dirPath = new File(ExecutionFlow.getCurrentProjectRoot().toFile(), 
-				dirName + "/" + DataUtils.generateDirectoryPath(invokedSignature, isConstructor));
+				dirName + "/" + DataUtil.generateDirectoryPath(invokedSignature, isConstructor));
 		File output = new File(dirPath, filename+".csv");
 		
 		

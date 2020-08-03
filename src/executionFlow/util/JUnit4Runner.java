@@ -130,7 +130,7 @@ public class JUnit4Runner
 		
 		pb = new ProcessBuilder(
 			"cmd.exe", "/c",
-			"java", "-cp", DataUtils.implode(classPath, ";"), 
+			"java", "-cp", DataUtil.implode(classPath, ";"), 
 			"org.junit.runner.JUnitCore", classSignature
 		);
 		
