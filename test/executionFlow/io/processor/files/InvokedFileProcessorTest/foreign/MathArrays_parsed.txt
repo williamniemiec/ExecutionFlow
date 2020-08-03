@@ -51,7 +51,8 @@ public class MathArrays {
     /**
      * Private constructor.
      */
-    private MathArrays() {}
+    private MathArrays() {
+    	}
 
     /**
      * Real-valued function that operate on an array or a part of it.
@@ -71,7 +72,7 @@ public class MathArrays {
          * @param numElements Number of elements to take into account.
          * @return the result of the operation.
          */
-@executionFlow.runtime.CollectCalls         double evaluate(double[] array,
+        double evaluate(double[] array,
                         int startIndex,
                         int numElements);
     }
@@ -101,7 +102,7 @@ public class MathArrays {
      * @param val Scalar
      * @since 3.2
      */
-@executionFlow.runtime.CollectCalls     public static void scaleInPlace(double val, final double[] arr) {
+    public static void scaleInPlace(double val, final double[] arr) {
         for (int i = 0; i < arr.length; i++) {
             arr[i] *= val;
         }
@@ -117,7 +118,7 @@ public class MathArrays {
      * @throws DimensionMismatchException if the array lengths differ.
      * @since 3.1
      */
-@executionFlow.runtime.CollectCalls     public static double[] ebeAdd(double[] a, double[] b)
+    public static double[] ebeAdd(double[] a, double[] b)
         throws DimensionMismatchException {
         checkEqualLength(a, b);
 
@@ -137,7 +138,7 @@ public class MathArrays {
      * @throws DimensionMismatchException if the array lengths differ.
      * @since 3.1
      */
-@executionFlow.runtime.CollectCalls     public static double[] ebeSubtract(double[] a, double[] b)
+    public static double[] ebeSubtract(double[] a, double[] b)
         throws DimensionMismatchException {
         checkEqualLength(a, b);
 
@@ -157,7 +158,7 @@ public class MathArrays {
      * @throws DimensionMismatchException if the array lengths differ.
      * @since 3.1
      */
-@executionFlow.runtime.CollectCalls     public static double[] ebeMultiply(double[] a, double[] b)
+    public static double[] ebeMultiply(double[] a, double[] b)
         throws DimensionMismatchException {
         checkEqualLength(a, b);
 
@@ -177,7 +178,7 @@ public class MathArrays {
      * @throws DimensionMismatchException if the array lengths differ.
      * @since 3.1
      */
-@executionFlow.runtime.CollectCalls     public static double[] ebeDivide(double[] a, double[] b)
+    public static double[] ebeDivide(double[] a, double[] b)
         throws DimensionMismatchException {
         checkEqualLength(a, b);
 
@@ -196,7 +197,7 @@ public class MathArrays {
      * @return the L<sub>1</sub> distance between the two points
      * @throws DimensionMismatchException if the array lengths differ.
      */
-@executionFlow.runtime.CollectCalls     public static double distance1(double[] p1, double[] p2)
+    public static double distance1(double[] p1, double[] p2)
     throws DimensionMismatchException {
         checkEqualLength(p1, p2);
         double sum = 0;
@@ -214,7 +215,7 @@ public class MathArrays {
      * @return the L<sub>1</sub> distance between the two points
      * @throws DimensionMismatchException if the array lengths differ.
      */
-@executionFlow.runtime.CollectCalls     public static int distance1(int[] p1, int[] p2)
+    public static int distance1(int[] p1, int[] p2)
     throws DimensionMismatchException {
         checkEqualLength(p1, p2);
         int sum = 0;
@@ -232,7 +233,7 @@ public class MathArrays {
      * @return the L<sub>2</sub> distance between the two points
      * @throws DimensionMismatchException if the array lengths differ.
      */
-@executionFlow.runtime.CollectCalls     public static double distance(double[] p1, double[] p2)
+    public static double distance(double[] p1, double[] p2)
     throws DimensionMismatchException {
         checkEqualLength(p1, p2);
         double sum = 0;
@@ -251,7 +252,7 @@ public class MathArrays {
      * @return the L<sub>2</sub> distance between the two points
      * @throws DimensionMismatchException if the array lengths differ.
      */
-@executionFlow.runtime.CollectCalls     public static double distance(int[] p1, int[] p2)
+    public static double distance(int[] p1, int[] p2)
     throws DimensionMismatchException {
       checkEqualLength(p1, p2);
       double sum = 0;
@@ -270,7 +271,7 @@ public class MathArrays {
      * @return the L<sub>&infin;</sub> distance between the two points
      * @throws DimensionMismatchException if the array lengths differ.
      */
-@executionFlow.runtime.CollectCalls     public static double distanceInf(double[] p1, double[] p2)
+    public static double distanceInf(double[] p1, double[] p2)
     throws DimensionMismatchException {
         checkEqualLength(p1, p2);
         double max = 0;
@@ -288,7 +289,7 @@ public class MathArrays {
      * @return the L<sub>&infin;</sub> distance between the two points
      * @throws DimensionMismatchException if the array lengths differ.
      */
-@executionFlow.runtime.CollectCalls     public static int distanceInf(int[] p1, int[] p2)
+    public static int distanceInf(int[] p1, int[] p2)
     throws DimensionMismatchException {
         checkEqualLength(p1, p2);
         int max = 0;
@@ -323,32 +324,34 @@ public class MathArrays {
         T previous = val[0];
         final int max = val.length;
         for (int i = 1; i < max; i++) {
-            final int comp;int _2879a2bfaec6aec0d9ec7e58ac2acd16=0;
+            final int comp;
             switch (dir) {
-            case INCREASING:int _95e5b3a87a47e63a1e3217080c842dc5=0;
+            case INCREASING:
                 comp = previous.compareTo(val[i]);
                 if (strict) {
                     if (comp >= 0) {
                         return false;
-                    }}
- else {int _2bfb1c3b29b75559a752b1f7ddd320d1=0;
+                    }
+                
+                    } else {
                     if (comp > 0) {
                         return false;
                     }
                 }
-if (Boolean.parseBoolean("True")) {                break;}
-            case DECREASING:int _428486572218380c4958248730fd64a0=0;
+                break;
+            case DECREASING:
                 comp = val[i].compareTo(previous);
                 if (strict) {
                     if (comp >= 0) {
                         return false;
-                    }}
- else {int _913e8074cc05f503c0c30b7894de8d3a=0;
+                    }
+                
+                    } else {
                     if (comp > 0) {
                        return false;
                     }
                 }
-if (Boolean.parseBoolean("True")) {                break;}
+                break;
             default:
                 // Should never happen.
                 throw new MathInternalError();
@@ -367,7 +370,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @param strict Whether the order should be strict.
      * @return {@code true} if sorted, {@code false} otherwise.
      */
-@executionFlow.runtime.CollectCalls     public static boolean isMonotonic(double[] val, OrderDirection dir, boolean strict) {
+    public static boolean isMonotonic(double[] val, OrderDirection dir, boolean strict) {
         return checkOrder(val, dir, strict, false);
     }
 
@@ -382,12 +385,13 @@ if (Boolean.parseBoolean("True")) {                break;}
      * {@code abort} is {@code true}.
      * @since 3.6
      */
-@executionFlow.runtime.CollectCalls     public static boolean checkEqualLength(double[] a,
+    public static boolean checkEqualLength(double[] a,
                                            double[] b,
                                            boolean abort) {
         if (a.length == b.length) {
-            return true;}
- else {int _7977377b77c4c5ca229eab0686a7859d=0;
+            return true;
+        
+            } else {
             if (abort) {
                 throw new DimensionMismatchException(a.length, b.length);
             }
@@ -403,7 +407,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws DimensionMismatchException if the lengths differ.
      * @since 3.6
      */
-@executionFlow.runtime.CollectCalls     public static void checkEqualLength(double[] a,
+    public static void checkEqualLength(double[] a,
                                         double[] b) {
         checkEqualLength(a, b, true);
     }
@@ -420,12 +424,13 @@ if (Boolean.parseBoolean("True")) {                break;}
      * {@code abort} is {@code true}.
      * @since 3.6
      */
-@executionFlow.runtime.CollectCalls     public static boolean checkEqualLength(int[] a,
+    public static boolean checkEqualLength(int[] a,
                                            int[] b,
                                            boolean abort) {
         if (a.length == b.length) {
-            return true;}
- else {int _8c4fc609090eef74763344768c78d447=0;
+            return true;
+        
+            } else {
             if (abort) {
                 throw new DimensionMismatchException(a.length, b.length);
             }
@@ -441,7 +446,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws DimensionMismatchException if the lengths differ.
      * @since 3.6
      */
-@executionFlow.runtime.CollectCalls     public static void checkEqualLength(int[] a,
+    public static void checkEqualLength(int[] a,
                                         int[] b) {
         checkEqualLength(a, b, true);
     }
@@ -457,38 +462,40 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NonMonotonicSequenceException if the array is not sorted
      * and {@code abort} is {@code true}.
      */
-@executionFlow.runtime.CollectCalls     public static boolean checkOrder(double[] val, OrderDirection dir,
+    public static boolean checkOrder(double[] val, OrderDirection dir,
                                      boolean strict, boolean abort)
         throws NonMonotonicSequenceException {
         double previous = val[0];
         final int max = val.length;
 
-        int index;int _b0d52b49a6cd5411616516216e4f50a4=0;
+        int index;
         ITEM:
         for (index = 1; index < max; index++) {
             switch (dir) {
-            case INCREASING:int _b3df53986c8063658f6fdfbd375298d3=0;
+            case INCREASING:
                 if (strict) {
                     if (val[index] <= previous) {
-                        break ITEM;int _e163a0aa0db03d6a354ada2233d16754=0;
-                    }}
- else {int _b85b3349fcd68ae371594bcb7ba6a955=0;
+                        break ITEM;
+                    }
+                
+                    } else {
                     if (val[index] < previous) {
-                        break ITEM;int _66b29612b371612ee21ae952dea6cb11=0;
+                        break ITEM;
                     }
                 }
-if (Boolean.parseBoolean("True")) {                break;}
-            case DECREASING:int _d9799772b60de061d46e748aa2b53f79=0;
+                break;
+            case DECREASING:
                 if (strict) {
                     if (val[index] >= previous) {
-                        break ITEM;int _e5f3d923dcc90322ed0d90b1e30f58c6=0;
-                    }}
- else {int _36db7571c62241504e3fe70f1f23d017=0;
+                        break ITEM;
+                    }
+                
+                    } else {
                     if (val[index] > previous) {
-                        break ITEM;int _68f444ecf52fa8695538133f5f646ca2=0;
+                        break ITEM;
                     }
                 }
-if (Boolean.parseBoolean("True")) {                break;}
+                break;
             default:
                 // Should never happen.
                 throw new MathInternalError();
@@ -504,8 +511,9 @@ if (Boolean.parseBoolean("True")) {                break;}
 
         // Loop early exit means wrong ordering.
         if (abort) {
-            throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);}
- else {int _5b61f6e32e4fbc6dd9624690d1141d5e=0;
+            throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);
+        
+            } else {
             return false;
         }
     }
@@ -519,7 +527,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NonMonotonicSequenceException if the array is not sorted.
      * @since 2.2
      */
-@executionFlow.runtime.CollectCalls     public static void checkOrder(double[] val, OrderDirection dir,
+    public static void checkOrder(double[] val, OrderDirection dir,
                                   boolean strict) throws NonMonotonicSequenceException {
         checkOrder(val, dir, strict, true);
     }
@@ -531,7 +539,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NonMonotonicSequenceException if the array is not sorted.
      * @since 2.2
      */
-@executionFlow.runtime.CollectCalls     public static void checkOrder(double[] val) throws NonMonotonicSequenceException {
+    public static void checkOrder(double[] val) throws NonMonotonicSequenceException {
         checkOrder(val, OrderDirection.INCREASING, true);
     }
 
@@ -543,7 +551,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws DimensionMismatchException if input array is not rectangular
      * @since 3.1
      */
-@executionFlow.runtime.CollectCalls     public static void checkRectangular(final long[][] in)
+    public static void checkRectangular(final long[][] in)
         throws NullArgumentException, DimensionMismatchException {
         MathUtils.checkNotNull(in);
         for (int i = 1; i < in.length; i++) {
@@ -563,7 +571,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * strictly positive.
      * @since 3.1
      */
-@executionFlow.runtime.CollectCalls     public static void checkPositive(final double[] in)
+    public static void checkPositive(final double[] in)
         throws NotStrictlyPositiveException {
         for (int i = 0; i < in.length; i++) {
             if (in[i] <= 0) {
@@ -579,7 +587,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NotANumberException if an entry is {@code NaN}.
      * @since 3.4
      */
-@executionFlow.runtime.CollectCalls     public static void checkNotNaN(final double[] in)
+    public static void checkNotNaN(final double[] in)
         throws NotANumberException {
         for(int i = 0; i < in.length; i++) {
             if (Double.isNaN(in[i])) {
@@ -595,7 +603,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NotPositiveException if any array entries are less than 0.
      * @since 3.1
      */
-@executionFlow.runtime.CollectCalls     public static void checkNonNegative(final long[] in)
+    public static void checkNonNegative(final long[] in)
         throws NotPositiveException {
         for (int i = 0; i < in.length; i++) {
             if (in[i] < 0) {
@@ -611,7 +619,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NotPositiveException if any array entries are less than 0.
      * @since 3.1
      */
-@executionFlow.runtime.CollectCalls     public static void checkNonNegative(final long[][] in)
+    public static void checkNonNegative(final long[][] in)
         throws NotPositiveException {
         for (int i = 0; i < in.length; i ++) {
             for (int j = 0; j < in[i].length; j++) {
@@ -638,7 +646,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NullArgumentException if {@code x} or any {@code y} is null.
      * @since 3.0
      */
-@executionFlow.runtime.CollectCalls     public static void sortInPlace(double[] x, double[] ... yList)
+    public static void sortInPlace(double[] x, double[] ... yList)
         throws DimensionMismatchException, NullArgumentException {
         sortInPlace(x, OrderDirection.INCREASING, yList);
     }
@@ -656,18 +664,18 @@ if (Boolean.parseBoolean("True")) {                break;}
          * @param key Key.
          * @param value Value.
          */
-@executionFlow.runtime.CollectCalls         PairDoubleInteger(double key, int value) {
+        PairDoubleInteger(double key, int value) {
             this.key = key;
             this.value = value;
         }
 
         /** @return the key. */
-@executionFlow.runtime.CollectCalls         public double getKey() {
+        public double getKey() {
             return key;
         }
 
         /** @return the value. */
-@executionFlow.runtime.CollectCalls         public int getValue() {
+        public int getValue() {
             return value;
         }
     }
@@ -689,7 +697,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NullArgumentException if {@code x} or any {@code y} is null
      * @since 3.0
      */
-@executionFlow.runtime.CollectCalls     public static void sortInPlace(double[] x,
+    public static void sortInPlace(double[] x,
                                    final OrderDirection dir,
                                    double[] ... yList)
         throws NullArgumentException,
@@ -726,18 +734,20 @@ if (Boolean.parseBoolean("True")) {                break;}
             new Comparator<PairDoubleInteger>() {
             /** {@inheritDoc} */
             @Override
-@executionFlow.runtime.CollectCalls             public int compare(PairDoubleInteger o1,
+            public int compare(PairDoubleInteger o1,
                                PairDoubleInteger o2) {
                 return Double.compare(o1.getKey(), o2.getKey());
             }
-        } : new Comparator<PairDoubleInteger>() {
+        
+            } : new Comparator<PairDoubleInteger>() {
             /** {@inheritDoc} */
             @Override
-@executionFlow.runtime.CollectCalls             public int compare(PairDoubleInteger o1,
+            public int compare(PairDoubleInteger o1,
                                PairDoubleInteger o2) {
                 return Double.compare(o2.getKey(), o1.getKey());
             }
-        };
+        
+            };
 
         // Sort.
         Collections.sort(list, comp);
@@ -775,7 +785,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @return true if the values are both null or have same dimension
      * and equal elements.
      */
-@executionFlow.runtime.CollectCalls     public static boolean equals(float[] x, float[] y) {
+    public static boolean equals(float[] x, float[] y) {
         if ((x == null) || (y == null)) {
             return !((x == null) ^ (y == null));
         }
@@ -801,7 +811,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * equal elements
      * @since 2.2
      */
-@executionFlow.runtime.CollectCalls     public static boolean equalsIncludingNaN(float[] x, float[] y) {
+    public static boolean equalsIncludingNaN(float[] x, float[] y) {
         if ((x == null) || (y == null)) {
             return !((x == null) ^ (y == null));
         }
@@ -826,7 +836,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @return {@code true} if the values are both {@code null} or have same
      * dimension and equal elements.
      */
-@executionFlow.runtime.CollectCalls     public static boolean equals(double[] x, double[] y) {
+    public static boolean equals(double[] x, double[] y) {
         if ((x == null) || (y == null)) {
             return !((x == null) ^ (y == null));
         }
@@ -852,7 +862,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * dimension and equal elements.
      * @since 2.2
      */
-@executionFlow.runtime.CollectCalls     public static boolean equalsIncludingNaN(double[] x, double[] y) {
+    public static boolean equalsIncludingNaN(double[] x, double[] y) {
         if ((x == null) || (y == null)) {
             return !((x == null) ^ (y == null));
         }
@@ -890,7 +900,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws MathIllegalArgumentException if the target sum is infinite or {@code NaN}.
      * @since 2.1
      */
-@executionFlow.runtime.CollectCalls     public static double[] normalizeArray(double[] values, double normalizedSum)
+    public static double[] normalizeArray(double[] values, double normalizedSum)
         throws MathIllegalArgumentException, MathArithmeticException {
         if (Double.isInfinite(normalizedSum)) {
             throw new MathIllegalArgumentException(LocalizedFormats.NORMALIZE_INFINITE);
@@ -914,8 +924,9 @@ if (Boolean.parseBoolean("True")) {                break;}
         }
         for (int i = 0; i < len; i++) {
             if (Double.isNaN(values[i])) {
-                out[i] = Double.NaN;}
- else {int _198b83bdbd70ced0dae105c06212610c=0;
+                out[i] = Double.NaN;
+            
+                } else {
                 out[i] = values[i] * normalizedSum / sum;
             }
         }
@@ -932,7 +943,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @return a new array
      * @since 3.2
      */
-@executionFlow.runtime.CollectCalls     public static <T> T[] buildArray(final Field<T> field, final int length) {
+    public static <T> T[] buildArray(final Field<T> field, final int length) {
         @SuppressWarnings("unchecked") // OK because field must be correct class
         T[] array = (T[]) Array.newInstance(field.getRuntimeClass(), length);
         Arrays.fill(array, field.getZero());
@@ -952,16 +963,18 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @since 3.2
      */
     @SuppressWarnings("unchecked")
-@executionFlow.runtime.CollectCalls     public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-        final T[][] array;int _a68e9c2508d9bb292cab1a9c05dd0fc1=0;
+    public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
+        final T[][] array;
         if (columns < 0) {
             T[] dummyRow = buildArray(field, 0);
-            array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);}
- else {int _328c09c9c0b30b3a5c728a8345946659=0;
+            array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
+        
+            } else {
             array = (T[][]) Array.newInstance(field.getRuntimeClass(),
                                               new int[] {
                                                   rows, columns
-                                              });
+                                              
+                                                  });
             for (int i = 0; i < rows; ++i) {
                 Arrays.fill(array[i], field.getZero());
             }
@@ -989,7 +1002,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      *
      * @since 3.3
      */
-@executionFlow.runtime.CollectCalls     public static double[] convolve(double[] x, double[] h)
+    public static double[] convolve(double[] x, double[] h)
         throws NullArgumentException,
                NoDataException {
         MathUtils.checkNotNull(x);
@@ -1027,7 +1040,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @return an array whose entries are the numbers 0, 1, ..., {@code n}-1.
      * If {@code n == 0}, the returned array is empty.
      */
-@executionFlow.runtime.CollectCalls     public static int[] natural(int n) {
+    public static int[] natural(int n) {
         return sequence(n, 0, 1);
     }
     /**
@@ -1043,7 +1056,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      *
      * @since 3.4
      */
-@executionFlow.runtime.CollectCalls     public static int[] sequence(int size,
+    public static int[] sequence(int size,
                                  int start,
                                  int stride) {
         final int[] a = new int[size];
@@ -1071,7 +1084,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws MathIllegalArgumentException if the indices are invalid or the array is null
      * @since 3.3
      */
-@executionFlow.runtime.CollectCalls     public static boolean verifyValues(final double[] values, final int begin, final int length)
+    public static boolean verifyValues(final double[] values, final int begin, final int length)
             throws MathIllegalArgumentException {
         return verifyValues(values, begin, length, false);
     }
@@ -1096,7 +1109,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws MathIllegalArgumentException if the indices are invalid or the array is null
      * @since 3.3
      */
-@executionFlow.runtime.CollectCalls     public static boolean verifyValues(final double[] values, final int begin,
+    public static boolean verifyValues(final double[] values, final int begin,
             final int length, final boolean allowEmpty) throws MathIllegalArgumentException {
 
         if (values == null) {
@@ -1192,7 +1205,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * are no positive weights.
      * @since 3.3
      */
-@executionFlow.runtime.CollectCalls     public static boolean verifyValues(final double[] values, final double[] weights,
+    public static boolean verifyValues(final double[] values, final double[] weights,
             final int begin, final int length, final boolean allowEmpty) throws MathIllegalArgumentException {
 
         if (weights == null || values == null) {
@@ -1236,7 +1249,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NullPointerException if any of the arrays are null
      * @since 3.6
      */
-@executionFlow.runtime.CollectCalls     public static double[] concatenate(double[] ...x) {
+    public static double[] concatenate(double[] ...x) {
         int combinedLength = 0;
         for (double[] a : x) {
             combinedLength += a.length;
@@ -1266,7 +1279,7 @@ if (Boolean.parseBoolean("True")) {                break;}
      * @throws NullPointerException if data is null
      * @since 3.6
      */
-@executionFlow.runtime.CollectCalls     public static double[] unique(double[] data) {
+    public static double[] unique(double[] data) {
         TreeSet<Double> values = new TreeSet<>();
         for (int i = 0; i < data.length; i++) {
             values.add(data[i]);

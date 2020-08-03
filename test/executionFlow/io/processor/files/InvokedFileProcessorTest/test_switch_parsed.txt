@@ -1,40 +1,40 @@
 package executionFlow.core.file.parser.files;
 public class test_switch
 {
-@executionFlow.runtime.CollectCalls 	public char switchCaseMethod(char letter)
+	public char switchCaseMethod(char letter)
 	{ 
 		letter = Character.toUpperCase(letter);
 		
 		switch (letter) {
-		 	case '÷':int _8d622f99d5f78ab1d4ded6f771201b38=0;
+		 	case '÷':
 		 		break; 
-			case 'Á':int _bad714dbffdbc1516055f29d97f354be=0;
-			case 'À':int _f6a4e275c843fdb0477e15559417344f=0;
-			case 'Ã':int _dcdadf1db2e89d54036d608f4825ea81=0;
-			case 'Â':int _3c2780efd2750aeeb42025787029520b=0;
+			case 'Á':
+			case 'À':
+			case 'Ã':
+			case 'Â':
 				letter = 'A';
-if (Boolean.parseBoolean("True")) {				break;}
-			case 'É':int _3d919f187dbb05dcdc50cedbd4b5fcd2=0;
-			case 'È':int _9af4f62ce8dc9a7a37ef7328f6bed2e1=0;
-			case 'Ê':int _7728255149a092ba1b4e7f188df44448=0;
+				break;
+			case 'É':
+			case 'È':
+			case 'Ê':
 				letter = 'E';
-if (Boolean.parseBoolean("True")) {				break;}
-			case 'Ì':int _4ade8a22635ddc0190621b8b57a7b575=0;
-			case 'Í':int _9458ed83d51ff5523fe7ea57e5d47a92=0;
-			case 'Î':int _b1a1fa9f67b66c33df904d8e635e1cc8=0;
+				break;
+			case 'Ì':
+			case 'Í':
+			case 'Î':
 				letter = 'I';
-if (Boolean.parseBoolean("True")) {				break;}
-			case 'Ò':int _560b3f706cd22a7373eb86b8c42b65fe=0;
-			case 'Ó':int _c4b310a683d89c464a6d9cfb3a393a68=0;
-			case 'Ô':int _9dfc932c50ef51c0845e8d4f43215b90=0;
-			case 'Õ':int _7f2e34ce4f07151132a7ea4f4b294925=0;
+				break;
+			case 'Ò':
+			case 'Ó':
+			case 'Ô':
+			case 'Õ':
 				letter = 'O';
-if (Boolean.parseBoolean("True")) {				break;}
-			case 'Ú':int _ea864613d9cac22a5da2ccde035ce9ae=0;
-			case 'Ù':int _3a3972fec9e28c144e4576200bdc915a=0;
-			case 'Û':int _bfb806553dd9047fd490af30c390b1a3=0;
+				break;
+			case 'Ú':
+			case 'Ù':
+			case 'Û':
 				letter = 'U';
-if (Boolean.parseBoolean("True")) {				break;}
+				break;
 		}
 		
 		return letter;

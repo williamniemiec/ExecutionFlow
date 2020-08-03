@@ -5,14 +5,15 @@ import java.io.IOException;
 
 public class test_catch
 {
-@executionFlow.runtime.CollectCalls 	public boolean tryCatchMethod_catch(int num)
+	public boolean tryCatchMethod_catch(int num)
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;int _570a779d7dac229b700d64158fe702d8=0;
-		try {int _9ce313c2ecbd259b7d15037a35a8fde7=0;
-			throw new IOException();}
- catch (IOException e) {
+		FileWriter fw;
+		try {
+			throw new IOException();
+		
+			} catch (IOException e) {
 			return false;
 		}
 	}

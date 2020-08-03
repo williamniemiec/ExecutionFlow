@@ -3,7 +3,7 @@ package executionFlow.core.file.parser.files;
 
 public class test_constructor 
 {
-@executionFlow.runtime.CollectCalls 	public test_constructor(boolean callMethods)
+	public test_constructor(boolean callMethods)
 	{
 		if (callMethods) {
 			C();
@@ -11,7 +11,7 @@ public class test_constructor
 		}
 	}
 	
-@executionFlow.runtime.CollectCalls 	public void A()
+	public void A()
 	{
 		System.out.println("a");
 		B();
@@ -19,18 +19,18 @@ public class test_constructor
 	}
 	
 	
-@executionFlow.runtime.CollectCalls 	public void B()
+	public void B()
 	{
 		System.out.println("b");
 	}
 	
-@executionFlow.runtime.CollectCalls 	public void C()
+	public void C()
 	{
 		System.out.println("c");
 		D();
 	}
 	
-@executionFlow.runtime.CollectCalls 	public void D()
+	public void D()
 	{
 		System.out.println("d");
 	}

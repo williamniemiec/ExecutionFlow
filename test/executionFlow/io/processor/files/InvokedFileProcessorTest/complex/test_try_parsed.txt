@@ -5,18 +5,19 @@ import java.io.IOException;
 
 public class test_try 
 {
-@executionFlow.runtime.CollectCalls 	public boolean tryCatchMethod_try(int num)
+	public boolean tryCatchMethod_try(int num)
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;int _622f9cec6118275ead8001ba4acd650e=0;
+		FileWriter fw;
+		try 
 
-		{
 			fw = new FileWriter(f);
 			fw.write('x');
 			fw.close();
-			f.delete();}
- catch (IOException e) 
+			f.delete();
+		
+			} catch (IOException e) 
 		{
 			return false;
 		}
@@ -24,13 +25,13 @@ public class test_try
 		return true;
 	}
 	
-@executionFlow.runtime.CollectCalls 	public boolean tryCatchMethod_try2(int num)
+	public boolean tryCatchMethod_try2(int num)
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;int _4b89fba392fd64c6a5ff33e9e0bca521=0;
+		FileWriter fw;
+		try 
 
-		{
 			fw = new FileWriter(f);
 			fw.write('x');
 			fw.close();

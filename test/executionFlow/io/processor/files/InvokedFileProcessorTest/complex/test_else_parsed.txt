@@ -1,7 +1,7 @@
 package executionFlow.core.file.parser.files.complex;
 public class test_else 
 {
-@executionFlow.runtime.CollectCalls 	public String ifElseMethod(int num)
+	public String ifElseMethod(int num)
 	{
 		if (num < 0) 
 		{
@@ -9,8 +9,8 @@ public class test_else
 		}
 		
 		String response = "";
-		int w;int _7d5b5ac2e3cf316bd3f589db1881ff91=0;
-        int k;int _5ff965717a155915a88ecccd4fdd3fc2=0;
+		int w;
+        int k;
 
 		if (num == 0) 
 		{
@@ -20,15 +20,15 @@ public class test_else
 		{
 			response = "Number one";
 		} 
+		else 
 
-		{
 			response = "Number "+num;
 		}
 		
 		return response;
 	}
 	
-@executionFlow.runtime.CollectCalls 	public String ifElseMethod2(int num)
+	public String ifElseMethod2(int num)
 	{
 		if (num < 0) 
 		{
@@ -36,8 +36,8 @@ public class test_else
 		}
 		
 		String response = "";
-		int w;int _849a35b079859ee066125facec316ba4=0;
-        int k;int _bee18905f3a8ad3609371a51672b8ce4=0;
+		int w;
+        int k;
 
 		if (num == 0) 
 		{
@@ -47,8 +47,8 @@ public class test_else
 		{
 			response = "Number one";
 		} 
+		else 
 
-		{
 			response = "Number "+num;
 		}
 		

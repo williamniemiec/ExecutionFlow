@@ -5,22 +5,23 @@ import java.io.IOException;
 
 public class test_doWhile
 {
-@executionFlow.runtime.CollectCalls 	public void doWhile(int num)
+	public void doWhile(int num)
 	{
 		int i = 0, k = 0;
 
+		do 
 
-		{
 			k++;
-		} while (i < num);
+		
+			} while (i < num);
 	}
 	
-@executionFlow.runtime.CollectCalls 	public void doWhile2(int num)
+	public void doWhile2(int num)
 	{
 		int i = 0, k = 0;
 
+		do 
 
-		{
 			k++;
 		} 
 		while (i < num);
