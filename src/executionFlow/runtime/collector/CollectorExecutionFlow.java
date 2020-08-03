@@ -22,7 +22,7 @@ import executionFlow.ExecutionFlow;
  * {@link ExecutionFlow} class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.1.0
  * @since		1.0
  */
 public class CollectorExecutionFlow 
@@ -123,13 +123,14 @@ public class CollectorExecutionFlow
 	{
 		// Gets folder where .class is
 		String path = extractPathFromSignature(classSignature);
-		
+		String prefix = ExecutionFlow.isDevelopment() ? "bin\\" : "";
+
 		
 		// Finds absolute path where the class file is
 		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith(path+className+".class")) {
+		        if (file.toString().endsWith(prefix+path+className+".class")) {
 		        	binPath = file;
 		        }
 		        
