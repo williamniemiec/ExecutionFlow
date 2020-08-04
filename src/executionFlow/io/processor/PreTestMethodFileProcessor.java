@@ -348,6 +348,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			Path tmp = Path.of(outputFile.getAbsolutePath()+".tmp");
 			boolean insideMethod = false;
 			
+			
 			currentLine = 1;
 			
 			try (BufferedReader br = Files.newBufferedReader(outputFile.toPath(), encode.getStandardCharset());
@@ -407,7 +408,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * JUnit 5 test annotation to JUnit 4 test annotation.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		3.0.0
+	 * @version		3.1.0
 	 * @since 		2.0.0
 	 */
 	private class AnnotationParser
@@ -415,11 +416,13 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final String regex_methodDeclaration = 
+		private static final String regex_methodDeclaration = 
 				"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
 				+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*(\\ |\\t)*";
-		private final String regex_repeatedTest = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
-		private final String regex_junit4_test = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*";
+		private static final String regex_repeatedTest = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
+		private static final String regex_junit4_test = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*";
+		private static final String regex_parameterizedTest = 
+				".*@(.*\\.)?(org\\.junit\\.jupiter\\.params\\.)?ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
 		private String numRepetitions;
 		private String testMethodSignature;
 		private String[] testMethodParams;
@@ -493,9 +496,6 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		public String parse(String line)
 		{
-			final String regex_parameterizedTest = 
-					".*@(.*\\.)?(org\\.junit\\.jupiter\\.params\\.)?ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
-			
 			if (line.contains("@") && !inTestAnnotationScope) {
 				inTestAnnotationScope =	line.matches(regex_junit4_test) || 
 										line.matches(regex_repeatedTest) || 
@@ -527,11 +527,11 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		private String parseAnnotations(String line)
 		{
-			
 			return	line.matches(regex_junit4_test) 			 ?	parseTestAnnotation(line, false) :
 					line.contains("@org.junit.jupiter.api.Test") ?	parseTestAnnotation(line, true) :
 					line.matches(regex_repeatedTest) 			 ?	parseRepeatedTest(line) :
-					testMethodArgs != null						 ?	parseParameterizedTest(line) : 
+					line.matches(regex_parameterizedTest) || 
+								 testMethodArgs != null			 ?	parseParameterizedTest(line) : 
 					line;
 		}
 		
