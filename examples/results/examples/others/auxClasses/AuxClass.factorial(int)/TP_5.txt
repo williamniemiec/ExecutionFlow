@@ -1,3 +1,4 @@
-examples.others.OthersTest.testFactorial_zero()
-[91, 93, 97]
+examples.junit5.MixedJUnit5Annotations.repeatedTestAnnotation()
+[97, 99, 100, 99, 100, 99, 100, 99, 100, 99, 103]
+[97, 99, 100, 99, 100, 99, 100, 99, 100, 99, 103]
 

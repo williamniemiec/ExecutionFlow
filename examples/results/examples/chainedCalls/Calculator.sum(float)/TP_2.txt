@@ -1,0 +1,12 @@
+examples.chainedCalls.ChainedCalls.testChainedMethodsInForLoop()
+[49, 50]
+[49, 50]
+[49, 50]
+[49, 50]
+[49, 50]
+[49, 50]
+[49, 50]
+[49, 50]
+[49, 50]
+[49, 50]
+

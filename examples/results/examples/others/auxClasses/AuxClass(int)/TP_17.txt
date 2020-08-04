@@ -1,0 +1,3 @@
+examples.others.OthersTest.testFibonacci()
+[33, 35]
+

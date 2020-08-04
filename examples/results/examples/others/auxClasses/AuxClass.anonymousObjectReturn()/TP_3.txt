@@ -1,0 +1,4 @@
+examples.others.OthersTest.anonymousObjectReturn()
+[226]
+[226]
+

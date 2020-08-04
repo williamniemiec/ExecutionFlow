@@ -200,4 +200,18 @@ public class TestClass_ControlFlow
 		
 		return num;
 	}
+
+	/**
+	 * Method with an if clause along with else in the same line.
+	 * 
+	 * @param		num
+	 * 
+	 * @return		0 if num > 0; otherwise, returns 10
+	 */
+	public int ifElseSameLine2(int num)
+	{
+		if (num > 0) { num *= 0; } else { num = 10; }
+		
+		return num;
+	}
 }

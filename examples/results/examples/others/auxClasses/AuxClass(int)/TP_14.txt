@@ -1,0 +1,4 @@
+examples.others.OthersTest.testMethodWithAuxMethods()
+[33, 35]
+[33, 35]
+

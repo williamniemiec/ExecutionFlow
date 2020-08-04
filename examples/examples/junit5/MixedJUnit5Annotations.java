@@ -38,7 +38,7 @@ public class MixedJUnit5Annotations
 	}
 	
 	@ParameterizedTest
-	@ValueSource(ints = {-1,0,1})
+	@ValueSource(ints = {-1})
 	public void parameterizedTestAnnotation(int num)
 	{
 		AuxClass tc = new AuxClass(4);

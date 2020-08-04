@@ -1,3 +1,4 @@
-examples.others.OthersTest.testMethodWithAuxMethods()
-[91, 93, 94, 93, 94, 93, 94, 93, 97]
+examples.junit5.RepeatedTestAnnotation.test1()
+[97, 99, 100, 99, 100, 99, 100, 99, 100, 99, 103]
+[97, 99, 100, 99, 100, 99, 100, 99, 100, 99, 103]
 

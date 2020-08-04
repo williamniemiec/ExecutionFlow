@@ -1,0 +1,3 @@
+examples.junit5.ParameterizedTestAnnotation.testWithEnumSourceIncludeUsingInterface()
+[251, 253, 254, 253, 257]
+

@@ -1,5 +1,5 @@
 examples.others.AssertFailTest.assertFailInTheMiddleTest()
-[184, 185]
-[184, 188, 192]
-[184, 188, 189]
+[190, 191]
+[190, 194, 198]
+[190, 194, 195]
 
