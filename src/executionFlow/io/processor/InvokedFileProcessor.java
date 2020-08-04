@@ -376,7 +376,7 @@ public class InvokedFileProcessor extends FileProcessor
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
 			
-			if (line.matches(regex_commentFullLine))
+			if (line.contains("@") || line.matches(regex_commentFullLine))
 				continue;
 			
 			// If the line does not contain an opening curly bracket or contains
@@ -421,7 +421,7 @@ public class InvokedFileProcessor extends FileProcessor
 		
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
-			if (line.matches(regex_commentFullLine) || wasBroken) {
+			if (line.contains("@") || line.matches(regex_commentFullLine) || wasBroken) {
 				wasBroken = false;
 				continue;
 			}
