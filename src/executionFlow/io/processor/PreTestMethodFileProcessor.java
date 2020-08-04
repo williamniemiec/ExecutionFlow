@@ -341,7 +341,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 
 		testAnnotations = annotationParser.getMarkedAnnotations();
 		totalAnnotations = testAnnotations.size();
-		
+
 		// Comments test annotations and method declaration from all tests
 		// except the test method provided
 		if (!testAnnotations.isEmpty()) {
@@ -420,7 +420,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
 				+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*(\\ |\\t)*";
 		private static final String regex_repeatedTest = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
-		private static final String regex_junit4_test = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*";
+		private static final String regex_junit4_test = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
 		private static final String regex_parameterizedTest = 
 				".*@(.*\\.)?(org\\.junit\\.jupiter\\.params\\.)?ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
 		private String numRepetitions;
@@ -550,7 +550,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * declaration of the methods as well as their annotations.
 		 */
 		private String parseIgnore(String line)
-		{						
+		{				
 			// If it is inside a method that should be ignored, comment its code
 			if (ignoreMethod) {
 				if (curlyBracketBalance_ignore == null)
@@ -565,7 +565,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			}
 			
 			// If current method it is not the given test method, ignores it		
-			else if (line.matches(regex_methodDeclaration) && !line.contains("private") && 
+			else if (line.matches(regex_methodDeclaration) && !line.contains("private ") && 
 					!extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
 				if (curlyBracketBalance_ignore == null)
 					curlyBracketBalance_ignore = new CurlyBracketBalance();
