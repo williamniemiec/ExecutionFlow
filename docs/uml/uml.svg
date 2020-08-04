@@ -384,26 +384,32 @@
     <rect style="fill: #ffffff" x="2675.58" y="1923.67" width="487.4" height="28"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2675.58" y="1923.67" width="487.4" height="28"/>
     <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="2919.28" y="1943.67">InvokedFileProcessor</text>
-    <rect style="fill: #ffffff" x="2675.58" y="1951.67" width="487.4" height="84"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2675.58" y="1951.67" width="487.4" height="84"/>
+    <rect style="fill: #ffffff" x="2675.58" y="1951.67" width="487.4" height="100"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2675.58" y="1951.67" width="487.4" height="100"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="1964.87">-serialVersionUID: long</text>
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2678.58" y1="1971.27" x2="2855.68" y2="1971.27"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="1980.87">-DEBUG: boolean</text>
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2678.58" y1="1987.27" x2="2794.08" y2="1987.27"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="1996.87">-fileExtension: String = "java"</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2012.87">-skipNextLine: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2028.87">-wasParsed: boolean</text>
-    <rect style="fill: #ffffff" x="2675.58" y="2035.67" width="487.4" height="148"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2675.58" y="2035.67" width="487.4" height="148"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2048.87">-InvokedFileProcessor(file:Path,outputDir:Path,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2064.87">                      outputFilename:String,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2080.87">                      fileExtension:String)</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2096.87">-InvokedFileProcessor(file:Path,outputDir:Path,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2112.87">                      outputFilename:String,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2128.87">                      fileExtension:String,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2144.87">                      encode:FileEncoding)</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2160.87">+processFile(): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2176.87">-checkCurlyBracketNewLine(line:String,nextLine:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="1996.87">#regex_commentFullLine: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2012.87">-fileExtension: String = "java"</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2028.87">-skipNextLine: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2044.87">-wasParsed: boolean</text>
+    <rect style="fill: #ffffff" x="2675.58" y="2051.67" width="487.4" height="228"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2675.58" y="2051.67" width="487.4" height="228"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2064.87">-InvokedFileProcessor(file:Path,outputDir:Path,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2080.87">                      outputFilename:String,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2096.87">                      fileExtension:String)</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2112.87">-InvokedFileProcessor(file:Path,outputDir:Path,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2128.87">                      outputFilename:String,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2144.87">                      fileExtension:String,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2160.87">                      encode:FileEncoding)</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2176.87">+processFile(): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2192.87">-curlyBracketBreaker(lines:List&lt;String&gt;): void</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2208.87">-fillHoles(lines:List&lt;String&gt;): void</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2224.87">-openingCurlyBracketBreaker(lines:List&lt;String&gt;): void</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2240.87">-closingCurlyBracketBreaker(lines:List&lt;String&gt;): void</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2256.87">-getIndentation(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2272.87">-checkCurlyBracketNewLine(line:String,nextLine:String): String</text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="460.36" y="2599.44" width="302.6" height="28"/>
@@ -420,14 +426,14 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="463.36" y="2712.64">+hasBalanceAlreadyPassedTwo(): boolean</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.18 4085.8,2498.18 4085.8,2600.66 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 4085.8,2498.18 4085.8,2600.66 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.36 611.66,2498.36 611.66,2599.44 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 611.66,2498.36 611.66,2599.44 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-793.358,-573.978 228.388,-573.978 228.388,-994.82 561.991,-994.82 "/>
@@ -535,8 +541,8 @@
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="118.326,1134.5 110.326,1118.5 102.326,1134.5 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="312.118,1561.63 312.118,2183.67 2668.87,2183.67 "/>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2656.23,2188.67 2672.23,2183.67 2656.23,2178.67 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="312.118,1561.63 312.118,2279.67 2668.87,2279.67 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2656.23,2284.67 2672.23,2279.67 2656.23,2274.67 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="385.051,1050.26 814.642,1050.26 814.642,965.325 "/>
@@ -1083,19 +1089,19 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-1088.26,-615.331 -1083.26,-599.331 -1078.26,-615.331 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.18 3624.16,2498.18 3624.16,2606.14 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 3624.16,2498.18 3624.16,2606.14 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.18 3169.96,2498.18 3169.96,2603.38 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 3169.96,2498.18 3169.96,2603.38 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.36 2747.84,2498.36 2747.84,2602.86 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 2747.84,2498.36 2747.84,2602.86 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-3029.12,-5.19713 -3029.12,138.703 -3030.55,138.703 -3030.55,284.84 "/>
@@ -1279,7 +1285,7 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1795,1258.57 1811,1253.57 1795,1248.57 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2031.11,1629.81 2031.11,1653.6 2295.77,1653.6 2295.77,1679.64 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2031.11,1629.81 2031.11,1653.61 2295.77,1653.61 2295.77,1679.64 "/>
     <polygon style="fill: #ffffff" points="2039.11,1629.81 2031.11,1613.81 2023.11,1629.81 "/>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2039.11,1629.81 2031.11,1613.81 2023.11,1629.81 "/>
   </g>
@@ -1358,24 +1364,24 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2104.11,826.564 2120.11,821.564 2104.11,816.564 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.36 2340.54,2498.36 2340.54,2598.46 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 2340.54,2498.36 2340.54,2598.46 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.36 1904.84,2498.36 1904.84,2602.14 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1904.84,2498.36 1904.84,2602.14 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.36 1467.15,2498.36 1467.15,2601.2 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1467.15,2498.36 1467.15,2601.2 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2201.92 2919.28,2498.36 1028.52,2498.36 1028.52,2606.06 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2201.92 2919.28,2185.92 2911.28,2201.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1028.52,2498.36 1028.52,2606.06 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="3228.22,-604.65 3228.22,-483.296 2720.3,-483.296 2720.3,-357.42 "/>
@@ -1387,28 +1393,28 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-30.996,275.303 -25.996,291.303 -20.996,275.303 "/>
   </g>
   <g>
-    <rect style="fill: #ffffff" x="3286.2" y="1950.6" width="371.9" height="44"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="3286.2" y="1950.6" width="371.9" height="44"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="3472.15" y="1965.8">&lt;&lt;Static&gt;&gt;</text>
-    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="3472.15" y="1986.6">Builder</text>
-    <rect style="fill: #ffffff" x="3286.2" y="1994.6" width="371.9" height="84"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="3286.2" y="1994.6" width="371.9" height="84"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2007.8">-encode: FileEncoding</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2023.8">-fileExtension: String = "java"</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2039.8">-file: Path</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2055.8">-outputDir: Path</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2071.8">-outputFilename: String</text>
-    <rect style="fill: #ffffff" x="3286.2" y="2078.6" width="371.9" height="100"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="3286.2" y="2078.6" width="371.9" height="100"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2091.8">+file(file:Path): Builder</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2107.8">+outputDir(outputDir:Path): Builder</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2123.8">+outputFilename(outputFilename:String): Builder</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2139.8">+encode(encode:FileEncoding): Builder</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2155.8">+fileExtension(fileExtension:Builder): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2171.8">+build(): InvokedFileProcessor</text>
+    <rect style="fill: #ffffff" x="3286.2" y="1971.35" width="371.9" height="44"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="3286.2" y="1971.35" width="371.9" height="44"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="3472.15" y="1986.55">&lt;&lt;Static&gt;&gt;</text>
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="3472.15" y="2007.35">Builder</text>
+    <rect style="fill: #ffffff" x="3286.2" y="2015.35" width="371.9" height="84"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="3286.2" y="2015.35" width="371.9" height="84"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2028.55">-encode: FileEncoding</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2044.55">-fileExtension: String = "java"</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2060.55">-file: Path</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2076.55">-outputDir: Path</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2092.55">-outputFilename: String</text>
+    <rect style="fill: #ffffff" x="3286.2" y="2099.35" width="371.9" height="100"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="3286.2" y="2099.35" width="371.9" height="100"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2112.55">+file(file:Path): Builder</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2128.55">+outputDir(outputDir:Path): Builder</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2144.55">+outputFilename(outputFilename:String): Builder</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2160.55">+encode(encode:FileEncoding): Builder</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2176.55">+fileExtension(fileExtension:Builder): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3289.2" y="2192.55">+build(): InvokedFileProcessor</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="3181.22,1937.67 3232.59,1937.67 3232.59,1972.6 3286.2,1972.6 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="3181.22,1937.67 3232.59,1937.67 3232.59,1993.35 3286.2,1993.35 "/>
     <polygon style="fill: #ffffff" points="3181.22,1929.67 3165.22,1937.67 3181.22,1945.67 "/>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="3181.22,1929.67 3165.22,1937.67 3181.22,1945.67 "/>
   </g>
