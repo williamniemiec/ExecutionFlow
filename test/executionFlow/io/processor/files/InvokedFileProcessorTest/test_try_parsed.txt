@@ -6,18 +6,17 @@ import java.io.IOException;
 
 public class test_try 
 {
-	public boolean tryCatchMethod_try(int num)
+@executionFlow.runtime.CollectCalls 	public boolean tryCatchMethod_try(int num)
 	{
 		File f = new File("tmp");
 		
-		FileWriter fw;
-		try {
+		FileWriter fw;int _818880ed21fa6b9a2f2a6c00139f41cc=0;
+		try {int _8016b104c78223ce5734cb54ac32ce32=0;
 			fw = new FileWriter(f);
 			fw.write('x');
 			fw.close();
-			f.delete();
-		
-			} catch (IOException e) {
+			f.delete();}
+ catch (IOException e) {
 			return false;
 		}
 		

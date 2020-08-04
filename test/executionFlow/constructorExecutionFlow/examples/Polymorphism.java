@@ -9,9 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import executionFlow.ConstructorExecutionFlow;
@@ -21,11 +18,7 @@ import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.FilesManager;
-import executionFlow.io.ProcessorType;
-import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.runtime.SkipCollection;
-import executionFlow.util.ConsoleOutput;
 
 
 /**

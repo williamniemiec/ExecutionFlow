@@ -11,12 +11,12 @@ public class test_clauseAndBodySameLine
 	 * @param n A number
 	 * @return Zero
 	 */
-	public int inlineDoWhile(int n)
+@executionFlow.runtime.CollectCalls 	public int inlineDoWhile(int n)
 	{
 		if (n <= 0)
 			n = 1;
 		
-		do {
+		do {int _2331b67b46e332cab3395c91a721210f=0;
 			 n--; 
 		} while (n > 0);
 		
@@ -30,11 +30,11 @@ public class test_clauseAndBodySameLine
 	 * 
 	 * @return		0 if num > 0; otherwise, returns 10
 	 */
-	public int ifElseSameLine(int num)
+@executionFlow.runtime.CollectCalls 	public int ifElseSameLine(int num)
 	{
 		if (num > 0) {
-			 num *= 0; 
-		} else {
+			 num *= 0; }
+ else {int _b689a9c375188571f4561b0fc2922ba=0;
 			num = 10;
 		}
 		

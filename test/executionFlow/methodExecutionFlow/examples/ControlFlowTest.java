@@ -25,6 +25,8 @@ import executionFlow.runtime.SkipCollection;
  * Tests test path computation for the tested methods of 
  * {@link examples.controlFlow.ControlFlowTest} class using 
  * {@link MethodExecutionFlow} class.
+ * 
+ * 
  */
 @SkipCollection
 public class ControlFlowTest extends MethodExecutionFlowTest
@@ -560,7 +562,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(180,183,185), testPaths.get(0));
+		assertEquals(Arrays.asList(180,183,184,185,183,184,185,183,187), testPaths.get(0));
 	}
 	
 	@Test
@@ -629,8 +631,8 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		
 		
 		// Defines which methods will be collected
-		testMethodSignature = "examples.complexTests.ComplexTests.ifElseSameLine()";
-		methodSignature = "examples.complexTests.TestClass_ComplexTests.ifElseSameLine(int)";
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseSameLine()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseSameLine(int)";
 		
 		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
 		
@@ -662,7 +664,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(197, 201), testPaths.get(0));
+		assertEquals(Arrays.asList(199,200,205), testPaths.get(0));
 	}
 	
 	/**
@@ -682,8 +684,8 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		
 		
 		// Defines which methods will be collected
-		testMethodSignature = "examples.complexTests.ComplexTests.ifElseSameLine()";
-		methodSignature = "examples.complexTests.TestClass_ComplexTests.ifElseSameLine(int)";
+		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseSameLine()";
+		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseSameLine(int)";
 		
 		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
 		
@@ -715,6 +717,6 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(197, 198, 201), testPaths.get(0));
+		assertEquals(Arrays.asList(199,201,202,205), testPaths.get(0));
 	}
 }

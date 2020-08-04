@@ -269,4 +269,21 @@ public class InvokedFileProcessorTest
 				.build();
 		fp.processFile();
 	}
+	
+	@Test
+	public void testControlFlow() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
+		String filename = "test_controlFlow";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.encode(FileEncoding.ISO_8859_1)
+				.build();
+		fp.processFile();
+	}
 }

@@ -1,0 +1,224 @@
+package examples.controlFlow;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
+/**
+ * Class with control flow methods.
+ */
+public class TestClass_ControlFlow 
+{
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
+	/**
+	 * Method with a if-else control flow. It returns if a number is negative,
+	 * is the number zero or number one; otherwise, returns "Number &lt;number&gt;".
+	 * 
+	 * @param num A number
+	 * @return "Negative value", "Number zero", "Number one" or "Number &lt;num&gt;"
+	 */
+@executionFlow.runtime.CollectCalls 	public String ifElseMethod(int num)
+	{
+		if (num < 0) {
+			return "Negative value";
+		}
+		
+		String response = "";
+		
+		if (num == 0) {
+			response = "Number zero";}
+ else if (num == 1) {
+			response = "Number one";}
+ else {int _baf8f60399500da08d9f5bbae2b2f88e=0;
+			response = "Number "+num;
+		}
+		
+		return response;
+	}
+	
+	/**
+	 * Method with a try-catch control flow. Never generates 
+	 * {@link IOException}; always returns true.
+	 * 
+	 * @return true
+	 */
+@executionFlow.runtime.CollectCalls 	public boolean tryCatchMethod_try()
+	{
+		File f = new File("tmp");
+		
+		FileWriter fw;int _816d8ff03f2d8fefde45821075c95053=0;
+		try {int _e0ecf51bf63c1639ed88ef94bc9c3fc4=0;
+			fw = new FileWriter(f);
+			fw.write('x');
+			fw.close();
+			f.delete();}
+ catch (IOException e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Method with a try-catch control flow. Always generates 
+	 * {@link IOException}, catch it and returns false.
+	 * 
+	 * @return false
+	 */
+@executionFlow.runtime.CollectCalls 	public boolean tryCatchMethod_catch()
+	{
+		File f = new File("tmp");
+		
+		FileWriter fw;int _be20fc5b37aa397466e0f60e18514fab=0;
+		try {int _14a48dc72395fcae0d5d8a54fc84fcac=0;
+			throw new IOException();}
+ catch (IOException e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Removes accentuation from a letter.
+	 * 
+	 * @param letter Letter that will have its accentuation removed
+	 */
+@executionFlow.runtime.CollectCalls 	public char switchCaseMethod(char letter)
+	{ 
+		letter = Character.toUpperCase(letter);
+				
+		switch (letter) {
+		case '÷':int _ed4a5395162cf62104387a7966f934b=0;
+			case 'Á':int _e302ec5f846c8d3bf9c0c5602549409b=0;
+			case 'À':int _1d81d73649fac1f33bfaf45a5713f26a=0;
+			case 'Ã':int _1c9c28cc02d7e93ee9e1b8d5af6daa4a=0;
+			case 'Â':int _d377b8c2ed93048464dfbe9ae86f3245=0;
+				letter = 'A';
+if (Boolean.parseBoolean("True")) {				break;}
+			case 'É':int _d2abcbe472f562827856d924cc8173ed=0;
+			case 'È':int _75a20e8c39dc9b101cc5a72bdf1083c9=0;
+			case 'Ê':int _e829655da2c1425c7a54c14f4671a7de=0;
+				letter = 'E';
+if (Boolean.parseBoolean("True")) {				break;}
+			case 'Ì':int _5b13882932b53360950a9090a59201ba=0;
+			case 'Í':int _dfcc253fa59e0d311bf500f5a68cf375=0;
+			case 'Î':int _3878c8803908e2eb6591c91c1c9a4778=0;
+				letter = 'I';
+if (Boolean.parseBoolean("True")) {				break;}
+			case 'Ò':int _ef531cdffc3461ebfcb6005f138fd0e0=0;
+			case 'Ó':int _f9fc1e9f07333a59ae979193cfcec19c=0;
+			case 'Ô':int _7a4069e453dbd5028dca68b15f56a57a=0;
+			case 'Õ':int _9448f2a03c3a63b20e1a4609b3a36be1=0;
+				letter = 'O';
+if (Boolean.parseBoolean("True")) {				break;}
+			case 'Ú':int _49b6d366e433146dc69578f40dd34c03=0;
+			case 'Ù':int _4f568eb1aa2a55f9a8727ff2e710201b=0;
+			case 'Û':int _2abbed189885ef14bbbb6a94fcf0d0b7=0;
+				letter = 'U';
+if (Boolean.parseBoolean("True")) {				break;}
+		}
+		
+		return letter;
+	}
+	
+	/**
+	 * Method with a do-while control flow. It returns the sum of two numbers.
+	 * 
+	 * @param a A number
+	 * @param b Another number
+	 * @return a + b
+	 */
+@executionFlow.runtime.CollectCalls 	public int doWhileMethod(int a, int b)
+	{
+		if (a == 0)
+			return b;
+		if (b == 0)
+			return a;
+		
+		do {int _b8d2350c53d3b866380d4c42214cbd90=0;
+			a++;
+			b--;
+		} while (b != 0);
+		
+		return a;	// a = a + b;
+	}
+	
+	/**
+	 * Method with an inline while.
+	 * 
+	 * @param n A number
+	 * @return Zero
+	 */
+@executionFlow.runtime.CollectCalls 	public int inlineWhile(int a)
+	{
+		while (a > 0) a--;
+		
+		return a;
+	}
+	
+	/**
+	 * Method with an inline if-else.
+	 * 
+	 * @param n A number
+	 * @return Zero
+	 */
+@executionFlow.runtime.CollectCalls 	public boolean inlineIfElse(int n)
+	{
+		if (n > 0) return true; else return false; 
+	}
+	
+	/**
+	 * Method with an inline do-while.
+	 * 
+	 * @param n A number
+	 * @return Zero
+	 */
+@executionFlow.runtime.CollectCalls 	public int inlineDoWhile(int n)
+	{
+		if (n <= 0)
+			n = 1;
+		
+		do {int _57565096801bc311f33275a1589dcc0e=0;
+			 n--; 
+		} while (n > 0);
+		
+		return n;
+	}
+	
+	/**
+	 * Method with an if clause along with else in the same line.
+	 * 
+	 * @param		num
+	 * 
+	 * @return		0 if num > 0; otherwise, returns 10
+	 */
+@executionFlow.runtime.CollectCalls 	public int ifElseSameLine(int num)
+	{
+		if (num > 0) {
+			 num *= 0; }
+ else {int _865d33233b44732d678a6dcaebe0da2d=0;
+			num = 10;
+		}
+		
+		return num;
+	}
+
+	/**
+	 * Method with an if clause along with else in the same line.
+	 * 
+	 * @param		num
+	 * 
+	 * @return		0 if num > 0; otherwise, returns 10
+	 */
+@executionFlow.runtime.CollectCalls 	public int ifElseSameLine2(int num)
+	{
+		if (num > 0) {
+			 num *= 0; }
+ else {int _a364d00d48f4bb47b2ba173d74dd9e8=0;
+			 	 num = 10; }
+		
+		return num;
+	}
+}

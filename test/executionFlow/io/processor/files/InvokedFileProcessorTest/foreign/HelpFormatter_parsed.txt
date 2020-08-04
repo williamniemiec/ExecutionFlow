@@ -190,7 +190,7 @@ public class HelpFormatter
      *
      * @param width the new value of 'width'
      */
-    public void setWidth(final int width)
+@executionFlow.runtime.CollectCalls     public void setWidth(final int width)
     {
         this.defaultWidth = width;
     }
@@ -200,7 +200,7 @@ public class HelpFormatter
      *
      * @return the 'width'
      */
-    public int getWidth()
+@executionFlow.runtime.CollectCalls     public int getWidth()
     {
         return defaultWidth;
     }
@@ -210,7 +210,7 @@ public class HelpFormatter
      *
      * @param padding the new value of 'leftPadding'
      */
-    public void setLeftPadding(final int padding)
+@executionFlow.runtime.CollectCalls     public void setLeftPadding(final int padding)
     {
         this.defaultLeftPad = padding;
     }
@@ -220,7 +220,7 @@ public class HelpFormatter
      *
      * @return the 'leftPadding'
      */
-    public int getLeftPadding()
+@executionFlow.runtime.CollectCalls     public int getLeftPadding()
     {
         return defaultLeftPad;
     }
@@ -230,7 +230,7 @@ public class HelpFormatter
      *
      * @param padding the new value of 'descPadding'
      */
-    public void setDescPadding(final int padding)
+@executionFlow.runtime.CollectCalls     public void setDescPadding(final int padding)
     {
         this.defaultDescPad = padding;
     }
@@ -240,7 +240,7 @@ public class HelpFormatter
      *
      * @return the 'descPadding'
      */
-    public int getDescPadding()
+@executionFlow.runtime.CollectCalls     public int getDescPadding()
     {
         return defaultDescPad;
     }
@@ -250,7 +250,7 @@ public class HelpFormatter
      *
      * @param prefix the new value of 'syntaxPrefix'
      */
-    public void setSyntaxPrefix(final String prefix)
+@executionFlow.runtime.CollectCalls     public void setSyntaxPrefix(final String prefix)
     {
         this.defaultSyntaxPrefix = prefix;
     }
@@ -260,7 +260,7 @@ public class HelpFormatter
      *
      * @return the 'syntaxPrefix'
      */
-    public String getSyntaxPrefix()
+@executionFlow.runtime.CollectCalls     public String getSyntaxPrefix()
     {
         return defaultSyntaxPrefix;
     }
@@ -270,7 +270,7 @@ public class HelpFormatter
      *
      * @param newline the new value of 'newLine'
      */
-    public void setNewLine(final String newline)
+@executionFlow.runtime.CollectCalls     public void setNewLine(final String newline)
     {
         this.defaultNewLine = newline;
     }
@@ -280,7 +280,7 @@ public class HelpFormatter
      *
      * @return the 'newLine'
      */
-    public String getNewLine()
+@executionFlow.runtime.CollectCalls     public String getNewLine()
     {
         return defaultNewLine;
     }
@@ -290,7 +290,7 @@ public class HelpFormatter
      *
      * @param prefix the new value of 'optPrefix'
      */
-    public void setOptPrefix(final String prefix)
+@executionFlow.runtime.CollectCalls     public void setOptPrefix(final String prefix)
     {
         this.defaultOptPrefix = prefix;
     }
@@ -300,7 +300,7 @@ public class HelpFormatter
      *
      * @return the 'optPrefix'
      */
-    public String getOptPrefix()
+@executionFlow.runtime.CollectCalls     public String getOptPrefix()
     {
         return defaultOptPrefix;
     }
@@ -310,7 +310,7 @@ public class HelpFormatter
      *
      * @param prefix the new value of 'longOptPrefix'
      */
-    public void setLongOptPrefix(final String prefix)
+@executionFlow.runtime.CollectCalls     public void setLongOptPrefix(final String prefix)
     {
         this.defaultLongOptPrefix = prefix;
     }
@@ -320,7 +320,7 @@ public class HelpFormatter
      *
      * @return the 'longOptPrefix'
      */
-    public String getLongOptPrefix()
+@executionFlow.runtime.CollectCalls     public String getLongOptPrefix()
     {
         return defaultLongOptPrefix;
     }
@@ -333,7 +333,7 @@ public class HelpFormatter
      * @param longOptSeparator the separator, typically ' ' or '='.
      * @since 1.3
      */
-    public void setLongOptSeparator(final String longOptSeparator)
+@executionFlow.runtime.CollectCalls     public void setLongOptSeparator(final String longOptSeparator)
     {
         this.longOptSeparator = longOptSeparator;
     }
@@ -344,7 +344,7 @@ public class HelpFormatter
      * @return the separator
      * @since 1.3
      */
-    public String getLongOptSeparator()
+@executionFlow.runtime.CollectCalls     public String getLongOptSeparator()
     {
         return longOptSeparator;
     }
@@ -354,7 +354,7 @@ public class HelpFormatter
      *
      * @param name the new value of 'argName'
      */
-    public void setArgName(final String name)
+@executionFlow.runtime.CollectCalls     public void setArgName(final String name)
     {
         this.defaultArgName = name;
     }
@@ -364,7 +364,7 @@ public class HelpFormatter
      *
      * @return the 'argName'
      */
-    public String getArgName()
+@executionFlow.runtime.CollectCalls     public String getArgName()
     {
         return defaultArgName;
     }
@@ -376,7 +376,7 @@ public class HelpFormatter
      * @return the {@link Comparator} currently in use to sort the options
      * @since 1.2
      */
-    public Comparator<Option> getOptionComparator()
+@executionFlow.runtime.CollectCalls     public Comparator<Option> getOptionComparator()
     {
         return optionComparator;
     }
@@ -388,7 +388,7 @@ public class HelpFormatter
      * @param comparator the {@link Comparator} to use for sorting the options
      * @since 1.2
      */
-    public void setOptionComparator(final Comparator<Option> comparator)
+@executionFlow.runtime.CollectCalls     public void setOptionComparator(final Comparator<Option> comparator)
     {
         this.optionComparator = comparator;
     }
@@ -401,7 +401,7 @@ public class HelpFormatter
      * @param cmdLineSyntax the syntax for this application
      * @param options the Options instance
      */
-    public void printHelp(final String cmdLineSyntax, final Options options)
+@executionFlow.runtime.CollectCalls     public void printHelp(final String cmdLineSyntax, final Options options)
     {
         printHelp(getWidth(), cmdLineSyntax, null, options, null, false);
     }
@@ -416,7 +416,7 @@ public class HelpFormatter
      * @param autoUsage whether to print an automatically generated
      * usage statement
      */
-    public void printHelp(final String cmdLineSyntax, final Options options, final boolean autoUsage)
+@executionFlow.runtime.CollectCalls     public void printHelp(final String cmdLineSyntax, final Options options, final boolean autoUsage)
     {
         printHelp(getWidth(), cmdLineSyntax, null, options, null, autoUsage);
     }
@@ -431,7 +431,7 @@ public class HelpFormatter
      * @param options the Options instance
      * @param footer the banner to display at the end of the help
      */
-    public void printHelp(final String cmdLineSyntax, final String header, final Options options, final String footer)
+@executionFlow.runtime.CollectCalls     public void printHelp(final String cmdLineSyntax, final String header, final Options options, final String footer)
     {
         printHelp(cmdLineSyntax, header, options, footer, false);
     }
@@ -448,7 +448,7 @@ public class HelpFormatter
      * @param autoUsage whether to print an automatically generated
      * usage statement
      */
-    public void printHelp(final String cmdLineSyntax, final String header, final Options options, final String footer, final boolean autoUsage)
+@executionFlow.runtime.CollectCalls     public void printHelp(final String cmdLineSyntax, final String header, final Options options, final String footer, final boolean autoUsage)
     {
         printHelp(getWidth(), cmdLineSyntax, header, options, footer, autoUsage);
     }
@@ -464,7 +464,7 @@ public class HelpFormatter
      * @param options the Options instance
      * @param footer the banner to display at the end of the help
      */
-    public void printHelp(final int width, final String cmdLineSyntax, final String header, final Options options, final String footer)
+@executionFlow.runtime.CollectCalls     public void printHelp(final int width, final String cmdLineSyntax, final String header, final Options options, final String footer)
     {
         printHelp(width, cmdLineSyntax, header, options, footer, false);
     }
@@ -482,7 +482,7 @@ public class HelpFormatter
      * @param autoUsage whether to print an automatically generated
      * usage statement
      */
-    public void printHelp(final int width, final String cmdLineSyntax, final String header,
+@executionFlow.runtime.CollectCalls     public void printHelp(final int width, final String cmdLineSyntax, final String header,
                           final Options options, final String footer, final boolean autoUsage)
     {
         final PrintWriter pw = new PrintWriter(System.out);
@@ -508,7 +508,7 @@ public class HelpFormatter
      *
      * @throws IllegalStateException if there is no room to print a line
      */
-    public void printHelp(final PrintWriter pw, final int width, final String cmdLineSyntax,
+@executionFlow.runtime.CollectCalls     public void printHelp(final PrintWriter pw, final int width, final String cmdLineSyntax,
                           final String header, final Options options, final int leftPad,
                           final int descPad, final String footer)
     {
@@ -535,7 +535,7 @@ public class HelpFormatter
      *
      * @throws IllegalStateException if there is no room to print a line
      */
-    public void printHelp(final PrintWriter pw, final int width, final String cmdLineSyntax,
+@executionFlow.runtime.CollectCalls     public void printHelp(final PrintWriter pw, final int width, final String cmdLineSyntax,
                           final String header, final Options options, final int leftPad,
                           final int descPad, final String footer, final boolean autoUsage)
     {
@@ -548,7 +548,7 @@ public class HelpFormatter
         {
             printUsage(pw, width, cmdLineSyntax, options);
         }
-        else
+        else {int _4b5ecf4504fbe48535379c1925bc877e=0;
 
             printUsage(pw, width, cmdLineSyntax);
         }
@@ -574,7 +574,7 @@ public class HelpFormatter
      * @param app The application name
      * @param options The command line Options
      */
-    public void printUsage(final PrintWriter pw, final int width, final String app, final Options options)
+@executionFlow.runtime.CollectCalls     public void printUsage(final PrintWriter pw, final int width, final String app, final Options options)
     {
         // initialise the string buffer
         final StringBuffer buff = new StringBuffer(getSyntaxPrefix()).append(app).append(" ");
@@ -615,7 +615,7 @@ public class HelpFormatter
             }
 
             // if the Option is not part of an OptionGroup
-            else
+            else {int _e2dea97f1bf7d5b58c88736614b0e021=0;
 
                 appendOption(buff, option, option.isRequired());
             }
@@ -639,7 +639,7 @@ public class HelpFormatter
      * @param group the group to append
      * @see #appendOption(StringBuffer,Option,boolean)
      */
-    private void appendOptionGroup(final StringBuffer buff, final OptionGroup group)
+@executionFlow.runtime.CollectCalls     private void appendOptionGroup(final StringBuffer buff, final OptionGroup group)
     {
         if (!group.isRequired())
         {
@@ -676,7 +676,7 @@ public class HelpFormatter
      * @param option the Option to append
      * @param required whether the Option is required or not
      */
-    private void appendOption(final StringBuffer buff, final Option option, final boolean required)
+@executionFlow.runtime.CollectCalls     private void appendOption(final StringBuffer buff, final Option option, final boolean required)
     {
         if (!required)
         {
@@ -687,7 +687,7 @@ public class HelpFormatter
         {
             buff.append("-").append(option.getOpt());
         }
-        else
+        else {int _7cd3a58850c4db3b7268095e4fdf0af6=0;
 
             buff.append("--").append(option.getLongOpt());
         }
@@ -714,7 +714,7 @@ public class HelpFormatter
      * @param width The number of characters per line for the usage statement.
      * @param cmdLineSyntax The usage statement.
      */
-    public void printUsage(final PrintWriter pw, final int width, final String cmdLineSyntax)
+@executionFlow.runtime.CollectCalls     public void printUsage(final PrintWriter pw, final int width, final String cmdLineSyntax)
     {
         final int argPos = cmdLineSyntax.indexOf(' ') + 1;
 
@@ -733,7 +733,7 @@ public class HelpFormatter
      * @param descPad the number of characters of padding to be prefixed
      * to each description line
      */
-    public void printOptions(final PrintWriter pw, final int width, final Options options,
+@executionFlow.runtime.CollectCalls     public void printOptions(final PrintWriter pw, final int width, final Options options,
                              final int leftPad, final int descPad)
     {
         final StringBuffer sb = new StringBuffer();
@@ -749,7 +749,7 @@ public class HelpFormatter
      * @param width The number of characters to display per line
      * @param text The text to be written to the PrintWriter
      */
-    public void printWrapped(final PrintWriter pw, final int width, final String text)
+@executionFlow.runtime.CollectCalls     public void printWrapped(final PrintWriter pw, final int width, final String text)
     {
         printWrapped(pw, width, 0, text);
     }
@@ -762,7 +762,7 @@ public class HelpFormatter
      * @param nextLineTabStop The position on the next line for the first tab.
      * @param text The text to be written to the PrintWriter
      */
-    public void printWrapped(final PrintWriter pw, final int width, final int nextLineTabStop, final String text)
+@executionFlow.runtime.CollectCalls     public void printWrapped(final PrintWriter pw, final int width, final int nextLineTabStop, final String text)
     {
         final StringBuffer sb = new StringBuffer(text.length());
 
@@ -786,7 +786,7 @@ public class HelpFormatter
      *
      * @return the StringBuffer with the rendered Options contents.
      */
-    protected StringBuffer renderOptions(final StringBuffer sb, final int width, final Options options, final int leftPad, final int descPad)
+@executionFlow.runtime.CollectCalls     protected StringBuffer renderOptions(final StringBuffer sb, final int width, final Options options, final int leftPad, final int descPad)
     {
         final String lpad = createPadding(leftPad);
         final String dpad = createPadding(descPad);
@@ -813,7 +813,7 @@ public class HelpFormatter
             {
                 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
             }
-            else
+            else {int _31583234bf599c02ba81b0fb3f2c483c=0;
 
                 optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());
 
@@ -831,7 +831,7 @@ public class HelpFormatter
                     // if the option has a blank argname
                     optBuf.append(' ');
                 }
-                else
+                else {int _172ba7dfbcd7b6442975cd57eaeb183a=0;
 
                     optBuf.append(option.hasLongOpt() ? longOptSeparator : " ");
                     optBuf.append("<").append(argName != null ? option.getArgName() : getArgName()).append(">");
@@ -885,7 +885,7 @@ public class HelpFormatter
      *
      * @return the StringBuffer with the rendered Options contents.
      */
-    protected StringBuffer renderWrappedText(final StringBuffer sb, final int width,
+@executionFlow.runtime.CollectCalls     protected StringBuffer renderWrappedText(final StringBuffer sb, final int width,
                                              int nextLineTabStop, String text)
     {
         int pos = findWrapPos(text, width, 0);
@@ -937,12 +937,12 @@ public class HelpFormatter
      * @param nextLineTabStop The position on the next line for the first tab.
      * @param text The text to be rendered.
      */
-    private Appendable renderWrappedTextBlock(final StringBuffer sb, final int width, final int nextLineTabStop, final String text)
+@executionFlow.runtime.CollectCalls     private Appendable renderWrappedTextBlock(final StringBuffer sb, final int width, final int nextLineTabStop, final String text)
     {
         try
         {
             final BufferedReader in = new BufferedReader(new StringReader(text));
-            String line;
+            String line;int _febf7569189ba1c49478fcf68dce8369=0;
             boolean firstLine = true;
             while ((line = in.readLine()) != null)
             {
@@ -950,7 +950,7 @@ public class HelpFormatter
                 {
                     sb.append(getNewLine());
                 }
-                else
+                else {int _7f6bbfcf9b266b7221f0c0f8280df2b6=0;
 
                     firstLine = false;
                 }
@@ -979,7 +979,7 @@ public class HelpFormatter
      * @return position on which the text must be wrapped or -1 if the wrap
      * position is at the end of the text
      */
-    protected int findWrapPos(final String text, final int width, final int startPos)
+@executionFlow.runtime.CollectCalls     protected int findWrapPos(final String text, final int width, final int startPos)
     {
         // the line ends before the max wrap pos or a new line char found
         int pos = text.indexOf('\n', startPos);
@@ -1005,7 +1005,7 @@ public class HelpFormatter
             final char c = text.charAt(pos);
             if (c == ' ' || c == '\n' || c == '\r')
             {
-                break;
+if (Boolean.parseBoolean("True")) {                break;}
             }
         }
 
@@ -1028,7 +1028,7 @@ public class HelpFormatter
      *
      * @return The String of padding
      */
-    protected String createPadding(final int len)
+@executionFlow.runtime.CollectCalls     protected String createPadding(final int len)
     {
         final char[] padding = new char[len];
         Arrays.fill(padding, ' ');
@@ -1043,7 +1043,7 @@ public class HelpFormatter
      *
      * @return The String of without the trailing padding
      */
-    protected String rtrim(final String s)
+@executionFlow.runtime.CollectCalls     protected String rtrim(final String s)
     {
         if (s == null || s.length() == 0)
         {
@@ -1083,7 +1083,7 @@ public class HelpFormatter
          *         the first argument is less than, equal to, or greater than the
          *         second.
          */
-        public int compare(final Option opt1, final Option opt2)
+@executionFlow.runtime.CollectCalls         public int compare(final Option opt1, final Option opt2)
         {
             return opt1.getKey().compareToIgnoreCase(opt2.getKey());
         }
