@@ -426,14 +426,14 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="463.36" y="2712.64">+hasBalanceAlreadyPassedTwo(): boolean</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 4085.8,2498.18 4085.8,2600.66 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.18 4085.8,2498.18 4085.8,2600.66 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 611.66,2498.36 611.66,2599.44 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 611.66,2498.36 611.66,2599.44 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-793.358,-573.978 228.388,-573.978 228.388,-994.82 561.991,-994.82 "/>
@@ -996,38 +996,43 @@
     <rect style="fill: #ffffff" x="2063.62" y="1679.64" width="464.3" height="28"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1679.64" width="464.3" height="28"/>
     <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="2295.77" y="1699.64">AnnotationParser</text>
-    <rect style="fill: #ffffff" x="2063.62" y="1707.64" width="464.3" height="244"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1707.64" width="464.3" height="244"/>
+    <rect style="fill: #ffffff" x="2063.62" y="1707.64" width="464.3" height="260"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1707.64" width="464.3" height="260"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1720.84">-regex_methodDeclaration: String</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1727.24" x2="2313.02" y2="1727.24"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1736.84">-regex_repeatedTest: String</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1743.24" x2="2274.52" y2="1743.24"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1752.84">-regex_junit4_test: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1768.84">-numRepetitions: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1784.84">-testMethodSignature: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1800.84">-testMethodParams: String[]</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1816.84">-testMethodArgs: Object[]</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1832.84">-curlyBracketBalance_ignore: CurlyBracketBalance</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1848.84">-curlyBracketBalance_repeatedTest: CurlyBracketBalance</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1864.84">-curlyBracketBalance_parameterizedTest: CurlyBracketBalance</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1880.84">-inTestMethodSignature: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1896.84">-repeatedTest_putLoop: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1912.84">-insideRepeatedTest: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1928.84">-ignoreMethod: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1944.84">-inTestAnnotationScope: boolean</text>
-    <rect style="fill: #ffffff" x="2063.62" y="1951.64" width="464.3" height="212"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1951.64" width="464.3" height="212"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1964.84">+AnnotationParser(testMethodSignature:String,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1980.84">                  testMethodArg:Object[])</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1996.84">+AnnotationParser(testMethodSignature:String)</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2012.84">+parse(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2028.84">+getMarkedAnnotations(): Map&lt;Integer, Boolean&gt;</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2044.84">-parseAnnotations(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2060.84">-parseIgnore(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2076.84">-extractMethodSignatureFromLine(): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2092.84">-parseInsideRepeatedTest(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2108.84">-parseTestAnnotation(line:String,isJunit5:boolean): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2124.84">-parseRepeatedTest(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2140.84">-parseParameterizedTest(line:String): String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2156.84">-repeatedTest_toLoop(line:String): String</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1759.24" x2="2266.82" y2="1759.24"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1768.84">-regex_parameterizedTest</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1775.24" x2="2251.42" y2="1775.24"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1784.84">-numRepetitions: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1800.84">-testMethodSignature: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1816.84">-testMethodParams: String[]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1832.84">-testMethodArgs: Object[]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1848.84">-curlyBracketBalance_ignore: CurlyBracketBalance</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1864.84">-curlyBracketBalance_repeatedTest: CurlyBracketBalance</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1880.84">-curlyBracketBalance_parameterizedTest: CurlyBracketBalance</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1896.84">-inTestMethodSignature: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1912.84">-repeatedTest_putLoop: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1928.84">-insideRepeatedTest: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1944.84">-ignoreMethod: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1960.84">-inTestAnnotationScope: boolean</text>
+    <rect style="fill: #ffffff" x="2063.62" y="1967.64" width="464.3" height="212"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1967.64" width="464.3" height="212"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1980.84">+AnnotationParser(testMethodSignature:String,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1996.84">                  testMethodArg:Object[])</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2012.84">+AnnotationParser(testMethodSignature:String)</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2028.84">+parse(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2044.84">+getMarkedAnnotations(): Map&lt;Integer, Boolean&gt;</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2060.84">-parseAnnotations(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2076.84">-parseIgnore(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2092.84">-extractMethodSignatureFromLine(): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2108.84">-parseInsideRepeatedTest(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2124.84">-parseTestAnnotation(line:String,isJunit5:boolean): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2140.84">-parseRepeatedTest(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2156.84">-parseParameterizedTest(line:String): String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="2172.84">-repeatedTest_toLoop(line:String): String</text>
   </g>
   <g>
     <rect style="fill: #ffffff" x="1601" y="1681.11" width="333.4" height="28"/>
@@ -1089,19 +1094,19 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-1088.26,-615.331 -1083.26,-599.331 -1078.26,-615.331 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 3624.16,2498.18 3624.16,2606.14 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.18 3624.16,2498.18 3624.16,2606.14 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 3169.96,2498.18 3169.96,2603.38 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.18 3169.96,2498.18 3169.96,2603.38 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 2747.84,2498.36 2747.84,2602.86 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 2747.84,2498.36 2747.84,2602.86 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-3029.12,-5.19713 -3029.12,138.703 -3030.55,138.703 -3030.55,284.84 "/>
@@ -1364,24 +1369,24 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2104.11,826.564 2120.11,821.564 2104.11,816.564 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 2340.54,2498.36 2340.54,2598.46 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 2340.54,2498.36 2340.54,2598.46 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1904.84,2498.36 1904.84,2602.14 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 1904.84,2498.36 1904.84,2602.14 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1467.15,2498.36 1467.15,2601.2 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 1467.15,2498.36 1467.15,2601.2 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1028.52,2498.36 1028.52,2606.06 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 1028.52,2498.36 1028.52,2606.06 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="3228.22,-604.65 3228.22,-483.296 2720.3,-483.296 2720.3,-357.42 "/>
