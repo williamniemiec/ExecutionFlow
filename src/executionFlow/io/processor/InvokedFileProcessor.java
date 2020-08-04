@@ -1,11 +1,10 @@
 package executionFlow.io.processor;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +12,8 @@ import java.util.regex.Pattern;
 import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.CurlyBracketBalance;
-import executionFlow.util.DataUtils;
+import executionFlow.util.DataUtil;
+import executionFlow.util.FileUtil;
 
 
 /**
@@ -22,7 +22,7 @@ import executionFlow.util.DataUtils;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.1.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -37,6 +37,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 */
 	private static final boolean DEBUG;
 	
+	private final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 	private String fileExtension = "java";
 	private boolean skipNextLine;
 	private boolean wasParsed;
@@ -248,9 +249,71 @@ public class InvokedFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 		
-		final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		String line, nextLine;
+		List<String> lines = new ArrayList<>();
 		File outputFile;
+		
+		
+		// If an output directory is specified, processed file will be saved to it
+		if (outputDir != null)
+			outputFile = new File(outputDir.toFile(), outputFilename + "." + fileExtension);
+		// Otherwise processed file will be saved in current directory
+		else	
+			outputFile = new File(outputFilename + "." + fileExtension);
+		
+		// Reads the source file and puts its lines in a list
+		lines = FileUtil.getLines(file, encode.getStandardCharset());
+		
+		// Processes the source file lines by breaking lines that contains 
+		// clause + body on the same line 
+		curlyBracketBreaker(lines);
+		
+		ConsoleOutput.showHeader("File after processing (test path will be computed based on it)", '=');
+		ConsoleOutput.printDivision('-', 80);
+		for (int i=0; i<lines.size(); i++) {
+			System.out.printf("%-6d\t%s\n", i+1, lines.get(i));
+		}
+		ConsoleOutput.printDivision('-', 80);
+		
+		// Process the source file lines in order to get test path without 
+		// omitting lines
+		fillHoles(lines);
+		
+		// Writes processed lines to a file
+		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
+		
+		return outputFile.getAbsolutePath();
+	}
+	
+	/**
+	 * Move any code after an opening or closing curly bracket to the next line.
+	 * 
+	 * @param		Lines from a source file
+	 */
+	private void curlyBracketBreaker(List<String> lines)
+	{
+		// Move any code after an opening curly bracket to the next line
+		openingCurlyBracketBreaker(lines);
+		// Move any code after an closing curly bracket to the next line
+		closingCurlyBracketBreaker(lines);
+	}
+	
+	/**
+	 * Adds instructions to pieces of code that are omitted during compilation.
+	 * Are they:
+	 * <ul>
+	 * 	<li>if-else clauses</li>
+	 * 	<li>try-catch-finally clauses</li>
+	 * 	<li>continue and break keywords</li>
+	 * 	<li>do-while clauses</li>
+	 * 	<li>switch clauses</li>
+	 * 	<li>variable declarations that are not initialized</li>
+	 * </ul>
+	 * 
+	 * @param		lines Lines from a source file
+	 */
+	private void fillHoles(List<String> lines)
+	{
+		String line, nextLine;
 		PrintParser printParser = new PrintParser();
 		InvokerParser invokerParser = new InvokerParser();
 		ElseParser elseParser = new ElseParser();
@@ -261,71 +324,169 @@ public class InvokedFileProcessor extends FileProcessor
 		VariableParser variableParser = new VariableParser();
 		
 		
-		// If an output directory is specified, processed file will be saved to it
-		if (outputDir != null)
-			outputFile = new File(outputDir.toFile(), outputFilename + "." + fileExtension);
-		// Otherwise processed file will be saved in current directory
-		else	
-			outputFile = new File(outputFilename + "." + fileExtension);
-		
-		// Opens file streams (file to be parsed and output file / processed file)
-		try (	BufferedReader br = Files.newBufferedReader(file, encode.getStandardCharset());
-				BufferedReader br_forward = Files.newBufferedReader(file, encode.getStandardCharset()); 
-				BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), encode.getStandardCharset())	) { 
-			br_forward.readLine();
-			
-			// Parses file line by line
-			while ((line = br.readLine()) != null) {
-				nextLine = br_forward.readLine();
-				wasParsed = false;
-				
-				if (nextLine == null)
-					nextLine = "";
-				
-				// Checks if it is a comment line
-				if (!skipNextLine && !line.matches(regex_commentFullLine)) {
-					line = printParser.parse(line);
-					line = invokerParser.parse(line);
-					line = elseParser.parse(line, nextLine);
-					line = tryFinallyParser.parse(line, nextLine);
-					line = continueBreakParser.parse(line, nextLine);
-					line = doWhileParser.parse(line, nextLine);
-					line = switchParser.parse(line, nextLine);
-					line = variableParser.parse(line);
-				}
-				
-				// -----{ DEBUG }-----
-				if (DEBUG) { ConsoleOutput.showDebug(line); }
-				// -----{ END DEBUG }-----	
-				
-				if (skipNextLine) {
-					skipNextLine = false;
-					bw.newLine();	// It is necessary to keep line numbers equals to original file 
-				}
-				else {
-					bw.write(line);
-					bw.newLine();
-				}
+		for (int i=0; i < lines.size() - 1; i++) {
+			if (skipNextLine) {
+				skipNextLine = false;
+				lines.set(i, ""); // It is necessary to keep line numbers equals to original file 
+				continue;
 			}
-		}
+			
+			line = lines.get(i);
+			nextLine = lines.get(i+1);
 
-		return outputFile.getAbsolutePath();
+			wasParsed = false;
+			
+			// Checks if it is a comment line
+			if (!skipNextLine && !line.matches(regex_commentFullLine)) {
+				line = printParser.parse(line);
+				line = invokerParser.parse(line);
+				line = elseParser.parse(line, nextLine);
+				line = tryFinallyParser.parse(line, nextLine);
+				line = continueBreakParser.parse(line, nextLine);
+				line = doWhileParser.parse(line, nextLine);
+				line = switchParser.parse(line, nextLine);
+				line = variableParser.parse(line);
+			}
+			
+			// -----{ DEBUG }-----
+			if (DEBUG) { ConsoleOutput.showDebug(line); }
+			// -----{ END DEBUG }-----	
+			
+			lines.set(i, line);
+		}
 	}
 	
 	/**
-	 * Checks if open curly bracket is in next line. If it is, moves it to
-	 * the end of current line.
+	 * Move any code after an opening curly bracket to the next line.
+	 * 
+	 * @param		Lines from a source file
+	 */
+	private void openingCurlyBracketBreaker(List<String> lines) 
+	{
+		final String regex_onlyOpeningCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
+		final String regex_openingCurlyBracket = "(\\ |\\t)*\\{(\\ |\\t)*";
+		String line, rightBracket;
+		int idx_curlyBracketEnd;
+		Matcher m;
+		
+		
+		if (lines == null || lines.isEmpty())
+			return;
+		
+		for (int i=0; i<lines.size(); i++) {
+			line = lines.get(i);
+			
+			if (line.matches(regex_commentFullLine))
+				continue;
+			
+			// If the line does not contain an opening curly bracket or contains
+			// but it is alone on the line, keep the original line 
+			if (line.contains("{") && !line.matches(regex_onlyOpeningCurlyBracket)) {
+				m = Pattern.compile(regex_openingCurlyBracket).matcher(line);
+				
+				if (m.find()) {
+					idx_curlyBracketEnd = m.start() + m.group().indexOf("{");	
+					rightBracket = line.substring(idx_curlyBracketEnd + 1);
+					
+					// If the line contains an opening curly bracket but there
+					// is nothing to the right of it, keep the original line
+					if (!rightBracket.isBlank()) {
+						// Otherwise put everything to its right on a new line 
+						// (not including it)
+						lines.set(i, line.substring(0, idx_curlyBracketEnd + 1));
+						lines.add(i + 1, getIndentation(line) + "\t" + line.substring(idx_curlyBracketEnd + 1));
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Move any code after an closing curly bracket to the next line.
+	 * 
+	 * @param		Lines from a source file
+	 */
+	private void closingCurlyBracketBreaker(List<String> lines) 
+	{
+		final String regex_onlyClosingCurlyBracket = "^(\\s|\\t)+\\}(\\s|\\t|\\/)*$";
+		final String regex_closingCurlyBracket = "(\\ |\\t)*\\}(\\ |\\t)*";
+		String line, rightBracket, leftContent;
+		int idx_curlyBracketEnd;
+		Matcher m;
+		boolean wasBroken = false;
+		
+		
+		if (lines == null || lines.isEmpty())
+			return;
+		
+		for (int i=0; i<lines.size(); i++) {
+			line = lines.get(i);
+			if (line.matches(regex_commentFullLine) || wasBroken) {
+				wasBroken = false;
+				continue;
+			}
+			
+			// If the line does not contain a closing curly bracket or contains
+			// but it is alone on the line, keep the original line 
+			if (line.contains("}") && !line.matches(regex_onlyClosingCurlyBracket)) {
+				m = Pattern.compile(regex_closingCurlyBracket).matcher(line);
+				
+				if (m.find()) {
+					idx_curlyBracketEnd = m.start() + m.group().indexOf("}");	
+					rightBracket = line.substring(idx_curlyBracketEnd + 1);
+					
+					// If the line contains a closing curly bracket but there
+					// is nothing to the right of it, keep the original line
+					if (!rightBracket.isBlank()) {
+						// Otherwise put everything to its right on a new line
+						// (including it)
+						leftContent = line.substring(0, idx_curlyBracketEnd);
+						
+						if (!leftContent.isBlank()) {
+							lines.set(i, leftContent);
+							lines.add(i + 1, getIndentation(lines.get(i-1)) + line.substring(idx_curlyBracketEnd));
+							wasBroken = true;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Gets indentation of a source file line.
+	 * 
+	 * @param		line Source file line
+	 * 
+	 * @return		Indentation or empty string if there is no indentation
+	 */
+	private String getIndentation(String line)
+	{
+		final String regex_indent = "^(\\ |\\t)+";
+		Matcher m = Pattern.compile(regex_indent).matcher(line);
+		
+		
+		if (!m.find())
+			return "";
+		
+		return m.group();
+	}
+	
+	/**
+	 * Checks if an opening curly bracket is in next line. If it is, moves it 
+	 * to the end of current line.
 	 * 
 	 * @param		line Current line
 	 * @param		nextLine Line following the current line
 	 * 
-	 * @return		Current line with open curly bracket at the end
+	 * @return		Current line with a opening curly bracket at the end
 	 */
 	private String checkCurlyBracketNewLine(String line, String nextLine)
 	{
-		final String regex_onlyOpenCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
+		final String regex_onlyOpeningCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
 		
-		if (nextLine.matches(regex_onlyOpenCurlyBracket)) {
+		
+		if (nextLine.matches(regex_onlyOpeningCurlyBracket)) {
 			line = line + " {";
 			skipNextLine = true;
 		}
@@ -496,7 +657,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * computed correctly. These adjustments are:
 		 * <ul>
 		 * 	<li>Adds an instruction in else statements</li>
-		 * 	<li>Adjusts lines containing closed curly bracket + instruction</li>
+		 * 	<li>Adjusts lines containing closing curly bracket + instruction</li>
 		 * 	<li>Adds curly brackets in else blocks that does not have curly 
 		 * 	brackets</li>
 		 * </ul>
@@ -531,7 +692,7 @@ public class InvokedFileProcessor extends FileProcessor
 				}
 			}
 			else {
-				// Checks if closed curly bracket is on the same line as an
+				// Checks if a closing curly bracket is on the same line as an
 				// else-if or if statement
 				if (nextLine.matches(regex_if_else_closed_curlybracket)) {
 					if (line.contains("//")) {
@@ -636,7 +797,7 @@ public class InvokedFileProcessor extends FileProcessor
 				sb.append(line.substring(0, curlyBracketsIndex+1));
 				
 				// Appends in response variable assignment command
-				sb.append("int "+DataUtils.generateVarName()+"=0;");
+				sb.append("int "+DataUtil.generateVarName()+"=0;");
 				
 				// Appends in response everything after '{' 
 				sb.append(line.substring(curlyBracketsIndex+1));
@@ -648,14 +809,14 @@ public class InvokedFileProcessor extends FileProcessor
 				sb.append(line.substring(0, indexAfterElse));
 				
 				// Appends in response variable assignment command
-				sb.append(" {"+"int "+DataUtils.generateVarName()+"=0;");
+				sb.append(" {"+"int "+DataUtil.generateVarName()+"=0;");
 				
 				String afterElse = line.substring(indexAfterElse);
 				
 				// Checks if there is a command after 'else' keyword
 				if (!afterElse.isEmpty() && !afterElse.matches("^(\\s|\\t)+$")) {
 					sb.append(afterElse);	// If there is one, it its an in line else code block
-					sb.append("}");			// Appends in response this command and a closed curly bracket
+					sb.append("}");			// Appends in response this command and a closing curly bracket
 				} 
 				else {
 					elseNoCurlyBrackets = true;	// Else it is a else code block with more than one line
@@ -752,7 +913,7 @@ public class InvokedFileProcessor extends FileProcessor
 				response.append(line.substring(0, curlyBracketsIndex+1));
 				
 				// Appends in response variable assignment command
-				response.append("int "+DataUtils.generateVarName()+"=0;");
+				response.append("int "+DataUtil.generateVarName()+"=0;");
 
 				// Appends in response everything after '{'
 				response.append(line.substring(curlyBracketsIndex+1));
@@ -874,7 +1035,7 @@ public class InvokedFileProcessor extends FileProcessor
 				response.append(line.substring(0, curlyBracketsIndex+1));
 				
 				// Appends in response variable assignment command
-				response.append("int "+DataUtils.generateVarName()+"=0;");
+				response.append("int "+DataUtil.generateVarName()+"=0;");
 				
 				// Appends in response everything after '{' 
 				response.append(line.substring(curlyBracketsIndex+1));
@@ -950,7 +1111,7 @@ public class InvokedFileProcessor extends FileProcessor
 			response.append(line.substring(0, m.start()+1));
 			
 			// Appends in response variable assignment command
-			response.append("int "+DataUtils.generateVarName()+"=0;");
+			response.append("int "+DataUtil.generateVarName()+"=0;");
 			
 			// Appends in response everything after ':'
 			response.append(line.substring(m.start()+1));
@@ -1011,7 +1172,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 */
 		private String parse_varDeclaration(String line)
 		{
-			return line+"int "+DataUtils.generateVarName()+"=0;";
+			return line+"int "+DataUtil.generateVarName()+"=0;";
 		}
 	}
 	
