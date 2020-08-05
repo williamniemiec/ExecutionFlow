@@ -32,7 +32,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.1.1
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -273,35 +273,35 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Checks if there are still tests to be performed
 			if (totalTests < 0) {
-				totalTests = PreTestMethodFileProcessor.getTotalAnnotations() - 1;
+				totalTests = PreTestMethodFileProcessor.getTotalIgnoredMethods() ;
 			}
 			else {
 				totalTests--;
 			}
 				
-				if (totalTests == 0) {
-					// Restores original method files and its compiled files
-					try {
-						if (ExecutionFlow.getInvokedManager().load())
-							ExecutionFlow.getInvokedManager().restoreAll();	
-					} catch (ClassNotFoundException e) {
-						hasError = true;
-						ConsoleOutput.showError("Class FileManager not found");
-						e.printStackTrace();
-					} catch (IOException e) {
-						hasError = true;
-						ConsoleOutput.showError("Could not recover all backup files for methods");
-						ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
-								+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
-								+ "#could-not-recover-all-backup-files");
-						e.printStackTrace();
-					}
-
-					ExecutionFlow.getInvokedManager().deleteBackup();
-					
-					// Resets totalTests
-					totalTests = -1;
+			if (totalTests == 0) {
+				// Restores original method files and its compiled files
+				try {
+					if (ExecutionFlow.getInvokedManager().load())
+						ExecutionFlow.getInvokedManager().restoreAll();	
+				} catch (ClassNotFoundException e) {
+					hasError = true;
+					ConsoleOutput.showError("Class FileManager not found");
+					e.printStackTrace();
+				} catch (IOException e) {
+					hasError = true;
+					ConsoleOutput.showError("Could not recover all backup files for methods");
+					ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
+							+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+							+ "#could-not-recover-all-backup-files");
+					e.printStackTrace();
 				}
+
+				ExecutionFlow.getInvokedManager().deleteBackup();
+				
+				// Resets totalTests
+				totalTests = -1;
+			}
 
 			testMethodManager.restoreAll();
 			
