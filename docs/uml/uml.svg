@@ -263,8 +263,8 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2935.26,-1940.37 2930.26,-1956.37 2925.26,-1940.37 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-793.358,-573.978 -647.694,-573.978 -647.694,-468.146 -618.733,-468.146 "/>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-631.381,-463.146 -615.381,-468.146 -631.381,-473.146 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-793.358,-573.978 -647.694,-573.978 -647.694,-473.333 -618.733,-473.333 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-631.381,-468.333 -615.381,-473.333 -631.381,-478.333 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2332.1,-2088.46 2517.7,-2088.46 2517.7,-1474.7 2687.18,-1474.7 "/>
@@ -282,62 +282,65 @@
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2330.04,-1350.32 2314.04,-1342.32 2330.04,-1334.32 "/>
   </g>
   <g>
-    <rect style="fill: #ffffff" x="-612.028" y="-482.146" width="541.3" height="28"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-612.028" y="-482.146" width="541.3" height="28"/>
-    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="-341.378" y="-462.146">Analyzer</text>
-    <rect style="fill: #ffffff" x="-612.028" y="-454.146" width="541.3" height="324"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-612.028" y="-454.146" width="541.3" height="324"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-440.946">-DEBUG: boolean</text>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="-434.546" x2="-493.528" y2="-434.546"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-424.946">-classInvocationSignature: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-408.946">-invokedSignature: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-392.946">-invokedName: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-376.946">-lastSrcLine: String = ""</text>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="-370.546" x2="-416.528" y2="-370.546"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-360.946">-testMethodSignature: String</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-344.946">-invocationLine: int</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-328.946">-lastLineAdded: int = -1</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-312.946">-methodDeclarationLine: int</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-296.946">-testPath: List&lt;Integer&gt;</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-280.946">-testPaths: List&lt;List&lt;Integer&gt;&gt;</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-264.946">-jdb: JDB</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-248.946">-endOfMethod: boolean</text>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="-242.546" x2="-447.328" y2="-242.546"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-232.946">-newIteration: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-216.946">-exitMethod: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-200.946">-isInternalCommand: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-184.946">-inMethod: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-168.946">-withinConstructor: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-152.946">-withinOverloadCall: boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-136.946">-lastAddWasReturn: boolean</text>
-    <rect style="fill: #ffffff" x="-612.028" y="-130.146" width="541.3" height="356"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-612.028" y="-130.146" width="541.3" height="356"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-116.946">+Analyzer(invokedInfo:InvokedInfo,testMethodInfo:InvokedInfo)</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-100.946">+run(): Analyzer</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-84.946">+getMethodsCalledByTestedInvoked(): List&lt;String&gt;</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-68.946">+deleteMethodsCalledByTestedInvoked(): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-52.946">+getTestPaths(process:Process,methodName:String): List&lt;List&lt;Integer&gt;&gt;</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-36.946">-extractRootPathDirectory(classPath:Path,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-20.946">                          classPackage:String): Path</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-4.946">-parseOutput(): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="11.054">-parseAll(appRoot:String): void</text>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="12.654" x2="-370.328" y2="12.654"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="27.054">-getSrcLine(src:String): int</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="43.054">-isEndOfTestMethod(line:String): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="59.054">-isInternalMethod(line:String): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="75.054">-isEmptyLine(line:String): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="91.054">-isNewIteration(line:String): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="107.054">-willEnterInMethod(line:String): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="123.054">-isEmptyMethod(srcLine:String): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="139.054">-isNativeCall(line:String,srcLine:String): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="155.054">-shouldIgnore(srcLine:String,currentLine:int): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="171.054">-isInsideMethod(line:String,srcLine:String,</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="187.054">                ignoreFlag:boolean,): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="203.054">-isWithinMethod(line:String): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="219.054">-hasStarted(line:String): boolean</text>
+    <rect style="fill: #ffffff" x="-612.028" y="-487.333" width="541.3" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-612.028" y="-487.333" width="541.3" height="28"/>
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="-341.378" y="-467.333">Analyzer</text>
+    <rect style="fill: #ffffff" x="-612.028" y="-459.333" width="541.3" height="356"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-612.028" y="-459.333" width="541.3" height="356"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-446.133">-DEBUG: boolean</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="-439.733" x2="-493.528" y2="-439.733"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-430.133">-REGEX_MULTILINE_ARGS: String</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="-423.733" x2="-385.728" y2="-423.733"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-414.133">-classInvocationSignature: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-398.133">-invokedSignature: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-382.133">-invokedName: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-366.133">-lastSrcLine: String = ""</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="-359.733" x2="-416.528" y2="-359.733"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-350.133">-testMethodSignature: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-334.133">-invocationLine: int</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-318.133">-lastLineAdded: int = -1</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-302.133">-methodDeclarationLine: int</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-286.133">-testPath: List&lt;Integer&gt;</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-270.133">-testPaths: List&lt;List&lt;Integer&gt;&gt;</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-254.133">-jdb: JDB</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-238.133">-endOfMethod: boolean</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="-231.733" x2="-447.328" y2="-231.733"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-222.133">-newIteration: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-206.133">-exitMethod: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-190.133">-isInternalCommand: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-174.133">-inMethod: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-158.133">-withinConstructor: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-142.133">-withinOverloadCall: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-126.133">-lastAddWasReturn: boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-110.133">-isMethodMultiLineArgs: boolean</text>
+    <rect style="fill: #ffffff" x="-612.028" y="-103.333" width="541.3" height="356"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-612.028" y="-103.333" width="541.3" height="356"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-90.1334">+Analyzer(invokedInfo:InvokedInfo,testMethodInfo:InvokedInfo)</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-74.1334">+run(): Analyzer</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-58.1334">+getMethodsCalledByTestedInvoked(): List&lt;String&gt;</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-42.1334">+deleteMethodsCalledByTestedInvoked(): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-26.1334">+getTestPaths(process:Process,methodName:String): List&lt;List&lt;Integer&gt;&gt;</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="-10.1334">-extractRootPathDirectory(classPath:Path,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="5.86665">                          classPackage:String): Path</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="21.8666">-parseOutput(): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="37.8666">-parseAll(appRoot:String): void</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="-609.028" y1="39.4666" x2="-370.328" y2="39.4666"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="53.8666">-getSrcLine(src:String): int</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="69.8666">-isEndOfTestMethod(line:String): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="85.8666">-isInternalMethod(line:String): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="101.867">-isEmptyLine(line:String): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="117.867">-isNewIteration(line:String): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="133.867">-willEnterInMethod(line:String): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="149.867">-isEmptyMethod(srcLine:String): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="165.867">-isNativeCall(line:String,srcLine:String): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="181.867">-shouldIgnore(srcLine:String,currentLine:int): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="197.867">-isInsideMethod(line:String,srcLine:String,</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="213.867">                ignoreFlag:boolean,): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="229.867">-isWithinMethod(line:String): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-609.028" y="245.867">-hasStarted(line:String): boolean</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-70.728,-468.146 1389.46,-468.146 1389.46,-1052.89 2947.01,-1052.89 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-70.728,-473.333 1389.46,-473.333 1389.46,-1052.89 2947.01,-1052.89 "/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2934.37,-1047.89 2950.37,-1052.89 2934.37,-1057.89 "/>
   </g>
   <g>
@@ -390,7 +393,8 @@
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2678.58" y1="1971.27" x2="2855.68" y2="1971.27"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="1980.87">-DEBUG: boolean</text>
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2678.58" y1="1987.27" x2="2794.08" y2="1987.27"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="1996.87">#regex_commentFullLine: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="1996.87">-REGEX_COMMENT_FULL_LINE: String</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2678.58" y1="2003.27" x2="2924.98" y2="2003.27"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2012.87">-fileExtension: String = "java"</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2028.87">-skipNextLine: boolean</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2678.58" y="2044.87">-wasParsed: boolean</text>
@@ -426,14 +430,14 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="463.36" y="2712.64">+hasBalanceAlreadyPassedTwo(): boolean</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.18 4085.8,2498.18 4085.8,2600.66 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 4085.8,2498.18 4085.8,2600.66 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 611.66,2498.36 611.66,2599.44 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 611.66,2498.36 611.66,2599.44 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-793.358,-573.978 228.388,-573.978 228.388,-994.82 561.991,-994.82 "/>
@@ -998,14 +1002,14 @@
     <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="2295.77" y="1699.64">AnnotationParser</text>
     <rect style="fill: #ffffff" x="2063.62" y="1707.64" width="464.3" height="260"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="2063.62" y="1707.64" width="464.3" height="260"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1720.84">-regex_methodDeclaration: String</text>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1727.24" x2="2313.02" y2="1727.24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1736.84">-regex_repeatedTest: String</text>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1743.24" x2="2274.52" y2="1743.24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1752.84">-regex_junit4_test: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1720.84">-REGEX_METHOD_DECLARATION: String</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1727.24" x2="2320.72" y2="1727.24"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1736.84">-REGEX_REPEATED_TEST: String</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1743.24" x2="2282.22" y2="1743.24"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1752.84">-REGEX_JUNIT4_TEST: String</text>
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1759.24" x2="2266.82" y2="1759.24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1768.84">-regex_parameterizedTest</text>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1775.24" x2="2251.42" y2="1775.24"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1768.84">-REGEX_PARAMETERIZED_TEST</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="2066.62" y1="1775.24" x2="2259.12" y2="1775.24"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1784.84">-numRepetitions: String</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1800.84">-testMethodSignature: String</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="2066.62" y="1816.84">-testMethodParams: String[]</text>
@@ -1094,19 +1098,19 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-1088.26,-615.331 -1083.26,-599.331 -1078.26,-615.331 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.18 3624.16,2498.18 3624.16,2606.14 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 3624.16,2498.18 3624.16,2606.14 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.18 3169.96,2498.18 3169.96,2603.38 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.18 3169.96,2498.18 3169.96,2603.38 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 2747.84,2498.36 2747.84,2602.86 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 2747.84,2498.36 2747.84,2602.86 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-3029.12,-5.19713 -3029.12,138.703 -3030.55,138.703 -3030.55,284.84 "/>
@@ -1154,7 +1158,7 @@
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2298.16,997.8 2290.16,981.8 2282.16,997.8 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-341.378,225.854 -341.378,256.255 -25.996,256.255 -25.996,287.951 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="-341.378,252.667 -341.378,269.661 -25.996,269.661 -25.996,287.951 "/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-30.996,275.303 -25.996,291.303 -20.996,275.303 "/>
   </g>
   <g>
@@ -1369,24 +1373,24 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2104.11,826.564 2120.11,821.564 2104.11,816.564 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 2340.54,2498.36 2340.54,2598.46 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 2340.54,2498.36 2340.54,2598.46 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 1904.84,2498.36 1904.84,2602.14 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1904.84,2498.36 1904.84,2602.14 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 1467.15,2498.36 1467.15,2601.2 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1467.15,2498.36 1467.15,2601.2 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.92 2919.28,2498.36 1028.52,2498.36 1028.52,2606.06 "/>
-    <polygon style="fill: #ffffff" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.92 2919.28,2281.92 2911.28,2297.92 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2919.28,2297.91 2919.28,2498.36 1028.52,2498.36 1028.52,2606.06 "/>
+    <polygon style="fill: #ffffff" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="2927.28,2297.91 2919.28,2281.91 2911.28,2297.91 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="3228.22,-604.65 3228.22,-483.296 2720.3,-483.296 2720.3,-357.42 "/>
