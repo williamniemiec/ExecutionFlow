@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import examples.testClasses.TestClass;
 
-public class TestClass 
+//public class TestClass 
 {
 	@org.junit.Test
 	public void testLastCurlyBracketInSameLine() {
@@ -15,50 +15,50 @@ public class TestClass
 		System.out.println("#####################################################################");
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
+//
+try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _a31ed2fc09ded38c94042eb932c28945){}}
 
-try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _4c86ab64cde1d1eca5d532c5c4c124){}}
-
-//	@org.junit.Test
-//	public void testFoo()
+	@org.junit.Test
+	public void testFoo()
 //	{
-//try {		assertEquals("1", "1");} catch(Throwable _46b0b76fd01fdfff4b30d68930f25e2f){}
-//try {		assertEquals("1", "2");	} catch(Throwable _335a2b015f3f8946db03285bdd763731){}// It will fail
-//	}
+//try {		assertEquals("1", "1");} catch(Throwable _3f3d03bbc0aff774642d46588c5819d){}
+//try {		assertEquals("1", "2");	} catch(Throwable _540e5b8c609a2c65d07ec0706e0b4e49){}// It will fail
+////	}
 	
-//	@org.junit.Test
-//	public void assertFailInTheMiddleTest() 
+	@org.junit.Test
+	public void assertFailInTheMiddleTest() 
 //	{
 //		TestClass tc = new TestClass(99);
-//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _7f15b947a756a159b6124bb5a358d21e){}
+//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _4f636dc89c165afd91d1eb589efb6649){}
 //try {		assertEquals("nine", 
-//				tc.threePaths(3));} catch(Throwable _a721e23baa3ee80b3da89c6612002672){}		// It will fail
-//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _b706aee672373d9d0db1cae9fe2307f3){}
-//	}
+//				tc.threePaths(3));} catch(Throwable _270c0a6ee22df959669eb1b93612dc09){}		// It will fail
+//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _1539b3326d05c367264aa32fbdd08721){}
+////	}
 	
-//	@org.junit.Test
-//	public void multilineAssert1()
+	@org.junit.Test
+	public void multilineAssert1()
 //	{
 //try {		assertEquals(param1, 			// Comment 1
 //				param2,					// Comment 2
-//				param3);} catch(Throwable _87c9343f056807916911c15f90e369d5){}				// Comment 3
+////				param3);} catch(Throwable _e25be22e58297fd75356d1473b21e6a3){}				// Comment 3
 //	}
 	
-//	@org.junit.Test
-//	public void multilineAssert2()
+	@org.junit.Test
+	public void multilineAssert2()
 //	{
 //try {		assertEquals (
 //				param1, 				// Comment 1
 //				param2,					// Comment 2
-//				param3);} catch(Throwable _aed1d2f50055d0fedfb7185174b2e760){}				// Comment 3
+//				param3);} catch(Throwable _9a73a75f91a74efdf3b940af6684860b){}				// Comment 3
 //	}
 	
-//	@org.junit.Test
-//	public void multilineAssert3()
+	@org.junit.Test
+	public void multilineAssert3()
 //	{
 //try {		assertEquals (
 //				param1, 				// Comment 1
 //				param2,					// Comment 2
 //				param3					// Comment 3
-//		);} catch(Throwable _36643f6789b78454b345694f10f475c0){}								// Comment 4
+//		);} catch(Throwable _d3aedd77c1862e4b439c54fe38df177d){}								// Comment 4
 //	}
 }

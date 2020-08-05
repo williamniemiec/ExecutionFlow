@@ -43,7 +43,7 @@ public class PreTestMethodFileProcessorTest
 				.outputDir(currentDir.toPath())
 				.outputFilename(filename+"_parsed")
 				.fileExtension("txt")
-				.testMethodSignature("examples.junit5.ParameterizedTestAnnotation.test1(int num)")
+				.testMethodSignature("examples.junit5.ParameterizedTestAnnotation.test1(int)")
 				.testMethodArgs(-1)
 				.build();
 		fp.processFile();
