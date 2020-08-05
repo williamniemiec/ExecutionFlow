@@ -37,7 +37,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 */
 	private static final boolean DEBUG;
 	
-	private final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
+	private static final String REGEX_COMMENT_FULL_LINE = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 	private String fileExtension = "java";
 	private boolean skipNextLine;
 	private boolean wasParsed;
@@ -337,7 +337,7 @@ public class InvokedFileProcessor extends FileProcessor
 			wasParsed = false;
 			
 			// Checks if it is a comment line
-			if (!skipNextLine && !line.matches(regex_commentFullLine)) {
+			if (!skipNextLine && !line.matches(REGEX_COMMENT_FULL_LINE)) {
 				line = printParser.parse(line);
 				line = invokerParser.parse(line);
 				line = elseParser.parse(line, nextLine);
@@ -376,7 +376,7 @@ public class InvokedFileProcessor extends FileProcessor
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
 			
-			if (line.contains("@") || line.matches(regex_commentFullLine))
+			if (line.contains("@") || line.matches(REGEX_COMMENT_FULL_LINE))
 				continue;
 			
 			// If the line does not contain an opening curly bracket or contains
@@ -421,7 +421,7 @@ public class InvokedFileProcessor extends FileProcessor
 		
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
-			if (line.contains("@") || line.matches(regex_commentFullLine) || wasBroken) {
+			if (line.contains("@") || line.matches(REGEX_COMMENT_FULL_LINE) || wasBroken) {
 				wasBroken = false;
 				continue;
 			}

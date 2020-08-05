@@ -124,7 +124,7 @@ public class OthersTest
 	{
 		AuxClass ac = new AuxClass(1);
 		
-		assertEquals(24, ac.getNumber());
+		assertEquals(1, ac.getNumber());
 	}
 	
 	@Test

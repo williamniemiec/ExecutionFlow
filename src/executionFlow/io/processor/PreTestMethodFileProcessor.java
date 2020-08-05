@@ -416,12 +416,12 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private static final String regex_methodDeclaration = 
+		private static final String REGEX_METHOD_DECLARATION = 
 				"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
 				+ "\\(([A-z0-9\\-_$,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*(\\ |\\t)*";
-		private static final String regex_repeatedTest = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
-		private static final String regex_junit4_test = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
-		private static final String regex_parameterizedTest = 
+		private static final String REGEX_REPEATED_TEST = ".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
+		private static final String REGEX_JUNIT4_TEST = ".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
+		private static final String REGEX_PARAMETERIZED_TEST = 
 				".*@(.*\\.)?(org\\.junit\\.jupiter\\.params\\.)?ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
 		private String numRepetitions;
 		private String testMethodSignature;
@@ -497,9 +497,9 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		public String parse(String line)
 		{
 			if (line.contains("@") && !inTestAnnotationScope) {
-				inTestAnnotationScope =	line.matches(regex_junit4_test) || 
-										line.matches(regex_repeatedTest) || 
-										line.matches(regex_parameterizedTest) || 
+				inTestAnnotationScope =	line.matches(REGEX_JUNIT4_TEST) || 
+										line.matches(REGEX_REPEATED_TEST) || 
+										line.matches(REGEX_PARAMETERIZED_TEST) || 
 										line.contains("@org.junit.jupiter.api.Test");
 			}
 			
@@ -527,10 +527,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		private String parseAnnotations(String line)
 		{
-			return	line.matches(regex_junit4_test) 			 ?	parseTestAnnotation(line, false) :
+			return	line.matches(REGEX_JUNIT4_TEST) 			 ?	parseTestAnnotation(line, false) :
 					line.contains("@org.junit.jupiter.api.Test") ?	parseTestAnnotation(line, true) :
-					line.matches(regex_repeatedTest) 			 ?	parseRepeatedTest(line) :
-					line.matches(regex_parameterizedTest) || 
+					line.matches(REGEX_REPEATED_TEST) 			 ?	parseRepeatedTest(line) :
+					line.matches(REGEX_PARAMETERIZED_TEST) || 
 								 testMethodArgs != null			 ?	parseParameterizedTest(line) : 
 					line;
 		}
@@ -565,7 +565,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			}
 			
 			// If current method it is not the given test method, ignores it		
-			else if (line.matches(regex_methodDeclaration) && !line.contains("private ") && 
+			else if (line.matches(REGEX_METHOD_DECLARATION) && !line.contains("private ") && 
 					!extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
 				if (curlyBracketBalance_ignore == null)
 					curlyBracketBalance_ignore = new CurlyBracketBalance();
@@ -690,7 +690,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		private String parseRepeatedTest(String line)
 		{
-			Pattern p = Pattern.compile(regex_repeatedTest);
+			Pattern p = Pattern.compile(REGEX_REPEATED_TEST);
 			Matcher m = p.matcher(line);
 			
 			
@@ -771,7 +771,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			// Checks if it is within parameterized test
 			else if (inTestMethodSignature) {
 				// Converts test method parameters to local variables 
-				if (line.matches(regex_methodDeclaration)) {
+				if (line.matches(REGEX_METHOD_DECLARATION)) {
 					if (!extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
 						inTestMethodSignature = false;
 						curlyBracketBalance_parameterizedTest.parse(line);

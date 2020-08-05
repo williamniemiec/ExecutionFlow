@@ -21,7 +21,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.1.1
  * @since		2.0.0
  */
 public class Analyzer 
@@ -34,6 +34,9 @@ public class Analyzer
 	 */
 	private static final boolean DEBUG; 
 	
+	private static final String REGEX_MULTILINE_ARGS = 
+			"^[0-9]*(\\t|\\ )+[A-z0-9$\\-_\\.\\,\\ \\:]+(\\);)?$";
+
 	/**
 	 * Stores signature of the class of the test method.
 	 */
@@ -75,6 +78,7 @@ public class Analyzer
 	private boolean withinConstructor;
 	private boolean withinOverloadCall;
 	private boolean lastAddWasReturn;
+	private boolean isMethodMultiLineArgs;
 
 	
 	//-------------------------------------------------------------------------
@@ -384,7 +388,7 @@ public class Analyzer
 		int currentLine = -1;
 		String line, srcLine = null;
 		
-		
+
 		if (jdb.isReady()) {        	
         	isInternalCommand = false;
         	line = jdb.read();
@@ -429,7 +433,8 @@ public class Analyzer
         			methodDeclarationLine = currentLine;
         		}
         		
-        		ignore = withinOverloadCall || ignore || shouldIgnore(srcLine, currentLine);
+        		ignore = withinOverloadCall || ignore || shouldIgnore(srcLine, currentLine) || isMethodMultiLineArgs;
+        		isMethodMultiLineArgs = srcLine.matches(REGEX_MULTILINE_ARGS);
         		
         		if (methodDeclarationLine == 0 && currentLine > 0 && 
         				(line.contains(invokedName+".") || line.contains(invokedName+"(")))
@@ -662,13 +667,10 @@ public class Analyzer
 	 */
 	private boolean shouldIgnore(String srcLine, int currentLine)
 	{
-		final String regex_multiLineArg = "^[0-9]*(\\t|\\ )+[A-z0-9$\\-_\\.\\,\\ \\:]+(\\);)?$";
-		
-		
 		return	(currentLine != -1 && currentLine < methodDeclarationLine) ||
 				currentLine == 1 ||
 				srcLine.contains(" class ") ||
-				srcLine.matches(regex_multiLineArg);
+				srcLine.matches(REGEX_MULTILINE_ARGS);
 	}
 	
 	/**
