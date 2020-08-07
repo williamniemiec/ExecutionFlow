@@ -22,7 +22,7 @@ import executionFlow.util.FileUtil;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.1.0
+ * @version		3.2.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -30,17 +30,24 @@ public class InvokedFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 200L;
+	private static final long serialVersionUID = 320L;
 	
 	/**
 	 * If true, displays processed lines.
 	 */
 	private static final boolean DEBUG;
 	
-	private static final String REGEX_COMMENT_FULL_LINE = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
+	private static final String REGEX_COMMENT_FULL_LINE = 
+			"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
+	private static final String REGEX_ASSERT_METHOD = 
+			"(\\ |\\t)*(Assert\\.)?assert[A-z]+\\(.*";
 	private String fileExtension = "java";
 	private boolean skipNextLine;
 	private boolean wasParsed;
+	private boolean insideTestMethod;
+	private boolean insideAnonymousClass;
+	private CurlyBracketBalance testMethodCBB;
+	private Stack<CurlyBracketBalance> anonymousClassesCBB = new Stack<>(); 
 	
 	
 	//-------------------------------------------------------------------------
@@ -313,6 +320,8 @@ public class InvokedFileProcessor extends FileProcessor
 	 */
 	private void fillHoles(List<String> lines)
 	{
+		final String REGEX_ANONYMOUS_CLASS = 
+				".+new(\\s|\\t)+[A-z0-9\\-_$]+\\(([A-z0-9\\-_$\\.,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*(\\s|\\t)*$";
 		String line, nextLine;
 		PrintParser printParser = new PrintParser();
 		InvokedParser invokerParser = new InvokedParser();
@@ -336,16 +345,61 @@ public class InvokedFileProcessor extends FileProcessor
 
 			wasParsed = false;
 			
-			// Checks if it is a comment line
-			if (!skipNextLine && !line.matches(REGEX_COMMENT_FULL_LINE)) {
-				line = printParser.parse(line);
-				line = invokerParser.parse(line);
-				line = elseParser.parse(line, nextLine);
-				line = tryFinallyParser.parse(line, nextLine);
-				line = continueBreakParser.parse(line, nextLine);
-				line = doWhileParser.parse(line, nextLine);
-				line = switchParser.parse(line, nextLine);
-				line = variableParser.parse(line);
+			// Checks if it is inside a test method
+			if (!line.matches(REGEX_COMMENT_FULL_LINE)) {
+				// Checks if it is a test method
+				if (line.contains("@org.junit.Test")) {
+					insideTestMethod = true;
+					testMethodCBB = new CurlyBracketBalance();
+				}
+				
+				// Checks if it is inside a test method
+				if (insideTestMethod) {
+					testMethodCBB.parse(line);
+					
+					if (testMethodCBB.isBalanceEmpty() && testMethodCBB.alreadyIncreased()) {
+						insideTestMethod = false;
+						testMethodCBB = null;
+					}
+					
+					// Checks if it is an anonymous class
+					if (line.matches(REGEX_ANONYMOUS_CLASS)) {
+						CurlyBracketBalance cbb = new CurlyBracketBalance();
+						
+						
+						cbb.parse(line);
+						anonymousClassesCBB.push(cbb);
+					}
+				}
+				
+				// Checks if it is inside an anonymous class
+				if (anonymousClassesCBB.size() > 0) {
+					CurlyBracketBalance cbb = new CurlyBracketBalance();
+					
+					
+					cbb = anonymousClassesCBB.peek();
+					cbb.parse(line);
+					
+					if (cbb.isBalanceEmpty()) {
+						insideAnonymousClass = false;
+						anonymousClassesCBB.pop();
+					}
+					else {
+						insideAnonymousClass = true;
+					}
+				}
+				
+				// Process the line
+				if ((!insideTestMethod && !skipNextLine) || (insideTestMethod && insideAnonymousClass)) {
+					line = printParser.parse(line);
+					line = invokerParser.parse(line);
+					line = elseParser.parse(line, nextLine);
+					line = tryFinallyParser.parse(line, nextLine);
+					line = continueBreakParser.parse(line, nextLine);
+					line = doWhileParser.parse(line, nextLine);
+					line = switchParser.parse(line, nextLine);
+					line = variableParser.parse(line);
+				}
 			}
 			
 			// -----{ DEBUG }-----
@@ -363,8 +417,8 @@ public class InvokedFileProcessor extends FileProcessor
 	 */
 	private void openingCurlyBracketBreaker(List<String> lines) 
 	{
-		final String regex_onlyOpeningCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
-		final String regex_openingCurlyBracket = "(\\ |\\t)*\\{(\\ |\\t)*";
+		final String REGEX_ONLY_OPENING_CURLY_BRACKET = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
+		final String REGEX_OPENING_CURLY_BRACKET = "(\\ |\\t)*\\{(\\ |\\t)*";
 		String line, rightBracket;
 		int idx_curlyBracketEnd;
 		Matcher m;
@@ -376,13 +430,14 @@ public class InvokedFileProcessor extends FileProcessor
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
 			
-			if (line.contains("@") || line.matches(REGEX_COMMENT_FULL_LINE))
+			if (line.contains("@") || line.matches(REGEX_COMMENT_FULL_LINE) || 
+					line.matches(REGEX_ASSERT_METHOD))
 				continue;
 			
 			// If the line does not contain an opening curly bracket or contains
 			// but it is alone on the line, keep the original line 
-			if (line.contains("{") && !line.matches(regex_onlyOpeningCurlyBracket)) {
-				m = Pattern.compile(regex_openingCurlyBracket).matcher(line);
+			if (line.contains("{") && !line.matches(REGEX_ONLY_OPENING_CURLY_BRACKET)) {
+				m = Pattern.compile(REGEX_OPENING_CURLY_BRACKET).matcher(line);
 				
 				if (m.find()) {
 					idx_curlyBracketEnd = m.start() + m.group().indexOf("{");	
@@ -408,8 +463,8 @@ public class InvokedFileProcessor extends FileProcessor
 	 */
 	private void closingCurlyBracketBreaker(List<String> lines) 
 	{
-		final String regex_onlyClosingCurlyBracket = "^(\\s|\\t)+\\}(\\s|\\t|\\/)*$";
-		final String regex_closingCurlyBracket = "(\\ |\\t)*\\}(\\ |\\t)*";
+		final String REGEX_ONLY_CLOSING_CURLY_BRACKET = "^(\\s|\\t)+\\}(\\s|\\t|\\/)*$";
+		final String REGEX_CLOSING_CURLY_BRACKET = "(\\ |\\t)*\\}(\\ |\\t)*";
 		String line, rightBracket, leftContent;
 		int idx_curlyBracketEnd;
 		Matcher m;
@@ -421,15 +476,16 @@ public class InvokedFileProcessor extends FileProcessor
 		
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
-			if (line.contains("@") || line.matches(REGEX_COMMENT_FULL_LINE) || wasBroken) {
+			if (line.contains("@") || line.matches(REGEX_COMMENT_FULL_LINE) ||
+					line.matches(REGEX_ASSERT_METHOD) || wasBroken) {
 				wasBroken = false;
 				continue;
 			}
 			
 			// If the line does not contain a closing curly bracket or contains
 			// but it is alone on the line, keep the original line 
-			if (line.contains("}") && !line.matches(regex_onlyClosingCurlyBracket)) {
-				m = Pattern.compile(regex_closingCurlyBracket).matcher(line);
+			if (line.contains("}") && !line.matches(REGEX_ONLY_CLOSING_CURLY_BRACKET)) {
+				m = Pattern.compile(REGEX_CLOSING_CURLY_BRACKET).matcher(line);
 				
 				if (m.find()) {
 					idx_curlyBracketEnd = m.start() + m.group().indexOf("}");	
@@ -563,9 +619,9 @@ public class InvokedFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private boolean withinInvoker;
-		private final String regex_new = "(\\ |\\t)+new(\\ |\\t)*";
-		private final String pattern_invokerDeclaration = 
+		private boolean insideInvoked;
+		private final String REGEX_NEW = "(\\ |\\t)+new(\\ |\\t)*";
+		private final String PATTERN_INVOKED_DECLARATION = 
 				"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+(\\ |\\t)*\\(.*";
 		
 		
@@ -587,19 +643,19 @@ public class InvokedFileProcessor extends FileProcessor
 				return line;
 			
 			
-			if (withinInvoker) {
+			if (insideInvoked) {
 				if (line.contains("{")) {
-					withinInvoker = false;
+					insideInvoked = false;
 				}
 				
 				wasParsed = true;
 			}
 
-			else if (	!line.matches(regex_new) && 
-						line.matches(pattern_invokerDeclaration) &&
-						isInvokerDeclaration(line)	) {
+			else if (	!line.matches(REGEX_NEW) && 
+						line.matches(PATTERN_INVOKED_DECLARATION) &&
+						isInvokedDeclaration(line)	) {
 				line = "@executionFlow.runtime.CollectCalls " + line;
-				withinInvoker = !line.contains("{");
+				insideInvoked = !line.contains("{");
 				wasParsed = true;
 			}
 			
@@ -613,7 +669,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * 
 		 * @return		If the line contains an invoked declaration
 		 */
-		private boolean isInvokerDeclaration(String line)
+		private boolean isInvokedDeclaration(String line)
 		{
 					// Checks if it is an invoker whose parameters are all on the same line
 			return	!line.contains("return ") && !line.contains(" new ") && (
@@ -641,9 +697,9 @@ public class InvokedFileProcessor extends FileProcessor
 		//		Attributes
 		//---------------------------------------------------------------------
 		private ElseBlockManager elseBlockManager = new ElseBlockManager();
-		private final Pattern pattern_else = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
-		private final String regex_catch = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-		private final String regex_if_else_closed_curlybracket = "(\\t|\\ )+\\}(\\t|\\ )*(else if|else)(\\t|\\ )*(\\(|\\{).*";
+		private final Pattern PATTERN_ELSE = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
+		private final String REGEX_CATCH = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+		private final String REGEX_IF_ELSE_CLOSED_CURLY_BRACKET = "(\\t|\\ )+\\}(\\t|\\ )*(else if|else)(\\t|\\ )*(\\(|\\{).*";
 		private boolean elseNoCurlyBrackets;
 		private boolean inlineCommand;
 		private boolean removedClosedCB;
@@ -694,7 +750,7 @@ public class InvokedFileProcessor extends FileProcessor
 			else {
 				// Checks if a closing curly bracket is on the same line as an
 				// else-if or if statement
-				if (nextLine.matches(regex_if_else_closed_curlybracket)) {
+				if (nextLine.matches(REGEX_IF_ELSE_CLOSED_CURLY_BRACKET)) {
 					if (line.contains("//")) {
 						int idx_comment = line.indexOf("//");
 						
@@ -714,7 +770,7 @@ public class InvokedFileProcessor extends FileProcessor
 					// Checks if else block balance is empty
 					if (elseBlockManager.isCurrentBalanceEmpty()) {
 						// Checks if it is a line with 'catch' keyword
-						if (line.matches(regex_catch)) {
+						if (line.matches(REGEX_CATCH)) {
 							// Updates else block balance
 							if (line.contains("{") && !line.contains("}")) {
 								elseBlockManager.incrementBalance();
@@ -727,7 +783,7 @@ public class InvokedFileProcessor extends FileProcessor
 									elseNoCurlyBrackets = false;
 							}
 						} 
-						else if (!nextLine.matches(regex_catch)) {	// Checks if next line does not have 'catch' keyword
+						else if (!nextLine.matches(REGEX_CATCH)) {	// Checks if next line does not have 'catch' keyword
 							line += "}";
 							elseBlockManager.removeCurrentElseBlock();
 							
@@ -754,7 +810,7 @@ public class InvokedFileProcessor extends FileProcessor
 				}
 	
 				// Else
-				if (!line.contains("if") && pattern_else.matcher(line).find()) {
+				if (!line.contains("if") && PATTERN_ELSE.matcher(line).find()) {
 					line = checkCurlyBracketNewLine(line, nextLine);
 					line = parse_else(line);
 					
@@ -840,9 +896,9 @@ public class InvokedFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern pattern_tryFinally = 
+		private final Pattern PATTERN_TRY_FINALLY = 
 				Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
-		private final String regex_catch_closed_curlybracket = 
+		private final String REGEX_CATCH_CLOSED_CURLY_BRACKET = 
 				"(\\t|\\ )+\\}(\\t|\\ )*catch(\\t|\\ )*(\\(|\\{).*";
 		private boolean removedClosedCB;
 		
@@ -871,7 +927,7 @@ public class InvokedFileProcessor extends FileProcessor
 			if (wasParsed)
 				return line;
 			
-			if (pattern_tryFinally.matcher(line).find() && pattern_tryFinally.matcher(line).find()) {	
+			if (PATTERN_TRY_FINALLY.matcher(line).find() && PATTERN_TRY_FINALLY.matcher(line).find()) {	
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = parse_try_finally(line);
 				wasParsed = true;
@@ -879,7 +935,7 @@ public class InvokedFileProcessor extends FileProcessor
 			
 			// Checks if closed curly bracket is on the same line as an
 			// else-if or if statement
-			if (nextLine.matches(regex_catch_closed_curlybracket)) {
+			if (nextLine.matches(REGEX_CATCH_CLOSED_CURLY_BRACKET)) {
 				if (line.contains("//")) {
 					int idx_comment = line.indexOf("//");
 					
@@ -939,7 +995,7 @@ public class InvokedFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final String regex_continueBreak = "^(\\ |\\t)*(continue|break)(\\ |\\t)*;";
+		private final String REGEX_CONTINUE_BREAK = "^(\\ |\\t)*(continue|break)(\\ |\\t)*;";
 		
 		
 		//---------------------------------------------------------------------
@@ -965,7 +1021,7 @@ public class InvokedFileProcessor extends FileProcessor
 			if (wasParsed)
 				return line;
 			
-			if (line.matches(regex_continueBreak)) {	
+			if (line.matches(REGEX_CONTINUE_BREAK)) {	
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = "if (Boolean.parseBoolean(\"True\")) {"+line+"}";
 				wasParsed = true;
@@ -988,7 +1044,7 @@ public class InvokedFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern pattern_do = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
+		private final Pattern PATTERN_DO = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
 		
 		
 		//---------------------------------------------------------------------
@@ -1008,7 +1064,7 @@ public class InvokedFileProcessor extends FileProcessor
 			if (wasParsed)
 				return line;
 			
-			if (pattern_do.matcher(line).find()) {								
+			if (PATTERN_DO.matcher(line).find()) {								
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = parse_do(line);
 				wasParsed = true;
@@ -1061,7 +1117,7 @@ public class InvokedFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern pattern_switch = Pattern.compile("(\\t|\\ |\\})+(case|default)(\\t|\\ )+");
+		private final Pattern PATTERN_SWITCH = Pattern.compile("(\\t|\\ |\\})+(case|default)(\\t|\\ )+");
 		
 		
 		//---------------------------------------------------------------------
@@ -1081,7 +1137,7 @@ public class InvokedFileProcessor extends FileProcessor
 			if (wasParsed)
 				return line;
 			
-			if (pattern_switch.matcher(line).find()) {							
+			if (PATTERN_SWITCH.matcher(line).find()) {							
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = parse_switch(line);
 				wasParsed = true;
@@ -1133,7 +1189,7 @@ public class InvokedFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final String regex_varDeclarationWithoutInitialization = 
+		private final String REGEX_VARIABLE_DECLARATION_WITHOUT_INITIALIZATION = 
 				"( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
 		
 		
@@ -1155,7 +1211,7 @@ public class InvokedFileProcessor extends FileProcessor
 			
 			if (	!line.contains("return ") && !line.contains("return(") && 		
 					!line.contains("package ") && !line.contains("class ") && 
-					line.matches(regex_varDeclarationWithoutInitialization)	) {
+					line.matches(REGEX_VARIABLE_DECLARATION_WITHOUT_INITIALIZATION)	) {
 				line = parse_varDeclaration(line);
 				wasParsed = true;
 			}
