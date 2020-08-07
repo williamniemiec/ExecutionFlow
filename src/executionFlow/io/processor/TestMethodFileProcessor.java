@@ -1,14 +1,14 @@
 package executionFlow.io.processor;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
+import executionFlow.util.FileUtil;
 
 
 /**
@@ -17,7 +17,7 @@ import executionFlow.util.ConsoleOutput;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.2.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor
@@ -245,8 +245,9 @@ public class TestMethodFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 
-		final String regex_commentFullLine = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
+		final String REGEX_COMMENT_FULL_LINE = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 		String line;
+		List<String> lines = new ArrayList<>();
 		File outputFile;
 		
 		
@@ -257,43 +258,44 @@ public class TestMethodFileProcessor extends FileProcessor
 		else	
 			outputFile = new File(outputFilename + "." + fileExtension);
 		
-		// Opens file streams (file to be parsed and output file / processed file)
-		try (BufferedReader br = Files.newBufferedReader(file, encode.getStandardCharset());
-			 BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath(), encode.getStandardCharset())) { 
-			
-			// Parses file line by line
-			while ((line = br.readLine()) != null) {
-				if (!line.matches(regex_commentFullLine)) {
-					// Checks whether the line contains a test annotation
-					if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-						line += " @executionFlow.runtime._SkipInvoked";
-					}
-					// Checks if there are print's
-					else if (line.contains("System.out.print")) {
-						String[] tmp = line.split(";");
-						StringBuilder response = new StringBuilder();
-						
-						
-						// Deletes print's from the line
-						for (String term : tmp) {
-							if (!term.contains("System.out.print")) {
-								response.append(term);
-								response.append(";");
-							}
-						}
-						
-						line = response.toString();
-					}
+		// Reads the source file and puts its lines in a list
+		lines = FileUtil.getLines(file, encode.getStandardCharset());
+		
+		// Parses file line by line
+		for (int i=0; i<lines.size(); i++) {
+			line = lines.get(i);
+			if (!line.matches(REGEX_COMMENT_FULL_LINE)) {
+				// Checks whether the line contains a test annotation
+				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
+					line += " @executionFlow.runtime._SkipInvoked";
 				}
-				
-				// -----{ DEBUG }-----
-				if (DEBUG) { ConsoleOutput.showDebug(line); }
-				// -----{ END DEBUG }-----	
-				
-				bw.write(line);
-				bw.newLine();
+				// Checks if there are print's
+				else if (line.contains("System.out.print")) {
+					String[] tmp = line.split(";");
+					StringBuilder response = new StringBuilder();
+					
+					
+					// Deletes print's from the line
+					for (String term : tmp) {
+						if (!term.contains("System.out.print")) {
+							response.append(term);
+							response.append(";");
+						}
+					}
+					
+					line = response.toString();
+				}
 			}
+			
+			// -----{ DEBUG }-----
+			if (DEBUG) { ConsoleOutput.showDebug(line); }
+			// -----{ END DEBUG }-----	
+			
+			lines.set(i, line);
 		}
+
+		// Writes processed lines to a file
+		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
 
 		return outputFile.getAbsolutePath();
 	}
