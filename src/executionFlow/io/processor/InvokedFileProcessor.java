@@ -315,7 +315,7 @@ public class InvokedFileProcessor extends FileProcessor
 	{
 		String line, nextLine;
 		PrintParser printParser = new PrintParser();
-		InvokerParser invokerParser = new InvokerParser();
+		InvokedParser invokerParser = new InvokedParser();
 		ElseParser elseParser = new ElseParser();
 		TryCatchFinallyParser tryFinallyParser = new TryCatchFinallyParser();
 		ContinueBreakParser continueBreakParser = new ContinueBreakParser();
@@ -552,13 +552,13 @@ public class InvokedFileProcessor extends FileProcessor
 	}
 	
 	/**
-	 * Responsible for handling invoker declarations.
+	 * Responsible for handling invoked declarations.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
+	 * @version		3.2.0
 	 * @since 		2.0.0
 	 */
-	private class InvokerParser
+	private class InvokedParser
 	{
 		//---------------------------------------------------------------------
 		//		Attributes
@@ -607,11 +607,11 @@ public class InvokedFileProcessor extends FileProcessor
 		}
 		
 		/**
-		 * Checks whether a line contains an invoker declaration.
+		 * Checks whether a line contains an invoked declaration.
 		 * 
 		 * @param		line Line to be analyzed
 		 * 
-		 * @return		If the line contains an invoker declaration
+		 * @return		If the line contains an invoked declaration
 		 */
 		private boolean isInvokerDeclaration(String line)
 		{
@@ -619,7 +619,7 @@ public class InvokedFileProcessor extends FileProcessor
 			return	!line.contains("return ") && !line.contains(" new ") && (
 						line.matches("(\\ |\\t)*([A-z0-9\\-\\._$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
 								+ "\\(([A-z0-9\\-_$\\.,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*((\\s|\\ )+"
-								+ "(throws|implements|extends)(\\s|\\ )+.+)?") ||
+								+ "(throws|implements|extends)(\\s|\\ )+.+)?(\\ |\\t)*") ||
 						// Checks if it is an invoker whose parameters are broken on other lines
 						line.matches("(\\ |\\t)*([A-z0-9\\-_\\.$<>\\[\\]\\ \\t?]+(\\s|\\t))+"
 								+ "[A-z0-9\\-_$]+(\\ |\\t)*\\(.*,(\\ |\\t)*")
