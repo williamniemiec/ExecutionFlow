@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collection;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +17,8 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.info.CollectorInfo;
+import executionFlow.info.ConstructorInvokedInfo;
 
 
 /**
@@ -22,7 +26,7 @@ import executionFlow.ExecutionFlow;
  * {@link ExecutionFlow} class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.1.0
+ * @version		3.2.0
  * @since		1.0
  */
 public class CollectorExecutionFlow 
@@ -318,6 +322,27 @@ public class CollectorExecutionFlow
 		}
 		
 		return response.toString();
+	}
+	
+	/**
+	 * Replaces all anonymous class constructor signatures from where anonymous
+	 * class is created to where anonymous class is declared.  
+	 * 
+	 * @param		constructorCollector Constructor collector containing 
+	 * constructor signatures to be replaced
+	 * @param		anonymousClassSignatures Anonymous class signatures
+	 */
+	public static void fixAnonymousClassSignatures(Collection<CollectorInfo> constructorCollector,
+			Map<String, String> anonymousClassSignatures)
+	{
+		for (CollectorInfo collector : constructorCollector) {
+			ConstructorInvokedInfo cii = (ConstructorInvokedInfo)collector.getConstructorInfo();
+			
+			
+			if (anonymousClassSignatures.containsKey(cii.getClassSignature())) {
+				cii.setClassSignature(anonymousClassSignatures.get(cii.getClassSignature()));
+			}
+		}
 	}
 	
 	/**

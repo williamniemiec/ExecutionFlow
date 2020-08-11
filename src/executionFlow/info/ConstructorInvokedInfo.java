@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Stores information about a constructor.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.2.0
  * @since		2.0.0
  */
 public class ConstructorInvokedInfo extends InvokedInfo
@@ -231,7 +231,7 @@ public class ConstructorInvokedInfo extends InvokedInfo
 	
 	
 	//-------------------------------------------------------------------------
-	//		Getters
+	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	@Override
 	public String getClassSignature()
@@ -255,5 +255,22 @@ public class ConstructorInvokedInfo extends InvokedInfo
 	public Class<?>[] getParameterTypes() 
 	{
 		return parameterTypes;
+	}
+	
+	/**
+	 * Sets class signature.
+	 * 
+	 * @param		classSignature Class signature to be set
+	 * 
+	 * @return		Itself to allow chained calls
+	 * 
+	 * @implSpec	This function will update {@link #invokedSignature}
+	 */
+	public ConstructorInvokedInfo setClassSignature(String classSignature)
+	{
+		this.invokedSignature = this.invokedSignature.replace(getClassSignature(), classSignature);
+		this.classSignature = classSignature;
+		
+		return this;
 	}
 }

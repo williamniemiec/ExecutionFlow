@@ -57,6 +57,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		Class<?>[] paramTypes;		// Constructor parameter types
 		Object[] paramValues;		// Constructor parameter values
 		
+
 		signature = thisJoinPoint.getSignature().toString();
 		
 		if (signature.contains("java.") || !signature.matches(constructorRegex))

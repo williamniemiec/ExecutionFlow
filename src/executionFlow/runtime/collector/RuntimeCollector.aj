@@ -1,6 +1,7 @@
 package executionFlow.runtime.collector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ import executionFlow.info.MethodInvokedInfo;
  * {@link executionFlow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.3
+ * @version		3.2.0
  * @since		1.0
  */
 public abstract aspect RuntimeCollector 
@@ -53,6 +54,16 @@ public abstract aspect RuntimeCollector
 	 */
 	protected static Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
 
+	/**
+	 * Stores anonymous class signature where it is created and where it is 
+	 * declared.
+	 * <ul>
+	 * 	<li><b>Key:</b>	Class signature where anonymous class is created</li>
+	 * 	<li><b>Value:</b> Class signature where anonymous class is declared</li>
+	 * </ul> 
+	 */
+	protected static Map<String, String> anonymousClassSignatures = new HashMap<>();
+	
 	protected static String testMethodSignature;
 	protected static MethodInvokedInfo testMethodInfo;
 	protected static boolean skipCollection;
@@ -139,6 +150,7 @@ public abstract aspect RuntimeCollector
 		collectedMethods.clear();
 		methodCollector.clear();
 		constructorCollector.clear();
+		anonymousClassSignatures.clear();
 		testMethodSignature = null;
 		skipCollection = false;
 		lastInvocationLine = 0;

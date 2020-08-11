@@ -31,7 +31,7 @@ import executionFlow.info.MethodInvokedInfo;
  * with {@link executionFlow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.2.0
  * @since		1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
@@ -70,6 +70,13 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		signature = thisJoinPoint.getSignature().toString();
 
+		if (thisJoinPoint.getTarget() != null) {
+			anonymousClassSignatures.put(
+					thisJoinPoint.getTarget().getClass().getName(), 
+					thisJoinPoint.getSignature().getDeclaringTypeName()
+			);
+		}
+
 		if (!isMethodSignature(signature) || isNativeMethod(signature)) { return; }
 		
 		// Ignores methods in the method test (with @Test) (it will only consider internal calls)
@@ -81,10 +88,17 @@ public aspect MethodCollector extends RuntimeCollector
 					+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
 		}
 		else { 	// Non-static method
-			signature = thisJoinPoint.getTarget().getClass().getName() + "." 
-					+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
+			if (anonymousClassSignatures.containsKey(thisJoinPoint.getTarget().getClass().getName())) {
+				signature = anonymousClassSignatures.get(thisJoinPoint.getTarget().getClass().getName()) 
+						+ "." + thisJoinPoint.getSignature().getName()
+						+ signature.substring(signature.indexOf("("));
+			}
+			else {
+				signature = thisJoinPoint.getTarget().getClass().getName() 
+						+ "." + thisJoinPoint.getSignature().getName() 
+						+ signature.substring(signature.indexOf("("));
+			}
 		}
-		
 		// Extracts the method name
 		methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
