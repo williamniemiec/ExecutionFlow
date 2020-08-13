@@ -30,7 +30,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 320L;
+	private static final long serialVersionUID = 200L;
 	
 	/**
 	 * If true, displays processed lines.

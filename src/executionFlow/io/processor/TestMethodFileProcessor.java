@@ -264,6 +264,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		// Parses file line by line
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
+			
 			if (!line.matches(REGEX_COMMENT_FULL_LINE)) {
 				// Checks whether the line contains a test annotation
 				if (line.contains("@Test") || line.contains("@org.junit.Test")) {

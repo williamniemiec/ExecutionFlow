@@ -7,7 +7,9 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
+import executionFlow.info.CollectorInfo;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.factory.FileProcessorFactory;
 import executionFlow.util.ConsoleOutput;
@@ -17,7 +19,7 @@ import executionFlow.util.ConsoleOutput;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.2.0
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -137,6 +139,8 @@ public class FileManager implements Serializable
 	 * Parses and process file, saving modified file in the same file passed 
 	 * to constructor.
 	 * 
+	 * @param		collectors Information about all invoked collected
+	 * 
 	 * @return		This object to allow chained calls
 	 * 
 	 * @throws		IOException If file encoding cannot be defined
@@ -144,7 +148,7 @@ public class FileManager implements Serializable
 	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertParse()} function.
 	 */
-	public FileManager parseFile() throws IOException
+	public FileManager parseFile(List<CollectorInfo> collectors) throws IOException
 	{
 		// Saves .java file to allow to restore it after
 		createSrcBackupFile();
@@ -155,13 +159,13 @@ public class FileManager implements Serializable
 		// Tries to parse file using UTF-8 encoding. If an error occurs, tries 
 		// to parse the file using ISO-8859-1 encoding
 		try {	
-			out = Path.of(fp.processFile());
+			out = Path.of(fp.processFile(collectors));
 		} catch(IOException e) {	
 			charsetError = true;
 			fp.setEncoding(FileEncoding.ISO_8859_1);
 			
 			try {
-				out = Path.of(fp.processFile());
+				out = Path.of(fp.processFile(collectors));
 			} catch (IOException e1) {
 				throw new IOException("Parsing failed");
 			}
@@ -174,6 +178,22 @@ public class FileManager implements Serializable
 		}
 		
 		return this;
+	}
+	
+	/**
+	 * Parses and process file, saving modified file in the same file passed 
+	 * to constructor.
+	 * 
+	 * @return		This object to allow chained calls
+	 * 
+	 * @throws		IOException If file encoding cannot be defined
+	 * 
+	 * @implNote	This function overwrite file passed to the constructor! To
+	 * restore the original file, call {@link #revertParse()} function.
+	 */
+	public FileManager parseFile() throws IOException
+	{
+		return parseFile(null);
 	}
 	
 	/**

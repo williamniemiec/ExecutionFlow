@@ -21,7 +21,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.1.1
+ * @version		3.2.0
  * @since		2.0.0
  */
 public class Analyzer 
@@ -75,8 +75,8 @@ public class Analyzer
 	private boolean exitMethod;
 	private boolean isInternalCommand;
 	private boolean inMethod;
-	private boolean withinConstructor;
-	private boolean withinOverloadCall;
+	private boolean insideConstructor;
+	private boolean insideOverloadCall;
 	private boolean lastAddWasReturn;
 	private boolean isMethodMultiLineArgs;
 
@@ -413,7 +413,7 @@ public class Analyzer
     			isEmptyMethod = isEmptyMethod(srcLine);
     			inMethod = isInsideMethod(line);
     			newIteration = isNewIteration(line);
-        		withinConstructor = line.contains(".<init>");
+        		insideConstructor = line.contains(".<init>");
         		currentLine = getSrcLine(srcLine);
 
         		// Ignores native calls
@@ -423,7 +423,7 @@ public class Analyzer
         			ignore = true;
         		}
         		// Ignores overload calls
-        		else if (withinOverloadCall) {
+        		else if (insideOverloadCall) {
         			ignore = !isEmptyMethod;
         		}
         		
@@ -433,23 +433,23 @@ public class Analyzer
         			methodDeclarationLine = currentLine;
         		}
         		
-        		ignore = withinOverloadCall || ignore || shouldIgnore(srcLine, currentLine) || isMethodMultiLineArgs;
+        		ignore = insideOverloadCall || ignore || shouldIgnore(srcLine, currentLine) || isMethodMultiLineArgs;
         		isMethodMultiLineArgs = srcLine.matches(REGEX_MULTILINE_ARGS);
         		
-        		if (methodDeclarationLine == 0 && currentLine > 0 && 
+        		if (methodDeclarationLine == 0 && currentLine > 1 && 
         				(line.contains(invokedName+".") || line.contains(invokedName+"(")))
         			methodDeclarationLine = currentLine;        		
         		
         		// Checks if it is still within a constructor
-        		if (inMethod && withinConstructor && !withinOverloadCall && 
+        		if (inMethod && insideConstructor && !insideOverloadCall && 
         				(isEmptyMethod || line.contains(testMethodSignature))) {
-        			withinConstructor = false;
+        			insideConstructor = false;
         			exitMethod = true;
         			readyToReadInput = true;
         		}
     			
         		if (!isInternalCommand && !exitMethod && !ignore) {
-        			if (inMethod || withinConstructor) {
+        			if (inMethod || insideConstructor) {
         				// Checks if returned from the method
         				if (line.contains(testMethodSignature)) {
         					exitMethod = true;
@@ -457,8 +457,8 @@ public class Analyzer
         					inMethod = false;
         				} 
         				// Checks if it is still inside the method
-        				else if (!isEmptyMethod && !lastAddWasReturn) {
-    						testPath.add(currentLine);
+        				else if (!isEmptyMethod && !lastAddWasReturn && methodDeclarationLine > 0) {
+    						testPath.add(currentLine); System.out.println("ADDED: "+currentLine);
     						lastAddWasReturn = srcLine.contains("return "); 
     					}
             		}
@@ -468,8 +468,8 @@ public class Analyzer
         		}
         		
         		// Checks whether it is a constructor overloaded call
-        		if (!withinOverloadCall) {
-        			withinOverloadCall = withinConstructor && srcLine.contains("this(");
+        		if (!insideOverloadCall) {
+        			insideOverloadCall = insideConstructor && srcLine.contains("this(");
         			lineOverloadedCall = currentLine;
         		}
     		}
@@ -479,11 +479,11 @@ public class Analyzer
     		}
     		
     		if (srcLine != null && !srcLine.isEmpty()) {
-    			if (withinOverloadCall && currentLine == lineOverloadedCall + 1) {
-					withinOverloadCall = false;
+    			if (insideOverloadCall && currentLine == lineOverloadedCall + 1) {
+					insideOverloadCall = false;
     			}
     			
-    			if (!withinOverloadCall) {
+    			if (!insideOverloadCall) {
 	    			if (exitMethod) {
 	    				inMethod = false;
 	    				lastAddWasReturn = false;
@@ -501,7 +501,7 @@ public class Analyzer
 	    				exitMethod = true;
     			}
     			else if (isEmptyMethod) {
-    				withinOverloadCall = false;
+    				insideOverloadCall = false;
 				}
     			
     			// -----{ DEBUG }-----
@@ -646,11 +646,18 @@ public class Analyzer
 	 */
 	private boolean isNativeCall(String line, String srcLine)
 	{
+		final String REGEX_ANONYMOUS_CLASS = ".+\\$[0-9]+.+";
+		
+		
 		return	line.contains("line=1 ") || 
 				line.contains("jdk.") || 
 				line.contains("aspectj.") || 
 				line.contains("executionFlow.runtime") || 
 				srcLine.contains("package ") || (
+					(
+							!line.matches(REGEX_ANONYMOUS_CLASS) || 
+							(line.matches(REGEX_ANONYMOUS_CLASS) && !srcLine.matches(".+\\{(\\ |\\t)*$"))
+					) &&
 					!line.contains(invokedName+".") && 
 					!line.contains(invokedName+"(") && 
 					!line.contains(testMethodSignature)

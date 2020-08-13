@@ -25,7 +25,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.2.0
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -129,19 +129,19 @@ public class MethodExecutionFlow extends ExecutionFlow
 					break;
 				
 				// Checks if collected method is within test method
-				if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
-					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokedSignature());
-					ConsoleOutput.showError("The method to be tested cannot be within the test class");
-					ConsoleOutput.showError("This test path will be skipped");
-					continue;
-				}
-				
-				if (collector.getMethodInfo().belongsToAnonymousClass()) {
-					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokedSignature());
-					ConsoleOutput.showError("The method to be tested cannot belong to an anonymous class");
-					ConsoleOutput.showError("This test path will be skipped");
-					continue;
-				}
+//				if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
+//					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokedSignature());
+//					ConsoleOutput.showError("The method to be tested cannot be within the test class");
+//					ConsoleOutput.showError("This test path will be skipped");
+//					continue;
+//				}
+//				
+//				if (collector.getMethodInfo().belongsToAnonymousClass()) {
+//					ConsoleOutput.showError("MethodExecutionFlow - " + collector.getMethodInfo().getInvokedSignature());
+//					ConsoleOutput.showError("The method to be tested cannot belong to an anonymous class");
+//					ConsoleOutput.showError("This test path will be skipped");
+//					continue;
+//				}
 				
 				// Gets FileManager for method file
 				methodFileManager = new FileManager(
@@ -164,7 +164,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 				try {
 					analyzer = analyze(
 							collector.getTestMethodInfo(), testMethodFileManager, 
-							collector.getMethodInfo(), methodFileManager
+							collector.getMethodInfo(), methodFileManager,
+							collectors
 					);
 					tp = analyzer.getTestPaths();
 					

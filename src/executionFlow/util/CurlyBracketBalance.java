@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * <code>Current balance - Amount of open curly brackets - Amount of closed curly brackets</code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.2.0
  * @since		2.0.0
  */
 public class CurlyBracketBalance 
@@ -18,9 +18,15 @@ public class CurlyBracketBalance
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Balance of curly brackets. It is always positive or zero.
+	 * Balance of curly brackets.
 	 */
 	private int curlyBracketsBalance;
+	
+	/**
+	 * Flag indicating whether the balance has already been increased at any 
+	 * time.
+	 */
+	private boolean alreadyIncreased;
 	
 	
 	//-------------------------------------------------------------------------
@@ -42,6 +48,7 @@ public class CurlyBracketBalance
 		
 		
 		curlyBracketsBalance = curlyBracketsBalance + amountOpenCurlyBrackets - amountClosedCurlyBrackets;
+		alreadyIncreased = alreadyIncreased ? alreadyIncreased : amountOpenCurlyBrackets > 0;
 		
 		return this;
 	}
@@ -53,6 +60,7 @@ public class CurlyBracketBalance
 	 */
 	public void increaseBalance()
 	{
+		alreadyIncreased = true;
 		curlyBracketsBalance += 1;
 	}
 	
@@ -84,6 +92,16 @@ public class CurlyBracketBalance
 	public boolean isBalanceEmpty()
 	{
 		return curlyBracketsBalance == 0;
+	}
+	
+	/**
+	 * Checks whether the balance has already been increased at any time.
+	 * 
+	 * @return		If the balance has already been increased at any time
+	 */
+	public boolean alreadyIncreased()
+	{
+		return alreadyIncreased;
 	}
 	
 	/**

@@ -34,7 +34,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.2.0
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -259,6 +259,7 @@ public abstract class ExecutionFlow
 	 * @param		testMethodFileManager Test method file information
 	 * @param		invokedInfo Invoked information
 	 * @param		invokedFileManager Invoked file information
+	 * @param		collectors Information about all invoked collected
 	 * 
 	 * @return		Analyzer after finishing its execution
 	 * 
@@ -270,7 +271,8 @@ public abstract class ExecutionFlow
 	 * {@link Analyzer#run()} method
 	 */
 	protected Analyzer analyze(InvokedInfo testMethodInfo, FileManager testMethodFileManager, 
-			InvokedInfo invokedInfo, FileManager invokedFileManager) throws IOException
+			InvokedInfo invokedInfo, FileManager invokedFileManager,
+			List<CollectorInfo> collectors) throws IOException
 	{
 		if (testMethodManager == null)
 			throw new IllegalStateException("testMethodManager cannot be null. "
@@ -292,7 +294,7 @@ public abstract class ExecutionFlow
 			ConsoleOutput.showInfo("Processing source file of invoked - " 
 				+ invokedInfo.getInvokedSignature()+"...");
 			
-			invokedManager.parse(invokedFileManager).compile(invokedFileManager);
+			invokedManager.parse(invokedFileManager, collectors).compile(invokedFileManager);
 			ConsoleOutput.showInfo("Processing completed");
 		}
 		

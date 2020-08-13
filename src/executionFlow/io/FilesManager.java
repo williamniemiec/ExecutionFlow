@@ -9,9 +9,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.info.CollectorInfo;
 import executionFlow.util.ConsoleOutput;
 
 
@@ -21,7 +23,7 @@ import executionFlow.util.ConsoleOutput;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.2.0
  * @since		2.0.0
  */
 public class FilesManager 
@@ -156,13 +158,14 @@ public class FilesManager
 	 * Parses file from its {@link FileManager}.
 	 * 
 	 * @param		fm File manager of the file
+	 * @param		collectors Information about all invoked collected
 	 * 
 	 * @return		This object to allow chained calls
 	 * 
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesManager parse(FileManager fm) throws IOException
+	public FilesManager parse(FileManager fm, List<CollectorInfo> collectors) throws IOException
 	{
 		int key = fm.hashCode();
 
@@ -176,9 +179,24 @@ public class FilesManager
 			save();
 		}
 		
-		fm.parseFile();
+		fm.parseFile(collectors);
 		
 		return this;
+	}
+	
+	/**
+	 * Parses file from its {@link FileManager}.
+	 * 
+	 * @param		fm File manager of the file
+	 * 
+	 * @return		This object to allow chained calls
+	 * 
+	 * @throws		IOException If an error occurs during parsing or during
+	 * class serialization
+	 */
+	public FilesManager parse(FileManager fm) throws IOException
+	{
+		return parse(fm, null);
 	}
 	
 	/**

@@ -22,7 +22,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		3.2.0
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
@@ -115,13 +115,13 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		// Generates test path for each collected method
 		for (CollectorInfo collector : constructorCollector) {
 			// Checks if collected constructor is within test method
-			if (collector.getConstructorInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
-				ConsoleOutput.showError("ConstructorExecutionFlow - " + collector.getConstructorInfo().getInvokedSignature());
-				ConsoleOutput.showError("The constructor to be tested cannot be within the test class");
-				ConsoleOutput.showError("Anonymous classes are not supported");
-				ConsoleOutput.showError("This test path will be skipped");
-				continue;
-			}
+//			if (collector.getConstructorInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
+//				ConsoleOutput.showError("ConstructorExecutionFlow - " + collector.getConstructorInfo().getInvokedSignature());
+//				ConsoleOutput.showError("The constructor to be tested cannot be within the test class");
+//				ConsoleOutput.showError("Anonymous classes are not supported");
+//				ConsoleOutput.showError("This test path will be skipped");
+//				continue;
+//			}
 
 			// Gets FileManager for method file
 			constructorFileManager = new FileManager(
@@ -144,7 +144,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			try {
 				analyzer = analyze(
 						collector.getTestMethodInfo(), testMethodFileManager, 
-						collector.getConstructorInfo(), constructorFileManager
+						collector.getConstructorInfo(), constructorFileManager,
+						List.copyOf(constructorCollector)
 				);
 				tp = analyzer.getTestPaths();
 				

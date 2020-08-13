@@ -41,7 +41,7 @@ public class FileCompiler
 	 * compilation (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	

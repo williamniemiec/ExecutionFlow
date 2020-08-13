@@ -8,7 +8,7 @@ import java.nio.file.Path;
  * method or a constructor. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		3.2.0
  * @since		2.0.0
  */
 public abstract class InvokedInfo 
@@ -238,6 +238,21 @@ public abstract class InvokedInfo
 	public int getInvocationLine()
 	{
 		return this.invocationLine;
+	}
+	
+	/**
+	 * Sets invocation line.
+	 * 
+	 * @param		line Invocation line (must be greater than zero)
+	 * 
+	 * @return		Itself to allow chained calls
+	 */
+	public InvokedInfo setInvocationLine(int line) {
+		if (line > 0) {
+			this.invocationLine = line;
+		}
+		
+		return this;
 	}
 	
 	/**
