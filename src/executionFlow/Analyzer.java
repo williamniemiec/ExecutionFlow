@@ -448,6 +448,40 @@ public class Analyzer
         			readyToReadInput = true;
         		}
     			
+        		
+        		
+        		
+        		
+        		System.out.println("=======");
+        		System.out.println("in: "+invokedName);
+        		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
+        		System.out.println(isInternalCommand);
+        		System.out.println(exitMethod);
+        		System.out.println(ignore);
+        		
+        		System.out.println(inMethod);
+        		System.out.println(currentLine);
+        		System.out.println(isInsideMethod(line));
+        		
+        		System.out.println(invokedSignature);  
+//				System.out.println(getSrcLine(srcLine) != lastLineAdded);
+        		System.out.println(isEmptyMethod(srcLine));
+        		System.out.println(lastAddWasReturn);
+        		System.out.println(isNewIteration(line));
+        		System.out.println(willEnterInMethod(line));
+        		System.out.println(newIteration);
+        		if (isNativeCall(line, srcLine)) {
+        			System.out.println("native");
+        			System.out.println(invokedName+"."); 
+					System.out.println(invokedName+"("); 
+        		}
+        		System.out.println("=======");
+        		
+        		
+        		
+        		
+        		
+        		
         		if (!isInternalCommand && !exitMethod && !ignore) {
         			if (inMethod || insideConstructor) {
         				// Checks if returned from the method

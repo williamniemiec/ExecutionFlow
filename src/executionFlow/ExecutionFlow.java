@@ -291,10 +291,14 @@ public abstract class ExecutionFlow
 		// Processes the source file of the method if it has not 
 		// been processed yet
 		if (!invokedManager.wasProcessed(invokedFileManager)) {
+			boolean autoRestore = 
+					!testMethodFileManager.getSrcFile().equals(invokedFileManager.getSrcFile());
+			
+			
 			ConsoleOutput.showInfo("Processing source file of invoked - " 
 				+ invokedInfo.getInvokedSignature()+"...");
 			
-			invokedManager.parse(invokedFileManager, collectors).compile(invokedFileManager);
+			invokedManager.parse(invokedFileManager, collectors, autoRestore).compile(invokedFileManager);
 			ConsoleOutput.showInfo("Processing completed");
 		}
 		

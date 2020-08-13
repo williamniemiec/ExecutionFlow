@@ -140,6 +140,8 @@ public class FileManager implements Serializable
 	 * to constructor.
 	 * 
 	 * @param		collectors Information about all invoked collected
+	 * @param		autoRestore Checks if processed files exist against the 
+	 * current file. If so, restore them before processing. Default is true.
 	 * 
 	 * @return		This object to allow chained calls
 	 * 
@@ -148,10 +150,11 @@ public class FileManager implements Serializable
 	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertParse()} function.
 	 */
-	public FileManager parseFile(List<CollectorInfo> collectors) throws IOException
+	public FileManager parseFile(List<CollectorInfo> collectors, boolean autoRestore) throws IOException
 	{
 		// Saves .java file to allow to restore it after
-		createSrcBackupFile();
+		if (autoRestore)
+			createSrcBackupFile();
 		
 		// Parses file
 		Path out;
@@ -178,6 +181,24 @@ public class FileManager implements Serializable
 		}
 		
 		return this;
+	}
+	
+	/**
+	 * Parses and process file, saving modified file in the same file passed 
+	 * to constructor.
+	 * 
+	 * @param		collectors Information about all invoked collected
+	 * 
+	 * @return		This object to allow chained calls
+	 * 
+	 * @throws		IOException If file encoding cannot be defined
+	 * 
+	 * @implNote	This function overwrite file passed to the constructor! To
+	 * restore the original file, call {@link #revertParse()} function.
+	 */
+	public FileManager parseFile(List<CollectorInfo> collectors) throws IOException
+	{
+		return parseFile(collectors, true);
 	}
 	
 	/**
