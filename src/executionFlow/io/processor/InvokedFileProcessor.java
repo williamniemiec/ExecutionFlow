@@ -276,10 +276,10 @@ public class InvokedFileProcessor extends FileProcessor
 
 		// Processes the source file lines by breaking lines that contains 
 		// clause + body on the same line 
-		cbb = new CurlyBracketBreaker(lines);
+		cbb = new CurlyBracketBreaker();
 
 		// Updates invocation line of all collected invoked
-		for (Integer line : cbb.getBrokenLines()) {
+		for (Integer line : cbb.parse(lines).getBrokenLines()) {
 			for (CollectorInfo c : collectors) {
 				InvokedInfo invInfo;
 				

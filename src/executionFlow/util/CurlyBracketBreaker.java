@@ -25,22 +25,6 @@ public class CurlyBracketBreaker
 	private static final String REGEX_ASSERT_METHOD = 
 			"(\\ |\\t)*(Assert\\.)?assert[A-z]+\\(.*";
 	private List<Integer> lineBreak = new ArrayList<>();
-	private List<String> lines;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	/**
-	 * Creates a curly bracket breaker. It will move any code after an opening
-	 * or closing curly bracket to the next line.
-	 * 
-	 * @param		Lines from a source file
-	 */
-	public CurlyBracketBreaker(List<String> lines)
-	{
-		this.lines = lines;
-	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -50,21 +34,27 @@ public class CurlyBracketBreaker
 	 * Move any code after an opening or closing curly bracket to the next line.
 	 * 
 	 * @param		Lines from a source file
+	 * 
+	 * @return		Itself to allow chained calls
 	 */
-	public void parse()
+	public CurlyBracketBreaker parse(List<String> lines)
 	{
 		// Move any code after an opening curly bracket to the next line
-		openingCurlyBracketBreaker();
+		openingCurlyBracketBreaker(lines);
 		// Move any code after an closing curly bracket to the next line
-		closingCurlyBracketBreaker();
+		closingCurlyBracketBreaker(lines);
 		
 		Collections.sort(lineBreak);
+		
+		return this;
 	}
 	
 	/**
 	 * Move any code after an opening curly bracket to the next line.
+	 * 
+	 * @param		Lines from a source file
 	 */
-	private void openingCurlyBracketBreaker() 
+	private void openingCurlyBracketBreaker(List<String> lines) 
 	{
 		final String REGEX_ONLY_OPENING_CURLY_BRACKET = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
 		final String REGEX_OPENING_CURLY_BRACKET = "(\\ |\\t)*\\{(\\ |\\t)*";
@@ -108,8 +98,10 @@ public class CurlyBracketBreaker
 	
 	/**
 	 * Move any code after an closing curly bracket to the next line.
+	 * 
+	 * @param		Lines from a source file
 	 */
-	private void closingCurlyBracketBreaker() 
+	private void closingCurlyBracketBreaker(List<String> lines) 
 	{
 		final String REGEX_ONLY_CLOSING_CURLY_BRACKET = "^(\\s|\\t)+\\}(\\s|\\t|\\/)*$";
 		final String REGEX_CLOSING_CURLY_BRACKET = "(\\ |\\t)*\\}(\\ |\\t)*";
