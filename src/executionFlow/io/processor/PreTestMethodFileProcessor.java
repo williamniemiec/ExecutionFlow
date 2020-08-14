@@ -908,7 +908,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * stop if an assert fails.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		3.0.0
+	 * @version		3.2.0
 	 * @since 		2.0.0
 	 */
 	private class AssertParser
@@ -917,7 +917,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//		Attributes
 		//---------------------------------------------------------------------
 		private final Pattern PATTERN_ASSERT = 
-				Pattern.compile("^(\\ |\\t)+assert[A-z]+(\\ |\\t)*\\((.+\\);)?");
+				Pattern.compile("^(\\ |\\t)+(Assert\\.)?assert[A-z]+(\\ |\\t)*\\((.+\\);)?");
 		private String try_catch_message = "", catchType = "Throwable";
 		private int endOfAssert;
 		private int commentStart;
