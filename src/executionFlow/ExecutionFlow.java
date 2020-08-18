@@ -95,7 +95,7 @@ public abstract class ExecutionFlow
 	 * each test method executed.
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
 	}
 	
 	/**

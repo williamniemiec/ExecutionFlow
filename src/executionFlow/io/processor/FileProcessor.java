@@ -17,7 +17,7 @@ import executionFlow.io.FileEncoding;
  * classes that implement this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		2.0.0
  */
 public abstract class FileProcessor implements Serializable 
@@ -25,7 +25,7 @@ public abstract class FileProcessor implements Serializable
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 200L;
+	private static final long serialVersionUID = 400L;
 	
 	protected FileEncoding encode = FileEncoding.UTF_8;
 	protected transient Path file;

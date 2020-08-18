@@ -21,7 +21,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		2.0.0
  */
 public class Analyzer 
@@ -393,8 +393,12 @@ public class Analyzer
         	isInternalCommand = false;
         	line = jdb.read();
         	
-        	if ( line.contains("Stopping due to deferred breakpoint errors"))
-        		throw new IOException("Incorrect invocation line");
+        	if (line.contains("Stopping due to deferred breakpoint errors"))
+        		throw new IOException("Incorrect invocation line {invocationLine: " 
+    					+ invocationLine + ", test method signature: "
+        				+ testMethodSignature + ", invokedSignature: " 
+    					+ invokedSignature + "}"
+				);
         	
         	if (isEmptyLine(line) || line.matches(regex_emptyOutput)) 
         		return false;
@@ -448,38 +452,38 @@ public class Analyzer
         			readyToReadInput = true;
         		}
     			
-        		
-        		
-        		
-        		
-        		System.out.println("=======");
-        		System.out.println("in: "+invokedName);
-        		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
-        		System.out.println(isInternalCommand);
-        		System.out.println(exitMethod);
-        		System.out.println(ignore);
-        		
-        		System.out.println(inMethod);
-        		System.out.println(currentLine);
-        		System.out.println(isInsideMethod(line));
-        		
-        		System.out.println(invokedSignature);  
-//				System.out.println(getSrcLine(srcLine) != lastLineAdded);
-        		System.out.println(isEmptyMethod(srcLine));
-        		System.out.println(lastAddWasReturn);
-        		System.out.println(isNewIteration(line));
-        		System.out.println(willEnterInMethod(line));
-        		System.out.println(newIteration);
-        		if (isNativeCall(line, srcLine)) {
-        			System.out.println("native");
-        			System.out.println(invokedName+"."); 
-					System.out.println(invokedName+"("); 
-        		}
-        		System.out.println("=======");
-        		
-        		
-        		
-        		
+//        		
+//        		
+//        		
+//        		
+//        		System.out.println("=======");
+//        		System.out.println("in: "+invokedName);
+//        		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
+//        		System.out.println(isInternalCommand);
+//        		System.out.println(exitMethod);
+//        		System.out.println(ignore);
+//        		
+//        		System.out.println(inMethod);
+//        		System.out.println(currentLine);
+//        		System.out.println(isInsideMethod(line));
+//        		
+//        		System.out.println(invokedSignature);  
+////				System.out.println(getSrcLine(srcLine) != lastLineAdded);
+//        		System.out.println(isEmptyMethod(srcLine));
+//        		System.out.println(lastAddWasReturn);
+//        		System.out.println(isNewIteration(line));
+//        		System.out.println(willEnterInMethod(line));
+//        		System.out.println(newIteration);
+//        		if (isNativeCall(line, srcLine)) {
+//        			System.out.println("native");
+//        			System.out.println(invokedName+"."); 
+//					System.out.println(invokedName+"("); 
+//        		}
+//        		System.out.println("=======");
+//        		
+//        		
+//        		
+//        		
         		
         		
         		if (!isInternalCommand && !exitMethod && !ignore) {
@@ -492,7 +496,7 @@ public class Analyzer
         				} 
         				// Checks if it is still inside the method
         				else if (!isEmptyMethod && !lastAddWasReturn && methodDeclarationLine > 0) {
-    						testPath.add(currentLine); System.out.println("ADDED: "+currentLine);
+    						testPath.add(currentLine);
     						lastAddWasReturn = srcLine.contains("return "); 
     					}
             		}

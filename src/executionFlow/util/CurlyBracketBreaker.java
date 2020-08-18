@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
  * does not break lines containing 'assert' or 'Assert.assert'.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
- * @since 		3.2.0
+ * @version		4.0.0
+ * @since 		4.0.0
  */
 public class CurlyBracketBreaker 
 {
@@ -24,6 +24,8 @@ public class CurlyBracketBreaker
 			"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 	private static final String REGEX_ASSERT_METHOD = 
 			"(\\ |\\t)*(Assert\\.)?assert[A-z]+\\(.*";
+	private static final String REGEX_EMPTY_CURLY_BRACKETS = 
+			"^.+(\\s|\\t)*\\{.*\\}(\\s|\\t)*$";
 	private List<Integer> lineBreak = new ArrayList<>();
 	
 	
@@ -70,6 +72,7 @@ public class CurlyBracketBreaker
 			line = lines.get(i);
 			
 			if (line.contains("@") || line.matches(REGEX_COMMENT_FULL_LINE) || 
+					line.matches(REGEX_EMPTY_CURLY_BRACKETS) || 
 					line.matches(REGEX_ASSERT_METHOD))
 				continue;
 			
@@ -117,6 +120,7 @@ public class CurlyBracketBreaker
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
 			if (line.contains("@") || line.matches(REGEX_COMMENT_FULL_LINE) ||
+					line.matches(REGEX_EMPTY_CURLY_BRACKETS) ||
 					line.matches(REGEX_ASSERT_METHOD) || wasBroken) {
 				wasBroken = false;
 				continue;
