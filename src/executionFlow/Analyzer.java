@@ -37,6 +37,8 @@ public class Analyzer
 	private static final String REGEX_MULTILINE_ARGS = 
 			"^[0-9]*(\\t|\\ )+[A-z0-9$\\-_\\.\\,\\ \\:]+(\\);)?$";
 
+	private static final String REGEX_DOLLAR_SIGN_PLUS_NUMBERS = "^.+\\$[0-9]+.*$";
+	
 	/**
 	 * Stores signature of the class of the test method.
 	 */
@@ -110,7 +112,6 @@ public class Analyzer
 	 */
 	public Analyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException
 	{
-		final String REGEX_DOLLAR_SIGN_PLUS_NUMBERS = "^.+\\$[0-9]+.*$";
 		List<String> classPath = new ArrayList<>(), srcPath = new ArrayList<>();
 		String methodClassPath, libPath_relative;
 		int idx_dollarSign;
@@ -349,6 +350,7 @@ public class Analyzer
 	 */
 	public List<List<Integer>> getTestPaths()
 	{ 
+		// Parses test path if analyzed invoked belongs to a inner class
 		return testPaths;
 	}
 	
@@ -459,13 +461,73 @@ public class Analyzer
         				(line.contains(invokedName+".") || line.contains(invokedName+"(")))
         			methodDeclarationLine = currentLine;        		
         		
-        		// Checks if it is still within a constructor
+        		// Stores analyzed signature
+            	if (analyzedInvokedSignature.isBlank()) {
+    				if (anonymousConstructor) {
+    					String[] signatureParams = invokedSignature.substring(
+    							invokedSignature.indexOf("(")+1, invokedSignature.indexOf(")")).split(",");
+    					StringBuilder params = new StringBuilder();
+    					
+    					
+    					// Parameter types
+    					for (int i=1; i<signatureParams.length; i++) {
+    						params.append(signatureParams[i]);
+    						params.append(", ");
+    					}
+    					
+    					// Removes last comma
+    					if (params.length() > 1)
+    						params.deleteCharAt(params.length() - 1);
+    					
+    					analyzedInvokedSignature = line.split(",")[1].split("\\.\\<init\\>")[0] + "(" + params.toString() + ")";
+    				}
+    				else {
+    					analyzedInvokedSignature = invokedSignature;
+    				}
+    				
+    				analyzedInvokedSignature = analyzedInvokedSignature.trim();
+    			}
+        		
+        		// Checks if it inside a constructor
         		if (inMethod && insideConstructor && !insideOverloadCall && 
         				(isEmptyMethod || line.contains(testMethodSignature))) {
         			insideConstructor = false;
         			exitMethod = true;
         			readyToReadInput = true;
         		}
+  
+        		
+        		System.out.println("=======");
+        		System.out.println("in: "+invokedName);
+        		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
+        		System.out.println("Internal? "+isInternalCommand);
+        		System.out.println("Exit? "+exitMethod);
+        		System.out.println("Ignore? "+ignore);
+        		
+        		System.out.println("inMethod? "+inMethod);
+        		System.out.println("cl: "+currentLine);
+        		System.out.println("isInside? "+isInsideMethod(line));
+        		
+        		System.out.println("is: "+invokedSignature);  
+//				System.out.println(getSrcLine(srcLine) != lastLineAdded);
+        		System.out.println("isEmpty? "+isEmptyMethod(srcLine));
+        		System.out.println("lastAddWasReturn? "+lastAddWasReturn);
+        		System.out.println("is new it? "+isNewIteration(line));
+        		System.out.println("will enter? "+willEnterInMethod(line));
+        		System.out.println("newIt: "+newIteration);
+        		if (isNativeCall(line, srcLine)) {
+        			System.out.println("native");
+        			System.out.println(invokedName+"."); 
+					System.out.println(invokedName+"("); 
+        		}
+        		System.out.println("ac? "+anonymousConstructor);
+        		System.out.println("analyzed: "+analyzedInvokedSignature);
+        		System.out.println("=======");
+        		
+        		
+        		
+        		
+        		
         		
         		if (!isInternalCommand && !exitMethod && !ignore) {
         			if (inMethod || insideConstructor) {
@@ -477,36 +539,9 @@ public class Analyzer
         				} 
         				// Checks if it is still inside the method
         				else if (!isEmptyMethod && !lastAddWasReturn && methodDeclarationLine > 0 && 
-        						!(line.contains("<init>") && line.contains("$"))) {
-    						testPath.add(currentLine);
-    						lastAddWasReturn = srcLine.contains("return "); 
-    						
-    						if (analyzedInvokedSignature == "") {
-    							if (anonymousConstructor) {
-    								String[] signatureParams = invokedSignature.substring(
-    										invokedSignature.indexOf("(")+1, invokedSignature.indexOf(")")).split(",");
-    								StringBuilder params = new StringBuilder();
-    								
-    								
-    								// Parameter types
-    								for (int i=1; i<signatureParams.length; i++) {
-    									params.append(signatureParams[i]);
-    									params.append(", ");
-    								}
-    								
-    								// Removes last comma
-    								if (params.length() > 1)
-    									params.deleteCharAt(params.length() - 1);
-    								
-        							analyzedInvokedSignature = line.split(",")[1].split("\\.\\<init\\>")[0] + "(" + params.toString() + ")";
-        						}
-    							else {
-    								analyzedInvokedSignature = invokedSignature;
-    							}
-    							
-    							analyzedInvokedSignature = analyzedInvokedSignature.trim();
-    						}
-    						
+        						!(insideConstructor && line.matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS))) {
+    						testPath.add(currentLine);System.out.println("ADDED: "+currentLine);
+    						lastAddWasReturn = srcLine.contains("return ");
     					}
             		}
         			else if (willEnterInMethod(line)) {
@@ -544,7 +579,7 @@ public class Analyzer
 	    			
 	    			lastSrcLine = srcLine;
 	    			
-	    			if (isInsideMethod(line, srcLine, ignore))
+	    			if (shouldExit(line, srcLine, ignore))
 	    				exitMethod = true;
     			}
     			else if (isEmptyMethod) {
@@ -675,13 +710,13 @@ public class Analyzer
 	 */
 	private boolean isEmptyMethod(String srcLine)
 	{
-		final String regex_onlyCurlyBracket = "([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)";
-		final String regex_emptyMethod = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}"
+		final String REGEX_ONLY_CLOSED_CURLY_BRACKET = "([0-9]+)(\\ |\\t)+\\}((\\ |\\t)+)?($)";
+		final String REGEX_EMPTY_METHOD = "^([0-9]*)(\\t|\\ )*((([a-z]+\\ ){2,}"
 				+ ".+\\(.*\\)(\\ |\\t)*\\{(\\ |\\t)*\\})|(\\{(\\t|\\ )*\\})|(\\}))$";
 		
 		
-		return	srcLine.matches(regex_onlyCurlyBracket) ||
-				srcLine.matches(regex_emptyMethod);
+		return	srcLine.matches(REGEX_ONLY_CLOSED_CURLY_BRACKET) ||
+				srcLine.matches(REGEX_EMPTY_METHOD);
 	}
 	
 	/**
@@ -695,7 +730,12 @@ public class Analyzer
 	private boolean isNativeCall(String line, String srcLine)
 	{
 		final String REGEX_ANONYMOUS_CLASS = ".+\\$[0-9]+.+";
-
+		System.out.println("native");
+		System.out.println(!line.matches(REGEX_ANONYMOUS_CLASS));
+		System.out.println(invokedName);
+		System.out.println(testMethodSignature);
+		
+		
 		
 		return	(line.contains("line=1 ") || 
 				line.contains("jdk.") || 
@@ -723,14 +763,18 @@ public class Analyzer
 	 */
 	private boolean shouldIgnore(String srcLine, int currentLine)
 	{
+		final String REGEX_ONLY_OPEN_CURLY_BRACKET = "([0-9]+)(\\ |\\t)+\\{((\\ |\\t)+)?($)";
+		
+		
 		return	(currentLine != -1 && currentLine < methodDeclarationLine) ||
 				currentLine == 1 ||
 				srcLine.contains(" class ") ||
-				srcLine.matches(REGEX_MULTILINE_ARGS);
+				srcLine.matches(REGEX_MULTILINE_ARGS) ||
+				srcLine.matches(REGEX_ONLY_OPEN_CURLY_BRACKET);
 	}
 	
 	/**
-	 * Checks whether it is inside a method.
+	 * Checks whether to exit the method.
 	 * 
 	 * @param		line JDB output
 	 * @param		srcLine JDB output - source line
@@ -738,9 +782,10 @@ public class Analyzer
 	 * 
 	 * @return		If it is inside a method
 	 */
-	private boolean isInsideMethod(String line, String srcLine, boolean ignoreFlag)
+	private boolean shouldExit(String line, String srcLine, boolean ignoreFlag)
 	{
-		return	(srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
+		return	!line.contains("<init>") &&
+				(srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
 				(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
 				(ignoreFlag == true && line.contains(testMethodSignature) && getSrcLine(srcLine) > invocationLine);
 	}
@@ -754,6 +799,13 @@ public class Analyzer
 	 */
 	private boolean isInsideMethod(String line)
 	{
+		System.out.println("Inside method");
+		System.out.println(line.contains(invokedName + "(") || line.contains(invokedName + ".<init>"));
+		System.out.println(line.contains(invokedName + ".<init>"));
+		System.out.println("end");
+		
+		
+		
 		if (anonymousConstructor) {
 			return	!line.contains(testMethodSignature) &&
 					!line.contains("$") && 
@@ -762,7 +814,7 @@ public class Analyzer
 		}
 		else {
 			return	!line.contains(testMethodSignature) &&
-					line.contains(invokedName+"(") && 
+					(line.contains(invokedName + "(") || line.contains(invokedName + ".<init>")) && 
 					!exitMethod;
 		}
 	}
