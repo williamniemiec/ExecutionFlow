@@ -115,15 +115,6 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		
 		// Generates test path for each collected method
 		for (CollectorInfo collector : constructorCollector) {
-			// Checks if collected constructor is within test method
-//			if (collector.getConstructorInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
-//				ConsoleOutput.showError("ConstructorExecutionFlow - " + collector.getConstructorInfo().getInvokedSignature());
-//				ConsoleOutput.showError("The constructor to be tested cannot be within the test class");
-//				ConsoleOutput.showError("Anonymous classes are not supported");
-//				ConsoleOutput.showError("This test path will be skipped");
-//				continue;
-//			}
-
 			// Gets FileManager for method file
 			constructorFileManager = new FileManager(
 				collector.getConstructorInfo().getClassSignature(),
@@ -149,21 +140,12 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 						List.copyOf(constructorCollector)
 				);
 				tp = analyzer.getTestPaths();
-				
-				
-				
-				
-				
+
 				// Fixes anonymous class signature
 				if (collector.getConstructorInfo().getInvokedSignature() != analyzer.getAnalyzedInvokedSignature()) {
 					((ConstructorInvokedInfo)collector.getConstructorInfo())
 						.setInvokedSignature(analyzer.getAnalyzedInvokedSignature());
 				}
-				
-				
-				
-				
-				
 				
 				if (tp.isEmpty() || tp.get(0).isEmpty())
 					ConsoleOutput.showWarning("Test path is empty");

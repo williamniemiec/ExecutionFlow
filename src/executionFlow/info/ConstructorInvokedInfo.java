@@ -287,32 +287,4 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		
 		return this;
 	}
-	
-//	/**
-//	 * Sets source file path.
-//	 * 
-//	 * @param		srcPath Source file path
-//	 * 
-//	 * @return		Itself to allow chained calls
-//	 */
-//	public ConstructorInvokedInfo setSrcPath(Path srcPath)
-//	{
-//		this.srcPath = srcPath;
-//		
-//		return this;
-//	}
-	
-//	/**
-//	 * Sets compiled file path.
-//	 * 
-//	 * @param		binPath Compiled file path
-//	 * 
-//	 * @return		Itself to allow chained calls
-//	 */
-//	public ConstructorInvokedInfo setBinPath(Path binPath)
-//	{
-//		this.binPath = binPath;
-//		
-//		return this;
-//	}
 }

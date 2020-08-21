@@ -161,7 +161,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 					.args(testMethodArgs)
 					.srcPath(testSrcPath)
 					.build();
-			} catch(IllegalArgumentException e) {
+			} 
+			catch(IllegalArgumentException e) {
 				ConsoleOutput.showError("Test method info - "+e.getMessage());
 				e.printStackTrace();
 			}
@@ -200,7 +201,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 				
 				ConsoleOutput.showInfo("Pre-processing completed");
 			}
-		} catch(IOException | ClassNotFoundException e) {
+		} 
+		catch(IOException | ClassNotFoundException e) {
 			ConsoleOutput.showError(e.getMessage());
 			e.printStackTrace();
 			
@@ -258,11 +260,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 				if (ExecutionFlow.getTestMethodManager().load())
 					ExecutionFlow.getTestMethodManager().restoreAll();	
 				
-			} catch (ClassNotFoundException e) {
+			} 
+			catch (ClassNotFoundException e) {
 				hasError = true;
 				ConsoleOutput.showError("Class FileManager not found");
 				e.printStackTrace();
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				hasError = true;
 				ConsoleOutput.showError("Could not recover the backup file of the test method");
 				ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
@@ -284,11 +288,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 				try {
 					if (ExecutionFlow.getInvokedManager().load())
 						ExecutionFlow.getInvokedManager().restoreAll();	
-				} catch (ClassNotFoundException e) {
+				} 
+				catch (ClassNotFoundException e) {
 					hasError = true;
 					ConsoleOutput.showError("Class FileManager not found");
 					e.printStackTrace();
-				} catch (IOException e) {
+				} 
+				catch (IOException e) {
 					hasError = true;
 					ConsoleOutput.showError("Could not recover all backup files for methods");
 					ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
@@ -314,7 +320,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			// Disables checkpoint
 			try {
 				checkpoint.disable();
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				hasError = true;
 				ConsoleOutput.showError("Checkpoint cannot be disabled");
 				e.printStackTrace();
@@ -339,30 +346,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.setExporter(new TestedInvokedExporter("Testers", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
-		
-		
-		
-		
-		
-		
-		// Gets test paths of the collected constructors and export them
-//		remover?Colle2ctorExecutionFlow.fixAnonymousClassSignatureAndFilePath(
-//				constructorCollector.values(), 
-//				anonymousClassSignatures,
-//				anonymousClassFilePath
-//		);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		ef = new ConstructorExecutionFlow(constructorCollector.values());
 		ef.execute().export();

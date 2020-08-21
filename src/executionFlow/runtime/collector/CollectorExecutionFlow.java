@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collection;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,9 +15,6 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.info.CollectorInfo;
-import executionFlow.info.ConstructorInvokedInfo;
-import executionFlow.util.Pair;
 
 
 /**
@@ -324,41 +319,6 @@ public class CollectorExecutionFlow
 		
 		return response.toString();
 	}
-	
-//	/**
-//	 * Replaces all anonymous class constructor signatures from where anonymous
-//	 * class is created to where anonymous class is declared. The same thing is
-//	 * done with the compiled and source files.
-//	 * 
-//	 * @param		constructorCollector Constructor collector containing 
-//	 * constructor signatures to be replaced
-//	 * @param		anonymousClassSignatures Anonymous class signatures
-//	 * @param		anonymousClassFilePath Compiled files followed by source files
-//	 * where anonymous classes are declared
-//	 */
-//	public static void fixAnonymousClassSignatureAndFilePath(Collection<CollectorInfo> constructorCollector,
-//			Map<String, String> anonymousClassSignatures, Map<String, Pair<Path, Path>> anonymousClassFilePath)
-//	{
-//		Pair<Path, Path> files;
-//		ConstructorInvokedInfo cii;
-//		
-//		
-//		for (CollectorInfo collector : constructorCollector) {
-//			cii = (ConstructorInvokedInfo)collector.getConstructorInfo();
-//			
-//			// Updates source file path
-//			if (anonymousClassFilePath.containsKey(cii.getClassSignature())) {
-//				files = anonymousClassFilePath.get(cii.getClassSignature());
-//				cii.setBinPath(files.first);
-//				cii.setSrcPath(files.second);
-//			}
-//			
-//			// Updates signature
-//			if (anonymousClassSignatures.containsKey(cii.getClassSignature())) {
-//				cii.setClassSignature(anonymousClassSignatures.get(cii.getClassSignature()));
-//			}
-//		}
-//	}
 	
 	/**
 	 * Converts a wrapper class in primitive. If the class is not a

@@ -8,7 +8,6 @@ import java.util.List;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
-import executionFlow.util.Pair;
 
 
 /**
@@ -139,17 +138,6 @@ public aspect MethodCollector extends RuntimeCollector
 			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
-			
-			
-			
-			
-//			if (anonymousClassSignature != "")
-//				anonymousClassFilePath.put(anonymousClassSignature, Pair.of(classPath, srcPath));
-
-			
-			
-			
-			
 			methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(classPath)
 				.methodSignature(signature)
@@ -182,7 +170,8 @@ public aspect MethodCollector extends RuntimeCollector
 				methodCollector.put(invocationLine, list);
 				list.add(ci);
 			}
-		} catch(IllegalArgumentException | IOException e) {
+		} 
+		catch(IllegalArgumentException | IOException e) {
 			System.err.println("[ERROR] MethodCollector - "+e.getMessage()+"\n");
 		}
 	}

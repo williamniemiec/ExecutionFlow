@@ -106,7 +106,8 @@ public aspect ConstructorCollector extends RuntimeCollector
 			if (!constructorCollector.containsKey(key))
 				constructorCollector.put(key, collectorInfo);
 		
-		} catch (IOException e1) {
+		} 
+		catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}

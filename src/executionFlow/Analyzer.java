@@ -47,6 +47,7 @@ public class Analyzer
 	private String invokedSignature;
 	private String invokedName;
 	private String lastSrcLine = "";
+	private String analyzedInvokedSignature = "";
 	
 	/**
 	 * Stores signature of the test method.
@@ -58,7 +59,7 @@ public class Analyzer
 	 */
 	private int invocationLine;
 	
-	private int methodDeclarationLine;
+	private int invokedDeclarationLine;
 	private int lineOverloadedCall;
 	
 	/**
@@ -81,15 +82,9 @@ public class Analyzer
 	private boolean insideOverloadCall;
 	private boolean lastAddWasReturn;
 	private boolean isMethodMultiLineArgs;
-	
-	
-	boolean anonymousConstructor;
-	String analyzedInvokedSignature = "";
-	
-	
+	private boolean anonymousConstructor;
 	
 
-	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
@@ -98,7 +93,7 @@ public class Analyzer
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 
 	
@@ -132,10 +127,9 @@ public class Analyzer
 		invokedName = invokedSignature.substring(invokedSignature.lastIndexOf("."), invokedSignature.indexOf("("));
 		
 		idx_dollarSign = invokedInfo.getClassSignature().indexOf("$");
+		
 		if (idx_dollarSign != -1)
-			anonymousConstructor = invokedSignature.matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS); //invokedSignature.contains("$") && 
-								//	 invokedSignature.contains("<init>"); //&& 
-									 //testMethodInfo.getClassSignature() == invokedInfo.getClassSignature().substring(0, idx_dollarSign);
+			anonymousConstructor = invokedSignature.matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
 		
 		// Gets paths
 		srcRootPath = extractRootPathDirectory(invokedInfo.getSrcPath(), invokedInfo.getPackage());
@@ -226,12 +220,22 @@ public class Analyzer
 				if (endOfMethod) {
 					// Checks if there is unsaved test path
 					if (testPath.size() > 0) {	// If there is one, save it
+						if (anonymousConstructor && testPath.size() > 1) {
+							testPath.remove(testPath.size() - 1);
+							testPath.remove(0);
+						}
+						
 						testPaths.add(testPath);
 					} 
 				}
 				// Checks if has exit the method
 				else if (exitMethod && !isInternalCommand) {
 					// Saves test path
+					if (anonymousConstructor && testPath.size() > 1) {
+						testPath.remove(testPath.size() - 1);
+						testPath.remove(0);
+					}
+					
 					testPaths.add(testPath);
 					
 					// Prepare for next test path
@@ -301,39 +305,6 @@ public class Analyzer
 	}
 	
 	/**
-	 * Gets methods called by tested invoked. It will return signature of all 
-	 * called methods from tested methods.
-	 * 
-	 * @return		Null if tested invoked does not call methods; otherwise, 
-	 * returns list of signature of methods called by tested invoked
-	 * 
-	 * @implSpec	After call this method, the file containing methods called
-	 * by tested invoked will be deleted. Therefore, this method can only be 
-	 * called once for each {@link #run JDB execution}
-	 */
-	@SuppressWarnings("unchecked")
-	public List<String> getMethodsCalledByTestedInvoked()
-	{
-		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		Map<String, List<String>> invokedMethods = new HashMap<>();
-		
-		
-		if (f.exists()) {
-			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-				invokedMethods = (Map<String, List<String>>) ois.readObject();
-			} catch (IOException | ClassNotFoundException e) {
-				invokedMethods = null;
-				ConsoleOutput.showError("Called methods by tested invoked - " + e.getMessage());
-				e.printStackTrace();
-			}
-		
-			f.delete();
-		}
-
-		return invokedMethods.containsKey(invokedSignature) ? invokedMethods.get(invokedSignature) : null;
-	}
-	
-	/**
 	 * Deletes file containing methods called by tested invoked.
 	 * 
 	 * @return		If file has been successfully removed
@@ -341,17 +312,6 @@ public class Analyzer
 	public boolean deleteMethodsCalledByTestedInvoked()
 	{
 		return new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
-	}
-	
-	/**
-	 * Gets computed test path.
-	 * 
-	 * @return		Computed test path
-	 */
-	public List<List<Integer>> getTestPaths()
-	{ 
-		// Parses test path if analyzed invoked belongs to a inner class
-		return testPaths;
 	}
 	
 	/**
@@ -401,7 +361,8 @@ public class Analyzer
 	private boolean parseOutput() throws IOException
 	{
 		boolean readyToReadInput = false, ignore = false, isEmptyMethod = false;
-		final String regex_emptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
+		final String REGEX_DOLLAR_SIGN_PLUS_NUMBERS_CONSTRUCTOR = "^.+\\$[0-9]+\\.\\<init\\>.*$";
+		final String REGEX_EMPTY_OUTPUT = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
 		int currentLine = -1;
 		String line, srcLine = null;
 		
@@ -417,7 +378,7 @@ public class Analyzer
     					+ invokedSignature + "}"
 				);
         	
-        	if (isEmptyLine(line) || line.matches(regex_emptyOutput)) 
+        	if (isEmptyLine(line) || line.matches(REGEX_EMPTY_OUTPUT)) 
         		return false;
         	
         	// -----{ DEBUG }-----
@@ -435,7 +396,7 @@ public class Analyzer
     			inMethod = isInsideMethod(line);
     			newIteration = isNewIteration(line);
         		insideConstructor = line.contains(".<init>");
-        		currentLine = getSrcLine(srcLine);
+        		currentLine = (srcLine == null || srcLine.isEmpty()) ? getLine(line) : getSrcLine(srcLine);
 
         		// Ignores native calls
         		if (isNativeCall(line, srcLine)) {
@@ -451,19 +412,27 @@ public class Analyzer
         		// Checks if it is in the constructor signature
         		if (srcLine.contains("@executionFlow.runtime.CollectCalls")) {
         			ignore = true;
-        			methodDeclarationLine = currentLine;
+        			invokedDeclarationLine = currentLine;
         		}
         		
         		ignore = insideOverloadCall || ignore || shouldIgnore(srcLine, currentLine) || isMethodMultiLineArgs;
         		isMethodMultiLineArgs = srcLine.matches(REGEX_MULTILINE_ARGS);
         		
-        		if (methodDeclarationLine == 0 && currentLine > 1 && 
-        				(line.contains(invokedName+".") || line.contains(invokedName+"(")))
-        			methodDeclarationLine = currentLine;        		
+        		// Gets the line on which the invoked is declared
+        		if (invokedDeclarationLine == 0 && currentLine > 1 && 
+        				(
+    						(anonymousConstructor && insideConstructor) || 
+    						line.contains(invokedName+".") || 
+    						line.contains(invokedName+"(")
+						) && 
+        				!line.split(",")[1].matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS_CONSTRUCTOR)) {
+        			invokedDeclarationLine = currentLine;        		
+        		}
         		
         		// Stores analyzed signature
-            	if (analyzedInvokedSignature.isBlank()) {
-    				if (anonymousConstructor) {
+            	if (analyzedInvokedSignature.isBlank() && invokedDeclarationLine > 0 
+            			&& (inMethod || insideConstructor)) {
+    				if (anonymousConstructor) {	// Fix anonymous signature
     					String[] signatureParams = invokedSignature.substring(
     							invokedSignature.indexOf("(")+1, invokedSignature.indexOf(")")).split(",");
     					StringBuilder params = new StringBuilder();
@@ -471,14 +440,13 @@ public class Analyzer
     					
     					// Parameter types
     					for (int i=1; i<signatureParams.length; i++) {
-    						params.append(signatureParams[i]);
-    						params.append(", ");
+    						params.append(signatureParams[i].trim().replace(",", ""));
+    						
+    						if (i+1 != signatureParams.length)
+    							params.append(", ");
     					}
     					
-    					// Removes last comma
-    					if (params.length() > 1)
-    						params.deleteCharAt(params.length() - 1);
-    					
+    					// Stores the fixed anonymous signature
     					analyzedInvokedSignature = line.split(",")[1].split("\\.\\<init\\>")[0] + "(" + params.toString() + ")";
     				}
     				else {
@@ -495,40 +463,7 @@ public class Analyzer
         			exitMethod = true;
         			readyToReadInput = true;
         		}
-  
-        		
-        		System.out.println("=======");
-        		System.out.println("in: "+invokedName);
-        		System.out.println("methodDeclarationLine: "+methodDeclarationLine);
-        		System.out.println("Internal? "+isInternalCommand);
-        		System.out.println("Exit? "+exitMethod);
-        		System.out.println("Ignore? "+ignore);
-        		
-        		System.out.println("inMethod? "+inMethod);
-        		System.out.println("cl: "+currentLine);
-        		System.out.println("isInside? "+isInsideMethod(line));
-        		
-        		System.out.println("is: "+invokedSignature);  
-//				System.out.println(getSrcLine(srcLine) != lastLineAdded);
-        		System.out.println("isEmpty? "+isEmptyMethod(srcLine));
-        		System.out.println("lastAddWasReturn? "+lastAddWasReturn);
-        		System.out.println("is new it? "+isNewIteration(line));
-        		System.out.println("will enter? "+willEnterInMethod(line));
-        		System.out.println("newIt: "+newIteration);
-        		if (isNativeCall(line, srcLine)) {
-        			System.out.println("native");
-        			System.out.println(invokedName+"."); 
-					System.out.println(invokedName+"("); 
-        		}
-        		System.out.println("ac? "+anonymousConstructor);
-        		System.out.println("analyzed: "+analyzedInvokedSignature);
-        		System.out.println("=======");
-        		
-        		
-        		
-        		
-        		
-        		
+
         		if (!isInternalCommand && !exitMethod && !ignore) {
         			if (inMethod || insideConstructor) {
         				// Checks if returned from the method
@@ -538,9 +473,9 @@ public class Analyzer
         					inMethod = false;
         				} 
         				// Checks if it is still inside the method
-        				else if (!isEmptyMethod && !lastAddWasReturn && methodDeclarationLine > 0 && 
+        				else if (!isEmptyMethod && !lastAddWasReturn && invokedDeclarationLine > 0 && 
         						!(insideConstructor && line.matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS))) {
-    						testPath.add(currentLine);System.out.println("ADDED: "+currentLine);
+    						testPath.add(currentLine);
     						lastAddWasReturn = srcLine.contains("return ");
     					}
             		}
@@ -569,10 +504,11 @@ public class Analyzer
 	    			if (exitMethod) {
 	    				inMethod = false;
 	    				lastAddWasReturn = false;
-	    				methodDeclarationLine = 0;
+	    				invokedDeclarationLine = 0;
 	    			}
 	    			
-	    			if (!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && srcLine.equals(lastSrcLine)) {
+	    			if (!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && 
+	    					srcLine.equals(lastSrcLine)) {
 	    				exitMethod = true;
 	    				endOfMethod = true;
 	    			}
@@ -620,6 +556,21 @@ public class Analyzer
 			return -1;
 		
 		return Integer.valueOf(srcLine.replace(".", "").substring(0, srcLine.indexOf(" ")).trim());
+	}
+	
+	/**
+	 * Gets executed line from debugger line.
+	 *  
+	 * @param		srcLine JDB output - line
+	 * 
+	 * @return		Executed line or -1 if line is empty or null
+	 */
+	private int getLine(String line) 
+	{
+		if (line == null || line.isEmpty() || !line.contains(","))
+			return -1;
+		
+		return Integer.valueOf(line.split(",")[2].split("=")[1].split(" ")[0].trim());
 	}
 	
 	/**
@@ -730,12 +681,7 @@ public class Analyzer
 	private boolean isNativeCall(String line, String srcLine)
 	{
 		final String REGEX_ANONYMOUS_CLASS = ".+\\$[0-9]+.+";
-		System.out.println("native");
-		System.out.println(!line.matches(REGEX_ANONYMOUS_CLASS));
-		System.out.println(invokedName);
-		System.out.println(testMethodSignature);
-		
-		
+
 		
 		return	(line.contains("line=1 ") || 
 				line.contains("jdk.") || 
@@ -766,7 +712,7 @@ public class Analyzer
 		final String REGEX_ONLY_OPEN_CURLY_BRACKET = "([0-9]+)(\\ |\\t)+\\{((\\ |\\t)+)?($)";
 		
 		
-		return	(currentLine != -1 && currentLine < methodDeclarationLine) ||
+		return	(currentLine != -1 && currentLine < invokedDeclarationLine) ||
 				currentLine == 1 ||
 				srcLine.contains(" class ") ||
 				srcLine.matches(REGEX_MULTILINE_ARGS) ||
@@ -799,13 +745,6 @@ public class Analyzer
 	 */
 	private boolean isInsideMethod(String line)
 	{
-		System.out.println("Inside method");
-		System.out.println(line.contains(invokedName + "(") || line.contains(invokedName + ".<init>"));
-		System.out.println(line.contains(invokedName + ".<init>"));
-		System.out.println("end");
-		
-		
-		
 		if (anonymousConstructor) {
 			return	!line.contains(testMethodSignature) &&
 					!line.contains("$") && 
@@ -836,8 +775,56 @@ public class Analyzer
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
+	/**
+	 * Gets invoked signature of the invoked analyzed by the analyzer.
+	 * 
+	 * @return		Invoked signature
+	 */
 	public String getAnalyzedInvokedSignature()
 	{
 		return analyzedInvokedSignature;
+	}
+	
+	/**
+	 * Gets methods called by tested invoked. It will return signature of all 
+	 * called methods from tested methods.
+	 * 
+	 * @return		Null if tested invoked does not call methods; otherwise, 
+	 * returns list of signature of methods called by tested invoked
+	 * 
+	 * @implSpec	After call this method, the file containing methods called
+	 * by tested invoked will be deleted. Therefore, this method can only be 
+	 * called once for each {@link #run JDB execution}
+	 */
+	@SuppressWarnings("unchecked")
+	public List<String> getMethodsCalledByTestedInvoked()
+	{
+		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		Map<String, List<String>> invokedMethods = new HashMap<>();
+		
+		
+		if (f.exists()) {
+			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+				invokedMethods = (Map<String, List<String>>) ois.readObject();
+			} catch (IOException | ClassNotFoundException e) {
+				invokedMethods = null;
+				ConsoleOutput.showError("Called methods by tested invoked - " + e.getMessage());
+				e.printStackTrace();
+			}
+		
+			f.delete();
+		}
+
+		return invokedMethods.containsKey(invokedSignature) ? invokedMethods.get(invokedSignature) : null;
+	}
+	
+	/**
+	 * Gets computed test path.
+	 * 
+	 * @return		Computed test path
+	 */
+	public List<List<Integer>> getTestPaths()
+	{ 	
+		return testPaths;
 	}
 }
