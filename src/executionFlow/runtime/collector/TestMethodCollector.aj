@@ -32,7 +32,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -340,9 +340,30 @@ public aspect TestMethodCollector extends RuntimeCollector
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
 		
+		
+		
+		
+		
+		
 		// Gets test paths of the collected constructors and export them
-		CollectorExecutionFlow.fixAnonymousClassSignatures(constructorCollector.values(), anonymousClassSignatures);
-	
+//		remover?Colle2ctorExecutionFlow.fixAnonymousClassSignatureAndFilePath(
+//				constructorCollector.values(), 
+//				anonymousClassSignatures,
+//				anonymousClassFilePath
+//		);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		ef = new ConstructorExecutionFlow(constructorCollector.values());
 		ef.execute().export();
 		

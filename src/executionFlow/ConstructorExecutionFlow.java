@@ -6,6 +6,7 @@ import java.util.List;
 
 import executionFlow.exporter.*;
 import executionFlow.info.CollectorInfo;
+import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
@@ -22,7 +23,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
@@ -148,6 +149,21 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 						List.copyOf(constructorCollector)
 				);
 				tp = analyzer.getTestPaths();
+				
+				
+				
+				
+				
+				// Fixes anonymous class signature
+				if (collector.getConstructorInfo().getInvokedSignature() != analyzer.getAnalyzedInvokedSignature()) {
+					((ConstructorInvokedInfo)collector.getConstructorInfo())
+						.setInvokedSignature(analyzer.getAnalyzedInvokedSignature());
+				}
+				
+				
+				
+				
+				
 				
 				if (tp.isEmpty() || tp.get(0).isEmpty())
 					ConsoleOutput.showWarning("Test path is empty");

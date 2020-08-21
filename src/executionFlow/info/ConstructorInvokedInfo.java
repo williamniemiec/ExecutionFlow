@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Stores information about a constructor.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		2.0.0
  */
 public class ConstructorInvokedInfo extends InvokedInfo
@@ -273,4 +273,46 @@ public class ConstructorInvokedInfo extends InvokedInfo
 		
 		return this;
 	}
+	
+	/**
+	 * Sets invoked signature.
+	 * 
+	 * @param		signature New signature
+	 * 
+	 * @return		Itself to allow chained calls
+	 */
+	public ConstructorInvokedInfo setInvokedSignature(String signature)
+	{
+		this.invokedSignature = signature;
+		
+		return this;
+	}
+	
+//	/**
+//	 * Sets source file path.
+//	 * 
+//	 * @param		srcPath Source file path
+//	 * 
+//	 * @return		Itself to allow chained calls
+//	 */
+//	public ConstructorInvokedInfo setSrcPath(Path srcPath)
+//	{
+//		this.srcPath = srcPath;
+//		
+//		return this;
+//	}
+	
+//	/**
+//	 * Sets compiled file path.
+//	 * 
+//	 * @param		binPath Compiled file path
+//	 * 
+//	 * @return		Itself to allow chained calls
+//	 */
+//	public ConstructorInvokedInfo setBinPath(Path binPath)
+//	{
+//		this.binPath = binPath;
+//		
+//		return this;
+//	}
 }

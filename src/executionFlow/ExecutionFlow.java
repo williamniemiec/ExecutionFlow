@@ -34,7 +34,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -103,7 +103,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
@@ -288,7 +288,7 @@ public abstract class ExecutionFlow
 			ConsoleOutput.showInfo("Processing completed");	
 		}
 
-		// Processes the source file of the method if it has not 
+		// Processes the source file of the invoked if it has not 
 		// been processed yet
 		if (!invokedManager.wasProcessed(invokedFileManager)) {
 			boolean autoRestore = 
@@ -303,7 +303,7 @@ public abstract class ExecutionFlow
 		}
 		
 		// Computes test path from JDB
-		ConsoleOutput.showInfo("Computing test path of method "
+		ConsoleOutput.showInfo("Computing test path of invoked "
 			+ invokedInfo.getInvokedSignature()+"...");
 
 		return new Analyzer(invokedInfo, testMethodInfo).run();

@@ -8,6 +8,7 @@ import java.util.List;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
+import executionFlow.util.Pair;
 
 
 /**
@@ -31,7 +32,7 @@ import executionFlow.info.MethodInvokedInfo;
  * with {@link executionFlow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
@@ -59,7 +60,7 @@ public aspect MethodCollector extends RuntimeCollector
 	{
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
-		String signature, methodName, classSignature, className, key;
+		String signature, anonymousClassSignature, methodName, classSignature, className, key;
 		Class<?>[] paramTypes;
 		Class<?> returnType;
 		Object constructor = null;
@@ -69,10 +70,13 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		
 		signature = thisJoinPoint.getSignature().toString();
-
+		anonymousClassSignature = "";
+		
 		if (thisJoinPoint.getTarget() != null) {
+			anonymousClassSignature = thisJoinPoint.getTarget().getClass().getName(); 
+			
 			anonymousClassSignatures.put(
-					thisJoinPoint.getTarget().getClass().getName(), 
+					anonymousClassSignature, 
 					thisJoinPoint.getSignature().getDeclaringTypeName()
 			);
 		}
@@ -134,6 +138,17 @@ public aspect MethodCollector extends RuntimeCollector
 			className = CollectorExecutionFlow.getClassName(classSignature);
 			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
+			
+			
+			
+			
+			
+//			if (anonymousClassSignature != "")
+//				anonymousClassFilePath.put(anonymousClassSignature, Pair.of(classPath, srcPath));
+
+			
+			
+			
 			
 			methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(classPath)

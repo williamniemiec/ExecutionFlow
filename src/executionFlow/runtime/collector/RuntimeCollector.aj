@@ -1,5 +1,6 @@
 package executionFlow.runtime.collector;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
+import executionFlow.util.Pair;
 
 
 /**
@@ -20,7 +22,7 @@ import executionFlow.info.MethodInvokedInfo;
  * {@link executionFlow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		1.0
  */
 public abstract aspect RuntimeCollector 
@@ -63,6 +65,17 @@ public abstract aspect RuntimeCollector
 	 * </ul> 
 	 */
 	protected static Map<String, String> anonymousClassSignatures = new HashMap<>();
+//	
+//	/**
+//	 * Stores anonymous class signature where it is created and its source and
+//	 * compiled file.
+//	 * <ul>
+//	 * 	<li><b>Key:</b>	Class signature where anonymous class is created</li>
+//	 * 	<li><b>Value:</b> Pair containing the compiled file followed by the source
+//	 * 	file of the invoked to which the anonymous class refers</li>
+//	 * </ul> 
+//	 */
+//	protected static Map<String, Pair<Path, Path>> anonymousClassFilePath = new HashMap<>();
 	
 	protected static String testMethodSignature;
 	protected static MethodInvokedInfo testMethodInfo;
@@ -150,7 +163,6 @@ public abstract aspect RuntimeCollector
 		collectedMethods.clear();
 		methodCollector.clear();
 		constructorCollector.clear();
-		anonymousClassSignatures.clear();
 		testMethodSignature = null;
 		skipCollection = false;
 		lastInvocationLine = 0;
