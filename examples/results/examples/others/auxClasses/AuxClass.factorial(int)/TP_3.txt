@@ -1,4 +1,3 @@
-examples.junit5.RepeatedTestAnnotation.test1()
-[97, 99, 100, 99, 100, 99, 100, 99, 100, 99, 103]
-[97, 99, 100, 99, 100, 99, 100, 99, 100, 99, 103]
+examples.others.OthersTest.testFactorial()
+[95, 97, 98, 97, 98, 97, 98, 97, 98, 97, 101]
 

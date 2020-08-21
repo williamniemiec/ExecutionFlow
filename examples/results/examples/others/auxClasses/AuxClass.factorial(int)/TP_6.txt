@@ -1,3 +1,4 @@
-examples.others.OthersTest.testingMultipleMethods()
-[97, 99, 100, 99, 100, 99, 100, 99, 100, 99, 103]
+examples.junit5.MixedJUnit5Annotations.repeatedTestAnnotation()
+[95, 97, 98, 97, 98, 97, 98, 97, 98, 97, 101]
+[95, 97, 98, 97, 98, 97, 98, 97, 98, 97, 101]
 

@@ -11,10 +11,10 @@ public class OverrideTest
 	{
 		OverrideClass oc = new OverrideClass() {
 			@Override
-@executionFlow.runtime.CollectCalls 			public int foo(int num)
+			public int foo(int num)
 			{
 				if (num == 0)
-if (Boolean.parseBoolean("True")) {					break;}
+					break;
 					
 				num *= 1000;
 				return (int)num;

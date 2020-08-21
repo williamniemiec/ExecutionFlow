@@ -1,0 +1,3 @@
+examples.innerClass.InnerClassTest.test1()
+[50]
+

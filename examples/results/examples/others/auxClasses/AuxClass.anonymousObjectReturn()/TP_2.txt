@@ -1,4 +1,4 @@
-examples.junit5.RepeatedTestAnnotation.test3()
-[226]
-[226]
+examples.junit5.RepeatedTestAnnotation.test2()
+[224]
+[224]
 
