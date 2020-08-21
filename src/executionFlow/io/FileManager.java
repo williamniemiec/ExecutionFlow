@@ -19,7 +19,7 @@ import executionFlow.util.ConsoleOutput;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -228,7 +228,8 @@ public class FileManager implements Serializable
 	{
 		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
 								0 : classPackage.split("\\.").length;
-
+		
+		
 		// Sets path to the compiler
 		for (int i=0; i<packageFolders; i++) {
 			binDirectory = binDirectory.getParent();

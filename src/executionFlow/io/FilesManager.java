@@ -23,7 +23,7 @@ import executionFlow.util.ConsoleOutput;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.2.0
+ * @version		4.0.0
  * @since		2.0.0
  */
 public class FilesManager 

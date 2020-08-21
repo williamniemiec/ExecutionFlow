@@ -48,4 +48,38 @@ public class PreTestMethodFileProcessorTest
 				.build();
 		fp.processFile();
 	}
+	
+	@Test
+	public void testMethodInvokedSameLine() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/");
+		String filename = "test_method_tested_invoked_same_file";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.testMethodSignature("examples.againstRequirements.methodInSameFileOfTestMethod()")
+				.build();
+		fp.processFile();
+	}
+	
+	@Test
+	public void testAnonymousClass() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/");
+		String filename = "test_anonymous_class";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.testMethodSignature("examples.override.OverrideTest.testOverloadedMethod3()")
+				.build();
+		fp.processFile();
+	}
 }

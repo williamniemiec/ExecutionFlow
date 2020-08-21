@@ -61,7 +61,7 @@ public class FileCompiler
 	{
 		Main compiler = new Main();
 		MessageHandler m = new MessageHandler();
-		String mavenDependencies;
+		String dependencies;
 		String appRootPath = ExecutionFlow.getAppRootPath().toString();
 		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
 				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
@@ -74,7 +74,7 @@ public class FileCompiler
 			ConsoleOutput.showInfo("Fetch completed");
 		}
 		
-		mavenDependencies = DataUtil.pathListToString(DependencyManager.getDependencies(), ";", false);
+		dependencies = DataUtil.pathListToString(DependencyManager.getDependencies(), ";", false);
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 
@@ -83,7 +83,7 @@ public class FileCompiler
 				"-encoding", 
 				encode.getName(),
 				"-classpath", outputDir.toAbsolutePath().toString()+";"
-						+ mavenDependencies + ";"
+						+ dependencies + ";"
 						+ DependencyManager.getPath() + ";"
 						+ appRootPath + "\\..\\classes" + ";"
 						+ appRootPath + "\\..\\test-classes" + ";"
