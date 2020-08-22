@@ -344,6 +344,7 @@ public class InvokedFileProcessor extends FileProcessor
 		DoWhileParser doWhileParser = new DoWhileParser();
 		SwitchParser switchParser = new SwitchParser();
 		VariableParser variableParser = new VariableParser();
+		boolean multilineComment = false;
 		
 		
 		for (int i=0; i < lines.size() - 1; i++) {
@@ -357,6 +358,17 @@ public class InvokedFileProcessor extends FileProcessor
 			nextLine = lines.get(i+1);
 
 			wasParsed = false;
+			
+			// Ignores multiline comments
+			if (multilineComment) {
+				multilineComment = !line.contains("*/");
+				continue;
+			}
+			
+			if (line.contains("/*") && !line.contains("*/")) {
+				multilineComment = true;
+				continue;
+			}
 			
 			// Checks if it is inside a test method
 			if (!line.matches(REGEX_COMMENT_FULL_LINE)) {
@@ -992,7 +1004,7 @@ public class InvokedFileProcessor extends FileProcessor
 				response.append(line.substring(curlyBracketsIndex+1));
 			} 
 			else {
-				throw new IllegalStateException("Code block must be enclosed in curly brackets");
+				throw new IllegalStateException("Code block must be enclosed in curly brackets; line: " + line);
 			}
 			
 			return response.toString();

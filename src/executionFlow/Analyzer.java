@@ -412,7 +412,6 @@ public class Analyzer
         		// Checks if it is in the constructor signature
         		if (srcLine.contains("@executionFlow.runtime.CollectCalls")) {
         			ignore = true;
-        			invokedDeclarationLine = currentLine;
         		}
         		
         		ignore = insideOverloadCall || ignore || shouldIgnore(srcLine, currentLine) || isMethodMultiLineArgs;
@@ -455,7 +454,7 @@ public class Analyzer
     				
     				analyzedInvokedSignature = analyzedInvokedSignature.trim();
     			}
-        		
+            	
         		// Checks if it inside a constructor
         		if (inMethod && insideConstructor && !insideOverloadCall && 
         				(isEmptyMethod || line.contains(testMethodSignature))) {
@@ -507,7 +506,8 @@ public class Analyzer
 	    				invokedDeclarationLine = 0;
 	    			}
 	    			
-	    			if (!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && 
+	    			if (line.contains("[INFO]") || 
+	    					!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && 
 	    					srcLine.equals(lastSrcLine)) {
 	    				exitMethod = true;
 	    				endOfMethod = true;

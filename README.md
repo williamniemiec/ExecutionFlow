@@ -20,6 +20,9 @@ Veja a documentação na [wiki](https://github.com/williamniemiec/ExecutionFlow/
 ## Problemas
 Caso você encontre algum problema na aplicação, certifique-se de verificar a solução de problemas na wiki. Caso seu problema não seja resolvido, verifique se já existe uma [issue](https://github.com/williamniemiec/ExecutionFlow/issues) com seu problema. Se não tiver, [crie uma issue](https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) descrevendo detalhadamente o problema ocorrido.
 
+### Migração da versão 3.x para 4.x
+A versão `4.x` não é compatível com a versão `3.x` e anteriores. Caso você tenha usado uma versão anterior em seu projeto e quer usar a versão `4.x`, siga os <a href="#migration-1x-2x">mesmos passos</a> da migração da versão `1.x` para `2.x`.
+
 ### Migração da versão 2.x para 3.x
 A versão `3.x` não é compatível com a versão `2.x`; logo, se você usou ela em seu projeto e quer usar a versão `3.x`, siga os mesmos passos da migração da versão `1.x` para `2.x`. Caso contrário, ocorrerá o seguinte erro:
 
@@ -58,7 +61,7 @@ A versão `3.x` não é compatível com a versão `2.x`; logo, se você usou ela
 </code>
 
 
-### Migração da versão 1.x para 2.x
+### <a name="migration-1x-2x"></a> Migração da versão 1.x para 2.x
 Caso você tenha usado a versão `1.x` em algum momento em seu projeto, certifique-se de excluir o diretório com o nome `executionFlow` dos arquivos de seu projeto. Além disso, use apenas uma versão no classpath / buildpath de seu projeto, pois caso contrário pode haver conflito entre as versões. Faça o procedimento abaixo antes de utilizar a nova versão.
 
 ![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/gif/migration.gif)
