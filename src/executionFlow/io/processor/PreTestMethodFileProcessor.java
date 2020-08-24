@@ -371,7 +371,8 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				}
 				
 				// Process the line
-				if (!line.matches(REGEX_COMMENT_FULL_LINE) && !insideAnonymousClass &&
+				//PROBLEMA: COMENTANDO insideAnonymousClass FAZ COM QUE MÉTODOS DE CLASSES ANONIMAS NÃO SEJAM COMPUTADOS CORRETAMENTE
+				if (!line.matches(REGEX_COMMENT_FULL_LINE) /* && !insideAnonymousClass*/ &&
 						!insideMultilineComment) {
 					line = assertParser.parse(line);
 					line = annotationParser.parse(line);
@@ -549,7 +550,8 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			}
 			
 			if (inTestAnnotationScope) {
-				line = parseIgnore(line);
+				if (!insideAnonymousClass)
+					line = parseIgnore(line);
 				
 				if (!ignoreMethod) {
 					line = parseInsideRepeatedTest(line);
