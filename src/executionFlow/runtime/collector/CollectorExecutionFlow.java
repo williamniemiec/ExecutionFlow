@@ -115,7 +115,7 @@ public class CollectorExecutionFlow
 	 * @param		className Name of the class
 	 * @param		classSignature Signature of the class
 	 * 
-	 * @return		Path of the class
+	 * @return		Compiled file path or null if it cannot find the file
 	 * 
 	 * @throws		IOException If class does not exist
 	 */
@@ -125,6 +125,8 @@ public class CollectorExecutionFlow
 		String path = extractPathFromSignature(classSignature);
 		String prefix = ExecutionFlow.isDevelopment() ? "bin\\" : "";
 
+		
+		binPath = null;
 		
 		// Finds absolute path where the class file is
 		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
@@ -147,7 +149,7 @@ public class CollectorExecutionFlow
 	 * @param		className Name of the class
 	 * @param		classSignature Signature of the class
 	 * 
-	 * @return		Path of source file of current execution class
+	 * @return		Compiled file path or null if it cannot find the file
 	 * 
 	 * @throws		IOException If class does not exist
 	 */
@@ -159,6 +161,8 @@ public class CollectorExecutionFlow
 		// Gets path where .java is
 		String path = extractPathFromSignature(classSignature);
 		
+		
+		srcPath = null;
 		
 		// Finds absolute path where the source file is
 		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {

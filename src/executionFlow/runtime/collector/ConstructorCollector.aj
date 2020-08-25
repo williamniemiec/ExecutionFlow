@@ -5,6 +5,7 @@ import java.nio.file.Path;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -29,7 +30,7 @@ import executionFlow.info.ConstructorInvokedInfo;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		4.0.1
  * @since		1.0
  */
 public aspect ConstructorCollector extends RuntimeCollector
@@ -87,6 +88,13 @@ public aspect ConstructorCollector extends RuntimeCollector
 			className = CollectorExecutionFlow.extractMethodName(signature);
 			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
+			
+			if (srcPath == null || classPath == null) {
+				ConsoleOutput.showWarning("The constructor with the following signature" 
+						+ " will be skiped because its source file and / or " 
+						+ " binary file cannot be found: " + signature);
+				return;
+			}
 			
 			constructorInvokedInfo = new ConstructorInvokedInfo.Builder()
 				.binPath(classPath)

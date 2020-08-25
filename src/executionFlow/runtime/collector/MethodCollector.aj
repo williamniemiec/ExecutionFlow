@@ -8,6 +8,7 @@ import java.util.List;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -31,7 +32,7 @@ import executionFlow.info.MethodInvokedInfo;
  * with {@link executionFlow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		4.0.1
  * @since		1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
@@ -137,6 +138,13 @@ public aspect MethodCollector extends RuntimeCollector
 			className = CollectorExecutionFlow.getClassName(classSignature);
 			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
+			
+			if (srcPath == null || classPath == null) {
+				ConsoleOutput.showWarning("The method with the following signature" 
+						+ " will be skiped because its source file and / or " 
+						+ " binary file cannot be found: " + signature);
+				return;
+			}
 			
 			methodInfo = new MethodInvokedInfo.Builder()
 				.binPath(classPath)

@@ -47,6 +47,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 		cflow(execution(@executionFlow.runtime._SkipInvoked * *.*(..))) && 
 		(junit4() || junit5()) &&
 		!junit4_internal() && !junit5_internal() &&
+		!get(* *.*) && !set(* *.*) &&
 		!execution(public int hashCode());
 	
 	before(): invokedSignature()
