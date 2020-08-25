@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * does not break lines containing 'assert' or 'Assert.assert'.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		4.0.1
  * @since 		4.0.0
  */
 public class CurlyBracketBreaker 
@@ -60,6 +60,7 @@ public class CurlyBracketBreaker
 	{
 		final String REGEX_ONLY_OPENING_CURLY_BRACKET = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
 		final String REGEX_OPENING_CURLY_BRACKET = "(\\ |\\t)*\\{(\\ |\\t)*";
+		final String REGEX_STRING = "\".*\"";
 		String line, rightBracket;
 		int idx_curlyBracketEnd;
 		Matcher m;
@@ -82,7 +83,17 @@ public class CurlyBracketBreaker
 				m = Pattern.compile(REGEX_OPENING_CURLY_BRACKET).matcher(line);
 				
 				if (m.find()) {
-					idx_curlyBracketEnd = m.start() + m.group().indexOf("{");	
+					idx_curlyBracketEnd = m.start() + m.group().indexOf("{");
+					
+					// Checks if curly bracket belongs to a string
+					m = Pattern.compile(REGEX_STRING).matcher(line);
+					
+					if (m.find()) {
+						if (idx_curlyBracketEnd > m.start() && idx_curlyBracketEnd < m.end()) {
+							continue;
+						}
+					}
+					
 					rightBracket = line.substring(idx_curlyBracketEnd + 1);
 					
 					// If the line contains an opening curly bracket but there
@@ -108,6 +119,7 @@ public class CurlyBracketBreaker
 	{
 		final String REGEX_ONLY_CLOSING_CURLY_BRACKET = "^(\\s|\\t)+\\}(\\s|\\t|\\/)*$";
 		final String REGEX_CLOSING_CURLY_BRACKET = "(\\ |\\t)*\\}(\\ |\\t)*";
+		final String REGEX_STRING = "\".*\"";
 		String line, rightBracket, leftContent;
 		int idx_curlyBracketEnd;
 		Matcher m;
@@ -133,6 +145,16 @@ public class CurlyBracketBreaker
 				
 				if (m.find()) {
 					idx_curlyBracketEnd = m.start() + m.group().indexOf("}");	
+					
+					// Checks if curly bracket belongs to a string
+					m = Pattern.compile(REGEX_STRING).matcher(line);
+					
+					if (m.find()) {
+						if (idx_curlyBracketEnd > m.start() && idx_curlyBracketEnd < m.end()) {
+							continue;
+						}
+					}
+					
 					rightBracket = line.substring(idx_curlyBracketEnd + 1);
 					
 					// If the line contains a closing curly bracket but there
