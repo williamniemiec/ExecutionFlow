@@ -164,12 +164,12 @@ public class CurlyBracketBreaker
 						// (including it)
 						leftContent = line.substring(0, idx_curlyBracketEnd);
 						
-						if (!leftContent.isBlank()) {
+						//if (!leftContent.isBlank()) {
 							lines.set(i, leftContent);
 							lines.add(i + 1, getIndentation(lines.get(i-1)) + line.substring(idx_curlyBracketEnd));
 							wasBroken = true;
 							lineBreak.add(i);
-						}
+						//}
 					}
 				}
 			}
