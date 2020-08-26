@@ -2,6 +2,8 @@ package executionFlow.runtime.collector;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
@@ -35,26 +37,53 @@ import executionFlow.util.ConsoleOutput;
  */
 public aspect ConstructorCollector extends RuntimeCollector
 {
+	private static Set<String> collectedConstructors = new HashSet<>();
+	private static String lastSignatureWithDollarSign = ""; 
+	private static int invocationLine = 0;
+	
 	//-------------------------------------------------------------------------
 	//		Pointcut
 	//-------------------------------------------------------------------------
+	/**
+	 * Intercepts object instantiation and gets its invocation line.
+	 */
+	pointcut constructorInvocationLineCollector(): 
+		!skipAnnotation() &&
+		(junit4() || junit5()) &&
+		call(*.new(..));
+	
+	before(): constructorInvocationLineCollector()
+	{
+		invocationLine = thisJoinPoint.getSourceLocation().getLine();
+	}
+	
 	/**
 	 * Intercepts object instantiation within test methods.
 	 */
 	pointcut constructorCollector(): 
 		!skipAnnotation() &&
-		(junit4() || junit5()) &&
-		!within(ConstructorCollector) &&
-		call(*.new(..));
+		cflow(
+			(withincode(@org.junit.Test * *.*()) || 
+			 withincode(@org.junit.jupiter.api.Test * *.*()) ||
+			 withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
+			 withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..))) && 
+			call(*.new(..))
+		) &&
+		!within(executionFlow.*) &&
+		!within(executionFlow.*.*) &&
+		!within(executionFlow.*.*.*) &&
+		!within(ConstructorCollector);
 		
 	before(): constructorCollector()
 	{
+		if (invocationLine <= 0)
+			return;
+		
 		final String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		String key, signature, classSignature, className;
 		ConstructorInvokedInfo constructorInvokedInfo;
 		CollectorInfo collectorInfo;
 		Path classPath, srcPath;
-		int invocationLine;
 		Class<?>[] paramTypes;		// Constructor parameter types
 		Object[] paramValues;		// Constructor parameter values
 		
@@ -68,6 +97,19 @@ public aspect ConstructorCollector extends RuntimeCollector
 		signature = thisJoinPoint.getSignature().getDeclaringTypeName() 
 				+ signature.substring(signature.indexOf("("));
 		
+		
+		if (signature.contains("$")) {
+//			lastSignatureWithDollarSign = signature;
+//			
+			return;
+		}
+		else if (collectedConstructors.contains(signature) || testMethodInfo == null) {
+			return;
+		}
+			
+		
+		collectedConstructors.add(signature);
+		
 		// Extracts constructor data
 		if (thisJoinPoint.getArgs() == null || thisJoinPoint.getArgs().length == 0) {
 			paramTypes = new Class<?>[0];
@@ -78,7 +120,6 @@ public aspect ConstructorCollector extends RuntimeCollector
 			paramValues = thisJoinPoint.getArgs();			
 		}
 		
-		invocationLine = thisJoinPoint.getSourceLocation().getLine();	
 		key = invocationLine + signature;
 		classSignature = signature.split("\\(")[0];
 		
@@ -86,8 +127,17 @@ public aspect ConstructorCollector extends RuntimeCollector
 		try {
 			// Class path and source path from method
 			className = CollectorExecutionFlow.extractMethodName(signature);
-			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
+			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
+			
+//			if (!lastSignatureWithDollarSign.isBlank()) {
+//				anonymousSrcPath = CollectorExecutionFlow.findBinPath(
+//						CollectorExecutionFlow.extractMethodName(lastSignatureWithDollarSign), 
+//						lastSignatureWithDollarSign.split("\\(")[0]
+//				);
+//				
+//				lastSignatureWithDollarSign = "";
+//			}
 			
 			if (srcPath == null || classPath == null) {
 				ConsoleOutput.showWarning("The constructor with the following signature" 
@@ -114,6 +164,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 			if (!constructorCollector.containsKey(key))
 				constructorCollector.put(key, collectorInfo);
 		
+			invocationLine = 0;
 		} 
 		catch (IOException e1) {
 			e1.printStackTrace();
