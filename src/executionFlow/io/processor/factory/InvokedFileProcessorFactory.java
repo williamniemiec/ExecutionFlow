@@ -17,6 +17,20 @@ import executionFlow.io.processor.InvokedFileProcessor;
 public class InvokedFileProcessorFactory extends FileProcessorFactory
 {
 	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
+	private boolean isTestMethod;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	public InvokedFileProcessorFactory(boolean isTestMethod)
+	{
+		this.isTestMethod = isTestMethod;
+	}
+	
+	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
@@ -28,6 +42,7 @@ public class InvokedFileProcessorFactory extends FileProcessorFactory
 				.outputDir(outputDir)
 				.outputFilename(outputFilename)
 				.encode(encode)
+				.isTestMethod(this.isTestMethod)
 				.build();
 	}
 }

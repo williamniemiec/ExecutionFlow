@@ -25,7 +25,7 @@ public class CurlyBracketBreaker
 	private static final String REGEX_ASSERT_METHOD = 
 			"(\\ |\\t)*(Assert\\.)?assert[A-z]+\\(.*";
 	private static final String REGEX_EMPTY_CURLY_BRACKETS = 
-			"^.+(\\s|\\t)*\\{.*\\}(\\s|\\t)*$";
+			"^.+(\\s|\\t)*\\{(\\s|\\t)*\\}(\\s|\\t)*$";
 	private List<Integer> lineBreak = new ArrayList<>();
 	
 	
@@ -117,10 +117,10 @@ public class CurlyBracketBreaker
 	 */
 	private void closingCurlyBracketBreaker(List<String> lines) 
 	{
-		final String REGEX_ONLY_CLOSING_CURLY_BRACKET = "^(\\s|\\t)+\\}(\\s|\\t|\\/)*$";
+		final String REGEX_ONLY_CLOSING_CURLY_BRACKET = "^(\\s|\\t)+(\\})+(\\)|;|\\}|\\])*(\\s|\\t|\\/)*$";
 		final String REGEX_CLOSING_CURLY_BRACKET = "(\\ |\\t)*\\}(\\ |\\t)*";
 		final String REGEX_STRING = "\".*\"";
-		String line, rightBracket, leftContent;
+		String line, rightContent, leftContent;
 		int idx_curlyBracketEnd;
 		Matcher m;
 		boolean wasBroken = false;
@@ -155,22 +155,19 @@ public class CurlyBracketBreaker
 						}
 					}
 					
-					rightBracket = line.substring(idx_curlyBracketEnd + 1);
-					
-					// If the line contains a closing curly bracket but there
-					// is nothing to the right of it, keep the original line
-					if (!rightBracket.isBlank()) {
-						// Otherwise put everything to its right on a new line
-						// (including it)
-						leftContent = line.substring(0, idx_curlyBracketEnd);
+					rightContent = line.substring(idx_curlyBracketEnd + 1);
+					leftContent = line.substring(0, idx_curlyBracketEnd);
 						
-						//if (!leftContent.isBlank()) {
-							lines.set(i, leftContent);
-							lines.add(i + 1, getIndentation(lines.get(i-1)) + line.substring(idx_curlyBracketEnd));
-							wasBroken = true;
-							lineBreak.add(i);
-						//}
+					if (leftContent.isBlank()) {
+						lines.set(i, leftContent + "}");
+						lines.add(i + 1, getIndentation(lines.get(i)) + rightContent);
 					}
+					else {
+						lines.set(i, leftContent);
+						lines.add(i + 1, getIndentation(lines.get(i)) + "}" + rightContent);
+					}
+					
+					lineBreak.add(i);
 				}
 			}
 		}

@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 import executionFlow.io.FileEncoding;
 import executionFlow.runtime.collector.CollectorExecutionFlow;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.CurlyBracketBalance;
 import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;
+import executionFlow.util.balance.CurlyBracketBalance;
 
 
 /**
@@ -460,9 +460,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		private boolean insideRepeatedTest;
 		private boolean ignoreMethod;
 		private boolean inTestAnnotationScope;
-		
-		
-		
+
 		/**
 		 * Stores test method declaration lines that are not part of the test 
 		 * method provided in the constructor.

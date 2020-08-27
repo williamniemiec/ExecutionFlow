@@ -134,7 +134,10 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
-					new InvokedFileProcessorFactory()
+					new InvokedFileProcessorFactory(
+							collector.getMethodInfo().getSrcPath().equals(
+							collector.getTestMethodInfo().getSrcPath()
+					))
 				);
 
 				// Gets FileManager for test method file

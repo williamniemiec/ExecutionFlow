@@ -271,7 +271,7 @@ public class MethodInvokedInfo extends InvokedInfo
 	{
 		return "MethodInvoked ["
 				+ "methodName=" + methodName 
-				+ ", classPath=" + binPath 
+				+ ", binPath=" + binPath 
 				+ ", srcPath=" + srcPath
 				+ ", classSignature=" + getClassSignature()
 				+ ", classPackage=" + getPackage()

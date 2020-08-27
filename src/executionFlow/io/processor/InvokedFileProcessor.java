@@ -13,10 +13,10 @@ import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.CurlyBracketBalance;
 import executionFlow.util.CurlyBracketBreaker;
 import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;
+import executionFlow.util.balance.CurlyBracketBalance;
 
 
 /**
@@ -47,10 +47,9 @@ public class InvokedFileProcessor extends FileProcessor
 	private boolean wasParsed;
 	private boolean insideTestMethod;
 	private boolean insideAnonymousClass;
+	private boolean isTestMethod;
 	private CurlyBracketBalance testMethodCBB;
-	private Stack<CurlyBracketBalance> anonymousClassesCBB = new Stack<>(); 
-	
-	boolean isTestMethod;
+	private Stack<CurlyBracketBalance> anonymousClassesCBB = new Stack<>(); 	
 	
 	
 	//-------------------------------------------------------------------------
@@ -819,7 +818,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
+	 * @version		4.0.1
 	 * @since 		2.0.0
 	 */
 	private class TryCatchFinallyParser
@@ -828,7 +827,7 @@ public class InvokedFileProcessor extends FileProcessor
 		//		Attributes
 		//---------------------------------------------------------------------
 		private final Pattern PATTERN_TRY_FINALLY = 
-				Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\{]");
+				Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\t\\{]+");
 		private final String REGEX_CATCH_CLOSED_CURLY_BRACKET = 
 				"(\\t|\\ )+\\}(\\t|\\ )*catch(\\t|\\ )*(\\(|\\{).*";
 		private boolean removedClosedCB;
@@ -858,7 +857,7 @@ public class InvokedFileProcessor extends FileProcessor
 			if (wasParsed)
 				return line;
 			
-			if (PATTERN_TRY_FINALLY.matcher(line).find() && PATTERN_TRY_FINALLY.matcher(line).find()) {	
+			if (PATTERN_TRY_FINALLY.matcher(line).find()) {	
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = parse_try_finally(line);
 				wasParsed = true;

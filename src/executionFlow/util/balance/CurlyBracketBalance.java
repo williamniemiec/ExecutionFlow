@@ -1,4 +1,4 @@
-package executionFlow.util;
+package executionFlow.util.balance;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,26 +12,20 @@ import java.util.regex.Pattern;
  * @version		4.0.0
  * @since		2.0.0
  */
-public class CurlyBracketBalance 
+public class CurlyBracketBalance extends Balance
 {
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	/**
-	 * Balance of curly brackets.
-	 */
-	private int curlyBracketsBalance;
-	
-	/**
-	 * Flag indicating whether the balance has already been increased at any 
-	 * time.
-	 */
-	private boolean alreadyIncreased;
-	
-	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	@Override
+	public String toString() 
+	{
+		return "CurlyBracketBalance ["
+				+ "curlyBracketsBalance=" + balance 
+				+ ", alreadyIncreased="	+ alreadyIncreased 
+			+ "]";
+	}
+	
 	/**
 	 * Parses line by counting the number of curly brackets and performing the
 	 * following calculation: 
@@ -47,61 +41,10 @@ public class CurlyBracketBalance
 		int amountClosedCurlyBrackets = countClosedCurlyBrackets(text);
 		
 		
-		curlyBracketsBalance = curlyBracketsBalance + amountOpenCurlyBrackets - amountClosedCurlyBrackets;
+		balance = balance + amountOpenCurlyBrackets - amountClosedCurlyBrackets;
 		alreadyIncreased = alreadyIncreased ? alreadyIncreased : amountOpenCurlyBrackets > 0;
 		
 		return this;
-	}
-	
-	/**
-	 * Increments balance.
-	 * 
-	 * @apiNote		Must be called only when an open curly bracket is found
-	 */
-	public void increaseBalance()
-	{
-		alreadyIncreased = true;
-		curlyBracketsBalance += 1;
-	}
-	
-	/**
-	 * Decrements balance.
-	 * 
-	 * @apiNote		Must be called only when a closed curly bracket is found
-	 */
-	public void decreaseBalance()
-	{
-		curlyBracketsBalance -= 1;
-	}
-	
-	/**
-	 * Returns balance.
-	 * 
-	 * @return		Current balance
-	 */
-	public int getBalance()
-	{
-		return curlyBracketsBalance;
-	}
-	
-	/**
-	 * Checks if balance is empty
-	 * 
-	 * @return		If balance is zero
-	 */
-	public boolean isBalanceEmpty()
-	{
-		return curlyBracketsBalance == 0;
-	}
-	
-	/**
-	 * Checks whether the balance has already been increased at any time.
-	 * 
-	 * @return		If the balance has already been increased at any time
-	 */
-	public boolean alreadyIncreased()
-	{
-		return alreadyIncreased;
 	}
 	
 	/**

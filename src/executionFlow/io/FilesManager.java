@@ -207,6 +207,7 @@ public class FilesManager
 	 * Parses file from its {@link FileManager}.
 	 * 
 	 * @param		fm File manager of the file
+	 * @param		isTestMethod If file contains test methods
 	 * 
 	 * @return		This object to allow chained calls
 	 * 

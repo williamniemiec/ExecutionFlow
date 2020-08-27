@@ -282,7 +282,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			else {
 				totalTests--;
 			}
-				
+
 			if (totalTests == 0) {
 				// Restores original method files and its compiled files
 				try {

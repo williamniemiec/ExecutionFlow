@@ -103,6 +103,7 @@ public aspect MethodCollector extends RuntimeCollector
 						+ signature.substring(signature.indexOf("("));
 			}
 		}
+		
 		// Extracts the method name
 		methodName = CollectorExecutionFlow.extractMethodName(signature);
 		

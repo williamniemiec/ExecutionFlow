@@ -23,7 +23,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		4.0.1
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
@@ -121,7 +121,10 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				collector.getConstructorInfo().getSrcPath(), 
 				collector.getConstructorInfo().getClassDirectory(),
 				collector.getConstructorInfo().getPackage(),
-				new InvokedFileProcessorFactory()
+				new InvokedFileProcessorFactory(
+					collector.getConstructorInfo().getSrcPath().equals(
+						collector.getTestMethodInfo().getSrcPath()
+				))
 			);
 			
 			// Gets FileManager for test method file
@@ -141,10 +144,16 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				);
 				tp = analyzer.getTestPaths();
 
-				// Fixes anonymous class signature
+				// Fix anonymous class signature
 				if (collector.getConstructorInfo().getInvokedSignature() != analyzer.getAnalyzedInvokedSignature()) {
-					((ConstructorInvokedInfo)collector.getConstructorInfo())
+					if (analyzer.getAnalyzedInvokedSignature().isBlank()) {
+						((ConstructorInvokedInfo)collector.getConstructorInfo())
+						.setInvokedSignature(collector.getConstructorInfo().getInvokedSignature().replaceAll("\\$", "."));
+					}
+					else {
+						((ConstructorInvokedInfo)collector.getConstructorInfo())
 						.setInvokedSignature(analyzer.getAnalyzedInvokedSignature());
+					}
 				}
 				
 				if (tp.isEmpty() || tp.get(0).isEmpty())

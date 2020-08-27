@@ -103,15 +103,15 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
 	 * Sets test path export type.
 	 */
 	static {
-//		EXPORT = TestPathExportType.CONSOLE;
-		EXPORT = TestPathExportType.FILE;
+		EXPORT = TestPathExportType.CONSOLE;
+//		EXPORT = TestPathExportType.FILE;
 	}
 	
 
@@ -298,7 +298,11 @@ public abstract class ExecutionFlow
 			ConsoleOutput.showInfo("Processing source file of invoked - " 
 				+ invokedInfo.getInvokedSignature()+"...");
 			
-			invokedManager.parse(invokedFileManager, collectors, autoRestore).compile(invokedFileManager);
+			invokedManager.parse(
+					invokedFileManager, 
+					collectors, 
+					autoRestore
+			).compile(invokedFileManager);
 			ConsoleOutput.showInfo("Processing completed");
 		}
 		

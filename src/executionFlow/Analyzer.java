@@ -14,6 +14,7 @@ import executionFlow.dependency.DependencyManager;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.JDB;
+import executionFlow.util.balance.RoundBracketBalance;
 
 
 /**
@@ -21,7 +22,7 @@ import executionFlow.util.JDB;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		4.0.1
  * @since		2.0.0
  */
 public class Analyzer 
@@ -61,6 +62,7 @@ public class Analyzer
 	
 	private int invokedDeclarationLine;
 	private int lineOverloadedCall;
+	private int lastLineAdded = -1;
 	
 	/**
 	 * Stores current test path.
@@ -83,6 +85,8 @@ public class Analyzer
 	private boolean lastAddWasReturn;
 	private boolean isMethodMultiLineArgs;
 	private boolean anonymousConstructor;
+	private boolean invokedNameContainsDollarSign;
+	private RoundBracketBalance rbb;
 	
 
 	//-------------------------------------------------------------------------
@@ -125,6 +129,7 @@ public class Analyzer
 		invocationLine = invokedInfo.getInvocationLine();
 		invokedSignature = invokedInfo.getInvokedSignature();
 		invokedName = invokedSignature.substring(invokedSignature.lastIndexOf("."), invokedSignature.indexOf("("));
+		invokedNameContainsDollarSign = invokedName.substring(1).matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
 		
 		idx_dollarSign = invokedInfo.getClassSignature().indexOf("$");
 		
@@ -161,6 +166,19 @@ public class Analyzer
 		// Sets source path
 		srcPath.add(testClassRootPath.relativize(srcRootPath).toString());
 		srcPath.add(testClassRootPath.relativize(testMethodSrcPath).toString());
+		
+		// Fix source file of anonymous and inner classes
+		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
+			srcPath.add(testClassRootPath.relativize(
+					new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/main/java").toPath())
+					.toString()
+			);
+			srcPath.add(
+					testClassRootPath.relativize(
+							new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/").toPath())
+					.toString()
+			);
+		}
 		
 		jdb = new JDB(testClassRootPath, classPath, srcPath);
 		testPath = new ArrayList<>();
@@ -231,11 +249,6 @@ public class Analyzer
 				// Checks if has exit the method
 				else if (exitMethod && !isInternalCommand) {
 					// Saves test path
-					if (anonymousConstructor && testPath.size() > 1) {
-						testPath.remove(testPath.size() - 1);
-						testPath.remove(0);
-					}
-					
 					testPaths.add(testPath);
 					
 					// Prepare for next test path
@@ -360,7 +373,8 @@ public class Analyzer
 	 */
 	private boolean parseOutput() throws IOException
 	{
-		boolean readyToReadInput = false, ignore = false, isEmptyMethod = false;
+		boolean readyToReadInput = false, ignore = false, isEmptyMethod = false, 
+				containsTestMethodSignature, isInnerClassOrAnonymousClass;
 		final String REGEX_DOLLAR_SIGN_PLUS_NUMBERS_CONSTRUCTOR = "^.+\\$[0-9]+\\.\\<init\\>.*$";
 		final String REGEX_EMPTY_OUTPUT = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
 		int currentLine = -1;
@@ -374,7 +388,7 @@ public class Analyzer
         	if (line.contains("Stopping due to deferred breakpoint errors"))
         		throw new IOException("Incorrect invocation line {invocationLine: " 
     					+ invocationLine + ", test method signature: "
-        				+ testMethodSignature + ", invokedSignature: " 
+        				+ testMethodSignature + ")" + ", invokedSignature: " 
     					+ invokedSignature + "}"
 				);
         	
@@ -396,7 +410,28 @@ public class Analyzer
     			inMethod = isInsideMethod(line);
     			newIteration = isNewIteration(line);
         		insideConstructor = line.contains(".<init>");
+        		containsTestMethodSignature = line.contains(testMethodSignature);
         		currentLine = (srcLine == null || srcLine.isEmpty()) ? getLine(line) : getSrcLine(srcLine);
+        		isInnerClassOrAnonymousClass = 
+        				line.contains("$") && 
+        				invokedNameContainsDollarSign && 
+        				!line.contains("line=1 ") &&
+        				!line.contains("jdk.") &&
+        				!line.contains("aspectj.") && 
+        				!line.contains("executionFlow.runtime") && 
+        				!srcLine.contains("package ") &&
+        				!line.contains("executionFlow.runtime") &&
+        				!line.contains(invokedName);
+        		
+        		if (srcLine.contains("(") && !srcLine.contains(")")) {
+        			if (rbb == null) {
+        				rbb = new RoundBracketBalance();
+        			}
+        		}
+        		
+        		if (rbb != null) {
+        			rbb.parse(srcLine);
+        		}
 
         		// Ignores native calls
         		if (isNativeCall(line, srcLine)) {
@@ -417,8 +452,17 @@ public class Analyzer
         		ignore = insideOverloadCall || ignore || shouldIgnore(srcLine, currentLine) || isMethodMultiLineArgs;
         		isMethodMultiLineArgs = srcLine.matches(REGEX_MULTILINE_ARGS);
         		
+        		// Checks if invoked is a inner class or anonymous class
+        		if (isInnerClassOrAnonymousClass) {
+        			// If it is, it guarantees that its test path will be computed
+        			inMethod = true;
+        			ignore = false;
+        			isInternalCommand = false;
+        		}
+        		
         		// Gets the line on which the invoked is declared
-        		if (invokedDeclarationLine == 0 && currentLine > 1 && 
+        		if (	((invokedDeclarationLine == 0 && currentLine > 1) || 
+        				srcLine.contains("@executionFlow.runtime.CollectCalls")) &&
         				(
     						(anonymousConstructor && insideConstructor) || 
     						line.contains(invokedName+".") || 
@@ -427,16 +471,22 @@ public class Analyzer
         				!line.split(",")[1].matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS_CONSTRUCTOR)) {
         			invokedDeclarationLine = currentLine;        		
         		}
+        		else if (invokedDeclarationLine == 0 && currentLine > 1 && 
+        				invokedNameContainsDollarSign && inMethod) {
+        			invokedDeclarationLine = currentLine;
+        		}
         		
         		// Stores analyzed signature
             	if (analyzedInvokedSignature.isBlank() && invokedDeclarationLine > 0 
             			&& (inMethod || insideConstructor)) {
-    				if (anonymousConstructor) {	// Fix anonymous signature
+            		// Fix anonymous signature
+    				if (anonymousConstructor || invokedNameContainsDollarSign) {	
     					String[] signatureParams = invokedSignature.substring(
-    							invokedSignature.indexOf("(")+1, invokedSignature.indexOf(")")).split(",");
+    							invokedSignature.indexOf("(")+1, invokedSignature.indexOf(")")
+						).split(",");
     					StringBuilder params = new StringBuilder();
     					
-    					
+
     					// Parameter types
     					for (int i=1; i<signatureParams.length; i++) {
     						params.append(signatureParams[i].trim().replace(",", ""));
@@ -455,9 +505,10 @@ public class Analyzer
     				analyzedInvokedSignature = analyzedInvokedSignature.trim();
     			}
             	
-        		// Checks if it inside a constructor
-        		if (inMethod && insideConstructor && !insideOverloadCall && 
-        				(isEmptyMethod || line.contains(testMethodSignature))) {
+            	// Checks if it exits the method or constructor
+        		if (	(containsTestMethodSignature && testPath.size() > 0) ||
+        				(inMethod && insideConstructor && !insideOverloadCall &&
+        				(isEmptyMethod || containsTestMethodSignature))	) {
         			insideConstructor = false;
         			exitMethod = true;
         			readyToReadInput = true;
@@ -472,9 +523,13 @@ public class Analyzer
         					inMethod = false;
         				} 
         				// Checks if it is still inside the method
-        				else if (!isEmptyMethod && !lastAddWasReturn && invokedDeclarationLine > 0 && 
-        						!(insideConstructor && line.matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS))) {
+        				else if (	!isEmptyMethod && !lastAddWasReturn && invokedDeclarationLine > 0 && 
+        							!(insideConstructor && line.matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS)) &&
+        							!srcLine.contains("} catch(Throwable _") &&
+        							(rbb == null || !rbb.isBalanceEmpty()) &&
+        							currentLine != lastLineAdded	) {
     						testPath.add(currentLine);
+    						lastLineAdded = currentLine;
     						lastAddWasReturn = srcLine.contains("return ");
     					}
             		}
@@ -488,6 +543,9 @@ public class Analyzer
         			insideOverloadCall = insideConstructor && srcLine.contains("this(");
         			lineOverloadedCall = currentLine;
         		}
+        		
+        		if (rbb != null && rbb.isBalanceEmpty())
+    				rbb = null;
     		}
     		
     		if (endOfMethod) {
@@ -506,9 +564,8 @@ public class Analyzer
 	    				invokedDeclarationLine = 0;
 	    			}
 	    			
-	    			if (line.contains("[INFO]") || 
-	    					!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && 
-	    					srcLine.equals(lastSrcLine)) {
+	    			if (	!newIteration && srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") && 
+	    					srcLine.equals(lastSrcLine)	) {
 	    				exitMethod = true;
 	    				endOfMethod = true;
 	    			}
@@ -521,6 +578,13 @@ public class Analyzer
     			else if (isEmptyMethod) {
     				insideOverloadCall = false;
 				}
+    			
+    			if (exitMethod) {
+    				currentLine = -1;
+    			}
+    			
+    			if (line.contains("[INFO]"))
+    				System.exit(-1);
     			
     			// -----{ DEBUG }-----
     			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }
@@ -730,8 +794,10 @@ public class Analyzer
 	 */
 	private boolean shouldExit(String line, String srcLine, boolean ignoreFlag)
 	{
-		return	!line.contains("<init>") &&
-				(srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
+		return	invokedDeclarationLine > 0 &&
+				!line.contains("<init>") &&
+				srcLine.contains("return ") &&
+				//(srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
 				(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
 				(ignoreFlag == true && line.contains(testMethodSignature) && getSrcLine(srcLine) > invocationLine);
 	}
@@ -782,7 +848,7 @@ public class Analyzer
 	 */
 	public String getAnalyzedInvokedSignature()
 	{
-		return analyzedInvokedSignature;
+		return analyzedInvokedSignature.replace('$', '.');
 	}
 	
 	/**

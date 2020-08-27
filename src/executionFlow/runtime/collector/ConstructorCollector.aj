@@ -37,12 +37,15 @@ import executionFlow.util.ConsoleOutput;
  */
 public aspect ConstructorCollector extends RuntimeCollector
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static Set<String> collectedConstructors = new HashSet<>();
-	private static String lastSignatureWithDollarSign = ""; 
 	private static int invocationLine = 0;
 	
+	
 	//-------------------------------------------------------------------------
-	//		Pointcut
+	//		Pointcuts
 	//-------------------------------------------------------------------------
 	/**
 	 * Intercepts object instantiation and gets its invocation line.
@@ -63,10 +66,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 	pointcut constructorCollector(): 
 		!skipAnnotation() &&
 		cflow(
-			(withincode(@org.junit.Test * *.*()) || 
-			 withincode(@org.junit.jupiter.api.Test * *.*()) ||
-			 withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
-			 withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..))) && 
+			(junit4() || junit5()) && 
 			call(*.new(..))
 		) &&
 		!within(executionFlow.*) &&
@@ -79,7 +79,8 @@ public aspect ConstructorCollector extends RuntimeCollector
 		if (invocationLine <= 0)
 			return;
 		
-		final String constructorRegex = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
+		final String REGEX_CONSTRUCTOR = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
+		final String REGEX_ANONYMOUS_CLASS = ".+\\$[0-9]+.+";
 		String key, signature, classSignature, className;
 		ConstructorInvokedInfo constructorInvokedInfo;
 		CollectorInfo collectorInfo;
@@ -90,23 +91,18 @@ public aspect ConstructorCollector extends RuntimeCollector
 
 		signature = thisJoinPoint.getSignature().toString();
 		
-		if (signature.contains("java.") || !signature.matches(constructorRegex))
+		if (signature.contains("java.") || !signature.matches(REGEX_CONSTRUCTOR))
 			return;
 
 		// Gets correct signature of inner classes
 		signature = thisJoinPoint.getSignature().getDeclaringTypeName() 
 				+ signature.substring(signature.indexOf("("));
-		
-		
-		if (signature.contains("$")) {
-//			lastSignatureWithDollarSign = signature;
-//			
+
+		if (	signature.matches(REGEX_ANONYMOUS_CLASS) || 
+				collectedConstructors.contains(signature) || 
+				testMethodInfo == null	) {
 			return;
 		}
-		else if (collectedConstructors.contains(signature) || testMethodInfo == null) {
-			return;
-		}
-			
 		
 		collectedConstructors.add(signature);
 		
@@ -129,15 +125,6 @@ public aspect ConstructorCollector extends RuntimeCollector
 			className = CollectorExecutionFlow.extractMethodName(signature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
-			
-//			if (!lastSignatureWithDollarSign.isBlank()) {
-//				anonymousSrcPath = CollectorExecutionFlow.findBinPath(
-//						CollectorExecutionFlow.extractMethodName(lastSignatureWithDollarSign), 
-//						lastSignatureWithDollarSign.split("\\(")[0]
-//				);
-//				
-//				lastSignatureWithDollarSign = "";
-//			}
 			
 			if (srcPath == null || classPath == null) {
 				ConsoleOutput.showWarning("The constructor with the following signature" 
