@@ -521,29 +521,30 @@ public class PreTestMethodFileProcessor extends FileProcessor
 										line.contains("@org.junit.jupiter.api.Test");
 			}
 
-			if (curlyBracketBalance_currentTestMethod != null) {
-				curlyBracketBalance_currentTestMethod.parse(line);
-				
-				if (curlyBracketBalance_currentTestMethod.isBalanceEmpty()) {
-					curlyBracketBalance_currentTestMethod = null;
-				}
-			}
-			else if (line.matches(REGEX_METHOD_DECLARATION) && 
-					extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
-				curlyBracketBalance_currentTestMethod = new CurlyBracketBalance();
-				curlyBracketBalance_currentTestMethod.parse(line);
-			}
-			
 			if (inTestAnnotationScope) {
+				if (curlyBracketBalance_currentTestMethod != null) {
+					curlyBracketBalance_currentTestMethod.parse(line);
+					
+					if (curlyBracketBalance_currentTestMethod.isBalanceEmpty()) {
+						curlyBracketBalance_currentTestMethod = null;
+						inTestAnnotationScope = false;
+					}
+				}
+				else if (line.matches(REGEX_METHOD_DECLARATION) && 
+						extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
+					curlyBracketBalance_currentTestMethod = new CurlyBracketBalance();
+					curlyBracketBalance_currentTestMethod.parse(line);
+				}
+			
 				if (curlyBracketBalance_currentTestMethod == null)
 					line = parseIgnore(line);
+			}
+			
+			if (!ignoreMethod) {
+				line = parseInsideRepeatedTest(line);
 				
-				if (!ignoreMethod) {
-					line = parseInsideRepeatedTest(line);
-					
-					// Converts test annotation from JUnit 5 to JUnit 4
-					line = parseAnnotations(line);
-				}
+				// Converts test annotation from JUnit 5 to JUnit 4
+				line = parseAnnotations(line);
 			}
 			
 			return line;
