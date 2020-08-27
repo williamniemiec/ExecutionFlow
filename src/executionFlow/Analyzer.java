@@ -253,6 +253,7 @@ public class Analyzer
 					
 					// Prepare for next test path
 					testPath = new ArrayList<>();
+					lastLineAdded = -1;
 					
 					// Checks if method is within a loop
 					// -----{ DEBUG }-----
