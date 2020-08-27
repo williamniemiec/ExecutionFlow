@@ -25,7 +25,7 @@ import executionFlow.util.FileUtil;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		4.0.1
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -49,6 +49,8 @@ public class InvokedFileProcessor extends FileProcessor
 	private boolean insideAnonymousClass;
 	private CurlyBracketBalance testMethodCBB;
 	private Stack<CurlyBracketBalance> anonymousClassesCBB = new Stack<>(); 
+	
+	boolean isTestMethod;
 	
 	
 	//-------------------------------------------------------------------------
@@ -76,14 +78,16 @@ public class InvokedFileProcessor extends FileProcessor
 	 * @param		outputFilename Name of the parsed file
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
+	 * @param		isTestMethod If file contains test methods
 	 */ 
 	private InvokedFileProcessor(Path file, Path outputDir, 
-			String outputFilename, String fileExtension)
+			String outputFilename, String fileExtension, boolean isTestMethod)
 	{
 		this.file = file;
 		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
 		this.fileExtension = fileExtension;
+		this.isTestMethod = isTestMethod;
 	}
 	
 	/**
@@ -94,13 +98,14 @@ public class InvokedFileProcessor extends FileProcessor
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
+	 * @param		isTestMethod If file contains test methods
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
 	private InvokedFileProcessor(Path file, Path outputDir, String outputFilename,
-			String fileExtension, FileEncoding encode)
+			String fileExtension, boolean isTestMethod, FileEncoding encode)
 	{
-		this(file, outputDir, outputFilename, fileExtension);
+		this(file, outputDir, outputFilename, fileExtension, isTestMethod);
 		this.encode = encode;
 	}
 	
@@ -115,6 +120,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * 	<li>file</li>
 	 * 	<li>outputDir</li>
 	 * 	<li>outputFilename</li>
+	 * 	<li>isTestMethod</li>
 	 * </ul>
 	 */
 	public static class Builder
@@ -124,6 +130,7 @@ public class InvokedFileProcessor extends FileProcessor
 		private Path file;
 		private Path outputDir;
 		private String outputFilename;
+		private boolean isTestMethod;
 
 		
 		/**
@@ -191,6 +198,18 @@ public class InvokedFileProcessor extends FileProcessor
 		}
 		
 		/**
+		 * @param		isTestMethod If file contains test methods
+		 * 
+		 * @return		Itself to allow chained calls
+		 */
+		public Builder isTestMethod(boolean isTestMethod)
+		{
+			this.isTestMethod = isTestMethod;
+			
+			return this;
+		}
+		
+		/**
 		 * @param		fileExtension Output file extension (without dot)
 		 * (default is java)
 		 * 
@@ -212,6 +231,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * 	<li>file</li>
 		 * 	<li>outputDir</li>
 		 * 	<li>outputFilename</li>
+		 * 	<li>isTestMethod</li>
 		 * </ul>
 		 * 
 		 * @return		InvokedFileProcessor with provided information
@@ -235,8 +255,8 @@ public class InvokedFileProcessor extends FileProcessor
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
 			return	encode == null ? 
-					new InvokedFileProcessor(file, outputDir, outputFilename,fileExtension) : 
-					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension, encode);
+					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension, isTestMethod) : 
+					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension, isTestMethod, encode);
 		}
 	}
 	
@@ -277,25 +297,29 @@ public class InvokedFileProcessor extends FileProcessor
 		// Processes the source file lines by breaking lines that contains 
 		// clause + body on the same line 
 		cbb = new CurlyBracketBreaker();
+		cbb.parse(lines);
+		
+		// Updates invocation line of all collected invoked if it is in the same
+		// file of test method is declared
+		if (isTestMethod) {
+			for (Integer line : cbb.getBrokenLines()) {
+				for (CollectorInfo c : collectors) {
+					InvokedInfo invInfo;
+					
+					
+					// Updates test method info
+					invInfo = c.getTestMethodInfo();
 
-		// Updates invocation line of all collected invoked
-		for (Integer line : cbb.parse(lines).getBrokenLines()) {
-			for (CollectorInfo c : collectors) {
-				InvokedInfo invInfo;
-				
-				
-				// Updates test method info
-				invInfo = c.getTestMethodInfo();
-				
-				if (invInfo.getInvocationLine() >= line) {
-					invInfo.setInvocationLine(invInfo.getInvocationLine() + 1);
-				}
-				
-				// Updates method or constructor invoked line
-				invInfo = c.getConstructorInfo() != null ? c.getConstructorInfo() : c.getMethodInfo();
-				
-				if (invInfo.getInvocationLine() >= line) {
-					invInfo.setInvocationLine(invInfo.getInvocationLine() + 1);
+					if (invInfo.getInvocationLine() >= line) {
+						invInfo.setInvocationLine(invInfo.getInvocationLine() + 1);
+					}
+					
+					// Updates method or constructor invoked line
+					invInfo = c.getConstructorInfo() != null ? c.getConstructorInfo() : c.getMethodInfo();
+					
+					if (invInfo.getInvocationLine() >= line) {
+						invInfo.setInvocationLine(invInfo.getInvocationLine() + 1);
+					}
 				}
 			}
 		}
