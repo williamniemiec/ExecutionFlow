@@ -23,49 +23,8 @@ A documentação sobre como usar a aplicação se encontra [aqui](https://github
 ## Problemas
 Caso você encontre algum problema na aplicação, certifique-se de verificar a solução de problemas na wiki. Caso seu problema não seja resolvido, verifique se já existe uma [issue](https://github.com/williamniemiec/ExecutionFlow/issues) com seu problema. Se não tiver, [crie uma issue](https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) descrevendo detalhadamente o problema ocorrido.
 
-### Migração da versão 3.x para 4.x
-A versão `4.x` não é compatível com a versão `3.x` e anteriores. Caso você tenha usado uma versão anterior em seu projeto e quer usar a versão `4.x`, siga os <a href="#migration-1x-2x">mesmos passos</a> da migração da versão `1.x` para `2.x`.
-
-### Migração da versão 2.x para 3.x
-A versão `3.x` não é compatível com a versão `2.x`; logo, se você usou ela em seu projeto e quer usar a versão `3.x`, siga os mesmos passos da migração da versão `1.x` para `2.x`. Caso contrário, ocorrerá o seguinte erro:
-
-<code>
-	
-	org.aspectj.lang.NoAspectBoundException: Exception while initializing executionFlow_runtime_collector_TestMethodCollector: java.lang.NoSuchMethodError: executionFlow.util.Checkpoint.<init>(Ljava/lang/String;)V
-	at executionFlow.runtime.collector.TestMethodCollector.aspectOf(TestMethodCollector.aj:1)
-	at io.socket.parser.ByteArrayTest.encodeByteArray(ByteArrayTest.java:28)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:567)
-	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
-	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
-	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
-	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
-	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
-	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
-	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
-	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
-	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
-	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
-	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
-	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
-	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
-	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:89)
-	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:41)
-	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:541)
-	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:763)
-	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:463)
-	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:209)
-	Caused by: java.lang.NoSuchMethodError: executionFlow.util.Checkpoint.<init>(Ljava/lang/String;)V
-		at executionFlow.runtime.collector.TestMethodCollector.<clinit>(TestMethodCollector.aj:44)
-		at io.socket.parser.ByteArrayTest.encodeByteArray(ByteArrayTest.java:23)
-		... 23 more
-</code>
-
-
-### <a name="migration-1x-2x"></a> Migração da versão 1.x para 2.x
-Caso você tenha usado a versão `1.x` em algum momento em seu projeto, certifique-se de excluir o diretório com o nome `executionFlow` dos arquivos de seu projeto. Além disso, use apenas uma versão no classpath / buildpath de seu projeto, pois caso contrário pode haver conflito entre as versões. Faça o procedimento abaixo antes de utilizar a nova versão.
+### Incompatibilidade entre as versões
+Na maioria das vezes as versões não são compatíveis entre si.  Caso você tenha usado uma versão anterior em seu projeto, é necessário eliminar a versão antiga antes de utilizar a nova. Para isso, certifique-se de excluir o diretório com o nome `executionFlow` dos arquivos de seu projeto. Além disso, use apenas uma versão no classpath / buildpath de seu projeto, pois caso contrário pode haver conflito entre as versões. Faça o procedimento abaixo antes de utilizar a nova versão.
 
 ![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/gif/migration.gif)
 
