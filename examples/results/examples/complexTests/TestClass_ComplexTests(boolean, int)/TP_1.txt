@@ -1,0 +1,6 @@
+examples.complexTests.ComplexTests.testForConstructorAndMethod()
+[33]
+[33]
+[33]
+[33]
+

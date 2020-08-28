@@ -1,3 +1,3 @@
-examples.others.OthersTest.testFactorial()
+examples.others.AssertFailTest.assertFailAtTheEndTest()
 [35]
 

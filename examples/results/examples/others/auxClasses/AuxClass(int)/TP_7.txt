@@ -1,4 +1,4 @@
-examples.others.OthersTest.testMethodWithAuxMethods()
+examples.junit5.RepeatedTestAnnotation.test3()
 [35]
 [35]
 

@@ -1,4 +1,3 @@
-examples.junit5.MixedJUnit5Annotations.repeatedTestAnnotation()
-[35]
+examples.others.OthersTest.testMethodWithAuxMethods()
 [35]
 

@@ -1,4 +1,4 @@
-examples.junit5.RepeatedTestAnnotation.test3()
-[224]
-[224]
+examples.others.OthersTest.anonymousObjectReturn()
+[225]
+[225]
 

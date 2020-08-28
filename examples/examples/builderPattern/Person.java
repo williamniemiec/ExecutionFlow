@@ -18,7 +18,7 @@ public class Person
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private Person(String firstName, String lastName, String email, int age) 
+ 	private Person(String firstName, String lastName, String email, int age) 
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -37,31 +37,31 @@ public class Person
 		private String email;
 		private int age;
 		
-		public PersonBuilder firstName(String firstName)
+ 		public PersonBuilder firstName(String firstName)
 		{
 			this.firstName = firstName;
 			return this;
 		}
 		
-		public PersonBuilder lastName(String lastName)
+ 		public PersonBuilder lastName(String lastName)
 		{
 			this.lastName = lastName;
 			return this;
 		}
 		
-		public PersonBuilder email(String email)
+ 		public PersonBuilder email(String email)
 		{
 			this.email = email;
 			return this;
 		}
 		
-		public PersonBuilder age(int age)
+ 		public PersonBuilder age(int age)
 		{
 			this.age = age;
 			return this;
 		}
 		
-		public Person build()
+ 		public Person build()
 		{
 			return new Person(firstName, lastName, email, age);
 		}
@@ -71,7 +71,7 @@ public class Person
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public void print()
+ 	public void print()
 	{
 		System.out.println("First name: "+firstName);
 		System.out.println("Last name: "+lastName);
@@ -79,3 +79,5 @@ public class Person
 		System.out.println("Age: "+age);
 	}
 }
+
+

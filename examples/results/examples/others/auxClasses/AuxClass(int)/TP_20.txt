@@ -1,4 +1,3 @@
-examples.junit5.RepeatedTestAnnotation.test2()
-[35]
+examples.others.OthersTest.methodCallMultiLineArgs()
 [35]
 

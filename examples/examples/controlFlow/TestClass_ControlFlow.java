@@ -90,7 +90,6 @@ public class TestClass_ControlFlow
 		letter = Character.toUpperCase(letter);
 				
 		switch (letter) {
-		case '÷':
 			case 'Á':
 			case 'À':
 			case 'Ã':
