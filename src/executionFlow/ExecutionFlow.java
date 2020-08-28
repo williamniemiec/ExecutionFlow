@@ -34,7 +34,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		4.0.1
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -277,12 +277,15 @@ public abstract class ExecutionFlow
 		if (testMethodManager == null)
 			throw new IllegalStateException("testMethodManager cannot be null. "
 					+ "Make sure that the 'init' method has been called before.");
+	
+		String invSig = invokedInfo.getInvokedSignature().replaceAll("\\$", ".");
+	
 		
 		// Processes the source file of the test method if it has
 		// not been processed yet
 		if (!testMethodManager.wasProcessed(testMethodFileManager)) {
 			ConsoleOutput.showInfo("Processing source file of test method "
-				+ testMethodInfo.getInvokedSignature()+"...");
+				+ testMethodInfo.getInvokedSignature().replaceAll("\\$", ".") + "...");
 			
 			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 			ConsoleOutput.showInfo("Processing completed");	
@@ -296,7 +299,7 @@ public abstract class ExecutionFlow
 			
 			
 			ConsoleOutput.showInfo("Processing source file of invoked - " 
-				+ invokedInfo.getInvokedSignature()+"...");
+				+ invSig + "...");
 			
 			invokedManager.parse(
 					invokedFileManager, 
@@ -308,7 +311,7 @@ public abstract class ExecutionFlow
 		
 		// Computes test path from JDB
 		ConsoleOutput.showInfo("Computing test path of invoked "
-			+ invokedInfo.getInvokedSignature()+"...");
+			+ invSig + "...");
 
 		return new Analyzer(invokedInfo, testMethodInfo).run();
 	}

@@ -170,7 +170,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					// Stores each computed test path
 					storeTestPath(tp, Pair.of(
 							collector.getTestMethodInfo().getInvokedSignature(),
-							collector.getMethodInfo().getInvokedSignature()
+							collector.getMethodInfo().getInvokedSignature().replaceAll("\\$", ".")
 					));
 					
 					// Exports methods called by tested method to a CSV

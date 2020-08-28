@@ -164,7 +164,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				// Stores each computed test path
 				storeTestPath(tp, Pair.of(
 						collector.getTestMethodInfo().getInvokedSignature(),
-						collector.getConstructorInfo().getInvokedSignature()
+						collector.getConstructorInfo().getInvokedSignature().replaceAll("\\$", ".")
 				));
 				
 				// Exports called methods by tested constructor to a CSV

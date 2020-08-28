@@ -171,7 +171,7 @@ public class InnerClassTest extends MethodExecutionFlowTest
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature.replaceAll("\\$", "."));
 		
 		assertEquals(
 			Arrays.asList(
