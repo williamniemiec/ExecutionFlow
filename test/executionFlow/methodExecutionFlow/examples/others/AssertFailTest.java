@@ -125,7 +125,7 @@ public class AssertFailTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(188,189)
+				Arrays.asList(189,190)
 			),
 			testPaths
 		);
@@ -183,7 +183,7 @@ public class AssertFailTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(188,192,193)
+				Arrays.asList(189,193,194)
 			),
 			testPaths
 		);
@@ -241,7 +241,7 @@ public class AssertFailTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(188,192,196)
+				Arrays.asList(189,193,197)
 			),
 			testPaths
 		);
@@ -299,7 +299,7 @@ public class AssertFailTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(188,189)
+				Arrays.asList(189,190)
 			),
 			testPaths
 		);
@@ -357,7 +357,7 @@ public class AssertFailTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(188,192,196)
+				Arrays.asList(189,193,197)
 			),
 			testPaths
 		);
@@ -415,7 +415,7 @@ public class AssertFailTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(188,192,193)
+				Arrays.asList(189,193,194)
 			),
 			testPaths
 		);

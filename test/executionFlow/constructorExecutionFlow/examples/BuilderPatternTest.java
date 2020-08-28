@@ -88,7 +88,7 @@ public class BuilderPatternTest extends ConstructorExecutionFlowTest
 		
 		// Informations about constructor
 		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
-			.binPath(Path.of("bin/examples/builderPattern/Person.class"))
+			.binPath(Path.of("bin/examples/builderPattern/Person$PersonBuilder.class"))
 			.srcPath(Path.of("examples/examples/builderPattern/Person.java"))
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
@@ -108,6 +108,6 @@ public class BuilderPatternTest extends ConstructorExecutionFlowTest
 		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
-		assertEquals(Arrays.asList(), testPaths.get(0));
+		assertEquals(null, testPaths);
 	}
 }

@@ -170,7 +170,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(25,29,31,32,39), testPaths.get(0));
+		assertEquals(Arrays.asList(25,29,31,32,41), testPaths.get(0));
 	}
 	
 	@Test
@@ -219,7 +219,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(25,29,31,33,34,39), testPaths.get(0));
+		assertEquals(Arrays.asList(25,29,31,34,35,41), testPaths.get(0));
 	}
 	
 	@Test
@@ -268,7 +268,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(25,29,31,33,35,36,39), testPaths.get(0));
+		assertEquals(Arrays.asList(25,29,31,34,37,38,41), testPaths.get(0));
 	}
 	
 	@Test
@@ -317,7 +317,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(50,52,53,54,55,56,57,62), testPaths.get(0));
+		assertEquals(Arrays.asList(52,54,55,56,57,58,59,65), testPaths.get(0));
 	}
 	
 	@Test
@@ -366,7 +366,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(73,75,76,77,78,79), testPaths.get(0));
+		assertEquals(Arrays.asList(76,78,79,80,82,83), testPaths.get(0));
 	}
 	
 	@Test
@@ -415,7 +415,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(90,92,100,101,102,103,104,123), testPaths.get(0));
+		assertEquals(Arrays.asList(94,96,103,104,105,106,107,126), testPaths.get(0));
 	}
 	
 	@Test
@@ -464,7 +464,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(135,137,140,141,142,143,140,141,142,143,140,141,142,143,140,141,142,143,140,141,142,143,145), testPaths.get(0));
+		assertEquals(Arrays.asList(138,140,143,144,145,147,143,144,145,147,143,144,145,147,143,144,145,147,143,144,145,147,149), testPaths.get(0));
 	}
 	
 	@Test
@@ -513,7 +513,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(156,158), testPaths.get(0));
+		assertEquals(Arrays.asList(160,162), testPaths.get(0));
 	}
 	
 	@Test
@@ -562,7 +562,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(180,183,184,185,183,184,185,183,187), testPaths.get(0));
+		assertEquals(Arrays.asList(184,187,188,190,187,188,190,187,192), testPaths.get(0));
 	}
 	
 	@Test
@@ -611,7 +611,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(169), testPaths.get(0));
+		assertEquals(Arrays.asList(173), testPaths.get(0));
 	}
 	
 	/**
@@ -664,7 +664,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(199,200,205), testPaths.get(0));
+		assertEquals(Arrays.asList(204,205,211), testPaths.get(0));
 	}
 	
 	/**
@@ -717,6 +717,6 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(199,201,202,205), testPaths.get(0));
+		assertEquals(Arrays.asList(204,207,208,211), testPaths.get(0));
 	}
 }
