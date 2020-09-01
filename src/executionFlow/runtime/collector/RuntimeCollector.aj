@@ -20,7 +20,7 @@ import executionFlow.info.MethodInvokedInfo;
  * {@link executionFlow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		4.0.2
  * @since		1.0
  */
 public abstract aspect RuntimeCollector 
@@ -69,6 +69,7 @@ public abstract aspect RuntimeCollector
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
 	protected static Object[] testMethodArgs;
+	protected static Map<String, List<String>> methodsCalledByTestedInvoked = new HashMap<>();
 	
 	
 	//-------------------------------------------------------------------------
@@ -139,7 +140,8 @@ public abstract aspect RuntimeCollector
 	 */
 	protected boolean isMethodSignature(String signature)
 	{
-		return signature.matches("[A-z\\.]+\\s([A-z0-9-_$]+\\.)+[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)");
+		return signature.matches("[A-z\\.]+(\\s|\\t)+([A-z0-9-_$]+\\.)+"
+				+ "[A-z0-9-_$]+\\([A-z0-9-\\._$,\\s]*\\)");
 	}
 	
 	/**
@@ -153,6 +155,7 @@ public abstract aspect RuntimeCollector
 		testMethodSignature = null;
 		skipCollection = false;
 		lastInvocationLine = 0;
+		methodsCalledByTestedInvoked.clear();
 	}
 	
 	/**

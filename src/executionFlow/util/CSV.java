@@ -50,7 +50,7 @@ public class CSV
 	/**
 	 * Writes a content to a CSV file.
 	 * 
-	 * @param		content Content to be written
+	 * @param		content Content to be written (lines)
 	 * @param		Path where CSV file will be saved
 	 * 
 	 * @throws		IOException If an error occurs while writing the file 

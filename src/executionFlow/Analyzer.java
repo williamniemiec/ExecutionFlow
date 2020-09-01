@@ -22,7 +22,7 @@ import executionFlow.util.balance.RoundBracketBalance;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
+ * @version		4.0.2
  * @since		2.0.0
  */
 public class Analyzer 
@@ -798,7 +798,6 @@ public class Analyzer
 		return	invokedDeclarationLine > 0 &&
 				!line.contains("<init>") &&
 				srcLine.contains("return ") &&
-				//(srcLine.contains("return ") || srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*")) && 
 				(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
 				(ignoreFlag == true && line.contains(testMethodSignature) && getSrcLine(srcLine) > invocationLine);
 	}
@@ -868,12 +867,14 @@ public class Analyzer
 	{
 		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		Map<String, List<String>> invokedMethods = new HashMap<>();
+		String invokedSignatureWithoutDollarSign = invokedSignature.replaceAll("\\$", ".");
 		
 		
 		if (f.exists()) {
 			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
 				invokedMethods = (Map<String, List<String>>) ois.readObject();
-			} catch (IOException | ClassNotFoundException e) {
+			} 
+			catch (IOException | ClassNotFoundException e) {
 				invokedMethods = null;
 				ConsoleOutput.showError("Called methods by tested invoked - " + e.getMessage());
 				e.printStackTrace();
@@ -882,7 +883,8 @@ public class Analyzer
 			f.delete();
 		}
 
-		return invokedMethods.containsKey(invokedSignature) ? invokedMethods.get(invokedSignature) : null;
+		return invokedMethods.containsKey(invokedSignatureWithoutDollarSign) ? 
+				invokedMethods.get(invokedSignatureWithoutDollarSign) : null;
 	}
 	
 	/**

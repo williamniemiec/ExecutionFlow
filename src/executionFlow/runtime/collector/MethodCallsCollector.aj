@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -22,7 +22,7 @@ import executionFlow.ExecutionFlow;
  * must have {@link executionFlow.runtime._SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		4.0.2
  * @since		2.0.0
  */
 public aspect MethodCallsCollector extends RuntimeCollector
@@ -31,7 +31,6 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private String invocationSignature;
-	private Map<String, List<String>> methodsCalledByTestedInvoked = new HashMap<>();
 	
 	
 	//-----------------------------------------------------------------------
@@ -53,8 +52,8 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	before(): invokedSignature()
 	{
 		String signature = thisJoinPoint.getSignature().toString();
-		
 
+		
 		// Ignores native java methods
 		if (isNativeMethod(signature)) { return; }
 
@@ -74,6 +73,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 */
 	pointcut invokedMethodsByTestedInvoker():
 		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
+		!get(* *.*) && !set(* *.*) &&
 		// Within a constructor
 		( withincode(@executionFlow.runtime.CollectCalls *.new(..)) && 
 		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..))) ) ||
@@ -85,7 +85,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	before(): invokedMethodsByTestedInvoker()
 	{
 		String methodCalledSignature = thisJoinPoint.getSignature().toString();
-		
+
 		
 		// Checks if is a method signature
 		if (!isMethodSignature(methodCalledSignature)) { return; }
@@ -94,14 +94,11 @@ public aspect MethodCallsCollector extends RuntimeCollector
 		if (isNativeMethod(methodCalledSignature)) { return; }
 
 		if (invocationSignature == null) { return; }
-		
 		// Removes return type from the signature of the method called
 		methodCalledSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
 				+ thisJoinPoint.getSignature().getName() + methodCalledSignature.substring(methodCalledSignature.indexOf("("));
-		
-		// Stores current signature of the method called without its return type
-		methodCalledSignature = CollectorExecutionFlow.extractMethodSignature(methodCalledSignature);
-		
+		methodCalledSignature = methodCalledSignature.replaceAll("\\$", ".");
+
 		// Stores method called in methodsCalledByTestedInvoked
 		if (!methodsCalledByTestedInvoked.containsKey(invocationSignature)) {
 			List<String> invokedMethods = new ArrayList<>();
@@ -116,19 +113,18 @@ public aspect MethodCallsCollector extends RuntimeCollector
 			
 			invokedMethods.add(methodCalledSignature);
 		}
+
+		write();
 	}
 	
 	/**
 	 * Saves methods called by tested invoked. It will save to a file named
-	 * 'mcti.ef' (Methods Called by Tested Invoker).
+	 * 'mcti.ef' (Methods Called by Tested Invoked).
 	 */
-	pointcut writer():
-		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
-		execution(@executionFlow.runtime._SkipInvoked * *.*(..)) && 
-		!withincode(@executionFlow.runtime._SkipInvoked * *.*(..));
-	
-	after() returning(): writer() {
+	private void write()
+	{
 		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		
 		
 		if (!methodsCalledByTestedInvoked.isEmpty()) {
 			if (f.exists()) {
@@ -153,19 +149,18 @@ public aspect MethodCallsCollector extends RuntimeCollector
 						}
 					}
 				} catch (IOException | ClassNotFoundException e) {
-					
+					ConsoleOutput.showError("MethodCallsCollector.aj - "+e.getMessage());
+					e.printStackTrace();
 				}
 			}
 			
 			// Writes file
 			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
 				oos.writeObject(methodsCalledByTestedInvoked);
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				e.printStackTrace();
 			}
-			
 		}
-		
-		methodsCalledByTestedInvoked.clear();
 	}
 }
