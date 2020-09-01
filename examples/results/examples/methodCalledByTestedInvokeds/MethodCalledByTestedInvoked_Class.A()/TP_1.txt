@@ -1,3 +1,0 @@
-examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test.T()
-[16, 17, 18]
-
