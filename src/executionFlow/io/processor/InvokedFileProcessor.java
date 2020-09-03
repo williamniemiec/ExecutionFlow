@@ -13,10 +13,12 @@ import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.CurlyBracketBreaker;
 import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;
 import executionFlow.util.balance.CurlyBracketBalance;
+import executionFlow.util.breaker.Breaker;
+import executionFlow.util.breaker.CurlyBracketBreaker;
+import executionFlow.util.breaker.StatementBreaker;
 
 
 /**
@@ -25,7 +27,7 @@ import executionFlow.util.balance.CurlyBracketBalance;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
+ * @version		4.1.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -280,7 +282,7 @@ public class InvokedFileProcessor extends FileProcessor
 		
 		List<String> lines = new ArrayList<>();
 		File outputFile;
-		CurlyBracketBreaker cbb;
+		Breaker cbb, sb;
 		
 		
 		// If an output directory is specified, processed file will be saved to it
@@ -298,10 +300,16 @@ public class InvokedFileProcessor extends FileProcessor
 		cbb = new CurlyBracketBreaker();
 		cbb.parse(lines);
 		
+		// Breaks linear statements (more than one statement on the same line)
+		sb = new StatementBreaker();
+		sb.parse(lines);
+		
+		DataUtil.<Integer>mergeLists(cbb.getBrokenLines(), sb.getBrokenLines());
+		
 		// Updates invocation line of all collected invoked if it is in the same
 		// file of test method is declared
 		if (isTestMethod) {
-			for (Integer line : cbb.getBrokenLines()) {
+			for (Integer line : sb.getBrokenLines()) {
 				for (CollectorInfo c : collectors) {
 					InvokedInfo invInfo;
 					
@@ -338,6 +346,20 @@ public class InvokedFileProcessor extends FileProcessor
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
 		
 		return outputFile.getAbsolutePath();
+	}
+	
+	/**
+	 * Processes the file adding instructions in parts of the code that does not
+	 * exist when converting it to bytecode. Besides, modifies the code so that
+	 * {@link executionFlow.util.core.JDB} computes the test path correctly.
+	 * 
+	 * @throws		IOException If file encoding is incorrect or if file cannot
+	 * be read / written
+	 */
+	@Override
+	public String processFile() throws IOException
+	{
+		return processFile(new ArrayList<CollectorInfo>());
 	}
 	
 	/**

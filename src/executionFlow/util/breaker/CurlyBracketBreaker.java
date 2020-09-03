@@ -1,10 +1,10 @@
-package executionFlow.util;
+package executionFlow.util.breaker;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import executionFlow.util.DataUtil;
 
 
 /**
@@ -12,10 +12,10 @@ import java.util.regex.Pattern;
  * does not break lines containing 'assert' or 'Assert.assert'.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
+ * @version		4.1.0
  * @since 		4.0.0
  */
-public class CurlyBracketBreaker 
+public class CurlyBracketBreaker extends Breaker
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -26,7 +26,6 @@ public class CurlyBracketBreaker
 			"(\\ |\\t)*(Assert\\.)?assert[A-z]+\\(.*";
 	private static final String REGEX_EMPTY_CURLY_BRACKETS = 
 			"^.+(\\s|\\t)*\\{(\\s|\\t)*\\}(\\s|\\t)*$";
-	private List<Integer> lineBreak = new ArrayList<>();
 	
 	
 	//-------------------------------------------------------------------------
@@ -45,9 +44,7 @@ public class CurlyBracketBreaker
 		openingCurlyBracketBreaker(lines);
 		// Move any code after an closing curly bracket to the next line
 		closingCurlyBracketBreaker(lines);
-		
-		Collections.sort(lineBreak);
-		
+
 		return this;
 	}
 	
@@ -102,7 +99,7 @@ public class CurlyBracketBreaker
 						// Otherwise put everything to its right on a new line 
 						// (not including it)
 						lines.set(i, line.substring(0, idx_curlyBracketEnd + 1));
-						lines.add(i + 1, getIndentation(line) + "\t" + line.substring(idx_curlyBracketEnd + 1));
+						lines.add(i + 1, DataUtil.getIndentation(line) + "\t" + line.substring(idx_curlyBracketEnd + 1));
 						lineBreak.add(i);
 					}
 				}
@@ -160,44 +157,16 @@ public class CurlyBracketBreaker
 						
 					if (leftContent.isBlank()) {
 						lines.set(i, leftContent + "}");
-						lines.add(i + 1, getIndentation(lines.get(i)) + rightContent);
+						lines.add(i + 1, DataUtil.getIndentation(lines.get(i)) + rightContent);
 					}
 					else {
 						lines.set(i, leftContent);
-						lines.add(i + 1, getIndentation(lines.get(i)) + "}" + rightContent);
+						lines.add(i + 1, DataUtil.getIndentation(lines.get(i)) + "}" + rightContent);
 					}
 					
 					lineBreak.add(i);
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Gets indentation of a source file line.
-	 * 
-	 * @param		line Source file line
-	 * 
-	 * @return		Indentation or empty string if there is no indentation
-	 */
-	private String getIndentation(String line)
-	{
-		final String regex_indent = "^(\\ |\\t)+";
-		Matcher m = Pattern.compile(regex_indent).matcher(line);
-		
-		
-		if (!m.find())
-			return "";
-		
-		return m.group();
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Getters
-	//-------------------------------------------------------------------------
-	public List<Integer> getBrokenLines()
-	{
-		return this.lineBreak;
 	}
 }

@@ -10,13 +10,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
  * Contains methods that perform data manipulation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.1.0
+ * @version		4.1.0
  * @since		2.0.0
  */
 public class DataUtil 
@@ -79,6 +81,22 @@ public class DataUtil
 					contentMap2.add(contentMap1);
 					map2.put(keyMap1, contentMap2);
 				}
+			}
+		}
+	}
+	
+	/**
+	 * Given two lists, adds all content from the first list to the second.
+	 * 
+	 * @param		<T> List type
+	 * @param		l1 Some list
+	 * @param		l2 List that will be merge with l1 
+	 */
+	public static <T> void mergeLists(List<T> l1, List<T> l2)
+	{
+		for (T l1e : l1) {	// l1e: list 1's element
+			if (!l2.contains(l1e)) {
+				l2.add(l1e);
 			}
 		}
 	}
@@ -302,5 +320,24 @@ public class DataUtil
 			response.append(".");
 		
 		return response.toString();
+	}
+	
+	/**
+	 * Gets indentation of a line.
+	 * 
+	 * @param		line Line to be taken indentation
+	 * 
+	 * @return		Indentation or empty string if there is no indentation
+	 */
+	public static String getIndentation(String line)
+	{
+		final String REGEX_INDENT = "^(\\ |\\t)+";
+		Matcher m = Pattern.compile(REGEX_INDENT).matcher(line);
+		
+		
+		if (!m.find())
+			return "";
+		
+		return m.group();
 	}
 }

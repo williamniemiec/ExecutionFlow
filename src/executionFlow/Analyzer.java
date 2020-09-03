@@ -22,7 +22,7 @@ import executionFlow.util.balance.RoundBracketBalance;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.2
+ * @version		4.1.0
  * @since		2.0.0
  */
 public class Analyzer 
