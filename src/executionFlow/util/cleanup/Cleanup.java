@@ -28,11 +28,17 @@ import executionFlow.util.DataUtil;
  */
 public class Cleanup 
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private List<String> sourceCode;
 	private List<Integer> emptyLines;
 	private List<Map<Integer, List<Integer>>> lineMappings;
 	
-
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public Cleanup(List<String> sourceCode)
 	{
 		this.sourceCode = sourceCode;
@@ -41,6 +47,9 @@ public class Cleanup
 	}
 	
 	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	public List<String> cleanup() {
 		eliminateComments();
 		trimLines();
@@ -62,45 +71,6 @@ public class Cleanup
 		trimLines();
 		
 		return sourceCode;
-	}
-	
-	/**
-	 * Gets the mapping of the original file with the modified file.
-	 * 
-	 * @return		Mapping
-	 */
-	public Map<Integer, Integer> getMapping()
-	{
-		Map<Integer, Integer> mapping = new HashMap<>();
-		Set<Integer> updated = new HashSet<>();
-		
-
-		// Gets first line change
-		for (Map.Entry<Integer, List<Integer>> lm : lineMappings.get(0).entrySet()) {
-			mapping.put(lm.getKey(), lm.getValue().get(0));
-		}
-		
-		// Updates line changes from the second
-		for (int i=1; i<lineMappings.size(); i++) {
-			// For each mapping
-			for (Map.Entry<Integer, List<Integer>> lm : lineMappings.get(i).entrySet()) {
-				// If there is a value in the mapping with the current key
-				if (mapping.containsValue(lm.getKey())) {
-					// Updates this value with the value contained in the current key
-					for (Integer key : DataUtil.<Integer, Integer>findKeyFromValue(mapping, lm.getKey())) {
-						if (!updated.contains(key)) {
-							mapping.put(key, lm.getValue().get(0));
-							updated.add(key);
-						}
-					}
-				}
-			}
-			
-			// Resets update set
-			updated.clear();
-		}
-		
-		return mapping;
 	}
 	
 	public List<Map<Integer, List<Integer>>> getLineMappings()	{
@@ -532,5 +502,52 @@ public class Cleanup
 	
 	private <T> ArrayList<T> initArray(T[] elements) {
 		return new ArrayList<T>(Arrays.asList(elements));
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	/**
+	 * Gets the mapping of the original file with the modified file.
+	 * 
+	 * @return		Mapping with the following format:
+	 * <ul>
+	 * 	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Value:</b> Modified source file line</li>
+	 * </ul>
+	 */
+	public Map<Integer, Integer> getMapping()
+	{
+		Map<Integer, Integer> mapping = new HashMap<>();
+		Set<Integer> updated = new HashSet<>();
+		
+
+		// Gets first line change
+		for (Map.Entry<Integer, List<Integer>> lm : lineMappings.get(0).entrySet()) {
+			mapping.put(lm.getKey(), lm.getValue().get(0));
+		}
+		
+		// Updates line changes from the second
+		for (int i=1; i<lineMappings.size(); i++) {
+			// For each mapping
+			for (Map.Entry<Integer, List<Integer>> lm : lineMappings.get(i).entrySet()) {
+				// If there is a value in the mapping with the current key
+				if (mapping.containsValue(lm.getKey())) {
+					// Updates this value with the value contained in the current key
+					for (Integer key : DataUtil.<Integer, Integer>findKeyFromValue(mapping, lm.getKey())) {
+						if (!updated.contains(key)) {
+							mapping.put(key, lm.getValue().get(0));
+							updated.add(key);
+						}
+					}
+				}
+			}
+			
+			// Resets update set
+			updated.clear();
+		}
+		
+		return mapping;
 	}
 }
