@@ -4,21 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;
 import executionFlow.util.balance.CurlyBracketBalance;
-import executionFlow.util.breaker.Breaker;
-import executionFlow.util.breaker.CurlyBracketBreaker;
-import executionFlow.util.breaker.StatementBreaker;
+import executionFlow.util.cleanup.Cleanup;
 
 
 /**
@@ -27,7 +26,7 @@ import executionFlow.util.breaker.StatementBreaker;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.1.0
+ * @version		5.0.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -42,6 +41,8 @@ public class InvokedFileProcessor extends FileProcessor
 	 */
 	private static final boolean DEBUG;
 	
+	private static Map<Path, Map<Integer, Integer>> mapping = new HashMap<>();
+	
 	private static final String REGEX_COMMENT_FULL_LINE = 
 			"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 	private String fileExtension = "java";
@@ -51,7 +52,7 @@ public class InvokedFileProcessor extends FileProcessor
 	private boolean insideAnonymousClass;
 	private boolean isTestMethod;
 	private CurlyBracketBalance testMethodCBB;
-	private Stack<CurlyBracketBalance> anonymousClassesCBB = new Stack<>(); 	
+	private Stack<CurlyBracketBalance> anonymousClassesCBB = new Stack<>();
 	
 	
 	//-------------------------------------------------------------------------
@@ -282,7 +283,7 @@ public class InvokedFileProcessor extends FileProcessor
 		
 		List<String> lines = new ArrayList<>();
 		File outputFile;
-		Breaker cbb, sb;
+		Cleanup cleanup;
 		
 		
 		// If an output directory is specified, processed file will be saved to it
@@ -294,40 +295,25 @@ public class InvokedFileProcessor extends FileProcessor
 		
 		// Reads the source file and puts its lines in a list
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
+		cleanup = new Cleanup(lines);
+		lines = cleanup.cleanup();
 
-		// Processes the source file lines by breaking lines that contains 
-		// clause + body on the same line 
-		cbb = new CurlyBracketBreaker();
-		cbb.parse(lines);
-		
-		// Breaks linear statements (more than one statement on the same line)
-		sb = new StatementBreaker();
-		sb.parse(lines);
-		
-		DataUtil.<Integer>mergeLists(cbb.getBrokenLines(), sb.getBrokenLines());
-		
 		// Updates invocation line of all collected invoked if it is in the same
 		// file of test method is declared
 		if (isTestMethod) {
-			for (Integer line : sb.getBrokenLines()) {
-				for (CollectorInfo c : collectors) {
-					InvokedInfo invInfo;
-					
-					
-					// Updates test method info
-					invInfo = c.getTestMethodInfo();
+			Map<Integer, Integer> mapping = cleanup.getMapping();
+			int invocationLine = 0;
+			
 
-					if (invInfo.getInvocationLine() >= line) {
-						invInfo.setInvocationLine(invInfo.getInvocationLine() + 1);
-					}
-					
-					// Updates method or constructor invoked line
-					invInfo = c.getConstructorInfo() != null ? c.getConstructorInfo() : c.getMethodInfo();
-					
-					if (invInfo.getInvocationLine() >= line) {
-						invInfo.setInvocationLine(invInfo.getInvocationLine() + 1);
-					}
-				}
+			for (int i=0; i<collectors.size(); i++) {
+				invocationLine = collectors.get(i).getMethodInfo().getInvocationLine();
+				InvokedFileProcessor.mapping = Map.of(
+					collectors.get(i).getMethodInfo().getSrcPath(),
+					mapping
+				);
+				
+				if (mapping.containsKey(invocationLine))
+					collectors.get(i).getMethodInfo().setInvocationLine(mapping.get(invocationLine));
 			}
 		}
 		
@@ -344,7 +330,7 @@ public class InvokedFileProcessor extends FileProcessor
 		
 		// Writes processed lines to a file
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
-		
+
 		return outputFile.getAbsolutePath();
 	}
 	
@@ -502,6 +488,29 @@ public class InvokedFileProcessor extends FileProcessor
 		return line;
 	}
 
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	/**
+	 * Gets the mapping of the original file with the modified file.
+	 * 
+	 * @return		Mapping with the following format:
+	 * <ul>
+	 * 	<li><b>Key:</b> Source path</li>
+	 * 	<li><b>Value:</b> Map with the following format:
+	 * 		<ul>
+	 * 			<li><b>Key:</b> Original source file line</li>
+	 * 			<li><b>Value:</b> Modified source file line</li>
+	 * 		</ul>
+	 * 	</li>
+	 * </ul>
+	 */
+	public static Map<Path, Map<Integer, Integer>> getMapping()
+	{
+		return mapping;
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Inner classes
