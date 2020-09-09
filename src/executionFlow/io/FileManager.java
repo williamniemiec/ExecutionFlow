@@ -19,7 +19,7 @@ import executionFlow.util.ConsoleOutput;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		4.2.0
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -122,7 +122,7 @@ public class FileManager implements Serializable
 	@Override
 	public int hashCode()
 	{
-		return classSignature.hashCode();
+		return srcFile.hashCode();
 	}
 
 	@Override
@@ -132,9 +132,9 @@ public class FileManager implements Serializable
 		if (obj == this)						{ return true;	}
 		if (this.getClass() != obj.getClass())	{ return false;	}
 		
-		return this.classSignature.equals(((FileManager)obj).getClassSignature());
-	}
-
+		return this.srcFile.equals(((FileManager)obj).getSrcFile());
+	}	
+	
 	/**
 	 * Parses and process file, saving modified file in the same file passed 
 	 * to constructor.
@@ -163,13 +163,15 @@ public class FileManager implements Serializable
 		// to parse the file using ISO-8859-1 encoding
 		try {	
 			out = Path.of(fp.processFile(collectors));
-		} catch(IOException e) {	
+		} 
+		catch(IOException e) {	
 			charsetError = true;
 			fp.setEncoding(FileEncoding.ISO_8859_1);
 			
 			try {
 				out = Path.of(fp.processFile(collectors));
-			} catch (IOException e1) {
+			} 
+			catch (IOException e1) {
 				throw new IOException("Parsing failed");
 			}
 		}
@@ -265,11 +267,13 @@ public class FileManager implements Serializable
 			if (Files.exists(originalSrcFile)) {
 				try {
 					Files.delete(srcFile);
-				} catch (IOException e) { }
+				} 
+				catch (IOException e) { }
 
 				Files.move(originalSrcFile, srcFile);
 			}
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			throw new IOException("Revert parse without backup");
 		}
 		
@@ -290,11 +294,13 @@ public class FileManager implements Serializable
 				
 				try {
 					Files.delete(binFile);
-				} catch (IOException e) { }
+				} 
+				catch (IOException e) { }
 				
 				Files.move(originalBinFile, binFile);
 			}
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			throw new IOException("Revert compilation without backup");
 		}
 		
@@ -338,15 +344,18 @@ public class FileManager implements Serializable
 				originalBinFile, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
-		} catch (IOException e) {			// If already exists a .original, this means
+		} 
+		catch (IOException e) {			// If already exists a .original, this means
 			try {							// that last compiled file was not restored
 				revertCompilation();	
+				
 				if (!lastWasError) {
 					lastWasError = true;
 					createBackupBinFile();	// So, restore this file and starts again
 					lastWasError = false;
 				}
-			} catch (IOException e1) {
+			} 
+			catch (IOException e1) {
 				e1.printStackTrace();
 			}			
 		}
@@ -371,15 +380,18 @@ public class FileManager implements Serializable
 				originalSrcFile, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
-		} catch (IOException e) {		// If already exists a .original, this means
+		} 
+		catch (IOException e) {		// If already exists a .original, this means
 			try {						// that last parsed file was not restored
 				revertParse();
+				
 				if (!lastWasError) {
 					lastWasError = true;
 					createSrcBackupFile();	// So, restore this file and starts again
 					lastWasError = false;
 				}
-			} catch (IOException e1) {
+			} 
+			catch (IOException e1) {
 				e1.printStackTrace();
 			}				
 		}
@@ -419,7 +431,8 @@ public class FileManager implements Serializable
 			oos.writeUTF(binFile.toAbsolutePath().toString());
 			oos.writeUTF(originalSrcFile.toAbsolutePath().toString());
 			oos.writeUTF(originalBinFile.toAbsolutePath().toString());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -430,10 +443,11 @@ public class FileManager implements Serializable
 			ois.defaultReadObject();
 			this.srcFile = Path.of(ois.readUTF());
 			this.binDirectory = Path.of(ois.readUTF());
-			this.binFile = Path.of(ois.readUTF());;
-			this.originalSrcFile = Path.of(ois.readUTF());;
-			this.originalBinFile = Path.of(ois.readUTF());;
-		} catch (ClassNotFoundException | IOException e) {
+			this.binFile = Path.of(ois.readUTF());
+			this.originalSrcFile = Path.of(ois.readUTF());
+			this.originalBinFile = Path.of(ois.readUTF());
+		} 
+		catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
 	}
