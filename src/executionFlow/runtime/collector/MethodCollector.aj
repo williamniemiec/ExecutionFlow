@@ -32,7 +32,7 @@ import executionFlow.util.ConsoleOutput;
  * with {@link executionFlow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
+ * @version		5.0.0
  * @since		1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
@@ -40,6 +40,7 @@ public aspect MethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private static final String REGEX_ANONYMOUS_SIGNATURE = ".+\\$[0-9]+.*";
 	private Path classPath;
 	private Path srcPath;
 	
@@ -108,8 +109,14 @@ public aspect MethodCollector extends RuntimeCollector
 		methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
 		// Extracts class signature
-		classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
+		classSignature = thisJoinPoint.getTarget().getClass().getName();
+		className = thisJoinPoint.getTarget() != null && 
+					thisJoinPoint.getTarget().getClass().getName().matches(REGEX_ANONYMOUS_SIGNATURE) ?
+							thisJoinPoint.getTarget().getClass().getName() :
+							thisJoinPoint.getSignature().getDeclaringTypeName();
 
+		className = className.substring(className.lastIndexOf(".")+1);
+							
 		// Extracts types of method parameters (if there is any)
 		paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint);
 		returnType = CollectorExecutionFlow.extractReturnType(thisJoinPoint);		
@@ -136,7 +143,6 @@ public aspect MethodCollector extends RuntimeCollector
 		// Collects the method
 		try {
 			// Gets class path and source path
-			className = CollectorExecutionFlow.getClassName(classSignature);
 			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
 			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
 			
