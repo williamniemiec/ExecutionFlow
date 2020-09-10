@@ -22,7 +22,7 @@ import executionFlow.util.balance.RoundBracketBalance;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.1.0
+ * @version		5.0.0
  * @since		2.0.0
  */
 public class Analyzer 
@@ -464,6 +464,7 @@ public class Analyzer
         		// Gets the line on which the invoked is declared
         		if (	((invokedDeclarationLine == 0 && currentLine > 1) || 
         				srcLine.contains("@executionFlow.runtime.CollectCalls")) &&
+        				!line.contains(testMethodSignature) &&
         				(
     						(anonymousConstructor && insideConstructor) || 
     						line.contains(invokedName+".") || 
@@ -513,8 +514,8 @@ public class Analyzer
         			insideConstructor = false;
         			exitMethod = true;
         			readyToReadInput = true;
-        		}
-
+        		}        		
+        		
         		if (!isInternalCommand && !exitMethod && !ignore) {
         			if (inMethod || insideConstructor) {
         				// Checks if returned from the method
@@ -531,7 +532,7 @@ public class Analyzer
         							currentLine != lastLineAdded	) {
     						testPath.add(currentLine);
     						lastLineAdded = currentLine;
-    						lastAddWasReturn = srcLine.contains("return ");
+    						lastAddWasReturn = srcLine.contains("return ") && !srcLine.contains("if ");
     					}
             		}
         			else if (willEnterInMethod(line)) {
@@ -797,7 +798,7 @@ public class Analyzer
 	{
 		return	invokedDeclarationLine > 0 &&
 				!line.contains("<init>") &&
-				srcLine.contains("return ") &&
+				srcLine.contains("return ") && !srcLine.contains("if ") &&
 				(line.contains(invokedName+".") || line.contains(invokedName+"(")) ||
 				(ignoreFlag == true && line.contains(testMethodSignature) && getSrcLine(srcLine) > invocationLine);
 	}
