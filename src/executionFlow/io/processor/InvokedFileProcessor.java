@@ -477,7 +477,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 */
 	private String checkCurlyBracketNewLine(String line, String nextLine)
 	{
-		final String regex_onlyOpeningCurlyBracket = "^(\\s|\\t)+\\{(\\s|\\t|\\/)*$";
+		final String regex_onlyOpeningCurlyBracket = "^(\\s|\\t)*\\{(\\s|\\t|\\/)*$";
 		
 		
 		if (nextLine.matches(regex_onlyOpeningCurlyBracket)) {
@@ -572,7 +572,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * Responsible for handling invoked declarations.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		4.0.0
+	 * @version		5.0.0
 	 * @since 		2.0.0
 	 */
 	private class InvokedParser
@@ -581,7 +581,7 @@ public class InvokedFileProcessor extends FileProcessor
 		//		Attributes
 		//---------------------------------------------------------------------
 		private boolean insideInvoked;
-		private final String REGEX_NEW = "(\\ |\\t)+new(\\ |\\t)*";
+		private final String REGEX_NEW = "(\\ |\\t)*new[\\s\\t\\{\\n]+";
 		private final String PATTERN_INVOKED_DECLARATION = 
 				"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+(\\ |\\t)*\\(.*";
 		
@@ -649,7 +649,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.5
+	 * @version		5.0.0
 	 * @since 		2.0.0
 	 */
 	private class ElseParser
@@ -658,9 +658,9 @@ public class InvokedFileProcessor extends FileProcessor
 		//		Attributes
 		//---------------------------------------------------------------------
 		private ElseBlockManager elseBlockManager = new ElseBlockManager();
-		private final Pattern PATTERN_ELSE = Pattern.compile("(\\ |\\t|\\})+else(\\ |\\t|\\}|$)+.*");
-		private final String REGEX_CATCH = "(\\ |\\t|\\})+catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-		private final String REGEX_IF_ELSE_CLOSED_CURLY_BRACKET = "(\\t|\\ )+\\}(\\t|\\ )*(else if|else)(\\t|\\ )*(\\(|\\{).*";
+		private final Pattern PATTERN_ELSE = Pattern.compile("[\\s\\t\\}]*else(\\ |\\t|\\}|$)+.*");
+		private final String REGEX_CATCH = "[\\s\\t\\}]*catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+		private final String REGEX_IF_ELSE_CLOSED_CURLY_BRACKET = "(\\t|\\ )*\\}(\\t|\\ )*(else if|else)(\\t|\\ )*(\\(|\\{).*";
 		private boolean elseNoCurlyBrackets;
 		private boolean inlineCommand;
 		private boolean removedClosedCB;
@@ -849,7 +849,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		4.0.1
+	 * @version		5.0.0
 	 * @since 		2.0.0
 	 */
 	private class TryCatchFinallyParser
@@ -858,9 +858,9 @@ public class InvokedFileProcessor extends FileProcessor
 		//		Attributes
 		//---------------------------------------------------------------------
 		private final Pattern PATTERN_TRY_FINALLY = 
-				Pattern.compile("(\\t|\\ |\\})+(try|finally)[\\s\\t\\{]+");
+				Pattern.compile("[\\t\\s\\}]*(try|finally)[\\s\\t\\{]+");
 		private final String REGEX_CATCH_CLOSED_CURLY_BRACKET = 
-				"(\\t|\\ )+\\}(\\t|\\ )*catch(\\t|\\ )*(\\(|\\{).*";
+				"(\\t|\\ )*\\}(\\t|\\ )*catch(\\t|\\ )*[\\(|\\{]+.*";
 		private boolean removedClosedCB;
 		
 		
@@ -948,7 +948,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
+	 * @version		5.0.0
 	 * @since 		2.0.0
 	 */
 	private class ContinueBreakParser
@@ -997,7 +997,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
+	 * @version		5.0.0
 	 * @since 		2.0.0
 	 */
 	private class DoWhileParser
@@ -1005,7 +1005,7 @@ public class InvokedFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern PATTERN_DO = Pattern.compile("(\\t|\\ |\\})+do[\\s\\{]");
+		private final Pattern PATTERN_DO = Pattern.compile("[\\t\\s\\}]*do[\\n\\s\\t\\{]+");
 		
 		
 		//---------------------------------------------------------------------
@@ -1070,7 +1070,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
+	 * @version		5.0.0
 	 * @since 		2.0.0
 	 */
 	private class SwitchParser
@@ -1078,7 +1078,7 @@ public class InvokedFileProcessor extends FileProcessor
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern PATTERN_SWITCH = Pattern.compile("(\\t|\\ |\\})+(case|default)(\\t|\\ )+");
+		private final Pattern PATTERN_SWITCH = Pattern.compile("[\\t\\s\\}]*(case|default)(\\t|\\ )+");
 		
 		
 		//---------------------------------------------------------------------
