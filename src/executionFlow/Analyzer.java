@@ -113,7 +113,7 @@ public class Analyzer
 	{
 		List<String> classPath = new ArrayList<>(), srcPath = new ArrayList<>();
 		String methodClassPath, libPath_relative;
-		int idx_dollarSign;
+		int idx_dollarSign, idx_paramStart;
 		Path classRootPath;			// Root path where the compiled file of invoked class is
 		Path srcRootPath;			// Root path where the source file of the invoked is
 		Path testMethodSrcPath;		// Root path where the source file of test method class is. It 
@@ -125,10 +125,15 @@ public class Analyzer
 		// Gets information about the test method of the invoked to be analyzed
 		testMethodSignature = testMethodInfo.getInvokedSignature();
 		testMethodSignature = testMethodSignature.substring(0, testMethodSignature.indexOf("(")+1);
+		
 		classInvocationSignature = testMethodInfo.getClassSignature();
+		
 		invocationLine = invokedInfo.getInvocationLine();
 		invokedSignature = invokedInfo.getInvokedSignature();
-		invokedName = invokedSignature.substring(invokedSignature.lastIndexOf("."), invokedSignature.indexOf("("));
+		
+		idx_paramStart = invokedSignature.indexOf("(");
+		invokedName = invokedSignature.substring(0, idx_paramStart);
+		invokedName = invokedName.substring(invokedName.lastIndexOf("."), idx_paramStart);
 		invokedNameContainsDollarSign = invokedName.substring(1).matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
 		
 		idx_dollarSign = invokedInfo.getClassSignature().indexOf("$");
@@ -156,26 +161,27 @@ public class Analyzer
 		// Sets class path
 		classPath.add(".");
 		classPath.add(libPath_relative + "*");
-		classPath.add("\"" + testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
+		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
 		
-		if (methodClassPath.isEmpty())
-			classPath.add("..\\classes\\");
-		else
+		if (!methodClassPath.isEmpty())
 			classPath.add(methodClassPath);
+		
+		classPath.add("..\\classes\\");
 		
 		// Sets source path
 		srcPath.add(testClassRootPath.relativize(srcRootPath).toString());
 		srcPath.add(testClassRootPath.relativize(testMethodSrcPath).toString());
 		
 		// Fix source file of anonymous and inner classes
+		srcPath.add(testClassRootPath.relativize(
+				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/main/java").toPath())
+				.toString()
+		);
+		
 		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
-			srcPath.add(testClassRootPath.relativize(
-					new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/main/java").toPath())
-					.toString()
-			);
 			srcPath.add(
 					testClassRootPath.relativize(
-							new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/").toPath())
+							new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/test/java").toPath())
 					.toString()
 			);
 		}
@@ -396,6 +402,11 @@ public class Analyzer
     					+ invokedSignature + "}"
 				);
         	
+        	if (line.contains("[INFO]") || line.contains("Exception occurred")) {
+				ConsoleOutput.showError("Error while running JDB");
+				System.exit(-1);
+			}
+        	
         	if (isEmptyLine(line) || line.matches(REGEX_EMPTY_OUTPUT)) 
         		return false;
         	
@@ -587,9 +598,6 @@ public class Analyzer
     			if (exitMethod) {
     				currentLine = -1;
     			}
-    			
-    			if (line.contains("[INFO]"))
-    				System.exit(-1);
     			
     			// -----{ DEBUG }-----
     			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }
