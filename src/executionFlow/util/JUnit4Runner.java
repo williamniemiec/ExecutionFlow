@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * @apiNote		Compatible with aspects
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		5.0.0
  * @since		2.0.0
  */
 public class JUnit4Runner 
@@ -125,11 +125,7 @@ public class JUnit4Runner
 	private static Process init(Path workingDirectory, List<String> classPath, 
 			String classSignature) throws IOException
 	{
-		ProcessBuilder pb;
-		
-		
-		pb = new ProcessBuilder(
-			"cmd.exe", "/c",
+		ProcessBuilder pb = new ProcessBuilder(
 			"java", "-cp", DataUtil.implode(classPath, ";"), 
 			"org.junit.runner.JUnitCore", classSignature
 		);
