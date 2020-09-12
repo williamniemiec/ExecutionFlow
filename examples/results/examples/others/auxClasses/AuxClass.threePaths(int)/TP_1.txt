@@ -1,5 +1,5 @@
 examples.others.AssertFailTest.assertFailAtTheEndTest()
-[189, 190]
-[189, 193, 194]
-[189, 193, 197]
+[77, 78]
+[77, 80, 81]
+[77, 80, 83]
 

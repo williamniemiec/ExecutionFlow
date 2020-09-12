@@ -24,6 +24,7 @@ examples.polymorphism.ClassInterface.testClassParam(ClassInterface),examples.pol
 examples.polymorphism.ClassInterface.interfaceMethod(),examples.others.OthersTest.anonymousObjectReturn()
 examples.complexTests.TestClass_ComplexTests(boolean, int),examples.complexTests.ComplexTests.testForConstructorAndMethod()
 examples.innerClass.OuterClass(String),examples.innerClass.InnerClassTest.test1()
+examples.builderPattern.Person.print(),examples.builderPattern.BuilderPatternTest.testBuilderPattern()
 examples.others.auxClasses.AuxClass.trim(String),examples.junit5.ParameterizedTestAnnotation.nullTest(),examples.junit5.ParameterizedTestAnnotation.nullEmptyAndBlankStrings()
 examples.others.auxClasses.AuxClass.factorial(int),examples.junit5.MixedJUnit5Annotations.repeatedTestAnnotation(),examples.junit5.MixedJUnit5Annotations.parameterizedTestAnnotation(),examples.junit5.MixedJUnit5Annotations.testAnnotation(),examples.junit5.ParameterizedTestAnnotation.test1(),examples.junit5.RepeatedTestAnnotation.test1(),examples.junit5.TestAnnotation.test1(),examples.others.OthersTest.testingMultipleMethods(),examples.others.OthersTest.testMethodWithAuxMethods(),examples.others.OthersTest.testFactorial(),examples.others.OthersTest.testFactorial_zero(),examples.others.SimpleTestPath.simpleTestPath()
 examples.complexTests.TestClass_ComplexTests(),examples.complexTests.ComplexTests.moreOneConstructor(),examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()

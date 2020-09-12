@@ -1,3 +1,3 @@
 examples.chainedCalls.ChainedCalls.testChainedMethodsInForLoop()
-[79]
+[35]
 

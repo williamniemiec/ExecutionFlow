@@ -1,4 +1,4 @@
 examples.controlFlow.ControlFlowTest.ifElseSameLine()
-[204, 205, 211]
-[204, 207, 208, 211]
+[106, 107, 112]
+[106, 109, 110, 112]
 

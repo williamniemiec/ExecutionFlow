@@ -1,4 +1,4 @@
 examples.junit5.MixedJUnit5Annotations.repeatedTestAnnotation()
-[35]
-[35]
+[12]
+[12]
 

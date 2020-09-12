@@ -67,7 +67,7 @@ public class AuxClass
 	 * Empty concrete function.
 	 */
 	public void test2() 
-	{ }
+	{}
 	
 	public static void test3(int x, int y, String k) 
 	{
@@ -82,7 +82,7 @@ public class AuxClass
 	/**
 	 * Empty static function.
 	 */
-	public static void test4() { }
+	public static void test4() {}
 	
 	/**
 	 * Calculates the factorial of a number.
@@ -246,12 +246,13 @@ public class AuxClass
 	
 	public static int countTotalArguments(Object... args)
 	{
-		int i;
+		int i = 2;
+		int k;
 		
-		for (i=0; i<args.length; i++) {
+		for (k=0; k<args.length; k++) {
 			continue;
 		}
 		
-		return i;
+		return k;
 	}
 }

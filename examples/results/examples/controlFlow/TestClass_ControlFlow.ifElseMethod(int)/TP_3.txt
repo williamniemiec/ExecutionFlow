@@ -1,3 +1,3 @@
 examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()
-[25, 26]
+[7, 8]
 

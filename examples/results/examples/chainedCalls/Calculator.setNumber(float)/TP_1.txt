@@ -1,3 +1,3 @@
 examples.chainedCalls.ChainedCalls.testChainedMethods()
-[43, 44]
+[11, 12]
 

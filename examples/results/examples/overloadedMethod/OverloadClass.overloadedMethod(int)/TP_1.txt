@@ -1,3 +1,3 @@
 examples.overloadedMethod.OverloadTest.testOverloadedMethod2()
-[34, 35]
+[11, 12]
 
