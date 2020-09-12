@@ -15,7 +15,7 @@ import java.util.List;
  * Simple API for JBD (Java debugger).
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		5.0.0
  * @since		1.2
  */
 public class JDB
@@ -51,10 +51,9 @@ public class JDB
 			throw new IllegalStateException("Source path list cannot be empty");
 
 		processBuilder = new ProcessBuilder(
-			"cmd.exe", "/c", 
-			"jdb " 
-				+ "-sourcepath " + DataUtil.implode(srcPath, ";") + " " 
-				+ "-classpath " + DataUtil.implode(classPath, ";"),
+			"jdb",
+				"-sourcepath", DataUtil.implode(srcPath, ";"),
+				"-classpath", DataUtil.implode(classPath, ";"),
 				classSignature, classArgs
 		);
 		processBuilder.directory(workingDirectory.toFile());
@@ -77,10 +76,9 @@ public class JDB
 			throw new IllegalStateException("Source path list cannot be empty");
 
 		processBuilder = new ProcessBuilder(
-			"cmd.exe", "/c", 
-			"jdb " 
-				+ "-sourcepath " + DataUtil.implode(srcPath, ";") + " " 
-				+ "-classpath " + DataUtil.implode(classPath, ";")
+			"jdb",
+				"-sourcepath", DataUtil.implode(srcPath, ";"),
+				"-classpath", DataUtil.implode(classPath, ";")
 		);
 		processBuilder.directory(workingDirectory.toFile());
 	}
@@ -96,7 +94,6 @@ public class JDB
 	public JDB(Path workingDirectory, String classSignature, String args)
 	{
 		processBuilder = new ProcessBuilder(
-			"cmd.exe", "/c", 
 			"jdb",	classSignature, args
 		);
 		processBuilder.directory(workingDirectory.toFile());
@@ -120,10 +117,9 @@ public class JDB
 			throw new IllegalStateException("Source path list cannot be empty");
 
 		processBuilder = new ProcessBuilder(
-			"cmd.exe", "/c", 
-			"jdb " 
-				+ "-sourcepath " + DataUtil.implode(srcPath, ";") + " " 
-				+ "-classpath " + DataUtil.implode(classPath, ";")
+			"jdb",
+				"-sourcepath", DataUtil.implode(srcPath, ";"), 
+				"-classpath", DataUtil.implode(classPath, ";")
 		);
 	}
 	
@@ -143,10 +139,9 @@ public class JDB
 			throw new IllegalStateException("Source path list cannot be empty");
 
 		processBuilder = new ProcessBuilder(
-			"cmd.exe", "/c", 
-			"jdb " 
-				+ "-sourcepath " + DataUtil.implode(srcPath, ";") + " " 
-				+ "-classpath " + DataUtil.implode(classPath, ";")
+			"jdb",
+				"-sourcepath", DataUtil.implode(srcPath, ";"),
+				"-classpath", DataUtil.implode(classPath, ";")
 		);
 	}
 	
@@ -160,7 +155,6 @@ public class JDB
 	public JDB(String classSignature, String args)
 	{
 		processBuilder = new ProcessBuilder(
-			"cmd.exe", "/c", 
 			"jdb",	classSignature, args
 		);
 	}
@@ -196,7 +190,8 @@ public class JDB
 		
 		try {
 			process.waitFor();
-		} catch (InterruptedException e) {
+		} 
+		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -248,7 +243,8 @@ public class JDB
 	{
 		try {
 			return out.read();
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			return "";
 		}
 	}
@@ -413,7 +409,8 @@ public class JDB
 		{
 			try {
 				return output.ready();
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				return false;
 			}
 		}
@@ -445,7 +442,8 @@ public class JDB
 		{
 			try {
 				output.close();
-			} catch (IOException e) { }
+			} 
+			catch (IOException e) { }
 		}
 	}
 }
