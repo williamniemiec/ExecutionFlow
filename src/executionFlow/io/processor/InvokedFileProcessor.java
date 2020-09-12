@@ -18,6 +18,7 @@ import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;
 import executionFlow.util.balance.CurlyBracketBalance;
 import executionFlow.util.cleanup.Cleanup;
+import executionFlow.util.format.JavaIndenter;
 
 
 /**
@@ -281,7 +282,7 @@ public class InvokedFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 		
-		List<String> lines = new ArrayList<>();
+		List<String> formatedFile, lines = new ArrayList<>();
 		File outputFile;
 		Cleanup cleanup;
 		
@@ -317,11 +318,15 @@ public class InvokedFileProcessor extends FileProcessor
 			}
 		}
 		
+		// Displays processed file
 		ConsoleOutput.showHeader("File after processing (test path will be computed based on it)", '=');
 		ConsoleOutput.printDivision('-', 80);
+		formatedFile = new JavaIndenter().format(lines);
+		
 		for (int i=0; i<lines.size(); i++) {
-			System.out.printf("%-6d\t%s\n", i+1, lines.get(i));
+			System.out.printf("%-6d\t%s\n", i+1, formatedFile.get(i));
 		}
+		
 		ConsoleOutput.printDivision('-', 80);
 		
 		// Process the source file lines in order to get test path without 
