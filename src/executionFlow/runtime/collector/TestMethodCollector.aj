@@ -11,11 +11,13 @@ import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.dependency.DependencyManager;
 import executionFlow.exporter.TestedInvokedExporter;
+import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
+import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.util.Checkpoint;
@@ -32,7 +34,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		5.0.0
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -247,6 +249,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 					e.printStackTrace();
 				}
 			}
+			
+			// Resets methods called by tested invoked
+			new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
 
 			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 
@@ -346,6 +351,30 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.setExporter(new TestedInvokedExporter("Testers", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
+		
+		// If constructor is declared in the same file as the test method and 
+		// method, it updates its invocation line according to the modified 
+		// test method file 
+		for (List<CollectorInfo> mc : methodCollector.values()) {
+			for (CollectorInfo collector : mc) {
+				Path methodPath = collector.getMethodInfo().getSrcPath();
+				
+				// Checks if method is declared in the same file as the test method
+				if (methodPath.equals(collector.getTestMethodInfo().getSrcPath())) {	
+					// Updates constructor invocation lines
+					for (CollectorInfo cc : constructorCollector.values()) {
+						// If constructor is declared in the same file as the 
+						// method, it updates its invocation line
+						if (cc.getTestMethodInfo().getSrcPath().equals(methodPath)) {
+							cc.getConstructorInfo().setInvocationLine(
+									InvokedFileProcessor.getMapping()
+										.get(methodPath)
+										.get(cc.getConstructorInfo().getInvocationLine()));
+						}
+					}
+				}
+			}
+		}
 		
 		ef = new ConstructorExecutionFlow(constructorCollector.values());
 		ef.execute().export();
