@@ -19,7 +19,7 @@ import executionFlow.util.ConsoleOutput;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.2.0
+ * @version		5.0.0
  * @since		1.3
  */
 public class FileManager implements Serializable

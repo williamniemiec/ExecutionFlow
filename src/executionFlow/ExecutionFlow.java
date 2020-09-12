@@ -103,7 +103,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
@@ -287,7 +287,13 @@ public abstract class ExecutionFlow
 			ConsoleOutput.showInfo("Processing source file of test method "
 				+ testMethodInfo.getInvokedSignature().replaceAll("\\$", ".") + "...");
 			
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
+			try {
+				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
+			}
+			catch (java.lang.NoClassDefFoundError e) {
+				System.exit(-1);
+			}
+			
 			ConsoleOutput.showInfo("Processing completed");	
 		}
 

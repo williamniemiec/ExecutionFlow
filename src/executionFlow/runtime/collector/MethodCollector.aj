@@ -109,11 +109,13 @@ public aspect MethodCollector extends RuntimeCollector
 		methodName = CollectorExecutionFlow.extractMethodName(signature);
 		
 		// Extracts class signature
-		classSignature = thisJoinPoint.getTarget().getClass().getName();
+		classSignature = thisJoinPoint.getTarget() == null ? 
+							thisJoinPoint.getSignature().getDeclaringTypeName() : 
+							thisJoinPoint.getTarget().getClass().getName();
 		className = thisJoinPoint.getTarget() != null && 
 					thisJoinPoint.getTarget().getClass().getName().matches(REGEX_ANONYMOUS_SIGNATURE) ?
-							thisJoinPoint.getTarget().getClass().getName() :
-							thisJoinPoint.getSignature().getDeclaringTypeName();
+						thisJoinPoint.getTarget().getClass().getName() :
+						thisJoinPoint.getSignature().getDeclaringTypeName();
 
 		className = className.substring(className.lastIndexOf(".")+1);
 							

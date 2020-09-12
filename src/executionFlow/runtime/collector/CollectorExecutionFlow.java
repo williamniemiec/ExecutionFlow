@@ -161,7 +161,6 @@ public class CollectorExecutionFlow
 		// Gets path where .java is
 		String path = extractPathFromSignature(classSignature);
 		
-		
 		srcPath = null;
 		
 		// Finds absolute path where the source file is

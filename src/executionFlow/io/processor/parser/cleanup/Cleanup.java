@@ -1,4 +1,4 @@
-package executionFlow.util.cleanup;
+package executionFlow.io.processor.parser.cleanup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,11 +16,10 @@ import executionFlow.util.DataUtil;
  * Processes java file by making the following modifications:
  * <ul>
  * 	<li>Eliminates comments</li>
- * 	<li>Breaks lines containing clause + body on the same line</li>
- * 	<li>Moves closed curly bracket to its own lines, being isolated on them</li>
- * 	<li>Converts for each and for loops to while loop</li>
- * 	<li>Separates case statements</li>
- * 	<li>Combines multi line statements</li>
+ * 	<li>Breaks code blocks contained within curly braces</li>
+ * 	<li>Converts for each and for loops to while loop (disabled)</li>
+ * 	<li>Separates case clauses</li>
+ * 	<li>Breaks compound clauses</li>
  * </ul>
  * 
  * @author		Murilo Wolfart
@@ -50,7 +49,7 @@ public class Cleanup
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public List<String> cleanup() {
+	public List<String> parse() {
 		eliminateComments();
 		trimLines();
 		removeBlankLines();
@@ -59,22 +58,18 @@ public class Cleanup
 		moveClosingBraces();
 		moveCodeAfterClosedBrace();
 		trimLines();
-		convertForEachToFor();
-		trimLines();
+//		convertForEachToFor();
+//		trimLines();
 		separateLinesWithSemicolons();
 		trimLines();
 		combineMultiLineStatements();
 		trimLines();
-		convertForToWhile();
-		trimLines();
+//		convertForToWhile();
+//		trimLines();
 		separateCaseStatements();
 		trimLines();
 		
 		return sourceCode;
-	}
-	
-	public List<Map<Integer, List<Integer>>> getLineMappings()	{
-		return lineMappings;
 	}
 	
 	private void trimLines() {
@@ -294,6 +289,10 @@ public class Cleanup
 			if (sourceCode.get(i).contains("catch(Throwable _"))
 				continue;
 			
+			// Temporary (it will be removed in the future)
+			if (sourceCode.get(i).matches("[\\s\\t]*for[\\s\\t]*\\(.*"))
+				continue;
+			
 			targetLinesIds.add(i);
 			if (statements.size() > 1) {
 				boolean lineEndsWithSemicolon = sourceCode.get(i).matches("^.*;$");
@@ -403,7 +402,7 @@ public class Cleanup
 				//replace for initialization with while
 				mapping.put(i+depth, initArray(i));
 				String testStatement = sourceCode.get(i+1).substring(0, sourceCode.get(i+1).length()-1).trim();
-				sourceCode.set(i, "while (" + testStatement + "){");
+				sourceCode.set(i, "while (" + testStatement + "){");System.out.println("TEST: "+testStatement);
 				sourceCode.remove(i+1); //remove old (test) line
 				
 				loopsClosingLines.add(closingLine);
@@ -549,5 +548,9 @@ public class Cleanup
 		}
 		
 		return mapping;
+	}
+	
+	public List<Map<Integer, List<Integer>>> getLineMappings()	{
+		return lineMappings;
 	}
 }

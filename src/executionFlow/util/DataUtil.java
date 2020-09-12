@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  * Contains methods that perform data manipulation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.1.0
+ * @version		5.0.0
  * @since		2.0.0
  */
 public class DataUtil 
@@ -99,6 +99,31 @@ public class DataUtil
 				l2.add(l1e);
 			}
 		}
+	}
+	
+	/**
+	 * Gets all keys that contains a value.
+	 * 
+	 * @param		<T1> Key type
+	 * @param		<T2> Value type
+	 * @param		map Map to be analyzed
+	 * @param		value Value associated with the key to be searched
+	 * 
+	 * @return		List of keys associated with the specified value or empty
+	 * list if there is no key associated with the value
+	 */
+	public static <T1, T2> List<T1> findKeyFromValue(Map<T1, T2> map, T2 value)
+	{
+		List<T1> keys = new ArrayList<>();
+		
+		
+		for (Map.Entry<T1, T2>  m : map.entrySet()) {
+			if (m.getValue().equals(value)) {
+				keys.add(m.getKey());
+			}
+		}
+		
+		return keys;
 	}
 	
 	/**

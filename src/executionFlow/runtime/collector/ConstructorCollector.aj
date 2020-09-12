@@ -72,6 +72,8 @@ public aspect ConstructorCollector extends RuntimeCollector
 		!within(executionFlow.*) &&
 		!within(executionFlow.*.*) &&
 		!within(executionFlow.*.*.*) &&
+		!within(executionFlow.*.*.*.*) &&
+		!within(executionFlow.*.*.*.*.*) &&
 		!within(ConstructorCollector);
 		
 	before(): constructorCollector()
