@@ -298,8 +298,11 @@ public class Analyzer
 		}
 		catch (IOException e) {
 			// Exits jdb
-			jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
-			jdb.quit();
+			try {
+				jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
+				jdb.quit();
+			}
+			catch(Exception e2) {}
 			throw e;
 		}
 
@@ -514,7 +517,7 @@ public class Analyzer
         			insideConstructor = false;
         			exitMethod = true;
         			readyToReadInput = true;
-        		}        		
+        		}
         		
         		if (!isInternalCommand && !exitMethod && !ignore) {
         			if (inMethod || insideConstructor) {
