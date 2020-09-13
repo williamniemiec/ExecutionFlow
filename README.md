@@ -18,7 +18,6 @@ A documentação sobre como usar a aplicação se encontra [aqui](https://github
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
 - [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior
 - JUnit 4 ou JUnit 5
-- Sistema operacional: Windows
 
 ## Problemas
 Caso você encontre algum problema na aplicação, certifique-se de verificar a solução de problemas na wiki. Caso seu problema não seja resolvido, verifique se já existe uma [issue](https://github.com/williamniemiec/ExecutionFlow/issues) com seu problema. Se não tiver, [crie uma issue](https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) descrevendo detalhadamente o problema ocorrido.
@@ -29,7 +28,7 @@ Na maioria das vezes as versões não são compatíveis entre si.  Caso você te
 ![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/gif/migration.gif)
 
 ### Warning durante a execução
-Se for exibida essa mensagem durante a execução da aplicação, apenas clique em `continue` (informa que o código foi alterado durante a execução)
+Se for exibida essa mensagem durante a execução da aplicação, apenas clique em `continue` (informa que o código foi alterado durante a execução). Isso ocorre porque durante a execução da aplicação o código fonte é alterado, sendo que no final o código fonte original é restaurado.
 
 ![eclipse_msg](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/others/eclipse_msg.PNG?raw=true)
 
@@ -57,7 +56,7 @@ Veja a descrição de cada classe do projeto [aqui](https://github.com/williamni
 	--------------------------------------------------------------------------------
 	examples.others.SimpleTestPath.simpleTestPath()
 	examples.others.auxClasses.AuxClass.factorial(int)
-	[91, 93, 94, 93, 94, 93, 94, 93, 94, 93, 97]
+	[35, 36, 37, 36, 37, 36, 37, 36, 37, 36, 39]
 	 
 	[...]
 	 
@@ -66,7 +65,7 @@ Veja a descrição de cada classe do projeto [aqui](https://github.com/williamni
 	--------------------------------------------------------------------------------
 	examples.others.SimpleTestPath.simpleTestPath()
 	examples.others.auxClasses.AuxClass(int)
-	[29, 31]
+	[12]
 </code>
 
 Veja mais exemplos de test paths gerados [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Exemplos).
