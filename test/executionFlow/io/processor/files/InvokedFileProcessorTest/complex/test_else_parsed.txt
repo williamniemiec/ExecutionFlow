@@ -1,57 +1,39 @@
 package executionFlow.core.file.parser.files.complex;
-public class test_else 
-{
-@executionFlow.runtime.CollectCalls 	public String ifElseMethod(int num)
-	{
-		if (num < 0) 
-		{
-			return "";
-		}
-		
-		String response = "";
-		int w;int _c5cc9ae0184f756ed7fffd80ab40878b=0;
-        int k;int _209dfae61b3936c2f2e67520626da77f=0;
-
-		if (num == 0) 
-		{
-			response = "Number zero";
-		} 
-		else if (num == 1) 
-		{
-			response = "Number one";
-		} 
-		else  {int _d66c66cf9eb62d3282e5411a21d9d821=0;
-
-			response = "Number "+num;
-		}
-		
-		return response;
-	}
-	
-@executionFlow.runtime.CollectCalls 	public String ifElseMethod2(int num)
-	{
-		if (num < 0) 
-		{
-			return "";
-		}
-		
-		String response = "";
-		int w;int _9163abbf3354be9d587f209daa866da8=0;
-        int k;int _8e48bbf47efeb41ab9991befa1d052d7=0;
-
-		if (num == 0) 
-		{
-			response = "Number zero";
-		} 
-		else if (num == 1) 
-		{
-			response = "Number one";
-		} 
-		else  {int _d77f526f3083f480d9dae9cfc4180c3e=0;
-
-			response = "Number "+num;
-		}
-		
-		return response;
-	}
+public class test_else{
+@executionFlow.runtime.CollectCalls public String ifElseMethod(int num){
+if (num < 0){
+return "";
+}
+String response = "";
+int w;int _d6b916f2b2909be213f05dff1c14b849=0;
+int k;int _59eecfb3ce3e6fa706d5ab2d6e3a4846=0;
+if (num == 0){
+response = "Number zero";
+}
+else if (num == 1){
+response = "Number one";
+}
+else{
+response = "Number "+num;
+}
+return response;
+}
+@executionFlow.runtime.CollectCalls public String ifElseMethod2(int num){
+if (num < 0){
+return "";
+}
+String response = "";
+int w;int _4b8dcaf5e9dd4e85967ddb5b20ab35a=0;
+int k;int _2cdd7c4c73ee94bf2ca5d7a9789000c6=0;
+if (num == 0){
+response = "Number zero";
+}
+else if (num == 1){
+response = "Number one";
+}
+else{
+response = "Number "+num;
+}
+return response;
+}
 }

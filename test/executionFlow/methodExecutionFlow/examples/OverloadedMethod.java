@@ -125,7 +125,7 @@ public class OverloadedMethod extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(40,41,42,43)
+				Arrays.asList(15,16,17,18)
 			),
 			testPaths
 		);
@@ -183,7 +183,7 @@ public class OverloadedMethod extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(34,35)
+				Arrays.asList(11,12)
 			),
 			testPaths
 		);

@@ -121,7 +121,7 @@ public class TestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-					Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
+					Arrays.asList(35,36,37,36,37,36,37,36,37,36,39)
 			),
 			testPaths
 		);

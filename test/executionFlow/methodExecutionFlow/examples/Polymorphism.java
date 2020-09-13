@@ -125,7 +125,7 @@ public class Polymorphism extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(36)
+				Arrays.asList(12)
 			),
 			testPaths
 		);
@@ -183,7 +183,7 @@ public class Polymorphism extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(30,31)
+				Arrays.asList(8,9)
 			),
 			testPaths
 		);

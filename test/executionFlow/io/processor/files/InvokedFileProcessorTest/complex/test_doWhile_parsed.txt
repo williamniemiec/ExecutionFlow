@@ -2,27 +2,19 @@ package executionFlow.core.file.parser.files.complex;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-public class test_doWhile
-{
-@executionFlow.runtime.CollectCalls 	public void doWhile(int num)
-	{
-		int i = 0, k = 0;
-
-		do  {int _69548b72cd4ea3e6513b2cccdd318e02=0;
-
-			k++;
-		} while (i < num);
-	}
-	
-@executionFlow.runtime.CollectCalls 	public void doWhile2(int num)
-	{
-		int i = 0, k = 0;
-
-		do  {int _86d8e40deec887f8105a0e655d0a96ae=0;
-
-			k++;
-		} 
-		while (i < num);
-	}
+public class test_doWhile{
+@executionFlow.runtime.CollectCalls public void doWhile(int num){
+int i = 0, k = 0;
+do{int _6d3a2c756e42092401351c5bf2b8bca1=0;
+k++;
+}
+while (i < num);
+}
+@executionFlow.runtime.CollectCalls public void doWhile2(int num){
+int i = 0, k = 0;
+do{int _9d18b389118a072977f227a7eb374502=0;
+k++;
+}
+while (i < num);
+}
 }

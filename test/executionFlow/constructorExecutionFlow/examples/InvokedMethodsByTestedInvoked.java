@@ -110,7 +110,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
-		assertEquals(Arrays.asList(8), testPaths.get(0));
+		assertEquals(Arrays.asList(4), testPaths.get(0));
 	}
 	
 	/**
@@ -160,6 +160,6 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
-		assertEquals(Arrays.asList(8,9,10), testPaths.get(0));
+		assertEquals(Arrays.asList(4,5,6), testPaths.get(0));
 	}
 }

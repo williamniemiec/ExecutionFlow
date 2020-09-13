@@ -117,7 +117,7 @@ public class InnerClassTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(50)
+				Arrays.asList(17)
 			),
 			testPaths
 		);
@@ -175,7 +175,7 @@ public class InnerClassTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(40)
+				Arrays.asList(13)
 			),
 			testPaths
 		);

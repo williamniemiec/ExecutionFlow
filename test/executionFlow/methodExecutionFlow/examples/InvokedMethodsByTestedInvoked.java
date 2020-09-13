@@ -129,7 +129,7 @@ public class InvokedMethodsByTestedInvoked extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(16,17,18)
+				Arrays.asList(10,11,12)
 			),
 			testPaths
 		);

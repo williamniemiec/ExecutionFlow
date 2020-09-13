@@ -11,8 +11,7 @@ public class test_switch
 			case 'Á':
 			case 'À':
 			case 'Ã':
-			case 'Â':
-				letter = 'A';
+			case 'Â':letter = 'A';
 				break;
 			case 'É':
 			case 'È':

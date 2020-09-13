@@ -110,10 +110,10 @@ public class ComplexTests extends ConstructorExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(33),
-				Arrays.asList(33), 
-				Arrays.asList(33), 
-				Arrays.asList(33)
+				Arrays.asList(14),
+				Arrays.asList(14), 
+				Arrays.asList(14), 
+				Arrays.asList(14)
 			), 
 			testPaths
 		);
@@ -167,7 +167,7 @@ public class ComplexTests extends ConstructorExecutionFlowTest
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
 		assertEquals(
-			Arrays.asList(Arrays.asList(38)), 
+			Arrays.asList(Arrays.asList(17)), 
 			testPaths
 		);
 	}
@@ -220,7 +220,7 @@ public class ComplexTests extends ConstructorExecutionFlowTest
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
 		assertEquals(
-			Arrays.asList(Arrays.asList(27, 28)), 
+			Arrays.asList(Arrays.asList(10, 11)), 
 			testPaths
 		);
 	}

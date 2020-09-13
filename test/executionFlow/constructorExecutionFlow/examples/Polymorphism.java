@@ -108,6 +108,6 @@ public class Polymorphism extends ConstructorExecutionFlowTest
 		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
-		assertEquals(Arrays.asList(20), testPaths.get(0));
+		assertEquals(Arrays.asList(5), testPaths.get(0));
 	}
 }

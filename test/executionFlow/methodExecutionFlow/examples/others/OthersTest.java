@@ -183,7 +183,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
+				Arrays.asList(35,36,37,36,37,36,37,36,37,36,39)
 			),
 			testPaths
 		);
@@ -241,7 +241,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(95,97,101)
+				Arrays.asList(35,36,39)
 			),
 			testPaths
 		);
@@ -299,7 +299,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,116,117,118,119,116,117,118,119,116,117,118,119,116,122)
+				Arrays.asList(42,43,44,45,46,47,48,45,46,47,48,45,46,47,48,45,50)
 			),
 			testPaths
 		);
@@ -358,7 +358,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(156,158,160,158,160,158,160,158,160,158,160,158,160,158,160,158,160,158,160,158,160,158,163)
+				Arrays.asList(64,65,66,65,66,65,66,65,66,65,66,65,66,65,66,65,66,65,66,65,66,65,68)
 			),
 			testPaths
 		);
@@ -416,7 +416,10 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(133,134,136,137,138,136,137,138,136,137,138,136,137,138,136,137,138,136,137,139,140,136,137,139,140,136,137,139,140,136,137,139,140,136,137,139,140,136,144)
+				Arrays.asList(
+						53,54,55,56,55,56,55,56,55,56,55,56,55,56,57,58,55,
+						56,57,58,55,56,57,58,55,56,57,58,55,56,57,58,55,61
+				)
 			),
 			testPaths
 		);
@@ -474,7 +477,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(202)
+				Arrays.asList(86)
 			),
 			testPaths
 		);
@@ -532,7 +535,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,116,117,118,119,116,117,118,119,116,122)
+				Arrays.asList(42,43,44,45,46,47,48,45,46,47,48,45,50)
 			),
 			testPaths
 		);
@@ -590,7 +593,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(95,97,98,97,98,97,98,97,101)
+				Arrays.asList(35,36,37,36,37,36,37,36,39)
 			),
 			testPaths
 		);
@@ -648,7 +651,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(95,97,98,97,98,97,98,97,98,97,101)
+				Arrays.asList(35,36,37,36,37,36,37,36,37,36,39)
 			),
 			testPaths
 		);
@@ -706,7 +709,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,116,117,118,119,116,117,118,119,116,122)
+				Arrays.asList(42,43,44,45,46,47,48,45,46,47,48,45,50)
 			),
 			testPaths
 		);
@@ -763,7 +766,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(207)
+				Arrays.asList(89)
 			),
 			testPaths
 		);
@@ -820,7 +823,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(212, 220)
+				Arrays.asList(92,93)
 			),
 			testPaths
 		);
@@ -877,7 +880,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(225)
+				Arrays.asList(96)
 			),
 			testPaths
 		);

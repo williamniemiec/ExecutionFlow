@@ -108,6 +108,6 @@ public class ChainedCalls extends ConstructorExecutionFlowTest
 		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
-		assertEquals(Arrays.asList(34), testPaths.get(0));
+		assertEquals(Arrays.asList(8), testPaths.get(0));
 	}
 }

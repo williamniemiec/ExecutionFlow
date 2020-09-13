@@ -108,6 +108,6 @@ public class OverloadedMethod extends ConstructorExecutionFlowTest
 		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
-		assertEquals(Arrays.asList(25), testPaths.get(0));
+		assertEquals(Arrays.asList(8), testPaths.get(0));
 	}
 }

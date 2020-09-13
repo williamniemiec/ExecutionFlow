@@ -125,7 +125,7 @@ public class ChainedCalls extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(43,44)
+				Arrays.asList(11,12)
 			),
 			testPaths
 		);
@@ -183,7 +183,7 @@ public class ChainedCalls extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(49,50)
+				Arrays.asList(15,16)
 			),
 			testPaths
 		);
@@ -241,7 +241,7 @@ public class ChainedCalls extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(55,56)
+				Arrays.asList(19,20)
 			),
 			testPaths
 		);
@@ -299,7 +299,7 @@ public class ChainedCalls extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(61,62)
+				Arrays.asList(23,24)
 			),
 			testPaths
 		);
@@ -357,7 +357,7 @@ public class ChainedCalls extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(67,68)
+				Arrays.asList(27,28)
 			),
 			testPaths
 		);
@@ -415,7 +415,7 @@ public class ChainedCalls extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(79)
+				Arrays.asList(35)
 			),
 			testPaths
 		);

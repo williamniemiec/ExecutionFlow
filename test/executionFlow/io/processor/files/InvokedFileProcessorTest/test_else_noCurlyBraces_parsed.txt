@@ -1,59 +1,41 @@
 package executionFlow.core.file.parser.files.noCurlyBraces;
-public class test_else_noCurlyBraces 
-{
-@executionFlow.runtime.CollectCalls 	public String ifElseMethod(int num)
-	{
-		int w;int _2a753b0c6d2209a84696079f4ae91db8=0;
-		
-		if (false)	w++;
-		else {int _5700c84ab037d80adaaf3b54124ae04b=0;
-			for(;;)
-				while (w == 0) {
-					if (false) w++;
-					else {int _b500a28262f5e3dcb81b260a607ad7c8=0;
-						try {int _b3613abbab9ea4c5d732a6921dba3521=0;
-							w++;
-							if (false) w++;
-							else {int _4968a45285998a3f81fc7c28863eb0e0=0;
-								w--;}}
- catch(Exception e) {
-							w--;
-						}
-				}}
-				for(;;)
-					w++;
-
-
-		return w;
-	}
-
-@executionFlow.runtime.CollectCalls 	public String ifElseMethod_complex(int num)
-	{
-		int w;int _bdfceae54e583ecc20d6ade0a268dd4b=0;
-		
-		if (false)	w++;
-		else {int _be1f025489b7fed78311885f4e775a7f=0;
-			for(;;)
-				while (w == 0) 
-				{
-					if (false) w++;
-					else {int _20c01813d7dd72a99657a07761d8c1b5=0;
-						try  {int _38d642b47bde20456d44543539070a8b=0;
-
-							w++;
-							if (false) w++;
-							else {int _84aa87eb423d05d787cb2cd019217569=0;
-								w--;}
-						} 
-						catch(Exception e) 
-						{
-							w--;
-						}}
-				}
-				for(;;)
-					w++;
-
-
-		return w;
-	}}
+public class test_else_noCurlyBraces{
+@executionFlow.runtime.CollectCalls public String ifElseMethod(int num){
+int w;int _a0827c10ee9fe323aeae9300d515a56c=0;
+if (false)	w++;
+else {int _76aa244e5207b71ba6ba3fb9bf044479=0; for(;;)}
+while (w == 0) {
+if (false) w++;
+else try {int _f83244cb0203df60e116ecff98492988=0;
+w++;
+if (false) w++;
+else {int _388c7c9a9cc48ba8098341e2372600d0=0; w--;}
+}
+catch(Exception e) {
+w--;
+}
+}
+for(;;)
+w++;
+return w;
+}
+@executionFlow.runtime.CollectCalls public String ifElseMethod_complex(int num){
+int w;int _535b4e0b104546f04e0ac7213b65fc78=0;
+if (false)	w++;
+else {int _f90213cda8ec2e8701dcdd7855b67ff8=0; for(;;)}
+while (w == 0){
+if (false) w++;
+else try{int _ce1ffe14c4fe563152e34c42ffcdc25=0;
+w++;
+if (false) w++;
+else {int _954c57c0e7283bb2f3751f68008be179=0; w--;}
+}
+catch(Exception e){
+w--;
+}
+}
+for(;;)
+w++;
+return w;
+}
 }
