@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * @apiNote		Compatible with aspects
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.0.0
+ * @version		5.1.0
  * @since		2.0.0
  */
 public class JUnit4Runner 
@@ -71,7 +71,7 @@ public class JUnit4Runner
 			
 			while ((line = output.readLine()) != null) {
 				// Displays error messages (if any)
-				while (outputError.ready() && (line = outputError.readLine()) != null) {
+				if (outputError.ready() && (line = outputError.readLine()) != null) {
 					System.err.println(line);
 				}
 				
@@ -86,7 +86,7 @@ public class JUnit4Runner
 					if (displayVersion)
 						System.out.println(line);
 				}
-				else {
+				else if (!line.contains("ERROR")){
 					System.out.println(line);
 				}
 			}
