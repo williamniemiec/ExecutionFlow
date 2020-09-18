@@ -15,7 +15,7 @@ import java.util.List;
  * Simple API for JBD (Java debugger).
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.0.0
+ * @version		5.1.0
  * @since		1.2
  */
 public class JDB
@@ -176,6 +176,12 @@ public class JDB
 		out = new JDBOutput();
 		in = new JDBInput();
 		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+		    	process.destroy();
+		    }
+		});
+
 		return this;
 	}
 

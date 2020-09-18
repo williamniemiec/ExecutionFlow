@@ -63,6 +63,11 @@ public class JUnit4Runner
 			
 			
 			totalTests = 0;
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+			    public void run() {
+			    	p.destroy();
+			    }
+			});
 			
 			// Checks if there was an error creating the process
 			while (outputError.ready() && (line = outputError.readLine()) != null) {
