@@ -254,7 +254,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
-			    public void run() {System.out.println("test");
+			    public void run() {
 			    	JUnit4Runner.quit();
 			    	
 			    	// Restores original files

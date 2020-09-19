@@ -12,6 +12,7 @@ import java.util.Map;
 
 import executionFlow.dependency.DependencyManager;
 import executionFlow.info.InvokedInfo;
+import executionFlow.util.Clock;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.JDB;
 import executionFlow.util.balance.RoundBracketBalance;
@@ -86,6 +87,7 @@ public class Analyzer
 	private boolean isMethodMultiLineArgs;
 	private boolean anonymousConstructor;
 	private boolean invokedNameContainsDollarSign;
+	private static boolean timeout;
 	private RoundBracketBalance rbb;
 	
 
@@ -199,6 +201,16 @@ public class Analyzer
 		// -----{ END DEBUG }-----
 	}
 	
+	public static void setTimeout(boolean status)
+	{
+		timeout = status;
+	}
+	
+	public static boolean getTimeout()
+	{
+		return timeout;
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -230,14 +242,22 @@ public class Analyzer
 		}
 		// -----{ END DEBUG }-----
 		
+		timeout = false;
+		
 		try {
 			jdb.start().send("clear", "stop at " + classInvocationSignature + ":" + invocationLine,
 					"run org.junit.runner.JUnitCore "+classInvocationSignature);
 			
+			// Sets timeout (10 minutes)
+			Clock.setTimeout(() -> {
+				Analyzer.setTimeout(true);
+				jdb.quit();
+			}, 10 * 60 * 60);
+			
 			// Executes while inside the test method
-			while (!endOfMethod) {
+			while (!endOfMethod && !timeout) {
 				// Checks if output has finished processing
-				while (!wasNewIteration && !parseOutput()) { continue; }
+				while (!wasNewIteration && !timeout && !parseOutput()) { continue; }
 				
 				wasNewIteration = false;
 				

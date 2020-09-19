@@ -155,6 +155,12 @@ public class MethodExecutionFlow extends ExecutionFlow
 							collector.getMethodInfo(), methodFileManager,
 							collectors
 					);
+					
+					if (Analyzer.getTimeout()) {
+						ConsoleOutput.showError("Time exceeded");
+						continue;
+					}
+					
 					tp = analyzer.getTestPaths();
 					
 					if (tp.isEmpty() || tp.get(0).isEmpty())

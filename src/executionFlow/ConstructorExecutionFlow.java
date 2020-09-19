@@ -142,6 +142,12 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 						collector.getConstructorInfo(), constructorFileManager,
 						List.copyOf(constructorCollector)
 				);
+				
+				if (Analyzer.getTimeout()) {
+					ConsoleOutput.showError("Time exceeded");
+					continue;
+				}
+				
 				tp = analyzer.getTestPaths();
 
 				// Fix anonymous class signature
