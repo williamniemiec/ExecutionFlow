@@ -84,7 +84,7 @@ public class Checkpoint
 	}
 	
 	/**
-	 * Defines the end of a checkpoint.
+	 * Disables checkpoint.
 	 * 
 	 * @throws 		IOException If an error occurs when deleting the checkpoint
 	 * file

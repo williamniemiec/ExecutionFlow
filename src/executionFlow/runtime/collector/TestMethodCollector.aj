@@ -34,7 +34,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.0.0
+ * @version		5.1.0
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -253,6 +253,25 @@ public aspect TestMethodCollector extends RuntimeCollector
 			// Resets methods called by tested invoked
 			new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
 
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+			    public void run() {System.out.println("test");
+			    	JUnit4Runner.quit();
+			    	
+			    	// Restores original files
+			    	restoreTestMethodFiles();
+			    	restoreInvokedFiles();
+			    	ExecutionFlow.getInvokedManager().deleteBackup();
+			    	
+			    	if (testMethodManager != null)
+			    		testMethodManager.restoreAll();
+			    	
+			    	deleteTestMethodBackupFiles();
+					disableCheckpoint();
+					
+					new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
+			    }
+			});
+			
 			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 
 			finished = true;
@@ -261,24 +280,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			lastRepeatedTestSignature = thisJoinPoint.getSignature().toString();
 			
 			// Restores original test method file and its compiled file
-			try {
-				if (ExecutionFlow.getTestMethodManager().load())
-					ExecutionFlow.getTestMethodManager().restoreAll();	
-				
-			} 
-			catch (ClassNotFoundException e) {
-				hasError = true;
-				ConsoleOutput.showError("Class FileManager not found");
-				e.printStackTrace();
-			} 
-			catch (IOException e) {
-				hasError = true;
-				ConsoleOutput.showError("Could not recover the backup file of the test method");
-				ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
-						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
-						+ "#could-not-recover-all-backup-files");
-				e.printStackTrace();
-			}
+			hasError = restoreTestMethodFiles();
 			
 			// Checks if there are still tests to be performed
 			if (totalTests < 0) {
@@ -290,24 +292,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 
 			if (totalTests == 0) {
 				// Restores original method files and its compiled files
-				try {
-					if (ExecutionFlow.getInvokedManager().load())
-						ExecutionFlow.getInvokedManager().restoreAll();	
-				} 
-				catch (ClassNotFoundException e) {
-					hasError = true;
-					ConsoleOutput.showError("Class FileManager not found");
-					e.printStackTrace();
-				} 
-				catch (IOException e) {
-					hasError = true;
-					ConsoleOutput.showError("Could not recover all backup files for methods");
-					ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
-							+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
-							+ "#could-not-recover-all-backup-files");
-					e.printStackTrace();
-				}
-
+				hasError = restoreInvokedFiles();
 				ExecutionFlow.getInvokedManager().deleteBackup();
 				
 				// Resets totalTests
@@ -317,20 +302,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 			testMethodManager.restoreAll();
 			
 			// Deletes backup files
-			ExecutionFlow.getTestMethodManager().deleteBackup();
-			testMethodManager.deleteBackup();
-			testMethodManager = null;
-			ExecutionFlow.destroyTestMethodManager();
+			deleteTestMethodBackupFiles();
 			
 			// Disables checkpoint
-			try {
-				checkpoint.disable();
-			} 
-			catch (IOException e) {
-				hasError = true;
-				ConsoleOutput.showError("Checkpoint cannot be disabled");
-				e.printStackTrace();
-			}
+			hasError = disableCheckpoint();
 			
 			// Stops execution if a problem occurs
 			if (hasError)
@@ -355,6 +330,25 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// If constructor is declared in the same file as the test method and 
 		// method, it updates its invocation line according to the modified 
 		// test method file 
+		updateConstructorCollectorInvocationLines();
+		
+		ef = new ConstructorExecutionFlow(constructorCollector.values());
+		ef.execute().export();
+		
+		// Exports tested constructors to a CSV
+		ef.setExporter(new TestedInvokedExporter("Testers", 
+				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
+			.export();
+		
+		reset();	// Prepares for next test
+	}
+
+	/**
+	 * Updates constructor invocation line of each constructor collected based
+	 * on the collected methods.
+	 */
+	private void updateConstructorCollectorInvocationLines()
+	{
 		for (List<CollectorInfo> mc : methodCollector.values()) {
 			for (CollectorInfo collector : mc) {
 				Path methodPath = collector.getMethodInfo().getSrcPath();
@@ -375,15 +369,104 @@ public aspect TestMethodCollector extends RuntimeCollector
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Deletes backup files related to test methods.
+	 */
+	private void deleteTestMethodBackupFiles()
+	{
+		if (ExecutionFlow.getTestMethodManager() != null)
+			ExecutionFlow.getTestMethodManager().deleteBackup();
 		
-		ef = new ConstructorExecutionFlow(constructorCollector.values());
-		ef.execute().export();
+		if (testMethodManager != null) {
+			testMethodManager.deleteBackup();
+			testMethodManager = null;
+		}
+		ExecutionFlow.destroyTestMethodManager();
+	}
+	
+	/**
+	 * Disables checkpoint.
+	 * 
+	 * @return		If an error has occurred
+	 */
+	private boolean disableCheckpoint()
+	{
+		boolean hasError = false;
 		
-		// Exports tested constructors to a CSV
-		ef.setExporter(new TestedInvokedExporter("Testers", 
-				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
-			.export();
 		
-		reset();	// Prepares for next test
+		try {
+			checkpoint.disable();
+		} 
+		catch (IOException e) {
+			hasError = true;
+			ConsoleOutput.showError("Checkpoint cannot be disabled");
+			e.printStackTrace();
+		}
+		
+		return hasError;
+	}
+	
+	/**
+	 * Restores original test method files.
+	 * 
+	 * @return		If an error has occurred
+	 */
+	private boolean restoreTestMethodFiles()
+	{
+		boolean hasError = false;
+		
+		
+		try {
+			if (ExecutionFlow.getTestMethodManager() != null && ExecutionFlow.getTestMethodManager().load())
+				ExecutionFlow.getTestMethodManager().restoreAll();	
+		} 
+		catch (ClassNotFoundException e) {
+			hasError = true;
+			ConsoleOutput.showError("Class FileManager not found");
+			e.printStackTrace();
+		} 
+		catch (IOException e) {
+			hasError = true;
+			ConsoleOutput.showError("Could not recover the backup file of the test method");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
+					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+					+ "#could-not-recover-all-backup-files");
+			e.printStackTrace();
+		}
+		
+		return hasError;
+	}
+	
+	/**
+	 * Restores original invoked files.
+	 * 
+	 * @return		If an error has occurred
+	 */
+	private boolean restoreInvokedFiles()
+	{
+		boolean hasError = false;
+		
+		
+		try {
+			if (ExecutionFlow.getInvokedManager() != null && ExecutionFlow.getInvokedManager().load())
+				ExecutionFlow.getInvokedManager().restoreAll();	
+		} 
+		catch (ClassNotFoundException e) {
+			hasError = true;
+			ConsoleOutput.showError("Class FileManager not found");
+		 	e.printStackTrace();
+		} 
+		catch (IOException e) {
+			hasError = true;
+			ConsoleOutput.showError("Could not recover all backup files for methods");
+			ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
+					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+					+ "#could-not-recover-all-backup-files");
+			e.printStackTrace();
+		}
+		
+		return hasError;
 	}
 }

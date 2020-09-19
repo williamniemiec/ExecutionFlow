@@ -186,7 +186,7 @@ public class JDB
 	}
 
 	/**
-	 * Terminates JDB.
+	 * Ends the process containing JDB.
 	 */
 	public void quit()
 	{
