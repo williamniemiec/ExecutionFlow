@@ -150,12 +150,14 @@ public class MethodExecutionFlow extends ExecutionFlow
 				);
 				
 				try {
+					// Runs analyzer
 					analyzer = analyze(
 							collector.getTestMethodInfo(), testMethodFileManager, 
 							collector.getMethodInfo(), methodFileManager,
 							collectors
 					);
 					
+					// Checks if time has been exceeded
 					if (Analyzer.getTimeout()) {
 						ConsoleOutput.showError("Time exceeded");
 						continue;

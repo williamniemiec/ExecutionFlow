@@ -137,12 +137,14 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			);
 			
 			try {
+				// Runs analyzer
 				analyzer = analyze(
 						collector.getTestMethodInfo(), testMethodFileManager, 
 						collector.getConstructorInfo(), constructorFileManager,
 						List.copyOf(constructorCollector)
 				);
 				
+				// Checks if time has been exceeded
 				if (Analyzer.getTimeout()) {
 					ConsoleOutput.showError("Time exceeded");
 					continue;

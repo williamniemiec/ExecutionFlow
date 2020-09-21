@@ -201,16 +201,6 @@ public class Analyzer
 		// -----{ END DEBUG }-----
 	}
 	
-	public static void setTimeout(boolean status)
-	{
-		timeout = status;
-	}
-	
-	public static boolean getTimeout()
-	{
-		return timeout;
-	}
-	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -927,5 +917,26 @@ public class Analyzer
 	public List<List<Integer>> getTestPaths()
 	{ 	
 		return testPaths;
+	}
+	
+	/**
+	 * Defines whether the execution time has been exceeded.
+	 * 
+	 * @param		status True if the execution time has been exceeded; false 
+	 * otherwise
+	 */
+	public static void setTimeout(boolean status)
+	{
+		timeout = status;
+	}
+	
+	/**
+	 * Checks if the execution time has been exceeded.
+	 * 
+	 * @return		True if the execution time has been exceeded; false otherwise
+	 */
+	public static boolean getTimeout()
+	{
+		return timeout;
 	}
 }
