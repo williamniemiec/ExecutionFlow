@@ -168,7 +168,10 @@ public class JDB
 	 * 
 	 * @return		Itself to allow chained calls
 	 * 
-	 * @throws		IOException If JDB cannot be initialized 
+	 * @throws		IOException If JDB cannot be initialized
+	 * 
+	 * @implNote	If the parent process is terminated, this process will also 
+	 * terminate
 	 */
 	public JDB start() throws IOException
 	{
