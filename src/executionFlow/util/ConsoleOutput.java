@@ -5,11 +5,17 @@ package executionFlow.util;
  * Responsible for displaying information on the console.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		5.1.0
  * @since		2.0.0
  */
 public class ConsoleOutput 
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
+	private static final int WIDTH = 8;
+	
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -44,9 +50,9 @@ public class ConsoleOutput
 	public static void showInfo(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.out.println("[INFO] "+message);
+			System.out.printf("%-" + WIDTH + "s\n", "[INFO] " + message);
 		else
-			System.out.print("[INFO] "+message);
+			System.out.printf("%-" + WIDTH + "s", "[INFO] " + message);
 	}
 	
 	/**
@@ -80,9 +86,9 @@ public class ConsoleOutput
 	public static void showError(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.err.println("[ERROR] "+message);
+			System.err.printf("%-" + WIDTH + "s\n", "[ERROR] " + message);
 		else
-			System.err.print("[ERROR] "+message);
+			System.err.printf("%-" + WIDTH + "s", "[ERROR] " + message);
 	}
 	
 	/**
@@ -116,9 +122,9 @@ public class ConsoleOutput
 	public static void showWarning(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.out.println("[WARN] "+message);
+			System.out.printf("%-" + WIDTH + "s\n", "[WARN] " + message);
 		else
-			System.out.print("[WARN] "+message);
+			System.out.printf("%-" + WIDTH + "s", "[WARN] " + message);
 	}
 	
 	/**
@@ -152,9 +158,9 @@ public class ConsoleOutput
 	public static void showDebug(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.out.println("[DEBUG] "+message);
+			System.out.printf("%-" + WIDTH + "s\n", "[DEBUG] " + message);
 		else
-			System.out.print("[DEBUG] "+message);
+			System.out.printf("%-" + WIDTH + "s", "[DEBUG] " + message);
 	}
 	
 	/**

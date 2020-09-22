@@ -333,7 +333,8 @@ public class FilesManager
 	{
 		if (!hasBackupStored()) { return false; }
 		
-		boolean response = true;
+		boolean error = false;
+		
 		
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile));
@@ -341,12 +342,13 @@ public class FilesManager
 			this.parsedFiles = (Set<Integer>)ois.readObject();
 			this.compiledFiles = (Set<Integer>)ois.readObject();
 			ois.close();
-		} catch (FileNotFoundException e) {
+		} 
+		catch (FileNotFoundException e) {
 			this.files = null;
-			response = false;
+			error = true;
 		}
 		
-		return response;
+		return error;
 	}
 	
 	/**
@@ -376,7 +378,7 @@ public class FilesManager
 	 */
 	private boolean restoreAll(Set<FileManager> files)
 	{
-		boolean response = true;
+		boolean error = false;
 		Iterator<FileManager> it = files.iterator();
 		
 		// Restores source file and compilation file for each modified file
@@ -389,7 +391,7 @@ public class FilesManager
 			} catch (IOException e) {
 				ConsoleOutput.showError("Restore parse - " + fm.getCompiledFile().toString());
 				ConsoleOutput.showError("Restore parse - " + e.getMessage());
-				response = false;
+				error = true;
 			}
 			
 			// Restores compilation file
@@ -398,13 +400,14 @@ public class FilesManager
 			} catch (IOException e) {
 				ConsoleOutput.showError("Restore compilation - "+fm.getCompiledFile().toString());
 				ConsoleOutput.showError("Restore compilation - "+e.getMessage());
-				response = false;
+				error = true;
 			}
 			
-			it.remove();
+			if (!error)
+				it.remove();
 		}
 		
-		return response;
+		return !error;
 	}
 	
 	/**

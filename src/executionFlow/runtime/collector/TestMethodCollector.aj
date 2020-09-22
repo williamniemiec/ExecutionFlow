@@ -48,7 +48,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "Test_Method");
 	private static Checkpoint checkpoint_initial = 
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
-	public static int totalTests = -1;
+	private static int totalTests = -1;
+	private static boolean success = false;
 	private static String outputDir;
 	private String lastRepeatedTestSignature;
 	private String testClassName;
@@ -179,8 +180,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 			);
 			
 			// Checks if it the first execution
-			if (testMethodManager == null && !checkpoint.isActive())
+			if (testMethodManager == null && !checkpoint.isActive()) {
 				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
+				success = false;
+			}
 
 			// Checks if there are files that were not restored in the last execution
 			if (checkpoint.exists() && !checkpoint.isActive()) {
@@ -255,20 +258,22 @@ public aspect TestMethodCollector extends RuntimeCollector
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 			    public void run() {
-			    	JUnit4Runner.quit();
-			    	
-			    	// Restores original files
-			    	restoreTestMethodFiles();
-			    	restoreInvokedFiles();
-			    	ExecutionFlow.getInvokedManager().deleteBackup();
-			    	
-			    	if (testMethodManager != null)
-			    		testMethodManager.restoreAll();
-			    	
-			    	deleteTestMethodBackupFiles();
-					disableCheckpoint();
-					
-					new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
+			    	if (!success) {
+				    	JUnit4Runner.quit();
+				    	
+				    	// Restores original files
+				    	restoreTestMethodFiles();
+				    	restoreInvokedFiles();
+				    	ExecutionFlow.getInvokedManager().deleteBackup();
+				    	
+				    	if (testMethodManager != null)
+				    		testMethodManager.restoreAll();
+				    	
+				    	deleteTestMethodBackupFiles();
+						disableCheckpoint();
+						
+						new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
+			    	}
 			    }
 			});
 			
@@ -297,6 +302,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 				
 				// Resets totalTests
 				totalTests = -1;
+				
+				success = true;
 			}
 
 			testMethodManager.restoreAll();
