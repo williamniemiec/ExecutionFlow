@@ -50,9 +50,9 @@ public class ConsoleOutput
 	public static void showInfo(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.out.printf("%-" + WIDTH + "s\n", "[INFO] " + message);
+			System.out.printf("%-" + WIDTH + "s%s\n", "[INFO] ", message);
 		else
-			System.out.printf("%-" + WIDTH + "s", "[INFO] " + message);
+			System.out.printf("%-" + WIDTH + "s%s", "[INFO] ", message);
 	}
 	
 	/**
@@ -86,9 +86,9 @@ public class ConsoleOutput
 	public static void showError(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.err.printf("%-" + WIDTH + "s\n", "[ERROR] " + message);
+			System.err.printf("%-" + WIDTH + "s%s\n", "[ERROR] ", message);
 		else
-			System.err.printf("%-" + WIDTH + "s", "[ERROR] " + message);
+			System.err.printf("%-" + WIDTH + "s%s", "[ERROR] ", message);
 	}
 	
 	/**
@@ -122,9 +122,9 @@ public class ConsoleOutput
 	public static void showWarning(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.out.printf("%-" + WIDTH + "s\n", "[WARN] " + message);
+			System.out.printf("%-" + WIDTH + "s%s\n", "[WARN] ", message);
 		else
-			System.out.printf("%-" + WIDTH + "s", "[WARN] " + message);
+			System.out.printf("%-" + WIDTH + "s%s", "[WARN] ", message);
 	}
 	
 	/**
@@ -158,9 +158,9 @@ public class ConsoleOutput
 	public static void showDebug(String message, boolean breakLine)
 	{
 		if (breakLine)
-			System.out.printf("%-" + WIDTH + "s\n", "[DEBUG] " + message);
+			System.out.printf("%-" + WIDTH + "s%s\n", "[DEBUG] ", message);
 		else
-			System.out.printf("%-" + WIDTH + "s", "[DEBUG] " + message);
+			System.out.printf("%-" + WIDTH + "s%s", "[DEBUG] ", message);
 	}
 	
 	/**
