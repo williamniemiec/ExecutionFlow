@@ -259,7 +259,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 			    public void run() {
 			    	if (!success) {
-				    	JUnit4Runner.quit();
+			    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+			    		
+			    		
+				    	try {
+							JUnit4Runner.quit();
+						} 
+				    	catch (IOException e) {}
 				    	
 				    	// Restores original files
 				    	restoreTestMethodFiles();
@@ -272,7 +278,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 				    	deleteTestMethodBackupFiles();
 						disableCheckpoint();
 						
-						new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
+						if (mcti.exists())
+							while (!mcti.delete());
+						
+						System.exit(-1);
 			    	}
 			    }
 			});

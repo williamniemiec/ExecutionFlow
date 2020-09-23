@@ -25,6 +25,8 @@ public class JUnit4Runner
 	//-------------------------------------------------------------------------
 	private static int totalTests;
 	private static Process process;
+	private static BufferedReader output;
+	private static BufferedReader outputError;
 	
 	
 	//-------------------------------------------------------------------------
@@ -62,14 +64,14 @@ public class JUnit4Runner
 	{	
 		try {
 			process = init(workingDirectory, classPath, classSignature);
-			BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			BufferedReader outputError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			String line;
 			Pattern pattern_totalTests = Pattern.compile("[0-9]+");
 			boolean error = false;
 			
 						
 			totalTests = 0;
+			output = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			outputError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			
 			// Checks if there was an error creating the process
 			while (outputError.ready() && (line = outputError.readLine()) != null) {
@@ -112,10 +114,14 @@ public class JUnit4Runner
 	
 	/**
 	 * Ends the process containing JUnit 4.
+	 * 
+	 * @throws		IOException If an I/O error occurs
 	 */
-	public static void quit()
+	public static void quit() throws IOException
 	{
-		process.destroy();
+		output.close();
+		outputError.close();
+		process.destroyForcibly();
 	}
 	
 	/**

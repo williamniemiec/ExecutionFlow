@@ -181,7 +181,9 @@ public class JDB
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
-		    	process.destroy();
+		    	in.close();
+				out.close();
+		    	process.destroyForcibly();
 		    }
 		});
 
@@ -193,9 +195,12 @@ public class JDB
 	 */
 	public void quit()
 	{
+		if (!process.isAlive())
+			return;
+		
 		in.close();
 		out.close();
-		process.destroy();
+		process.destroyForcibly();
 		
 		try {
 			process.waitFor();
@@ -280,6 +285,28 @@ public class JDB
 	public boolean isReady()
 	{
 		return out.isReady();
+	}
+	
+	/**
+	 * Checks whether the JDB process is running.
+	 * 
+	 * @return		True if the process is running; false otherwise 
+	 */
+	public boolean isRunning()
+	{
+		return process.isAlive();
+	}
+	
+	/**
+	 * Causes the current thread to wait, if necessary, until the JDB process 
+	 * has terminated.
+	 * 
+	 * @throws		InterruptedException If the current thread is interrupted 
+	 * by another thread while it is waiting
+	 */
+	public void waitFor() throws InterruptedException
+	{
+		process.waitFor();
 	}
 	
 	
