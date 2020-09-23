@@ -49,7 +49,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static Checkpoint checkpoint_initial = 
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
 	private static int totalTests = -1;
-	private static boolean success = false;
+	private volatile static boolean success = false;
 	private static String outputDir;
 	private String lastRepeatedTestSignature;
 	private String testClassName;

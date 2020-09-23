@@ -348,7 +348,7 @@ public class FilesManager
 			error = true;
 		}
 		
-		return error;
+		return !error;
 	}
 	
 	/**
