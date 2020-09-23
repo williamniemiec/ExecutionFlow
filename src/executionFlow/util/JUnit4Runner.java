@@ -66,6 +66,8 @@ public class JUnit4Runner
 			BufferedReader outputError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			String line;
 			Pattern pattern_totalTests = Pattern.compile("[0-9]+");
+			boolean error = false;
+			
 						
 			totalTests = 0;
 			
@@ -75,9 +77,12 @@ public class JUnit4Runner
 			}
 			
 			while ((line = output.readLine()) != null) {
+				error = false;
+				
 				// Displays error messages (if any)
 				if (outputError.ready() && (line = outputError.readLine()) != null) {
 					System.err.println(line);
+					error = true;
 				}
 				
 				if (line.contains("OK (")) {
@@ -91,7 +96,7 @@ public class JUnit4Runner
 					if (displayVersion)
 						System.out.println(line);
 				}
-				else if (!line.contains("ERROR")){
+				else if (!error){
 					System.out.println(line);
 				}
 			}
