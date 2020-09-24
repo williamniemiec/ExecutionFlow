@@ -100,7 +100,7 @@ public class Analyzer
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = true;
+		DEBUG = false;
 	}
 
 	
@@ -222,6 +222,8 @@ public class Analyzer
 			throw new IllegalStateException("JDB has not been initialized");
 		
 		boolean wasNewIteration = false;
+		final int TIMEOUT_ID = 1;
+		final int TIMEOUT_TIME = 3 * 1000;
 		
 		
 		// -----{ DEBUG }-----
@@ -246,7 +248,7 @@ public class Analyzer
 				testPaths.clear();
 				Analyzer.setTimeout(true);
 				lock = false;
-			}, 10 * 60 * 1000);
+			}, TIMEOUT_ID, TIMEOUT_TIME);
 			
 			// Executes while inside the test method
 			while (!endOfMethod && !timeout) {
@@ -338,7 +340,11 @@ public class Analyzer
 		jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
 		jdb.quit();
 		
+		// Waits for timeout thread to finish running (if running)
 		while (lock);
+		
+		// Cancels timeout
+		Clock.clearTimeout(TIMEOUT_ID);
 		
 		return this;
 	}
