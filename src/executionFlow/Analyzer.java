@@ -23,7 +23,7 @@ import executionFlow.util.balance.RoundBracketBalance;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.0.0
+ * @version		5.1.0
  * @since		2.0.0
  */
 public class Analyzer 
@@ -87,7 +87,8 @@ public class Analyzer
 	private boolean isMethodMultiLineArgs;
 	private boolean anonymousConstructor;
 	private boolean invokedNameContainsDollarSign;
-	private static boolean timeout;
+	private volatile static boolean timeout;
+	private volatile boolean lock;
 	private RoundBracketBalance rbb;
 	
 
@@ -99,7 +100,7 @@ public class Analyzer
 	 * JDB execution (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 
 	
@@ -223,7 +224,6 @@ public class Analyzer
 		boolean wasNewIteration = false;
 		
 		
-		// Runs JDB
 		// -----{ DEBUG }-----
 		if (DEBUG) {
 			ConsoleOutput.showDebug("COMMAND: " + "clear ");
@@ -233,6 +233,7 @@ public class Analyzer
 		// -----{ END DEBUG }-----
 		
 		timeout = false;
+		lock = false;
 		
 		try {
 			jdb.start().send("clear", "stop at " + classInvocationSignature + ":" + invocationLine,
@@ -240,9 +241,12 @@ public class Analyzer
 			
 			// Sets timeout (10 minutes)
 			Clock.setTimeout(() -> {
-				Analyzer.setTimeout(true);
+				lock = true;
 				jdb.quit();
-			}, 10 * 60 * 60);
+				testPaths.clear();
+				Analyzer.setTimeout(true);
+				lock = false;
+			}, 10 * 60 * 1000);
 			
 			// Executes while inside the test method
 			while (!endOfMethod && !timeout) {
@@ -333,6 +337,8 @@ public class Analyzer
 		
 		jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
 		jdb.quit();
+		
+		while (lock);
 		
 		return this;
 	}
