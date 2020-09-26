@@ -1,12 +1,18 @@
 package executionFlow.runtime.collector;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
 import executionFlow.ConstructorExecutionFlow;
+import executionFlow.Control;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.dependency.DependencyManager;
@@ -132,6 +138,38 @@ public aspect TestMethodCollector extends RuntimeCollector
 		testMethodSignature = 
 				CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
 
+		// Defines the routine to be executed after the app ends
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+	    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+	    		
+	    		
+	    		if (JUnit4Runner.isRunning()) {
+			    	try {
+						JUnit4Runner.quit();
+					} 
+			    	catch (IOException e) {}
+	    		}
+		    	    		
+		    	// Restores original files			    	
+		    	restoreTestMethodFiles();
+		    	restoreInvokedFiles();
+		    	
+		    	if (testMethodManager != null)
+		    		testMethodManager.restoreAll();
+		    	
+		    	if (ExecutionFlow.getInvokedManager() != null)
+		    		ExecutionFlow.getInvokedManager().deleteBackup();
+		    	
+		    	deleteTestMethodBackupFiles();
+				disableCheckpoint();
+				
+				if (mcti.exists())
+					while (!mcti.delete());
+		    }
+		});
+		
+		
 		// Gets information about test method
 		try {
 			String className, classSignature, testClassSignature;
@@ -182,6 +220,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			// Checks if it the first execution
 			if (testMethodManager == null && !checkpoint.isActive()) {
 				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
+				Control.open();
 			}
 
 			// Checks if there are files that were not restored in the last execution
@@ -255,34 +294,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 			// Resets methods called by tested invoked
 			new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
 
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-			    public void run() {
-			    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-			    		
-			    		
-				    	try {
-							JUnit4Runner.quit();
-						} 
-				    	catch (IOException e) {}
-				    	
-				    	// Restores original files				    	
-				    	restoreTestMethodFiles();
-				    	restoreInvokedFiles();
-				    	
-				    	if (testMethodManager != null)
-				    		testMethodManager.restoreAll();
-				    	
-				    	if (ExecutionFlow.getInvokedManager() != null)
-				    		ExecutionFlow.getInvokedManager().deleteBackup();
-				    	
-				    	deleteTestMethodBackupFiles();
-						disableCheckpoint();
-						
-						if (mcti.exists())
-							while (!mcti.delete());
-			    }
-			});
-			
 			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 
 			finished = true;
@@ -308,6 +319,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 				
 				// Resets totalTests
 				totalTests = -1;
+				
+				Control.close();
 			}
 
 			testMethodManager.restoreAll();
@@ -405,6 +418,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private boolean disableCheckpoint()
 	{
+		if (checkpoint == null)
+			return false;
+		
 		boolean hasError = false;
 		
 		
@@ -427,11 +443,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private boolean restoreTestMethodFiles()
 	{
+		if (ExecutionFlow.getTestMethodManager() == null)
+			return false;
+		
 		boolean hasError = false;
 		
 		
 		try {
-			if (ExecutionFlow.getTestMethodManager() != null && ExecutionFlow.getTestMethodManager().load())
+			if (ExecutionFlow.getTestMethodManager().load())
 				ExecutionFlow.getTestMethodManager().restoreAll();	
 		} 
 		catch (ClassNotFoundException e) {
@@ -458,11 +477,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private boolean restoreInvokedFiles()
 	{
+		if (ExecutionFlow.getInvokedManager() == null)
+			return false;
+		
 		boolean hasError = false;
 		
 		
 		try {
-			if (ExecutionFlow.getInvokedManager() != null && ExecutionFlow.getInvokedManager().load())
+			if (ExecutionFlow.getInvokedManager().load())
 				ExecutionFlow.getInvokedManager().restoreAll();	
 		} 
 		catch (ClassNotFoundException e) {
