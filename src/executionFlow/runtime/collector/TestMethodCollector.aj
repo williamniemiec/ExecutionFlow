@@ -49,7 +49,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static Checkpoint checkpoint_initial = 
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
 	private static int totalTests = -1;
-	private volatile static boolean success = false;
 	private static String outputDir;
 	private String lastRepeatedTestSignature;
 	private String testClassName;
@@ -179,10 +178,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 				"pre_processing.original"
 			);
 			
+			
 			// Checks if it the first execution
 			if (testMethodManager == null && !checkpoint.isActive()) {
 				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
-				success = false;
 			}
 
 			// Checks if there are files that were not restored in the last execution
@@ -258,7 +257,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 			    public void run() {
-			    	if (!success) {
 			    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 			    		
 			    		
@@ -267,22 +265,21 @@ public aspect TestMethodCollector extends RuntimeCollector
 						} 
 				    	catch (IOException e) {}
 				    	
-				    	// Restores original files
+				    	// Restores original files				    	
 				    	restoreTestMethodFiles();
 				    	restoreInvokedFiles();
-				    	ExecutionFlow.getInvokedManager().deleteBackup();
 				    	
 				    	if (testMethodManager != null)
 				    		testMethodManager.restoreAll();
+				    	
+				    	if (ExecutionFlow.getInvokedManager() != null)
+				    		ExecutionFlow.getInvokedManager().deleteBackup();
 				    	
 				    	deleteTestMethodBackupFiles();
 						disableCheckpoint();
 						
 						if (mcti.exists())
 							while (!mcti.delete());
-						
-						System.exit(-1);
-			    	}
 			    }
 			});
 			
@@ -311,8 +308,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 				
 				// Resets totalTests
 				totalTests = -1;
-				
-				success = true;
 			}
 
 			testMethodManager.restoreAll();
@@ -399,6 +394,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			testMethodManager.deleteBackup();
 			testMethodManager = null;
 		}
+		
 		ExecutionFlow.destroyTestMethodManager();
 	}
 	
