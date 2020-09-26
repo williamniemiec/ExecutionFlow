@@ -20,7 +20,7 @@ public class Control
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private transient static JFrame instance = null;
+	private transient static JFrame window = null;
 	private final static int MAIN_FRAME_WIDTH = 325;
 	private final static int MAIN_FRAME_HEIGHT = 100;
 	private final static int MAIN_FRAME_X = 100;
@@ -42,10 +42,10 @@ public class Control
 	 */
 	public static void open()
 	{
-		if (instance == null)
+		if (window == null)
 			createWindow();
 			
-		instance.setVisible(true);
+		window.setVisible(true);
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class Control
 	 */
 	public static void close()
 	{
-		instance.dispose();
+		window.dispose();
 	}
 	
 	/**
@@ -72,8 +72,8 @@ public class Control
 		});
 				
 		// Window creation
-		instance = new JFrame("Execution Flow - Control");
-		instance.add(stop);
-		instance.setBounds(MAIN_FRAME_X, MAIN_FRAME_Y, MAIN_FRAME_WIDTH, MAIN_FRAME_HEIGHT);
+		window = new JFrame("Execution Flow - Control");
+		window.add(stop);
+		window.setBounds(MAIN_FRAME_X, MAIN_FRAME_Y, MAIN_FRAME_WIDTH, MAIN_FRAME_HEIGHT);
 	}
 }
