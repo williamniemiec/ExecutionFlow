@@ -14,7 +14,6 @@ import java.util.Set;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.info.CollectorInfo;
-import executionFlow.util.ConsoleOutput;
 
 
 /**
@@ -23,7 +22,7 @@ import executionFlow.util.ConsoleOutput;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		5.1.0
  * @since		2.0.0
  */
 public class FilesManager 
@@ -385,21 +384,12 @@ public class FilesManager
 		while (it.hasNext()) {
 			FileManager fm = it.next(); 
 			
-			// Restores source file
+			// Restores source and compilation file
 			try {
 				fm.revertParse();
-			} catch (IOException e) {
-				ConsoleOutput.showError("Restore parse - " + fm.getCompiledFile().toString());
-				ConsoleOutput.showError("Restore parse - " + e.getMessage());
-				error = true;
-			}
-			
-			// Restores compilation file
-			try {
 				fm.revertCompilation();
-			} catch (IOException e) {
-				ConsoleOutput.showError("Restore compilation - "+fm.getCompiledFile().toString());
-				ConsoleOutput.showError("Restore compilation - "+e.getMessage());
+			} 
+			catch (IOException e) {
 				error = true;
 			}
 			
