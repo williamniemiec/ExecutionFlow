@@ -78,7 +78,7 @@ public class JUnit4Runner
 				System.err.println(line);
 			}
 			
-			while ((line = output.readLine()) != null) {
+			while (process.isAlive() && (line = output.readLine()) != null) {
 				error = false;
 				
 				// Displays error messages (if any)
@@ -104,10 +104,13 @@ public class JUnit4Runner
 			}
 			
 			// Closes process
-			output.close();
-			outputError.close();
-			process.waitFor();
-		} catch (IOException | InterruptedException e1) {
+			if (process.isAlive()) {
+				output.close();
+				outputError.close();
+				process.waitFor();
+			}
+		} 
+		catch (IOException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -122,6 +125,16 @@ public class JUnit4Runner
 		output.close();
 		outputError.close();
 		process.destroyForcibly();
+	}
+	
+	/**
+	 * Checks whether the process is running.
+	 * 
+	 * @return		True if the process is running; false otherwise
+	 */
+	public static boolean isRunning()
+	{
+		return process != null && process.isAlive();
 	}
 	
 	/**
