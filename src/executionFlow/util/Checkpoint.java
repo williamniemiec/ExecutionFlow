@@ -95,6 +95,9 @@ public class Checkpoint
 	 */
 	public void disable() throws IOException
 	{
+		if (checkpointFileThread == null)
+			return;
+		
 		end = true;
 		
 		try {
