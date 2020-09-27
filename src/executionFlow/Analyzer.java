@@ -223,7 +223,7 @@ public class Analyzer
 		
 		boolean wasNewIteration = false;
 		final int TIMEOUT_ID = 1;
-		final int TIMEOUT_TIME = 3 * 1000;
+		final int TIMEOUT_TIME = 10 * 60 * 1000;
 		
 		
 		// -----{ DEBUG }-----
@@ -246,6 +246,7 @@ public class Analyzer
 				lock = true;
 				jdb.quit();
 				testPaths.clear();
+				(new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef")).delete();
 				Analyzer.setTimeout(true);
 				lock = false;
 			}, TIMEOUT_ID, TIMEOUT_TIME);
