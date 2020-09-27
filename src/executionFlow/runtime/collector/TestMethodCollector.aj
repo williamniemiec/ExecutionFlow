@@ -162,7 +162,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 		    		ExecutionFlow.getInvokedManager().deleteBackup();
 		    	
 		    	deleteTestMethodBackupFiles();
-				disableCheckpoint();
+				disableCheckpoint(checkpoint);
+				disableCheckpoint(checkpoint_initial);
 				
 				if (mcti.exists())
 					while (!mcti.delete());
@@ -329,7 +330,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			deleteTestMethodBackupFiles();
 			
 			// Disables checkpoint
-			disableCheckpoint();
+			disableCheckpoint(checkpoint);
 			
 			// Stops execution if a problem occurs
 			if (hasError)
@@ -413,11 +414,11 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	/**
-	 * Disables checkpoint.
+	 * Disables a checkpoint.
 	 * 
 	 * @return		If an error has occurred
 	 */
-	private boolean disableCheckpoint()
+	private boolean disableCheckpoint(Checkpoint checkpoint)
 	{
 		if (checkpoint == null)
 			return false;
