@@ -179,9 +179,14 @@ public class JDB
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
-		    	in.close();
-				out.close();
-		    	process.destroyForcibly();
+		    	if (in != null)
+		    		in.close();
+		    	
+		    	if (out != null)
+		    		out.close();
+		    	
+		    	if (process != null)
+		    		process.destroyForcibly();
 		    }
 		});
 
