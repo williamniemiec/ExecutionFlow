@@ -14,8 +14,6 @@ import java.nio.file.Path;
  * executed only once. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
- * @since		2.0.0
  */
 public class Checkpoint
 {
@@ -24,7 +22,7 @@ public class Checkpoint
 	//-------------------------------------------------------------------------
 	private Path checkpointFile;
 	private Thread checkpointFileThread;
-	private boolean end;
+	private volatile boolean end;
 	
 	
 	//-------------------------------------------------------------------------
@@ -61,20 +59,24 @@ public class Checkpoint
 		try {
 			Files.deleteIfExists(checkpointFile);
 			Files.createFile(checkpointFile);
-		} catch(FileAlreadyExistsException e) { }
+		} 
+		catch(FileAlreadyExistsException e) {}
 		
 		Runnable r = () -> {
 			try (FileReader fr = new FileReader(checkpointFile.toFile())) {
 				while (!end) {
 					try {
 						Thread.sleep(200);
-					} catch (InterruptedException e) {
+					} 
+					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
-			} catch (FileNotFoundException e) {
+			} 
+			catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		};
@@ -99,7 +101,8 @@ public class Checkpoint
 			Thread.sleep(50);
 			checkpointFileThread.join();
 			delete();
-		} catch (InterruptedException e) {
+		} 
+		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -138,7 +141,8 @@ public class Checkpoint
 			
 			// Restores deleted checkpoint file
 			Files.createFile(checkpointFile);
-		} catch (SecurityException | IOException e) {
+		} 
+		catch (SecurityException | IOException e) {
 			response = true;
 		}
 		
