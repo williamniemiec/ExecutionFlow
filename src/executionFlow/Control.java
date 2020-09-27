@@ -75,5 +75,6 @@ public class Control
 		window = new JFrame("Execution Flow - Control");
 		window.add(stop);
 		window.setBounds(MAIN_FRAME_X, MAIN_FRAME_Y, MAIN_FRAME_WIDTH, MAIN_FRAME_HEIGHT);
+		window.toFront();
 	}
 }
