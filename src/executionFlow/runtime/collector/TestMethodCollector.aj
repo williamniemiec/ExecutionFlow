@@ -58,8 +58,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private FilesManager testMethodManager;
 	private FileManager testMethodFileManager;
 	private boolean isRepeatedTest;
+	private volatile static boolean success;
 	
-	volatile boolean success;
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -329,7 +329,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			deleteTestMethodBackupFiles();
 			
 			// Disables checkpoint
-			hasError = disableCheckpoint();
+			disableCheckpoint();
 			
 			// Stops execution if a problem occurs
 			if (hasError)
@@ -430,8 +430,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		} 
 		catch (IOException e) {
 			hasError = true;
-			ConsoleOutput.showError("Checkpoint cannot be disabled");
-			e.printStackTrace();
 		}
 		
 		return hasError;
