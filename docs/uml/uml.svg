@@ -163,8 +163,8 @@
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1921.22" y="-2167.02" width="395" height="44"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="2118.72" y="-2151.82">&lt;&lt;Aspect&gt;&gt;</text>
     <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="2118.72" y="-2131.02">TestMethodCollector</text>
-    <rect style="fill: #ffffff" x="1921.22" y="-2123.02" width="395" height="212"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1921.22" y="-2123.02" width="395" height="212"/>
+    <rect style="fill: #ffffff" x="1921.22" y="-2123.02" width="395" height="228"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1921.22" y="-2123.02" width="395" height="228"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-2109.82">-firstTime: boolean = true</text>
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="1924.22" y1="-2103.42" x2="2124.42" y2="-2103.42"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-2093.82">-finished: boolean</text>
@@ -183,13 +183,15 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1949.82">-testMethodManager: FilesManager</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1933.82">-testMethodFileManager: FileManager</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1917.82">-isRepeatedTest: boolean</text>
-    <rect style="fill: #ffffff" x="1921.22" y="-1911.02" width="395" height="84"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1921.22" y="-1911.02" width="395" height="84"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1897.82">-updateConstructorCollectorInvocationLines(): void</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1881.82">-deleteTestMethodBackupFiles(): void</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1865.82">-disableCheckpoint(): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1849.82">-restoreTestMethodFiles(): boolean</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1833.82">-restoreInvokedFiles(): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1901.82">-success: boolean</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="1924.22" y1="-1895.42" x2="2055.12" y2="-1895.42"/>
+    <rect style="fill: #ffffff" x="1921.22" y="-1895.02" width="395" height="84"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1921.22" y="-1895.02" width="395" height="84"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1881.82">-updateConstructorCollectorInvocationLines(): void</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1865.82">-deleteTestMethodBackupFiles(): void</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1849.82">-disableCheckpoint(): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1833.82">-restoreTestMethodFiles(): boolean</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1924.22" y="-1817.82">-restoreInvokedFiles(): boolean</text>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="1921.22,-2145.02 -1098.66,-2145.02 -1098.66,-602.683 "/>
@@ -1185,7 +1187,7 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-582.49,-1004.38 -587.49,-1020.38 -592.49,-1004.38 "/>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="2118.72,-1827.02 2118.72,-1790.21 1497.07,-1790.21 1497.07,-1975.76 920.921,-1975.76 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" points="2118.72,-1811.02 2118.72,-1790.21 1497.07,-1790.21 1497.07,-1975.76 920.921,-1975.76 "/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="933.569,-1980.76 917.569,-1975.76 933.569,-1970.76 "/>
   </g>
   <g>
