@@ -377,6 +377,9 @@ public class FilesManager
 	 */
 	private boolean restoreAll(Set<FileManager> files)
 	{
+		if (files == null)
+			return false;
+		
 		boolean error = false;
 		Iterator<FileManager> it = files.iterator();
 		
