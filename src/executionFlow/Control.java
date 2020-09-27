@@ -20,7 +20,7 @@ public class Control
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private transient static JFrame window = null;
+	private volatile static JFrame window = null;
 	private final static int MAIN_FRAME_WIDTH = 325;
 	private final static int MAIN_FRAME_HEIGHT = 100;
 	private final static int MAIN_FRAME_X = 100;
