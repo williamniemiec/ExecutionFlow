@@ -27,6 +27,7 @@ public class JUnit4Runner
 	private static Process process;
 	private static BufferedReader output;
 	private static BufferedReader outputError;
+	private static boolean stopped;
 	
 	
 	//-------------------------------------------------------------------------
@@ -62,6 +63,8 @@ public class JUnit4Runner
 	public static void run(Path workingDirectory, List<String> classPath, 
 			String classSignature, boolean displayVersion)
 	{	
+		stopped = false;
+		
 		try {
 			process = init(workingDirectory, classPath, classSignature);
 			String line;
@@ -78,7 +81,7 @@ public class JUnit4Runner
 				System.err.println(line);
 			}
 			
-			while (process.isAlive() && (line = output.readLine()) != null) {
+			while (!stopped && (line = output.readLine()) != null) {
 				error = false;
 				
 				// Displays error messages (if any)
@@ -104,7 +107,7 @@ public class JUnit4Runner
 			}
 			
 			// Closes process
-			if (process.isAlive()) {
+			if (!stopped) {
 				output.close();
 				outputError.close();
 				process.waitFor();
@@ -122,9 +125,10 @@ public class JUnit4Runner
 	 */
 	public static void quit() throws IOException
 	{
+		stopped = true;
+		process.destroyForcibly();
 		output.close();
 		outputError.close();
-		process.destroyForcibly();
 	}
 	
 	/**
