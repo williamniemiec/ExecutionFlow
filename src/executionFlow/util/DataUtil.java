@@ -18,8 +18,6 @@ import java.util.regex.Pattern;
  * Contains methods that perform data manipulation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.0.0
- * @since		2.0.0
  */
 public class DataUtil 
 {

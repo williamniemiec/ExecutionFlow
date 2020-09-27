@@ -5,8 +5,6 @@ package executionFlow.util.balance;
  * Responsible for managing balances. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
- * @since		4.0.1
  */
 public abstract class Balance 
 {

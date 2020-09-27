@@ -9,8 +9,6 @@ import java.util.List;
  * Looks for patterns in lines of a file and performs a certain action.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.1.0
- * @since 		4.1.0
  */
 public abstract class Breaker 
 {

@@ -15,8 +15,6 @@ import java.util.regex.Pattern;
  * @apiNote		Compatible with aspects
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
- * @since		2.0.0
  */
 public class JUnit4Runner 
 {

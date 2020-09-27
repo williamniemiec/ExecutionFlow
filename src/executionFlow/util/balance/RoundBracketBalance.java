@@ -9,8 +9,6 @@ import java.util.regex.Pattern;
  * <code>Current balance - Amount of open round brackets - Amount of closed round brackets</code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
- * @since		4.0.1
  */
 public class RoundBracketBalance extends Balance
 {

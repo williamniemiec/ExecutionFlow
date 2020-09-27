@@ -9,8 +9,6 @@ import java.util.regex.Pattern;
  * <code>Current balance - Amount of open curly brackets - Amount of closed curly brackets</code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
- * @since		2.0.0
  */
 public class CurlyBracketBalance extends Balance
 {

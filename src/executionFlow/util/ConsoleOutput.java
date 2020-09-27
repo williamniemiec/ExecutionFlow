@@ -5,8 +5,6 @@ package executionFlow.util;
  * Responsible for displaying information on the console.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
- * @since		2.0.0
  */
 public class ConsoleOutput 
 {

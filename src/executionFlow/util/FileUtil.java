@@ -14,8 +14,6 @@ import java.util.List;
  * Contains methods that perform data manipulation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.1.0
- * @since		3.1.0
  */
 public class FileUtil 
 {

@@ -12,8 +12,6 @@ import executionFlow.util.DataUtil;
  * does not break lines containing 'assert' or 'Assert.assert'.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.1.0
- * @since 		4.0.0
  */
 public class CurlyBracketBreaker extends Breaker
 {

@@ -60,16 +60,6 @@ public class Clock
 		}, delay);
 		
 		return true;
-		
-//		new Thread(() -> {
-//	        try {
-//	            Thread.sleep(delay);
-//	            routine.run();
-//	        }
-//	        catch (Exception e) {
-//	            System.err.println(e);
-//	        }
-//	    }).start();
 	}
 	
 	/**
