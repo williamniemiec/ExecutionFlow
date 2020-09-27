@@ -1,13 +1,36 @@
 package examples.againstRequirements;
+
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Assert;
 import org.junit.Test;
-public class AgainstRequirements{
-@org.junit.Test @executionFlow.runtime._SkipInvoked public void methodInSameFileOfTestMethod() {
-int a = 2, b = 3;
-try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _e6232eda7973c80a6b66d8f8055f1f13){}
-}
-@executionFlow.runtime.CollectCalls private int sum(int a, int b){
-return a + b;
-}
+
+
+/**
+ * Tests what happens if the requirements are not met.
+ */
+public class AgainstRequirements 
+{
+	/**
+	 * Test a method defined within the test class. An error will be generated.
+	 * Execution will continue if there are more test methods to be executed.
+	 */
+	@org.junit.Test @executionFlow.runtime._SkipInvoked
+    public void methodInSameFileOfTestMethod() {
+		int a = 2, b = 3;
+		
+try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _dab8d97362e1b2bd85b1ad500f5730d1){}
+    }
+    
+	/**
+	 * Example method for {@link #methodInSameFileOfTestMethod()} method.
+	 * 
+	 * @param a A number
+	 * @param b Another number
+	 * @return a + b
+	 */
+    private int sum(int a, int b) 
+    {
+        return a + b;
+    }
 }

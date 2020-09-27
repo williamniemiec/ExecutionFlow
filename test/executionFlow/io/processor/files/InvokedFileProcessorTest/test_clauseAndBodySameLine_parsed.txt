@@ -5,7 +5,7 @@ import java.io.IOException;
 public class test_clauseAndBodySameLine{
 @executionFlow.runtime.CollectCalls public int inlineDoWhile(int n){
 if (n <= 0) n = 1;
-do {int _af901da002419a4e2800aa0358ecc4a5=0;
+do {int _55436068775c787cb143f1c2ce4d0a06=0;
 n--;
 }
 while (n > 0);
@@ -15,7 +15,7 @@ return n;
 if (num > 0) {
 num *= 0;
 }
-else {int _bad93afddb0015ed3e586cf5071fc80d=0;
+else {int _8fa8fa493321f49d5bb00875ce534a1a=0;
 num = 10;
 }
 return num;

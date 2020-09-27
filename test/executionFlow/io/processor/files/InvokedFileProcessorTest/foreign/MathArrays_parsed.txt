@@ -106,29 +106,29 @@ public static  <T extends Comparable<? super T>> boolean isMonotonic(T[] val, Or
 T previous = val[0];
 final int max = val.length;
 for (int i = 1; i < max; i++) {
-final int comp;int _2191caa9d6ea93fdc7a86b02abc2be5c=0;
+final int comp;int _620c0212c7ff19ed89d830e5e3f41f64=0;
 switch (dir) {
-case INCREASING:int _fbdb2eaf452458ac89d286ce7e60379e=0;
+case INCREASING:int _ebec8519039dd871d7c6958af2a6ec3d=0;
 comp = previous.compareTo(val[i]);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _24707f7b931c3fe5f745550a3e6ed1c5=0;
+else {int _87846020f2963d2da6efbb6e0f07dabd=0;
 if (comp > 0) {
 return false;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
-case DECREASING:int _d4eacc02f0deb587a3098cc831b4e5f2=0;
+case DECREASING:int _82407a4aaf8f03427fec3362f10c0c22=0;
 comp = val[i].compareTo(previous);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _9fce108265c0d1b758dfc289b6338a59=0;
+else {int _829872455afa9b3d2a71c3188f6f2c9d=0;
 if (comp > 0) {
 return false;
 }
@@ -148,7 +148,7 @@ return checkOrder(val, dir, strict, false);
 if (a.length == b.length) {
 return true;
 }
-else {int _8cd0cd4475b5a90311010a9b19643edf=0;
+else {int _469c2d51bf14399b7ca7b595a227c38b=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
@@ -162,7 +162,7 @@ checkEqualLength(a, b, true);
 if (a.length == b.length) {
 return true;
 }
-else {int _af07df907ea8dbad075fc53e4e055fd3=0;
+else {int _4033300eebaefb01c6f01cc8e0393398=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
@@ -175,30 +175,30 @@ checkEqualLength(a, b, true);
 @executionFlow.runtime.CollectCalls public static boolean checkOrder(double[] val, OrderDirection dir, boolean strict, boolean abort) throws NonMonotonicSequenceException {
 double previous = val[0];
 final int max = val.length;
-int index;int _a7d78047dc0b5b6580b069a757c48500=0;
+int index;int _c24897be50f8eaff2f8b15f55111b155=0;
 ITEM: for (index = 1; index < max; index++) {
 switch (dir) {
-case INCREASING:int _88f1fb3e71b026d3b500835b8b2f6abe=0;
+case INCREASING:int _878c328bd54fee08570be424eb0b7396=0;
 if (strict) {
 if (val[index] <= previous) {
-break ITEM;int _20f0b798a841e9c80ee2c48be59bef76=0;
+break ITEM;int _1dc47fac566b62927afc0c3b3823d873=0;
 }
 }
-else {int _f5e12fc7f4fc9f6060ac23ae92774543=0;
+else {int _4a0c8e6813187eeda06e0b1d9146a417=0;
 if (val[index] < previous) {
-break ITEM;int _c35e76b2180457f68218e374c83e9f9=0;
+break ITEM;int _6a7fb60e2a2ead6d6abcfacf5a3905f8=0;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
-case DECREASING:int _fb4f359ef2b833dc6cbc46b23f4e952=0;
+case DECREASING:int _f4e540074629c1beafa3582111e226e2=0;
 if (strict) {
 if (val[index] >= previous) {
-break ITEM;int _4c27f3349095a5145b146a1247eb3af3=0;
+break ITEM;int _b55b5e461013fa373a14bbb9f39a5f0b=0;
 }
 }
-else {int _296c6ded1d3345a652e1fb35f1dbc5ad=0;
+else {int _de5080460645ba434382c39ead57283e=0;
 if (val[index] > previous) {
-break ITEM;int _64fffccb6131733eb5db91e3e0193684=0;
+break ITEM;int _78c8462d3b2366ee6ed1f1ef1c2ee60b=0;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
@@ -213,7 +213,7 @@ return true;
 if (abort) {
 throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);
 }
-else {int _37e66e50cfa5e1598a9c81c9f2b436d2=0;
+else {int _fbcdc339cfd8bdf5ec9e2db79799a723=0;
 return false;
 }
 }
@@ -404,7 +404,7 @@ for (int i = 0; i < len; i++) {
 if (Double.isNaN(values[i])) {
 out[i] = Double.NaN;
 }
-else {int _708ee4cc1bc0c3edc9d82deef655a70b=0;
+else {int _78077b59aeb36dd691723a5e17edaa94=0;
 out[i] = values[i] * normalizedSum / sum;
 }
 }
@@ -416,12 +416,12 @@ Arrays.fill(array, field.getZero());
 return array;
 }
 @SuppressWarnings("unchecked") public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-final T[][] array;int _819fc43f5f616c7f7e50524926cf805d=0;
+final T[][] array;int _c285bbc82282a93b629a8ece3d1f5228=0;
 if (columns < 0) {
 T[] dummyRow = buildArray(field, 0);
 array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
 }
-else {int _21250e10697dfe2a83638bd6963673b2=0;
+else {int _6ee2ea6c782f47f13cbac32b258b1f66=0;
 array = (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] {
 rows, columns }
 );

@@ -1,7 +1,8 @@
 package executionFlow.core.file.parser.files;
 
 public class test_empty {
-	public void foo() {}
+	public void foo() {
+	}
 	
 	public void foo2() 
 	{}
@@ -16,5 +17,5 @@ public class test_empty {
 	}
 	
 	public void foo5() 
-	{}
+	{ }
 }

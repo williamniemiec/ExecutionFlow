@@ -122,9 +122,9 @@ public class ComplexTests extends MethodExecutionFlowTest
 		assertEquals(
 			Arrays.asList(
 				Arrays.asList(35,36,37,36,39),
-				Arrays.asList(39,40,41,42,43,41,42,43,41,45),
-				Arrays.asList(39,40,41,42,43,41,42,43,41,42,43,41,45),
-				Arrays.asList(39,40,41,42,43,41,42,43,41,42,43,41,42,43,41,45)
+				Arrays.asList(35,36,37,36,37,36,39),
+				Arrays.asList(35,36,37,36,37,36,37,36,39),
+				Arrays.asList(35,36,37,36,37,36,37,36,37,36,39)
 			), 
 			testPaths
 		);

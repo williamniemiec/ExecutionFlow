@@ -122,11 +122,11 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature.replaceAll("\\$", "."));
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(42,43)
+				Arrays.asList(19,20)
 			),
 			testPaths
 		);
@@ -180,11 +180,11 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature.replaceAll("\\$", "."));
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(48,49)
+				Arrays.asList(23,24)
 			),
 			testPaths
 		);
@@ -238,11 +238,11 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature.replaceAll("\\$", "."));
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(60,61)
+				Arrays.asList(31,32)
 			),
 			testPaths
 		);
@@ -296,11 +296,11 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature.replaceAll("\\$", "."));
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(54,55)
+				Arrays.asList(27,28)
 			),
 			testPaths
 		);
@@ -354,11 +354,11 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
 		
 		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature.replaceAll("\\$", "."));
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(66)
+				Arrays.asList(35)
 			),
 			testPaths
 		);
@@ -415,7 +415,7 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(76,77,78,79)
+				Arrays.asList(39,40,41,42)
 			),
 			testPaths
 		);

@@ -5,7 +5,9 @@ import java.nio.file.Path;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
+import executionFlow.Control;
 import executionFlow.ExecutionFlow;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
@@ -52,6 +54,19 @@ public class ConstructorExecutionFlowTest
 		ExecutionFlow.destroyTestMethodManager();
 		ExecutionFlow.init(true);
 				
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() 
+			{
+				try {
+					restoreTestMethod();
+					restoreInvoked();
+				} 
+				catch (ClassNotFoundException | IOException e) 
+				{}
+			}
+		});
+		
 		// Creates backup from original files
 		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false);
 		
@@ -111,6 +126,9 @@ public class ConstructorExecutionFlowTest
 	@After
 	public void restoreTestMethod() throws ClassNotFoundException, IOException
 	{
+		if (ExecutionFlow.getTestMethodManager() == null)
+			return;
+		
 		if (ExecutionFlow.getTestMethodManager().load())
 			ExecutionFlow.getTestMethodManager().restoreAll();	
 		
@@ -122,14 +140,25 @@ public class ConstructorExecutionFlowTest
 		ExecutionFlow.destroyTestMethodManager();		
 	}
 	
+	@BeforeClass
+	public static void control()
+	{
+		Control.open();
+	}
+	
 	@AfterClass
 	public static void restoreInvoked() throws ClassNotFoundException, IOException
 	{
+		if (ExecutionFlow.getInvokedManager() == null)
+			return;
+		
 		if (ExecutionFlow.getInvokedManager().load())
 			ExecutionFlow.getInvokedManager().restoreAll();	
 		
 		ExecutionFlow.getInvokedManager().deleteBackup();
 		
 		ExecutionFlow.destroyInvokedManager();
+		
+		Control.close();
 	}
 }

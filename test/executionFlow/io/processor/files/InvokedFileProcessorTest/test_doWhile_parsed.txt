@@ -5,7 +5,7 @@ import java.io.IOException;
 public class test_doWhile{
 @executionFlow.runtime.CollectCalls public void doWhile(int num){
 int i = num;
-do {int _72b8353a4d6cf1604f3e5594a0e4746d=0;
+do {int _9dfd1d9fc624a9937c10dceae6e38699=0;
 if (i < 0) break;
 i--;
 }

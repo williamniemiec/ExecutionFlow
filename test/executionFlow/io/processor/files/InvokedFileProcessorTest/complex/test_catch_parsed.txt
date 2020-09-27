@@ -5,8 +5,8 @@ import java.io.IOException;
 public class test_catch{
 @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_catch(int num){
 File f = new File("tmp");
-FileWriter fw;int _4c9810b0761c351ce22ae7699d9af71a=0;
-try{int _a7559750e96558b0eb825bd406e1d983=0;
+FileWriter fw;int _145828da2347d9c7b5cf1e6578dd2851=0;
+try{int _41f4a6a0573f9fc7db4315cd56791848=0;
 throw new IOException();
 }
 catch (IOException e){
