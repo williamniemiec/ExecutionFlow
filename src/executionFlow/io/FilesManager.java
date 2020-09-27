@@ -387,6 +387,12 @@ public class FilesManager
 			// Restores source and compilation file
 			try {
 				fm.revertParse();
+			} 
+			catch (IOException e) {
+				error = true;
+			}
+			
+			try {
 				fm.revertCompilation();
 			} 
 			catch (IOException e) {
