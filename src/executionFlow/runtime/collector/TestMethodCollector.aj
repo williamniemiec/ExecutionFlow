@@ -1,15 +1,10 @@
 package executionFlow.runtime.collector;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
 
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.Control;
@@ -64,6 +59,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private FileManager testMethodFileManager;
 	private boolean isRepeatedTest;
 	
+	volatile boolean success;
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -137,10 +133,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 		reset();
 		testMethodSignature = 
 				CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
-
+		success = false;
+		
 		// Defines the routine to be executed after the app ends
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
+		    	if (success)
+		    		return;
+		    	
 	    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 	    		
 	    		
@@ -365,6 +365,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			.export();
 		
 		reset();	// Prepares for next test
+		success = true;
 	}
 
 	/**
