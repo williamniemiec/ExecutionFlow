@@ -102,6 +102,8 @@ public class JUnit4Runner
 				else if (!error){
 					System.out.println(line);
 				}
+				
+				System.out.flush();
 			}
 			
 			// Closes process
