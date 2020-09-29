@@ -73,7 +73,7 @@ public class Analyzer
 	/**
 	 * Stores all computed test paths.
 	 */
-	private List<List<Integer>> testPaths;
+	private volatile List<List<Integer>> testPaths;
 
 	private JDB jdb;
 	private boolean endOfMethod;
@@ -414,7 +414,13 @@ public class Analyzer
 		String line, srcLine = null;
 		
 
-		if (jdb.isReady()) {        	
+		if (!jdb.isReady()) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) 
+    		{}
+		}
+		else {        	
         	isInternalCommand = false;
         	line = jdb.read();
         	
@@ -430,8 +436,9 @@ public class Analyzer
 				System.exit(-1);
 			}
         	
-        	if (isEmptyLine(line) || line.matches(REGEX_EMPTY_OUTPUT)) 
+        	if (isEmptyLine(line) || line.matches(REGEX_EMPTY_OUTPUT)) {
         		return false;
+        	}
         	
         	// -----{ DEBUG }-----
         	if (DEBUG) { ConsoleOutput.showDebug("LINE: "+line); }
