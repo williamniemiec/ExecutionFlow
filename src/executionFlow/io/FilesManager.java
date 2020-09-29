@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -403,8 +404,13 @@ public class FilesManager
 				error = true;
 			}
 			
-			if (!error)
-				it.remove();
+			if (!error) {
+				try {
+					it.remove();
+				}
+				catch (ConcurrentModificationException e)
+				{}
+			}
 		}
 		
 		return !error;
