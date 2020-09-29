@@ -23,7 +23,7 @@ import executionFlow.util.formatter.JavaIndenter;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.0.0
+ * @version		5.1.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -31,8 +31,21 @@ public class InvokedFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 400L;
+	private static final long serialVersionUID = 510L;
 	
+	/**
+	 * Stores the mapping of the original file with the modified file.
+	 * 
+	 * <ul>
+	 * 	<li><b>Key:</b> Source path</li>
+	 * 	<li><b>Value:</b> Map with the following format:
+	 * 		<ul>
+	 * 			<li><b>Key:</b> Original source file line</li>
+	 * 			<li><b>Value:</b> Modified source file line</li>
+	 * 		</ul>
+	 * 	</li>
+	 * </ul>
+	 */
 	private static Map<Path, Map<Integer, Integer>> mapping = new HashMap<>();
 	
 	private String fileExtension = "java";
@@ -249,14 +262,14 @@ public class InvokedFileProcessor extends FileProcessor
 	 * be read / written
 	 */
 	@Override
-	public String processFile(List<CollectorInfo> collectors) throws IOException
+	public String processFile(Map<Integer, List<CollectorInfo>> collectors) throws IOException
 	{
 		if (file == null) { return ""; }
 		
 		List<String> formatedFile, lines = new ArrayList<>();
 		File outputFile;
 		Cleanup cleanup;
-		HolePlug slaphole;
+		HolePlug holePlug;
 		
 		
 		// If an output directory is specified, processed file will be saved to it
@@ -278,17 +291,23 @@ public class InvokedFileProcessor extends FileProcessor
 		if (isTestMethod) {
 			Map<Integer, Integer> mapping = cleanup.getMapping();
 			int invocationLine = 0;
-			
 
-			for (int i=0; i<collectors.size(); i++) {
-				invocationLine = collectors.get(i).getMethodInfo().getInvocationLine();
-				InvokedFileProcessor.mapping = Map.of(
-					collectors.get(i).getMethodInfo().getSrcPath(),
-					mapping
-				);
+
+			for (Map.Entry<Integer, List<CollectorInfo>> e : collectors.entrySet()) {
+				List<CollectorInfo> collectorList = e.getValue();
 				
-				if (mapping.containsKey(invocationLine))
-					collectors.get(i).getMethodInfo().setInvocationLine(mapping.get(invocationLine));
+				for (int i=0; i<collectorList.size(); i++) {
+					invocationLine = collectorList.get(i).getMethodInfo().getInvocationLine();
+					
+					InvokedFileProcessor.mapping.put(
+							collectorList.get(i).getMethodInfo().getSrcPath(),
+						mapping
+					);
+					
+					if (mapping.containsKey(invocationLine)) {
+						collectorList.get(i).getMethodInfo().setInvocationLine(mapping.get(invocationLine));
+					}
+				}
 			}
 		}
 		
@@ -304,8 +323,8 @@ public class InvokedFileProcessor extends FileProcessor
 		ConsoleOutput.printDivision('-', 80);
 		
 		// Processing #2
-		slaphole = new HolePlug(lines);
-		lines = slaphole.parse();
+		holePlug = new HolePlug(lines);
+		lines = holePlug.parse();
 		
 		// Writes processed lines to a file
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
@@ -313,18 +332,10 @@ public class InvokedFileProcessor extends FileProcessor
 		return outputFile.getAbsolutePath();
 	}
 	
-	/**
-	 * Processes the file adding instructions in parts of the code that does not
-	 * exist when converting it to bytecode. Besides, modifies the code so that
-	 * {@link executionFlow.util.core.JDB} computes the test path correctly.
-	 * 
-	 * @throws		IOException If file encoding is incorrect or if file cannot
-	 * be read / written
-	 */
 	@Override
 	public String processFile() throws IOException
 	{
-		return processFile(new ArrayList<CollectorInfo>());
+		return "";
 	}
 	
 	

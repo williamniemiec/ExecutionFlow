@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileEncoding;
@@ -17,7 +18,7 @@ import executionFlow.io.FileEncoding;
  * classes that implement this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		5.1.0
  * @since		2.0.0
  */
 public abstract class FileProcessor implements Serializable 
@@ -44,12 +45,19 @@ public abstract class FileProcessor implements Serializable
 	 * 
 	 * @throws		IOException If it cannot parse the file
 	 */
-	public String processFile() throws IOException
-	{
-		return "";
-	}
+	public abstract String processFile() throws IOException;
 	
-	public String processFile(List<CollectorInfo> collectors) throws IOException
+	/**
+	 * Processes the file, adding some code to an existing code if some 
+	 * conditions are met.
+	 * 
+	 * @param		collectors Information about all invoked collected
+	 * 
+	 * @return		Location of parsed file
+	 * 
+	 * @throws		IOException If it cannot parse the file
+	 */
+	public String processFile(Map<Integer, List<CollectorInfo>> collectors) throws IOException
 	{
 		return processFile();
 	}

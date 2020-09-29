@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.processor.FileProcessor;
@@ -19,7 +20,7 @@ import executionFlow.util.ConsoleOutput;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.0.0
+ * @version		5.1.0
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -150,7 +151,7 @@ public class FileManager implements Serializable
 	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertParse()} function.
 	 */
-	public FileManager parseFile(List<CollectorInfo> collectors, boolean autoRestore) throws IOException
+	public FileManager parseFile(Map<Integer, List<CollectorInfo>> collectors, boolean autoRestore) throws IOException
 	{
 		// Saves .java file to allow to restore it after
 		if (autoRestore)
@@ -198,7 +199,7 @@ public class FileManager implements Serializable
 	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertParse()} function.
 	 */
-	public FileManager parseFile(List<CollectorInfo> collectors) throws IOException
+	public FileManager parseFile(Map<Integer, List<CollectorInfo>> collectors) throws IOException
 	{
 		return parseFile(collectors, true);
 	}

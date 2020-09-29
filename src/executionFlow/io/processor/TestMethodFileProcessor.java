@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.FileUtil;
@@ -17,7 +19,7 @@ import executionFlow.util.FileUtil;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		5.1.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor

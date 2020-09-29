@@ -3,8 +3,12 @@ package executionFlow;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import executionFlow.exporter.*;
+import executionFlow.exporter.ConsoleExporter;
+import executionFlow.exporter.FileExporter;
+import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.io.FileManager;
@@ -23,7 +27,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
+ * @version		5.1.0
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
@@ -141,12 +145,13 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				analyzer = analyze(
 						collector.getTestMethodInfo(), testMethodFileManager, 
 						collector.getConstructorInfo(), constructorFileManager,
-						List.copyOf(constructorCollector)
+						Map.of(0, List.copyOf(constructorCollector))
 				);
 				
 				// Checks if time has been exceeded
 				if (Analyzer.getTimeout()) {
 					ConsoleOutput.showError("Time exceeded");
+					Thread.sleep(2000);
 					continue;
 				}
 				

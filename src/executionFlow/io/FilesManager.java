@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import executionFlow.ExecutionFlow;
@@ -166,7 +167,7 @@ public class FilesManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesManager parse(FileManager fm, List<CollectorInfo> collectors, 
+	public FilesManager parse(FileManager fm, Map<Integer, List<CollectorInfo>> collectors, 
 			boolean autoRestore) throws IOException
 	{
 		int key = fm.hashCode();
@@ -197,7 +198,7 @@ public class FilesManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesManager parse(FileManager fm, List<CollectorInfo> collectors) throws IOException
+	public FilesManager parse(FileManager fm, Map<Integer, List<CollectorInfo>> collectors) throws IOException
 	{
 		return parse(fm, collectors, true);
 	}

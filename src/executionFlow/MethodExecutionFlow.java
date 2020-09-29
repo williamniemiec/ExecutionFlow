@@ -25,7 +25,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		5.1.0
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -154,12 +154,13 @@ public class MethodExecutionFlow extends ExecutionFlow
 					analyzer = analyze(
 							collector.getTestMethodInfo(), testMethodFileManager, 
 							collector.getMethodInfo(), methodFileManager,
-							collectors
+							methodCollector
 					);
-					
+
 					// Checks if time has been exceeded
 					if (Analyzer.getTimeout()) {
 						ConsoleOutput.showError("Time exceeded");
+						Thread.sleep(2000);
 						continue;
 					}
 					

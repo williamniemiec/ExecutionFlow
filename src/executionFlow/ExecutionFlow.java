@@ -34,7 +34,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
+ * @version		5.1.0
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -132,7 +132,7 @@ public abstract class ExecutionFlow
 	{
 		if (testMethodManager == null) {
 			try {
-					testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true, restoreOriginalFiles);
+				testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true, restoreOriginalFiles);
 			} 
 			catch (ClassNotFoundException e) {
 				throw new ClassNotFoundException("Class FileManager not found");
@@ -272,7 +272,7 @@ public abstract class ExecutionFlow
 	 */
 	protected Analyzer analyze(InvokedInfo testMethodInfo, FileManager testMethodFileManager, 
 			InvokedInfo invokedInfo, FileManager invokedFileManager,
-			List<CollectorInfo> collectors) throws IOException
+			Map<Integer, List<CollectorInfo>> collectors) throws IOException
 	{
 		if (testMethodManager == null)
 			throw new IllegalStateException("testMethodManager cannot be null. "
