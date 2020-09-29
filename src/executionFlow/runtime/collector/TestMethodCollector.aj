@@ -136,39 +136,43 @@ public aspect TestMethodCollector extends RuntimeCollector
 		success = false;
 		
 		// Defines the routine to be executed after the app ends
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-		    public void run() {
-		    	if (success)
-		    		return;
-		    	
-	    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-	    		
-	    		
-	    		if (JUnit4Runner.isRunning()) {
-			    	try {
-						JUnit4Runner.quit();
-					} 
-			    	catch (IOException e) {}
-	    		}
-		    	    		
-		    	// Restores original files			    	
-		    	restoreTestMethodFiles();
-		    	restoreInvokedFiles();
-		    	
-		    	if (testMethodManager != null)
-		    		testMethodManager.restoreAll();
-		    	
-		    	if (ExecutionFlow.getInvokedManager() != null)
-		    		ExecutionFlow.getInvokedManager().deleteBackup();
-		    	
-		    	deleteTestMethodBackupFiles();
-				disableCheckpoint(checkpoint);
-				disableCheckpoint(checkpoint_initial);
-				
-				if (mcti.exists())
-					while (!mcti.delete());
-		    }
-		});
+		try {
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+			    public void run() {
+			    	if (success)
+			    		return;
+			    	
+		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		    		
+		    		
+		    		if (JUnit4Runner.isRunning()) {
+				    	try {
+							JUnit4Runner.quit();
+						} 
+				    	catch (IOException e) {}
+		    		}
+			    	    		
+			    	// Restores original files			    	
+			    	restoreTestMethodFiles();
+			    	restoreInvokedFiles();
+			    	
+			    	if (testMethodManager != null)
+			    		testMethodManager.restoreAll();
+			    	
+			    	if (ExecutionFlow.getInvokedManager() != null)
+			    		ExecutionFlow.getInvokedManager().deleteBackup();
+			    	
+			    	deleteTestMethodBackupFiles();
+					disableCheckpoint(checkpoint);
+					disableCheckpoint(checkpoint_initial);
+					
+					if (mcti.exists())
+						while (!mcti.delete());
+			    }
+			});
+		}
+		catch (IllegalStateException e)
+		{}
 		
 		
 		// Gets information about test method

@@ -166,10 +166,7 @@ public class JDB
 	 * 
 	 * @return		Itself to allow chained calls
 	 * 
-	 * @throws		IOException If JDB cannot be initialized
-	 * 
-	 * @implNote	If the parent process is terminated, this process will also 
-	 * terminate
+	 * @throws		IOException If JDB cannot be initialized 
 	 */
 	public JDB start() throws IOException
 	{
@@ -177,33 +174,35 @@ public class JDB
 		out = new JDBOutput();
 		in = new JDBInput();
 		
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-		    public void run() {
-		    	if (in != null)
-		    		in.close();
-		    	
-		    	if (out != null)
-		    		out.close();
-		    	
-		    	if (process != null)
-		    		process.destroyForcibly();
-		    }
-		});
+		try {
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+			    public void run() {
+			    	if (in != null)
+			    		in.close();
+			    	
+			    	if (out != null)
+			    		out.close();
+			    	
+			    	if (process != null)
+			    		process.destroyForcibly();
+			    }
+			});
+		}
+		catch (IllegalStateException e)
+		{}
 
+		
 		return this;
 	}
 
 	/**
-	 * Ends the process containing JDB.
+	 * Terminates JDB.
 	 */
 	public void quit()
 	{
-		if (!process.isAlive())
-			return;
-		
 		in.close();
 		out.close();
-		process.destroyForcibly();
+		process.destroy();
 		
 		try {
 			process.waitFor();
@@ -290,28 +289,6 @@ public class JDB
 		return out.isReady();
 	}
 	
-	/**
-	 * Checks whether the JDB process is running.
-	 * 
-	 * @return		True if the process is running; false otherwise 
-	 */
-	public boolean isRunning()
-	{
-		return process.isAlive();
-	}
-	
-	/**
-	 * Causes the current thread to wait, if necessary, until the JDB process 
-	 * has terminated.
-	 * 
-	 * @throws		InterruptedException If the current thread is interrupted 
-	 * by another thread while it is waiting
-	 */
-	public void waitFor() throws InterruptedException
-	{
-		process.waitFor();
-	}
-	
 	
 	//-------------------------------------------------------------------------
 	//		Inner classes
@@ -320,8 +297,6 @@ public class JDB
 	 * Responsible for handling JDB inputs.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
-	 * @since		1.4
 	 */
 	private class JDBInput
 	{
@@ -341,7 +316,7 @@ public class JDB
 		public JDBInput()
 		{
 			this.input = new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(process.getOutputStream())));
+					new OutputStreamWriter(process.getOutputStream())), true);
 		}
 		
 		
@@ -360,7 +335,6 @@ public class JDB
 		public void send(String command)
 		{
 			input.println(command);
-			input.flush();
 		}
 		
 		/**
@@ -377,8 +351,6 @@ public class JDB
 			for (String command : commands) {
 			    input.println(command);
 			}
-			
-			input.flush();
 		}
 		
 		/**
@@ -394,8 +366,6 @@ public class JDB
 	 * Responsible for handling JDB outputs.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		2.0.0
-	 * @since		1.4
 	 */
 	private class JDBOutput
 	{
