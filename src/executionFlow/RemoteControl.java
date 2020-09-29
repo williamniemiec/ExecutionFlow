@@ -15,13 +15,13 @@ import javax.swing.JFrame;
  * @version		5.1.0
  * @since		5.1.0
  */
-public class Control 
+public class RemoteControl 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private volatile static JFrame window = null;
-	private final static int MAIN_FRAME_WIDTH = 325;
+	private final static int MAIN_FRAME_WIDTH = 365;
 	private final static int MAIN_FRAME_HEIGHT = 100;
 	private final static int MAIN_FRAME_X = 100;
 	private final static int MAIN_FRAME_Y = 100;
@@ -30,7 +30,7 @@ public class Control
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private Control()
+	private RemoteControl()
 	{}
 	
 	
@@ -38,7 +38,8 @@ public class Control
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Displays control window.
+	 * Displays control window. It will only creates a new window if one has 
+	 * not been created.
 	 */
 	public static void open()
 	{
@@ -72,9 +73,11 @@ public class Control
 		});
 				
 		// Window creation
-		window = new JFrame("Execution Flow - Control");
+		window = new JFrame("Execution Flow - Remote control");
 		window.add(stop);
 		window.setBounds(MAIN_FRAME_X, MAIN_FRAME_Y, MAIN_FRAME_WIDTH, MAIN_FRAME_HEIGHT);
+		window.setResizable(false);
 		window.toFront();
+		window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 }
