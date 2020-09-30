@@ -75,7 +75,7 @@ Veja a documentação específica para programadores que buscam alterar o códig
 
 Veja mais exemplos de test paths gerados [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Exemplos).
 
-## 🔎 Como funciona?
+## ℹ Como funciona?
 ![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/others/visao-geral.png?raw=true)
 
 Veja mais detalhes [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-funciona).
