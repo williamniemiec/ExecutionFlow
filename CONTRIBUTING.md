@@ -65,8 +65,7 @@ Para que seja possível executar algum arquivo do projeto é necessário importa
 * [Eclipse v2019-06](https://www.eclipse.org/downloads/packages/release/2019-06): Como já citado anteriormente, até o momento não é possível usar uma versão mais nova da IDE devido a incompatibilidade com a dependência AJDT.
 * [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update): Plugin da IDE Eclipse usado para habilitar [programação orientada a aspectos](https://en.wikipedia.org/wiki/Aspect-oriented_programming).
 * [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior.
-* [JUnit 4](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/junit-4.13.jar)
-* [Hamcrest](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar): Necessário para a execução de métodos de teste dentro do JDB.
+* JUnit 4 ou 5
 * [AspectJ Tools](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar): É utilizado para a compilação dos arquivos processados durante a execução da aplicação. Essa compilação é referente a execução da aplicação em outros projetos, e não a compilação do projeto da aplicação em si.
 
 
@@ -97,12 +96,12 @@ As classes devem conter a seguinte padrão:
 /**
  * Descrição da classe.
  * 
- * @author    SeuNome &lt; seuemail@email.com &gt;
- * @version   X.Y.Z
- * @since   A.B.C
+ * @author		SeuNome &lt; seuemail@email.com &gt;
+ * @version		X.Y.Z
+ * @since		A.B.C
  */
 </pre>
-Onde X, Y e Z  são números relativos a versão da apllicação em que a classe foi modificada pela última vez e A, B e C identificam a versão da aplicação em que a classe foi criada.
+Onde X, Y e Z  são números relativos a versão da apllicação em que a classe foi modificada pela última vez e A, B e C identificam a versão da aplicação em que a classe foi criada. A anotação é separada do conteúdo com 2 tabs.
 Além disso, internamente, a classe deve ser dividida em seções, sendo estas identificadas com o seguinte padrão:
 
 <pre>
