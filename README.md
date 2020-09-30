@@ -1,47 +1,54 @@
 ![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/logo/logo.jpg?raw=true)
 
-<h1 align='center'> Execution Flow</h1>
+<h1 align='center'>Execution Flow</h1>
+
+<p align='center'>Gera test path de métodos e construtores testados em testes JUnit</p>
 
 <hr />
 
-## Introdução
+## 🔵 Introdução
 Computa test path de métodos e construtores testados em testes JUnit. [Veja como usar nos seus projetos](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar).
 
-## Documentação
+## 📖 Documentação
 Veja a documentação na [wiki](https://github.com/williamniemiec/ExecutionFlow/wiki). Veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Limita%C3%A7%C3%B5es-e-pontos-importantes) as limitações da aplicação e outros pontos importantes.
 
-## Como usar
+## ❓ Como usar
 A documentação sobre como usar a aplicação se encontra [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Não se esqueça de incluir a o arquivo [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar) no build path do projeto, pois caso contrário a aplicação não funcionará.
 
-## Requisitos
+## ✔ Requisitos
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
 - [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior
 - JUnit 4 ou JUnit 5
 
-## Problemas
+## ⚠ Avisos
 Caso você encontre algum problema na aplicação, certifique-se de verificar a solução de problemas na wiki. Caso seu problema não seja resolvido, verifique se já existe uma [issue](https://github.com/williamniemiec/ExecutionFlow/issues) com seu problema. Se não tiver, [crie uma issue](https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) descrevendo detalhadamente o problema ocorrido.
 
 ### Incompatibilidade entre as versões
 Na maioria das vezes as versões não são compatíveis entre si.  Caso você tenha usado uma versão anterior em seu projeto, é necessário eliminar a versão antiga antes de utilizar a nova. Para isso, certifique-se de excluir o diretório com o nome `executionFlow` dos arquivos de seu projeto. Além disso, use apenas uma versão no classpath / buildpath de seu projeto, pois caso contrário pode haver conflito entre as versões. Faça o procedimento abaixo antes de utilizar a nova versão.
 
-![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/gif/migration.gif)
+![migration](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/gif/migration.gif)
+
+### Parar a execução
+Para parar a aplicação, utilize o botão `Stop` na janela `Execution Flow - Remote control`. Não use o botão stop do eclipse, pois senão os arquivos originais não serão restaurados. Isso ocorre porque o stop do eclipse emite um comando SIGKILL, enquanto que o botão stop da janela `Execution Flow - Remote control` emite um comando SIGTERM para finalizar a aplicação. Veja [aqui](https://major.io/2010/03/18/sigterm-vs-sigkill/) mais sobre a diferença desses dois comandos.
+
+![stop](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/howToUse/stop.png)
 
 ### Warning durante a execução
 Se for exibida essa mensagem durante a execução da aplicação, apenas clique em `continue` (informa que o código foi alterado durante a execução). Isso ocorre porque durante a execução da aplicação o código fonte é alterado, sendo que no final o código fonte original é restaurado.
 
 ![eclipse_msg](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/others/eclipse_msg.PNG?raw=true)
 
-## Changelog
+## 🚩 Changelog
 Detalhes sobre cada versão estão documentadas na [seção releases](https://github.com/williamniemiec/ExecutionFlow/releases).
 
-## Contribua
+## 🤝 Contribua
 Veja a documentação sobre como é possível contribuir com o projeto [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/CONTRIBUTING.md).
 
-## Desenvolvedores
+## 💻 Desenvolvedores
 Veja a documentação específica para programadores que buscam alterar o código fonte [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/DEVELOPERS.md).
 
-## Organização do projeto
+## 🗺 Organização do projeto
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/uml.png?raw=true)
 
 Veja a descrição de cada classe do projeto [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Classes,-Interfaces-e-Aspectos).
@@ -70,13 +77,13 @@ Veja a descrição de cada classe do projeto [aqui](https://github.com/williamni
 
 Veja mais exemplos de test paths gerados [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Exemplos).
 
-## Como funciona?
+## 🔎 Como funciona?
 ![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/others/visao-geral.png?raw=true)
 
 Veja mais detalhes [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-funciona).
 
 
-##  Arquivos
+## 📁 Arquivos
 ### /
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
