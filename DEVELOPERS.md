@@ -14,7 +14,7 @@ Para que seja possível executar algum arquivo do projeto é necessário importa
 * [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update): Plugin da IDE Eclipse usado para habilitar [programação orientada a aspectos](https://en.wikipedia.org/wiki/Aspect-oriented_programming).
 * [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior.
 * [JUnit 4](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/junit-4.13.jar)
-* [Hamcrest](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar): Necessário para a execução de métodos de teste dentro do JDB.
+* [Hamcrest](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/hamcrest-all-1.3.jar): Necessário para a execução de métodos de teste dentro do JDB.
 * [AspectJ Tools](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar): É utilizado para a compilação dos arquivos processados durante a execução da aplicação. Essa compilação é referente a execução da aplicação em outros projetos, e não a compilação do projeto da aplicação em si.
 * [junit-jupiter-api-5.6.2.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/junit-jupiter-api-5.6.2.jar) e [junit-jupiter-params-5.6.2.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/junit-jupiter-params-5.6.2.jar): Necessário para a execução de testes JUnit 5 pela aplicação. Apesar dela converter esses testes em JUnit 4, elas são necessárias para não ocorrer erro caso haja elementos e anotações do JUnit 5 no código.
 
@@ -26,7 +26,7 @@ Com o Eclipse, Java e AJDT instalados, para executar o projeto na IDE é necess�
 3) Clique em `Classpath` e clique em `Add External JARS...`
 4) Selecione os arquivos .jar das seguintes dependências (as outras dependências a própria aplicação pegará do diretório `lib`):
 * AspectJ Tools
-* JUnit 4
+* JUnit 4 ou 5
 5) Por fim clique em `Apply and Close`.
 
 ### <a name="setup-environment"></a> Rodando aplicação como projeto e como plugin
