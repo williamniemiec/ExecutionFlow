@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.FileUtil;

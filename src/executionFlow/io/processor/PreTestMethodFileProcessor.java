@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.runtime.collector.CollectorExecutionFlow;
 import executionFlow.util.ConsoleOutput;

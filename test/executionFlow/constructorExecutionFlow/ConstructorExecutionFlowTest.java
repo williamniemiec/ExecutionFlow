@@ -7,7 +7,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import executionFlow.Control;
+import executionFlow.RemoteControl;
 import executionFlow.ExecutionFlow;
 import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
@@ -143,7 +143,7 @@ public class ConstructorExecutionFlowTest
 	@BeforeClass
 	public static void control()
 	{
-		Control.open();
+		RemoteControl.open();
 	}
 	
 	@AfterClass
@@ -159,6 +159,6 @@ public class ConstructorExecutionFlowTest
 		
 		ExecutionFlow.destroyInvokedManager();
 		
-		Control.close();
+		RemoteControl.close();
 	}
 }

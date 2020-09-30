@@ -22,7 +22,7 @@ import executionFlow.util.ConsoleOutput;
  * must have {@link executionFlow.runtime._SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.2
+ * @version		5.1.0
  * @since		2.0.0
  */
 public aspect MethodCallsCollector extends RuntimeCollector
@@ -148,7 +148,11 @@ public aspect MethodCallsCollector extends RuntimeCollector
 							methodsCalledByTestedInvoked.put(e.getKey(), e.getValue());							
 						}
 					}
-				} catch (IOException | ClassNotFoundException e) {
+				}
+				catch(java.io.EOFException e) {
+					f.delete();
+				}
+				catch (IOException | ClassNotFoundException e) {
 					ConsoleOutput.showError("MethodCallsCollector.aj - "+e.getMessage());
 					e.printStackTrace();
 				}

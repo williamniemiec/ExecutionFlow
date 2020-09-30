@@ -3,3 +3,5 @@ bin
 docs/uml/*.dia~
 *.checkpoint
 *.ajproperties
+*.ef
+*.checkpoint

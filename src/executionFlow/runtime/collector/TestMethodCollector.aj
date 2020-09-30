@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import executionFlow.ConstructorExecutionFlow;
-import executionFlow.Control;
+import executionFlow.RemoteControl;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.dependency.DependencyManager;
@@ -225,7 +225,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			// Checks if it the first execution
 			if (testMethodManager == null && !checkpoint.isActive()) {
 				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
-				Control.open();
+				RemoteControl.open();
 			}
 
 			// Checks if there are files that were not restored in the last execution
@@ -325,7 +325,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 				// Resets totalTests
 				totalTests = -1;
 				
-				Control.close();
+				RemoteControl.close();
 			}
 
 			testMethodManager.restoreAll();
