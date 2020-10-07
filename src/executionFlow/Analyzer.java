@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import executionFlow.dependency.DependencyManager;
 import executionFlow.info.InvokedInfo;
@@ -23,7 +24,7 @@ import executionFlow.util.balance.RoundBracketBalance;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class Analyzer 
@@ -905,16 +906,16 @@ public class Analyzer
 	 * called once for each {@link #run JDB execution}
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getMethodsCalledByTestedInvoked()
+	public Set<String> getMethodsCalledByTestedInvoked()
 	{
 		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		Map<String, List<String>> invokedMethods = new HashMap<>();
+		Map<String, Set<String>> invokedMethods = new HashMap<>();
 		String invokedSignatureWithoutDollarSign = invokedSignature.replaceAll("\\$", ".");
 		
 		
 		if (f.exists()) {
 			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-				invokedMethods = (Map<String, List<String>>) ois.readObject();
+				invokedMethods = (Map<String, Set<String>>) ois.readObject();
 			} 
 			catch (IOException | ClassNotFoundException e) {
 				invokedMethods = null;

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
@@ -20,7 +21,7 @@ import executionFlow.info.MethodInvokedInfo;
  * {@link executionFlow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.2
+ * @version		5.2.0
  * @since		1.0
  */
 public abstract aspect RuntimeCollector 
@@ -69,7 +70,7 @@ public abstract aspect RuntimeCollector
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
 	protected static Object[] testMethodArgs;
-	protected static Map<String, List<String>> methodsCalledByTestedInvoked = new HashMap<>();
+	protected static Map<String, Set<String>> methodsCalledByTestedInvoked = new HashMap<>();
 	
 	
 	//-------------------------------------------------------------------------

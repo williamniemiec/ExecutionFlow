@@ -30,7 +30,7 @@ import executionFlow.util.Pair;
  * <b>Note:</b> An invoked can be a method or a constructor
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class TestedInvokedExporter implements ExporterExecutionFlow
@@ -101,7 +101,7 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 		
 		// Reads CSV (if it already exists)
 		try {
-			for (List<String> line : CSV.read(output)) {
+			for (List<String> line : CSV.read(output, ";")) {
 				List<String> invokedMethod = new ArrayList<>();
 				
 				
@@ -111,7 +111,8 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 				
 				invokedMethodSignatures.put(line.get(0), invokedMethod);
 			}			
-		} catch (IOException e) { }
+		} 
+		catch (IOException e) { }
 		
 		// Erases CSV file
 		output.delete();
@@ -127,9 +128,10 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 				
 				
 				content.add(0, e.getKey());
-				CSV.write(content, output);
+				CSV.write(content, output, ";");
 			}
-		} catch (IOException e1) {
+		} 
+		catch (IOException e1) {
 			ConsoleOutput.showError("CSV - " + e1.getMessage());
 			e1.printStackTrace();
 		}

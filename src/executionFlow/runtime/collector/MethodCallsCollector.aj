@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.util.ConsoleOutput;
@@ -22,7 +24,7 @@ import executionFlow.util.ConsoleOutput;
  * must have {@link executionFlow.runtime._SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public aspect MethodCallsCollector extends RuntimeCollector
@@ -74,6 +76,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	pointcut invokedMethodsByTestedInvoker():
 		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
 		!get(* *.*) && !set(* *.*) &&
+		//!junit4_internal() && !junit5_internal() && 
 		// Within a constructor
 		( withincode(@executionFlow.runtime.CollectCalls *.new(..)) && 
 		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..))) ) ||
@@ -101,14 +104,14 @@ public aspect MethodCallsCollector extends RuntimeCollector
 
 		// Stores method called in methodsCalledByTestedInvoked
 		if (!methodsCalledByTestedInvoked.containsKey(invocationSignature)) {
-			List<String> invokedMethods = new ArrayList<>();
+			Set<String> invokedMethods = new HashSet<>();
 			
 			
 			invokedMethods.add(methodCalledSignature);
 			methodsCalledByTestedInvoked.put(invocationSignature, invokedMethods);
 		}
 		else {
-			List<String> invokedMethods = methodsCalledByTestedInvoked.get(invocationSignature);
+			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invocationSignature);
 			
 			
 			invokedMethods.add(methodCalledSignature);
@@ -131,17 +134,26 @@ public aspect MethodCallsCollector extends RuntimeCollector
 				// Reads file (if exists)
 				try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
 					@SuppressWarnings("unchecked")
-					Map<String, List<String>> map = (Map<String, List<String>>) ois.readObject();
+					Map<String, Set<String>> map = (Map<String, Set<String>>) ois.readObject();
 					
 					
-					for (Map.Entry<String, List<String>> e : map.entrySet()) {
+					for (Map.Entry<String, Set<String>> e : map.entrySet()) {
 						// Merges methods called by tested invoked with saved
 						// collection
 						if (methodsCalledByTestedInvoked.containsKey(e.getKey())) {
-							List<String> methodsCalled = methodsCalledByTestedInvoked.get(e.getKey());
+							Set<String> methodsCalled = methodsCalledByTestedInvoked.get(e.getKey());
+							
 							
 							for (String invokedMethod : e.getValue())
 								methodsCalled.add(invokedMethod);
+							
+							for (String methodCalled : e.getValue()) {
+								if (!methodsCalled.contains(methodCalled)) {
+									methodsCalled.add(methodCalled);
+								}
+							}
+							
+							methodsCalledByTestedInvoked.put(e.getKey(), methodsCalled);		
 						}
 						// Saves collected methods called by tested invoked
 						else {

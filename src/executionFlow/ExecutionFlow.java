@@ -110,8 +110,8 @@ public abstract class ExecutionFlow
 	 * Sets test path export type.
 	 */
 	static {
-		EXPORT = TestPathExportType.CONSOLE;
-//		EXPORT = TestPathExportType.FILE;
+//		EXPORT = TestPathExportType.CONSOLE;
+		EXPORT = TestPathExportType.FILE;
 	}
 	
 
