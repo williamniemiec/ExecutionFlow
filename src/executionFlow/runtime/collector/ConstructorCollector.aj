@@ -65,6 +65,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 	 */
 	pointcut constructorCollector(): 
 		!skipAnnotation() &&
+		!(junit4_internal() || junit5_internal()) &&
 		cflow(
 			(junit4() || junit5()) && 
 			call(*.new(..))

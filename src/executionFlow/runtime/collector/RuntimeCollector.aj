@@ -119,17 +119,19 @@ public abstract aspect RuntimeCollector
 	//		Methods
 	//-------------------------------------------------------------------------	
 	/**
-	 * Returns if a method is a native method of Java.
+	 * Checks whether a method signature belongs to a native Java method or 
+	 * if it is a JUnit method.
 	 * 
 	 * @param		methodSignature Signature of the method
 	 * 
-	 * @return		If the method is a native method
+	 * @return		If the method is a native method or JUnit method
 	 */
 	protected boolean isNativeMethod(String methodSignature)
 	{
 		return	methodSignature == null || 
 				methodSignature.contains("java.") || 
-				methodSignature.contains("jdk.");
+				methodSignature.contains("jdk.") ||
+				methodSignature.contains("org.junit.");
 	}
 	
 	/**

@@ -6,9 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,10 +54,11 @@ public aspect MethodCallsCollector extends RuntimeCollector
 		String signature = thisJoinPoint.getSignature().toString();
 
 		
-		// Ignores native java methods
-		if (isNativeMethod(signature)) { return; }
+		if (isNativeMethod(signature)) 
+			return;
 
-		if (signature.indexOf("(") == -1) { return; }
+		if (signature.indexOf("(") == -1) 
+			return;
 		
 		// Gets correct signature of inner classes
 		invocationSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
@@ -75,8 +74,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 */
 	pointcut invokedMethodsByTestedInvoker():
 		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
-		!get(* *.*) && !set(* *.*) &&
-		//!junit4_internal() && !junit5_internal() && 
+		!get(* *.*) && !set(* *.*) && 
 		// Within a constructor
 		( withincode(@executionFlow.runtime.CollectCalls *.new(..)) && 
 		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..))) ) ||
@@ -90,13 +88,15 @@ public aspect MethodCallsCollector extends RuntimeCollector
 		String methodCalledSignature = thisJoinPoint.getSignature().toString();
 
 		
-		// Checks if is a method signature
-		if (!isMethodSignature(methodCalledSignature)) { return; }
+		if (!isMethodSignature(methodCalledSignature))
+			return;
 		
-		// Ignores native java methods
-		if (isNativeMethod(methodCalledSignature)) { return; }
+		if (isNativeMethod(methodCalledSignature))
+			return;
 
-		if (invocationSignature == null) { return; }
+		if (invocationSignature == null)
+			return;
+		
 		// Removes return type from the signature of the method called
 		methodCalledSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
 				+ thisJoinPoint.getSignature().getName() + methodCalledSignature.substring(methodCalledSignature.indexOf("("));
