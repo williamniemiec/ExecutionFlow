@@ -41,7 +41,7 @@ public class FileExporter implements ExporterExecutionFlow
 	 * Exports computed test paths from collected invoked, where an invoked
 	 * can be a method or a constructor.
 	 * 
-	 * @param		dirName Name of the directory
+	 * @param		dirName Directory name
 	 * @param		isConstructor If the invoked is a constructor
 	 */
 	public FileExporter(String dirName, boolean isConstructor)

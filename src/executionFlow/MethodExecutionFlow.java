@@ -7,11 +7,13 @@ import java.util.Map;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
 import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.ProcessedSourceFileExporter;
 import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
+import executionFlow.runtime.collector.MethodCollector;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.Pair;
 
@@ -114,10 +116,24 @@ public class MethodExecutionFlow extends ExecutionFlow
 		List<List<Integer>> tp;
 		FileManager methodFileManager, testMethodFileManager;
 		Analyzer analyzer;
-		MethodsCalledByTestedInvokedExporter invokedMethodsExporter = isDevelopment() ?
-				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "examples\\results") :
-				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "results");
+		MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
+		ProcessedSourceFileExporter processedSourceFileExporter;
 		
+		
+		if (isDevelopment()) {
+			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
+					"MethodsCalledByTestedMethod", "examples\\results"
+			);
+			
+			processedSourceFileExporter = new ProcessedSourceFileExporter("examples\\results");
+		}
+		else {
+			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
+					"MethodsCalledByTestedMethod", "results"
+			);
+			
+			processedSourceFileExporter = new ProcessedSourceFileExporter("results");
+		}
 		
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : methodCollector.values()) {
@@ -150,12 +166,28 @@ public class MethodExecutionFlow extends ExecutionFlow
 				);
 				
 				try {
-					// Runs analyzer
+					String methodSignature = collector.getMethodInfo()
+							.getInvokedSignature()
+							.replaceAll("\\$", ".");
+					
+					
 					analyzer = analyze(
 							collector.getTestMethodInfo(), testMethodFileManager, 
 							collector.getMethodInfo(), methodFileManager,
 							methodCollector
 					);
+					
+					// Stores processed file
+					processedSourceFileExporter.export(
+							collector.getMethodInfo().getSrcPath(), 
+							methodSignature,
+							false
+					);
+					
+					// Computes test path from JDB
+					ConsoleOutput.showInfo("Computing test path of invoked " 
+							+ methodSignature + "...");
+					analyzer.run();
 
 					// Checks if time has been exceeded
 					if (Analyzer.getTimeout()) {

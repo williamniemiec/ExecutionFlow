@@ -3,6 +3,7 @@ package executionFlow;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,11 +18,14 @@ import executionFlow.exporter.ExporterExecutionFlow;
 import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
+import executionFlow.io.FileEncoding;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.util.ConsoleOutput;
+import executionFlow.util.FileUtil;
 import executionFlow.util.Pair;
+import executionFlow.util.formatter.JavaIndenter;
 
 
 /**
@@ -110,8 +114,8 @@ public abstract class ExecutionFlow
 	 * Sets test path export type.
 	 */
 	static {
-//		EXPORT = TestPathExportType.CONSOLE;
-		EXPORT = TestPathExportType.FILE;
+		EXPORT = TestPathExportType.CONSOLE;
+//		EXPORT = TestPathExportType.FILE;
 	}
 	
 
@@ -315,11 +319,7 @@ public abstract class ExecutionFlow
 			ConsoleOutput.showInfo("Processing completed");
 		}
 		
-		// Computes test path from JDB
-		ConsoleOutput.showInfo("Computing test path of invoked "
-			+ invSig + "...");
-
-		return new Analyzer(invokedInfo, testMethodInfo).run();
+		return new Analyzer(invokedInfo, testMethodInfo);
 	}
 	
 	
