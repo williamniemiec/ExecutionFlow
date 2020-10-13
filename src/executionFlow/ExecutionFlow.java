@@ -42,7 +42,7 @@ import executionFlow.util.formatter.JavaIndenter;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -260,7 +260,7 @@ public abstract class ExecutionFlow
 				.replaceAll("\\$", ".");
 		boolean isConstructor = invokedInfo instanceof ConstructorInvokedInfo;
 	
-			
+		
 		analyzer = analyze(
 				testMethodInfo, testMethodFileManager, 
 				invokedInfo, invokedFileManager,
@@ -324,10 +324,9 @@ public abstract class ExecutionFlow
 					analyzer.getMethodsCalledByTestedInvoked(), false
 			);
 		}
-		else {
-			analyzer.deleteMethodsCalledByTestedInvoked();
-		}
-		
+
+		analyzer.deleteMethodsCalledByTestedInvoked();
+
 		return tp;
 	}
 	

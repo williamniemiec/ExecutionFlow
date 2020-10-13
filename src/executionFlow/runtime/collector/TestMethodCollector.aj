@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.RemoteControl;
 import executionFlow.ExecutionFlow;
@@ -35,7 +37,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -49,6 +51,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "Test_Method");
 	private static Checkpoint checkpoint_initial = 
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
+	private static Checkpoint checkpoint_appRunning =
+			new Checkpoint(ExecutionFlow.getAppRootPath(), "app_running");
 	private static int totalTests = -1;
 	private static String outputDir;
 	private String lastRepeatedTestSignature;
@@ -165,6 +169,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			    	deleteTestMethodBackupFiles();
 					disableCheckpoint(checkpoint);
 					disableCheckpoint(checkpoint_initial);
+					disableCheckpoint(checkpoint_appRunning);
 					
 					if (mcti.exists())
 						while (!mcti.delete());
@@ -226,6 +231,11 @@ public aspect TestMethodCollector extends RuntimeCollector
 			if (testMethodManager == null && !checkpoint.isActive()) {
 				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
 				RemoteControl.open();
+				
+				if (!checkpoint_appRunning.isActive()) {
+					checkpoint_appRunning.enable();
+					askLog();
+				}
 			}
 
 			// Checks if there are files that were not restored in the last execution
@@ -506,5 +516,37 @@ public aspect TestMethodCollector extends RuntimeCollector
 		}
 		
 		return hasError;
+	}
+	
+	/**
+	 * Asks the user what level of logging will be used.
+	 */
+	private void askLog()
+	{
+		String[] options = {"None","Error", "Warning and errors", "All"};
+		ConsoleOutput.Level logLevel;
+		
+		int response = JOptionPane.showOptionDialog(
+				null, "Choose log level", "Log option", 
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
+				null, options, options[3]
+		);
+		
+		switch (response) {
+			case 0:
+				logLevel = ConsoleOutput.Level.OFF;
+				break;
+			case 1:
+				logLevel = ConsoleOutput.Level.ERROR;
+				break;
+			case 2:
+				logLevel = ConsoleOutput.Level.WARNING_AND_ERROR;
+				break;
+			case 3:
+			default:
+				logLevel = ConsoleOutput.Level.ALL;
+		}
+		
+		ConsoleOutput.setLevel(logLevel);
 	}
 }

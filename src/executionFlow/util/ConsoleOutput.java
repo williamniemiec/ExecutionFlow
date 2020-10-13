@@ -38,7 +38,7 @@ public class ConsoleOutput
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final int WIDTH = 8;
-	private static Level level = Level.WARNING_AND_ERROR;
+	private static Level level = Level.ALL;
 	
 	
 	//-------------------------------------------------------------------------

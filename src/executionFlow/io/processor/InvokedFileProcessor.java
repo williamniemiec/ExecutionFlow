@@ -312,15 +312,17 @@ public class InvokedFileProcessor extends FileProcessor
 		}
 		
 		// Displays processed file
-		ConsoleOutput.showHeader("File after processing (test path will be computed based on it)", '=');
-		ConsoleOutput.printDivision('-', 80);
-		formatedFile = new JavaIndenter().format(lines);
-		
-		for (int i=0; i<lines.size(); i++) {
-			System.out.printf("%-6d\t%s\n", i+1, formatedFile.get(i));
+		if (ConsoleOutput.getLevel() == ConsoleOutput.Level.ALL) {
+			ConsoleOutput.showHeader("File after processing (test path will be computed based on it)", '=');
+			ConsoleOutput.printDivision('-', 80);
+			formatedFile = new JavaIndenter().format(lines);
+			
+			for (int i=0; i<lines.size(); i++) {
+				System.out.printf("%-6d\t%s\n", i+1, formatedFile.get(i));
+			}
+			
+			ConsoleOutput.printDivision('-', 80);
 		}
-		
-		ConsoleOutput.printDivision('-', 80);
 		
 		// Processing #2
 		holePlug = new HolePlug(lines);
