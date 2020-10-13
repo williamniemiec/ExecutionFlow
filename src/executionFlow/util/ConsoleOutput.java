@@ -9,9 +9,36 @@ package executionFlow.util;
 public class ConsoleOutput 
 {
 	//-------------------------------------------------------------------------
+	//		Enumerations
+	//-------------------------------------------------------------------------
+	public enum Level {
+		/**
+		 * Disables all messages.
+		 */
+		OFF,
+		
+		/**
+		 * Displays only error messages.
+		 */
+		ERROR, 
+		
+		/**
+		 * Displays only error and warning messages.
+		 */
+		WARNING_AND_ERROR, 
+		
+		/**
+		 * Displays all messages.
+		 */
+		ALL
+	}
+	
+	
+	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final int WIDTH = 8;
+	private static Level level = Level.WARNING_AND_ERROR;
 	
 	
 	//-------------------------------------------------------------------------
@@ -47,6 +74,12 @@ public class ConsoleOutput
 	 */
 	public static void showInfo(String message, boolean breakLine)
 	{
+		boolean shouldDisplay =	(level == Level.ALL);
+		
+		
+		if (!shouldDisplay)
+			return;
+		
 		if (breakLine)
 			System.out.printf("%-" + WIDTH + "s%s\n", "[INFO] ", message);
 		else
@@ -83,6 +116,13 @@ public class ConsoleOutput
 	 */
 	public static void showError(String message, boolean breakLine)
 	{
+		boolean shouldDisplay =	(level == Level.WARNING_AND_ERROR) ||
+								(level == Level.ERROR);
+		
+		
+		if (!shouldDisplay)
+			return;
+		
 		if (breakLine)
 			System.err.printf("%-" + WIDTH + "s%s\n", "[ERROR] ", message);
 		else
@@ -119,6 +159,13 @@ public class ConsoleOutput
 	 */
 	public static void showWarning(String message, boolean breakLine)
 	{
+		boolean shouldDisplay = (level == Level.ALL) || 
+								(level == Level.WARNING_AND_ERROR);
+		
+		
+		if (!shouldDisplay)
+			return;
+		
 		if (breakLine)
 			System.out.printf("%-" + WIDTH + "s%s\n", "[WARN] ", message);
 		else
@@ -206,5 +253,31 @@ public class ConsoleOutput
 	{
 		for (int i=0; i<amount; i++)
 			System.out.print(" ");
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters & Setters
+	//-------------------------------------------------------------------------
+	/**
+	 * Gets output level. The level defines what type of message will be 
+	 * displayed.
+	 * 
+	 * @return		Current level
+	 */
+	public static Level getLevel()
+	{
+		return level;
+	}
+	
+	/**
+	 * Sets output level. The level defines what type of message will be 
+	 * displayed.
+	 * 
+	 * @param		level New level
+	 */
+	public static void setLevel(Level level)
+	{
+		ConsoleOutput.level = level;
 	}
 }
