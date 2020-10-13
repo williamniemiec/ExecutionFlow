@@ -1,5 +1,7 @@
 package executionFlow;
 
+import java.io.IOException;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -8,14 +10,13 @@ import java.util.Map;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
 import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.ProcessedSourceFileExporter;
 import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.Pair;
 
 
 /**
@@ -39,7 +40,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Stores information about collected constructors.
 	 */
 	private Collection<CollectorInfo> constructorCollector;
-	private boolean exportCalledMethods;
+	
 	
 	
 	//-------------------------------------------------------------------------
@@ -89,6 +90,21 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		this.exportCalledMethods = exportCalledMethods;
 		
 		computedTestPaths = new HashMap<>();
+		
+		if (isDevelopment()) {
+			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
+					"MethodsCalledByTestedConstructor", "examples\\results"
+			);
+			
+			processedSourceFileExporter = new ProcessedSourceFileExporter("examples\\results");
+		}
+		else {
+			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
+					"MethodsCalledByTestedConstructor", "results"
+			);
+			
+			processedSourceFileExporter = new ProcessedSourceFileExporter("results");
+		}
 	}
 	
 	
@@ -98,6 +114,9 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	@Override
 	public ExecutionFlow execute()
 	{
+		if (constructorCollector == null || constructorCollector.isEmpty())
+			return this;
+		
 		// -----{ DEBUG }-----
 		if (DEBUG) {
 			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
@@ -106,15 +125,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		}
 		// -----{ END DEBUG }-----
 		
-		if (constructorCollector == null || constructorCollector.isEmpty())
-			return this;
-		
-		List<List<Integer>> tp;
 		FileManager constructorFileManager, testMethodFileManager;
-		Analyzer analyzer;
-		MethodsCalledByTestedInvokedExporter methodsCalledExporter = isDevelopment() ?
-				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedConstructor", "examples\\results") :
-				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedConstructor", "results");
+		Map<Integer, List<CollectorInfo>> consCollector =  Map.of(0, List.copyOf(constructorCollector));
 		
 		
 		// Generates test path for each collected method
@@ -141,58 +153,21 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			);
 			
 			try {
-				// Runs analyzer
-				analyzer = analyze(
-						collector.getTestMethodInfo(), testMethodFileManager, 
-						collector.getConstructorInfo(), constructorFileManager,
-						Map.of(0, List.copyOf(constructorCollector))
+				run(
+					collector.getTestMethodInfo(), 
+					testMethodFileManager, 
+					collector.getConstructorInfo(), 
+					constructorFileManager,
+					consCollector
 				);
-				
-				// Checks if time has been exceeded
-				if (Analyzer.getTimeout()) {
-					ConsoleOutput.showError("Time exceeded");
-					Thread.sleep(2000);
-					continue;
-				}
-				
-				tp = analyzer.getTestPaths();
 
-				// Fix anonymous class signature
-				if (collector.getConstructorInfo().getInvokedSignature() != analyzer.getAnalyzedInvokedSignature()) {
-					if (analyzer.getAnalyzedInvokedSignature().isBlank()) {
-						((ConstructorInvokedInfo)collector.getConstructorInfo())
-						.setInvokedSignature(collector.getConstructorInfo().getInvokedSignature().replaceAll("\\$", "."));
-					}
-					else {
-						((ConstructorInvokedInfo)collector.getConstructorInfo())
-						.setInvokedSignature(analyzer.getAnalyzedInvokedSignature());
-					}
-				}
-				
-				if (tp.isEmpty() || tp.get(0).isEmpty())
-					ConsoleOutput.showWarning("Test path is empty");
-				else
-					ConsoleOutput.showInfo("Test path has been successfully computed");
-				
-				// Stores each computed test path
-				storeTestPath(tp, Pair.of(
-						collector.getTestMethodInfo().getInvokedSignature(),
-						collector.getConstructorInfo().getInvokedSignature().replaceAll("\\$", ".")
-				));
-				
-				// Exports called methods by tested constructor to a CSV
-				if (exportCalledMethods) {
-					methodsCalledExporter.export(
-							collector.getConstructorInfo().getInvokedSignature(),
-							analyzer.getMethodsCalledByTestedInvoked(), true
-					);
-				}
-				else {
-					analyzer.deleteMethodsCalledByTestedInvoked();
-				}
-			} catch (Exception e) {
-				ConsoleOutput.showError(e.getMessage());
-				e.printStackTrace();
+			} 
+			catch (InterruptedByTimeoutException e1) {
+				ConsoleOutput.showError("Time exceeded");
+			} 
+			catch (IOException e2) {
+				ConsoleOutput.showError(e2.getMessage());
+				e2.printStackTrace();
 			}
 		}
 		

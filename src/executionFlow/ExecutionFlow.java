@@ -3,6 +3,7 @@ package executionFlow;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -15,8 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.exporter.ExporterExecutionFlow;
+import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.ProcessedSourceFileExporter;
 import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
+import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.FileManager;
@@ -89,6 +93,9 @@ public abstract class ExecutionFlow
 	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
 	
 	protected ExporterExecutionFlow exporter;
+	protected MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
+	protected  ProcessedSourceFileExporter processedSourceFileExporter;
+	protected boolean exportCalledMethods;
 
 	
 	//-------------------------------------------------------------------------
@@ -219,6 +226,109 @@ public abstract class ExecutionFlow
 			throw new IllegalArgumentException("Exporter cannot be null");
 		
 		exporter.export(computedTestPaths);
+	}
+	
+	/**
+	 * Runs the application by performing the following tasks: 
+	 * <ul>
+	 * 	<li>Computes test path</li>
+	 * 	<li>Exports test path</li>
+	 * 	<li>Exports methods called by tested invoked</li>
+	 * 	<li>Exports test methods that test the invoked</li>
+	 * 	<li>Exports processed source file</li>
+	 * </ul>
+	 * 
+	 * @param		testMethodInfo Test method information
+	 * @param		testMethodFileManager Test method file information
+	 * @param		invokedInfo Invoked information
+	 * @param		invokedFileManager Invoked file information
+	 * @param		collectors Information about all invoked collected
+
+	 * @return		Test path or empty list if there is no test path
+	 * 
+	 * @throws 		IOException  If an error occurs while computing test path 
+	 * or exporting processed source file
+	 * @throws 		InterruptedByTimeoutException If runtime has been exceeded 
+	 */
+	protected List<List<Integer>> run(InvokedInfo testMethodInfo, FileManager testMethodFileManager, 
+			InvokedInfo invokedInfo, FileManager invokedFileManager,
+			Map<Integer, List<CollectorInfo>> collectors) throws IOException, InterruptedByTimeoutException
+	{
+		List<List<Integer>> tp = new ArrayList<>();
+		Analyzer analyzer;
+		String invokedSignature = invokedInfo.getInvokedSignature()
+				.replaceAll("\\$", ".");
+		boolean isConstructor = invokedInfo instanceof ConstructorInvokedInfo;
+	
+			
+		analyzer = analyze(
+				testMethodInfo, testMethodFileManager, 
+				invokedInfo, invokedFileManager,
+				collectors
+		);
+		
+		// Stores processed file
+		processedSourceFileExporter.export(
+				invokedInfo.getSrcPath(), 
+				invokedSignature,
+				isConstructor
+		);
+		
+		// Computes test path from JDB
+		ConsoleOutput.showInfo("Computing test path of invoked " 
+				+ invokedSignature + "...");
+		analyzer.run();
+
+		// Checks if time has been exceeded
+		if (Analyzer.getTimeout()) {
+			try {
+				Thread.sleep(2000);
+			} 
+			catch (InterruptedException e) 
+			{}
+			
+			throw new InterruptedByTimeoutException();
+		}
+		
+		tp = analyzer.getTestPaths();
+		
+		if (tp.isEmpty() || tp.get(0).isEmpty())
+			ConsoleOutput.showWarning("Test path is empty");
+		else
+			ConsoleOutput.showInfo("Test path has been successfully computed");				
+
+		// Fix anonymous class signature
+		if (isConstructor) {
+			if (invokedInfo.getInvokedSignature() != analyzer.getAnalyzedInvokedSignature()) {
+				if (analyzer.getAnalyzedInvokedSignature().isBlank()) {
+					((ConstructorInvokedInfo)invokedInfo)
+						.setInvokedSignature(invokedInfo.getInvokedSignature().replaceAll("\\$", "."));
+				}
+				else {
+					((ConstructorInvokedInfo)invokedInfo)
+						.setInvokedSignature(analyzer.getAnalyzedInvokedSignature());
+				}
+			}
+		}
+		
+		// Stores each computed test path
+		storeTestPath(tp, Pair.of(
+				testMethodInfo.getInvokedSignature(),
+				invokedInfo.getInvokedSignature().replaceAll("\\$", ".")
+		));
+		
+		// Exports methods called by tested invoked to a CSV
+		if (exportCalledMethods) {
+			invokedMethodsExporter.export(
+					invokedInfo.getInvokedSignature(), 
+					analyzer.getMethodsCalledByTestedInvoked(), false
+			);
+		}
+		else {
+			analyzer.deleteMethodsCalledByTestedInvoked();
+		}
+		
+		return tp;
 	}
 	
 	/**

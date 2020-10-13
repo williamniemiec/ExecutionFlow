@@ -37,7 +37,7 @@ public class JavaLine {
 				javaVar = javaVar.trim();
 
 				// Check brackets
-				if (javaVar.indexOf('{') > -1 || JavaIndenter.blnFlag == true){
+				if (javaVar.indexOf('{') > -1 || JavaIndenter.getBinFlag() == true){
 					bracketCount--;
 					//Comment but bracket?
 				}
@@ -92,7 +92,7 @@ public class JavaLine {
 			commentVar = "";
 		}
 
-		if (JavaIndenter.blockComment == true){
+		if (JavaIndenter.getBlockComment() == true){
 			// detect \maybe
 
 
@@ -126,7 +126,7 @@ public class JavaLine {
     private static String indentJava(int bracketCount){
     	String strIndent="";
 		 for (int y = 0; y < bracketCount; y++){
-			 strIndent += "  "; // or /t
+			 strIndent += "     "; // or /t
 	 	 }
 	return strIndent;
     }

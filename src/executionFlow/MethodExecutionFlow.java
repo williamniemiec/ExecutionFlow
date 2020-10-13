@@ -1,5 +1,7 @@
 package executionFlow;
 
+import java.io.IOException;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,6 @@ import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.MethodCollector;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.Pair;
 
 
 /**
@@ -43,8 +44,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * <ul> 
 	 */
 	private Map<Integer, List<CollectorInfo>> methodCollector;
-	
-	private boolean exportCalledMethods;
+
 	
 	
 	//-------------------------------------------------------------------------
@@ -92,32 +92,6 @@ public class MethodExecutionFlow extends ExecutionFlow
 		this.exportCalledMethods = exportCalledMethods;
 		
 		computedTestPaths = new HashMap<>();
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
-	@Override
-	public ExecutionFlow execute()
-	{
-		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-			ConsoleOutput.showDebug("MEF: " + methodCollector.toString());
-			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-		}
-		// -----{ END DEBUG }-----
-		
-		if (methodCollector == null || methodCollector.isEmpty())
-			return this;
-		
-		boolean gotoNextLine = false;
-		List<List<Integer>> tp;
-		FileManager methodFileManager, testMethodFileManager;
-		Analyzer analyzer;
-		MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
-		ProcessedSourceFileExporter processedSourceFileExporter;
 		
 		
 		if (isDevelopment()) {
@@ -134,6 +108,30 @@ public class MethodExecutionFlow extends ExecutionFlow
 			
 			processedSourceFileExporter = new ProcessedSourceFileExporter("results");
 		}
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	@Override
+	public ExecutionFlow execute()
+	{
+		if (methodCollector == null || methodCollector.isEmpty())
+			return this;
+		
+		// -----{ DEBUG }-----
+		if (DEBUG) {
+			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+			ConsoleOutput.showDebug("MEF: " + methodCollector.toString());
+			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+		}
+		// -----{ END DEBUG }-----
+		
+		boolean gotoNextLine = false;
+		List<List<Integer>> tp;
+		FileManager methodFileManager, testMethodFileManager;
+		
 		
 		// Generates test path for each collected method
 		for (List<CollectorInfo> collectors : methodCollector.values()) {
@@ -166,67 +164,23 @@ public class MethodExecutionFlow extends ExecutionFlow
 				);
 				
 				try {
-					String methodSignature = collector.getMethodInfo()
-							.getInvokedSignature()
-							.replaceAll("\\$", ".");
-					
-					
-					analyzer = analyze(
-							collector.getTestMethodInfo(), testMethodFileManager, 
-							collector.getMethodInfo(), methodFileManager,
-							methodCollector
+					tp = run(
+						collector.getTestMethodInfo(), 
+						testMethodFileManager, 
+						collector.getMethodInfo(), 
+						methodFileManager,
+						methodCollector
 					);
 					
-					// Stores processed file
-					processedSourceFileExporter.export(
-							collector.getMethodInfo().getSrcPath(), 
-							methodSignature,
-							false
-					);
-					
-					// Computes test path from JDB
-					ConsoleOutput.showInfo("Computing test path of invoked " 
-							+ methodSignature + "...");
-					analyzer.run();
-
-					// Checks if time has been exceeded
-					if (Analyzer.getTimeout()) {
-						ConsoleOutput.showError("Time exceeded");
-						Thread.sleep(2000);
-						continue;
-					}
-					
-					tp = analyzer.getTestPaths();
-					
-					if (tp.isEmpty() || tp.get(0).isEmpty())
-						ConsoleOutput.showWarning("Test path is empty");
-					else
-						ConsoleOutput.showInfo("Test path has been successfully computed");				
-
 					// Checks whether test path was generated inside a loop
-					if (tp.size() > 1) {
-						gotoNextLine = true;
-					}
-					
-					// Stores each computed test path
-					storeTestPath(tp, Pair.of(
-							collector.getTestMethodInfo().getInvokedSignature(),
-							collector.getMethodInfo().getInvokedSignature().replaceAll("\\$", ".")
-					));
-					
-					// Exports methods called by tested method to a CSV
-					if (exportCalledMethods) {
-						invokedMethodsExporter.export(
-								collector.getMethodInfo().getInvokedSignature(), 
-								analyzer.getMethodsCalledByTestedInvoked(), false
-						);
-					}
-					else {
-						analyzer.deleteMethodsCalledByTestedInvoked();
-					}
-				} catch (Exception e) {
-					ConsoleOutput.showError(e.getMessage());
-					e.printStackTrace();
+					gotoNextLine = tp.size() > 1;
+				} 
+				catch (InterruptedByTimeoutException e1) {
+					ConsoleOutput.showError("Time exceeded");
+				} 
+				catch (IOException e2) {
+					ConsoleOutput.showError(e2.getMessage());
+					e2.printStackTrace();
 				}
 			}
 		}
