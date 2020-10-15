@@ -9,9 +9,9 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import executionFlow.ConstructorExecutionFlow;
-import executionFlow.RemoteControl;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
+import executionFlow.RemoteControl;
 import executionFlow.dependency.DependencyManager;
 import executionFlow.exporter.TestedInvokedExporter;
 import executionFlow.info.CollectorInfo;
@@ -23,8 +23,10 @@ import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionFlow.user.Session;
 import executionFlow.util.Checkpoint;
 import executionFlow.util.ConsoleOutput;
+import executionFlow.util.ConsoleOutput.Level;
 import executionFlow.util.JUnit4Runner;
 
 
@@ -147,6 +149,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			    		return;
 			    	
 		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		    		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
 		    		
 		    		
 		    		if (JUnit4Runner.isRunning()) {
@@ -173,6 +176,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 					
 					if (mcti.exists())
 						while (!mcti.delete());
+					
+					session.destroy();
 			    }
 			});
 		}
@@ -184,6 +189,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		try {
 			String className, classSignature, testClassSignature;
 			Path testSrcPath;
+			Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
 			
 			
 			// Checks if it is not the first run
@@ -233,9 +239,19 @@ public aspect TestMethodCollector extends RuntimeCollector
 				RemoteControl.open();
 				
 				if (!checkpoint_appRunning.isActive()) {
+					ConsoleOutput.Level logLevel = askLog();
+					
+					
 					checkpoint_appRunning.enable();
-					askLog();
-				}
+					
+					session.save("LOG_LEVEL", logLevel);
+					ConsoleOutput.setLevel(logLevel);
+				}	
+			}
+			else {
+				ConsoleOutput.Level logLevel = (ConsoleOutput.Level)session.read("LOG_LEVEL");
+				
+				ConsoleOutput.setLevel(logLevel);
 			}
 
 			// Checks if there are files that were not restored in the last execution
@@ -520,8 +536,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 	
 	/**
 	 * Asks the user what level of logging will be used.
+	 * 
+	 * @return		Selected log level
 	 */
-	private void askLog()
+	private Level askLog()
 	{
 		String[] options = {"None","Error", "Warning and errors", "All"};
 		ConsoleOutput.Level logLevel;
@@ -547,6 +565,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 				logLevel = ConsoleOutput.Level.ALL;
 		}
 		
-		ConsoleOutput.setLevel(logLevel);
+		return logLevel;
 	}
 }
