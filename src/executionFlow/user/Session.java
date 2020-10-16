@@ -11,9 +11,8 @@ import java.util.Map;
 
 
 /**
- * Creates a session that stores information obtained at run time. To allow 
- * different processes and threads to have access to this information, it is 
- * written to disk.
+ * Session manager that stores information obtained at run time. It allows 
+ * different processes and threads to have access to this information.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		5.2.0
@@ -24,7 +23,7 @@ public class Session
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	private Map<String, Object> content;
+	private transient Map<String, Object> content;
 	private File target;
 	
 	
@@ -54,16 +53,19 @@ public class Session
 	 * @param		value Data to be stored
 	 * 
 	 * @throws		IOException If an error occurred while storing the session
+	 * 
+	 * @implNote	To allow different processes and threads to have access to 
+	 * session data, it is stored on disk.
 	 */
-	public void save(String key, Object value) throws IOException
+	public synchronized void save(String key, Object value) throws IOException
 	{
-		if (target.exists())
-			target.delete();
-		
-		load();
+		if (exists()) {
+			load();
+			target.delete();			
+		}
 		
 		content.put(key, value);
-		
+
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(target))) {
 			oos.writeObject(content);
 		}
@@ -81,7 +83,7 @@ public class Session
 	 */
 	public Object read(String key) throws IOException
 	{
-		if (!target.exists())
+		if (!exists())
 			throw new IllegalStateException("Session not found");
 		
 		load();
@@ -117,7 +119,7 @@ public class Session
 	 * @return		True if session has been destroyed or if it does not exist;
 	 * false otherwise
 	 */
-	public boolean destroy()
+	public synchronized boolean destroy()
 	{
 		return target.exists() ? target.delete() : true;
 	}
@@ -130,11 +132,12 @@ public class Session
 	@SuppressWarnings("unchecked")
 	private void load() throws IOException
 	{
+		if (!exists())
+			return;
+
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(target))) {
-			if (ois.readObject() instanceof Map<?, ?>) {
-				content = (Map<String, Object>)ois.readObject();
-			}
-		}
+			content = (Map<String, Object>)ois.readObject();
+		}		
 		catch (ClassNotFoundException e) 
 		{}
 	}

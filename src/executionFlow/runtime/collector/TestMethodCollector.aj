@@ -541,7 +541,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private Level askLog()
 	{
-		String[] options = {"None","Error", "Warning and errors", "All"};
+		String[] options = {
+				"<html><body><div align='center'>None<br>(not recommended \u274C)</div></body></html>",
+				"Error", 
+				"<html><body><div align='center'>Warning and errors<br>(recommended \u2714)</div></body></html>", 
+				"All"
+		};
 		ConsoleOutput.Level logLevel;
 		
 		int response = JOptionPane.showOptionDialog(
