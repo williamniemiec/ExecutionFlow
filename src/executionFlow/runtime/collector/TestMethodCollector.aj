@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.aspectj.lang.JoinPoint;
+
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
@@ -137,144 +139,17 @@ public aspect TestMethodCollector extends RuntimeCollector
 			return;
 		
 		reset();
-		testMethodSignature = 
-				CollectorExecutionFlow.extractMethodSignature(thisJoinPoint.getSignature().toString());
 		success = false;
 		
-		// Defines the routine to be executed after the app ends
-		try {
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-			    public void run() {
-			    	if (success)
-			    		return;
-			    	
-		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		    		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
-		    		
-		    		
-		    		if (JUnit4Runner.isRunning()) {
-				    	try {
-							JUnit4Runner.quit();
-						} 
-				    	catch (IOException e) {}
-		    		}
-			    	    		
-			    	// Restores original files			    	
-			    	restoreTestMethodFiles();
-			    	restoreInvokedFiles();
-			    	
-			    	if (testMethodManager != null)
-			    		testMethodManager.restoreAll();
-			    	
-			    	if (ExecutionFlow.getInvokedManager() != null)
-			    		ExecutionFlow.getInvokedManager().deleteBackup();
-			    	
-			    	deleteTestMethodBackupFiles();
-					disableCheckpoint(checkpoint);
-					disableCheckpoint(checkpoint_initial);
-					disableCheckpoint(checkpoint_appRunning);
-					
-					if (mcti.exists())
-						while (!mcti.delete());
-					
-					session.destroy();
-			    }
-			});
-		}
-		catch (IllegalStateException e)
-		{}
-		
-		
-		// Gets information about test method
-		try {
-			String className, classSignature, testClassSignature;
-			Path testSrcPath;
-			Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
-			
-			
-			// Checks if it is not the first run
-			if (checkpoint_initial.isActive())
-				ExecutionFlow.init(false);
-			else
-				ExecutionFlow.init(true);
-			
-			// Gets compiled file path of the test method
-			className = thisJoinPoint.getTarget().getClass().getSimpleName();
-			classSignature = thisJoinPoint.getSignature().getDeclaringTypeName();
-			testClassPath = CollectorExecutionFlow.findBinPath(className, classSignature);
-			
-			// Gets source file path of the test method
-			testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
-			testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
-			testClassPackage = MethodInvokedInfo.extractPackage(testClassSignature);
-			testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
-			testMethodArgs = thisJoinPoint.getArgs();
+		onShutdown();
 
-			try {
-				testMethodInfo = new MethodInvokedInfo.Builder()
-					.binPath(testClassPath)
-					.methodSignature(testMethodSignature)
-					.args(testMethodArgs)
-					.srcPath(testSrcPath)
-					.build();
-			} 
-			catch(IllegalArgumentException e) {
-				ConsoleOutput.showError("Test method info - "+e.getMessage());
-				e.printStackTrace();
-			}
-			
-			testMethodFileManager = new FileManager(
-				classSignature,
-				testSrcPath,
-				MethodInvokedInfo.getCompiledFileDirectory(testClassPath),
-				testClassPackage,
-				new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs),
-				"pre_processing.original"
-			);
-			
-			
-			// Checks if it the first execution
-			if (testMethodManager == null && !checkpoint.isActive()) {
-				testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
-				RemoteControl.open();
-				
-				if (!checkpoint_appRunning.isActive()) {
-					ConsoleOutput.Level logLevel = askLog();
-					
-					
-					checkpoint_appRunning.enable();
-					
-					session.save("LOG_LEVEL", logLevel);
-					ConsoleOutput.setLevel(logLevel);
-				}	
-			}
-			else {
-				ConsoleOutput.Level logLevel = (ConsoleOutput.Level)session.read("LOG_LEVEL");
-				
-				ConsoleOutput.setLevel(logLevel);
-			}
-
-			// Checks if there are files that were not restored in the last execution
-			if (checkpoint.exists() && !checkpoint.isActive()) {
-				// Deletes backup file from the last execution
-				testMethodManager.deleteBackup();
-				checkpoint.delete();
-			}
-			
-			firstTime = !checkpoint.exists();
-			
-			// Performs pre-processing of the file containing the test method
-			if (firstTime) {
-				ConsoleOutput.showInfo("Pre-processing test method...");
-				ConsoleOutput.showWarning("On the first run this process can be slow");
-				
-				// Enables checkpoint
-				checkpoint.enable();
-				
-				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-				
-				ConsoleOutput.showInfo("Pre-processing completed");
-			}
+		try {
+			ExecutionFlow.init(!checkpoint_initial.isActive());
+			setTestMethodInfo(thisJoinPoint);
+			onFirstRun();
+			setLogLevel();
+			clean();
+			processTestMethod();
 		} 
 		catch(IOException | ClassNotFoundException e) {
 			ConsoleOutput.showError(e.getMessage());
@@ -400,6 +275,197 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 
 	/**
+	 * Defines what to do when the application is closed.
+	 */
+	private void onShutdown()
+	{
+		try {
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+			    public void run() {
+			    	if (success)
+			    		return;
+			    	
+		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		    		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
+		    		
+		    		
+		    		if (JUnit4Runner.isRunning()) {
+				    	try {
+							JUnit4Runner.quit();
+						} 
+				    	catch (IOException e) {}
+		    		}
+			    	    		
+			    	// Restores original files			    	
+			    	restoreTestMethodFiles();
+			    	restoreInvokedFiles();
+			    	
+			    	if (testMethodManager != null)
+			    		testMethodManager.restoreAll();
+			    	
+			    	if (ExecutionFlow.getInvokedManager() != null)
+			    		ExecutionFlow.getInvokedManager().deleteBackup();
+			    	
+			    	deleteTestMethodBackupFiles();
+					disableCheckpoint(checkpoint);
+					disableCheckpoint(checkpoint_initial);
+					disableCheckpoint(checkpoint_appRunning);
+					
+					if (mcti.exists())
+						while (!mcti.delete());
+					
+					session.destroy();
+			    }
+			});
+		}
+		catch (IllegalStateException e)
+		{}
+	}
+	
+	/**
+	 * Sets test method info, which are:
+	 * <ul>
+	 * 	<li>Signature</li>
+	 * 	<li>Binary path</li>
+	 * 	<li>Source path</li>
+	 * 	<li>Class name</li>
+	 * 	<li>Class package</li>
+	 * 	<li>Test method args</li>
+	 * 	<li>{@link executionFlow.info.MethodInvokedInfo testMethodInfo}</li>
+	 * 	<li>{@link executionFlow.io.FileManager.FileManager testMethodFileManager}</li>
+	 * </ul>
+	 * 
+	 * @param		jp Join point
+	 * 
+	 * @throws		IOException If an error occurs while searching for test 
+	 * method source and binary file
+	 */
+	@SuppressWarnings("unused")
+	private void setTestMethodInfo(JoinPoint jp) throws IOException
+	{
+		String className, classSignature, testClassSignature;
+		Path testSrcPath;
+		
+		
+		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(jp.getSignature().toString());
+		className = jp.getTarget().getClass().getSimpleName();
+		classSignature = jp.getSignature().getDeclaringTypeName();
+		testClassPath = CollectorExecutionFlow.findBinPath(className, classSignature);
+		
+		// Gets source file path of the test method
+		testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
+		testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
+		testClassPackage = MethodInvokedInfo.extractPackage(testClassSignature);
+		testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
+		testMethodArgs = jp.getArgs();
+
+		try {
+			testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(testClassPath)
+				.methodSignature(testMethodSignature)
+				.args(testMethodArgs)
+				.srcPath(testSrcPath)
+				.build();
+		} 
+		catch(IllegalArgumentException e) {
+			ConsoleOutput.showError("Test method info - "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		testMethodFileManager = new FileManager(
+			classSignature,
+			testSrcPath,
+			MethodInvokedInfo.getCompiledFileDirectory(testClassPath),
+			testClassPackage,
+			new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs),
+			"pre_processing.original"
+		);
+	}
+	
+	/**
+	 * Performs actions in the first run of the application. Amongst them:
+	 * <ul>
+	 * 	<li>Creates session</li>
+	 * 	<li>Displays remote control</li>
+	 * 	<li>Asks the user logging level</li>
+	 * </ul>
+	 * 
+	 * @throws		IOException If an error occurred while storing the session
+	 * or if checkpoint file cannot be created
+	 * @throws		ClassNotFoundException If class {@link FileManager} is not
+	 * found 
+	 */
+	private void onFirstRun() throws IOException, ClassNotFoundException
+	{
+		if (!((testMethodManager == null) && !checkpoint.isActive()))
+			return;
+		
+		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
+		
+		
+		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
+		RemoteControl.open();
+		
+		if (!checkpoint_appRunning.isActive()) {
+			ConsoleOutput.Level logLevel = askLog();
+			
+			
+			checkpoint_appRunning.enable();
+			
+			session.save("LOG_LEVEL", logLevel);
+		}
+	}
+	
+	/**
+	 * Sets logging level using data stored in the session.
+	 * 
+	 * @throws		IOException If an error occurred while loading the session
+	 */
+	private void setLogLevel() throws IOException
+	{
+		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
+		ConsoleOutput.Level logLevel = (ConsoleOutput.Level)session.read("LOG_LEVEL");
+		
+		
+		ConsoleOutput.setLevel(logLevel);
+	}
+	
+	/**
+	 * Checks if there are files that were not restored in the last execution.
+	 * 
+	 * @throws		IOException If the checkpoint is active
+	 */
+	private void clean() throws IOException
+	{
+		if (checkpoint.exists() && !checkpoint.isActive()) {
+			testMethodManager.deleteBackup();
+			checkpoint.delete();
+		}
+	}
+	
+	/**
+	 * Performs preprocessing of the file containing the test method.
+	 * 
+	 * @throws		IOException If an error occurs while processing test method
+	 * or if checkpoint file cannot be created
+	 */
+	private void processTestMethod() throws IOException
+	{
+		firstTime = !checkpoint.exists();
+		
+		if (firstTime) {
+			ConsoleOutput.showInfo("Preprocessing test method...");
+			ConsoleOutput.showWarning("On the first run this process can be slow");
+			
+			checkpoint.enable();
+			
+			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
+			
+			ConsoleOutput.showInfo("Preprocessing completed");
+		}
+	}
+	
+	/**
 	 * Updates constructor invocation line of each constructor collected based
 	 * on the collected methods.
 	 */
@@ -409,20 +475,24 @@ public aspect TestMethodCollector extends RuntimeCollector
 			for (CollectorInfo collector : mc) {
 				Path methodPath = collector.getMethodInfo().getSrcPath();
 				
+				
 				// Checks if method is declared in the same file as the test method
-				if (methodPath.equals(collector.getTestMethodInfo().getSrcPath())) {	
-					// Updates constructor invocation lines
-					for (CollectorInfo cc : constructorCollector.values()) {
-						// If constructor is declared in the same file as the 
-						// method, it updates its invocation line
-						if (cc.getTestMethodInfo().getSrcPath().equals(methodPath)) {
-							cc.getConstructorInfo().setInvocationLine(
-									InvokedFileProcessor.getMapping()
-										.get(methodPath)
-										.get(cc.getConstructorInfo().getInvocationLine()));
-						}
-					}
+				if (!methodPath.equals(collector.getTestMethodInfo().getSrcPath()))
+					continue;
+				
+				// Updates constructor invocation lines
+				for (CollectorInfo cc : constructorCollector.values()) {
+					// If constructor is declared in the same file as the 
+					// method, it updates its invocation line
+					if (cc.getTestMethodInfo().getSrcPath().equals(methodPath))
+						continue;
+					
+					cc.getConstructorInfo().setInvocationLine(
+							InvokedFileProcessor.getMapping()
+								.get(methodPath)
+								.get(cc.getConstructorInfo().getInvocationLine()));
 				}
+			
 			}
 		}
 	}
@@ -541,19 +611,20 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private Level askLog()
 	{
+		ConsoleOutput.Level logLevel;
 		String[] options = {
 				"<html><body><div align='center'>None<br>(not recommended \u274C)</div></body></html>",
 				"Error", 
 				"<html><body><div align='center'>Warning and errors<br>(recommended \u2714)</div></body></html>", 
 				"All"
 		};
-		ConsoleOutput.Level logLevel;
 		
 		int response = JOptionPane.showOptionDialog(
 				null, "Choose log level", "Log option", 
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
 				null, options, options[3]
 		);
+		
 		
 		switch (response) {
 			case 0:
