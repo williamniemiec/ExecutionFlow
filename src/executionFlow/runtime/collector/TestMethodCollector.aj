@@ -49,7 +49,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static boolean firstTime = true;
+	private static boolean inTestMethod = true;
 	private static boolean finished;
 	private static Checkpoint checkpoint =
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "Test_Method");
@@ -130,9 +130,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		// If it is in another test method and it it is not a repeated test 
 		// then should run the application
-		if (finished && !firstTime && !isRepeatedTest) {
+		if (finished && inTestMethod && !isRepeatedTest) {
 			finished = false;
-			firstTime = false;
+			inTestMethod = true;
 		}
 		
 		if (finished)
@@ -164,80 +164,31 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	after(): testMethodCollector() 
 	{
-		ExecutionFlow ef;
-
 		if (finished)
 			return;
 		
 		// Runs a new process of the application. This code block must only be
 		// executed once per test file
-		if (firstTime) {
+		if (!inTestMethod) {
 			boolean hasError = false;
-			List<String> classPath = new ArrayList<>();
-			Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
-			String libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
-			String classSignature = testClassPackage.isEmpty() ? 
-					testClassName : testClassPackage + "." + testClassName;
 			
 			
-			classPath.add(".");
-			classPath.add(testClassRootPath.relativize(ExecutionFlow.getAppRootPath()).toString());
-			classPath.add(libPath + "aspectjrt-1.9.2.jar");
-			classPath.add(libPath + "aspectjtools.jar");
-			classPath.add(libPath + "junit-4.13.jar");
-			classPath.add(libPath + "hamcrest-all-1.3.jar");
-			classPath.add(libPath + "..\\classes");
-			classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
-					
-			if (!checkpoint_initial.isActive()) {
-				try {
-					checkpoint_initial.enable();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			// Resets methods called by tested invoked
-			new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
-
-			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
+			restart();
 
 			finished = true;
-			firstTime = false;
+			inTestMethod = true;
 			isRepeatedTest = false;
 			lastRepeatedTestSignature = thisJoinPoint.getSignature().toString();
 			
-			// Restores original test method file and its compiled file
 			hasError = restoreTestMethodFiles();
-			
-			// Checks if there are still tests to be performed
-			if (totalTests < 0) {
-				totalTests = PreTestMethodFileProcessor.getTotalIgnoredMethods() ;
-			}
-			else {
-				totalTests--;
-			}
-
-			if (totalTests == 0) {
-				// Restores original method files and its compiled files
-				hasError = restoreInvokedFiles();
-				ExecutionFlow.getInvokedManager().deleteBackup();
-				
-				// Resets totalTests
-				totalTests = -1;
-				
-				RemoteControl.close();
-			}
+			hasError = onExitTestMethod();
 
 			testMethodManager.restoreAll();
 			
-			// Deletes backup files
 			deleteTestMethodBackupFiles();
-			
-			// Disables checkpoint
 			disableCheckpoint(checkpoint);
 			
-			// Stops execution if a problem occurs
+			// Stops execution if an error occurs
 			if (hasError)
 				System.exit(-1);
 			
@@ -248,6 +199,88 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// completed all test paths have been computed
 		if (finished)
 			return;
+		
+		processCollectedInvoked();
+		
+		// Prepares for next test
+		reset();	
+		success = true;
+	}
+	
+	/**
+	 * Restarts the application by starting it in CLI mode.
+	 */
+	private void restart()
+	{
+		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		List<String> classPath = new ArrayList<>();
+		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
+		String libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
+		String classSignature = testClassPackage.isEmpty() ? 
+				testClassName : testClassPackage + "." + testClassName;
+
+		
+		classPath.add(".");
+		classPath.add(testClassRootPath.relativize(ExecutionFlow.getAppRootPath()).toString());
+		classPath.add(libPath + "aspectjrt-1.9.2.jar");
+		classPath.add(libPath + "aspectjtools.jar");
+		classPath.add(libPath + "junit-4.13.jar");
+		classPath.add(libPath + "hamcrest-all-1.3.jar");
+		classPath.add(libPath + "..\\classes");
+		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
+				
+		if (!checkpoint_initial.isActive()) {
+			try {
+				checkpoint_initial.enable();
+			} 
+			catch (IOException e) {
+				ConsoleOutput.showError("Restart - " + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		
+		// Resets methods called by tested invoked
+		mcti.delete();
+
+		JUnit4Runner.run(testClassRootPath, classPath, classSignature);
+	}
+	
+	/**
+	 * Defines what to do when leaving a test method.
+	 * 
+	 * @return		True if an error has been occurred while restoring invoked 
+	 * files
+	 */
+	private boolean onExitTestMethod()
+	{
+		boolean hasError = false;
+		
+		
+		if (totalTests < 0) {
+			totalTests = PreTestMethodFileProcessor.getTotalIgnoredMethods() ;
+		}
+		else {
+			totalTests--;
+		}
+
+		if (totalTests == 0) {
+			// Restores original method files and its compiled files
+			hasError = restoreInvokedFiles();
+			ExecutionFlow.getInvokedManager().deleteBackup();
+			
+			// Resets totalTests
+			totalTests = -1;
+			
+			RemoteControl.close();
+		}
+		
+		return hasError;
+	}
+	
+	private void processCollectedInvoked()
+	{
+		ExecutionFlow ef;
+		
 		
 		// Gets test paths of the collected methods and export them
 		ef = new MethodExecutionFlow(methodCollector);
@@ -269,9 +302,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.setExporter(new TestedInvokedExporter("Testers", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
-		
-		reset();	// Prepares for next test
-		success = true;
 	}
 
 	/**
@@ -451,9 +481,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private void processTestMethod() throws IOException
 	{
-		firstTime = !checkpoint.exists();
+		inTestMethod = checkpoint.exists();
 		
-		if (firstTime) {
+		if (!inTestMethod) {
 			ConsoleOutput.showInfo("Preprocessing test method...");
 			ConsoleOutput.showWarning("On the first run this process can be slow");
 			
