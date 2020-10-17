@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.aspectj.lang.JoinPoint;
+
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.util.ConsoleOutput;
@@ -32,7 +34,7 @@ import executionFlow.util.ConsoleOutput;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.1
+ * @version		5.2.0
  * @since		1.0
  */
 public aspect ConstructorCollector extends RuntimeCollector
@@ -85,12 +87,8 @@ public aspect ConstructorCollector extends RuntimeCollector
 		
 		final String REGEX_CONSTRUCTOR = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		final String REGEX_ANONYMOUS_CLASS = ".+\\$[0-9]+.+";
-		String key, signature, classSignature, className;
-		ConstructorInvokedInfo constructorInvokedInfo;
-		CollectorInfo collectorInfo;
+		String signature, classSignature, className;
 		Path classPath, srcPath;
-		Class<?>[] paramTypes;		// Constructor parameter types
-		Object[] paramValues;		// Constructor parameter values
 		
 
 		signature = thisJoinPoint.getSignature().toString();
@@ -102,25 +100,14 @@ public aspect ConstructorCollector extends RuntimeCollector
 		signature = thisJoinPoint.getSignature().getDeclaringTypeName() 
 				+ signature.substring(signature.indexOf("("));
 
-		if (	signature.matches(REGEX_ANONYMOUS_CLASS) || 
+		if (signature.matches(REGEX_ANONYMOUS_CLASS) ||	
 				collectedConstructors.contains(signature) || 
-				testMethodInfo == null	) {
+				(testMethodInfo == null)) {
 			return;
 		}
 		
 		collectedConstructors.add(signature);
 		
-		// Extracts constructor data
-		if (thisJoinPoint.getArgs() == null || thisJoinPoint.getArgs().length == 0) {
-			paramTypes = new Class<?>[0];
-			paramValues = new Object[0];
-		} 
-		else {
-			paramTypes = CollectorExecutionFlow.extractParamTypes(thisJoinPoint.getArgs());
-			paramValues = thisJoinPoint.getArgs();			
-		}
-		
-		key = invocationLine + signature;
 		classSignature = signature.split("\\(")[0];
 		
 		// Gets class path and source path
@@ -137,7 +124,41 @@ public aspect ConstructorCollector extends RuntimeCollector
 				return;
 			}
 			
-			constructorInvokedInfo = new ConstructorInvokedInfo.Builder()
+			collectConstructor(thisJoinPoint, signature, srcPath, classPath);
+			invocationLine = 0;
+		} 
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Collects current constructor.
+	 * 
+	 * @param		jp Join point
+	 * @param		signature Constructor signature
+	 * @param		classPath Constructor binary file
+	 * @param		srcPath Constructor source file
+	 */
+	private void collectConstructor(JoinPoint jp, String signature, Path classPath, Path srcPath)
+	{
+		CollectorInfo collectorInfo;
+		ConstructorInvokedInfo constructorInvokedInfo;
+		Class<?>[] paramTypes;
+		Object[] paramValues;
+		String key = invocationLine + signature;
+		
+		
+		if (jp.getArgs() == null || jp.getArgs().length == 0) {
+			paramTypes = new Class<?>[0];
+			paramValues = new Object[0];
+		} 
+		else {
+			paramTypes = CollectorExecutionFlow.extractParamTypes(jp.getArgs());
+			paramValues = jp.getArgs();			
+		}
+		
+		constructorInvokedInfo = new ConstructorInvokedInfo.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
 				.constructorSignature(signature)
@@ -146,19 +167,12 @@ public aspect ConstructorCollector extends RuntimeCollector
 				.invocationLine(invocationLine)
 				.build();
 			
-			// Saves extracted data
-			collectorInfo = new CollectorInfo.Builder()
-				.constructorInfo(constructorInvokedInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
-			
-			if (!constructorCollector.containsKey(key))
-				constructorCollector.put(key, collectorInfo);
+		collectorInfo = new CollectorInfo.Builder()
+			.constructorInfo(constructorInvokedInfo)
+			.testMethodInfo(testMethodInfo)
+			.build();
 		
-			invocationLine = 0;
-		} 
-		catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		if (!constructorCollector.containsKey(key))
+			constructorCollector.put(key, collectorInfo);
 	}
 }

@@ -34,7 +34,7 @@ import executionFlow.util.ConsoleOutput;
  * with {@link executionFlow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.0.0
+ * @version		5.2.0
  * @since		1.0 
  */
 public aspect MethodCollector extends RuntimeCollector
@@ -212,7 +212,7 @@ public aspect MethodCollector extends RuntimeCollector
 	private void fixAnonymousSignature(JoinPoint jp)
 	{
 		if (jp.getTarget() != null) {
-			String anonymousClassSignature = anonymousClassSignature = jp.getTarget().getClass().getName(); 
+			String anonymousClassSignature = jp.getTarget().getClass().getName(); 
 			
 			
 			anonymousClassSignatures.put(
