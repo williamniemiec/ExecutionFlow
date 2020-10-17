@@ -117,7 +117,7 @@ public class CollectorExecutionFlow
 	 * 
 	 * @return		Compiled file path or null if it cannot find the file
 	 * 
-	 * @throws		IOException If class does not exist
+	 * @throws		IOException If an error occurs while searching for the file
 	 */
 	public static Path findBinPath(String className, String classSignature) throws IOException 
 	{
@@ -151,7 +151,7 @@ public class CollectorExecutionFlow
 	 * 
 	 * @return		Compiled file path or null if it cannot find the file
 	 * 
-	 * @throws		IOException If class does not exist
+	 * @throws		IOException If an error occurs while searching for the file
 	 */
 	public static Path findSrcPath(String className, String classSignature) throws IOException 
 	{
