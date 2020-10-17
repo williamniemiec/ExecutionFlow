@@ -2,6 +2,7 @@ package executionFlow.runtime.collector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -126,57 +127,84 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 */
 	private void write()
 	{
+		if (methodsCalledByTestedInvoked.isEmpty())
+			return;
+		
+		try {
+			load();
+			store();
+		} 
+		catch (IOException e) {
+			ConsoleOutput.showError("MethodCallsCollector.aj - " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Loads methods called by tested invoked and merges with attribute 
+	 * {@link #methodsCalledByTestedInvoked}.
+	 * 
+	 * @throws		FileNotFoundException If 'mcti.ef' does not exist, is a 
+	 * directory rather than a regular file, or for some other reason cannot be
+	 * opened for reading.
+	 * @throws		IOException If 'mcti.ef' cannot be read
+	 */
+	private void load() throws FileNotFoundException, IOException
+	{
 		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		
 		
-		if (!methodsCalledByTestedInvoked.isEmpty()) {
-			if (f.exists()) {
-				// Reads file (if exists)
-				try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-					@SuppressWarnings("unchecked")
-					Map<String, Set<String>> map = (Map<String, Set<String>>) ois.readObject();
+		if (!f.exists())
+			return;
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+			@SuppressWarnings("unchecked")
+			Map<String, Set<String>> map = (Map<String, Set<String>>) ois.readObject();
+			
+			
+			for (Map.Entry<String, Set<String>> e : map.entrySet()) {
+				// Merges methods called by tested invoked with saved collection
+				if (methodsCalledByTestedInvoked.containsKey(e.getKey())) {
+					Set<String> methodsCalled = methodsCalledByTestedInvoked.get(e.getKey());
 					
 					
-					for (Map.Entry<String, Set<String>> e : map.entrySet()) {
-						// Merges methods called by tested invoked with saved
-						// collection
-						if (methodsCalledByTestedInvoked.containsKey(e.getKey())) {
-							Set<String> methodsCalled = methodsCalledByTestedInvoked.get(e.getKey());
-							
-							
-							for (String invokedMethod : e.getValue())
-								methodsCalled.add(invokedMethod);
-							
-							for (String methodCalled : e.getValue()) {
-								if (!methodsCalled.contains(methodCalled)) {
-									methodsCalled.add(methodCalled);
-								}
-							}
-							
-							methodsCalledByTestedInvoked.put(e.getKey(), methodsCalled);		
-						}
-						// Saves collected methods called by tested invoked
-						else {
-							methodsCalledByTestedInvoked.put(e.getKey(), e.getValue());							
+					for (String invokedMethod : e.getValue())
+						methodsCalled.add(invokedMethod);
+					
+					for (String methodCalled : e.getValue()) {
+						if (!methodsCalled.contains(methodCalled)) {
+							methodsCalled.add(methodCalled);
 						}
 					}
+					
+					methodsCalledByTestedInvoked.put(e.getKey(), methodsCalled);		
 				}
-				catch(java.io.EOFException e) {
-					f.delete();
-				}
-				catch (IOException | ClassNotFoundException e) {
-					ConsoleOutput.showError("MethodCallsCollector.aj - "+e.getMessage());
-					e.printStackTrace();
+				// Saves collected methods called by tested invoked
+				else {
+					methodsCalledByTestedInvoked.put(e.getKey(), e.getValue());							
 				}
 			}
-			
-			// Writes file
-			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
-				oos.writeObject(methodsCalledByTestedInvoked);
-			} 
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+		}
+		catch(java.io.EOFException | ClassNotFoundException e) {
+			f.delete();
+		}
+	}
+	
+	/**
+	 * Stores {@link #methodsCalledByTestedInvoked} in the 'mcti.ef' file.
+	 * 
+	 * @throws		FileNotFoundException If 'mcti.ef' does not exist, is a 
+	 * directory rather than a regular file, or for some other reason cannot be
+	 * opened for reading.
+	 * @throws		IOException If 'mcti.ef' cannot be written
+	 */
+	private void store() throws FileNotFoundException, IOException
+	{
+		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		
+		
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
+			oos.writeObject(methodsCalledByTestedInvoked);
 		}
 	}
 }
