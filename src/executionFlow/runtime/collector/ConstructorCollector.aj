@@ -137,10 +137,10 @@ public aspect ConstructorCollector extends RuntimeCollector
 	 * 
 	 * @param		jp Join point
 	 * @param		signature Constructor signature
-	 * @param		classPath Constructor binary file
 	 * @param		srcPath Constructor source file
+	 * @param		classPath Constructor binary file
 	 */
-	private void collectConstructor(JoinPoint jp, String signature, Path classPath, Path srcPath)
+	private void collectConstructor(JoinPoint jp, String signature, Path srcPath, Path classPath)
 	{
 		CollectorInfo collectorInfo;
 		ConstructorInvokedInfo constructorInvokedInfo;
