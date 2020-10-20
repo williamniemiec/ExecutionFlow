@@ -157,15 +157,13 @@ public class Analyzer
 		
 		// Fetch dependencies
 		if (!DependencyManager.hasDependencies()) {
-			ConsoleOutput.showInfo("Fetching dependencies...");
 			DependencyManager.fetch();
-			ConsoleOutput.showInfo("Fetch completed");
 		}
 		
 		// Sets class path
 		classPath.add(".");
 		classPath.add(libPath_relative + "*");
-		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
+		classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
 		
 		if (!methodClassPath.isEmpty())
 			classPath.add(methodClassPath);

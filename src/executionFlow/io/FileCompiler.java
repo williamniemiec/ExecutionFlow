@@ -19,7 +19,7 @@ import executionFlow.util.DataUtil;
  * @apiNote		Compatible with AspectJ
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		5.2.0
  * @since		1.3
  */
 public class FileCompiler 
@@ -74,7 +74,7 @@ public class FileCompiler
 			ConsoleOutput.showInfo("Fetch completed");
 		}
 		
-		dependencies = DataUtil.pathListToString(DependencyManager.getDependencies(), ";", false);
+		dependencies = DataUtil.implode(DependencyManager.getDependencies(), ";");
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 
@@ -82,16 +82,15 @@ public class FileCompiler
 				"-9.0",
 				"-encoding", 
 				encode.getName(),
-				"-classpath", outputDir.toAbsolutePath().toString()+";"
-						+ dependencies + ";"
-						+ DependencyManager.getPath() + ";"
-						+ appRootPath + "\\..\\classes" + ";"
-						+ appRootPath + "\\..\\test-classes" + ";"
-						+ appRootPath + "\\lib\\aspectjrt-1.9.2.jar" + ";"
-						+ appRootPath + "\\lib\\junit-4.13.jar" + ";"
-						+ appRootPath + "\\lib\\hamcrest-all-1.3.jar" + ";"
-						+ appRootPath + "\\lib\\junit-jupiter-api-5.6.2.jar" + ";"
-						+ appRootPath + "\\lib\\junit-jupiter-params-5.6.2.jar",
+				"-classpath", outputDir.toAbsolutePath().toString() + ";" +
+						dependencies + ";" +
+						appRootPath + "\\..\\classes;" +
+						appRootPath + "\\..\\test-classes;" +
+						appRootPath + "\\lib\\aspectjrt-1.9.2.jar;" +
+						appRootPath + "\\lib\\junit-4.13.jar;" +
+						appRootPath + "\\lib\\hamcrest-all-1.3.jar;" +
+						appRootPath + "\\lib\\junit-jupiter-api-5.6.2.jar;" +
+						appRootPath + "\\lib\\junit-jupiter-params-5.6.2.jar;",
 				"-d", 
 				outputDir.toAbsolutePath().toString(), 
 				target.toAbsolutePath().toString()

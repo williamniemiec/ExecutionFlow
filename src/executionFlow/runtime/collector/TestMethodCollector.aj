@@ -227,7 +227,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 		classPath.add(libPath + "junit-4.13.jar");
 		classPath.add(libPath + "hamcrest-all-1.3.jar");
 		classPath.add(libPath + "..\\classes");
-		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
+//		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
+		classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
 				
 		if (!checkpoint_initial.isActive()) {
 			try {

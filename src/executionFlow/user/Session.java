@@ -79,7 +79,7 @@ public class Session
 	 * @return		Stored information of null if there is no data stored with 
 	 * the provided identifier
 	 * 
-	 * @throws		IOException If an error occurred while storing the session
+	 * @throws		IOException If an error occurred while loading the session
 	 */
 	public Object read(String key) throws IOException
 	{
