@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
 /**
  * Responsible for executing JUnit 4 tests.
  * 
- * @apiNote		Compatible with aspects
- * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
 public class JUnit4Runner 
@@ -32,8 +30,31 @@ public class JUnit4Runner
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Runs a JUnit 4 test file. To display the JUnit version at the end, use
-	 * the method in @see section.
+	 * Runs a JUnit 4 test file.
+	 * 
+	 * @param		workingDirectory Directory that will serve as a reference
+	 * for the execution of the process
+	 * @param		classPathArgumentFile Argument file containing class path 
+	 * list that will be used in JUnit 4 runner
+	 * @param		classSignature Class signature to begin execution
+	 * 
+	 * @throws		IOException If an error occurs while reading process output
+	 * @throws		InterruptedException If the process containing JUnit 4 is 
+	 * interrupted by another thread while it is waiting
+	 * @throws		IllegalStateException If process is null
+	 * 
+	 * @see			{@link #run(Path, List, String, boolean)}
+	 */
+	public static void run(Path workingDirectory, Path classPathArgumentFile, 
+			String classSignature) throws IOException, InterruptedException
+	{
+		process = init(workingDirectory, classPathArgumentFile, classSignature);
+		
+		run(workingDirectory, classSignature, false);
+	}
+	
+	/**
+	 * Runs a JUnit 4 test file.
 	 * 
 	 * @param		workingDirectory Directory that will serve as a reference
 	 * for the execution of the process
@@ -41,12 +62,19 @@ public class JUnit4Runner
 	 * runner
 	 * @param		classSignature Class signature to begin execution
 	 * 
+	 * @throws		IOException If an error occurs while reading process output
+	 * @throws		InterruptedException If the process containing JUnit 4 is 
+	 * interrupted by another thread while it is waiting
+	 * @throws		IllegalStateException If process is null
+	 * 
 	 * @see			{@link #run(Path, List, String, boolean)}
 	 */
 	public static void run(Path workingDirectory, List<String> classPath, 
-			String classSignature)
+			String classSignature) throws IOException, InterruptedException
 	{
-		run(workingDirectory, classPath, classSignature, false);
+		process = init(workingDirectory, classPath, classSignature);
+		
+		run(workingDirectory, classSignature, false);
 	}
 	
 	/**
@@ -57,64 +85,65 @@ public class JUnit4Runner
 	 * @param		classPath Class path list that will be used in JUnit 4 runner
 	 * @param		classSignature Class signature to begin execution
 	 * @param		displayVersion If true displays JUnit version at the end
+	 * 
+	 * @throws		IOException If an error occurs while reading process output
+	 * @throws		InterruptedException If the process containing JUnit 4 is 
+	 * interrupted by another thread while it is waiting
+	 * @throws		IllegalStateException If process is null
 	 */
-	public static void run(Path workingDirectory, List<String> classPath, 
-			String classSignature, boolean displayVersion)
+	private static void run(Path workingDirectory, 	String classSignature, 
+			boolean displayVersion) throws IOException, InterruptedException
 	{	
-		stopped = false;
+		if (process == null)
+			throw new IllegalStateException("Process has not been initialized");
 		
-		try {
-			process = init(workingDirectory, classPath, classSignature);
-			String line;
-			Pattern pattern_totalTests = Pattern.compile("[0-9]+");
-			boolean error = false;
+		String line;
+		Pattern pattern_totalTests = Pattern.compile("[0-9]+");
+		boolean error = false;
+		
+		
+		stopped = false;			
+		totalTests = 0;
+		output = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		outputError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+		
+		// Checks if there was an error creating the process
+		while (outputError.ready() && (line = outputError.readLine()) != null) {
+			System.err.println(line);
+		}
+		
+		while (!stopped && (line = output.readLine()) != null) {
+			error = false;
 			
-						
-			totalTests = 0;
-			output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			outputError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-			
-			// Checks if there was an error creating the process
-			while (outputError.ready() && (line = outputError.readLine()) != null) {
+			// Displays error messages (if any)
+			if (outputError.ready() && (line = outputError.readLine()) != null) {
 				System.err.println(line);
+				error = true;
 			}
 			
-			while (!stopped && (line = output.readLine()) != null) {
-				error = false;
+			if (line.contains("OK (")) {
+				Matcher m = pattern_totalTests.matcher(line);
 				
-				// Displays error messages (if any)
-				if (outputError.ready() && (line = outputError.readLine()) != null) {
-					System.err.println(line);
-					error = true;
-				}
 				
-				if (line.contains("OK (")) {
-					Matcher m = pattern_totalTests.matcher(line);
-					
-					
-					m.find();
-					totalTests = Integer.valueOf(m.group());
-				}
-				else if (line.contains("JUnit version")) {
-					if (displayVersion)
-						System.out.println(line);
-				}
-				else if (!error){
+				m.find();
+				totalTests = Integer.valueOf(m.group());
+			}
+			else if (line.contains("JUnit version")) {
+				if (displayVersion)
 					System.out.println(line);
-				}
-				
-				System.out.flush();
+			}
+			else if (!error){
+				System.out.println(line);
 			}
 			
-			// Closes process
-			if (!stopped) {
-				output.close();
-				outputError.close();
-				process.waitFor();
-			}
-		} 
-		catch (IOException | InterruptedException e1) {
-			e1.printStackTrace();
+			System.out.flush();
+		}
+		
+		// Closes process
+		if (!stopped) {
+			output.close();
+			outputError.close();
+			process.waitFor();
 		}
 	}
 	
@@ -168,6 +197,34 @@ public class JUnit4Runner
 	{
 		ProcessBuilder pb = new ProcessBuilder(
 			"java", "-cp", DataUtil.implode(classPath, ";"), 
+			"org.junit.runner.JUnitCore", classSignature
+		);
+		
+		pb.directory(workingDirectory.toFile());
+		
+		return pb.start();
+	}
+	
+	/**
+	 * Initializes CMD with JUnit 4 running a test file.
+	 * 
+	 * @param		workingDirectory Directory that will serve as a reference
+	 * for the execution of the process
+	 * @param		classPathArgumentFile Argument file containing class path 
+	 * list that will be used in JUnit 4 runner
+	 * @param		classSignature Class signature to begin execution 
+	 * 
+	 * @return		CMD process running JUnit 4 test
+	 * 
+	 * @throws		IOException If process cannot be created 
+	 */
+	private static Process init(Path workingDirectory, Path classPathArgumentFile, 
+			String classSignature) throws IOException
+	{
+		classPathArgumentFile = workingDirectory.relativize(classPathArgumentFile);
+		
+		ProcessBuilder pb = new ProcessBuilder(
+			"java", "-cp", "@" + classPathArgumentFile, 
 			"org.junit.runner.JUnitCore", classSignature
 		);
 		
