@@ -114,8 +114,8 @@ public class FileUtil
 			for (int i=0; i<totalPaths-1; i++) {
 				path = paths.get(i);
 				
-				bw.write(path.toAbsolutePath().toString());
-				bw.write(";");
+				bw.write(path.toAbsolutePath().toString().replaceAll("\\", "\\\\"));
+				bw.write(";\\");
 				bw.newLine();
 			}
 			
