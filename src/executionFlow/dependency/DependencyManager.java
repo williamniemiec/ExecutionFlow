@@ -1,7 +1,5 @@
 package executionFlow.dependency;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,8 +20,7 @@ public abstract class DependencyManager
 	//-------------------------------------------------------------------------
 	private static List<DependencyExtractor> dependencyExtractors = new ArrayList<>();
 	private static List<Path> dependencies;
-	private static final Path ARGUMENT_FILE = 
-			Path.of(System.getProperty("user.home"), ".ef_dependencies.txt");
+	
 	
 	
 	//-------------------------------------------------------------------------
@@ -53,7 +50,6 @@ public abstract class DependencyManager
 		if (dependencies == null) {
 			dependencies = new ArrayList<>();
 			pull();
-			createArgumentFile();
 		}
 	}
 	
@@ -91,57 +87,10 @@ public abstract class DependencyManager
 		return dependencies != null;
 	}
 	
-	/**
-	 * Generates argument file of dependencies.
-	 * 
-	 * @throws		IOException If an error occurs while generating the argument
-	 * file
-	 * 
-	 * @see			https://docs.oracle.com/javase/9/tools/java.htm#JSWOR-GUID-4856361B-8BFD-4964-AE84-121F5F6CF111
-	 */
-	private static void createArgumentFile() throws IOException
-	{
-		if ((dependencies == null) || (dependencies.size() == 0))
-			return;
-		
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARGUMENT_FILE.toFile()))) {
-			Path dependency;
-			int totalDependencies = dependencies.size();
-			
-			
-			bw.write("\"\\");
-			bw.newLine();
-			
-			for (int i=0; i<totalDependencies-1; i++) {
-				dependency = dependencies.get(i);
-				
-				bw.write(dependency.toAbsolutePath().toString());
-				bw.write(";");
-				bw.newLine();
-			}
-			
-			dependency = dependencies.get(totalDependencies-1);
-			bw.write(dependency.toAbsolutePath().toString());
-			bw.write("\"");
-		}
-	}
-	
 	
 	//-------------------------------------------------------------------------
 	//		Getters
-	//-------------------------------------------------------------------------
-	/**
-	 * Gets argument file of dependencies.
-	 * 
-	 * @return		Argument file
-	 * 
-	 * @see			https://docs.oracle.com/javase/9/tools/java.htm#JSWOR-GUID-4856361B-8BFD-4964-AE84-121F5F6CF111
-	 */
-	public static Path getArgumentFile()
-	{
-		return ARGUMENT_FILE;
-	}
-	
+	//-------------------------------------------------------------------------	
 	public static List<Path> getDependencies()
 	{
 		return dependencies;
