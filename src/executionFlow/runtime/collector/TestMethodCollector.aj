@@ -28,6 +28,8 @@ import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
 import executionFlow.util.Checkpoint;
 import executionFlow.util.ConsoleOutput;
+import executionFlow.util.DataUtil;
+import executionFlow.util.FileUtil;
 import executionFlow.util.ConsoleOutput.Level;
 import executionFlow.util.JUnit4Runner;
 
@@ -172,8 +174,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (!inTestMethod) {
 			boolean hasError = false;
 			
-			
-			restart();
+			try {
+				restart();
+			}
+			catch (IOException | InterruptedException e) {
+				ConsoleOutput.showError("Restart - " + e.getMessage());
+				System.exit(-1);
+			}
 
 			finished = true;
 			inTestMethod = true;
@@ -189,8 +196,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 			disableCheckpoint(checkpoint);
 			
 			// Stops execution if an error occurs
-			if (hasError)
+			if (hasError) {
 				System.exit(-1);
+			}
 			
 			return;
 		}
@@ -209,41 +217,60 @@ public aspect TestMethodCollector extends RuntimeCollector
 	
 	/**
 	 * Restarts the application by starting it in CLI mode.
+	 * 
+	 * @throws		IOException If an error occurs when creating the process 
+	 * containing {@link JUnit4Runner}
+	 * @throws		InterruptedException If the process containing 
+	 * {@link JUnit4Runner} is interrupted while it is waiting  
 	 */
-	private void restart()
+	private void restart() throws IOException, InterruptedException
 	{
 		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		List<String> classPath = new ArrayList<>();
+		List<Path> classPath = new ArrayList<>();
+		Path argumentFile = ExecutionFlow.getArgumentFile();
 		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
 		String libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
 
 		
-		classPath.add(".");
-		classPath.add(testClassRootPath.relativize(ExecutionFlow.getAppRootPath()).toString());
-		classPath.add(libPath + "aspectjrt-1.9.2.jar");
-		classPath.add(libPath + "aspectjtools.jar");
-		classPath.add(libPath + "junit-4.13.jar");
-		classPath.add(libPath + "hamcrest-all-1.3.jar");
-		classPath.add(libPath + "..\\classes");
+		classPath = DependencyManager.getDependencies();
+		classPath.add(Path.of(".").normalize());
+		classPath.add(testClassRootPath);
+		classPath.add(ExecutionFlow.getLibPath());
+		classPath.add(ExecutionFlow.getAppRootPath());
+		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
+		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
+		classPath.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
+		classPath.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
+		classPath.add(testClassRootPath.resolve("..\\classes").normalize());
 //		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
-		classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
+		//classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
+
+		
+		argumentFile = FileUtil.createArgumentFile(
+				argumentFile.getParent(), 
+				argumentFile.getFileName().toString(), 
+				classPath
+		);
+		
+				
+		
+//		System.out.println("-------------------");
+//		System.out.println(classPath);
+//		System.out.println(DataUtil.implode(classPath, ";"));
+//		System.out.println(DependencyManager.hasDependencies());
+//		System.out.println("-------------------");
+				
 				
 		if (!checkpoint_initial.isActive()) {
-			try {
-				checkpoint_initial.enable();
-			} 
-			catch (IOException e) {
-				ConsoleOutput.showError("Restart - " + e.getMessage());
-				e.printStackTrace();
-			}
+			checkpoint_initial.enable();
 		}
 		
 		// Resets methods called by tested invoked
 		mcti.delete();
-
-		JUnit4Runner.run(testClassRootPath, classPath, classSignature);
+//			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
+		JUnit4Runner.run(testClassRootPath, argumentFile, classSignature);
 	}
 	
 	/**
