@@ -3,7 +3,6 @@ package executionFlow.runtime.collector;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -15,7 +14,6 @@ import executionFlow.ExecutionFlow;
 import executionFlow.LibraryManager;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.RemoteControl;
-import executionFlow.dependency.DependencyManager;
 import executionFlow.exporter.TestedInvokedExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
@@ -29,8 +27,6 @@ import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
 import executionFlow.util.Checkpoint;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.DataUtil;
-import executionFlow.util.FileUtil;
 import executionFlow.util.ConsoleOutput.Level;
 import executionFlow.util.JUnit4Runner;
 
@@ -227,54 +223,22 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private void restart() throws IOException, InterruptedException
 	{
 		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		List<Path> classPath = new ArrayList<>();
 		Path argumentFile;
 		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
-		String libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
 
 		LibraryManager.addClassPath(testClassRootPath);
 		LibraryManager.addClassPath(testClassRootPath.resolve("..\\classes").normalize());
-		
-//		classPath = DependencyManager.getDependencies();
-//		classPath.add(Path.of(".").normalize());
-//		classPath.add(ExecutionFlow.getLibPath());
-//		classPath.add(ExecutionFlow.getAppRootPath());
-//		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
-//		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
-//		classPath.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
-//		classPath.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
-//		classPath.add(testClassRootPath);
-//		classPath.add(testClassRootPath.resolve("..\\classes").normalize());
-//		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
-		//classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
 
 		argumentFile = LibraryManager.getArgumentFile();
-		
-		
-//		argumentFile = FileUtil.createArgumentFile(
-//				argumentFile.getParent(), 
-//				argumentFile.getFileName().toString(), 
-//				classPath
-//		);
-		
-				
-		
-//		System.out.println("-------------------");
-//		System.out.println(classPath);
-//		System.out.println(DataUtil.implode(classPath, ";"));
-//		System.out.println(DependencyManager.hasDependencies());
-//		System.out.println("-------------------");
-				
-				
+	
 		if (!checkpoint_initial.isActive()) {
 			checkpoint_initial.enable();
 		}
 		
 		// Resets methods called by tested invoked
 		mcti.delete();
-//			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 		JUnit4Runner.run(testClassRootPath, argumentFile, classSignature);
 		
 		while (JUnit4Runner.isRunning()) {
@@ -682,8 +646,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 		String[] options = {
 				"<html><body><div align='center'>None<br>(not recommended \u274C)</div></body></html>",
 				"Error", 
-				"<html><body><div align='center'>Warning and errors<br>(recommended \u2714)</div></body></html>", 
-				"All"
+				"Warning",
+				"<html><body><div align='center'>Info<br>(recommended \u2714)</div></body></html>", 
+				"Debug"
 		};
 		
 		int response = JOptionPane.showOptionDialog(
@@ -701,11 +666,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 				logLevel = ConsoleOutput.Level.ERROR;
 				break;
 			case 2:
-				logLevel = ConsoleOutput.Level.WARNING_AND_ERROR;
+				logLevel = ConsoleOutput.Level.WARNING;
 				break;
+			case 4:
+				logLevel = ConsoleOutput.Level.DEBUG;
 			case 3:
 			default:
-				logLevel = ConsoleOutput.Level.ALL;
+				logLevel = ConsoleOutput.Level.INFO;
 		}
 		
 		return logLevel;

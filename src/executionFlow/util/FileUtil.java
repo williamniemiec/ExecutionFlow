@@ -127,4 +127,11 @@ public class FileUtil
 		
 		return argumentFile;
 	}
+	
+	public static void printFileWithLines(List<String> fileContent)
+	{
+		for (int i=0; i<fileContent.size(); i++) {
+			System.out.printf("%-5d\t%s\n", i+1, fileContent.get(i));
+		}
+	}
 }

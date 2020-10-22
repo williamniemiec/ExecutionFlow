@@ -118,11 +118,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			return this;
 		
 		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-			ConsoleOutput.showDebug("CEF: " + constructorCollector.toString());
-			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-		}
+		ConsoleOutput.showDebug("ConstructorExecutionFlow", "collector: " + constructorCollector.toString());
 		// -----{ END DEBUG }-----
 		
 		FileManager constructorFileManager, testMethodFileManager;

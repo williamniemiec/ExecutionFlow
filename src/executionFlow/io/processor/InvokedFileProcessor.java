@@ -23,7 +23,7 @@ import executionFlow.util.formatter.JavaIndenter;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -266,7 +266,7 @@ public class InvokedFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 		
-		List<String> formatedFile, lines = new ArrayList<>();
+		List<String> lines = new ArrayList<>();
 		File outputFile;
 		Cleanup cleanup;
 		HolePlug holePlug;
@@ -282,7 +282,7 @@ public class InvokedFileProcessor extends FileProcessor
 		// Reads the source file and puts its lines in a list
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
-		// Processing #1
+		// Processing #1 - Same processing done in TRGeneration (application)
 		cleanup = new Cleanup(lines);
 		lines = cleanup.parse();
 
@@ -311,20 +311,18 @@ public class InvokedFileProcessor extends FileProcessor
 			}
 		}
 		
-		// Displays processed file
-		if (ConsoleOutput.getLevel() == ConsoleOutput.Level.ALL) {
-			ConsoleOutput.showHeader("File after processing (test path will be computed based on it)", '=');
-			ConsoleOutput.printDivision('-', 80);
-			formatedFile = new JavaIndenter().format(lines);
+		// -----{ DEBUG }-----
+		if (ConsoleOutput.getLevel() == ConsoleOutput.Level.DEBUG) {
+			JavaIndenter indenter = new JavaIndenter();
+			List<String> formatedFile = indenter.format(lines);
+
 			
-			for (int i=0; i<lines.size(); i++) {
-				System.out.printf("%-6d\t%s\n", i+1, formatedFile.get(i));
-			}
-			
-			ConsoleOutput.printDivision('-', 80);
+			ConsoleOutput.showDebug("InvokedFileProcessor", "Processed file");
+			FileUtil.printFileWithLines(formatedFile);
 		}
+		// -----{ END DEBUG }-----
 		
-		// Processing #2
+		// Processing #2 - Fixes the omission of lines in compilation
 		holePlug = new HolePlug(lines);
 		lines = holePlug.parse();
 		

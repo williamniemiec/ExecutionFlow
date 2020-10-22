@@ -17,7 +17,7 @@ import executionFlow.util.FileUtil;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor
@@ -26,25 +26,8 @@ public class TestMethodFileProcessor extends FileProcessor
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 400L;
-	
-	/**
-	 * If true, displays processed lines.
-	 */
-	private static final boolean DEBUG;
-	
+		
 	private String fileExtension = "java";
-
-	
-	//-------------------------------------------------------------------------
-	//		Initialization blocks
-	//-------------------------------------------------------------------------
-	/**
-	 * Configures environment. If {@link #DEBUG} is true, displays processed 
-	 * lines.
-	 */
-	static {
-		DEBUG = false;
-	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -288,12 +271,15 @@ public class TestMethodFileProcessor extends FileProcessor
 				}
 			}
 			
-			// -----{ DEBUG }-----
-			if (DEBUG) { ConsoleOutput.showDebug(line); }
-			// -----{ END DEBUG }-----	
-			
 			lines.set(i, line);
 		}
+		
+		// -----{ DEBUG }-----
+		if (ConsoleOutput.getLevel() == ConsoleOutput.Level.DEBUG) {
+			ConsoleOutput.showDebug("TestMethodFileProcessor", "Processed file");
+			FileUtil.printFileWithLines(lines);
+		}
+		// -----{ END DEBUG }-----
 
 		// Writes processed lines to a file
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());

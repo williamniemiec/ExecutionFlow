@@ -23,28 +23,7 @@ import executionFlow.util.DataUtil;
  * @since		1.3
  */
 public class FileCompiler 
-{
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	/**
-	 * If true, displays shell output. 
-	 */
-	private static final boolean DEBUG;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	/**
-	 * Enables or disables debug. If activated, displays shell output during 
-	 * compilation (performance can get worse).
-	 */
-	static {
-		DEBUG = true;
-	}
-	
-	
+{		
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -99,18 +78,16 @@ public class FileCompiler
 		compiler.quit();
 		
 		// -----{ DEBUG }-----
-		if (DEBUG) {
+		if (ConsoleOutput.getLevel() == ConsoleOutput.Level.DEBUG) {
 			IMessage[] ms = m.getMessages(null, true);
 			
-			ConsoleOutput.showDebug("FileCompilator - start");
+			ConsoleOutput.showDebug("FileCompilator", "start");
 			
 			for (var msg : ms) {
 				ConsoleOutput.showDebug(msg.toString());
 			}
 			
-			ConsoleOutput.showDebug("Output dir: " + outputDir.toAbsolutePath().toString());
-			
-			ConsoleOutput.showDebug("FileCompilator - end");
+			ConsoleOutput.showDebug("FileCompilator", "Output dir: " + outputDir.toAbsolutePath().toString());
 		}
 		// -----{ END DEBUG }----
 	}

@@ -54,7 +54,7 @@ public abstract class ExecutionFlow
 	/**
 	 * If true, displays collected invoked for each test method executed.
 	 */
-	protected static final boolean DEBUG;
+//	protected static final boolean DEBUG;
 	
 	protected static final TestPathExportType EXPORT;
 	
@@ -100,15 +100,7 @@ public abstract class ExecutionFlow
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
-	//-------------------------------------------------------------------------
-	/**
-	 * Enables or disables debug. If activated, displays collected invoked for
-	 * each test method executed.
-	 */
-	static {
-		DEBUG = false;
-	}
-	
+	//-------------------------------------------------------------------------	
 	/**
 	 * Sets environment. If the code is executed outside project, that is,
 	 * through a jar file, it must be false.

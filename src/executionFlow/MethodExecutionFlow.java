@@ -121,11 +121,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 			return this;
 		
 		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-			ConsoleOutput.showDebug("MEF: " + methodCollector.toString());
-			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-		}
+		ConsoleOutput.showDebug("MethodExecutionFlow", "collector: " + methodCollector.toString());
 		// -----{ END DEBUG }-----
 		
 		boolean gotoNextLine = false;

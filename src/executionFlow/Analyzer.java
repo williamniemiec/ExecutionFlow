@@ -15,7 +15,6 @@ import executionFlow.dependency.DependencyManager;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Clock;
 import executionFlow.util.ConsoleOutput;
-import executionFlow.util.FileUtil;
 import executionFlow.util.JDB;
 import executionFlow.util.balance.RoundBracketBalance;
 
@@ -33,11 +32,6 @@ public class Analyzer
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * If true, displays shell output.
-	 */
-	private static final boolean DEBUG; 
-	
 	private static final String REGEX_MULTILINE_ARGS = 
 			"^[0-9]*(\\t|\\ )+[A-z0-9$\\-_\\.\\,\\ \\:]+(\\);)?$";
 
@@ -92,18 +86,6 @@ public class Analyzer
 	private volatile static boolean timeout;
 	private volatile boolean lock;
 	private RoundBracketBalance rbb;
-	
-
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	/**
-	 * Enables or disables debug. If activated, displays shell output during 
-	 * JDB execution (performance can get worse).
-	 */
-	static {
-		DEBUG = false;
-	}
 
 	
 	//-------------------------------------------------------------------------
@@ -118,7 +100,6 @@ public class Analyzer
 	{
 		List<Path> classPath = new ArrayList<>();
 		List<String> srcPath = new ArrayList<>();
-		String methodClassPath, libPath_relative, libPath;
 		int idx_dollarSign, idx_paramStart;
 		Path classRootPath;			// Root path where the compiled file of invoked class is
 		Path srcRootPath;			// Root path where the source file of the invoked is
@@ -154,45 +135,17 @@ public class Analyzer
 		testClassRootPath = extractRootPathDirectory(testMethodInfo.getBinPath(), testMethodInfo.getPackage());
 		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
 				
-		// Configures JDB, indicating path of libraries, classes and source files
-//		methodClassPath = testClassRootPath.relativize(classRootPath).toString();
-		//libPath_relative = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
-		libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
-		
-		// Fetch dependencies
+		// Generates argument file
 		if (!DependencyManager.hasDependencies()) {
 			DependencyManager.fetch();
 		}
 		
-		// Sets class path
 		LibraryManager.addClassPath(testClassRootPath);
 		LibraryManager.addClassPath(testClassRootPath.resolve("..\\classes").normalize());
 		LibraryManager.addClassPath(classRootPath);
-//		classPath = DependencyManager.getDependencies();
-//		classPath.add(Path.of(".").normalize());
-//		classPath.add(ExecutionFlow.getLibPath());
-////		classPath.add(libPath_relative + "*");
-//		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
-//		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
-//		classPath.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
-//		classPath.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
-//		classPath.add(testClassRootPath);
-//		classPath.add(testClassRootPath.resolve("..\\classes").normalize());
-//		classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
-		
-//		if (!methodClassPath.isEmpty())
-//			classPath.add(classRootPath);
-//			classPath.add(Path.of(methodClassPath));
-		
-//		classPath.add("..\\classes\\");
+
 		argumentFile = LibraryManager.getArgumentFile();
 		
-//		argumentFile = FileUtil.createArgumentFile(
-//				argumentFile.getParent(), 
-//				argumentFile.getFileName().toString(), 
-//				classPath
-//		);
-//		
 		// Sets source path
 		srcPath.add(testClassRootPath.relativize(srcRootPath).toString());
 		srcPath.add(testClassRootPath.relativize(testMethodSrcPath).toString());
@@ -211,17 +164,14 @@ public class Analyzer
 			);
 		}
 		
-//		jdb = new JDB(testClassRootPath, classPath, srcPath);
 		jdb = new JDB(testClassRootPath, argumentFile, srcPath);
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
 		
 		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showInfo("Classpath: " + classPath);
-			ConsoleOutput.showInfo("Srcpath: " + srcPath);
-			ConsoleOutput.showInfo("Working directory: " + testClassRootPath);
-		}
+		ConsoleOutput.showDebug("Analyzer", "Srcpath: " + classPath);
+		ConsoleOutput.showDebug("Analyzer", "Srcpath: " + srcPath);
+		ConsoleOutput.showDebug("Analyzer", "Working directory: " + testClassRootPath);
 		// -----{ END DEBUG }-----
 	}
 	
@@ -250,11 +200,9 @@ public class Analyzer
 		
 		
 		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("COMMAND: " + "clear ");
-			ConsoleOutput.showDebug("COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
-			ConsoleOutput.showDebug("COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
-		}
+		ConsoleOutput.showDebug("Analyzer", "COMMAND: " + "clear ");
+		ConsoleOutput.showDebug("Analyzer", "COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
+		ConsoleOutput.showDebug("Analyzer", "COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
 		// -----{ END DEBUG }-----
 		
 		timeout = false;
@@ -303,7 +251,7 @@ public class Analyzer
 					
 					// Checks if method is within a loop
 					// -----{ DEBUG }-----
-					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: cont"); }
+					ConsoleOutput.showDebug("Analyzer", "COMMAND: cont"); 
 					// -----{ END DEBUG }-----
 					
 					// Resets exit method
@@ -318,7 +266,7 @@ public class Analyzer
 					
 					// Enters the method, ignoring native methods
 					// -----{ DEBUG }-----
-					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: step into"); }
+					ConsoleOutput.showDebug("Analyzer", "COMMAND: step into");
 					// -----{ END DEBUG }-----
 					
 					jdb.send("step into");
@@ -326,7 +274,7 @@ public class Analyzer
 					
 					while (isInternalCommand) {
 						// -----{ DEBUG }-----
-						if (DEBUG) { ConsoleOutput.showDebug("COMMAND: next"); }
+						ConsoleOutput.showDebug("Analyzer", "COMMAND: next"); 
 						// -----{ END DEBUG }-----
 						
 						jdb.send("next");
@@ -335,7 +283,7 @@ public class Analyzer
 				} 
 				else if (!endOfMethod) {
 					// -----{ DEBUG }-----
-					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: next"); }
+					ConsoleOutput.showDebug("Analyzer", "COMMAND: next");
 					// -----{ END DEBUG }-----
 					
 					jdb.send("next");
@@ -354,11 +302,9 @@ public class Analyzer
 
 		// Exits JDB
 		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
-			ConsoleOutput.showDebug("COMMAND: " + "exit");
-			ConsoleOutput.showDebug("COMMAND: " + "exit");
-		}
+		ConsoleOutput.showDebug("Analyzer", "COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
+		ConsoleOutput.showDebug("Analyzer", "COMMAND: " + "exit");
+		ConsoleOutput.showDebug("Analyzer", "COMMAND: " + "exit");
 		// -----{ END DEBUG }-----
 		
 		jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
@@ -464,7 +410,7 @@ public class Analyzer
         	}
         	
         	// -----{ DEBUG }-----
-        	if (DEBUG) { ConsoleOutput.showDebug("LINE: "+line); }
+    		ConsoleOutput.showDebug("Analyzer", "LINE: "+line); 
     		// -----{ END DEBUG }-----
         	
         	endOfMethod = endOfMethod == true ? endOfMethod : isEndOfTestMethod(line);
@@ -653,7 +599,7 @@ public class Analyzer
     			}
     			
     			// -----{ DEBUG }-----
-    			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }
+				ConsoleOutput.showDebug("Analyzer", "SRC: "+srcLine); 
     			// -----{ END DEBUG }-----	    		
     		}
 		} 

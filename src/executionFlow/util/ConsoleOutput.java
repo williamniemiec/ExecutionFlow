@@ -23,22 +23,27 @@ public class ConsoleOutput
 		ERROR, 
 		
 		/**
-		 * Displays only error and warning messages.
+		 * Displays error and warning messages.
 		 */
-		WARNING_AND_ERROR, 
+		WARNING, 
 		
 		/**
-		 * Displays all messages.
+		 * Displays error, warning and info messages.
 		 */
-		ALL
+		INFO,
+		
+		/**
+		 * Displays error, warning, info and debug messages.
+		 */
+		DEBUG
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final int WIDTH = 8;
-	private static Level level = Level.ALL;
+	private static final int PADDING_LEFT = 8;
+	private static Level level = Level.INFO;
 	
 	
 	//-------------------------------------------------------------------------
@@ -74,16 +79,17 @@ public class ConsoleOutput
 	 */
 	public static void showInfo(String message, boolean breakLine)
 	{
-		boolean shouldDisplay =	(level == Level.ALL);
+		boolean shouldDisplay =	(level == Level.DEBUG) || 
+								(level == Level.INFO);
 		
 		
 		if (!shouldDisplay)
 			return;
 		
 		if (breakLine)
-			System.out.printf("%-" + WIDTH + "s%s\n", "[INFO] ", message);
+			System.out.printf("%-" + PADDING_LEFT + "s%s\n", "[INFO] ", message);
 		else
-			System.out.printf("%-" + WIDTH + "s%s", "[INFO] ", message);
+			System.out.printf("%-" + PADDING_LEFT + "s%s", "[INFO] ", message);
 	}
 	
 	/**
@@ -116,17 +122,16 @@ public class ConsoleOutput
 	 */
 	public static void showError(String message, boolean breakLine)
 	{
-		boolean shouldDisplay =	(level == Level.WARNING_AND_ERROR) ||
-								(level == Level.ERROR);
+		boolean shouldDisplay =	(level != Level.OFF);
 		
 		
 		if (!shouldDisplay)
 			return;
 		
 		if (breakLine)
-			System.err.printf("%-" + WIDTH + "s%s\n", "[ERROR] ", message);
+			System.err.printf("%-" + PADDING_LEFT + "s%s\n", "[ERROR] ", message);
 		else
-			System.err.printf("%-" + WIDTH + "s%s", "[ERROR] ", message);
+			System.err.printf("%-" + PADDING_LEFT + "s%s", "[ERROR] ", message);
 	}
 	
 	/**
@@ -159,17 +164,33 @@ public class ConsoleOutput
 	 */
 	public static void showWarning(String message, boolean breakLine)
 	{
-		boolean shouldDisplay = (level == Level.ALL) || 
-								(level == Level.WARNING_AND_ERROR);
+		boolean shouldDisplay = (level == Level.DEBUG) ||
+								(level == Level.INFO) ||
+								(level == Level.WARNING);
 		
 		
 		if (!shouldDisplay)
 			return;
 		
 		if (breakLine)
-			System.out.printf("%-" + WIDTH + "s%s\n", "[WARN] ", message);
+			System.out.printf("%-" + PADDING_LEFT + "s%s\n", "[WARN] ", message);
 		else
-			System.out.printf("%-" + WIDTH + "s%s", "[WARN] ", message);
+			System.out.printf("%-" + PADDING_LEFT + "s%s", "[WARN] ", message);
+	}
+	
+	/**
+	 * Displays a debug message. <br />
+	 * <b>Format:</b> <code>[DEBUG] - classname - &lt;message&gt;</code>
+	 * 
+	 * @param		classname Name of the class that called the method
+	 * @param		message Message to be displayed
+	 * 
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
+	 */
+	public static void showDebug(String classname, String message)
+	{
+		showDebug("- " + classname + " - " + message, true);
 	}
 	
 	/**
@@ -202,10 +223,16 @@ public class ConsoleOutput
 	 */
 	public static void showDebug(String message, boolean breakLine)
 	{
+		boolean shouldDisplay = (level == Level.DEBUG);
+		
+		
+		if (!shouldDisplay)
+			return;
+		
 		if (breakLine)
-			System.out.printf("%-" + WIDTH + "s%s\n", "[DEBUG] ", message);
+			System.out.printf("%-" + PADDING_LEFT + "s%s\n", "[DEBUG] ", message);
 		else
-			System.out.printf("%-" + WIDTH + "s%s", "[DEBUG] ", message);
+			System.out.printf("%-" + PADDING_LEFT + "s%s", "[DEBUG] ", message);
 	}
 	
 	/**
