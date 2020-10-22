@@ -48,9 +48,7 @@ public class FileCompiler
 
 		// Gets dependencies (if any)
 		if (!DependencyManager.hasDependencies()) {
-			ConsoleOutput.showInfo("Fetching dependencies...");
 			DependencyManager.fetch();
-			ConsoleOutput.showInfo("Fetch completed");
 		}
 		
 		dependencies = DataUtil.implode(DependencyManager.getDependencies(), ";");

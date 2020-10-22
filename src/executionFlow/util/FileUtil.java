@@ -6,7 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +51,19 @@ public class FileUtil
 	 * @param		lines Content to be written
 	 * @param		file Output file
 	 * @param		encode File encoding 
-	 * @throws		IOException If an I/O error occurs opening the file
+	 * 
+	 * @throws		IOException If an I/O error occurs while writing the file
 	 */
 	public static void putLines(List<String> lines, Path file, Charset encode) throws IOException
 	{
-		try (BufferedWriter bw = Files.newBufferedWriter(file, encode)) {
+		OpenOption options[] = {
+				StandardOpenOption.CREATE
+		};
+		
+		
+		Files.createDirectories(file.getParent());
+		
+		try (BufferedWriter bw = Files.newBufferedWriter(file, encode, options)) {
 			for (String line : lines) {
 				bw.write(line);
 				bw.newLine();
