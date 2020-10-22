@@ -145,6 +145,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		try {
 			ExecutionFlow.init(!checkpoint_initial.isActive());
 			setTestMethodInfo(thisJoinPoint);
+			onEachTestMethod();
 			onFirstRun();
 			setLogLevel();
 			clean();
@@ -271,8 +272,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Resets totalTests
 			totalTests = -1;
-			
-			RemoteControl.close();
 		}
 		
 		return hasError;
@@ -346,6 +345,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 						while (!mcti.delete());
 					
 					session.destroy();
+					RemoteControl.close();
 			    }
 			});
 		}
@@ -414,6 +414,21 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	/**
+	 * Performs actions for each test method performed.
+	 * 
+	 * @throws		IOException If an error occurs while restoring backup files
+	 * @throws		ClassNotFoundException If class {@link FileManager} is not
+	 * found 
+	 */
+	private void onEachTestMethod() throws IOException, ClassNotFoundException
+	{
+		if (!((testMethodManager == null) && !checkpoint.isActive()))
+			return;
+		
+		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
+	}
+	
+	/**
 	 * Performs actions in the first run of the application. Amongst them:
 	 * <ul>
 	 * 	<li>Creates session</li>
@@ -423,28 +438,21 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * 
 	 * @throws		IOException If an error occurred while storing the session
 	 * or if checkpoint file cannot be created
-	 * @throws		ClassNotFoundException If class {@link FileManager} is not
-	 * found 
+	 * 
 	 */
-	private void onFirstRun() throws IOException, ClassNotFoundException
+	private void onFirstRun() throws IOException
 	{
-		if (!((testMethodManager == null) && !checkpoint.isActive()))
+		if (checkpoint_appRunning.isActive())
 			return;
 		
 		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
+		ConsoleOutput.Level logLevel = askLog();
 		
 		
-		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
+		checkpoint_appRunning.enable();
+		
+		session.save("LOG_LEVEL", logLevel);
 		RemoteControl.open();
-		
-		if (!checkpoint_appRunning.isActive()) {
-			ConsoleOutput.Level logLevel = askLog();
-			
-			
-			checkpoint_appRunning.enable();
-			
-			session.save("LOG_LEVEL", logLevel);
-		}
 	}
 	
 	/**
