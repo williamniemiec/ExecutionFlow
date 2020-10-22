@@ -41,7 +41,7 @@ public class FileCompiler
 	 * compilation (performance can get worse).
 	 */
 	static {
-		DEBUG = false;
+		DEBUG = true;
 	}
 	
 	
@@ -66,7 +66,7 @@ public class FileCompiler
 		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
 				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
 		
-		
+
 		// Gets dependencies (if any)
 		if (!DependencyManager.hasDependencies()) {
 			ConsoleOutput.showInfo("Fetching dependencies...");

@@ -49,7 +49,7 @@ public class JUnit4Runner
 			String classSignature) throws IOException, InterruptedException
 	{
 		process = init(workingDirectory, classPathArgumentFile, classSignature);
-		
+		Thread.sleep(5000);
 		run(workingDirectory, classSignature, false);
 	}
 	
@@ -222,7 +222,7 @@ public class JUnit4Runner
 			String classSignature) throws IOException
 	{
 		classPathArgumentFile = workingDirectory.relativize(classPathArgumentFile);
-		
+		System.out.println("@" + classPathArgumentFile);
 		ProcessBuilder pb = new ProcessBuilder(
 			"java", "-cp", "@" + classPathArgumentFile, 
 			"org.junit.runner.JUnitCore", classSignature

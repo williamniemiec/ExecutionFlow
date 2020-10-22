@@ -78,6 +78,35 @@ public class JDB
 				"-sourcepath", DataUtil.implode(srcPath, ";"),
 				"-classpath", DataUtil.implode(classPath, ";")
 		);
+		
+		processBuilder.directory(workingDirectory.toFile());
+	}
+	
+	/**
+	 * Creates API for JDB.
+	 * 
+	 * @param		workingDirectory Directory that will serve as a reference
+	 * for the execution of the process
+	 * @param		classPathArgumentFile Argument file containing class path 
+	 * list that will be used in JDB
+	 * @param		srcPath Source path list that will be used in JDB
+	 */
+	public JDB(Path workingDirectory, Path classPathArgumentFile, List<String> srcPath)
+	{
+		if (classPathArgumentFile == null)
+			throw new IllegalStateException("Argument file cannot be empty");
+		
+		if (srcPath == null)
+			throw new IllegalStateException("Source path list cannot be empty");
+
+		classPathArgumentFile =  workingDirectory.relativize(classPathArgumentFile);
+		
+		processBuilder = new ProcessBuilder(
+			"jdb",
+				"-sourcepath", DataUtil.implode(srcPath, ";"),
+				"-classpath", "@" + classPathArgumentFile
+		);
+		
 		processBuilder.directory(workingDirectory.toFile());
 	}
 	

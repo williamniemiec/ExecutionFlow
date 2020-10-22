@@ -15,6 +15,7 @@ import executionFlow.dependency.DependencyManager;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Clock;
 import executionFlow.util.ConsoleOutput;
+import executionFlow.util.FileUtil;
 import executionFlow.util.JDB;
 import executionFlow.util.balance.RoundBracketBalance;
 
@@ -115,8 +116,9 @@ public class Analyzer
 	 */
 	public Analyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException
 	{
-		List<String> classPath = new ArrayList<>(), srcPath = new ArrayList<>();
-		String methodClassPath, libPath_relative;
+		List<Path> classPath = new ArrayList<>();
+		List<String> srcPath = new ArrayList<>();
+		String methodClassPath, libPath_relative, libPath;
 		int idx_dollarSign, idx_paramStart;
 		Path classRootPath;			// Root path where the compiled file of invoked class is
 		Path srcRootPath;			// Root path where the source file of the invoked is
@@ -124,6 +126,7 @@ public class Analyzer
 									// will be used as JDB root directory
 		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
 									// will be used as JDB root directory
+		Path argumentFile;
 		
 		
 		// Gets information about the test method of the invoked to be analyzed
@@ -152,8 +155,9 @@ public class Analyzer
 		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
 				
 		// Configures JDB, indicating path of libraries, classes and source files
-		methodClassPath = testClassRootPath.relativize(classRootPath).toString();
-		libPath_relative = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
+//		methodClassPath = testClassRootPath.relativize(classRootPath).toString();
+		//libPath_relative = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
+		libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
 		
 		// Fetch dependencies
 		if (!DependencyManager.hasDependencies()) {
@@ -161,15 +165,34 @@ public class Analyzer
 		}
 		
 		// Sets class path
-		classPath.add(".");
-		classPath.add(libPath_relative + "*");
-		classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
+		LibraryManager.addClassPath(testClassRootPath);
+		LibraryManager.addClassPath(testClassRootPath.resolve("..\\classes").normalize());
+		LibraryManager.addClassPath(classRootPath);
+//		classPath = DependencyManager.getDependencies();
+//		classPath.add(Path.of(".").normalize());
+//		classPath.add(ExecutionFlow.getLibPath());
+////		classPath.add(libPath_relative + "*");
+//		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
+//		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
+//		classPath.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
+//		classPath.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
+//		classPath.add(testClassRootPath);
+//		classPath.add(testClassRootPath.resolve("..\\classes").normalize());
+//		classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
 		
-		if (!methodClassPath.isEmpty())
-			classPath.add(methodClassPath);
+//		if (!methodClassPath.isEmpty())
+//			classPath.add(classRootPath);
+//			classPath.add(Path.of(methodClassPath));
 		
-		classPath.add("..\\classes\\");
+//		classPath.add("..\\classes\\");
+		argumentFile = LibraryManager.getArgumentFile();
 		
+//		argumentFile = FileUtil.createArgumentFile(
+//				argumentFile.getParent(), 
+//				argumentFile.getFileName().toString(), 
+//				classPath
+//		);
+//		
 		// Sets source path
 		srcPath.add(testClassRootPath.relativize(srcRootPath).toString());
 		srcPath.add(testClassRootPath.relativize(testMethodSrcPath).toString());
@@ -188,7 +211,8 @@ public class Analyzer
 			);
 		}
 		
-		jdb = new JDB(testClassRootPath, classPath, srcPath);
+//		jdb = new JDB(testClassRootPath, classPath, srcPath);
+		jdb = new JDB(testClassRootPath, argumentFile, srcPath);
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
 		

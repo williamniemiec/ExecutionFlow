@@ -12,6 +12,7 @@ import org.aspectj.lang.JoinPoint;
 
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
+import executionFlow.LibraryManager;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.RemoteControl;
 import executionFlow.dependency.DependencyManager;
@@ -227,32 +228,36 @@ public aspect TestMethodCollector extends RuntimeCollector
 	{
 		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		List<Path> classPath = new ArrayList<>();
-		Path argumentFile = ExecutionFlow.getArgumentFile();
+		Path argumentFile;
 		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
 		String libPath = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
 
+		LibraryManager.addClassPath(testClassRootPath);
+		LibraryManager.addClassPath(testClassRootPath.resolve("..\\classes").normalize());
 		
-		classPath = DependencyManager.getDependencies();
-		classPath.add(Path.of(".").normalize());
-		classPath.add(testClassRootPath);
-		classPath.add(ExecutionFlow.getLibPath());
-		classPath.add(ExecutionFlow.getAppRootPath());
-		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
-		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
-		classPath.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
-		classPath.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
-		classPath.add(testClassRootPath.resolve("..\\classes").normalize());
+//		classPath = DependencyManager.getDependencies();
+//		classPath.add(Path.of(".").normalize());
+//		classPath.add(ExecutionFlow.getLibPath());
+//		classPath.add(ExecutionFlow.getAppRootPath());
+//		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
+//		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
+//		classPath.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
+//		classPath.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
+//		classPath.add(testClassRootPath);
+//		classPath.add(testClassRootPath.resolve("..\\classes").normalize());
 //		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
 		//classPath.add("@" + testClassRootPath.relativize(DependencyManager.getArgumentFile()).toString());
 
+		argumentFile = LibraryManager.getArgumentFile();
 		
-		argumentFile = FileUtil.createArgumentFile(
-				argumentFile.getParent(), 
-				argumentFile.getFileName().toString(), 
-				classPath
-		);
+		
+//		argumentFile = FileUtil.createArgumentFile(
+//				argumentFile.getParent(), 
+//				argumentFile.getFileName().toString(), 
+//				classPath
+//		);
 		
 				
 		
@@ -271,6 +276,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 		mcti.delete();
 //			JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 		JUnit4Runner.run(testClassRootPath, argumentFile, classSignature);
+		
+		while (JUnit4Runner.isRunning()) {
+			Thread.sleep(2000);
+		}
 	}
 	
 	/**
