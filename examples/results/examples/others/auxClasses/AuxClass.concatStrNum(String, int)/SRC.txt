@@ -1,0 +1,119 @@
+package examples.others.auxClasses;                                                                                        
+import java.util.Arrays;                                                                                                   
+import java.util.List;                                                                                                     
+import examples.polymorphism.ClassInterface;                                                                               
+public class AuxClass{                                                                                                     
+     public String text;                                                                                                   
+     private int num;                                                                                                      
+     @executionFlow.runtime.CollectCalls public AuxClass(String t, int x){                                                 
+          this.text = t;                                                                                                   
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public AuxClass(int num){                                                         
+          this.num = num;                                                                                                  
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public AuxClass(int x, int y){                                                    
+          x = 2;                                                                                                           
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public AuxClass(String x){                                                        
+          x = "2";                                                                                                         
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public void test(int x, int y, String k){                                         
+          x = 3;                                                                                                           
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public void test2() {                                                             
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public static void test3(int x, int y, String k){                                 
+          x = 0;                                                                                                           
+          while (x < 3) {                                                                                                  
+               x++;                                                                                                        
+          }                                                                                                                
+          x = 3;                                                                                                           
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public static void test4() {                                                      
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public long factorial(int x){                                                     
+          long response = 1;                                                                                               
+          for (int i=1; i<=x; i++) {                                                                                       
+               response *= i;                                                                                              
+          }                                                                                                                
+          return response;                                                                                                 
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public long fibonacci(int x){                                                     
+          long response = 1;                                                                                               
+          long last = 1;                                                                                                   
+          long aux = 0;                                                                                                    
+          for (int i=2; i<x; i++) {                                                                                        
+               aux = response;                                                                                             
+               response = response + last;                                                                                 
+               last = aux;                                                                                                 
+          }                                                                                                                
+          return response;                                                                                                 
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public static char[] parseLetters_noInternalCall(CharSequence cs){                
+          char[] letters = cs.toString().toCharArray();                                                                    
+          char[] response = new char[letters.length];                                                                      
+          for (int i=0; i<letters.length; i++) {                                                                           
+                    if (letters[i] == Character.toUpperCase(letters[i])) response[i] =  Character.toLowerCase(letters[i]); 
+               else {int _3bbe329be739f7aa767cc7716d7ba4da=0;                                                              
+                    response[i] =  Character.toUpperCase(letters[i]);                                                      
+               }                                                                                                           
+          }                                                                                                                
+          return response;                                                                                                 
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public static char[] parseLetters_withInternalCall(char[] letters){               
+          char[] response = new char[letters.length];                                                                      
+          for (int i=0; i<letters.length; i++) {                                                                           
+               response[i] = invertLetter(letters[i]);                                                                     
+          }                                                                                                                
+          return response;                                                                                                 
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls private static char invertLetter(char letter){                                    
+          if (letter == Character.toUpperCase(letter)) {                                                                   
+               return Character.toLowerCase(letter);                                                                       
+          }                                                                                                                
+          return Character.toUpperCase(letter);                                                                            
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public String threePaths(int num){                                                
+          if (num == 1) {                                                                                                  
+               return "one";                                                                                               
+          }                                                                                                                
+          if (num == 2) {                                                                                                  
+               return "two";                                                                                               
+          }                                                                                                                
+          return "";                                                                                                       
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public int testObjParam(Object obj){                                              
+          return obj.hashCode();                                                                                           
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public int getNumber(){                                                           
+          return num;                                                                                                      
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public List<Integer> identity(int num1, int num2, int num3, int num4, int num5){  
+          List<Integer> response = Arrays.asList( num1, num2, num3, num4, num5 );                                          
+          return response;                                                                                                 
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public ClassInterface anonymousObjectReturn(){                                    
+          return new ClassInterface("test") {                                                                              
+               @Override public String interfaceMethod() {                                                                 
+                    String str = "test";                                                                                   
+                    return str;                                                                                            
+               }                                                                                                           
+          }                                                                                                                
+          ;                                                                                                                
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public static String trim(String text){                                           
+               if (text == null) return "";                                                                                
+               return text.trim();                                                                                         
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public static String concatStrNum(String str, int num){                           
+          return str + num;                                                                                                
+     }                                                                                                                     
+     @executionFlow.runtime.CollectCalls public static int countTotalArguments(Object... args){                            
+          int i = 2;                                                                                                       
+          int k;int _ddd6584860807181b176276fe076eabf=0;                                                                   
+          for (k=0; k<args.length; k++) {                                                                                  
+               if (Boolean.parseBoolean("True")) {continue;}                                                               
+          }                                                                                                                
+          return k;                                                                                                        
+     }                                                                                                                     
+}                                                                                                                          

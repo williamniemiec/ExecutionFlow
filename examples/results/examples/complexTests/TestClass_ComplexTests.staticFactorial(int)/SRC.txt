@@ -1,0 +1,53 @@
+package examples.complexTests;                                                                 
+public class TestClass_ComplexTests{                                                           
+     private boolean skip;                                                                     
+     private int num;                                                                          
+     @executionFlow.runtime.CollectCalls public TestClass_ComplexTests(boolean skip, int num){ 
+          this.skip = skip;                                                                    
+          this.num = num;                                                                      
+     }                                                                                         
+     @executionFlow.runtime.CollectCalls public TestClass_ComplexTests(boolean skip){          
+          this(skip, 0);                                                                       
+          factorial(1);                                                                        
+     }                                                                                         
+     @executionFlow.runtime.CollectCalls public TestClass_ComplexTests(int num){               
+          this(false, num);                                                                    
+     }                                                                                         
+     @executionFlow.runtime.CollectCalls public TestClass_ComplexTests(){                      
+          this(false, 0);                                                                      
+     }                                                                                         
+     @executionFlow.runtime.CollectCalls public long factorial(long x){                        
+               if (skip) return -1;                                                            
+               long response = 1;                                                              
+          for (int i=1; i<=x; i++) {                                                           
+               response *= i;                                                                  
+          }                                                                                    
+          return response;                                                                     
+     }                                                                                         
+     @executionFlow.runtime.CollectCalls public static long staticFactorial(int x){            
+          long response = 1;                                                                   
+          for (int i=1; i<=x; i++) {                                                           
+               response *= i;                                                                  
+          }                                                                                    
+          return response;                                                                     
+     }                                                                                         
+     @executionFlow.runtime.CollectCalls public long factorial_constructor(){                  
+          long response = 1;                                                                   
+          for (int i=1; i<=num; i++) {                                                         
+               response *= i;                                                                  
+          }                                                                                    
+          return response;                                                                     
+     }                                                                                         
+     @executionFlow.runtime.CollectCalls public long fibonacci(int x){                         
+               if (skip) return -1;                                                            
+               long response = 1;                                                              
+          long last = 1;                                                                       
+          long aux = 0;                                                                        
+          for (int i=2; i<x; i++) {                                                            
+               aux = response;                                                                 
+               response = response + last;                                                     
+               last = aux;                                                                     
+          }                                                                                    
+          return response;                                                                     
+     }                                                                                         
+}                                                                                              
