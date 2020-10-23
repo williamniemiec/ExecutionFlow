@@ -494,7 +494,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		if (!inTestMethod) {
 			ConsoleOutput.showInfo("Preprocessing test method...");
-			ConsoleOutput.showWarning("On the first run this process can be slow");
 			
 			checkpoint.enable();
 			
