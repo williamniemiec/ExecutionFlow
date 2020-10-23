@@ -10,8 +10,8 @@ import java.util.Map;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.parser.cleanup.Cleanup;
 import executionFlow.io.processor.parser.holeplug.HolePlug;
+import executionFlow.io.processor.parser.trgeneration.CodeCleaner;
 import executionFlow.util.ConsoleOutput;
 import executionFlow.util.FileUtil;
 import executionFlow.util.formatter.JavaIndenter;
@@ -268,7 +268,7 @@ public class InvokedFileProcessor extends FileProcessor
 		
 		List<String> lines = new ArrayList<>();
 		File outputFile;
-		Cleanup cleanup;
+		CodeCleaner cleanup;
 		HolePlug holePlug;
 		
 		
@@ -283,32 +283,13 @@ public class InvokedFileProcessor extends FileProcessor
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
 		// Processing #1 - Same processing done in TRGeneration (application)
-		cleanup = new Cleanup(lines);
+		cleanup = new CodeCleaner(lines);
 		lines = cleanup.parse();
 
 		// Updates invocation line of all collected invoked if it is in the same
 		// file of test method is declared
 		if (isTestMethod) {
-			Map<Integer, Integer> mapping = cleanup.getMapping();
-			int invocationLine = 0;
-
-
-			for (Map.Entry<Integer, List<CollectorInfo>> e : collectors.entrySet()) {
-				List<CollectorInfo> collectorList = e.getValue();
-				
-				for (int i=0; i<collectorList.size(); i++) {
-					invocationLine = collectorList.get(i).getMethodInfo().getInvocationLine();
-					
-					InvokedFileProcessor.mapping.put(
-							collectorList.get(i).getMethodInfo().getSrcPath(),
-						mapping
-					);
-					
-					if (mapping.containsKey(invocationLine)) {
-						collectorList.get(i).getMethodInfo().setInvocationLine(mapping.get(invocationLine));
-					}
-				}
-			}
+			updateInvocationLine(cleanup.getMapping(), collectors);
 		}
 		
 		// -----{ DEBUG }-----
@@ -336,6 +317,38 @@ public class InvokedFileProcessor extends FileProcessor
 	public String processFile() throws IOException
 	{
 		return "";
+	}
+	
+	/**
+	 * Updates invocation line of all collected invoked if it is in the same
+	 * file of test method is declared.
+	 * 
+	 * @param		mapping Mapping containing the old and new invocation line,
+	 * respectively 
+	 * @param		collector Collected invoked
+	 */
+	private void updateInvocationLine(Map<Integer, Integer> mapping, Map<Integer, List<CollectorInfo>> collector)
+	{
+		int invocationLine = 0;
+		List<CollectorInfo> collectorList;
+
+		
+		for (Map.Entry<Integer, List<CollectorInfo>> e : collector.entrySet()) {
+			collectorList = e.getValue();
+			
+			for (int i=0; i<collectorList.size(); i++) {
+				invocationLine = collectorList.get(i).getMethodInfo().getInvocationLine();
+				
+				InvokedFileProcessor.mapping.put(
+						collectorList.get(i).getMethodInfo().getSrcPath(),
+					mapping
+				);
+				
+				if (mapping.containsKey(invocationLine)) {
+					collectorList.get(i).getMethodInfo().setInvocationLine(mapping.get(invocationLine));
+				}
+			}
+		}
 	}
 	
 	
