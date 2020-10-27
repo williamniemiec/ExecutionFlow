@@ -4,24 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import executionFlow.util.DataUtil;
 
 
 /**
  * @author		Murilo Wolfart
  * @see			https://bitbucket.org/mwolfart/trgeneration/
  */
-public class CodeCleaner 
-{
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private List<String> codeToCleanup;
+public class CodeCleaner {
 	// Processed source code
 	private List<String> processedCode;
 	// (line mode only) Mappings containing information on processed code x original code
@@ -30,39 +21,9 @@ public class CodeCleaner
 	private List<Integer> emptyLines;
 	// Debug flag
 	private boolean debug;
-
 	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	public CodeCleaner(List<String> codeToCleanup)
-	{
-		this.codeToCleanup = codeToCleanup;
-		lineMappings = new ArrayList<Map<Integer, List<Integer>>>();
-		emptyLines = new ArrayList<Integer>();
-	}
+	// TODO make line mode optional in order to avoid unnecessary tasks
 	
-	
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
-	public List<String> parse() {
-		processedCode = codeToCleanup;
-		cleanup();
-//		addDummyNodes();
-		buildFullMap();
-		buildReverseFullMap();
-		deleteContentBetweenPercentages();
-		
-		
-		if (debug) {
-			dumpCode();
-			dumpLastMap();
-		}
-		
-		return processedCode;
-	}
-
 	public CodeCleaner(boolean debug) {
 		lineMappings = new ArrayList<Map<Integer, List<Integer>>>();
 		emptyLines = new ArrayList<Integer>();
@@ -77,22 +38,24 @@ public class CodeCleaner
 		debug = d;
 	}
 	
+	public void cleanupCode(List<String> codeToCleanup) {
+		processedCode = codeToCleanup;
+		cleanup();
+//		addDummyNodes();
+		buildFullMap();
+		buildReverseFullMap();
+		
+		if (debug) {
+			dumpCode();
+			dumpLastMap();
+		}
+	}
+	
 	public Map<Integer, List<Integer>> getCleanToOriginalCodeMapping() {
 		// returns the last map in the list, which will be the mapping
 		//  that contains the clean line id -> original line id map
 		//  if the method is called after cleanupCode
 		return lineMappings.get(lineMappings.size()-1);
-	}
-	
-	private void deleteContentBetweenPercentages()	{
-		String line;
-		
-		
-		for (int i=0; i<processedCode.size(); i++) {
-			line = processedCode.get(i);
-			line = line.replaceAll("%.+%", "");
-			processedCode.set(i, line);
-		}
 	}
 	
 	// CURRENT FORMAT CONSTRAINTS:
@@ -101,6 +64,9 @@ public class CodeCleaner
 	private int cleanup() {
 		eliminateComments();
 		if (debug) System.out.println("CLEANUP: Eliminated comments");
+		trimLines();
+		eliminateAnnotations();
+		if (debug) System.out.println("CLEANUP: Eliminated annotations");
 		trimLines();
 		removeBlankLines();
 		if (debug) System.out.println("CLEANUP: Removed blank lines");
@@ -202,6 +168,14 @@ public class CodeCleaner
 		}
 		
 		return endLine;
+	}
+	
+	private void eliminateAnnotations() {
+		for (int i=0; i<processedCode.size(); i++) {
+			if (processedCode.get(i).matches("^@.*")) {
+				processedCode.set(i, "");
+			}
+		}		
 	}
 	
 	private void removeBlankLines() {		
@@ -732,54 +706,12 @@ public class CodeCleaner
 		System.out.println(" ***** End of map ");
 	}
 	
-	
-	//-------------------------------------------------------------------------
-	//		Getters
-	//-------------------------------------------------------------------------
-	/**
-	 * Gets the mapping of the original file with the modified file.
-	 * 
-	 * @return		Mapping with the following format:
-	 * <ul>
-	 * 	<li><b>Key:</b> Original source file line</li>
-	 * 	<li><b>Value:</b> Modified source file line</li>
-	 * </ul>
-	 */
-	public Map<Integer, Integer> getMapping()
-	{
-		Map<Integer, Integer> mapping = new HashMap<>();
-		Set<Integer> updated = new HashSet<>();
-		
-
-		// Gets first line change
-		for (Map.Entry<Integer, List<Integer>> lm : lineMappings.get(0).entrySet()) {
-			mapping.put(lm.getKey(), lm.getValue().get(0));
-		}
-		
-		// Updates line changes from the second
-		for (int i=1; i<lineMappings.size(); i++) {
-			// For each mapping
-			for (Map.Entry<Integer, List<Integer>> lm : lineMappings.get(i).entrySet()) {
-				// If there is a value in the mapping with the current key
-				if (mapping.containsValue(lm.getKey())) {
-					// Updates this value with the value contained in the current key
-					for (Integer key : DataUtil.<Integer, Integer>findKeyFromValue(mapping, lm.getKey())) {
-						if (!updated.contains(key)) {
-							mapping.put(key, lm.getValue().get(0));
-							updated.add(key);
-						}
-					}
-				}
-			}
-			
-			// Resets update set
-			updated.clear();
-		}
-		
-		return mapping;
-	}
-	
 	public List<Map<Integer, List<Integer>>> getLineMappings()	{
 		return lineMappings;
 	}
+	
+	public List<String> getProcessedCode()	{
+		return processedCode;
+	}
 }
+
