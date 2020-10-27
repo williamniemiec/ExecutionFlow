@@ -266,7 +266,7 @@ public class InvokedFileProcessor extends FileProcessor
 	{
 		if (file == null) { return ""; }
 		
-		List<String> lines = new ArrayList<>();
+		List<String> lines;
 		File outputFile;
 		CodeCleaner cleanup;
 		HolePlug holePlug;
