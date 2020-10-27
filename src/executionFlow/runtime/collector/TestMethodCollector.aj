@@ -151,7 +151,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			clean();
 			processTestMethod();
 		} 
-		catch(IOException | ClassNotFoundException e) {
+		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
 			ConsoleOutput.showError(e.getMessage());
 			e.printStackTrace();
 			
