@@ -17,7 +17,6 @@ public class JavaIndenter {
 	 */
 	// The stored Java program
 	private ArrayList<JavaLine> program = new ArrayList<>();
-	private static Scanner userInput = new Scanner(System.in);
 
 	// Flag for braces and a single pass
 	private static boolean blnFlag = false;
@@ -186,7 +185,7 @@ public class JavaIndenter {
 				if (checkChar.equals("do ") || checkChar.equals("do(") || checkChar.equals("for")
 						|| checkChar.equals("whi") || checkChar.equals("if ") || checkChar.equals("els")
 						|| checkChar.equals("if(") || checkChar.equals("try") || checkChar.equals("cat")
-						|| checkChar.equals("swi") || checkChar.equals("cas")) {
+						|| checkChar.equals("swi")) {
 					bracketCount++;
 					blnFlag = true;
 				}
