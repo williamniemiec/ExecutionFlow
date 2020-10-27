@@ -244,6 +244,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		while (JUnit4Runner.isRunning()) {
 			Thread.sleep(2000);
+			
+			if (!checkpoint_initial.isActive())
+				JUnit4Runner.quit();
 		}
 	}
 	
@@ -272,6 +275,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			// Resets totalTests
 			totalTests = -1;
+			RemoteControl.close();
 		}
 		
 		return hasError;
@@ -345,12 +349,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 						while (!mcti.delete());
 					
 					session.destroy();
-					RemoteControl.close();
 			    }
 			});
 		}
-		catch (IllegalStateException e)
-		{}
+		catch (IllegalStateException e) {}
 	}
 	
 	/**
@@ -426,6 +428,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			return;
 		
 		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
+		RemoteControl.open();
 	}
 	
 	/**
@@ -452,7 +455,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		checkpoint_appRunning.enable();
 		
 		session.save("LOG_LEVEL", logLevel);
-		RemoteControl.open();
 	}
 	
 	/**
@@ -677,6 +679,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 				break;
 			case 4:
 				logLevel = ConsoleOutput.Level.DEBUG;
+				break;
 			case 3:
 			default:
 				logLevel = ConsoleOutput.Level.INFO;
