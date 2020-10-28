@@ -100,6 +100,7 @@ public class JUnit4Runner
 		String line;
 		Pattern pattern_totalTests = Pattern.compile("[0-9]+");
 		boolean error = false;
+		boolean fatalError = false;
 		
 		
 		stopped = false;			
@@ -112,7 +113,7 @@ public class JUnit4Runner
 			System.err.println(line);
 		}
 		
-		while (!stopped && (line = output.readLine()) != null) {
+		while (!fatalError && !stopped && (line = output.readLine()) != null) {
 			error = false;
 			
 			// Displays error messages (if any)
@@ -137,6 +138,8 @@ public class JUnit4Runner
 			}
 			
 			System.out.flush();
+			
+			fatalError = line.equals("FAILURES!!!");
 		}
 		
 		// Closes process
