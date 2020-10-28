@@ -8,20 +8,35 @@ import java.util.List;
 import executionFlow.dependency.DependencyManager;
 import executionFlow.util.FileUtil;
 
+
+/**
+ * Responsible for gathering all libraries that the application needs.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.0
+ * @since		5.2.0
+ */
 public class LibraryManager 
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static final Path ARGUMENT_FILE = 
 			Path.of(System.getProperty("user.home"), ".ef_dependencies.txt");
-	private static List<Path> classPath = new ArrayList<>();
+	private static List<Path> libraries = new ArrayList<>();
 	private static boolean modified = false;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
 	static {
-		classPath.add(ExecutionFlow.getLibPath());
-		classPath.add(ExecutionFlow.getAppRootPath());
-		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
-		classPath.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
-		classPath.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
-		classPath.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
+		libraries.add(ExecutionFlow.getLibPath());
+		libraries.add(ExecutionFlow.getAppRootPath());
+		libraries.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
+		libraries.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
+		libraries.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
+		libraries.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
 		
 		if (!DependencyManager.hasDependencies()) {
 			try {
@@ -30,34 +45,42 @@ public class LibraryManager
 			catch (IOException e) {}
 		}
 		
-		classPath.addAll(DependencyManager.getDependencies());
+		libraries.addAll(DependencyManager.getDependencies());
 		modified = true;
 	}
 	
 	
-	public static Path generateArgumentFile() throws IOException
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	/**
+	 * Adds a new library, which will be part of the argument file.
+	 * 
+	 * @param		library Library path (.jar file or directory path)
+	 * 
+	 * @throws		IllegalArgumentException If library is null
+	 */
+	public static void addLibrary(Path library) 
 	{
-		FileUtil.createArgumentFile(
-				ARGUMENT_FILE.getParent(), 
-				ARGUMENT_FILE.getFileName().toString(), 
-				classPath
-		);
-		
-		return ARGUMENT_FILE;
-	}
-	
-	public static void addClassPath(Path p) 
-	{
-		if (p == null)
+		if (library == null)
 			throw new IllegalArgumentException("Path cannot be null");
 		
-		if (classPath.contains(p))
+		if (libraries.contains(library))
 			return;
 		
 		modified = true;
-		classPath.add(p);
+		libraries.add(library);
 	}
 
+	/**
+	 * Gets argument file with all dependencies that the application needs.
+	 * 
+	 * @return		Argument file
+	 * 
+	 * @throws 		IOException If an error occurs while creating the file
+	 * 
+	 * @see			https://docs.oracle.com/javase/9/tools/java.htm#GUID-4856361B-8BFD-4964-AE84-121F5F6CF111
+	 */
 	public static Path getArgumentFile() throws IOException
 	{
 		if (modified) {
@@ -66,5 +89,22 @@ public class LibraryManager
 		}
 		
 		return ARGUMENT_FILE;
+	}
+	
+	/**
+	 * Creates / updates argument file with all dependencies that the 
+	 * application needs.
+	 * 
+	 * @throws		IOException If an error occurs while writing the file
+	 * 
+	 * @see			https://docs.oracle.com/javase/9/tools/java.htm#GUID-4856361B-8BFD-4964-AE84-121F5F6CF111
+	 */
+	private static void generateArgumentFile() throws IOException
+	{
+		FileUtil.createArgumentFile(
+				ARGUMENT_FILE.getParent(), 
+				ARGUMENT_FILE.getFileName().toString(), 
+				libraries
+		);
 	}
 }
