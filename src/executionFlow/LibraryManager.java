@@ -73,7 +73,8 @@ public class LibraryManager
 	}
 
 	/**
-	 * Gets argument file with all dependencies that the application needs.
+	 * Gets argument file with all dependencies that the application needs. If
+	 * any library has been added recently, the argument file will be updated.
 	 * 
 	 * @return		Argument file
 	 * 

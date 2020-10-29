@@ -12,7 +12,7 @@ import javax.swing.JFrame;
  * commands to the application.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		5.1.0
  */
 public class RemoteControl 
@@ -54,7 +54,8 @@ public class RemoteControl
 	 */
 	public static void close()
 	{
-		window.dispose();
+		if (window != null)
+			window.dispose();
 	}
 	
 	/**
