@@ -68,18 +68,10 @@ public aspect ConstructorCollector extends RuntimeCollector
 	pointcut constructorCollector(): 
 		!skipAnnotation() &&
 		!(junit4_internal() || junit5_internal()) &&
-		cflow(
-			(junit4() || junit5()) && 
-			call(*.new(..))
-		) &&
-		!within(executionFlow.*) &&
-		!within(executionFlow.*.*) &&
-		!within(executionFlow.*.*.*) &&
-		!within(executionFlow.*.*.*.*) &&
-		!within(executionFlow.*.*.*.*.*) &&
-		!cflowbelow(withincode(*.new(..))) &&
+		call(*.new(..)) && 
+		!cflowbelow(withincode(* *(..))) &&
 		!within(ConstructorCollector);
-		
+	
 	before(): constructorCollector()
 	{
 		if (invocationLine <= 0)
