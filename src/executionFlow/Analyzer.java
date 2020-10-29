@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.dependency.DependencyManager;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Clock;
 import executionFlow.util.ConsoleOutput;
@@ -136,13 +135,9 @@ public class Analyzer
 		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
 				
 		// Generates argument file
-		if (!DependencyManager.hasDependencies()) {
-			DependencyManager.fetch();
-		}
-		
-		LibraryManager.addClassPath(testClassRootPath);
-		LibraryManager.addClassPath(testClassRootPath.resolve("..\\classes").normalize());
-		LibraryManager.addClassPath(classRootPath);
+		LibraryManager.addLibrary(testClassRootPath);
+		LibraryManager.addLibrary(testClassRootPath.resolve("..\\classes").normalize());
+		LibraryManager.addLibrary(classRootPath);
 
 		argumentFile = LibraryManager.getArgumentFile();
 		
@@ -596,6 +591,11 @@ public class Analyzer
     			
     			if (exitMethod) {
     				currentLine = -1;
+    			}
+    			
+    			if (srcLine.contains("FAILURES!!!")) {
+    				endOfMethod = true;
+    				exitMethod = true;
     			}
     			
     			// -----{ DEBUG }-----
