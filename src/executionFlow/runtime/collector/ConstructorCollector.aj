@@ -70,6 +70,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		!(junit4_internal() || junit5_internal()) &&
 		call(*.new(..)) && 
 		!cflowbelow(withincode(* *(..))) &&
+		!within(executionFlow..*) &&
 		!within(ConstructorCollector);
 	
 	before(): constructorCollector()
