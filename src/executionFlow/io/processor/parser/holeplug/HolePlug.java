@@ -530,7 +530,7 @@ public class HolePlug
 	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.0.0
+	 * @version		5.2.0
 	 * @since 		5.0.0
 	 */
 	private class TryCatchFinallyParser
@@ -538,8 +538,7 @@ public class HolePlug
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern PATTERN_TRY_FINALLY = 
-				Pattern.compile("[\\t\\s\\}]*(try|finally)[\\s\\t\\{]+");
+		private final String REGEX_TRY_FINALLY = "[\\t\\s\\}]*(try|finally)[\\s\\t\\{]+";
 		private final String REGEX_CATCH_CLOSED_CURLY_BRACKET = 
 				"(\\t|\\ )*\\}(\\t|\\ )*catch(\\t|\\ )*[\\(|\\{]+.*";
 		private boolean removedClosedCB;
@@ -569,7 +568,7 @@ public class HolePlug
 			if (wasParsed)
 				return line;
 			
-			if (PATTERN_TRY_FINALLY.matcher(line).find()) {	
+			if (line.matches(REGEX_TRY_FINALLY)) {	
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = parse_try_finally(line);
 				wasParsed = true;
