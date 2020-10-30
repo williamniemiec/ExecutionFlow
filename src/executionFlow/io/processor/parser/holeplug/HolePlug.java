@@ -758,7 +758,7 @@ public class HolePlug
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern PATTERN_SWITCH = Pattern.compile("[\\t\\s\\}]*(case|default)(\\t|\\ )+");
+		private final String PATTERN_SWITCH = "[\\t\\s\\}]*(case|default):(\\t|\\ )+";
 		
 		
 		//---------------------------------------------------------------------
@@ -778,7 +778,7 @@ public class HolePlug
 			if (wasParsed)
 				return line;
 			
-			if (PATTERN_SWITCH.matcher(line).find()) {							
+			if (line.matches(PATTERN_SWITCH)) {							
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = parse_switch(line);
 				wasParsed = true;
