@@ -24,7 +24,7 @@ public class Session
 	//		Attributes
 	//-----------------------------------------------------------------------
 	private transient Map<String, Object> content;
-	private File target;
+	private File sessionFile;
 	
 	
 	//-----------------------------------------------------------------------
@@ -38,7 +38,7 @@ public class Session
 	 */
 	public Session(String name, File directory)
 	{
-		this.target = new File(directory, name + ".bin");
+		this.sessionFile = new File(directory, name + ".bin");
 		content = new HashMap<>();
 	}
 	
@@ -61,12 +61,12 @@ public class Session
 	{
 		if (exists()) {
 			load();
-			target.delete();			
+			sessionFile.delete();			
 		}
 		
 		content.put(key, value);
 
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(target))) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(sessionFile))) {
 			oos.writeObject(content);
 		}
 	}
@@ -110,7 +110,7 @@ public class Session
 	 */
 	public boolean exists()
 	{
-		return target.exists();
+		return sessionFile.exists();
 	}
 	
 	/**
@@ -121,7 +121,7 @@ public class Session
 	 */
 	public synchronized boolean destroy()
 	{
-		return target.exists() ? target.delete() : true;
+		return sessionFile.exists() ? sessionFile.delete() : true;
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class Session
 		if (!exists())
 			return;
 
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(target))) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(sessionFile))) {
 			content = (Map<String, Object>)ois.readObject();
 		}		
 		catch (ClassNotFoundException e) 
