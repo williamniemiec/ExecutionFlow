@@ -229,9 +229,12 @@ public class TestMethodFileProcessor extends FileProcessor
 		if (file == null) { return ""; }
 
 		final String REGEX_COMMENT_FULL_LINE = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
+		final String REGEX_MULTILINE_ARGS = ".+,([^;]+|[\\s\\t]*)$";
 		String line;
 		List<String> lines = new ArrayList<>();
 		File outputFile;
+		boolean multilineArgs = false;
+		int multilineArgsStart = -1;
 		
 		
 		// If an output directory is specified, processed file will be saved to it
@@ -247,8 +250,9 @@ public class TestMethodFileProcessor extends FileProcessor
 		// Parses file line by line
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
+			line = removeInlineComment(line);
 			
-			if (!line.matches(REGEX_COMMENT_FULL_LINE)) {
+			if (!(line.matches(REGEX_COMMENT_FULL_LINE) || line.isBlank())) {
 				// Checks whether the line contains a test annotation
 				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
 					line += " @executionFlow.runtime._SkipInvoked";
@@ -269,6 +273,26 @@ public class TestMethodFileProcessor extends FileProcessor
 					
 					line = response.toString();
 				}
+				else if (line.matches(REGEX_MULTILINE_ARGS) && (i+1 < lines.size())) {
+					String nextLine = lines.get(i+1);
+					
+					
+					nextLine = removeInlineComment(nextLine);
+					
+					if (!multilineArgs) {
+						multilineArgsStart = i;
+						multilineArgs = true;
+					}
+					
+					line = line + nextLine;
+					lines.set(i+1, "");
+				}
+				else if (multilineArgs) {
+					multilineArgs = false;
+					
+					lines.set(multilineArgsStart, lines.get(multilineArgsStart) + line);
+					line = "";
+				}
 			}
 			
 			lines.set(i, line);
@@ -285,5 +309,24 @@ public class TestMethodFileProcessor extends FileProcessor
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
 
 		return outputFile.getAbsolutePath();
+	}
+	
+	/**
+	 * Removes inline comment.
+	 * 
+	 * @param		line Line to which inline comment will be removed.
+	 * 
+	 * @return		Line without inline comment
+	 */
+	private String removeInlineComment(String line) 
+	{
+		int idxCommentStart = line.indexOf("//");
+		
+		
+		if (idxCommentStart != -1) {
+			line = line.substring(0, idxCommentStart);
+		}
+		
+		return line;
 	}
 }
