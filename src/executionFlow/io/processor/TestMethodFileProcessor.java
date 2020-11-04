@@ -339,7 +339,14 @@ public class TestMethodFileProcessor extends FileProcessor
 				newLine = multilineArgsStartIndex+1;
 			}
 			
-			mapping.put(file, Map.of(oldLine, newLine));
+			if (mapping.containsKey(file)) {
+				mapping.get(file).put(oldLine, newLine);
+			}
+			else {
+				HashMap<Integer, Integer> currentMap = new HashMap<>(Map.of(oldLine, newLine));
+				
+				mapping.put(file, currentMap);				
+			}
 		}
 		else if (insideMultilineArgs) {
 			insideMultilineArgs = false;
