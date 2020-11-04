@@ -31,6 +31,8 @@ public class TestMethodFileProcessor extends FileProcessor
 		
 	private String fileExtension = "java";
 	private static Map<Path, Map<Integer, Integer>> mapping;
+	private boolean insideMultilineArgs = false;
+	private int multilineArgsStartIndex = -1;
 	
 	
 	//-------------------------------------------------------------------------
@@ -229,15 +231,13 @@ public class TestMethodFileProcessor extends FileProcessor
 	@Override
 	public String processFile() throws IOException
 	{
-		if (file == null) { return ""; }
+		if (file == null)
+			return "";
 
 		final String REGEX_COMMENT_FULL_LINE = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		final String REGEX_MULTILINE_ARGS = ".+,([^;]+|[\\s\\t]*)$";
 		String line;
 		List<String> lines = new ArrayList<>();
 		File outputFile;
-		boolean multilineArgs = false;
-		int multilineArgsStart = -1;
 		
 		
 		// If an output directory is specified, processed file will be saved to it
@@ -258,47 +258,9 @@ public class TestMethodFileProcessor extends FileProcessor
 			line = removeInlineComment(line);
 			
 			if (!(line.matches(REGEX_COMMENT_FULL_LINE) || line.isBlank())) {
-				// Checks whether the line contains a test annotation
-				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-					line += " @executionFlow.runtime._SkipInvoked";
-				}
-				// Checks if there are print's
-				else if (line.contains("System.out.print")) {
-					String[] tmp = line.split(";");
-					StringBuilder response = new StringBuilder();
-					
-					
-					// Deletes print's from the line
-					for (String term : tmp) {
-						if (!term.contains("System.out.print")) {
-							response.append(term);
-							response.append(";");
-						}
-					}
-					
-					line = response.toString();
-				}
-				else if (line.matches(REGEX_MULTILINE_ARGS) && (i+1 < lines.size())) {
-					String nextLine = lines.get(i+1);
-					
-					
-					nextLine = removeInlineComment(nextLine);
-					
-					if (!multilineArgs) {
-						multilineArgsStart = i;
-						multilineArgs = true;
-					}
-					
-					line = line + nextLine;
-					lines.set(i+1, "");
-					mapping.put(file, Map.of(i+1+1, i+1));
-				}
-				else if (multilineArgs) {
-					multilineArgs = false;
-					
-					lines.set(multilineArgsStart, lines.get(multilineArgsStart) + line);
-					line = "";
-				}
+				line = parseTestAnnotation(line);
+				line = parsePrints(line);
+				line = parseMultilineArgs(line, lines, i);
 			}
 			
 			lines.set(i, line);
@@ -317,6 +279,112 @@ public class TestMethodFileProcessor extends FileProcessor
 		return outputFile.getAbsolutePath();
 	}
 	
+	/**
+	 * Adds {@link executionFlow.runtime._SkipInvoked} annotation next to 
+	 * 'Test' annotation.
+	 * 
+	 * @param		line Line to be analyzed
+	 * 
+	 * @return		Line with {@link executionFlow.runtime._SkipInvoked} if it
+	 * has 'Test' annotation. Otherwise, it returns the line sent by parameter
+	 */
+	private String parseTestAnnotation(String line) 
+	{
+		if (line.contains("@Test") || line.contains("@org.junit.Test")) {
+			line += " @executionFlow.runtime._SkipInvoked";
+		}
+		
+		return line;
+	}
+	
+	/**
+	 * Converts method calls with arguments on multiple lines to a call with 
+	 * arguments on a single line.
+	 * 
+	 * @param		currentLine Line corresponding to the current index
+	 * @param		lines File lines
+	 * @param		currentIndex Current line index
+	 * 
+	 * @return		Line with arguments on a single line
+	 */
+	private String parseMultilineArgs(String currentLine, List<String> lines, int currentIndex) 
+	{
+		final String REGEX_MULTILINE_ARGS = ".+,([^;]+|[\\s\\t]*)$";
+		final String REGEX_MULTILINE_ARGS_CLOSE = "[\\s\\t)]+;[\\s\\t]*";
+		
+		
+		if (currentLine.matches(REGEX_MULTILINE_ARGS) && (currentIndex+1 < lines.size())) {
+			String nextLine = lines.get(currentIndex+1);
+			int oldLine;
+			int newLine;
+			
+			
+			nextLine = removeInlineComment(nextLine);
+			
+			if (!insideMultilineArgs) {
+				multilineArgsStartIndex = currentIndex;
+				insideMultilineArgs = true;
+				
+				lines.set(currentIndex+1, "");
+				currentLine = currentLine + nextLine;
+				
+				oldLine = currentIndex+1+1;
+				newLine = currentIndex+1;
+			}
+			else {
+				lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
+				currentLine = "";
+				
+				oldLine = currentIndex+1;
+				newLine = multilineArgsStartIndex+1;
+			}
+			
+			mapping.put(file, Map.of(oldLine, newLine));
+		}
+		else if (insideMultilineArgs) {
+			insideMultilineArgs = false;
+			
+			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
+			currentLine = "";
+		}
+		else if (currentLine.matches(REGEX_MULTILINE_ARGS_CLOSE) && multilineArgsStartIndex > 0) {
+			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
+			currentLine = "";
+			
+			multilineArgsStartIndex = -1;
+		}
+		
+		return currentLine;
+	}
+
+	/**
+	 * Removes calls to print methods.
+	 * 
+	 * @param		line Line to be analyzed
+	 * 
+	 * @return		Line without calls to print methods
+	 */
+	private String parsePrints(String line) 
+	{
+		if (line.contains("System.out.print")) {
+			String[] tmp = line.split(";");
+			StringBuilder response = new StringBuilder();
+			
+			
+			// Deletes print's from the line
+			for (String term : tmp) {
+				if (!term.contains("System.out.print")) {
+					response.append(term);
+					response.append(";");
+				}
+			}
+			
+			line = response.toString();
+		}
+		
+		return line;
+	}
+
 	/**
 	 * Removes inline comment.
 	 * 
