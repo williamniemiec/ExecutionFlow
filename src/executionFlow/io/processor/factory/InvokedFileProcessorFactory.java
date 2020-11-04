@@ -11,25 +11,11 @@ import executionFlow.io.processor.InvokedFileProcessor;
  * Responsible for generating {@link InvokedFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class InvokedFileProcessorFactory extends FileProcessorFactory
 {
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private boolean isTestMethod;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	public InvokedFileProcessorFactory(boolean isTestMethod)
-	{
-		this.isTestMethod = isTestMethod;
-	}
-	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -42,7 +28,6 @@ public class InvokedFileProcessorFactory extends FileProcessorFactory
 				.outputDir(outputDir)
 				.outputFilename(outputFilename)
 				.encode(encode)
-				.isTestMethod(this.isTestMethod)
 				.build();
 	}
 }
