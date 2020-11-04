@@ -311,12 +311,18 @@ public class TestMethodFileProcessor extends FileProcessor
 	{
 		final String REGEX_MULTILINE_ARGS = ".+,([^;]+|[\\s\\t]*)$";
 		final String REGEX_MULTILINE_ARGS_CLOSE = "[\\s\\t)]+;[\\s\\t]*";
+		final String REGEX_CLASS_KEYWORDS = "(class|implements|throws)";
+		
+		boolean isMethodCallWithMultipleLinesArgument = 
+				!currentLine.matches(REGEX_CLASS_KEYWORDS) && 
+				currentLine.matches(REGEX_MULTILINE_ARGS) && 
+				(currentIndex+1 < lines.size());
 		
 		
-		if (currentLine.matches(REGEX_MULTILINE_ARGS) && (currentIndex+1 < lines.size())) {
-			String nextLine = lines.get(currentIndex+1);
+		if (isMethodCallWithMultipleLinesArgument) {
 			int oldLine;
 			int newLine;
+			String nextLine = lines.get(currentIndex+1);
 			
 			
 			nextLine = removeInlineComment(nextLine);
