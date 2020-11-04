@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.util.ConsoleOutput;
@@ -28,6 +30,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	private static final long serialVersionUID = 400L;
 		
 	private String fileExtension = "java";
+	private static Map<Path, Map<Integer, Integer>> mapping;
 	
 	
 	//-------------------------------------------------------------------------
@@ -247,6 +250,8 @@ public class TestMethodFileProcessor extends FileProcessor
 		// Reads the source file and puts its lines in a list
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
+		mapping = new HashMap<>();
+		
 		// Parses file line by line
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
@@ -286,6 +291,7 @@ public class TestMethodFileProcessor extends FileProcessor
 					
 					line = line + nextLine;
 					lines.set(i+1, "");
+					mapping.put(file, Map.of(i+1+1, i+1));
 				}
 				else if (multilineArgs) {
 					multilineArgs = false;
@@ -328,5 +334,28 @@ public class TestMethodFileProcessor extends FileProcessor
 		}
 		
 		return line;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	/**
+	 * Gets the mapping of the original file with the modified file.
+	 * 
+	 * @return		Mapping with the following format:
+	 * <ul>
+	 * 	<li><b>Key:</b> Source path</li>
+	 * 	<li><b>Value:</b> Map with the following format:
+	 * 		<ul>
+	 * 			<li><b>Key:</b> Original source file line</li>
+	 * 			<li><b>Value:</b> Modified source file line</li>
+	 * 		</ul>
+	 * 	</li>
+	 * </ul>
+	 */
+	public static Map<Path, Map<Integer, Integer>> getMapping()
+	{
+		return mapping;
 	}
 }
