@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 import executionFlow.util.FileUtil;
 
 
@@ -267,8 +268,8 @@ public class TestMethodFileProcessor extends FileProcessor
 		}
 		
 		// -----{ DEBUG }-----
-		if (ConsoleOutput.getLevel() == ConsoleOutput.Level.DEBUG) {
-			ConsoleOutput.showDebug("TestMethodFileProcessor", "Processed file");
+		if (Logging.getLevel() == Logging.Level.DEBUG) {
+			Logging.showDebug("TestMethodFileProcessor", "Processed file");
 			FileUtil.printFileWithLines(lines);
 		}
 		// -----{ END DEBUG }-----
@@ -309,12 +310,13 @@ public class TestMethodFileProcessor extends FileProcessor
 	 */
 	private String parseMultilineArgs(String currentLine, List<String> lines, int currentIndex) 
 	{
-		final String REGEX_MULTILINE_ARGS = ".+,([^;]+|[\\s\\t]*)$";
+		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
 		final String REGEX_MULTILINE_ARGS_CLOSE = "[\\s\\t)]+;[\\s\\t]*";
-		final String REGEX_CLASS_KEYWORDS = "(class|implements|throws)";
+		
+		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
 		
 		boolean isMethodCallWithMultipleLinesArgument = 
-				!currentLine.matches(REGEX_CLASS_KEYWORDS) && 
+				!classKeywords.matcher(currentLine).find() && 
 				currentLine.matches(REGEX_MULTILINE_ARGS) && 
 				(currentIndex+1 < lines.size());
 		
