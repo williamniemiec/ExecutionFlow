@@ -15,11 +15,11 @@ public class AgainstRequirements
 	 * Test a method defined within the test class. An error will be generated.
 	 * Execution will continue if there are more test methods to be executed.
 	 */
-	@org.junit.Test @executionFlow.runtime._SkipInvoked
+	@org.junit.Test @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked
     public void methodInSameFileOfTestMethod() {
 		int a = 2, b = 3;
 		
-try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _3d50c4db24792069b0fe44569d7372a3){}
+try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _64d00e17d8863568e293fca3fae49d12){}
     }
     
 	/**
@@ -29,16 +29,20 @@ try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _3d50c4db247920
 	 * @param b Another number
 	 * @return a + b
 	 */
-    private int sum(int a, int b) 
-    {
-        return a + b;
-    }
+    private int sum(int a, int b)     {        return a + b;
+    private int sum(int a, int b)     {}        return a + b;
+
+
+
+
+
+
 }
-{
+
         return a + b;
-    }
+
 }
-{
+
         return a + b;
-    }
-}
+
+    private int sum(int a, int b)     {    }{    }{    }{    }}

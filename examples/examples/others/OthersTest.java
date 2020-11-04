@@ -128,13 +128,6 @@ public class OthersTest
 	}
 	
 	@Test
-	public void methodCallMultiLineArgs()
-	{
-		AuxClass ac = new AuxClass(1);
-		assertEquals(Arrays.asList(1, 2, 3, 4, 5), ac.identity(1,2,3,4,5));
-	}
-	
-	@Test
 	public void anonymousObjectReturn()
 	{
 		AuxClass ac = new AuxClass(1);

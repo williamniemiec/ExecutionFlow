@@ -67,7 +67,7 @@ public class AuxClass
 	 * Empty concrete function.
 	 */
 	public void test2() 
-	{}
+	{ }
 	
 	public static void test3(int x, int y, String k) 
 	{
