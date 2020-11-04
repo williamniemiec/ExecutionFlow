@@ -26,8 +26,8 @@ import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
 import executionFlow.util.Checkpoint;
-import executionFlow.util.ConsoleOutput;
-import executionFlow.util.ConsoleOutput.Level;
+import executionFlow.util.Logging;
+import executionFlow.util.Logging.Level;
 import executionFlow.util.JUnit4Runner;
 
 
@@ -152,7 +152,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			processTestMethod();
 		} 
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
-			ConsoleOutput.showError(e.getMessage());
+			Logging.showError(e.getMessage());
 			e.printStackTrace();
 			
 			System.exit(-1);	// Stops execution if a problem occurs
@@ -176,7 +176,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 				restart();
 			}
 			catch (IOException | InterruptedException e) {
-				ConsoleOutput.showError("Restart - " + e.getMessage());
+				Logging.showError("Restart - " + e.getMessage());
 				System.exit(-1);
 			}
 
@@ -414,20 +414,20 @@ public aspect TestMethodCollector extends RuntimeCollector
 	@SuppressWarnings("unused")
 	private void setTestMethodInfo(JoinPoint jp) throws IOException
 	{
-		String className, classSignature, testClassSignature;
+		String classSignature, testClassSignature;
 		Path testSrcPath;
 		
 		
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(jp.getSignature().toString());
-		className = jp.getTarget().getClass().getSimpleName();
+//		className = jp.getTarget().getClass().getSimpleName();
 		classSignature = jp.getSignature().getDeclaringTypeName();
-		testClassPath = CollectorExecutionFlow.findBinPath(className, classSignature);
+		testClassPath = CollectorExecutionFlow.findBinPath(classSignature);
 		
 		// Gets source file path of the test method
 		testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
 		testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
 		testClassPackage = MethodInvokedInfo.extractPackage(testClassSignature);
-		testSrcPath = CollectorExecutionFlow.findSrcPath(testClassName, testClassSignature);
+		testSrcPath = CollectorExecutionFlow.findSrcPath(testClassSignature);
 		testMethodArgs = jp.getArgs();
 
 		try {
@@ -439,7 +439,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 				.build();
 		} 
 		catch(IllegalArgumentException e) {
-			ConsoleOutput.showError("Test method info - "+e.getMessage());
+			Logging.showError("Test method info - "+e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -452,7 +452,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			"pre_processing.original"
 		);
 		
-		ConsoleOutput.showDebug("Test method collector: "+testMethodInfo);
+		Logging.showDebug("Test method collector: "+testMethodInfo);
 	}
 	
 	/**
@@ -489,7 +489,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			return;
 		
 		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
-		ConsoleOutput.Level logLevel = askLog();
+		Logging.Level logLevel = askLog();
 		
 		
 		checkpoint_appRunning.enable();
@@ -505,10 +505,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private void setLogLevel() throws IOException
 	{
 		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
-		ConsoleOutput.Level logLevel = (ConsoleOutput.Level)session.read("LOG_LEVEL");
+		Logging.Level logLevel = (Logging.Level)session.read("LOG_LEVEL");
 		
 		
-		ConsoleOutput.setLevel(logLevel);
+		Logging.setLevel(logLevel);
 	}
 	
 	/**
@@ -534,16 +534,16 @@ public aspect TestMethodCollector extends RuntimeCollector
 	{
 		inTestMethod = checkpoint.exists();
 		
-		ConsoleOutput.showDebug("Test method collector: "+testMethodInfo);
+		Logging.showDebug("Test method collector: "+testMethodInfo);
 		
 		if (!inTestMethod) {
-			ConsoleOutput.showInfo("Pre-processing test method...");
+			Logging.showInfo("Pre-processing test method...");
 			
 			checkpoint.enable();
 			
 			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 			
-			ConsoleOutput.showInfo("Pre-processing completed");
+			Logging.showInfo("Pre-processing completed");
 		}
 	}
 	
@@ -605,13 +605,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 		} 
 		catch (ClassNotFoundException e) {
 			hasError = true;
-			ConsoleOutput.showError("Class FileManager not found");
+			Logging.showError("Class FileManager not found");
 			e.printStackTrace();
 		} 
 		catch (IOException e) {
 			hasError = true;
-			ConsoleOutput.showError("Could not recover the backup file of the test method");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
+			Logging.showError("Could not recover the backup file of the test method");
+			Logging.showError("See more: https://github.com/williamniemiec/"
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
 					+ "#could-not-recover-all-backup-files");
 			e.printStackTrace();
@@ -639,13 +639,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 		} 
 		catch (ClassNotFoundException e) {
 			hasError = true;
-			ConsoleOutput.showError("Class FileManager not found");
+			Logging.showError("Class FileManager not found");
 		 	e.printStackTrace();
 		} 
 		catch (IOException e) {
 			hasError = true;
-			ConsoleOutput.showError("Could not recover all backup files for methods");
-			ConsoleOutput.showError("See more: https://github.com/williamniemiec/"
+			Logging.showError("Could not recover all backup files for methods");
+			Logging.showError("See more: https://github.com/williamniemiec/"
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
 					+ "#could-not-recover-all-backup-files");
 			e.printStackTrace();
@@ -661,7 +661,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private Level askLog()
 	{
-		ConsoleOutput.Level logLevel;
+		Logging.Level logLevel;
 		String[] options = {
 				"<html><body><div align='center'>None<br>(not recommended \u274C)</div></body></html>",
 				"Error", 
@@ -679,20 +679,20 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		switch (response) {
 			case 0:
-				logLevel = ConsoleOutput.Level.OFF;
+				logLevel = Logging.Level.OFF;
 				break;
 			case 1:
-				logLevel = ConsoleOutput.Level.ERROR;
+				logLevel = Logging.Level.ERROR;
 				break;
 			case 2:
-				logLevel = ConsoleOutput.Level.WARNING;
+				logLevel = Logging.Level.WARNING;
 				break;
 			case 4:
-				logLevel = ConsoleOutput.Level.DEBUG;
+				logLevel = Logging.Level.DEBUG;
 				break;
 			case 3:
 			default:
-				logLevel = ConsoleOutput.Level.INFO;
+				logLevel = Logging.Level.INFO;
 		}
 		
 		return logLevel;

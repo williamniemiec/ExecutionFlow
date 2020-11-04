@@ -19,6 +19,7 @@ public class MethodInvokedInfo extends InvokedInfo
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private String concreteMethodSignature;
 	private String methodName;
 	private Class<?> returnType;
 	
@@ -333,5 +334,15 @@ public class MethodInvokedInfo extends InvokedInfo
 			return methodType(returnType);
 		
 		return methodType(returnType, parameterTypes);
+	}
+	
+	public String getConcreteMethodSignature()
+	{
+		return (concreteMethodSignature == null) ? invokedSignature : concreteMethodSignature;
+	}
+	
+	public void setConcreteMethodSignature(String concreteMethodSignature) 
+	{
+		this.concreteMethodSignature = concreteMethodSignature;
 	}
 }

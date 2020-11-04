@@ -22,11 +22,15 @@ import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.InvokedInfo;
+import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.io.processor.InvokedFileProcessor;
+import executionFlow.io.processor.TestMethodFileProcessor;
+import executionFlow.runtime.collector.TestMethodCollector;
+import executionFlow.util.Logging;
 import executionFlow.util.FileUtil;
 import executionFlow.util.Pair;
 import executionFlow.util.formatter.JavaIndenter;
@@ -51,12 +55,21 @@ public abstract class ExecutionFlow
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * If true, displays collected invoked for each test method executed.
-	 */
-//	protected static final boolean DEBUG;
-	
 	protected static final TestPathExportType EXPORT;
+	
+	/**
+	 * Stores computed test paths from a class.<br />
+	 * <ul>
+	 * 	<li><b>Key:</b> {@link Pair} (test method signature, invoked signature)</li>
+	 * 	<li><b>Value:</b> List of test paths</li>
+	 * </ul>
+	 */
+	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
+	
+	protected ExporterExecutionFlow exporter;
+	protected MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
+	protected  ProcessedSourceFileExporter processedSourceFileExporter;
+	protected boolean exportCalledMethods;
 	
 	/**
 	 * Sets if environment is development. This will affect
@@ -82,20 +95,6 @@ public abstract class ExecutionFlow
 	
 	private static Path appRoot;
 	private static Path currentProjectRoot;
-	
-	/**
-	 * Stores computed test paths from a class.<br />
-	 * <ul>
-	 * 	<li><b>Key:</b> {@link Pair} (test method signature, invoked signature)</li>
-	 * 	<li><b>Value:</b> List of test paths</li>
-	 * </ul>
-	 */
-	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
-	
-	protected ExporterExecutionFlow exporter;
-	protected MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
-	protected  ProcessedSourceFileExporter processedSourceFileExporter;
-	protected boolean exportCalledMethods;
 
 	
 	//-------------------------------------------------------------------------
@@ -106,7 +105,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
 	}
 	
 	/**
@@ -234,7 +233,6 @@ public abstract class ExecutionFlow
 	 * @param		testMethodFileManager Test method file information
 	 * @param		invokedInfo Invoked information
 	 * @param		invokedFileManager Invoked file information
-	 * @param		collectors Information about all invoked collected
 
 	 * @return		Test path or empty list if there is no test path
 	 * 
@@ -243,20 +241,17 @@ public abstract class ExecutionFlow
 	 * @throws 		InterruptedByTimeoutException If runtime has been exceeded 
 	 */
 	protected List<List<Integer>> run(InvokedInfo testMethodInfo, FileManager testMethodFileManager, 
-			InvokedInfo invokedInfo, FileManager invokedFileManager,
-			Map<Integer, List<CollectorInfo>> collectors) throws IOException, InterruptedByTimeoutException
+			InvokedInfo invokedInfo, FileManager invokedFileManager) throws IOException, InterruptedByTimeoutException
 	{
 		List<List<Integer>> tp = new ArrayList<>();
 		Analyzer analyzer;
-		String invokedSignature = invokedInfo.getInvokedSignature()
-				.replaceAll("\\$", ".");
+		String invokedSignature = invokedInfo.getInvokedSignature().replaceAll("\\$", ".");
 		boolean isConstructor = invokedInfo instanceof ConstructorInvokedInfo;
 	
 		
 		analyzer = analyze(
 				testMethodInfo, testMethodFileManager, 
-				invokedInfo, invokedFileManager,
-				collectors
+				invokedInfo, invokedFileManager
 		);
 		
 		// Stores processed file
@@ -267,7 +262,7 @@ public abstract class ExecutionFlow
 		);
 		
 		// Computes test path from JDB
-		ConsoleOutput.showInfo("Computing test path of invoked " 
+		Logging.showInfo("Computing test path of invoked " 
 				+ invokedSignature + "...");
 		analyzer.run();
 
@@ -285,9 +280,9 @@ public abstract class ExecutionFlow
 		tp = analyzer.getTestPaths();
 		
 		if (tp.isEmpty() || tp.get(0).isEmpty())
-			ConsoleOutput.showWarning("Test path is empty");
+			Logging.showWarning("Test path is empty");
 		else
-			ConsoleOutput.showInfo("Test path has been successfully computed");				
+			Logging.showInfo("Test path has been successfully computed");				
 
 		// Fix anonymous class signature
 		if (isConstructor) {
@@ -302,17 +297,21 @@ public abstract class ExecutionFlow
 				}
 			}
 		}
+		else {
+			invokedSignature = ((MethodInvokedInfo)invokedInfo).getConcreteMethodSignature();
+			invokedSignature = invokedSignature.replaceAll("\\$", ".");
+		}
 		
 		// Stores each computed test path
 		storeTestPath(tp, Pair.of(
 				testMethodInfo.getInvokedSignature(),
-				invokedInfo.getInvokedSignature().replaceAll("\\$", ".")
+				invokedSignature
 		));
 		
 		// Exports methods called by tested invoked to a CSV
 		if (exportCalledMethods) {
 			invokedMethodsExporter.export(
-					invokedInfo.getInvokedSignature(), 
+					invokedSignature, 
 					analyzer.getMethodsCalledByTestedInvoked(), false
 			);
 		}
@@ -368,16 +367,14 @@ public abstract class ExecutionFlow
 	 * 
 	 * @return		Analyzer after finishing its execution
 	 * 
-	 * @throws		IOException If an error occurs during the instantiation of
-	 * the analyzer
+	 * @throws		IOException If an error occurs during processing
 	 * @throws		IllegalStateException If test method manager is null
 	 * 
 	 * @implNote	This method will instantiate an Analyzer and call the 
 	 * {@link Analyzer#run()} method
 	 */
 	protected Analyzer analyze(InvokedInfo testMethodInfo, FileManager testMethodFileManager, 
-			InvokedInfo invokedInfo, FileManager invokedFileManager,
-			Map<Integer, List<CollectorInfo>> collectors) throws IOException
+			InvokedInfo invokedInfo, FileManager invokedFileManager) throws IOException
 	{
 		if (testMethodManager == null)
 			throw new IllegalStateException("testMethodManager cannot be null. "
@@ -386,41 +383,93 @@ public abstract class ExecutionFlow
 		String invSig = invokedInfo.getInvokedSignature().replaceAll("\\$", ".");
 	
 		
-		// Processes the source file of the test method if it has
-		// not been processed yet
+		processTestMethod(testMethodInfo, testMethodFileManager);
+		processInvoked(testMethodFileManager, invokedFileManager, invSig);
+		
+		TestMethodCollector.updateCollectorInvocationLines(TestMethodFileProcessor.getMapping());
+		TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping());
+		
+		updateInvokedInfo(invokedInfo, TestMethodFileProcessor.getMapping());
+		updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
+		
+		return new Analyzer(invokedInfo, testMethodInfo);
+	}
+	
+	/**
+	 * Processes test method source file.
+	 * 
+	 * @param		testMethodInfo Test method to be processed
+	 * @param		testMethodFileManager Test method file manager
+	 * 
+	 * @throws		IOException If an error occurs during processing or 
+	 * compilation
+	 */
+	private void processTestMethod(InvokedInfo testMethodInfo, FileManager testMethodFileManager) throws IOException 
+	{
 		if (!testMethodManager.wasProcessed(testMethodFileManager)) {
-			ConsoleOutput.showInfo("Processing source file of test method "
+			Logging.showInfo("Processing source file of test method "
 				+ testMethodInfo.getInvokedSignature().replaceAll("\\$", ".") + "...");
 			
 			try {
 				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 			}
 			catch (java.lang.NoClassDefFoundError e) {
+				Logging.showError("Process test method - " + e.getMessage());
+				e.printStackTrace();
 				System.exit(-1);
 			}
 			
-			ConsoleOutput.showInfo("Processing completed");	
+			Logging.showInfo("Processing completed");	
 		}
-
-		// Processes the source file of the invoked if it has not 
-		// been processed yet
+	}
+	
+	/**
+	 * Processes invoked source file.
+	 * 
+	 * @param		testMethodFileManager Test method to be processed
+	 * @param		invokedFileManager Invoked file manager
+	 * @param		invSig
+	 * 
+	 * @throws		IOException If an error occurs during processing or 
+	 * compilation
+	 */
+	private void processInvoked(FileManager testMethodFileManager, FileManager invokedFileManager,
+			String invSig) throws IOException 
+	{
 		if (!invokedManager.wasProcessed(invokedFileManager)) {
 			boolean autoRestore = 
 					!testMethodFileManager.getSrcFile().equals(invokedFileManager.getSrcFile());
 			
 			
-			ConsoleOutput.showInfo("Processing source file of invoked - " 
+			Logging.showInfo("Processing source file of invoked - " 
 				+ invSig + "...");
 			
 			invokedManager.parse(
-					invokedFileManager, 
-					collectors, 
+					invokedFileManager,
 					autoRestore
 			).compile(invokedFileManager);
-			ConsoleOutput.showInfo("Processing completed");
+			
+			Logging.showInfo("Processing completed");
 		}
-		
-		return new Analyzer(invokedInfo, testMethodInfo);
+	}
+	
+	/**
+	 * Updates the invocation line of an invoked based on a mapping.
+	 * 
+	 * @param		invokedInfo Invoked to be updated
+	 * @param		mapping Mapping that will be used as base for the update
+	 */
+	private void updateInvokedInfo(InvokedInfo invokedInfo, Map<Path, Map<Integer, Integer>> mapping)
+	{
+		for (Map.Entry<Path, Map<Integer, Integer>> e : mapping.entrySet()) {
+			Path testMethodSrcFile = e.getKey();
+			Map<Integer, Integer> map = e.getValue();
+			
+			
+			if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
+				invokedInfo.setInvocationLine(map.get(invokedInfo.getInvocationLine()));
+			}
+		}
 	}
 	
 	
