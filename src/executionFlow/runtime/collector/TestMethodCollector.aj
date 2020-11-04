@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -21,7 +22,6 @@ import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
-import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
@@ -214,6 +214,48 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	/**
+	 * Updates the invocation line of constructor and method collector based on
+	 * a mapping.
+	 * 
+	 * @param		mapping Mapping that will be used as base for the update
+	 */
+	public static void updateCollectorInvocationLines(Map<Path, Map<Integer, Integer>> mapping)
+	{
+		for (Map.Entry<Path, Map<Integer, Integer>> e : mapping.entrySet()) {
+			Path modifiedTestSrcFile = e.getKey();
+			Map<Integer, Integer> map = e.getValue();
+			int invocationLine;
+			
+			
+			// Updates constructor invocation lines If it is declared in the 
+			// same file as the processed test method file
+			for (CollectorInfo cc : constructorCollector.values()) {
+				invocationLine = cc.getConstructorInfo().getInvocationLine();
+				
+				if (!cc.getTestMethodInfo().getSrcPath().equals(modifiedTestSrcFile) || 
+						!map.containsKey(invocationLine))
+					continue;
+				
+				cc.getConstructorInfo().setInvocationLine(map.get(invocationLine));
+			}
+			
+			// Updates method invocation lines If it is declared in the 
+			// same file as the processed test method file
+			for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
+				for (CollectorInfo mc : methodCollectorList) {
+					invocationLine = mc.getMethodInfo().getInvocationLine();
+					
+					if (!mc.getTestMethodInfo().getSrcPath().equals(modifiedTestSrcFile) || 
+							!map.containsKey(invocationLine))
+						continue;
+					
+					mc.getMethodInfo().setInvocationLine(map.get(invocationLine));
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Restarts the application by starting it in CLI mode.
 	 * 
 	 * @throws		IOException If an error occurs when creating the process 
@@ -229,8 +271,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
 
-		LibraryManager.addClassPath(testClassRootPath);
-		LibraryManager.addClassPath(testClassRootPath.resolve("..\\classes").normalize());
+
+		LibraryManager.addLibrary(testClassRootPath);
+		LibraryManager.addLibrary(testClassRootPath.resolve("..\\classes").normalize());
 
 		argumentFile = LibraryManager.getArgumentFile();
 	
@@ -281,7 +324,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		return hasError;
 	}
 	
-	private void processCollectedInvoked()
+	public static void processCollectedInvoked()
 	{
 		ExecutionFlow ef;
 		
@@ -293,11 +336,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		ef.setExporter(new TestedInvokedExporter("Testers", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
 			.export();
-		
-		// If constructor is declared in the same file as the test method and 
-		// method, it updates its invocation line according to the modified 
-		// test method file 
-		updateConstructorCollectorInvocationLines();
 		
 		ef = new ConstructorExecutionFlow(constructorCollector.values());
 		ef.execute().export();
@@ -413,6 +451,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs),
 			"pre_processing.original"
 		);
+		
+		ConsoleOutput.showDebug("Test method collector: "+testMethodInfo);
 	}
 	
 	/**
@@ -485,7 +525,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	/**
-	 * Performs preprocessing of the file containing the test method.
+	 * Performs pre-processing of the file containing the test method.
 	 * 
 	 * @throws		IOException If an error occurs while processing test method
 	 * or if checkpoint file cannot be created
@@ -494,46 +534,16 @@ public aspect TestMethodCollector extends RuntimeCollector
 	{
 		inTestMethod = checkpoint.exists();
 		
+		ConsoleOutput.showDebug("Test method collector: "+testMethodInfo);
+		
 		if (!inTestMethod) {
-			ConsoleOutput.showInfo("Preprocessing test method...");
+			ConsoleOutput.showInfo("Pre-processing test method...");
 			
 			checkpoint.enable();
 			
 			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 			
-			ConsoleOutput.showInfo("Preprocessing completed");
-		}
-	}
-	
-	/**
-	 * Updates constructor invocation line of each constructor collected based
-	 * on the collected methods.
-	 */
-	private void updateConstructorCollectorInvocationLines()
-	{
-		for (List<CollectorInfo> mc : methodCollector.values()) {
-			for (CollectorInfo collector : mc) {
-				Path methodPath = collector.getMethodInfo().getSrcPath();
-				
-				
-				// Checks if method is declared in the same file as the test method
-				if (!methodPath.equals(collector.getTestMethodInfo().getSrcPath()))
-					continue;
-				
-				// Updates constructor invocation lines
-				for (CollectorInfo cc : constructorCollector.values()) {
-					// If constructor is declared in the same file as the 
-					// method, it updates its invocation line
-					if (cc.getTestMethodInfo().getSrcPath().equals(methodPath))
-						continue;
-					
-					cc.getConstructorInfo().setInvocationLine(
-							InvokedFileProcessor.getMapping()
-								.get(methodPath)
-								.get(cc.getConstructorInfo().getInvocationLine()));
-				}
-			
-			}
+			ConsoleOutput.showInfo("Pre-processing completed");
 		}
 	}
 	
