@@ -2,11 +2,11 @@ package executionFlow.util;
 
 
 /**
- * Responsible for displaying information on the console.
+ * Responsible for displaying log messages on the console.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class ConsoleOutput 
+public class Logging 
 {
 	//-------------------------------------------------------------------------
 	//		Enumerations
@@ -305,6 +305,6 @@ public class ConsoleOutput
 	 */
 	public static void setLevel(Level level)
 	{
-		ConsoleOutput.level = level;
+		Logging.level = level;
 	}
 }

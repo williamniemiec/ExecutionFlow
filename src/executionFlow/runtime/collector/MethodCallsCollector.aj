@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 
 
 /**
@@ -135,7 +135,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 			store();
 		} 
 		catch (IOException e) {
-			ConsoleOutput.showError("MethodCallsCollector.aj - " + e.getMessage());
+			Logging.showError("MethodCallsCollector.aj - " + e.getMessage());
 			e.printStackTrace();
 		}
 	}

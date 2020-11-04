@@ -16,7 +16,7 @@ import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.MethodCollector;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 
 
 /**
@@ -121,7 +121,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 			return this;
 		
 		// -----{ DEBUG }-----
-		ConsoleOutput.showDebug("MethodExecutionFlow", "collector: " + methodCollector.toString());
+		Logging.showDebug("MethodExecutionFlow", "collector: " + methodCollector.toString());
 		// -----{ END DEBUG }-----
 		
 		boolean gotoNextLine = false;
@@ -144,10 +144,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
-					new InvokedFileProcessorFactory(
-							collector.getMethodInfo().getSrcPath().equals(
-							collector.getTestMethodInfo().getSrcPath()
-					))
+					new InvokedFileProcessorFactory()
 				);
 
 				// Gets FileManager for test method file
@@ -164,18 +161,17 @@ public class MethodExecutionFlow extends ExecutionFlow
 						collector.getTestMethodInfo(), 
 						testMethodFileManager, 
 						collector.getMethodInfo(), 
-						methodFileManager,
-						methodCollector
+						methodFileManager
 					);
 					
 					// Checks whether test path was generated inside a loop
 					gotoNextLine = tp.size() > 1;
 				} 
 				catch (InterruptedByTimeoutException e1) {
-					ConsoleOutput.showError("Time exceeded");
+					Logging.showError("Time exceeded");
 				} 
 				catch (IOException e2) {
-					ConsoleOutput.showError(e2.getMessage());
+					Logging.showError(e2.getMessage());
 					e2.printStackTrace();
 				}
 			}

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 import executionFlow.util.DataUtil;
 import executionFlow.util.Pair;
 
@@ -77,8 +77,8 @@ public class FileExporter implements ExporterExecutionFlow
 				writeFile(e.getValue(), savePath, signatures.first);
 			}
 
-			ConsoleOutput.showInfo("Test paths have been successfully exported!");
-			ConsoleOutput.showInfo("Location: "+new File(ExecutionFlow.getAppRootPath().toFile(), dirName).getAbsolutePath());
+			Logging.showInfo("Test paths have been successfully exported!");
+			Logging.showInfo("Location: "+new File(ExecutionFlow.getAppRootPath().toFile(), dirName).getAbsolutePath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -117,7 +117,7 @@ public class FileExporter implements ExporterExecutionFlow
 		bfw.newLine();
 		bfw.close();
 		
-		ConsoleOutput.showInfo("Writing file "+f.getName()+" in "+f.getAbsolutePath());
+		Logging.showInfo("Writing file "+f.getName()+" in "+f.getAbsolutePath());
 	}
 	
 	/**

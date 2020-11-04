@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
@@ -16,7 +14,7 @@ import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 
 
 /**
@@ -118,11 +116,10 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			return this;
 		
 		// -----{ DEBUG }-----
-		ConsoleOutput.showDebug("ConstructorExecutionFlow", "collector: " + constructorCollector.toString());
+		Logging.showDebug("ConstructorExecutionFlow", "collector: " + constructorCollector.toString());
 		// -----{ END DEBUG }-----
 		
 		FileManager constructorFileManager, testMethodFileManager;
-		Map<Integer, List<CollectorInfo>> consCollector =  Map.of(0, List.copyOf(constructorCollector));
 		
 		
 		// Generates test path for each collected method
@@ -133,10 +130,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				collector.getConstructorInfo().getSrcPath(), 
 				collector.getConstructorInfo().getClassDirectory(),
 				collector.getConstructorInfo().getPackage(),
-				new InvokedFileProcessorFactory(
-					collector.getConstructorInfo().getSrcPath().equals(
-						collector.getTestMethodInfo().getSrcPath()
-				))
+				new InvokedFileProcessorFactory()
 			);
 			
 			// Gets FileManager for test method file
@@ -153,16 +147,15 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 					collector.getTestMethodInfo(), 
 					testMethodFileManager, 
 					collector.getConstructorInfo(), 
-					constructorFileManager,
-					consCollector
+					constructorFileManager
 				);
 
 			} 
 			catch (InterruptedByTimeoutException e1) {
-				ConsoleOutput.showError("Time exceeded");
+				Logging.showError("Time exceeded");
 			} 
 			catch (IOException e2) {
-				ConsoleOutput.showError(e2.getMessage());
+				Logging.showError(e2.getMessage());
 				e2.printStackTrace();
 			}
 		}

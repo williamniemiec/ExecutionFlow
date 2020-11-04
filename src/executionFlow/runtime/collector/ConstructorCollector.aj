@@ -9,7 +9,7 @@ import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 
 
 /**
@@ -80,7 +80,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 		
 		final String REGEX_CONSTRUCTOR = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		final String REGEX_ANONYMOUS_CLASS = ".+\\$[0-9]+.+";
-		String signature, classSignature, className;
+		String signature, classSignature;
 		Path classPath, srcPath;
 		
 
@@ -106,12 +106,12 @@ public aspect ConstructorCollector extends RuntimeCollector
 		// Gets class path and source path
 		try {
 			// Class path and source path from method
-			className = CollectorExecutionFlow.extractMethodName(signature);
-			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
-			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
+//			className = CollectorExecutionFlow.extractMethodName(signature);
+			srcPath = CollectorExecutionFlow.findSrcPath(classSignature);
+			classPath = CollectorExecutionFlow.findBinPath(classSignature);
 			
 			if (srcPath == null || classPath == null) {
-				ConsoleOutput.showWarning("The constructor with the following signature" 
+				Logging.showWarning("The constructor with the following signature" 
 						+ " will be skiped because its source file and / or " 
 						+ " binary file cannot be found: " + signature);
 				return;

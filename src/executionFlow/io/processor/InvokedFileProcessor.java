@@ -10,7 +10,7 @@ import java.util.Map;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.parser.holeplug.HolePlug;
 import executionFlow.io.processor.parser.trgeneration.CodeCleanerAdapter;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 import executionFlow.util.FileUtil;
 import executionFlow.util.formatter.JavaIndenter;
 
@@ -247,7 +247,8 @@ public class InvokedFileProcessor extends FileProcessor
 	@Override
 	public String processFile() throws IOException
 	{
-		if (file == null) { return ""; }
+		if (file == null)
+			return "";
 		
 		List<String> lines;
 		File outputFile;
@@ -267,24 +268,12 @@ public class InvokedFileProcessor extends FileProcessor
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
 		// Processing #1 - Same processing done in TRGeneration (application)
-		codeCleaner = new CodeCleanerAdapter(lines);
-		lines = codeCleaner.parse();
-		cleanupMapping = codeCleaner.getMapping();
-		
-		if (cleanupMapping != null)
-			mapping.put(outputFile.toPath(), codeCleaner.getMapping());
-		
-		
-		// -----{ DEBUG }-----
-		if (ConsoleOutput.getLevel() == ConsoleOutput.Level.DEBUG) {
-			JavaIndenter indenter = new JavaIndenter();
-			List<String> formatedFile = indenter.format(lines);
-
-			
-			ConsoleOutput.showDebug("InvokedFileProcessor", "Processed file");
-			FileUtil.printFileWithLines(formatedFile);
-		}
-		// -----{ END DEBUG }-----
+//		codeCleaner = new CodeCleanerAdapter(lines);
+//		lines = codeCleaner.parse();
+//		cleanupMapping = codeCleaner.getMapping();
+//		
+//		if (cleanupMapping != null)
+//			mapping.put(outputFile.toPath(), codeCleaner.getMapping());
 		
 		// Processing #2 - Fixes the omission of lines in compilation
 		holePlug = new HolePlug(lines);
@@ -293,6 +282,18 @@ public class InvokedFileProcessor extends FileProcessor
 		// Writes processed lines to a file
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
 
+		// -----{ DEBUG }-----
+		if (Logging.getLevel() == Logging.Level.DEBUG) {
+			JavaIndenter indenter = new JavaIndenter();
+			List<String> formatedFile = indenter.format(lines);
+
+			
+			Logging.showDebug("InvokedFileProcessor", "Processed file");
+			//FileUtil.printFileWithLines(formatedFile);
+			FileUtil.printFileWithLines(lines);
+		}
+		// -----{ END DEBUG }-----
+		
 		return outputFile.getAbsolutePath();
 	}
 	

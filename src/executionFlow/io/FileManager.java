@@ -10,7 +10,7 @@ import java.nio.file.StandardCopyOption;
 
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.factory.FileProcessorFactory;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 
 
 /**
@@ -225,7 +225,7 @@ public class FileManager implements Serializable
 				FileCompiler.compile(srcFile, binDirectory, FileEncoding.UTF_8);
 		} 
 		catch (java.lang.NoClassDefFoundError e) {
-			ConsoleOutput.showError("aspectjtools.jar not found");
+			Logging.showError("aspectjtools.jar not found");
 			throw e;
 		}
 		

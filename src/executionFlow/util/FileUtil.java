@@ -138,6 +138,31 @@ public class FileUtil
 		return argumentFile;
 	}
 	
+	public static Path createArgumentFile2(Path dir, String filename, List<Path> paths) throws IOException
+	{
+		Path argumentFile = dir.resolve(filename);
+		
+		
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(argumentFile.toFile()))) {
+			Path path;
+			int totalPaths = paths.size();
+						
+			// Writes list of paths
+			for (int i=0; i<totalPaths-1; i++) {
+				path = paths.get(i);
+				
+				bw.write(path.toAbsolutePath().toString());
+				bw.newLine();
+			}
+			
+			// Writes last item + footer
+			path = paths.get(totalPaths-1);
+			bw.write(path.toAbsolutePath().toString());
+		}
+		
+		return argumentFile;
+	}
+	
 	public static void printFileWithLines(List<String> fileContent)
 	{
 		for (int i=0; i<fileContent.size(); i++) {

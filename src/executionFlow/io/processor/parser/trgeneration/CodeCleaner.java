@@ -65,8 +65,8 @@ public class CodeCleaner {
 		eliminateComments();
 		if (debug) System.out.println("CLEANUP: Eliminated comments");
 		trimLines();
-		eliminateAnnotations();
-		if (debug) System.out.println("CLEANUP: Eliminated annotations");
+//		eliminateAnnotations();
+//		if (debug) System.out.println("CLEANUP: Eliminated annotations");
 		trimLines();
 		removeBlankLines();
 		if (debug) System.out.println("CLEANUP: Removed blank lines");

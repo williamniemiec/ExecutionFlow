@@ -10,7 +10,7 @@ import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 
 
 /**
@@ -62,7 +62,7 @@ public aspect MethodCollector extends RuntimeCollector
 	{
 		// Gets method invocation line
 		int invocationLine = thisJoinPoint.getSourceLocation().getLine();
-		String signature, className, classSignature, key;
+		String signature, classSignature, key;
 		Object constructor = null;
 
 		
@@ -79,7 +79,6 @@ public aspect MethodCollector extends RuntimeCollector
 
 		signature = getFixedMethodSignature(thisJoinPoint, signature);
 		
-		className = getClassName(thisJoinPoint);
 		classSignature = (thisJoinPoint.getTarget() == null) ? 
 							thisJoinPoint.getSignature().getDeclaringTypeName() : 
 							thisJoinPoint.getTarget().getClass().getName();
@@ -107,15 +106,15 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		// Gets class path and source path
 		try {
-			classPath = CollectorExecutionFlow.findBinPath(className, classSignature);
-			srcPath = CollectorExecutionFlow.findSrcPath(className, classSignature);
+			classPath = CollectorExecutionFlow.findBinPath(classSignature);
+			srcPath = CollectorExecutionFlow.findSrcPath(classSignature);
 		} 
 		catch (IOException e) {
-			ConsoleOutput.showError("[ERROR] MethodCollector - " + e.getMessage() + "\n");
+			Logging.showError("[ERROR] MethodCollector - " + e.getMessage() + "\n");
 		}
 		
 		if ((srcPath == null) || (classPath == null)) {
-			ConsoleOutput.showWarning("The method with the following signature" 
+			Logging.showWarning("The method with the following signature" 
 					+ " will be skiped because its source file and / or " 
 					+ " binary file cannot be found: " + signature);
 			return;
@@ -124,32 +123,6 @@ public aspect MethodCollector extends RuntimeCollector
 		collectMethod(thisJoinPoint, signature, invocationLine);
 		
 		collectedMethods.add(key);
-	}
-
-	/**
-	 * Gets class name of the current method.
-	 * 
-	 * @param		jp Join point
-	 * 
-	 * @return		Class name
-	 */
-	private String getClassName(JoinPoint jp)
-	{
-		String REGEX_ANONYMOUS_SIGNATURE = ".+\\$[0-9]+.*";
-		String className;
-		
-		
-		if ((jp.getTarget() != null) && 
-				jp.getTarget().getClass().getName().matches(REGEX_ANONYMOUS_SIGNATURE)) {
-			className = jp.getTarget().getClass().getName();
-		}
-		else {
-			className = jp.getSignature().getDeclaringTypeName();
-		}
-
-		className = className.substring(className.lastIndexOf(".")+1);
-		
-		return className;
 	}
 	
 	/**
@@ -167,6 +140,15 @@ public aspect MethodCollector extends RuntimeCollector
 		Class<?>[] paramTypes;
 		Class<?> returnType;
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
+		String concreteMethodSignature = null;
+		
+		
+		if (jp.getTarget() != null) {
+			concreteMethodSignature = 
+					jp.getTarget().getClass().getName() + "." + 
+					jp.getSignature().getName() + 
+					signature.substring(signature.indexOf("("));
+		}
 		
 		
 		// Extracts types of method parameters (if there is any)
@@ -184,6 +166,10 @@ public aspect MethodCollector extends RuntimeCollector
 			.srcPath(srcPath)
 			.build();
 
+		if (concreteMethodSignature != null) {
+			methodInfo.setConcreteMethodSignature(concreteMethodSignature);
+		}
+		
 		ci = new CollectorInfo.Builder()
 			.methodInfo(methodInfo)
 			.testMethodInfo(testMethodInfo)
