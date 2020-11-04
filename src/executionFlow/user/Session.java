@@ -80,11 +80,13 @@ public class Session
 	 * the provided identifier
 	 * 
 	 * @throws		IOException If an error occurred while loading the session
+	 * @throws		IllegalStateException If session does not exist. For a 
+	 * session to exist, something must be saved in it
 	 */
 	public Object read(String key) throws IOException
 	{
 		if (!exists())
-			throw new IllegalStateException("Session not found");
+			throw new IllegalStateException("Session does not exist");
 		
 		load();
 		
