@@ -7,10 +7,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.Map;
 
-import executionFlow.info.CollectorInfo;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.factory.FileProcessorFactory;
 import executionFlow.util.ConsoleOutput;
@@ -20,7 +17,7 @@ import executionFlow.util.ConsoleOutput;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -151,7 +148,7 @@ public class FileManager implements Serializable
 	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertParse()} function.
 	 */
-	public FileManager parseFile(Map<Integer, List<CollectorInfo>> collectors, boolean autoRestore) throws IOException
+	public FileManager parseFile(boolean autoRestore) throws IOException
 	{
 		// Saves .java file to allow to restore it after
 		if (autoRestore)
@@ -163,14 +160,14 @@ public class FileManager implements Serializable
 		// Tries to parse file using UTF-8 encoding. If an error occurs, tries 
 		// to parse the file using ISO-8859-1 encoding
 		try {	
-			out = Path.of(fp.processFile(collectors));
+			out = Path.of(fp.processFile());
 		} 
 		catch(IOException e) {	
 			charsetError = true;
 			fp.setEncoding(FileEncoding.ISO_8859_1);
 			
 			try {
-				out = Path.of(fp.processFile(collectors));
+				out = Path.of(fp.processFile());
 			} 
 			catch (IOException e1) {
 				throw new IOException("Parsing failed");
@@ -179,29 +176,10 @@ public class FileManager implements Serializable
 		
 		// Changes parsed file name to the same as received filename
 		if (Files.exists(out)) {
-			Files.delete(srcFile);
-			Files.move(out, srcFile);
+			Files.move(out, srcFile, StandardCopyOption.REPLACE_EXISTING);
 		}
 		
 		return this;
-	}
-	
-	/**
-	 * Parses and process file, saving modified file in the same file passed 
-	 * to constructor.
-	 * 
-	 * @param		collectors Information about all invoked collected
-	 * 
-	 * @return		This object to allow chained calls
-	 * 
-	 * @throws		IOException If file encoding cannot be defined
-	 * 
-	 * @implNote	This function overwrite file passed to the constructor! To
-	 * restore the original file, call {@link #revertParse()} function.
-	 */
-	public FileManager parseFile(Map<Integer, List<CollectorInfo>> collectors) throws IOException
-	{
-		return parseFile(collectors, true);
 	}
 	
 	/**
@@ -217,7 +195,7 @@ public class FileManager implements Serializable
 	 */
 	public FileManager parseFile() throws IOException
 	{
-		return parseFile(null);
+		return parseFile(true);
 	}
 	
 	/**
@@ -266,12 +244,7 @@ public class FileManager implements Serializable
 	{
 		try {
 			if (Files.exists(originalSrcFile)) {
-				try {
-					Files.delete(srcFile);
-				} 
-				catch (IOException e) { }
-
-				Files.move(originalSrcFile, srcFile);
+				Files.move(originalSrcFile, srcFile, StandardCopyOption.REPLACE_EXISTING);
 			}
 		} 
 		catch (IOException e) {
@@ -292,13 +265,7 @@ public class FileManager implements Serializable
 	{
 		try {
 			if (Files.exists(originalBinFile)) {
-				
-				try {
-					Files.delete(binFile);
-				} 
-				catch (IOException e) { }
-				
-				Files.move(originalBinFile, binFile);
+				Files.move(originalBinFile, binFile, StandardCopyOption.REPLACE_EXISTING);
 			}
 		} 
 		catch (IOException e) {
