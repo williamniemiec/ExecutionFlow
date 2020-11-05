@@ -281,7 +281,6 @@ public class HolePlug
 			if (wasParsed)
 				return line;
 			
-			
 			if (insideInvoked) {
 				if (line.contains("{")) {
 					insideInvoked = false;
@@ -289,7 +288,6 @@ public class HolePlug
 				
 				wasParsed = true;
 			}
-
 			else if (isInvokedDeclaration(line)) {
 				line = "@executionFlow.runtime.CollectCalls " + line;
 				insideInvoked = !line.contains("{");
@@ -310,23 +308,15 @@ public class HolePlug
 		{
 			final String REGEX_NEW = "(\\ |\\t)*new[\\s\\t\\{\\n]+";
 			final String REGEX_INVOKED_DECLARATION = 
-					"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+(\\ |\\t)*\\(([\\s\\t]*[A-z0-9\\-_$<>\\[\\]]+[\\s\\t]+.*)";
+					"[\\s\\t]*(public|protected|private)[\\s\\t]+.+\\(.*\\)[\\s\\t]*\\{[\\s\\t]*$";
 			
-			boolean isConstructor = !line.matches(REGEX_NEW) || line.contains(" new ");
+			boolean isConstructor = line.matches(REGEX_NEW) || line.contains(" new ");
 			boolean isMethodDeclaration = line.matches(REGEX_INVOKED_DECLARATION);
 			
 			
-					// Checks if it is an invoker whose parameters are all on the same line
 			return	isMethodDeclaration &&
 					!line.contains("return ") && 
-					!isConstructor && (
-						line.matches("(\\ |\\t)*([A-z0-9\\-\\._$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
-								+ "\\(([A-z0-9\\-_$\\.,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*((\\s|\\ )+"
-								+ "(throws|implements|extends)(\\s|\\ )+.+)?(\\ |\\t)*") ||
-						// Checks if it is an invoker whose parameters are broken on other lines
-						line.matches("(\\ |\\t)*([A-z0-9\\-_\\.$<>\\[\\]\\ \\t?]+(\\s|\\t))+"
-								+ "[A-z0-9\\-_$]+(\\ |\\t)*\\(.*,(\\ |\\t)*")
-					);
+					!isConstructor;
 		}
 	}
 	
