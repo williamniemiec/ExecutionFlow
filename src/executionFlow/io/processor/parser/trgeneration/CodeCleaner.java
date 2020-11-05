@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public class CodeCleaner {
 	// Processed source code
-	private List<String> processedCode;
+	protected List<String> processedCode;
 	// (line mode only) Mappings containing information on processed code x original code
-	private List<Map<Integer, List<Integer>>> lineMappings;
+	protected List<Map<Integer, List<Integer>>> lineMappings;
 	// (line mode only) List containing lines that originally were empty or only contained comments
 	private List<Integer> emptyLines;
 	// Debug flag
@@ -65,8 +65,8 @@ public class CodeCleaner {
 		eliminateComments();
 		if (debug) System.out.println("CLEANUP: Eliminated comments");
 		trimLines();
-//		eliminateAnnotations();
-//		if (debug) System.out.println("CLEANUP: Eliminated annotations");
+		eliminateAnnotations();
+		if (debug) System.out.println("CLEANUP: Eliminated annotations");
 		trimLines();
 		removeBlankLines();
 		if (debug) System.out.println("CLEANUP: Removed blank lines");
@@ -127,6 +127,8 @@ public class CodeCleaner {
 	
 	private void eliminateComments() {		
 		for (int i=0; i<processedCode.size(); i++) {
+			processedCode.set(i, removeMultiSingleLineComment(processedCode.get(i)));
+			
 			int idxSingle = Helper.getIndexOfReservedSymbol(processedCode.get(i), "//"); 
 			int idxMulti = Helper.getIndexOfReservedSymbol(processedCode.get(i), "/\\*"); 
 			int idx = (idxSingle >= 0 && idxMulti >= 0) ? 
@@ -142,6 +144,16 @@ public class CodeCleaner {
 		}
 	}
 		
+	private String removeMultiSingleLineComment(String str) {
+		int idxStart = str.indexOf("/*");
+		int idxEnd = str.indexOf("*/");
+		
+		if (idxStart >= 0 && idxEnd > 0)
+			str = str.substring(0, idxStart) + str.substring(idxEnd+2);
+		
+		return str;
+	}
+
 	private int eraseMultiLineComment(int startLine, int idxStart) {
 		String preceding = processedCode.get(startLine).substring(0, idxStart);
 		
@@ -225,7 +237,7 @@ public class CodeCleaner {
 				idx++;
 			}
 			
-			if (curLine.charAt(idx) != '{') {
+			if (curLine.charAt(idx) != '{' && curLine.charAt(idx) != ';') {
 				int blockStart = idx;
 				int blockEnd = Helper.getIndexAfterPosition(curLine, ";", blockStart) + 1;
 				String newLine = curLine.substring(0, blockStart)
