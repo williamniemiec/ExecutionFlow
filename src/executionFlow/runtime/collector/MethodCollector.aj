@@ -37,6 +37,7 @@ import executionFlow.util.Logging;
  * @version		5.2.0
  * @since		1.0 
  */
+@SuppressWarnings("unused")
 public aspect MethodCollector extends RuntimeCollector
 {	
 	//-------------------------------------------------------------------------
@@ -141,6 +142,7 @@ public aspect MethodCollector extends RuntimeCollector
 		Class<?> returnType;
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
 		String concreteMethodSignature = null;
+		final String REGEX_DOLLAR_SIGN_AND_NUMBER = ".+(\\$[0-9]+(\\.|\\()).*";
 		
 		
 		if (jp.getTarget() != null) {
@@ -148,8 +150,10 @@ public aspect MethodCollector extends RuntimeCollector
 					jp.getTarget().getClass().getName() + "." + 
 					jp.getSignature().getName() + 
 					signature.substring(signature.indexOf("("));
+			
+			if (concreteMethodSignature.matches(REGEX_DOLLAR_SIGN_AND_NUMBER))
+				concreteMethodSignature = signature;
 		}
-		
 		
 		// Extracts types of method parameters (if there is any)
 		paramTypes = CollectorExecutionFlow.extractParamTypes(jp);

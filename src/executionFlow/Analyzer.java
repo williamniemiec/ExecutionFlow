@@ -786,9 +786,11 @@ public class Analyzer
 	private boolean shouldIgnore(String srcLine, int currentLine)
 	{
 		final String REGEX_ONLY_OPEN_CURLY_BRACKET = "([0-9]+)(\\ |\\t)+\\{((\\ |\\t)+)?($)";
+		final String REGEX_METHOD_DECLARATION = "[\\ \\t0-9]*((public|proteted|private)(\\ |\\t)+)?[A-z]+\\(.*\\)(\\ |\\t)*\\{";
 		
 		
-		return	(currentLine != -1 && currentLine < invokedDeclarationLine) ||
+		return	srcLine.matches(REGEX_METHOD_DECLARATION) ||
+				(currentLine != -1 && currentLine < invokedDeclarationLine) ||
 				currentLine == 1 ||
 				srcLine.contains(" class ") ||
 				srcLine.matches(REGEX_MULTILINE_ARGS) ||
