@@ -105,7 +105,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
@@ -381,16 +381,18 @@ public abstract class ExecutionFlow
 					+ "Make sure that the 'init' method has been called before.");
 	
 		String invSig = invokedInfo.getInvokedSignature().replaceAll("\\$", ".");
-	
+		
 		
 		processTestMethod(testMethodInfo, testMethodFileManager);
 		processInvoked(testMethodFileManager, invokedFileManager, invSig);
 		
 		TestMethodCollector.updateCollectorInvocationLines(TestMethodFileProcessor.getMapping());
-		TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping());
-		
 		updateInvokedInfo(invokedInfo, TestMethodFileProcessor.getMapping());
-		updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
+		
+		if (invokedInfo.getSrcPath().equals(testMethodInfo.getSrcPath())) {
+			TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping());
+			updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
+		}		
 		
 		return new Analyzer(invokedInfo, testMethodInfo);
 	}
@@ -462,13 +464,17 @@ public abstract class ExecutionFlow
 	private void updateInvokedInfo(InvokedInfo invokedInfo, Map<Path, Map<Integer, Integer>> mapping)
 	{
 		for (Map.Entry<Path, Map<Integer, Integer>> e : mapping.entrySet()) {
-			Path testMethodSrcFile = e.getKey();
+//			Path testMethodSrcFile = e.getKey();
 			Map<Integer, Integer> map = e.getValue();
+			int currentInvocationLine = invokedInfo.getInvocationLine();
 			
 			
-			if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
-				invokedInfo.setInvocationLine(map.get(invokedInfo.getInvocationLine()));
+			if (map.containsKey(currentInvocationLine)) {
+				invokedInfo.setInvocationLine(map.get(currentInvocationLine));
 			}
+//			if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
+//				invokedInfo.setInvocationLine(map.get(invokedInfo.getInvocationLine()));
+//			}
 		}
 	}
 	
