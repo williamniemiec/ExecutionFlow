@@ -462,7 +462,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(80,81,82,83,84,86,82,83,84,86,82,83,84,86,82,83,84,86,82,83,84,86,87), testPaths.get(0));
+		assertEquals(Arrays.asList(80,83,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,91), testPaths.get(0));
 	}
 	
 	@Test
@@ -474,7 +474,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 90;
+		int invocationLine = 92;
 		
 		
 		// Defines which methods will be collected
@@ -511,7 +511,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(90,91), testPaths.get(0));
+		assertEquals(Arrays.asList(94,95,94,95,94,97), testPaths.get(0));
 	}
 	
 	@Test
@@ -523,7 +523,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 98;
+		int invocationLine = 100;
 		
 		
 		// Defines which methods will be collected
@@ -560,7 +560,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(98,99,100,102,99,100,102,99,103), testPaths.get(0));
+		assertEquals(Arrays.asList(108,111,112,114,111,112,114,111,115), testPaths.get(0));
 	}
 	
 	@Test
@@ -572,7 +572,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 106;
+		int invocationLine = 108;
 		
 		
 		// Defines which methods will be collected
@@ -609,7 +609,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(94), testPaths.get(0));
+		assertEquals(Arrays.asList(100,101), testPaths.get(0));
 	}
 	
 	/**
@@ -625,7 +625,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 114;
+		int invocationLine = 116;
 		
 		
 		// Defines which methods will be collected
@@ -662,7 +662,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(106,107,112), testPaths.get(0));
+		assertEquals(Arrays.asList(118,119,124), testPaths.get(0));
 	}
 	
 	/**
@@ -678,7 +678,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 115;
+		int invocationLine = 117;
 		
 		
 		// Defines which methods will be collected
@@ -715,6 +715,6 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(106,109,110,112), testPaths.get(0));
+		assertEquals(Arrays.asList(118,121,122,124), testPaths.get(0));
 	}
 }

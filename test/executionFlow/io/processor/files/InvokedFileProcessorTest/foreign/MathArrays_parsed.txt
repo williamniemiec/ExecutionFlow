@@ -8,127 +8,152 @@ double evaluate(double[] array, int startIndex, int numElements);
 }
 @executionFlow.runtime.CollectCalls public static double[] scale(double val, final double[] arr) {
 double[] newArr = new double[arr.length];
-for (int i = 0; i < arr.length; i++) {
+int i = 0;
+while (i < arr.length) {
 newArr[i] = arr[i] * val;
+i++;
 }
 return newArr;
 }
 @executionFlow.runtime.CollectCalls public static void scaleInPlace(double val, final double[] arr) {
-for (int i = 0; i < arr.length; i++) {
+int i = 0;
+while (i < arr.length) {
 arr[i] *= val;
+i++;
 }
 }
-@executionFlow.runtime.CollectCalls public static double[] ebeAdd(double[] a, double[] b) throws DimensionMismatchException {
+public static double[] ebeAdd(double[] a, double[] b) throws DimensionMismatchException {
 checkEqualLength(a, b);
 final double[] result = a.clone();
-for (int i = 0; i < a.length; i++) {
+int i = 0;
+while (i < a.length) {
 result[i] += b[i];
+i++;
 }
 return result;
 }
-@executionFlow.runtime.CollectCalls public static double[] ebeSubtract(double[] a, double[] b) throws DimensionMismatchException {
+public static double[] ebeSubtract(double[] a, double[] b) throws DimensionMismatchException {
 checkEqualLength(a, b);
 final double[] result = a.clone();
-for (int i = 0; i < a.length; i++) {
+int i = 0;
+while (i < a.length) {
 result[i] -= b[i];
+i++;
 }
 return result;
 }
-@executionFlow.runtime.CollectCalls public static double[] ebeMultiply(double[] a, double[] b) throws DimensionMismatchException {
+public static double[] ebeMultiply(double[] a, double[] b) throws DimensionMismatchException {
 checkEqualLength(a, b);
 final double[] result = a.clone();
-for (int i = 0; i < a.length; i++) {
+int i = 0;
+while (i < a.length) {
 result[i] *= b[i];
+i++;
 }
 return result;
 }
-@executionFlow.runtime.CollectCalls public static double[] ebeDivide(double[] a, double[] b) throws DimensionMismatchException {
+public static double[] ebeDivide(double[] a, double[] b) throws DimensionMismatchException {
 checkEqualLength(a, b);
 final double[] result = a.clone();
-for (int i = 0; i < a.length; i++) {
+int i = 0;
+while (i < a.length) {
 result[i] /= b[i];
+i++;
 }
 return result;
 }
-@executionFlow.runtime.CollectCalls public static double distance1(double[] p1, double[] p2) throws DimensionMismatchException {
+public static double distance1(double[] p1, double[] p2) throws DimensionMismatchException {
 checkEqualLength(p1, p2);
 double sum = 0;
-for (int i = 0; i < p1.length; i++) {
+int i = 0;
+while (i < p1.length) {
 sum += FastMath.abs(p1[i] - p2[i]);
+i++;
 }
 return sum;
 }
-@executionFlow.runtime.CollectCalls public static int distance1(int[] p1, int[] p2) throws DimensionMismatchException {
+public static int distance1(int[] p1, int[] p2) throws DimensionMismatchException {
 checkEqualLength(p1, p2);
 int sum = 0;
-for (int i = 0; i < p1.length; i++) {
+int i = 0;
+while (i < p1.length) {
 sum += FastMath.abs(p1[i] - p2[i]);
+i++;
 }
 return sum;
 }
-@executionFlow.runtime.CollectCalls public static double distance(double[] p1, double[] p2) throws DimensionMismatchException {
+public static double distance(double[] p1, double[] p2) throws DimensionMismatchException {
 checkEqualLength(p1, p2);
 double sum = 0;
-for (int i = 0; i < p1.length; i++) {
+int i = 0;
+while (i < p1.length) {
 final double dp = p1[i] - p2[i];
 sum += dp * dp;
+i++;
 }
 return FastMath.sqrt(sum);
 }
-@executionFlow.runtime.CollectCalls public static double distance(int[] p1, int[] p2) throws DimensionMismatchException {
+public static double distance(int[] p1, int[] p2) throws DimensionMismatchException {
 checkEqualLength(p1, p2);
 double sum = 0;
-for (int i = 0; i < p1.length; i++) {
+int i = 0;
+while (i < p1.length) {
 final double dp = p1[i] - p2[i];
 sum += dp * dp;
+i++;
 }
 return FastMath.sqrt(sum);
 }
-@executionFlow.runtime.CollectCalls public static double distanceInf(double[] p1, double[] p2) throws DimensionMismatchException {
+public static double distanceInf(double[] p1, double[] p2) throws DimensionMismatchException {
 checkEqualLength(p1, p2);
 double max = 0;
-for (int i = 0; i < p1.length; i++) {
+int i = 0;
+while (i < p1.length) {
 max = FastMath.max(max, FastMath.abs(p1[i] - p2[i]));
+i++;
 }
 return max;
 }
-@executionFlow.runtime.CollectCalls public static int distanceInf(int[] p1, int[] p2) throws DimensionMismatchException {
+public static int distanceInf(int[] p1, int[] p2) throws DimensionMismatchException {
 checkEqualLength(p1, p2);
 int max = 0;
-for (int i = 0; i < p1.length; i++) {
+int i = 0;
+while (i < p1.length) {
 max = FastMath.max(max, FastMath.abs(p1[i] - p2[i]));
+i++;
 }
 return max;
 }
 public enum OrderDirection {
 INCREASING, DECREASING }
-public static  <T extends Comparable<? super T>> boolean isMonotonic(T[] val, OrderDirection dir, boolean strict) {
+@executionFlow.runtime.CollectCalls public static  <T extends Comparable<? super T>> boolean isMonotonic(T[] val, OrderDirection dir, boolean strict) {
 T previous = val[0];
 final int max = val.length;
-for (int i = 1; i < max; i++) {
-final int comp;int _620c0212c7ff19ed89d830e5e3f41f64=0;
+int i = 1;
+while (i < max) {
+final int comp;int _47b88b49150f8b39a6bc449e81719a77=0;
 switch (dir) {
-case INCREASING:int _ebec8519039dd871d7c6958af2a6ec3d=0;
+case INCREASING:int _2b12818c31657cf7fff0ed50891f1f7f=0;
 comp = previous.compareTo(val[i]);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _87846020f2963d2da6efbb6e0f07dabd=0;
+else {int _d8dd10d9321b25ae665cf92dd4863a9f=0;
 if (comp > 0) {
 return false;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
-case DECREASING:int _82407a4aaf8f03427fec3362f10c0c22=0;
+case DECREASING:int _dd33cb71d3bd049e044caf9d2f928c8c=0;
 comp = val[i].compareTo(previous);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _829872455afa9b3d2a71c3188f6f2c9d=0;
+else {int _8724975ac3eca48f49c1c98d1bcbb3ee=0;
 if (comp > 0) {
 return false;
 }
@@ -138,6 +163,7 @@ default:
 throw new MathInternalError();
 }
 previous = val[i];
+i++;
 }
 return true;
 }
@@ -148,7 +174,7 @@ return checkOrder(val, dir, strict, false);
 if (a.length == b.length) {
 return true;
 }
-else {int _469c2d51bf14399b7ca7b595a227c38b=0;
+else {int _6260d6718bec8db4d08c2b8ca3d79edb=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
@@ -162,7 +188,7 @@ checkEqualLength(a, b, true);
 if (a.length == b.length) {
 return true;
 }
-else {int _4033300eebaefb01c6f01cc8e0393398=0;
+else {int _6d902baddb033a9c3988d4f5da40be22=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
@@ -172,33 +198,35 @@ return false;
 @executionFlow.runtime.CollectCalls public static void checkEqualLength(int[] a, int[] b) {
 checkEqualLength(a, b, true);
 }
-@executionFlow.runtime.CollectCalls public static boolean checkOrder(double[] val, OrderDirection dir, boolean strict, boolean abort) throws NonMonotonicSequenceException {
+public static boolean checkOrder(double[] val, OrderDirection dir, boolean strict, boolean abort) throws NonMonotonicSequenceException {
 double previous = val[0];
 final int max = val.length;
-int index;int _c24897be50f8eaff2f8b15f55111b155=0;
-ITEM: for (index = 1; index < max; index++) {
+int index;int _99de00395ae8ee0a11005083dd041d9d=0;
+ITEM: for (index = 1;
+index < max;
+index++) {
 switch (dir) {
-case INCREASING:int _878c328bd54fee08570be424eb0b7396=0;
+case INCREASING:int _5ccaaf0eeec66b7825034b15b0a06b3c=0;
 if (strict) {
 if (val[index] <= previous) {
-break ITEM;int _1dc47fac566b62927afc0c3b3823d873=0;
+break ITEM;int _9ae57fcfea9c1659661ecc3f7c2312a5=0;
 }
 }
-else {int _4a0c8e6813187eeda06e0b1d9146a417=0;
+else {int _61d984bd606f3a5f4e4a3dca4f021002=0;
 if (val[index] < previous) {
-break ITEM;int _6a7fb60e2a2ead6d6abcfacf5a3905f8=0;
+break ITEM;int _fd8e76c4ec97450e74b3d1c5f281353=0;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
-case DECREASING:int _f4e540074629c1beafa3582111e226e2=0;
+case DECREASING:int _fdbbe63340e305fb22795e55ee7cee7=0;
 if (strict) {
 if (val[index] >= previous) {
-break ITEM;int _b55b5e461013fa373a14bbb9f39a5f0b=0;
+break ITEM;int _2d434979ea9bdc03c9e4b07fe2c94532=0;
 }
 }
-else {int _de5080460645ba434382c39ead57283e=0;
+else {int _8099bc03d9b428c831569155399db697=0;
 if (val[index] > previous) {
-break ITEM;int _78c8462d3b2366ee6ed1f1ef1c2ee60b=0;
+break ITEM;int _2735cc4eb196657ef312fd4dda6c1744=0;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
@@ -213,55 +241,67 @@ return true;
 if (abort) {
 throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);
 }
-else {int _fbcdc339cfd8bdf5ec9e2db79799a723=0;
+else {int _6ce8feb72339050846a2e59977292f84=0;
 return false;
 }
 }
-@executionFlow.runtime.CollectCalls public static void checkOrder(double[] val, OrderDirection dir, boolean strict) throws NonMonotonicSequenceException {
+public static void checkOrder(double[] val, OrderDirection dir, boolean strict) throws NonMonotonicSequenceException {
 checkOrder(val, dir, strict, true);
 }
-@executionFlow.runtime.CollectCalls public static void checkOrder(double[] val) throws NonMonotonicSequenceException {
+public static void checkOrder(double[] val) throws NonMonotonicSequenceException {
 checkOrder(val, OrderDirection.INCREASING, true);
 }
-@executionFlow.runtime.CollectCalls public static void checkRectangular(final long[][] in) throws NullArgumentException, DimensionMismatchException {
+public static void checkRectangular(final long[][] in) throws NullArgumentException, DimensionMismatchException {
 MathUtils.checkNotNull(in);
-for (int i = 1; i < in.length; i++) {
+int i = 1;
+while (i < in.length) {
 if (in[i].length != in[0].length) {
 throw new DimensionMismatchException( LocalizedFormats.DIFFERENT_ROWS_LENGTHS, in[i].length, in[0].length);
 }
+i++;
 }
 }
-@executionFlow.runtime.CollectCalls public static void checkPositive(final double[] in) throws NotStrictlyPositiveException {
-for (int i = 0; i < in.length; i++) {
+public static void checkPositive(final double[] in) throws NotStrictlyPositiveException {
+int i = 0;
+while (i < in.length) {
 if (in[i] <= 0) {
 throw new NotStrictlyPositiveException(in[i]);
 }
+i++;
 }
 }
-@executionFlow.runtime.CollectCalls public static void checkNotNaN(final double[] in) throws NotANumberException {
-for(int i = 0; i < in.length; i++) {
+public static void checkNotNaN(final double[] in) throws NotANumberException {
+int i = 0;
+while (i < in.length) {
 if (Double.isNaN(in[i])) {
 throw new NotANumberException();
 }
+i++;
 }
 }
-@executionFlow.runtime.CollectCalls public static void checkNonNegative(final long[] in) throws NotPositiveException {
-for (int i = 0; i < in.length; i++) {
+public static void checkNonNegative(final long[] in) throws NotPositiveException {
+int i = 0;
+while (i < in.length) {
 if (in[i] < 0) {
 throw new NotPositiveException(in[i]);
 }
+i++;
 }
 }
-@executionFlow.runtime.CollectCalls public static void checkNonNegative(final long[][] in) throws NotPositiveException {
-for (int i = 0; i < in.length; i ++) {
-for (int j = 0; j < in[i].length; j++) {
+public static void checkNonNegative(final long[][] in) throws NotPositiveException {
+int i = 0;
+while (i < in.length) {
+int j = 0;
+while (j < in[i].length) {
 if (in[i][j] < 0) {
 throw new NotPositiveException(in[i][j]);
 }
+j++;
+}
+i ++;
 }
 }
-}
-@executionFlow.runtime.CollectCalls public static void sortInPlace(double[] x, double[] ... yList) throws DimensionMismatchException, NullArgumentException {
+public static void sortInPlace(double[] x, double[] ... yList) throws DimensionMismatchException, NullArgumentException {
 sortInPlace(x, OrderDirection.INCREASING, yList);
 }
 private static class PairDoubleInteger {
@@ -278,13 +318,14 @@ return key;
 return value;
 }
 }
-@executionFlow.runtime.CollectCalls public static void sortInPlace(double[] x, final OrderDirection dir, double[] ... yList) throws NullArgumentException, DimensionMismatchException {
+public static void sortInPlace(double[] x, final OrderDirection dir, double[] ... yList) throws NullArgumentException, DimensionMismatchException {
 if (x == null) {
 throw new NullArgumentException();
 }
 final int yListLen = yList.length;
 final int len = x.length;
-for (int j = 0; j < yListLen; j++) {
+int j = 0;
+while (j < yListLen) {
 final double[] y = yList[j];
 if (y == null) {
 throw new NullArgumentException();
@@ -292,35 +333,44 @@ throw new NullArgumentException();
 if (y.length != len) {
 throw new DimensionMismatchException(y.length, len);
 }
+j++;
 }
 final List<PairDoubleInteger> list = new ArrayList<>(len);
-for (int i = 0; i < len; i++) {
+int i = 0;
+while (i < len) {
 list.add(new PairDoubleInteger(x[i], i));
+i++;
 }
 final Comparator<PairDoubleInteger> comp = dir == MathArrays.OrderDirection.INCREASING ? new Comparator<PairDoubleInteger>() {
-@Override public int compare(PairDoubleInteger o1, PairDoubleInteger o2) {
+@executionFlow.runtime.CollectCalls public int compare(PairDoubleInteger o1, PairDoubleInteger o2) {
 return Double.compare(o1.getKey(), o2.getKey());
 }
 }
 : new Comparator<PairDoubleInteger>() {
-@Override public int compare(PairDoubleInteger o1, PairDoubleInteger o2) {
+@executionFlow.runtime.CollectCalls public int compare(PairDoubleInteger o1, PairDoubleInteger o2) {
 return Double.compare(o2.getKey(), o1.getKey());
 }
 }
 ;
 Collections.sort(list, comp);
 final int[] indices = new int[len];
-for (int i = 0; i < len; i++) {
+int i = 0;
+while (i < len) {
 final PairDoubleInteger e = list.get(i);
 x[i] = e.getKey();
 indices[i] = e.getValue();
+i++;
 }
-for (int j = 0; j < yListLen; j++) {
+int j = 0;
+while (j < yListLen) {
 final double[] yInPlace = yList[j];
 final double[] yOrig = yInPlace.clone();
-for (int i = 0; i < len; i++) {
+int i = 0;
+while (i < len) {
 yInPlace[i] = yOrig[indices[i]];
+i++;
 }
+j++;
 }
 }
 @executionFlow.runtime.CollectCalls public static boolean equals(float[] x, float[] y) {
@@ -330,10 +380,12 @@ return !((x == null) ^ (y == null));
 if (x.length != y.length) {
 return false;
 }
-for (int i = 0; i < x.length; ++i) {
+int i = 0;
+while (i < x.length) {
 if (!Precision.equals(x[i], y[i])) {
 return false;
 }
+++i;
 }
 return true;
 }
@@ -344,10 +396,12 @@ return !((x == null) ^ (y == null));
 if (x.length != y.length) {
 return false;
 }
-for (int i = 0; i < x.length; ++i) {
+int i = 0;
+while (i < x.length) {
 if (!Precision.equalsIncludingNaN(x[i], y[i])) {
 return false;
 }
+++i;
 }
 return true;
 }
@@ -358,10 +412,12 @@ return !((x == null) ^ (y == null));
 if (x.length != y.length) {
 return false;
 }
-for (int i = 0; i < x.length; ++i) {
+int i = 0;
+while (i < x.length) {
 if (!Precision.equals(x[i], y[i])) {
 return false;
 }
+++i;
 }
 return true;
 }
@@ -372,14 +428,16 @@ return !((x == null) ^ (y == null));
 if (x.length != y.length) {
 return false;
 }
-for (int i = 0; i < x.length; ++i) {
+int i = 0;
+while (i < x.length) {
 if (!Precision.equalsIncludingNaN(x[i], y[i])) {
 return false;
 }
+++i;
 }
 return true;
 }
-@executionFlow.runtime.CollectCalls public static double[] normalizeArray(double[] values, double normalizedSum) throws MathIllegalArgumentException, MathArithmeticException {
+public static double[] normalizeArray(double[] values, double normalizedSum) throws MathIllegalArgumentException, MathArithmeticException {
 if (Double.isInfinite(normalizedSum)) {
 throw new MathIllegalArgumentException(LocalizedFormats.NORMALIZE_INFINITE);
 }
@@ -389,49 +447,55 @@ throw new MathIllegalArgumentException(LocalizedFormats.NORMALIZE_NAN);
 double sum = 0d;
 final int len = values.length;
 double[] out = new double[len];
-for (int i = 0; i < len; i++) {
+int i = 0;
+while (i < len) {
 if (Double.isInfinite(values[i])) {
 throw new MathIllegalArgumentException(LocalizedFormats.INFINITE_ARRAY_ELEMENT, values[i], i);
 }
 if (!Double.isNaN(values[i])) {
 sum += values[i];
 }
+i++;
 }
 if (sum == 0) {
 throw new MathArithmeticException(LocalizedFormats.ARRAY_SUMS_TO_ZERO);
 }
-for (int i = 0; i < len; i++) {
+int i = 0;
+while (i < len) {
 if (Double.isNaN(values[i])) {
 out[i] = Double.NaN;
 }
-else {int _78077b59aeb36dd691723a5e17edaa94=0;
+else {int _6637f6243f4acc2175af99cf077859ed=0;
 out[i] = values[i] * normalizedSum / sum;
 }
+i++;
 }
 return out;
 }
 @executionFlow.runtime.CollectCalls public static <T> T[] buildArray(final Field<T> field, final int length) {
-@SuppressWarnings("unchecked") T[] array = (T[]) Array.newInstance(field.getRuntimeClass(), length);
+T[] array = (T[]) Array.newInstance(field.getRuntimeClass(), length);
 Arrays.fill(array, field.getZero());
 return array;
 }
-@SuppressWarnings("unchecked") public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-final T[][] array;int _c285bbc82282a93b629a8ece3d1f5228=0;
+@executionFlow.runtime.CollectCalls public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
+final T[][] array;int _25f9a9b1d6ed7a53359de15a05f3f87b=0;
 if (columns < 0) {
 T[] dummyRow = buildArray(field, 0);
 array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
 }
-else {int _6ee2ea6c782f47f13cbac32b258b1f66=0;
+else {int _e170f16f7bab268b7a742b98e5fb0eab=0;
 array = (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] {
 rows, columns }
 );
-for (int i = 0; i < rows; ++i) {
+int i = 0;
+while (i < rows) {
 Arrays.fill(array[i], field.getZero());
+++i;
 }
 }
 return array;
 }
-@executionFlow.runtime.CollectCalls public static double[] convolve(double[] x, double[] h) throws NullArgumentException, NoDataException {
+public static double[] convolve(double[] x, double[] h) throws NullArgumentException, NoDataException {
 MathUtils.checkNotNull(x);
 MathUtils.checkNotNull(h);
 final int xLen = x.length;
@@ -441,7 +505,8 @@ throw new NoDataException();
 }
 final int totalLength = xLen + hLen - 1;
 final double[] y = new double[totalLength];
-for (int n = 0; n < totalLength; n++) {
+int n = 0;
+while (n < totalLength) {
 double yn = 0;
 int k = FastMath.max(0, n + 1 - xLen);
 int j = n - k;
@@ -449,6 +514,7 @@ while (k < hLen && j >= 0) {
 yn += x[j--] * h[k++];
 }
 y[n] = yn;
+n++;
 }
 return y;
 }
@@ -457,15 +523,17 @@ return sequence(n, 0, 1);
 }
 @executionFlow.runtime.CollectCalls public static int[] sequence(int size, int start, int stride) {
 final int[] a = new int[size];
-for (int i = 0; i < size; i++) {
+int i = 0;
+while (i < size) {
 a[i] = start + i * stride;
+i++;
 }
 return a;
 }
-@executionFlow.runtime.CollectCalls public static boolean verifyValues(final double[] values, final int begin, final int length) throws MathIllegalArgumentException {
+public static boolean verifyValues(final double[] values, final int begin, final int length) throws MathIllegalArgumentException {
 return verifyValues(values, begin, length, false);
 }
-@executionFlow.runtime.CollectCalls public static boolean verifyValues(final double[] values, final int begin, final int length, final boolean allowEmpty) throws MathIllegalArgumentException {
+public static boolean verifyValues(final double[] values, final int begin, final int length, final boolean allowEmpty) throws MathIllegalArgumentException {
 if (values == null) {
 throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
 }
@@ -483,16 +551,17 @@ return false;
 }
 return true;
 }
-@executionFlow.runtime.CollectCalls public static boolean verifyValues( final double[] values, final double[] weights, final int begin, final int length) throws MathIllegalArgumentException {
+public static boolean verifyValues( final double[] values, final double[] weights, final int begin, final int length) throws MathIllegalArgumentException {
 return verifyValues(values, weights, begin, length, false);
 }
-@executionFlow.runtime.CollectCalls public static boolean verifyValues(final double[] values, final double[] weights, final int begin, final int length, final boolean allowEmpty) throws MathIllegalArgumentException {
+public static boolean verifyValues(final double[] values, final double[] weights, final int begin, final int length, final boolean allowEmpty) throws MathIllegalArgumentException {
 if (weights == null || values == null) {
 throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
 }
 checkEqualLength(weights, values);
 boolean containsPositiveWeight = false;
-for (int i = begin; i < begin + length; i++) {
+int i = begin;
+while (i < begin + length) {
 final double weight = weights[i];
 if (Double.isNaN(weight)) {
 throw new MathIllegalArgumentException(LocalizedFormats.NAN_ELEMENT_AT_INDEX, Integer.valueOf(i));
@@ -506,6 +575,7 @@ throw new MathIllegalArgumentException(LocalizedFormats.NEGATIVE_ELEMENT_AT_INDE
 if (!containsPositiveWeight && weight > 0.0) {
 containsPositiveWeight = true;
 }
+i++;
 }
 if (!containsPositiveWeight) {
 throw new MathIllegalArgumentException(LocalizedFormats.WEIGHT_AT_LEAST_ONE_NON_ZERO);
@@ -514,13 +584,50 @@ return verifyValues(values, begin, length, allowEmpty);
 }
 @executionFlow.runtime.CollectCalls public static double[] concatenate(double[] ...x) {
 int combinedLength = 0;
-for (double[] a : x) {
+Iterator<double[]> it = x.iterator();
+while (it.hasNext()) {
+double[] a = it.next();
 combinedLength += a.length;
+;
 }
 int offset = 0;
 int curLength = 0;
 final double[] combined = new double[combinedLength];
-for (int i = 0; i < x.length; i++) {
+int i = 0;
+while (i < x.length) {
+curLength = x[i].length;
+System.arraycopy(x[i], 0, combined, offset, curLength);
+offset += curLength;
+i++;
+}
+return combined;
+}
+@executionFlow.runtime.CollectCalls public static double[] unique(double[] data) {
+TreeSet<Double> values = new TreeSet<>();
+int i = 0;
+while (i < data.length) {
+values.add(data[i]);
+i++;
+}
+final int count = values.size();
+final double[] out = new double[count];
+Iterator<Double> iterator = values.descendingIterator();
+int i = 0;
+while (iterator.hasNext()) {
+out[i++] = iterator.next();
+}
+return out;
+}
+}
+Iterator();
+int i = 0;
+while (iterator.hasNext()) {
+out[i++] = iterator.next();
+}
+return out;
+}
+}
+i++) {
 curLength = x[i].length;
 System.arraycopy(x[i], 0, combined, offset, curLength);
 offset += curLength;

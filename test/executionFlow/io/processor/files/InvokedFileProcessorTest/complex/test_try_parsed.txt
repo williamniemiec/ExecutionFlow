@@ -2,32 +2,37 @@ package executionFlow.core.file.parser.files.complex;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-public class test_try{int _8dcb3ef9a33d9199b49a5dce3a78a0e=0;
+public class test_try{
 @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_try(int num){
 File f = new File("tmp");
-FileWriter fw;int _7bb0e83b800accf75e3f35df9685e31=0;
-try{int _b98cd5c5d8398597cb900202869999f5=0;
+FileWriter fw;int _684e3e05268d8e609f75ed58aa9506c8=0;
+ try{int _1330dac2b97fca7225878a2404587230=0;
 fw = new FileWriter(f);
 fw.write('x');
 fw.close();
-f.delete();
+ f.delete();
 }
-catch (IOException e){
-return false;
+ catch (IOException e){
+ return false;
 }
 return true;
 }
 @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_try2(int num){
 File f = new File("tmp");
-FileWriter fw;int _bb4311f4dfccabdde61c8f56baef65d0=0;
-try{int _5cf0d443eb83a715a68d386a34f0d097=0;
+FileWriter fw;int _c83a8d7da624dadcb8c2353f53d7d576=0;
+ try{int _e3044d383594836c4ce48f5dc8ef7560=0;
 fw = new FileWriter(f);
 fw.write('x');
 fw.close();
-f.delete();
+ f.delete();
 }
-catch (IOException e){
-return false;
+ catch (IOException e){
+ return false;
+}
+return true;
+}
+}
+alse;
 }
 return true;
 }

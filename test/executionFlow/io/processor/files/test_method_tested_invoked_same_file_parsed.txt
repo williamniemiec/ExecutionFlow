@@ -15,7 +15,41 @@ public class AgainstRequirements
 	 * Test a method defined within the test class. An error will be generated.
 	 * Execution will continue if there are more test methods to be executed.
 	 */
-	@org.junit.Test @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked
+	@org.junit.Test @executionFlow.runtime._SkipInvoked
+    public void methodInSameFileOfTestMethod() {
+		int a = 2, b = 3;
+		
+try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _732996d0f661594b9459742af769b93d){}
+    }
+    
+	/**
+	 * Example method for {@link #methodInSameFileOfTestMethod()} method.
+	 * 
+	 * @param a A number
+	 * @param b Another number
+	 * @return a + b
+	 */
+    private int sum(int a, int b)     {        return a + b;
+
+
+    }
+}
+       return a + b;
+
+
+    }
+}
+       return a + b;
+
+
+    }
+}
+       return a + b;
+
+
+    }
+}
+ed @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked
     public void methodInSameFileOfTestMethod() {
 		int a = 2, b = 3;
 		

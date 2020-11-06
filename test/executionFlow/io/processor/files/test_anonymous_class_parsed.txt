@@ -6,7 +6,38 @@ import org.junit.Test;
 
 public class OverrideTest 
 {
-	@org.junit.Test @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked
+	@org.junit.Test @executionFlow.runtime._SkipInvoked
+	public void testOverloadedMethod3()
+	{
+		OverrideClass oc = new OverrideClass() {
+			@Override
+			public int foo(int num)
+			{
+				if (num == 0)
+					break;
+					
+				num *= 1000;
+				return (int)num;
+			}
+		};
+		
+try {		assertEquals(10000, oc.foo(10));} catch(Throwable _59e00329c7e3b2fc922417f457b2a4d4){}
+	}
+}
+ 
+de15bb56faeaa5c2b0fc){}
+	}
+}
+ 
+6eca6023b905485cb6b068){}
+	}
+}
+ 
+2a8befa80363a305892d){}
+	}
+}
+ 
+Flow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked
 	public void testOverloadedMethod3()
 	{
 		OverrideClass oc = new OverrideClass() {

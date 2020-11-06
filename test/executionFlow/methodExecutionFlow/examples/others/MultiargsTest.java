@@ -23,19 +23,19 @@ import executionFlow.runtime.SkipCollection;
 
 /**
  * Tests test path computation for the tested methods of 
- * {@link examples.others.SimpleTestPath} test using 
+ * {@link examples.others.MultiargsTest} test using 
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class SimpleTestPath extends MethodExecutionFlowTest
+public class MultiargsTest extends MethodExecutionFlowTest
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/SimpleTestPath.class");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/MultiargsTest.class");
 	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/SimpleTestPath.java");
+			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/MultiargsTest.java");
 	private static final String PACKAGE_TEST_METHOD = "examples.others";
 	private static final Path PATH_BIN_METHOD = 
 			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class");
@@ -66,19 +66,12 @@ public class SimpleTestPath extends MethodExecutionFlowTest
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests {@link examples.others.SimpleTestPath#simpleTestPath()} 
+	 * Tests {@link examples.others.MultiargsTest#methodCallMultiLineArgsTest()} 
 	 * test method.
 	 */
 	@Test
-	public void simpleTestPath() throws Throwable 
+	public void methodCallMultiLineArgsTest() throws Throwable 
 	{
-		/**
-		 * Stores information about collected methods.
-		 * <ul>
-		 * 	<li><b>Key:</b> Method invocation line</li>
-		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-		 * </ul>
-		 */
 		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
@@ -86,12 +79,12 @@ public class SimpleTestPath extends MethodExecutionFlowTest
 		String testMethodSignature, methodSignature;
 		MethodInvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
-		int invocationLine = 19;
+		int invocationLine = 18;
 		
 		
 		// Defines which methods will be collected
-		testMethodSignature = "examples.others.SimpleTestPath.simpleTestPath()";
-		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		testMethodSignature = "examples.others.MultiargsTest.methodCallMultiLineArgsTest()";
+		methodSignature = "examples.others.auxClasses.AuxClass.identity(int, int, int, int, int)";
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
@@ -106,7 +99,7 @@ public class SimpleTestPath extends MethodExecutionFlowTest
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
 				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.methodName("identity")
 				.build();
 		
 		ci = new CollectorInfo.Builder()
@@ -125,7 +118,66 @@ public class SimpleTestPath extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(35,36,37,38,39,37,38,39,37,38,39,37,38,39,37,41)
+				Arrays.asList(102,103)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.MultiargsTest#simethodCallMultLineArgsWithBrokenLinesmpleTestPath()} 
+	 * test method.
+	 */
+	@Test
+	public void methodCallMultLineArgsWithBrokenLines() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 26;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.MultiargsTest.methodCallMultLineArgsWithBrokenLines()";
+		methodSignature = "examples.others.auxClasses.AuxClass.identity(int, int, int, int, int)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("identity")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(102,103)
 			),
 			testPaths
 		);

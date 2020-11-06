@@ -14,7 +14,7 @@ import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 
 
 /**
@@ -93,9 +93,9 @@ public class ConstructorExecutionFlowTest
 		
 		// Parses test method
 		try {
-			ConsoleOutput.showInfo("Pre-processing test method...");
+			Logging.showInfo("Pre-processing test method...");
 			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-			ConsoleOutput.showInfo("Pre-processing completed");
+			Logging.showInfo("Pre-processing completed");
 		} catch (IOException e) {
 			testMethodManager.restoreAll();
 			testMethodManager.deleteBackup();

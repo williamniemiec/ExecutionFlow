@@ -132,7 +132,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(35,36,39)
+				Arrays.asList(35,36,37,41)
 			),
 			testPaths
 		);
@@ -197,7 +197,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(35,36,39)
+				Arrays.asList(35,36,37,41)
 			),
 			testPaths
 		);
@@ -262,7 +262,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(35,36,37,36,39)
+				Arrays.asList(35,36,37,38,39,37,41)
 			),
 			testPaths
 		);
@@ -327,7 +327,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(105,106)
+				Arrays.asList(115,118)
 			),
 			testPaths
 		);
@@ -392,7 +392,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(105,106)
+				Arrays.asList(115,118)
 			),
 			testPaths
 		);
@@ -457,7 +457,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(105,106)
+				Arrays.asList(115,118)
 			),
 			testPaths
 		);
@@ -522,7 +522,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(105,106)
+				Arrays.asList(115,118)
 			),
 			testPaths
 		);
@@ -587,7 +587,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(105)
+				Arrays.asList(115,116)
 			),
 			testPaths
 		);
@@ -660,7 +660,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112, 113, 114, 115, 114, 115, 114, 117)
+				Arrays.asList(124,125,126,127,128,129,127,128,129,127,132)
 			),
 			testPaths
 		);
@@ -725,7 +725,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,115,114,115,114,117)
+				Arrays.asList(124,125,126,127,128,129,127,128,129,127,132)
 			),
 			testPaths
 		);
@@ -790,7 +790,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,115,114,115,114,117)
+				Arrays.asList(124,125,126,127,128,129,127,128,129,127,132)
 			),
 			testPaths
 		);
@@ -855,7 +855,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(109)
+				Arrays.asList(121)
 			),
 			testPaths
 		);
@@ -920,7 +920,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(109)
+				Arrays.asList(121)
 			),
 			testPaths
 		);
@@ -985,7 +985,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,115,114,117)
+				Arrays.asList(124,125,126,127,128,129,127,132)
 			),
 			testPaths
 		);
@@ -1050,7 +1050,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,115,114,117)
+				Arrays.asList(124,125,126,127,128,129,127,132)
 			),
 			testPaths
 		);
@@ -1115,7 +1115,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,115,114,117)
+				Arrays.asList(124,125,126,127,128,129,127,132)
 			),
 			testPaths
 		);
@@ -1180,7 +1180,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		
 		assertEquals(
 			Arrays.asList(
-				Arrays.asList(112,113,114,115,114,117)
+				Arrays.asList(124,125,126,127,128,129,127,132)
 			),
 			testPaths
 		);
