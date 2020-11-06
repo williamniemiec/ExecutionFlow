@@ -28,6 +28,8 @@ import executionFlow.util.balance.RoundBracketBalance;
  */
 public class Analyzer 
 {
+	// TODO This class should be refactored
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -370,6 +372,8 @@ public class Analyzer
 	 */
 	private boolean parseOutput() throws IOException
 	{
+		// TODO This method should be refactored
+		
 		boolean readyToReadInput = false, ignore = false, isEmptyMethod = false, 
 				containsTestMethodSignature, isInnerClassOrAnonymousClass;
 		final String REGEX_DOLLAR_SIGN_PLUS_NUMBERS_CONSTRUCTOR = "^.+\\$[0-9]+\\.\\<init\\>.*$";
