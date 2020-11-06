@@ -745,7 +745,7 @@ public class HolePlug
 	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.0.0
+	 * @version		5.2.0
 	 * @since 		5.0.0
 	 */
 	private class SwitchParser
@@ -753,7 +753,7 @@ public class HolePlug
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final String PATTERN_SWITCH = "[\\t\\s\\}]*(case|default):(\\t|\\ )+";
+		private final String PATTERN_SWITCH = "[\\t\\s\\}]*(case|default)[\\t\\s]+.*:.*";
 		
 		
 		//---------------------------------------------------------------------
