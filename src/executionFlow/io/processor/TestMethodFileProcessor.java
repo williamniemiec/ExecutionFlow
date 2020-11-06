@@ -31,7 +31,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	private static final long serialVersionUID = 400L;
 		
 	private String fileExtension = "java";
-	private static Map<Path, Map<Integer, Integer>> mapping;
+	private static Map<Integer, Integer> mapping;
 	private boolean insideMultilineArgs = false;
 	private int multilineArgsStartIndex = -1;
 	
@@ -321,6 +321,8 @@ public class TestMethodFileProcessor extends FileProcessor
 				(currentIndex+1 < lines.size());
 		
 		
+		 mapping = new HashMap<>();
+		
 		if (isMethodCallWithMultipleLinesArgument) {
 			int oldLine;
 			int newLine;
@@ -347,14 +349,15 @@ public class TestMethodFileProcessor extends FileProcessor
 				newLine = multilineArgsStartIndex+1;
 			}
 			
-			if (mapping.containsKey(file)) {
-				mapping.get(file).put(oldLine, newLine);
-			}
-			else {
-				HashMap<Integer, Integer> currentMap = new HashMap<>(Map.of(oldLine, newLine));
-				
-				mapping.put(file, currentMap);				
-			}
+			mapping.put(oldLine, newLine);
+//			if (mapping.containsKey(file)) {
+//				mapping.get(file).put(oldLine, newLine);
+//			}
+//			else {
+//				HashMap<Integer, Integer> currentMap = new HashMap<>(Map.of(oldLine, newLine));
+//				
+//				mapping.put(file, currentMap);				
+//			}
 		}
 		else if (insideMultilineArgs) {
 			insideMultilineArgs = false;
@@ -428,16 +431,11 @@ public class TestMethodFileProcessor extends FileProcessor
 	 * 
 	 * @return		Mapping with the following format:
 	 * <ul>
-	 * 	<li><b>Key:</b> Source path</li>
-	 * 	<li><b>Value:</b> Map with the following format:
-	 * 		<ul>
-	 * 			<li><b>Key:</b> Original source file line</li>
-	 * 			<li><b>Value:</b> Modified source file line</li>
-	 * 		</ul>
-	 * 	</li>
+	 *	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	public static Map<Path, Map<Integer, Integer>> getMapping()
+	public static Map<Integer, Integer> getMapping()
 	{
 		return mapping;
 	}
