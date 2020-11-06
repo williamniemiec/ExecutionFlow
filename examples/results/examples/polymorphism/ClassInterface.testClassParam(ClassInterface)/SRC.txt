@@ -4,7 +4,7 @@ public class ClassInterface implements Interface{
      @executionFlow.runtime.CollectCalls public ClassInterface(String text){                      
           this.text = text;                                                                       
      }                                                                                            
-     @Override public String interfaceMethod(){                                                   
+     @executionFlow.runtime.CollectCalls public String interfaceMethod(){                         
           System.out.println("interfaceMethod()");                                                
           return text;                                                                            
      }                                                                                            

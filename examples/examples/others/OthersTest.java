@@ -131,7 +131,9 @@ public class OthersTest
 	public void anonymousObjectReturn()
 	{
 		AuxClass ac = new AuxClass(1);
+		
 		assertTrue(ac.anonymousObjectReturn() instanceof ClassInterface);
+		
 		ac.anonymousObjectReturn().interfaceMethod(); 
 	}
 }

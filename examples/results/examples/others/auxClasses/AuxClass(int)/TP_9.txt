@@ -1,3 +1,0 @@
-examples.others.AssertFailTest.assertFailAtTheEndTest()
-[12]
-

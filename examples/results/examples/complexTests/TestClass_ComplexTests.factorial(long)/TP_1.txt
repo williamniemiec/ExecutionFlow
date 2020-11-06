@@ -1,4 +1,0 @@
-examples.complexTests.ComplexTests.moreOneConstructor()
-[20, 21, 22, 23, 22, 23, 22, 23, 22, 23, 22, 25]
-[20]
-

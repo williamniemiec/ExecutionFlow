@@ -1,4 +1,0 @@
-examples.others.OthersTest.anonymousObjectReturn()
-[96]
-[96]
-

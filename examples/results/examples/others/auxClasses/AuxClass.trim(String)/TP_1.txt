@@ -1,3 +1,0 @@
-examples.junit5.ParameterizedTestAnnotation.nullTest()
-[105]
-

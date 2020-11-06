@@ -1,5 +1,0 @@
-examples.others.AssertFailTest.assertFailInTheMiddleTest()
-[77, 78]
-[77, 80, 83]
-[77, 80, 81]
-

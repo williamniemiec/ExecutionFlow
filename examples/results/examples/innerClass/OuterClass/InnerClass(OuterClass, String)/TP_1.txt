@@ -1,3 +1,0 @@
-examples.innerClass.InnerClassTest.test1()
-[10]
-

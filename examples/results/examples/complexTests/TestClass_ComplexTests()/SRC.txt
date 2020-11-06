@@ -17,36 +17,48 @@ public class TestClass_ComplexTests{
           this(false, 0);                                                                      
      }                                                                                         
      @executionFlow.runtime.CollectCalls public long factorial(long x){                        
-               if (skip) return -1;                                                            
-               long response = 1;                                                              
-          for (int i=1; i<=x; i++) {                                                           
+          if (skip) {                                                                          
+               return -1;                                                                      
+          }                                                                                    
+          long response = 1;                                                                   
+          int i=1;                                                                             
+          while (i<=x) {                                                                       
                response *= i;                                                                  
+               i++;                                                                            
           }                                                                                    
           return response;                                                                     
      }                                                                                         
      @executionFlow.runtime.CollectCalls public static long staticFactorial(int x){            
           long response = 1;                                                                   
-          for (int i=1; i<=x; i++) {                                                           
+          int i=1;                                                                             
+          while (i<=x) {                                                                       
                response *= i;                                                                  
+               i++;                                                                            
           }                                                                                    
           return response;                                                                     
      }                                                                                         
      @executionFlow.runtime.CollectCalls public long factorial_constructor(){                  
           long response = 1;                                                                   
-          for (int i=1; i<=num; i++) {                                                         
+          int i=1;                                                                             
+          while (i<=num) {                                                                     
                response *= i;                                                                  
+               i++;                                                                            
           }                                                                                    
           return response;                                                                     
      }                                                                                         
      @executionFlow.runtime.CollectCalls public long fibonacci(int x){                         
-               if (skip) return -1;                                                            
-               long response = 1;                                                              
+          if (skip) {                                                                          
+               return -1;                                                                      
+          }                                                                                    
+          long response = 1;                                                                   
           long last = 1;                                                                       
           long aux = 0;                                                                        
-          for (int i=2; i<x; i++) {                                                            
+          int i=2;                                                                             
+          while (i<x) {                                                                        
                aux = response;                                                                 
                response = response + last;                                                     
                last = aux;                                                                     
+               i++;                                                                            
           }                                                                                    
           return response;                                                                     
      }                                                                                         

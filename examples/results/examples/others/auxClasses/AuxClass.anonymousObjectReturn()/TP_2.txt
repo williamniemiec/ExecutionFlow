@@ -1,4 +1,0 @@
-examples.junit5.RepeatedTestAnnotation.test3()
-[96]
-[96]
-

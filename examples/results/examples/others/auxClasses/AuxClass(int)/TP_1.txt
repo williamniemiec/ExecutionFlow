@@ -1,4 +1,0 @@
-examples.junit5.MixedJUnit5Annotations.repeatedTestAnnotation()
-[12]
-[12]
-
