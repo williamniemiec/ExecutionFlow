@@ -1,25 +1,20 @@
 package executionFlow.io.processor.parser.trgeneration;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import executionFlow.util.DataUtil;
 
 /**
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		5.2.0
  * @since 		5.2.0
  */
-public class CodeCleanerAdapter 
+public class CodeCleanerAdapter extends CodeCleaner
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private List<String> sourceCode;
-	private CodeCleaner cc = new CodeCleaner(false);
 
 	
 	//-------------------------------------------------------------------------
@@ -27,6 +22,7 @@ public class CodeCleanerAdapter
 	//-------------------------------------------------------------------------
 	public CodeCleanerAdapter(List<String> sourceCode)
 	{
+		super(false);
 		this.sourceCode = sourceCode;
 	}
 	
@@ -36,17 +32,11 @@ public class CodeCleanerAdapter
 	//-------------------------------------------------------------------------
 	public List<String> parse() 
 	{
-		List<String> processedCode;
-		
-		
-		cc.cleanupCode(sourceCode);
-		processedCode = cc.getProcessedCode();
-		
+		cleanupCode(sourceCode);	
 		deleteContentBetweenPercentages(processedCode);
 		
 		return processedCode;
 	}
-	
 	
 	private void deleteContentBetweenPercentages(List<String> processedCode)	
 	{
@@ -76,35 +66,16 @@ public class CodeCleanerAdapter
 	public Map<Integer, Integer> getMapping()
 	{
 		Map<Integer, Integer> mapping = new HashMap<>();
-		Set<Integer> updated = new HashSet<>();
-		List<Map<Integer, List<Integer>>> lineMappings = cc.getLineMappings();
 		
-
-		// Gets first line change
-		for (Map.Entry<Integer, List<Integer>> lm : lineMappings.get(0).entrySet()) {
-			mapping.put(lm.getKey(), lm.getValue().get(0));
-		}
 		
-		// Updates line changes from the second
-		for (int i=1; i<lineMappings.size(); i++) {
-			// For each mapping
-			for (Map.Entry<Integer, List<Integer>> lm : lineMappings.get(i).entrySet()) {
-				// If there is a value in the mapping with the current key
-				if (mapping.containsValue(lm.getKey())) {
-					// Updates this value with the value contained in the current key
-					for (Integer key : DataUtil.<Integer, Integer>findKeyFromValue(mapping, lm.getKey())) {
-						if (!updated.contains(key)) {
-							mapping.put(key, lm.getValue().get(0));
-							updated.add(key);
-						}
-					}
-				}
-			}
+		for (Map.Entry<Integer, List<Integer>> map : lineMappings.get(lineMappings.size()-1).entrySet()) {
+			int originalLine = map.getValue().get(0) + 1;
+			int newLine = map.getKey()+1;
 			
-			// Resets update set
-			updated.clear();
+			
+			mapping.put(originalLine, newLine);
 		}
-		
+
 		return mapping;
 	}
 }

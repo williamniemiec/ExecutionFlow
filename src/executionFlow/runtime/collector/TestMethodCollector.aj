@@ -218,39 +218,36 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * a mapping.
 	 * 
 	 * @param		mapping Mapping that will be used as base for the update
+	 * @param		testMethodSrcFile Test method source file
 	 */
-	public static void updateCollectorInvocationLines(Map<Path, Map<Integer, Integer>> mapping)
+	public static void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
 	{
-		for (Map.Entry<Path, Map<Integer, Integer>> e : mapping.entrySet()) {
-			Path modifiedTestSrcFile = e.getKey();
-			Map<Integer, Integer> map = e.getValue();
-			int invocationLine;
+		int invocationLine;
+		
+		
+		// Updates constructor invocation lines If it is declared in the 
+		// same file as the processed test method file
+		for (CollectorInfo cc : constructorCollector.values()) {
+			invocationLine = cc.getConstructorInfo().getInvocationLine();
 			
+			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
+					!mapping.containsKey(invocationLine))
+				continue;
 			
-			// Updates constructor invocation lines If it is declared in the 
-			// same file as the processed test method file
-			for (CollectorInfo cc : constructorCollector.values()) {
-				invocationLine = cc.getConstructorInfo().getInvocationLine();
+			cc.getConstructorInfo().setInvocationLine(mapping.get(invocationLine));
+		}
+		
+		// Updates method invocation lines If it is declared in the 
+		// same file as the processed test method file
+		for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
+			for (CollectorInfo mc : methodCollectorList) {
+				invocationLine = mc.getMethodInfo().getInvocationLine();
 				
-				if (!cc.getTestMethodInfo().getSrcPath().equals(modifiedTestSrcFile) || 
-						!map.containsKey(invocationLine))
+				if (!mc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
+						!mapping.containsKey(invocationLine))
 					continue;
 				
-				cc.getConstructorInfo().setInvocationLine(map.get(invocationLine));
-			}
-			
-			// Updates method invocation lines If it is declared in the 
-			// same file as the processed test method file
-			for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
-				for (CollectorInfo mc : methodCollectorList) {
-					invocationLine = mc.getMethodInfo().getInvocationLine();
-					
-					if (!mc.getTestMethodInfo().getSrcPath().equals(modifiedTestSrcFile) || 
-							!map.containsKey(invocationLine))
-						continue;
-					
-					mc.getMethodInfo().setInvocationLine(map.get(invocationLine));
-				}
+				mc.getMethodInfo().setInvocationLine(mapping.get(invocationLine));
 			}
 		}
 	}

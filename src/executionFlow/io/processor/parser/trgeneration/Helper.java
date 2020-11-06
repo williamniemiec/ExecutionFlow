@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import executionFlow.util.FileUtil;
+
 
 /**
  * @author		Murilo Wolfart
@@ -63,7 +65,7 @@ public class Helper {
 		if (dir.exists()) return;
 		if (!dir.mkdir()) {
 			System.err.println("Could not create directory " + dirPath);
-			System.exit(2);
+//			System.exit(2);
 		}
 	}
 	
@@ -147,8 +149,8 @@ public class Helper {
 
 		if (openingLine == -1) {
 			System.err.println("Braces are not balanced");
-			System.err.println("When trying to find start of block ending at line " + (startingLine+1));			
-			System.exit(2);
+			System.err.println("When trying to find start of block ending at line " + (startingLine+1));
+//			System.exit(2);
 		}
 		
 		return openingLine;
@@ -172,10 +174,14 @@ public class Helper {
 		}
 
 		if (closingLine == -1) {
+			System.out.println("----");
+			FileUtil.printFileWithLines(sourceCode);
+			
+			
 			System.err.println("Braces are not balanced");
 			System.err.println("When trying to find end of block starting at line " + (startingLine+1));
 			System.err.println("Line content: " + sourceCode.get(startingLine));
-			System.exit(2);
+//			System.exit(2);
 		}
 		
 		return closingLine;
@@ -201,7 +207,7 @@ public class Helper {
 		if (conditionalLine == -1) {
 			System.err.println("Continue without while or do");
 			System.err.println("When trying to find conditional of continue at line " + (startingLine+1));			
-			System.exit(2);
+//			System.exit(2);
 		}
 		
 		return conditionalLine;

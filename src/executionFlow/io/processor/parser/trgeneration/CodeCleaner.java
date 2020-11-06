@@ -65,7 +65,7 @@ public class CodeCleaner {
 		eliminateComments();
 		if (debug) System.out.println("CLEANUP: Eliminated comments");
 		trimLines();
-		eliminateAnnotations();
+//		eliminateAnnotations();
 		if (debug) System.out.println("CLEANUP: Eliminated annotations");
 		trimLines();
 		removeBlankLines();
@@ -98,7 +98,7 @@ public class CodeCleaner {
 		separateCaseStatements();
 		if (debug) System.out.println("CLEANUP: Separated case statements");
 		trimLines();
-		prepareTryCatchBlocks();
+//		prepareTryCatchBlocks();
 
 		if (debug) System.out.println("CLEANUP DONE! Resulting code:");
 		if (debug) dumpCode();
@@ -275,7 +275,7 @@ public class CodeCleaner {
 		for (int i=0; i<processedCode.size(); i++) {
 			int oldLineId = i+numRemovedLines;
 			
-			if (processedCode.get(i).equals("{")) {
+			if (processedCode.get(i).equals("{") && !processedCode.get(i).contains("catch(Throwable _")) {
 				processedCode.set(i-1, processedCode.get(i-1) + "{");
 				
 				mapping.put(oldLineId, Helper.initArray(i-1)); 
@@ -309,7 +309,7 @@ public class CodeCleaner {
 			boolean hasCodeAfterBracket = (idx > -1 
 					&& idx < processedCode.get(i).length()-1);
 			
-			if (hasCodeAfterBracket) { 
+			if (hasCodeAfterBracket && !processedCode.get(i).contains("catch(Throwable _")) { 
 				String preceding = processedCode.get(i).substring(0, idx+1);
 				String trailing = processedCode.get(i).substring(idx+1);
 				processedCode.add(i+1, trailing); //insert the text right of the { as the next line
@@ -339,7 +339,7 @@ public class CodeCleaner {
 			targetLinesIds.add(i);
 			
 			int idx = Helper.getIndexOfReservedChar(processedCode.get(i), "}"); 
-			if (idx > 1) { // this means the } is not starting a line
+			if (idx > 1 && !processedCode.get(i).contains("catch(Throwable _")) { // this means the } is not starting a line
 				String trailing = processedCode.get(i).substring(idx);
 				String preceding = processedCode.get(i).substring(0, idx);
 				processedCode.add(i+1, trailing); // insert the text starting with the } as the next line
@@ -369,7 +369,7 @@ public class CodeCleaner {
 			targetLinesIds.add(i);
 			
 			int idx = Helper.getIndexOfReservedChar(processedCode.get(i), "}"); 
-			if (idx > -1 && processedCode.get(i).length() > 1) { // this means there is text after the }
+			if (idx > -1 && processedCode.get(i).length() > 1 && !processedCode.get(i).contains("catch(Throwable _")) { // this means there is text after the }
 				String trailing = processedCode.get(i).substring(idx+1);
 				String preceding = processedCode.get(i).substring(0, idx+1);
 
@@ -397,7 +397,7 @@ public class CodeCleaner {
 			List<String> statements = Helper.splitByReserved(processedCode.get(i), ';');
 			
 			targetLinesIds.add(i);
-			if (statements.size() > 1) {
+			if (statements.size() > 1 && !processedCode.get(i).contains("catch(Throwable _")) {
 				boolean lineEndsWithSemicolon = processedCode.get(i).matches("^.*;$");
 				processedCode.set(i, statements.get(0) + ";");
 				
