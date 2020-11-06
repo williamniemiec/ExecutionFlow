@@ -8,7 +8,6 @@ import org.aspectj.bridge.MessageHandler;
 import org.aspectj.tools.ajc.Main;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.LibraryManager;
 import executionFlow.dependency.DependencyManager;
 import executionFlow.util.Logging;
 import executionFlow.util.DataUtil;
@@ -52,25 +51,7 @@ public class FileCompiler
 		}
 
 		dependencies = DataUtil.implode(DependencyManager.getDependencies(), ";");
-		
-		
-		System.out.println("appRootPath: "+appRootPath);
-		System.out.println("aspectsRootDirectory: "+aspectsRootDirectory);
-		System.out.println(
-				outputDir.toAbsolutePath().toString() + ";" +
-				dependencies + ";" +
-				appRootPath + ";" + 
-				appRootPath + "\\..\\classes;" +
-				appRootPath + "\\..\\test-classes;" +
-				appRootPath + "\\lib\\aspectjrt-1.9.2.jar;" +
-				appRootPath + "\\lib\\junit-4.13.jar;" +
-				appRootPath + "\\lib\\hamcrest-all-1.3.jar;" +
-				appRootPath + "\\lib\\junit-jupiter-api-5.6.2.jar;" +
-				appRootPath + "\\lib\\junit-jupiter-params-5.6.2.jar;"
-		);
-		
-		
-		
+
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 
