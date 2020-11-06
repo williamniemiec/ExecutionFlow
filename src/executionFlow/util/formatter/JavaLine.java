@@ -31,8 +31,19 @@ public class JavaLine {
 		if (i+1 < strLine.length()){
 			//check comment exists
 			if (strLine.charAt(i+1) == '/') {
-				// .substring split
-				javaVar = strLine.substring(0, i);
+			// .substring split	
+				if (strLine.contains("*/")) {
+					int idxMultiSingleCommentEnd = strLine.lastIndexOf("*/");
+					
+					javaVar = strLine.substring(idxMultiSingleCommentEnd+1);
+					commentVar = strLine.substring(0, idxMultiSingleCommentEnd+1);
+				} 
+				else {
+					javaVar = strLine.substring(0, i);
+					commentVar = strLine.substring(i, strLine.length());
+				}
+				
+				
 				// .trim trailing whitespace
 				javaVar = javaVar.trim();
 
@@ -44,11 +55,6 @@ public class JavaLine {
 				//indent Code
 				strIndent = indentJava(bracketCount);
 				javaVar = strIndent + javaVar;
-
-
-
-				// .substring comment
-				commentVar = strLine.substring(i, strLine.length());
 			}
 			else {
 				//No comment
