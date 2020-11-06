@@ -35,19 +35,13 @@ public class InvokedFileProcessor extends FileProcessor
 	 * Stores the mapping of the original file with the modified file.
 	 * 
 	 * <ul>
-	 * 	<li><b>Key:</b> Source path</li>
-	 * 	<li><b>Value:</b> Map with the following format:
-	 * 		<ul>
-	 * 			<li><b>Key:</b> Original source file line</li>
-	 * 			<li><b>Value:</b> Modified source file line</li>
-	 * 		</ul>
-	 * 	</li>
+	 * 	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	private static Map<Path, Map<Integer, Integer>> mapping = new HashMap<>();
+	private static Map<Integer, Integer> mapping = new HashMap<>();
 	
 	private String fileExtension = "java";
-//	private boolean isTestMethod;
 	
 	
 	//-------------------------------------------------------------------------
@@ -71,7 +65,6 @@ public class InvokedFileProcessor extends FileProcessor
 		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
 		this.fileExtension = fileExtension;
-//		this.isTestMethod = isTestMethod;
 	}
 	
 	/**
@@ -256,6 +249,7 @@ public class InvokedFileProcessor extends FileProcessor
 		HolePlug holePlug;
 		Map<Integer, Integer> cleanupMapping;
 		
+		mapping = new HashMap<>();
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -268,12 +262,12 @@ public class InvokedFileProcessor extends FileProcessor
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
 		// Processing #1 - Same processing done in TRGeneration (application)
-//		codeCleaner = new CodeCleanerAdapter(lines);
-//		lines = codeCleaner.parse();
-//		cleanupMapping = codeCleaner.getMapping();
-//		
-//		if (cleanupMapping != null)
-//			mapping.put(outputFile.toPath(), codeCleaner.getMapping());
+		codeCleaner = new CodeCleanerAdapter(lines);
+		lines = codeCleaner.parse();
+		cleanupMapping = codeCleaner.getMapping();
+		
+		if (cleanupMapping != null)
+			mapping = cleanupMapping;
 		
 		// Processing #2 - Fixes the omission of lines in compilation
 		holePlug = new HolePlug(lines);
@@ -289,8 +283,7 @@ public class InvokedFileProcessor extends FileProcessor
 
 			
 			Logging.showDebug("InvokedFileProcessor", "Processed file");
-			//FileUtil.printFileWithLines(formatedFile);
-			FileUtil.printFileWithLines(lines);
+			FileUtil.printFileWithLines(formatedFile);
 		}
 		// -----{ END DEBUG }-----
 		
@@ -305,16 +298,11 @@ public class InvokedFileProcessor extends FileProcessor
 	 * 
 	 * @return		Mapping with the following format:
 	 * <ul>
-	 * 	<li><b>Key:</b> Source path</li>
-	 * 	<li><b>Value:</b> Map with the following format:
-	 * 		<ul>
-	 * 			<li><b>Key:</b> Original source file line</li>
-	 * 			<li><b>Value:</b> Modified source file line</li>
-	 * 		</ul>
-	 * 	</li>
+	 * 	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	public static Map<Path, Map<Integer, Integer>> getMapping()
+	public static Map<Integer, Integer> getMapping()
 	{
 		return mapping;
 	}
