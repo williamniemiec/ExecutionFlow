@@ -381,17 +381,16 @@ public abstract class ExecutionFlow
 					+ "Make sure that the 'init' method has been called before.");
 	
 		String invSig = invokedInfo.getInvokedSignature().replaceAll("\\$", ".");
+		Path testMethodSrcFile = testMethodInfo.getSrcPath();
 		
 		
 		processTestMethod(testMethodInfo, testMethodFileManager);
 		processInvoked(testMethodFileManager, invokedFileManager, invSig);
 		
-		TestMethodCollector.updateCollectorInvocationLines(TestMethodFileProcessor.getMapping());
-		updateInvokedInfo(invokedInfo, TestMethodFileProcessor.getMapping());
+		TestMethodCollector.updateCollectorInvocationLines(TestMethodFileProcessor.getMapping(), testMethodSrcFile);
 		
-		if (invokedInfo.getSrcPath().equals(testMethodInfo.getSrcPath())) {
-			TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping());
-			updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
+		if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
+			TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping(), testMethodSrcFile);
 		}		
 		
 		return new Analyzer(invokedInfo, testMethodInfo);
@@ -461,20 +460,16 @@ public abstract class ExecutionFlow
 	 * @param		invokedInfo Invoked to be updated
 	 * @param		mapping Mapping that will be used as base for the update
 	 */
-	private void updateInvokedInfo(InvokedInfo invokedInfo, Map<Path, Map<Integer, Integer>> mapping)
+	private void updateInvokedInfo(InvokedInfo invokedInfo, Map<Integer, Integer> mapping)
 	{
-		for (Map.Entry<Path, Map<Integer, Integer>> e : mapping.entrySet()) {
-//			Path testMethodSrcFile = e.getKey();
-			Map<Integer, Integer> map = e.getValue();
-			int currentInvocationLine = invokedInfo.getInvocationLine();
-			
-			
-			if (map.containsKey(currentInvocationLine)) {
-				invokedInfo.setInvocationLine(map.get(currentInvocationLine));
-			}
-//			if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
-//				invokedInfo.setInvocationLine(map.get(invokedInfo.getInvocationLine()));
-//			}
+		if (mapping == null)
+			return;
+		
+		int currentInvocationLine = invokedInfo.getInvocationLine();
+		
+
+		if (mapping.containsKey(currentInvocationLine)) {
+			invokedInfo.setInvocationLine(mapping.get(currentInvocationLine));
 		}
 	}
 	
