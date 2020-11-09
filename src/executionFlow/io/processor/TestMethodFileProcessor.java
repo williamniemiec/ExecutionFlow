@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 import executionFlow.util.FileUtil;
 
 
@@ -17,7 +20,7 @@ import executionFlow.util.FileUtil;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor
@@ -26,25 +29,11 @@ public class TestMethodFileProcessor extends FileProcessor
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 400L;
-	
-	/**
-	 * If true, displays processed lines.
-	 */
-	private static final boolean DEBUG;
-	
+		
 	private String fileExtension = "java";
-
-	
-	//-------------------------------------------------------------------------
-	//		Initialization blocks
-	//-------------------------------------------------------------------------
-	/**
-	 * Configures environment. If {@link #DEBUG} is true, displays processed 
-	 * lines.
-	 */
-	static {
-		DEBUG = false;
-	}
+	private static Map<Integer, Integer> mapping;
+	private boolean insideMultilineArgs = false;
+	private int multilineArgsStartIndex = -1;
 	
 	
 	//-------------------------------------------------------------------------
@@ -243,7 +232,8 @@ public class TestMethodFileProcessor extends FileProcessor
 	@Override
 	public String processFile() throws IOException
 	{
-		if (file == null) { return ""; }
+		if (file == null)
+			return "";
 
 		final String REGEX_COMMENT_FULL_LINE = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 		String line;
@@ -261,43 +251,192 @@ public class TestMethodFileProcessor extends FileProcessor
 		// Reads the source file and puts its lines in a list
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
+		mapping = new HashMap<>();
+		
 		// Parses file line by line
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
+			line = removeInlineComment(line);
 			
-			if (!line.matches(REGEX_COMMENT_FULL_LINE)) {
-				// Checks whether the line contains a test annotation
-				if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-					line += " @executionFlow.runtime._SkipInvoked";
-				}
-				// Checks if there are print's
-				else if (line.contains("System.out.print")) {
-					String[] tmp = line.split(";");
-					StringBuilder response = new StringBuilder();
-					
-					
-					// Deletes print's from the line
-					for (String term : tmp) {
-						if (!term.contains("System.out.print")) {
-							response.append(term);
-							response.append(";");
-						}
-					}
-					
-					line = response.toString();
-				}
+			if (!(line.matches(REGEX_COMMENT_FULL_LINE) || line.isBlank())) {
+				line = parseTestAnnotation(line);
+				line = parsePrints(line);
+				line = parseMultilineArgs(line, lines, i);
 			}
-			
-			// -----{ DEBUG }-----
-			if (DEBUG) { ConsoleOutput.showDebug(line); }
-			// -----{ END DEBUG }-----	
 			
 			lines.set(i, line);
 		}
+		
+		// -----{ DEBUG }-----
+		if (Logging.getLevel() == Logging.Level.DEBUG) {
+			Logging.showDebug("TestMethodFileProcessor", "Processed file");
+			FileUtil.printFileWithLines(lines);
+		}
+		// -----{ END DEBUG }-----
 
 		// Writes processed lines to a file
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
 
 		return outputFile.getAbsolutePath();
+	}
+	
+	/**
+	 * Adds {@link executionFlow.runtime._SkipInvoked} annotation next to 
+	 * 'Test' annotation.
+	 * 
+	 * @param		line Line to be analyzed
+	 * 
+	 * @return		Line with {@link executionFlow.runtime._SkipInvoked} if it
+	 * has 'Test' annotation. Otherwise, it returns the line sent by parameter
+	 */
+	private String parseTestAnnotation(String line) 
+	{
+		if (line.contains("@Test") || line.contains("@org.junit.Test")) {
+			line += " @executionFlow.runtime._SkipInvoked";
+		}
+		
+		return line;
+	}
+	
+	/**
+	 * Converts method calls with arguments on multiple lines to a call with 
+	 * arguments on a single line.
+	 * 
+	 * @param		currentLine Line corresponding to the current index
+	 * @param		lines File lines
+	 * @param		currentIndex Current line index
+	 * 
+	 * @return		Line with arguments on a single line
+	 */
+	private String parseMultilineArgs(String currentLine, List<String> lines, int currentIndex) 
+	{
+		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
+		final String REGEX_MULTILINE_ARGS_CLOSE = "[\\s\\t)]+;[\\s\\t]*";
+		
+		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
+		
+		boolean isMethodCallWithMultipleLinesArgument = 
+				!classKeywords.matcher(currentLine).find() && 
+				currentLine.matches(REGEX_MULTILINE_ARGS) && 
+				(currentIndex+1 < lines.size());
+		
+		
+		 mapping = new HashMap<>();
+		
+		if (isMethodCallWithMultipleLinesArgument) {
+			int oldLine;
+			int newLine;
+			String nextLine = lines.get(currentIndex+1);
+			
+			
+			nextLine = removeInlineComment(nextLine);
+			
+			if (!insideMultilineArgs) {
+				multilineArgsStartIndex = currentIndex;
+				insideMultilineArgs = true;
+				
+				lines.set(currentIndex+1, "");
+				currentLine = currentLine + nextLine;
+				
+				oldLine = currentIndex+1+1;
+				newLine = currentIndex+1;
+			}
+			else {
+				lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
+				currentLine = "";
+				
+				oldLine = currentIndex+1;
+				newLine = multilineArgsStartIndex+1;
+			}
+			
+			mapping.put(oldLine, newLine);
+//			if (mapping.containsKey(file)) {
+//				mapping.get(file).put(oldLine, newLine);
+//			}
+//			else {
+//				HashMap<Integer, Integer> currentMap = new HashMap<>(Map.of(oldLine, newLine));
+//				
+//				mapping.put(file, currentMap);				
+//			}
+		}
+		else if (insideMultilineArgs) {
+			insideMultilineArgs = false;
+			
+			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
+			currentLine = "";
+		}
+		else if (currentLine.matches(REGEX_MULTILINE_ARGS_CLOSE) && multilineArgsStartIndex > 0) {
+			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
+			currentLine = "";
+			
+			multilineArgsStartIndex = -1;
+		}
+		
+		return currentLine;
+	}
+
+	/**
+	 * Removes calls to print methods.
+	 * 
+	 * @param		line Line to be analyzed
+	 * 
+	 * @return		Line without calls to print methods
+	 */
+	private String parsePrints(String line) 
+	{
+		if (line.contains("System.out.print")) {
+			String[] tmp = line.split(";");
+			StringBuilder response = new StringBuilder();
+			
+			
+			// Deletes print's from the line
+			for (String term : tmp) {
+				if (!term.contains("System.out.print")) {
+					response.append(term);
+					response.append(";");
+				}
+			}
+			
+			line = response.toString();
+		}
+		
+		return line;
+	}
+
+	/**
+	 * Removes inline comment.
+	 * 
+	 * @param		line Line to which inline comment will be removed.
+	 * 
+	 * @return		Line without inline comment
+	 */
+	private String removeInlineComment(String line) 
+	{
+		int idxCommentStart = line.indexOf("//");
+		
+		
+		if (idxCommentStart != -1) {
+			line = line.substring(0, idxCommentStart);
+		}
+		
+		return line;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	/**
+	 * Gets the mapping of the original file with the modified file.
+	 * 
+	 * @return		Mapping with the following format:
+	 * <ul>
+	 *	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Value:</b> Modified source file line</li>
+	 * </ul>
+	 */
+	public static Map<Integer, Integer> getMapping()
+	{
+		return mapping;
 	}
 }

@@ -14,73 +14,77 @@ response = "Number zero";
 else if (num == 1) {
 response = "Number one";
 }
-else {int _f42337b53a1bb05c6f4029f8afd91261=0;
+else {int _e753a088345fc31aa55bf9db9461580c=0;
 response = "Number "+num;
 }
 return response;
 }
 @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_try(){
 File f = new File("tmp");
-FileWriter fw;int _5d3d86e599f0d41a9a13780927235a1f=0;
-try {int _67b368a27a555bd0f270f7513cbc0374=0;
+FileWriter fw;int _d6994e2635e02064a28a27368ea0c38f=0;
+ try {int _a9ee2d6a43a78da78d02f5e3955117f8=0;
 fw = new FileWriter(f);
 fw.write('x');
 fw.close();
-f.delete();
+ f.delete();
 }
-catch (IOException e) {
-return false;
+ catch (IOException e) {
+ return false;
 }
 return true;
 }
 @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_catch(){
 File f = new File("tmp");
-FileWriter fw;int _89fa015b4f12d3e724716aafd45688d=0;
-try {int _1c0d8f641b48cf301172411176aca5a=0;
-throw new IOException();
+FileWriter fw;int _215f1ba50a95545406fa7d2eee2429c2=0;
+ try {int _e9938fc9c083785bff8482ad153eaa12=0;
+ throw new IOException();
 }
-catch (IOException e) {
-return false;
+ catch (IOException e) {
+ return false;
 }
 }
 @executionFlow.runtime.CollectCalls public char switchCaseMethod(char letter){
 letter = Character.toUpperCase(letter);
 switch (letter) {
-case '÷':int _ee4eaa1d63a60a898a5816588aabe65a=0;
-case 'Á':int _468210cff9e7c514f96048011fc8afc2=0;
-case 'À':int _1c05c56dadf8056b2db063ee43c11f73=0;
-case 'Ã':int _da7eb7fd31b086fc7a8421ef3e5d9a55=0;
-case 'Â':int _1af395906ccd06e9ffd53c05bd073747=0;
+case '÷':int _d77dffe9351d8b163e46973c59fb586c=0;
+case 'Á':int _76049006e50bb7c720f9edf2712cd7d3=0;
+case 'À':int _9337cd8d1d65d1408b60baa461a04834=0;
+case 'Ã':int _d406d86613d24a3b7eb22885ffe9eb94=0;
+case 'Â':int _707bb6aa6b832a23ee7cff0bf62e0c8c=0;
 letter = 'A';
 if (Boolean.parseBoolean("True")) {break;}
-case 'É':int _98ce2c3507d67095d267918f9c8a4f7a=0;
-case 'È':int _4363aef192230ca2d6c8ddcae7eeb0eb=0;
-case 'Ê':int _92f3c642f4a1458dc4b18f7fa65c1400=0;
+case 'É':int _d08e24127184cf204a0243062ec02777=0;
+case 'È':int _1fc4bb8771c28a5bb60715d8e89c834b=0;
+case 'Ê':int _46bbf414dcbe0221b61add4ac70b25e9=0;
 letter = 'E';
 if (Boolean.parseBoolean("True")) {break;}
-case 'Ì':int _fb4e974902ef3efe5a7e4a4a9c0e53be=0;
-case 'Í':int _de79efa5e8584aedd498500bfaaf7cb9=0;
-case 'Î':int _c9a13e29bd733c781e744106ce12bcef=0;
+case 'Ì':int _4581450300eb06e0952cc346c737db12=0;
+case 'Í':int _2ec0ddf0c5392313454e3c58874209f4=0;
+case 'Î':int _6ef02c84fe053599e7acbbf7dc1ca4fe=0;
 letter = 'I';
 if (Boolean.parseBoolean("True")) {break;}
-case 'Ò':int _39f22e3543cfab431848551821383f49=0;
-case 'Ó':int _58168cbd4c45d9e67a166cc67440ea7d=0;
-case 'Ô':int _330a3c2e8c205e446a74c5700354e76b=0;
-case 'Õ':int _a2441baba2f6086cad6b181232bf1319=0;
+case 'Ò':int _bb7309eca621476c505a47374957ea7a=0;
+case 'Ó':int _4f80542af0d489e02f75e96a83e06189=0;
+case 'Ô':int _b675b536c189befe3560c0dd21960f1e=0;
+case 'Õ':int _c599f8c1259a51b75129b43aa460817=0;
 letter = 'O';
 if (Boolean.parseBoolean("True")) {break;}
-case 'Ú':int _67f164e9c75616f1b05d1fe7ea7fd613=0;
-case 'Ù':int _55576f9be1af4322aa1c6027ae2c8882=0;
-case 'Û':int _791ca9c14b6404799f65661e06a514dc=0;
+case 'Ú':int _45901899e42e7c9d15a55c736faa1689=0;
+case 'Ù':int _8cee4b88672aad7521e4e706920b9cdd=0;
+case 'Û':int _2e1812f3a8ab9a8fd5c3b8e4512bb8bb=0;
 letter = 'U';
 if (Boolean.parseBoolean("True")) {break;}
 }
 return letter;
 }
 @executionFlow.runtime.CollectCalls public int doWhileMethod(int a, int b){
-if (a == 0) return b;
-if (b == 0) return a;
-do {int _edc100237f24458754ebdd7ba29dc89d=0;
+if (a == 0) {
+return b;
+}
+if (b == 0) {
+return a;
+}
+do {int _67361a82f4d5093937b306091d613732=0;
 a++;
 b--;
 }
@@ -88,16 +92,24 @@ while (b != 0);
 return a;
 }
 @executionFlow.runtime.CollectCalls public int inlineWhile(int a){
-while (a > 0) a--;
+while (a > 0) {
+a--;
+}
 return a;
 }
 @executionFlow.runtime.CollectCalls public boolean inlineIfElse(int n){
-if (n > 0) return true;
-else {int _d072f96b260809744cf7719d41bc24a4=0; return false;}
+if (n > 0) {
+return true;
+}
+else {int _a4dac6a993b1ec436f27130cd2ee9ed0=0;
+return false;
+}
 }
 @executionFlow.runtime.CollectCalls public int inlineDoWhile(int n){
-if (n <= 0) n = 1;
-do {int _1e55d08ce59c42f1bab943518167f676=0;
+if (n <= 0) {
+n = 1;
+}
+do {int _4f3215c720117568a40756c892d6316=0;
 n--;
 }
 while (n > 0);
@@ -107,7 +119,7 @@ return n;
 if (num > 0) {
 num *= 0;
 }
-else {int _5c998fbafecec2b0276811aa1bc62f8c=0;
+else {int _ed8a889bd4b9715942c7a75ce90a6e1=0;
 num = 10;
 }
 return num;
@@ -116,9 +128,11 @@ return num;
 if (num > 0) {
 num *= 0;
 }
-else {int _590ad3c6ce3582c6bb75fef95a0045e7=0;
+else {int _28547398f12db203c459824cf632959e=0;
 num = 10;
 }
 return num;
 }
 }
+
+

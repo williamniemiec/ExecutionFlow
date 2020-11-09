@@ -4,8 +4,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 public class test_clauseAndBodySameLine{
 @executionFlow.runtime.CollectCalls public int inlineDoWhile(int n){
-if (n <= 0) n = 1;
-do {int _55436068775c787cb143f1c2ce4d0a06=0;
+if (n <= 0) {
+n = 1;
+}
+do {int _d0fe0c36f02c9e54df1a2cadae822631=0;
 n--;
 }
 while (n > 0);
@@ -15,7 +17,7 @@ return n;
 if (num > 0) {
 num *= 0;
 }
-else {int _8fa8fa493321f49d5bb00875ce534a1a=0;
+else {int _a625ec03ddbd5677cb61e98843221e53=0;
 num = 10;
 }
 return num;

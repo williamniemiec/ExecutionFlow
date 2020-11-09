@@ -19,7 +19,7 @@ public class AgainstRequirements
     public void methodInSameFileOfTestMethod() {
 		int a = 2, b = 3;
 		
-try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _6a3890a236e0ceaa2c051918b6f17bdb){}
+try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _732996d0f661594b9459742af769b93d){}
     }
     
 	/**
@@ -29,8 +29,54 @@ try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _6a3890a236e0ce
 	 * @param b Another number
 	 * @return a + b
 	 */
-    private int sum(int a, int b) 
-    {
-        return a + b;
+    private int sum(int a, int b)     {        return a + b;
+
+
     }
 }
+       return a + b;
+
+
+    }
+}
+       return a + b;
+
+
+    }
+}
+       return a + b;
+
+
+    }
+}
+ed @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked @executionFlow.runtime._SkipInvoked
+    public void methodInSameFileOfTestMethod() {
+		int a = 2, b = 3;
+		
+try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _64d00e17d8863568e293fca3fae49d12){}
+    }
+    
+	/**
+	 * Example method for {@link #methodInSameFileOfTestMethod()} method.
+	 * 
+	 * @param a A number
+	 * @param b Another number
+	 * @return a + b
+	 */
+    private int sum(int a, int b)     {        return a + b;
+    private int sum(int a, int b)     {}        return a + b;
+
+
+
+
+
+
+}
+
+        return a + b;
+
+}
+
+        return a + b;
+
+    private int sum(int a, int b)     {    }{    }{    }{    }}

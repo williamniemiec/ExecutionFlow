@@ -3,16 +3,14 @@ package executionFlow.io.processor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.parser.cleanup.Cleanup;
 import executionFlow.io.processor.parser.holeplug.HolePlug;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.io.processor.parser.trgeneration.CodeCleanerAdapter;
+import executionFlow.util.Logging;
 import executionFlow.util.FileUtil;
 import executionFlow.util.formatter.JavaIndenter;
 
@@ -23,7 +21,7 @@ import executionFlow.util.formatter.JavaIndenter;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -37,19 +35,13 @@ public class InvokedFileProcessor extends FileProcessor
 	 * Stores the mapping of the original file with the modified file.
 	 * 
 	 * <ul>
-	 * 	<li><b>Key:</b> Source path</li>
-	 * 	<li><b>Value:</b> Map with the following format:
-	 * 		<ul>
-	 * 			<li><b>Key:</b> Original source file line</li>
-	 * 			<li><b>Value:</b> Modified source file line</li>
-	 * 		</ul>
-	 * 	</li>
+	 * 	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	private static Map<Path, Map<Integer, Integer>> mapping = new HashMap<>();
+	private static Map<Integer, Integer> mapping = new HashMap<>();
 	
 	private String fileExtension = "java";
-	private boolean isTestMethod;
 	
 	
 	//-------------------------------------------------------------------------
@@ -65,16 +57,14 @@ public class InvokedFileProcessor extends FileProcessor
 	 * @param		outputFilename Name of the parsed file
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
-	 * @param		isTestMethod If file contains test methods
 	 */ 
 	private InvokedFileProcessor(Path file, Path outputDir, 
-			String outputFilename, String fileExtension, boolean isTestMethod)
+			String outputFilename, String fileExtension)
 	{
 		this.file = file;
 		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
 		this.fileExtension = fileExtension;
-		this.isTestMethod = isTestMethod;
 	}
 	
 	/**
@@ -85,14 +75,13 @@ public class InvokedFileProcessor extends FileProcessor
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
 	 * @param		encode File encoding
-	 * @param		isTestMethod If file contains test methods
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 */ 
 	private InvokedFileProcessor(Path file, Path outputDir, String outputFilename,
-			String fileExtension, boolean isTestMethod, FileEncoding encode)
+			String fileExtension, FileEncoding encode)
 	{
-		this(file, outputDir, outputFilename, fileExtension, isTestMethod);
+		this(file, outputDir, outputFilename, fileExtension);
 		this.encode = encode;
 	}
 	
@@ -117,7 +106,6 @@ public class InvokedFileProcessor extends FileProcessor
 		private Path file;
 		private Path outputDir;
 		private String outputFilename;
-		private boolean isTestMethod;
 
 		
 		/**
@@ -185,18 +173,6 @@ public class InvokedFileProcessor extends FileProcessor
 		}
 		
 		/**
-		 * @param		isTestMethod If file contains test methods
-		 * 
-		 * @return		Itself to allow chained calls
-		 */
-		public Builder isTestMethod(boolean isTestMethod)
-		{
-			this.isTestMethod = isTestMethod;
-			
-			return this;
-		}
-		
-		/**
 		 * @param		fileExtension Output file extension (without dot)
 		 * (default is java)
 		 * 
@@ -242,8 +218,8 @@ public class InvokedFileProcessor extends FileProcessor
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
 			return	encode == null ? 
-					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension, isTestMethod) : 
-					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension, isTestMethod, encode);
+					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension) : 
+					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension, encode);
 		}
 	}
 	
@@ -262,15 +238,18 @@ public class InvokedFileProcessor extends FileProcessor
 	 * be read / written
 	 */
 	@Override
-	public String processFile(Map<Integer, List<CollectorInfo>> collectors) throws IOException
+	public String processFile() throws IOException
 	{
-		if (file == null) { return ""; }
+		if (file == null)
+			return "";
 		
-		List<String> formatedFile, lines = new ArrayList<>();
+		List<String> lines;
 		File outputFile;
-		Cleanup cleanup;
+		CodeCleanerAdapter codeCleaner;
 		HolePlug holePlug;
+		Map<Integer, Integer> cleanupMapping;
 		
+		mapping = new HashMap<>();
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -282,62 +261,34 @@ public class InvokedFileProcessor extends FileProcessor
 		// Reads the source file and puts its lines in a list
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
-		// Processing #1
-		cleanup = new Cleanup(lines);
-		lines = cleanup.parse();
-
-		// Updates invocation line of all collected invoked if it is in the same
-		// file of test method is declared
-		if (isTestMethod) {
-			Map<Integer, Integer> mapping = cleanup.getMapping();
-			int invocationLine = 0;
-
-
-			for (Map.Entry<Integer, List<CollectorInfo>> e : collectors.entrySet()) {
-				List<CollectorInfo> collectorList = e.getValue();
-				
-				for (int i=0; i<collectorList.size(); i++) {
-					invocationLine = collectorList.get(i).getMethodInfo().getInvocationLine();
-					
-					InvokedFileProcessor.mapping.put(
-							collectorList.get(i).getMethodInfo().getSrcPath(),
-						mapping
-					);
-					
-					if (mapping.containsKey(invocationLine)) {
-						collectorList.get(i).getMethodInfo().setInvocationLine(mapping.get(invocationLine));
-					}
-				}
-			}
-		}
+		// Processing #1 - Same processing done in TRGeneration (application)
+		codeCleaner = new CodeCleanerAdapter(lines);
+		lines = codeCleaner.parse();
+		cleanupMapping = codeCleaner.getMapping();
 		
-		// Displays processed file
-		ConsoleOutput.showHeader("File after processing (test path will be computed based on it)", '=');
-		ConsoleOutput.printDivision('-', 80);
-		formatedFile = new JavaIndenter().format(lines);
+		if (cleanupMapping != null)
+			mapping = cleanupMapping;
 		
-		for (int i=0; i<lines.size(); i++) {
-			System.out.printf("%-6d\t%s\n", i+1, formatedFile.get(i));
-		}
-		
-		ConsoleOutput.printDivision('-', 80);
-		
-		// Processing #2
+		// Processing #2 - Fixes the omission of lines in compilation
 		holePlug = new HolePlug(lines);
 		lines = holePlug.parse();
 		
 		// Writes processed lines to a file
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
 
+		// -----{ DEBUG }-----
+		if (Logging.getLevel() == Logging.Level.DEBUG) {
+			JavaIndenter indenter = new JavaIndenter();
+			List<String> formatedFile = indenter.format(lines);
+
+			
+			Logging.showDebug("InvokedFileProcessor", "Processed file");
+			FileUtil.printFileWithLines(formatedFile);
+		}
+		// -----{ END DEBUG }-----
+		
 		return outputFile.getAbsolutePath();
 	}
-	
-	@Override
-	public String processFile() throws IOException
-	{
-		return "";
-	}
-	
 	
 	//-------------------------------------------------------------------------
 	//		Getters
@@ -347,16 +298,11 @@ public class InvokedFileProcessor extends FileProcessor
 	 * 
 	 * @return		Mapping with the following format:
 	 * <ul>
-	 * 	<li><b>Key:</b> Source path</li>
-	 * 	<li><b>Value:</b> Map with the following format:
-	 * 		<ul>
-	 * 			<li><b>Key:</b> Original source file line</li>
-	 * 			<li><b>Value:</b> Modified source file line</li>
-	 * 		</ul>
-	 * 	</li>
+	 * 	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	public static Map<Path, Map<Integer, Integer>> getMapping()
+	public static Map<Integer, Integer> getMapping()
 	{
 		return mapping;
 	}

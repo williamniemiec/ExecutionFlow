@@ -61,4 +61,20 @@ public class TestMethodFileProcessorTest
 				.build();
 		fp.processFile();
 	}
+	
+	@Test
+	public void testMultiargsTest() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/TestMethodFileProcessorTest");
+		String filename = "Multiargs";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new TestMethodFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
+		fp.processFile();
+	}
 }

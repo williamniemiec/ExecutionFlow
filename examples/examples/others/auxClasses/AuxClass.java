@@ -67,7 +67,7 @@ public class AuxClass
 	 * Empty concrete function.
 	 */
 	public void test2() 
-	{}
+	{ }
 	
 	public static void test3(int x, int y, String k) 
 	{
@@ -254,5 +254,18 @@ public class AuxClass
 		}
 		
 		return k;
+	}
+	
+	public static int countTotalArguments2(Object... args)
+	{
+		int total = 0;
+		
+		for (int i=0; i<args.length; i++) {
+			if (i == 0)
+				continue;
+			total = i;
+		}
+		
+		return total;
 	}
 }

@@ -8,7 +8,7 @@ import java.nio.file.Path;
  * method or a constructor. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public abstract class InvokedInfo 

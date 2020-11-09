@@ -1,3 +1,0 @@
-examples.controlFlow.ControlFlowTest.switchCaseTest()
-[47, 48, 55, 56, 57, 58, 59, 77]
-

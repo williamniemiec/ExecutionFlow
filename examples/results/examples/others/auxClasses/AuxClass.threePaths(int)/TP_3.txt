@@ -1,5 +1,0 @@
-examples.others.MultipleTestPaths.ThreeTestPathsTest()
-[77, 78]
-[77, 80, 81]
-[77, 80, 83]
-

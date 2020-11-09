@@ -1,4 +1,0 @@
-examples.controlFlow.ControlFlowTest.ifElseSameLine()
-[106, 107, 112]
-[106, 109, 110, 112]
-

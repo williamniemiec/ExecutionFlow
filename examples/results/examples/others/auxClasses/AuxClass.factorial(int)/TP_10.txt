@@ -1,3 +1,0 @@
-examples.others.OthersTest.testFactorial_zero()
-[35, 36, 39]
-

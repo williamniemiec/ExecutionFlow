@@ -2,16 +2,17 @@ package executionFlow.runtime.collector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 
 
 /**
@@ -22,7 +23,7 @@ import executionFlow.util.ConsoleOutput;
  * must have {@link executionFlow.runtime._SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public aspect MethodCallsCollector extends RuntimeCollector
@@ -54,10 +55,11 @@ public aspect MethodCallsCollector extends RuntimeCollector
 		String signature = thisJoinPoint.getSignature().toString();
 
 		
-		// Ignores native java methods
-		if (isNativeMethod(signature)) { return; }
+		if (isNativeMethod(signature)) 
+			return;
 
-		if (signature.indexOf("(") == -1) { return; }
+		if (signature.indexOf("(") == -1) 
+			return;
 		
 		// Gets correct signature of inner classes
 		invocationSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
@@ -73,7 +75,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 */
 	pointcut invokedMethodsByTestedInvoker():
 		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
-		!get(* *.*) && !set(* *.*) &&
+		!get(* *.*) && !set(* *.*) && 
 		// Within a constructor
 		( withincode(@executionFlow.runtime.CollectCalls *.new(..)) && 
 		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..))) ) ||
@@ -87,13 +89,15 @@ public aspect MethodCallsCollector extends RuntimeCollector
 		String methodCalledSignature = thisJoinPoint.getSignature().toString();
 
 		
-		// Checks if is a method signature
-		if (!isMethodSignature(methodCalledSignature)) { return; }
+		if (!isMethodSignature(methodCalledSignature))
+			return;
 		
-		// Ignores native java methods
-		if (isNativeMethod(methodCalledSignature)) { return; }
+		if (isNativeMethod(methodCalledSignature))
+			return;
 
-		if (invocationSignature == null) { return; }
+		if (invocationSignature == null)
+			return;
+		
 		// Removes return type from the signature of the method called
 		methodCalledSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
 				+ thisJoinPoint.getSignature().getName() + methodCalledSignature.substring(methodCalledSignature.indexOf("("));
@@ -101,14 +105,14 @@ public aspect MethodCallsCollector extends RuntimeCollector
 
 		// Stores method called in methodsCalledByTestedInvoked
 		if (!methodsCalledByTestedInvoked.containsKey(invocationSignature)) {
-			List<String> invokedMethods = new ArrayList<>();
+			Set<String> invokedMethods = new HashSet<>();
 			
 			
 			invokedMethods.add(methodCalledSignature);
 			methodsCalledByTestedInvoked.put(invocationSignature, invokedMethods);
 		}
 		else {
-			List<String> invokedMethods = methodsCalledByTestedInvoked.get(invocationSignature);
+			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invocationSignature);
 			
 			
 			invokedMethods.add(methodCalledSignature);
@@ -123,48 +127,84 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 */
 	private void write()
 	{
+		if (methodsCalledByTestedInvoked.isEmpty())
+			return;
+		
+		try {
+			load();
+			store();
+		} 
+		catch (IOException e) {
+			Logging.showError("MethodCallsCollector.aj - " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Loads methods called by tested invoked and merges with attribute 
+	 * {@link #methodsCalledByTestedInvoked}.
+	 * 
+	 * @throws		FileNotFoundException If 'mcti.ef' does not exist, is a 
+	 * directory rather than a regular file, or for some other reason cannot be
+	 * opened for reading.
+	 * @throws		IOException If 'mcti.ef' cannot be read
+	 */
+	private void load() throws FileNotFoundException, IOException
+	{
 		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		
 		
-		if (!methodsCalledByTestedInvoked.isEmpty()) {
-			if (f.exists()) {
-				// Reads file (if exists)
-				try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-					@SuppressWarnings("unchecked")
-					Map<String, List<String>> map = (Map<String, List<String>>) ois.readObject();
+		if (!f.exists())
+			return;
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+			@SuppressWarnings("unchecked")
+			Map<String, Set<String>> map = (Map<String, Set<String>>) ois.readObject();
+			
+			
+			for (Map.Entry<String, Set<String>> e : map.entrySet()) {
+				// Merges methods called by tested invoked with saved collection
+				if (methodsCalledByTestedInvoked.containsKey(e.getKey())) {
+					Set<String> methodsCalled = methodsCalledByTestedInvoked.get(e.getKey());
 					
 					
-					for (Map.Entry<String, List<String>> e : map.entrySet()) {
-						// Merges methods called by tested invoked with saved
-						// collection
-						if (methodsCalledByTestedInvoked.containsKey(e.getKey())) {
-							List<String> methodsCalled = methodsCalledByTestedInvoked.get(e.getKey());
-							
-							for (String invokedMethod : e.getValue())
-								methodsCalled.add(invokedMethod);
-						}
-						// Saves collected methods called by tested invoked
-						else {
-							methodsCalledByTestedInvoked.put(e.getKey(), e.getValue());							
+					for (String invokedMethod : e.getValue())
+						methodsCalled.add(invokedMethod);
+					
+					for (String methodCalled : e.getValue()) {
+						if (!methodsCalled.contains(methodCalled)) {
+							methodsCalled.add(methodCalled);
 						}
 					}
+					
+					methodsCalledByTestedInvoked.put(e.getKey(), methodsCalled);		
 				}
-				catch(java.io.EOFException e) {
-					f.delete();
-				}
-				catch (IOException | ClassNotFoundException e) {
-					ConsoleOutput.showError("MethodCallsCollector.aj - "+e.getMessage());
-					e.printStackTrace();
+				// Saves collected methods called by tested invoked
+				else {
+					methodsCalledByTestedInvoked.put(e.getKey(), e.getValue());							
 				}
 			}
-			
-			// Writes file
-			try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
-				oos.writeObject(methodsCalledByTestedInvoked);
-			} 
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+		}
+		catch(java.io.EOFException | ClassNotFoundException e) {
+			f.delete();
+		}
+	}
+	
+	/**
+	 * Stores {@link #methodsCalledByTestedInvoked} in the 'mcti.ef' file.
+	 * 
+	 * @throws		FileNotFoundException If 'mcti.ef' does not exist, is a 
+	 * directory rather than a regular file, or for some other reason cannot be
+	 * opened for reading.
+	 * @throws		IOException If 'mcti.ef' cannot be written
+	 */
+	private void store() throws FileNotFoundException, IOException
+	{
+		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		
+		
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
+			oos.writeObject(methodsCalledByTestedInvoked);
 		}
 	}
 }

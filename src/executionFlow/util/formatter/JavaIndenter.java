@@ -17,14 +17,13 @@ public class JavaIndenter {
 	 */
 	// The stored Java program
 	private ArrayList<JavaLine> program = new ArrayList<>();
-	public static Scanner userInput = new Scanner(System.in);
 
 	// Flag for braces and a single pass
-	public static boolean blnFlag = false;
+	private static boolean blnFlag = false;
 	private boolean blnCheck = false;
 	// Comment flag for block comments and final pass
 	private static boolean commentFlag = false;
-	public static boolean blockComment = false;
+	private static boolean blockComment = false;
 
 	/**
 	 * @param args Arguments passed to program (ignored)
@@ -186,7 +185,7 @@ public class JavaIndenter {
 				if (checkChar.equals("do ") || checkChar.equals("do(") || checkChar.equals("for")
 						|| checkChar.equals("whi") || checkChar.equals("if ") || checkChar.equals("els")
 						|| checkChar.equals("if(") || checkChar.equals("try") || checkChar.equals("cat")
-						|| checkChar.equals("swi") || checkChar.equals("cas")) {
+						|| checkChar.equals("swi")) {
 					bracketCount++;
 					blnFlag = true;
 				}
@@ -233,5 +232,15 @@ public class JavaIndenter {
 		for (JavaLine strLine : program) {
 			System.out.println(strLine.returnLineWithCommentAt(pos));
 		}
+	}
+	
+	public static boolean getBlockComment()
+	{
+		return blockComment;
+	}
+	
+	public static boolean getBinFlag()
+	{
+		return blnFlag;
 	}
 }

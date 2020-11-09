@@ -253,7 +253,7 @@ public class HolePlug
 	 * Responsible for handling invoked declarations.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.0.0
+	 * @version		5.2.0
 	 * @since 		5.0.0
 	 */
 	private class InvokedParser
@@ -262,9 +262,6 @@ public class HolePlug
 		//		Attributes
 		//---------------------------------------------------------------------
 		private boolean insideInvoked;
-		private final String REGEX_NEW = "(\\ |\\t)*new[\\s\\t\\{\\n]+";
-		private final String PATTERN_INVOKED_DECLARATION = 
-				"(\\ |\\t)*([A-z0-9\\-_$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+(\\ |\\t)*\\(.*";
 		
 		
 		//---------------------------------------------------------------------
@@ -284,7 +281,6 @@ public class HolePlug
 			if (wasParsed)
 				return line;
 			
-			
 			if (insideInvoked) {
 				if (line.contains("{")) {
 					insideInvoked = false;
@@ -292,10 +288,7 @@ public class HolePlug
 				
 				wasParsed = true;
 			}
-
-			else if (	!line.matches(REGEX_NEW) && 
-						line.matches(PATTERN_INVOKED_DECLARATION) &&
-						isInvokedDeclaration(line)	) {
+			else if (isInvokedDeclaration(line)) {
 				line = "@executionFlow.runtime.CollectCalls " + line;
 				insideInvoked = !line.contains("{");
 				wasParsed = true;
@@ -313,15 +306,17 @@ public class HolePlug
 		 */
 		private boolean isInvokedDeclaration(String line)
 		{
-					// Checks if it is an invoker whose parameters are all on the same line
-			return	!line.contains("return ") && !line.contains(" new ") && (
-						line.matches("(\\ |\\t)*([A-z0-9\\-\\._$<>\\[\\]\\ \\t]+(\\s|\\t))+[A-z0-9\\-_$]+"
-								+ "\\(([A-z0-9\\-_$\\.,<>\\[\\]\\ \\t])*\\)(\\{|(\\s\\{)||\\/)*((\\s|\\ )+"
-								+ "(throws|implements|extends)(\\s|\\ )+.+)?(\\ |\\t)*") ||
-						// Checks if it is an invoker whose parameters are broken on other lines
-						line.matches("(\\ |\\t)*([A-z0-9\\-_\\.$<>\\[\\]\\ \\t?]+(\\s|\\t))+"
-								+ "[A-z0-9\\-_$]+(\\ |\\t)*\\(.*,(\\ |\\t)*")
-					);
+			final String REGEX_NEW = "(\\ |\\t)*new[\\s\\t\\{\\n]+";
+			final String REGEX_INVOKED_DECLARATION = 
+					"[\\s\\t]*(public|protected|private)[\\s\\t]+.+\\(.*\\)[\\s\\t]*\\{[\\s\\t]*$";
+			
+			boolean isConstructor = line.matches(REGEX_NEW) || line.contains(" new ");
+			boolean isMethodDeclaration = line.matches(REGEX_INVOKED_DECLARATION);
+			
+			
+			return	isMethodDeclaration &&
+					!line.contains("return ") && 
+					!isConstructor;
 		}
 	}
 	
@@ -530,7 +525,7 @@ public class HolePlug
 	 * ensure that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.0.0
+	 * @version		5.2.0
 	 * @since 		5.0.0
 	 */
 	private class TryCatchFinallyParser
@@ -538,8 +533,7 @@ public class HolePlug
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern PATTERN_TRY_FINALLY = 
-				Pattern.compile("[\\t\\s\\}]*(try|finally)[\\s\\t\\{]+");
+		private final String REGEX_TRY_FINALLY = "[\\t\\s\\}]*(try|finally)[\\s\\t\\{]+";
 		private final String REGEX_CATCH_CLOSED_CURLY_BRACKET = 
 				"(\\t|\\ )*\\}(\\t|\\ )*catch(\\t|\\ )*[\\(|\\{]+.*";
 		private boolean removedClosedCB;
@@ -569,7 +563,7 @@ public class HolePlug
 			if (wasParsed)
 				return line;
 			
-			if (PATTERN_TRY_FINALLY.matcher(line).find()) {	
+			if (line.matches(REGEX_TRY_FINALLY)) {	
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = parse_try_finally(line);
 				wasParsed = true;
@@ -751,7 +745,7 @@ public class HolePlug
 	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.0.0
+	 * @version		5.2.0
 	 * @since 		5.0.0
 	 */
 	private class SwitchParser
@@ -759,7 +753,7 @@ public class HolePlug
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final Pattern PATTERN_SWITCH = Pattern.compile("[\\t\\s\\}]*(case|default)(\\t|\\ )+");
+		private final String PATTERN_SWITCH = "[\\t\\s\\}]*(case|default)[\\t\\s]+.*:.*";
 		
 		
 		//---------------------------------------------------------------------
@@ -779,7 +773,7 @@ public class HolePlug
 			if (wasParsed)
 				return line;
 			
-			if (PATTERN_SWITCH.matcher(line).find()) {							
+			if (line.matches(PATTERN_SWITCH)) {							
 				line = checkCurlyBracketNewLine(line, nextLine);
 				line = parse_switch(line);
 				wasParsed = true;

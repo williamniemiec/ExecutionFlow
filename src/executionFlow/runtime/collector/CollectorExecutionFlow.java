@@ -117,10 +117,12 @@ public class CollectorExecutionFlow
 	 * 
 	 * @return		Compiled file path or null if it cannot find the file
 	 * 
-	 * @throws		IOException If class does not exist
+	 * @throws		IOException If an error occurs while searching for the file
 	 */
-	public static Path findBinPath(String className, String classSignature) throws IOException 
+	public static Path findBinPath(String classSignature) throws IOException 
 	{
+		String className = extractClassNameFromClassSignature(classSignature);
+		
 		// Gets folder where .class is
 		String path = extractPathFromSignature(classSignature);
 		String prefix = ExecutionFlow.isDevelopment() ? "bin\\" : "";
@@ -151,15 +153,18 @@ public class CollectorExecutionFlow
 	 * 
 	 * @return		Compiled file path or null if it cannot find the file
 	 * 
-	 * @throws		IOException If class does not exist
+	 * @throws		IOException If an error occurs while searching for the file
 	 */
-	public static Path findSrcPath(String className, String classSignature) throws IOException 
+	public static Path findSrcPath(String classSignature) throws IOException 
 	{
+		String className = extractClassNameFromClassSignature(classSignature);
+		
 		// Extracts parent class name from inner class (if it is one)
 		final String effectiveClassName = className.split("\\$")[0];
 		
 		// Gets path where .java is
 		String path = extractPathFromSignature(classSignature);
+		
 		
 		srcPath = null;
 		
@@ -178,7 +183,7 @@ public class CollectorExecutionFlow
 		
 		return srcPath;
 	}
-	
+
 	/**
 	 * Extracts method's class signature without return type.
 	 * 
@@ -321,6 +326,21 @@ public class CollectorExecutionFlow
 		}
 		
 		return response.toString();
+	}
+	
+	/**
+	 * Gets class name from a class signature.
+	 * 
+	 * @param		classSignature Class signature
+	 * 
+	 * @return		Class name
+	 */
+	private static String extractClassNameFromClassSignature(String classSignature) 
+	{
+		String terms[] = classSignature.split("\\.");
+		
+		
+		return terms[terms.length-1];
 	}
 	
 	/**

@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import executionFlow.dependency.DependencyManager;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Clock;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 import executionFlow.util.JDB;
 import executionFlow.util.balance.RoundBracketBalance;
 
@@ -23,19 +23,16 @@ import executionFlow.util.balance.RoundBracketBalance;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class Analyzer 
 {
+	// TODO This class should be refactored
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * If true, displays shell output.
-	 */
-	private static final boolean DEBUG; 
-	
 	private static final String REGEX_MULTILINE_ARGS = 
 			"^[0-9]*(\\t|\\ )+[A-z0-9$\\-_\\.\\,\\ \\:]+(\\);)?$";
 
@@ -90,18 +87,6 @@ public class Analyzer
 	private volatile static boolean timeout;
 	private volatile boolean lock;
 	private RoundBracketBalance rbb;
-	
-
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	/**
-	 * Enables or disables debug. If activated, displays shell output during 
-	 * JDB execution (performance can get worse).
-	 */
-	static {
-		DEBUG = false;
-	}
 
 	
 	//-------------------------------------------------------------------------
@@ -114,8 +99,8 @@ public class Analyzer
 	 */
 	public Analyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException
 	{
-		List<String> classPath = new ArrayList<>(), srcPath = new ArrayList<>();
-		String methodClassPath, libPath_relative;
+		List<Path> classPath = new ArrayList<>();
+		List<String> srcPath = new ArrayList<>();
 		int idx_dollarSign, idx_paramStart;
 		Path classRootPath;			// Root path where the compiled file of invoked class is
 		Path srcRootPath;			// Root path where the source file of the invoked is
@@ -123,6 +108,7 @@ public class Analyzer
 									// will be used as JDB root directory
 		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
 									// will be used as JDB root directory
+		Path argumentFile;
 		
 		
 		// Gets information about the test method of the invoked to be analyzed
@@ -150,26 +136,12 @@ public class Analyzer
 		testClassRootPath = extractRootPathDirectory(testMethodInfo.getBinPath(), testMethodInfo.getPackage());
 		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
 				
-		// Configures JDB, indicating path of libraries, classes and source files
-		methodClassPath = testClassRootPath.relativize(classRootPath).toString();
-		libPath_relative = testClassRootPath.relativize(ExecutionFlow.getLibPath()).toString() + "\\";
-		
-		// Fetch dependencies
-		if (!DependencyManager.hasDependencies()) {
-			ConsoleOutput.showInfo("Fetching dependencies...");
-			DependencyManager.fetch();
-			ConsoleOutput.showInfo("Fetch completed");
-		}
-		
-		// Sets class path
-		classPath.add(".");
-		classPath.add(libPath_relative + "*");
-		classPath.add(testClassRootPath.relativize(DependencyManager.getPath()).toString() + "\\*");
-		
-		if (!methodClassPath.isEmpty())
-			classPath.add(methodClassPath);
-		
-		classPath.add("..\\classes\\");
+		// Generates argument file
+		LibraryManager.addLibrary(testClassRootPath);
+		LibraryManager.addLibrary(testClassRootPath.resolve("..\\classes").normalize());
+		LibraryManager.addLibrary(classRootPath);
+
+		argumentFile = LibraryManager.getArgumentFile();
 		
 		// Sets source path
 		srcPath.add(testClassRootPath.relativize(srcRootPath).toString());
@@ -189,16 +161,14 @@ public class Analyzer
 			);
 		}
 		
-		jdb = new JDB(testClassRootPath, classPath, srcPath);
+		jdb = new JDB(testClassRootPath, argumentFile, srcPath);
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
 		
 		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showInfo("Classpath: " + classPath);
-			ConsoleOutput.showInfo("Srcpath: " + srcPath);
-			ConsoleOutput.showInfo("Working directory: " + testClassRootPath);
-		}
+		Logging.showDebug("Analyzer", "Srcpath: " + classPath);
+		Logging.showDebug("Analyzer", "Srcpath: " + srcPath);
+		Logging.showDebug("Analyzer", "Working directory: " + testClassRootPath);
 		// -----{ END DEBUG }-----
 	}
 	
@@ -227,11 +197,9 @@ public class Analyzer
 		
 		
 		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("COMMAND: " + "clear ");
-			ConsoleOutput.showDebug("COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
-			ConsoleOutput.showDebug("COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
-		}
+		Logging.showDebug("Analyzer", "COMMAND: " + "clear ");
+		Logging.showDebug("Analyzer", "COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
+		Logging.showDebug("Analyzer", "COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
 		// -----{ END DEBUG }-----
 		
 		timeout = false;
@@ -280,7 +248,7 @@ public class Analyzer
 					
 					// Checks if method is within a loop
 					// -----{ DEBUG }-----
-					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: cont"); }
+					Logging.showDebug("Analyzer", "COMMAND: cont"); 
 					// -----{ END DEBUG }-----
 					
 					// Resets exit method
@@ -295,7 +263,7 @@ public class Analyzer
 					
 					// Enters the method, ignoring native methods
 					// -----{ DEBUG }-----
-					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: step into"); }
+					Logging.showDebug("Analyzer", "COMMAND: step into");
 					// -----{ END DEBUG }-----
 					
 					jdb.send("step into");
@@ -303,7 +271,7 @@ public class Analyzer
 					
 					while (isInternalCommand) {
 						// -----{ DEBUG }-----
-						if (DEBUG) { ConsoleOutput.showDebug("COMMAND: next"); }
+						Logging.showDebug("Analyzer", "COMMAND: next"); 
 						// -----{ END DEBUG }-----
 						
 						jdb.send("next");
@@ -312,7 +280,7 @@ public class Analyzer
 				} 
 				else if (!endOfMethod) {
 					// -----{ DEBUG }-----
-					if (DEBUG) { ConsoleOutput.showDebug("COMMAND: next"); }
+					Logging.showDebug("Analyzer", "COMMAND: next");
 					// -----{ END DEBUG }-----
 					
 					jdb.send("next");
@@ -331,11 +299,9 @@ public class Analyzer
 
 		// Exits JDB
 		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
-			ConsoleOutput.showDebug("COMMAND: " + "exit");
-			ConsoleOutput.showDebug("COMMAND: " + "exit");
-		}
+		Logging.showDebug("Analyzer", "COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
+		Logging.showDebug("Analyzer", "COMMAND: " + "exit");
+		Logging.showDebug("Analyzer", "COMMAND: " + "exit");
 		// -----{ END DEBUG }-----
 		
 		jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
@@ -406,6 +372,8 @@ public class Analyzer
 	 */
 	private boolean parseOutput() throws IOException
 	{
+		// TODO This method should be refactored
+		
 		boolean readyToReadInput = false, ignore = false, isEmptyMethod = false, 
 				containsTestMethodSignature, isInnerClassOrAnonymousClass;
 		final String REGEX_DOLLAR_SIGN_PLUS_NUMBERS_CONSTRUCTOR = "^.+\\$[0-9]+\\.\\<init\\>.*$";
@@ -432,7 +400,7 @@ public class Analyzer
 				);
         	
         	if (line.contains("[INFO]") || line.contains("Exception occurred")) {
-				ConsoleOutput.showError("Error while running JDB");
+				Logging.showError("Error while running JDB");
 				System.exit(-1);
 			}
         	
@@ -441,7 +409,7 @@ public class Analyzer
         	}
         	
         	// -----{ DEBUG }-----
-        	if (DEBUG) { ConsoleOutput.showDebug("LINE: "+line); }
+    		Logging.showDebug("Analyzer", "LINE: "+line); 
     		// -----{ END DEBUG }-----
         	
         	endOfMethod = endOfMethod == true ? endOfMethod : isEndOfTestMethod(line);
@@ -629,8 +597,13 @@ public class Analyzer
     				currentLine = -1;
     			}
     			
+    			if (srcLine.contains("FAILURES!!!")) {
+    				endOfMethod = true;
+    				exitMethod = true;
+    			}
+    			
     			// -----{ DEBUG }-----
-    			if (DEBUG) { ConsoleOutput.showDebug("SRC: "+srcLine); }
+				Logging.showDebug("Analyzer", "SRC: "+srcLine); 
     			// -----{ END DEBUG }-----	    		
     		}
 		} 
@@ -817,9 +790,11 @@ public class Analyzer
 	private boolean shouldIgnore(String srcLine, int currentLine)
 	{
 		final String REGEX_ONLY_OPEN_CURLY_BRACKET = "([0-9]+)(\\ |\\t)+\\{((\\ |\\t)+)?($)";
+		final String REGEX_METHOD_DECLARATION = "[\\ \\t0-9]*((public|proteted|private)(\\ |\\t)+)?[A-z]+\\(.*\\)(\\ |\\t)*\\{";
 		
 		
-		return	(currentLine != -1 && currentLine < invokedDeclarationLine) ||
+		return	srcLine.matches(REGEX_METHOD_DECLARATION) ||
+				(currentLine != -1 && currentLine < invokedDeclarationLine) ||
 				currentLine == 1 ||
 				srcLine.contains(" class ") ||
 				srcLine.matches(REGEX_MULTILINE_ARGS) ||
@@ -905,20 +880,20 @@ public class Analyzer
 	 * called once for each {@link #run JDB execution}
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> getMethodsCalledByTestedInvoked()
+	public Set<String> getMethodsCalledByTestedInvoked()
 	{
 		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		Map<String, List<String>> invokedMethods = new HashMap<>();
+		Map<String, Set<String>> invokedMethods = new HashMap<>();
 		String invokedSignatureWithoutDollarSign = invokedSignature.replaceAll("\\$", ".");
 		
 		
 		if (f.exists()) {
 			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-				invokedMethods = (Map<String, List<String>>) ois.readObject();
+				invokedMethods = (Map<String, Set<String>>) ois.readObject();
 			} 
 			catch (IOException | ClassNotFoundException e) {
 				invokedMethods = null;
-				ConsoleOutput.showError("Called methods by tested invoked - " + e.getMessage());
+				Logging.showError("Called methods by tested invoked - " + e.getMessage());
 				e.printStackTrace();
 			}
 		

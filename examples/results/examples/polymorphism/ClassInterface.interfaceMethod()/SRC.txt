@@ -1,0 +1,14 @@
+package examples.polymorphism;                                                                    
+public class ClassInterface implements Interface{                                                 
+     private String text;                                                                         
+     @executionFlow.runtime.CollectCalls public ClassInterface(String text){                      
+          this.text = text;                                                                       
+     }                                                                                            
+     @executionFlow.runtime.CollectCalls public String interfaceMethod(){                         
+          System.out.println("interfaceMethod()");                                                
+          return text;                                                                            
+     }                                                                                            
+     @executionFlow.runtime.CollectCalls public static boolean testClassParam(ClassInterface ci){ 
+          return true;                                                                            
+     }                                                                                            
+}                                                                                                 

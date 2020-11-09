@@ -5,14 +5,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import executionFlow.util.FileUtil;
-
 
 /**
  * Responsible for gathering project dependencies. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public abstract class DependencyManager 
@@ -22,8 +20,7 @@ public abstract class DependencyManager
 	//-------------------------------------------------------------------------
 	private static List<DependencyExtractor> dependencyExtractors = new ArrayList<>();
 	private static List<Path> dependencies;
-	private static final Path PATH_DEPENDENCIES = 
-			Path.of(System.getProperty("user.home"), ".ef_dependencies");
+	
 	
 	
 	//-------------------------------------------------------------------------
@@ -40,7 +37,8 @@ public abstract class DependencyManager
 	/**
 	 * Gathers all dependencies in a folder.
 	 * 
-	 * @throws		IOException If an error occurs when obtaining a dependency
+	 * @throws		IOException If an error occurs when obtaining dependencies 
+	 * or generating the argument file
 	 * @throws 		IllegalArgumentException If no dependency extractor has 
 	 * been registered
 	 */
@@ -52,7 +50,6 @@ public abstract class DependencyManager
 		if (dependencies == null) {
 			dependencies = new ArrayList<>();
 			pull();
-			FileUtil.putFilesInFolder(dependencies, PATH_DEPENDENCIES);
 		}
 	}
 	
@@ -93,12 +90,7 @@ public abstract class DependencyManager
 	
 	//-------------------------------------------------------------------------
 	//		Getters
-	//-------------------------------------------------------------------------
-	public static Path getPath()
-	{
-		return PATH_DEPENDENCIES;
-	}
-	
+	//-------------------------------------------------------------------------	
 	public static List<Path> getDependencies()
 	{
 		return dependencies;

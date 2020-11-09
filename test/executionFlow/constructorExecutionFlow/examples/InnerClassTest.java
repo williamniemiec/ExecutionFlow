@@ -65,51 +65,51 @@ public class InnerClassTest extends ConstructorExecutionFlowTest
 	 * Tests first constructor used by {@link examples.innerClass.InnerClassTest#test1()}
 	 * test.
 	 */
-//	@Test
-//	public void test1() throws ClassNotFoundException, IOException
-//	{
-//		List<List<Integer>> testPaths;
-//		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
-//		Object[] paramValues = {"test"};
-//		Class<?>[] paramTypes = {String.class};
-//		String signature = "examples.innerClass.OuterClass(String)";
-//		String testMethodSignature = "examples.innerClass.InnerClassTest.test1()"; 
-//		String key = signature + Arrays.toString(paramValues);
-//		
-//		
-//		init("examples.innerClass.InnerClassTest", testMethodSignature);
-//		
-//		// Informations about test method
-//		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
-//			.binPath(PATH_BIN_TEST_METHOD)
-//			.srcPath(PATH_SRC_TEST_METHOD)
-//			.methodSignature(testMethodSignature)
-//			.build();
-//		
-//		// Informations about constructor
-//		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
-//			.binPath(Path.of("bin/examples/innerClass/OuterClass.class"))
-//			.srcPath(Path.of("examples/examples/innerClass/OuterClass.java"))
-//			.constructorSignature(signature)
-//			.parameterTypes(paramTypes)
-//			.args(paramValues)
-//			.invocationLine(18)
-//			.build();
-//		
-//		// Saves extracted data
-//		CollectorInfo ci = new CollectorInfo.Builder()
-//			.constructorInfo(cii)
-//			.testMethodInfo(testMethodInfo)
-//			.build();
-//		
-//		constructorCollector.put(key, ci);
-//		
-//		// Gets test paths of the collected constructors and export them
-//		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
-//		
-//		assertEquals(Arrays.asList(20),	testPaths.get(0));
-//	}
+	@Test
+	public void test1() throws ClassNotFoundException, IOException
+	{
+		List<List<Integer>> testPaths;
+		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
+		Object[] paramValues = {"test"};
+		Class<?>[] paramTypes = {String.class};
+		String signature = "examples.innerClass.OuterClass(String)";
+		String testMethodSignature = "examples.innerClass.InnerClassTest.test1()"; 
+		String key = signature + Arrays.toString(paramValues);
+		
+		
+		init("examples.innerClass.InnerClassTest", testMethodSignature);
+		
+		// Informations about test method
+		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
+			.binPath(PATH_BIN_TEST_METHOD)
+			.srcPath(PATH_SRC_TEST_METHOD)
+			.methodSignature(testMethodSignature)
+			.build();
+		
+		// Informations about constructor
+		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
+			.binPath(Path.of("bin/examples/innerClass/OuterClass.class"))
+			.srcPath(Path.of("examples/examples/innerClass/OuterClass.java"))
+			.constructorSignature(signature)
+			.parameterTypes(paramTypes)
+			.args(paramValues)
+			.invocationLine(18)
+			.build();
+		
+		// Saves extracted data
+		CollectorInfo ci = new CollectorInfo.Builder()
+			.constructorInfo(cii)
+			.testMethodInfo(testMethodInfo)
+			.build();
+		
+		constructorCollector.put(key, ci);
+		
+		// Gets test paths of the collected constructors and export them
+		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
+		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
+		
+		assertEquals(Arrays.asList(5),	testPaths.get(0));
+	}
 	
 	/**
 	 * Tests second constructor used by {@link examples.innerClass.InnerClassTest#test1()}

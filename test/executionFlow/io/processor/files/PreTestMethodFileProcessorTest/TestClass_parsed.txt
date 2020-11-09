@@ -16,23 +16,23 @@ public class TestClass
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
-try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _cf7036680082425a61c43e2107fdd1b2){}}
+try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _75d7a0762d6a5155dde772b8fbbab00a){}}
 
 //	@org.junit.Test
 //	public void testFoo()
 //	{
-//try {		assertEquals("1", "1");} catch(Throwable _3fda85b8eea204effc15c6a7dfe64432){}
-//try {		assertEquals("1", "2");	} catch(Throwable _a10e6ba37107a75335d2d15cd1fe916b){}// It will fail
+//try {		assertEquals("1", "1");} catch(Throwable _239ced92c32aae77df276d97670f3d9d){}
+//try {		assertEquals("1", "2");	} catch(Throwable _dc5614793a52b63087d31463a741bf52){}// It will fail
 //	}
 	
 //	@org.junit.Test
 //	public void assertFailInTheMiddleTest() 
 //	{
 //		TestClass tc = new TestClass(99);
-//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _ae7437f8e1ea1324bbbfbb3c97ea3183){}
+//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _fcef4818e6be8c2731e1227cf4f672b1){}
 //try {		assertEquals("nine", 
-//				tc.threePaths(3));} catch(Throwable _f5e60aca14e8e758246716816c6d7217){}		// It will fail
-//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _62d4bbcb63d13aa0e5c0b6a9868c3e77){}
+//				tc.threePaths(3));} catch(Throwable _24086b813669360173cfc58cd21526e){}		// It will fail
+//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _c4c8e78492c5c034102bfbc028b30f1b){}
 //	}
 	
 //	@org.junit.Test
@@ -40,7 +40,7 @@ try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _cf7036680082425a6
 //	{
 //try {		assertEquals(param1, 			// Comment 1
 //				param2,					// Comment 2
-//				param3);} catch(Throwable _f073f44a3127a8b2d304e4ccf27da4ca){}				// Comment 3
+//				param3);} catch(Throwable _edd110a9177101981dea1a705626747c){}				// Comment 3
 //	}
 	
 //	@org.junit.Test
@@ -49,7 +49,7 @@ try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _cf7036680082425a6
 //try {		assertEquals (
 //				param1, 				// Comment 1
 //				param2,					// Comment 2
-//				param3);} catch(Throwable _7ebff5a7cd27f608131f434864a8d493){}				// Comment 3
+//				param3);} catch(Throwable _f85927f9ce7786c6d2bffc767f95d820){}				// Comment 3
 //	}
 	
 //	@org.junit.Test
@@ -59,6 +59,7 @@ try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _cf7036680082425a6
 //				param1, 				// Comment 1
 //				param2,					// Comment 2
 //				param3					// Comment 3
-//		);} catch(Throwable _1da3873033831f8711b5cdf79be12a4d){}								// Comment 4
+//		);} catch(Throwable _811f6debaa95abad7b48c2073319e9b2){}								// Comment 4
 //	}
 }
+

@@ -31,24 +31,30 @@ public class JavaLine {
 		if (i+1 < strLine.length()){
 			//check comment exists
 			if (strLine.charAt(i+1) == '/') {
-				// .substring split
-				javaVar = strLine.substring(0, i);
+			// .substring split	
+				if (strLine.contains("*/")) {
+					int idxMultiSingleCommentEnd = strLine.lastIndexOf("*/");
+					
+					javaVar = strLine.substring(idxMultiSingleCommentEnd+1);
+					commentVar = strLine.substring(0, idxMultiSingleCommentEnd+1);
+				} 
+				else {
+					javaVar = strLine.substring(0, i);
+					commentVar = strLine.substring(i, strLine.length());
+				}
+				
+				
 				// .trim trailing whitespace
 				javaVar = javaVar.trim();
 
 				// Check brackets
-				if (javaVar.indexOf('{') > -1 || JavaIndenter.blnFlag == true){
+				if (javaVar.indexOf('{') > -1 || JavaIndenter.getBinFlag() == true){
 					bracketCount--;
 					//Comment but bracket?
 				}
 				//indent Code
 				strIndent = indentJava(bracketCount);
 				javaVar = strIndent + javaVar;
-
-
-
-				// .substring comment
-				commentVar = strLine.substring(i, strLine.length());
 			}
 			else {
 				//No comment
@@ -92,7 +98,7 @@ public class JavaLine {
 			commentVar = "";
 		}
 
-		if (JavaIndenter.blockComment == true){
+		if (JavaIndenter.getBlockComment() == true){
 			// detect \maybe
 
 
@@ -126,7 +132,7 @@ public class JavaLine {
     private static String indentJava(int bracketCount){
     	String strIndent="";
 		 for (int y = 0; y < bracketCount; y++){
-			 strIndent += "  "; // or /t
+			 strIndent += "     "; // or /t
 	 	 }
 	return strIndent;
     }

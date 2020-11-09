@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import executionFlow.util.CSV;
-import executionFlow.util.ConsoleOutput;
+import executionFlow.util.Logging;
 import executionFlow.util.DataUtil;
 import executionFlow.util.Pair;
 
@@ -30,7 +30,7 @@ import executionFlow.util.Pair;
  * <b>Note:</b> An invoked can be a method or a constructor
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class TestedInvokedExporter implements ExporterExecutionFlow
@@ -94,14 +94,14 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 		Map<String, List<String>> invokedMethodSignatures = new HashMap<>();
 
 		
-		ConsoleOutput.showInfo("Exporting invokers along with test methods that test them to CSV...");
+		Logging.showInfo("Exporting invokers along with test methods that test them to CSV...");
 		
 		// Gets invoked along with test methods that test it
 		invoked_testMethods = extractTestedInvoked(signatures);
 		
 		// Reads CSV (if it already exists)
 		try {
-			for (List<String> line : CSV.read(output)) {
+			for (List<String> line : CSV.read(output, ";")) {
 				List<String> invokedMethod = new ArrayList<>();
 				
 				
@@ -111,7 +111,8 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 				
 				invokedMethodSignatures.put(line.get(0), invokedMethod);
 			}			
-		} catch (IOException e) { }
+		} 
+		catch (IOException e) { }
 		
 		// Erases CSV file
 		output.delete();
@@ -127,15 +128,16 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 				
 				
 				content.add(0, e.getKey());
-				CSV.write(content, output);
+				CSV.write(content, output, ";");
 			}
-		} catch (IOException e1) {
-			ConsoleOutput.showError("CSV - " + e1.getMessage());
+		} 
+		catch (IOException e1) {
+			Logging.showError("CSV - " + e1.getMessage());
 			e1.printStackTrace();
 		}
 		
-		ConsoleOutput.showInfo("The export was successful");
-		ConsoleOutput.showInfo("Location: " + output.getAbsolutePath().toString());
+		Logging.showInfo("The export was successful");
+		Logging.showInfo("Location: " + output.getAbsolutePath().toString());
 	}
 	
 	

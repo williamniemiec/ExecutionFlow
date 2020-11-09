@@ -38,15 +38,16 @@ public class MavenDependencyExtractor implements DependencyExtractor
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
 				{
-					if (	file.getFileName().toString().endsWith(".jar") || 
-							file.getFileName().toString().endsWith(".JAR")	) {
+					if (file.getFileName().toString().endsWith(".jar") || 
+							file.getFileName().toString().endsWith(".JAR")) {
 						dependencies.add(file);
 					}
 					
 					return FileVisitResult.CONTINUE;
 				}
 			});
-		} catch (IOException e) { }
+		} 
+		catch (IOException e) { }
 
 		return dependencies;
 	}

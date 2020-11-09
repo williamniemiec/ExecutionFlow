@@ -1,3 +1,0 @@
-examples.controlFlow.ControlFlowTest.inlineDoWhile()
-[98, 99, 100, 102, 99, 100, 102, 99, 103]
-

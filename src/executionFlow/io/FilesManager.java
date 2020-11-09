@@ -10,12 +10,9 @@ import java.io.ObjectOutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.info.CollectorInfo;
 
 
 /**
@@ -24,7 +21,7 @@ import executionFlow.info.CollectorInfo;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class FilesManager 
@@ -159,7 +156,6 @@ public class FilesManager
 	 * Parses file from its {@link FileManager}.
 	 * 
 	 * @param		fm File manager of the file
-	 * @param		collectors Information about all invoked collected
 	 * @param		autoRestore Checks if processed files exist against the 
 	 * current file. If so, restore them before processing. Default is true.
 	 * 
@@ -168,8 +164,7 @@ public class FilesManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesManager parse(FileManager fm, Map<Integer, List<CollectorInfo>> collectors, 
-			boolean autoRestore) throws IOException
+	public FilesManager parse(FileManager fm, boolean autoRestore) throws IOException
 	{
 		int key = fm.hashCode();
 
@@ -183,25 +178,9 @@ public class FilesManager
 			save();
 		}
 		
-		fm.parseFile(collectors, autoRestore);
+		fm.parseFile(autoRestore);
 		
 		return this;
-	}
-	
-	/**
-	 * Parses file from its {@link FileManager}.
-	 * 
-	 * @param		fm File manager of the file
-	 * @param		collectors Information about all invoked collected
-	 * 
-	 * @return		This object to allow chained calls
-	 * 
-	 * @throws		IOException If an error occurs during parsing or during
-	 * class serialization
-	 */
-	public FilesManager parse(FileManager fm, Map<Integer, List<CollectorInfo>> collectors) throws IOException
-	{
-		return parse(fm, collectors, true);
 	}
 	
 	/**
@@ -217,7 +196,7 @@ public class FilesManager
 	 */
 	public FilesManager parse(FileManager fm) throws IOException
 	{
-		return parse(fm, null);
+		return parse(fm, true);
 	}
 	
 	/**

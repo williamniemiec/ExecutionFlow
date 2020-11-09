@@ -1,3 +1,0 @@
-examples.junit5.MixedJUnit5Annotations.parameterizedTestAnnotation()
-[12]
-

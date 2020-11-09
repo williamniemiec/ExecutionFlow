@@ -1,3 +1,0 @@
-examples.others.OthersTest.testInternalCall()
-[64, 65, 66, 65, 66, 65, 66, 65, 66, 65, 66, 65, 66, 65, 66, 65, 66, 65, 66, 65, 66, 65, 68]
-

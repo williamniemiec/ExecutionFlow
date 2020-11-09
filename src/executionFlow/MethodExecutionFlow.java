@@ -1,5 +1,7 @@
 package executionFlow;
 
+import java.io.IOException;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,13 +9,14 @@ import java.util.Map;
 import executionFlow.exporter.ConsoleExporter;
 import executionFlow.exporter.FileExporter;
 import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.ProcessedSourceFileExporter;
 import executionFlow.exporter.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
-import executionFlow.util.ConsoleOutput;
-import executionFlow.util.Pair;
+import executionFlow.runtime.collector.MethodCollector;
+import executionFlow.util.Logging;
 
 
 /**
@@ -25,7 +28,7 @@ import executionFlow.util.Pair;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.1.0
+ * @version		5.2.0
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -41,8 +44,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * <ul> 
 	 */
 	private Map<Integer, List<CollectorInfo>> methodCollector;
-	
-	private boolean exportCalledMethods;
+
 	
 	
 	//-------------------------------------------------------------------------
@@ -90,6 +92,22 @@ public class MethodExecutionFlow extends ExecutionFlow
 		this.exportCalledMethods = exportCalledMethods;
 		
 		computedTestPaths = new HashMap<>();
+		
+		
+		if (isDevelopment()) {
+			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
+					"MethodsCalledByTestedMethod", "examples\\results"
+			);
+			
+			processedSourceFileExporter = new ProcessedSourceFileExporter("examples\\results");
+		}
+		else {
+			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
+					"MethodsCalledByTestedMethod", "results"
+			);
+			
+			processedSourceFileExporter = new ProcessedSourceFileExporter("results");
+		}
 	}
 	
 	
@@ -99,24 +117,16 @@ public class MethodExecutionFlow extends ExecutionFlow
 	@Override
 	public ExecutionFlow execute()
 	{
-		// -----{ DEBUG }-----
-		if (DEBUG) {
-			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-			ConsoleOutput.showDebug("MEF: " + methodCollector.toString());
-			ConsoleOutput.showDebug("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-		}
-		// -----{ END DEBUG }-----
-		
 		if (methodCollector == null || methodCollector.isEmpty())
 			return this;
+		
+		// -----{ DEBUG }-----
+		Logging.showDebug("MethodExecutionFlow", "collector: " + methodCollector.toString());
+		// -----{ END DEBUG }-----
 		
 		boolean gotoNextLine = false;
 		List<List<Integer>> tp;
 		FileManager methodFileManager, testMethodFileManager;
-		Analyzer analyzer;
-		MethodsCalledByTestedInvokedExporter invokedMethodsExporter = isDevelopment() ?
-				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "examples\\results") :
-				new MethodsCalledByTestedInvokedExporter("MethodsCalledByTestedMethod", "results");
 		
 		
 		// Generates test path for each collected method
@@ -134,10 +144,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
-					new InvokedFileProcessorFactory(
-							collector.getMethodInfo().getSrcPath().equals(
-							collector.getTestMethodInfo().getSrcPath()
-					))
+					new InvokedFileProcessorFactory()
 				);
 
 				// Gets FileManager for test method file
@@ -150,51 +157,22 @@ public class MethodExecutionFlow extends ExecutionFlow
 				);
 				
 				try {
-					// Runs analyzer
-					analyzer = analyze(
-							collector.getTestMethodInfo(), testMethodFileManager, 
-							collector.getMethodInfo(), methodFileManager,
-							methodCollector
+					tp = run(
+						collector.getTestMethodInfo(), 
+						testMethodFileManager, 
+						collector.getMethodInfo(), 
+						methodFileManager
 					);
-
-					// Checks if time has been exceeded
-					if (Analyzer.getTimeout()) {
-						ConsoleOutput.showError("Time exceeded");
-						Thread.sleep(2000);
-						continue;
-					}
 					
-					tp = analyzer.getTestPaths();
-					
-					if (tp.isEmpty() || tp.get(0).isEmpty())
-						ConsoleOutput.showWarning("Test path is empty");
-					else
-						ConsoleOutput.showInfo("Test path has been successfully computed");				
-
 					// Checks whether test path was generated inside a loop
-					if (tp.size() > 1) {
-						gotoNextLine = true;
-					}
-					
-					// Stores each computed test path
-					storeTestPath(tp, Pair.of(
-							collector.getTestMethodInfo().getInvokedSignature(),
-							collector.getMethodInfo().getInvokedSignature().replaceAll("\\$", ".")
-					));
-					
-					// Exports methods called by tested method to a CSV
-					if (exportCalledMethods) {
-						invokedMethodsExporter.export(
-								collector.getMethodInfo().getInvokedSignature(), 
-								analyzer.getMethodsCalledByTestedInvoked(), false
-						);
-					}
-					else {
-						analyzer.deleteMethodsCalledByTestedInvoked();
-					}
-				} catch (Exception e) {
-					ConsoleOutput.showError(e.getMessage());
-					e.printStackTrace();
+					gotoNextLine = tp.size() > 1;
+				} 
+				catch (InterruptedByTimeoutException e1) {
+					Logging.showError("Time exceeded");
+				} 
+				catch (IOException e2) {
+					Logging.showError(e2.getMessage());
+					e2.printStackTrace();
 				}
 			}
 		}

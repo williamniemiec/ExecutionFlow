@@ -79,7 +79,9 @@ public class ControlFlowTest
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();
 		
-		assertEquals(7, tccf.doWhileMethod(2,5));
+		assertEquals(7, tccf.doWhileMethod(2,
+				5
+		));
 	}
 	
 	@Test
