@@ -3,7 +3,7 @@ package executionFlow.exporter;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.Pair;
 
 
@@ -29,7 +29,7 @@ public class ConsoleExporter implements ExporterExecutionFlow
 		String currentInvoked = "";
 		
 		
-		Logging.showHeader("EXPORT", '-');
+		Logger.showHeader("EXPORT", '-');
 		
 		for (Map.Entry<Pair<String, String>, List<List<Integer>>> e : classTestPaths.entrySet()) {
 			Pair<String, String> signatures = e.getKey();

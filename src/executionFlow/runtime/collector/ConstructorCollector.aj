@@ -9,7 +9,7 @@ import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 
 
 /**
@@ -111,7 +111,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 			classPath = CollectorExecutionFlow.findBinPath(classSignature);
 			
 			if (srcPath == null || classPath == null) {
-				Logging.showWarning("The constructor with the following signature" 
+				Logger.warning("The constructor with the following signature" 
 						+ " will be skiped because its source file and / or " 
 						+ " binary file cannot be found: " + signature);
 				return;

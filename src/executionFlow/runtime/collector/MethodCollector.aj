@@ -10,7 +10,7 @@ import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 
 
 /**
@@ -111,11 +111,11 @@ public aspect MethodCollector extends RuntimeCollector
 			srcPath = CollectorExecutionFlow.findSrcPath(classSignature);
 		} 
 		catch (IOException e) {
-			Logging.showError("[ERROR] MethodCollector - " + e.getMessage() + "\n");
+			Logger.error("[ERROR] MethodCollector - " + e.getMessage() + "\n");
 		}
 		
 		if ((srcPath == null) || (classPath == null)) {
-			Logging.showWarning("The method with the following signature" 
+			Logger.warning("The method with the following signature" 
 					+ " will be skiped because its source file and / or " 
 					+ " binary file cannot be found: " + signature);
 			return;

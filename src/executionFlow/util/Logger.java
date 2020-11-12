@@ -6,7 +6,7 @@ package executionFlow.util;
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class Logging 
+public class Logger 
 {
 	//-------------------------------------------------------------------------
 	//		Enumerations
@@ -58,9 +58,9 @@ public class Logging
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
-	public static void showInfo(String message)
+	public static void info(String message)
 	{
-		showInfo(message, true);
+		info(message, true);
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class Logging
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message
 	 */
-	public static void showInfo(String message, boolean breakLine)
+	public static void info(String message, boolean breakLine)
 	{
 		boolean shouldDisplay =	(level == Level.DEBUG) || 
 								(level == Level.INFO);
@@ -101,9 +101,9 @@ public class Logging
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
-	public static void showError(String message)
+	public static void error(String message)
 	{
-		showError(message, true);
+		error(message, true);
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class Logging
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message
 	 */
-	public static void showError(String message, boolean breakLine)
+	public static void error(String message, boolean breakLine)
 	{
 		boolean shouldDisplay =	(level != Level.OFF);
 		
@@ -143,9 +143,9 @@ public class Logging
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
-	public static void showWarning(String message)
+	public static void warning(String message)
 	{
-		showWarning(message, true);
+		warning(message, true);
 	}
 	
 	/**
@@ -162,7 +162,7 @@ public class Logging
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message
 	 */
-	public static void showWarning(String message, boolean breakLine)
+	public static void warning(String message, boolean breakLine)
 	{
 		boolean shouldDisplay = (level == Level.DEBUG) ||
 								(level == Level.INFO) ||
@@ -188,9 +188,9 @@ public class Logging
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
-	public static void showDebug(String classname, String message)
+	public static void debug(String classname, String message)
 	{
-		showDebug("- " + classname + " - " + message, true);
+		debug("- " + classname + " - " + message, true);
 	}
 	
 	/**
@@ -202,9 +202,9 @@ public class Logging
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
-	public static void showDebug(String message)
+	public static void debug(String message)
 	{
-		showDebug(message, true);
+		debug(message, true);
 	}
 	
 	/**
@@ -221,7 +221,7 @@ public class Logging
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message	
 	 */
-	public static void showDebug(String message, boolean breakLine)
+	public static void debug(String message, boolean breakLine)
 	{
 		boolean shouldDisplay = (level == Level.DEBUG);
 		
@@ -305,6 +305,6 @@ public class Logging
 	 */
 	public static void setLevel(Level level)
 	{
-		Logging.level = level;
+		Logger.level = level;
 	}
 }

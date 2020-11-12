@@ -10,7 +10,7 @@ import java.util.Map;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.parser.holeplug.HolePlug;
 import executionFlow.io.processor.parser.trgeneration.CodeCleanerAdapter;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.FileUtil;
 import executionFlow.util.formatter.JavaIndenter;
 
@@ -262,12 +262,12 @@ public class InvokedFileProcessor extends FileProcessor
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
 		// Processing #1 - Same processing done in TRGeneration (application)
-		codeCleaner = new CodeCleanerAdapter(lines);
-		lines = codeCleaner.parse();
-		cleanupMapping = codeCleaner.getMapping();
-		
-		if (cleanupMapping != null)
-			mapping = cleanupMapping;
+//		codeCleaner = new CodeCleanerAdapter(lines);
+//		lines = codeCleaner.parse();
+//		cleanupMapping = codeCleaner.getMapping();
+//		
+//		if (cleanupMapping != null)
+//			mapping = cleanupMapping;
 		
 		// Processing #2 - Fixes the omission of lines in compilation
 		holePlug = new HolePlug(lines);
@@ -277,12 +277,12 @@ public class InvokedFileProcessor extends FileProcessor
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
 
 		// -----{ DEBUG }-----
-		if (Logging.getLevel() == Logging.Level.DEBUG) {
+		if (Logger.getLevel() == Logger.Level.DEBUG) {
 			JavaIndenter indenter = new JavaIndenter();
 			List<String> formatedFile = indenter.format(lines);
 
 			
-			Logging.showDebug("InvokedFileProcessor", "Processed file");
+			Logger.debug("InvokedFileProcessor", "Processed file");
 			FileUtil.printFileWithLines(formatedFile);
 		}
 		// -----{ END DEBUG }-----

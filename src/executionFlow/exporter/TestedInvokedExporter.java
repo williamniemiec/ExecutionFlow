@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import executionFlow.util.CSV;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.DataUtil;
 import executionFlow.util.Pair;
 
@@ -94,7 +94,7 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 		Map<String, List<String>> invokedMethodSignatures = new HashMap<>();
 
 		
-		Logging.showInfo("Exporting invokers along with test methods that test them to CSV...");
+		Logger.info("Exporting invokers along with test methods that test them to CSV...");
 		
 		// Gets invoked along with test methods that test it
 		invoked_testMethods = extractTestedInvoked(signatures);
@@ -132,12 +132,12 @@ public class TestedInvokedExporter implements ExporterExecutionFlow
 			}
 		} 
 		catch (IOException e1) {
-			Logging.showError("CSV - " + e1.getMessage());
+			Logger.error("CSV - " + e1.getMessage());
 			e1.printStackTrace();
 		}
 		
-		Logging.showInfo("The export was successful");
-		Logging.showInfo("Location: " + output.getAbsolutePath().toString());
+		Logger.info("The export was successful");
+		Logger.info("Location: " + output.getAbsolutePath().toString());
 	}
 	
 	

@@ -13,7 +13,7 @@ import executionFlow.util.FileUtil;
  * Responsible for gathering all libraries that the application needs.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.1
  * @since		5.2.0
  */
 public class LibraryManager 
@@ -33,7 +33,7 @@ public class LibraryManager
 	static {
 		libraries.add(ExecutionFlow.getLibPath());
 		libraries.add(ExecutionFlow.getAppRootPath());
-		libraries.add(ExecutionFlow.getLibPath().resolve("aspectjrt-1.9.2.jar"));
+		libraries.add(ExecutionFlow.getLibPath().resolve("aspectjrt.jar"));
 		libraries.add(ExecutionFlow.getLibPath().resolve("aspectjtools.jar"));
 		libraries.add(ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
 		libraries.add(ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));

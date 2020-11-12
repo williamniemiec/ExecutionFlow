@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.FileUtil;
 
 
@@ -268,8 +268,8 @@ public class TestMethodFileProcessor extends FileProcessor
 		}
 		
 		// -----{ DEBUG }-----
-		if (Logging.getLevel() == Logging.Level.DEBUG) {
-			Logging.showDebug("TestMethodFileProcessor", "Processed file");
+		if (Logger.getLevel() == Logger.Level.DEBUG) {
+			Logger.debug("TestMethodFileProcessor", "Processed file");
 			FileUtil.printFileWithLines(lines);
 		}
 		// -----{ END DEBUG }-----

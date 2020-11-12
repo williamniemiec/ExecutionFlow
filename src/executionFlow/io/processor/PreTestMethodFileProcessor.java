@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.runtime.collector.CollectorExecutionFlow;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;
 import executionFlow.util.balance.CurlyBracketBalance;
@@ -365,8 +365,8 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		}
 		
 		// -----{ DEBUG }-----
-		if (Logging.getLevel() == Logging.Level.DEBUG) {
-			Logging.showDebug("PreTestMethodFileProcessor", "Processed file");
+		if (Logger.getLevel() == Logger.Level.DEBUG) {
+			Logger.debug("PreTestMethodFileProcessor", "Processed file");
 			FileUtil.printFileWithLines(lines);
 		}
 		// -----{ END DEBUG }-----

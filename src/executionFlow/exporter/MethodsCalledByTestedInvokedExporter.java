@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.util.CSV;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.DataUtil;
 
 
@@ -78,11 +78,11 @@ public class MethodsCalledByTestedInvokedExporter
 	public void export(String invokedSignature, Set<String> methodsCalledByTestedInvoked, boolean isConstructor)
 	{
 		if (methodsCalledByTestedInvoked == null || methodsCalledByTestedInvoked.isEmpty()) {
-			Logging.showWarning("There are no methods called by tested invoked");
+			Logger.warning("There are no methods called by tested invoked");
 			return;
 		}
 		
-		Logging.showInfo("Exporting methods called by tested invoked...");
+		Logger.info("Exporting methods called by tested invoked...");
 
 		File dirPath = new File(ExecutionFlow.getCurrentProjectRoot().toFile(), 
 				dirName + "/" + DataUtil.generateDirectoryPath(invokedSignature, isConstructor));
@@ -108,7 +108,7 @@ public class MethodsCalledByTestedInvokedExporter
 				output.delete();
 			} 
 			catch (IOException e2) {
-				Logging.showError("Failed to read CSV file - "+e2.getMessage());
+				Logger.error("Failed to read CSV file - "+e2.getMessage());
 			}			
 		}
 		
@@ -122,10 +122,10 @@ public class MethodsCalledByTestedInvokedExporter
 			CSV.write(mcti, output, ";");
 		} 
 		catch (IOException e2) {
-			Logging.showError("Failed to write CSV file - "+e2.getMessage());
+			Logger.error("Failed to write CSV file - "+e2.getMessage());
 		}
 		
-		Logging.showInfo("The export was successful");
-		Logging.showInfo("Location: "+output.getAbsolutePath());
+		Logger.info("The export was successful");
+		Logger.info("Location: "+output.getAbsolutePath());
 	}
 }

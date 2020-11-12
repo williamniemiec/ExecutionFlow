@@ -30,7 +30,7 @@ import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.runtime.collector.TestMethodCollector;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.FileUtil;
 import executionFlow.util.Pair;
 import executionFlow.util.formatter.JavaIndenter;
@@ -262,7 +262,7 @@ public abstract class ExecutionFlow
 		);
 		
 		// Computes test path from JDB
-		Logging.showInfo("Computing test path of invoked " 
+		Logger.info("Computing test path of invoked " 
 				+ invokedSignature + "...");
 		analyzer.run();
 
@@ -280,9 +280,9 @@ public abstract class ExecutionFlow
 		tp = analyzer.getTestPaths();
 		
 		if (tp.isEmpty() || tp.get(0).isEmpty())
-			Logging.showWarning("Test path is empty");
+			Logger.warning("Test path is empty");
 		else
-			Logging.showInfo("Test path has been successfully computed");				
+			Logger.info("Test path has been successfully computed");				
 
 		// Fix anonymous class signature
 		if (isConstructor) {
@@ -408,19 +408,19 @@ public abstract class ExecutionFlow
 	private void processTestMethod(InvokedInfo testMethodInfo, FileManager testMethodFileManager) throws IOException 
 	{
 		if (!testMethodManager.wasProcessed(testMethodFileManager)) {
-			Logging.showInfo("Processing source file of test method "
+			Logger.info("Processing source file of test method "
 				+ testMethodInfo.getInvokedSignature().replaceAll("\\$", ".") + "...");
 			
 			try {
 				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 			}
 			catch (java.lang.NoClassDefFoundError e) {
-				Logging.showError("Process test method - " + e.getMessage());
+				Logger.error("Process test method - " + e.getMessage());
 				e.printStackTrace();
 				System.exit(-1);
 			}
 			
-			Logging.showInfo("Processing completed");	
+			Logger.info("Processing completed");	
 		}
 	}
 	
@@ -442,7 +442,7 @@ public abstract class ExecutionFlow
 					!testMethodFileManager.getSrcFile().equals(invokedFileManager.getSrcFile());
 			
 			
-			Logging.showInfo("Processing source file of invoked - " 
+			Logger.info("Processing source file of invoked - " 
 				+ invSig + "...");
 			
 			invokedManager.parse(
@@ -450,7 +450,7 @@ public abstract class ExecutionFlow
 					autoRestore
 			).compile(invokedFileManager);
 			
-			Logging.showInfo("Processing completed");
+			Logger.info("Processing completed");
 		}
 	}
 	

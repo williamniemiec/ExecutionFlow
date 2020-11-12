@@ -16,7 +16,7 @@ import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.MethodCollector;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 
 
 /**
@@ -121,7 +121,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 			return this;
 		
 		// -----{ DEBUG }-----
-		Logging.showDebug("MethodExecutionFlow", "collector: " + methodCollector.toString());
+		Logger.debug("MethodExecutionFlow", "collector: " + methodCollector.toString());
 		// -----{ END DEBUG }-----
 		
 		boolean gotoNextLine = false;
@@ -168,10 +168,10 @@ public class MethodExecutionFlow extends ExecutionFlow
 					gotoNextLine = tp.size() > 1;
 				} 
 				catch (InterruptedByTimeoutException e1) {
-					Logging.showError("Time exceeded");
+					Logger.error("Time exceeded");
 				} 
 				catch (IOException e2) {
-					Logging.showError(e2.getMessage());
+					Logger.error(e2.getMessage());
 					e2.printStackTrace();
 				}
 			}

@@ -14,7 +14,7 @@ import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 
 
 /**
@@ -116,7 +116,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			return this;
 		
 		// -----{ DEBUG }-----
-		Logging.showDebug("ConstructorExecutionFlow", "collector: " + constructorCollector.toString());
+		Logger.debug("ConstructorExecutionFlow", "collector: " + constructorCollector.toString());
 		// -----{ END DEBUG }-----
 		
 		FileManager constructorFileManager, testMethodFileManager;
@@ -152,10 +152,10 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 
 			} 
 			catch (InterruptedByTimeoutException e1) {
-				Logging.showError("Time exceeded");
+				Logger.error("Time exceeded");
 			} 
 			catch (IOException e2) {
-				Logging.showError(e2.getMessage());
+				Logger.error(e2.getMessage());
 				e2.printStackTrace();
 			}
 		}

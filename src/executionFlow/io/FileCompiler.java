@@ -8,9 +8,7 @@ import org.aspectj.bridge.MessageHandler;
 import org.aspectj.tools.ajc.Main;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.dependency.DependencyManager;
-import executionFlow.util.Logging;
-import executionFlow.util.DataUtil;
+import executionFlow.util.Logger;
 
 
 /**
@@ -19,7 +17,7 @@ import executionFlow.util.DataUtil;
  * @apiNote		Compatible with AspectJ
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.1
  * @since		1.3
  */
 public class FileCompiler 
@@ -40,18 +38,11 @@ public class FileCompiler
 	{
 		Main compiler = new Main();
 		MessageHandler m = new MessageHandler();
-		String dependencies;
 		String appRootPath = ExecutionFlow.getAppRootPath().toString();
 		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
 				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
 		
-		// Gets dependencies (if any)
-		if (!DependencyManager.hasDependencies()) {
-			DependencyManager.fetch();
-		}
-
-		dependencies = DataUtil.implode(DependencyManager.getDependencies(), ";");
-
+		
 		compiler.run(
 			new String[] {
 				"-Xlint:ignore", 
@@ -60,12 +51,8 @@ public class FileCompiler
 				"-encoding", 
 				encode.getName(),
 				"-classpath", 
-						outputDir.toAbsolutePath().toString() + ";" +
-						dependencies + ";" +
-						appRootPath + ";" + 
-						appRootPath + "\\..\\classes;" +
-						appRootPath + "\\..\\test-classes;" +
-						appRootPath + "\\lib\\aspectjrt-1.9.2.jar;" +
+						System.getProperty("java.class.path") + ";" +
+						appRootPath + "\\lib\\aspectjrt.jar;" +
 						appRootPath + "\\lib\\junit-4.13.jar;" +
 						appRootPath + "\\lib\\hamcrest-all-1.3.jar;" +
 						appRootPath + "\\lib\\junit-jupiter-api-5.6.2.jar;" +
@@ -78,16 +65,16 @@ public class FileCompiler
 		compiler.quit();
 		
 		// -----{ DEBUG }-----
-		if (Logging.getLevel() == Logging.Level.DEBUG) {
+		if (Logger.getLevel() == Logger.Level.DEBUG) {
 			IMessage[] ms = m.getMessages(null, true);
 			
-			Logging.showDebug("FileCompilator", "start");
+			Logger.debug("FileCompilator", "start");
 			
 			for (var msg : ms) {
-				Logging.showDebug(msg.toString());
+				Logger.debug(msg.toString());
 			}
 			
-			Logging.showDebug("FileCompilator", "Output dir: " + outputDir.toAbsolutePath().toString());
+			Logger.debug("FileCompilator", "Output dir: " + outputDir.toAbsolutePath().toString());
 		}
 		// -----{ END DEBUG }----
 	}

@@ -13,7 +13,7 @@ import java.util.Set;
 
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Clock;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.JDB;
 import executionFlow.util.balance.RoundBracketBalance;
 
@@ -166,9 +166,9 @@ public class Analyzer
 		testPaths = new ArrayList<>();
 		
 		// -----{ DEBUG }-----
-		Logging.showDebug("Analyzer", "Srcpath: " + classPath);
-		Logging.showDebug("Analyzer", "Srcpath: " + srcPath);
-		Logging.showDebug("Analyzer", "Working directory: " + testClassRootPath);
+		Logger.debug("Analyzer", "Srcpath: " + classPath);
+		Logger.debug("Analyzer", "Srcpath: " + srcPath);
+		Logger.debug("Analyzer", "Working directory: " + testClassRootPath);
 		// -----{ END DEBUG }-----
 	}
 	
@@ -197,9 +197,9 @@ public class Analyzer
 		
 		
 		// -----{ DEBUG }-----
-		Logging.showDebug("Analyzer", "COMMAND: " + "clear ");
-		Logging.showDebug("Analyzer", "COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
-		Logging.showDebug("Analyzer", "COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
+		Logger.debug("Analyzer", "COMMAND: " + "clear ");
+		Logger.debug("Analyzer", "COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
+		Logger.debug("Analyzer", "COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
 		// -----{ END DEBUG }-----
 		
 		timeout = false;
@@ -248,7 +248,7 @@ public class Analyzer
 					
 					// Checks if method is within a loop
 					// -----{ DEBUG }-----
-					Logging.showDebug("Analyzer", "COMMAND: cont"); 
+					Logger.debug("Analyzer", "COMMAND: cont"); 
 					// -----{ END DEBUG }-----
 					
 					// Resets exit method
@@ -263,7 +263,7 @@ public class Analyzer
 					
 					// Enters the method, ignoring native methods
 					// -----{ DEBUG }-----
-					Logging.showDebug("Analyzer", "COMMAND: step into");
+					Logger.debug("Analyzer", "COMMAND: step into");
 					// -----{ END DEBUG }-----
 					
 					jdb.send("step into");
@@ -271,7 +271,7 @@ public class Analyzer
 					
 					while (isInternalCommand) {
 						// -----{ DEBUG }-----
-						Logging.showDebug("Analyzer", "COMMAND: next"); 
+						Logger.debug("Analyzer", "COMMAND: next"); 
 						// -----{ END DEBUG }-----
 						
 						jdb.send("next");
@@ -280,7 +280,7 @@ public class Analyzer
 				} 
 				else if (!endOfMethod) {
 					// -----{ DEBUG }-----
-					Logging.showDebug("Analyzer", "COMMAND: next");
+					Logger.debug("Analyzer", "COMMAND: next");
 					// -----{ END DEBUG }-----
 					
 					jdb.send("next");
@@ -299,9 +299,9 @@ public class Analyzer
 
 		// Exits JDB
 		// -----{ DEBUG }-----
-		Logging.showDebug("Analyzer", "COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
-		Logging.showDebug("Analyzer", "COMMAND: " + "exit");
-		Logging.showDebug("Analyzer", "COMMAND: " + "exit");
+		Logger.debug("Analyzer", "COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
+		Logger.debug("Analyzer", "COMMAND: " + "exit");
+		Logger.debug("Analyzer", "COMMAND: " + "exit");
 		// -----{ END DEBUG }-----
 		
 		jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
@@ -400,7 +400,7 @@ public class Analyzer
 				);
         	
         	if (line.contains("[INFO]") || line.contains("Exception occurred")) {
-				Logging.showError("Error while running JDB");
+				Logger.error("Error while running JDB");
 				System.exit(-1);
 			}
         	
@@ -409,7 +409,7 @@ public class Analyzer
         	}
         	
         	// -----{ DEBUG }-----
-    		Logging.showDebug("Analyzer", "LINE: "+line); 
+    		Logger.debug("Analyzer", "LINE: "+line); 
     		// -----{ END DEBUG }-----
         	
         	endOfMethod = endOfMethod == true ? endOfMethod : isEndOfTestMethod(line);
@@ -603,7 +603,7 @@ public class Analyzer
     			}
     			
     			// -----{ DEBUG }-----
-				Logging.showDebug("Analyzer", "SRC: "+srcLine); 
+				Logger.debug("Analyzer", "SRC: "+srcLine); 
     			// -----{ END DEBUG }-----	    		
     		}
 		} 
@@ -893,7 +893,7 @@ public class Analyzer
 			} 
 			catch (IOException | ClassNotFoundException e) {
 				invokedMethods = null;
-				Logging.showError("Called methods by tested invoked - " + e.getMessage());
+				Logger.error("Called methods by tested invoked - " + e.getMessage());
 				e.printStackTrace();
 			}
 		
