@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -130,7 +132,7 @@ public class CodeCleaner {
 	private void eliminateComments() {		
 		for (int i=0; i<processedCode.size(); i++) {
 			processedCode.set(i, removeMultiSingleLineComment(processedCode.get(i)));
-			
+
 //			int idxSingle = Helper.getIndexOfReservedSymbol(processedCode.get(i), "//");
 			int idxSingle = processedCode.get(i).indexOf("//");
 //			int idxMulti = processedCode.get(i).indexOf("//");
@@ -500,10 +502,18 @@ public class CodeCleaner {
 	
 	//turn for loops into while loops
 	private void convertForToWhile() {
+		final String REGEX_METHOD_DECLARATION = 
+				"^.*[\\s\\t]+((?!new)[A-z0-9\\_\\<\\>\\,\\[\\]\\.\\$])+[\\s\\t]+([A-z0-9\\_\\$]+)[\\s\\t]*\\(.*\\).*$";
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		List<Integer> loopsClosingLines = new ArrayList<Integer>();
+		Set<String> initVariables = new HashSet<>();
 		
-		for (int i=0; i<processedCode.size(); i++) {			
+		
+		for (int i=0; i<processedCode.size(); i++) {
+			if (processedCode.get(i).matches(REGEX_METHOD_DECLARATION)) {
+				initVariables = new HashSet<>();
+			}
+			
 			if (processedCode.get(i).matches("^for.+$")) {
 				int depth = loopsClosingLines.size();
 				int closingLine = Helper.findEndOfBlock(processedCode, i+3);
@@ -511,7 +521,17 @@ public class CodeCleaner {
 				// Move the initialization before the loop
 				mapping.put(i+depth, Helper.initArray(i));
 				int idx = processedCode.get(i).indexOf("(");
-				processedCode.add(i, "%forcenode%" + processedCode.get(i).substring(idx+1));
+				String initVar = processedCode.get(i).substring(idx+1);
+				String varLabel = initVar.split("\\s")[1];
+				
+				if (initVariables.contains(varLabel)) {
+					initVar = initVar.substring(initVar.indexOf(" ")+1);
+				}
+				else {
+					initVariables.add(varLabel);
+				}
+				
+				processedCode.add(i, "%forcenode%" + initVar);
 				i++; //adjust for insertion
 
 				// Work with iterator step
