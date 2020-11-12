@@ -13,8 +13,8 @@ import java.util.Set;
 
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Clock;
-import executionFlow.util.Logger;
 import executionFlow.util.JDB;
+import executionFlow.util.Logger;
 import executionFlow.util.balance.RoundBracketBalance;
 
 
@@ -100,15 +100,15 @@ public class Analyzer
 	public Analyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException
 	{
 		List<Path> classPath = new ArrayList<>();
-		List<String> srcPath = new ArrayList<>();
+		List<Path> srcPath = new ArrayList<>();
 		int idx_dollarSign, idx_paramStart;
-		Path classRootPath;			// Root path where the compiled file of invoked class is
 		Path srcRootPath;			// Root path where the source file of the invoked is
 		Path testMethodSrcPath;		// Root path where the source file of test method class is. It 
 									// will be used as JDB root directory
 		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
 									// will be used as JDB root directory
-		Path argumentFile;
+		Path libJUnit4 = LibraryManager.getLibrary("JUNIT_4");
+		Path libHamcrest = LibraryManager.getLibrary("HAMCREST");
 		
 		
 		// Gets information about the test method of the invoked to be analyzed
@@ -132,41 +132,38 @@ public class Analyzer
 		
 		// Gets paths
 		srcRootPath = extractRootPathDirectory(invokedInfo.getSrcPath(), invokedInfo.getPackage());
-		classRootPath = extractRootPathDirectory(invokedInfo.getBinPath(), invokedInfo.getPackage());
 		testClassRootPath = extractRootPathDirectory(testMethodInfo.getBinPath(), testMethodInfo.getPackage());
 		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
-				
-		// Generates argument file
-		LibraryManager.addLibrary(testClassRootPath);
-		LibraryManager.addLibrary(testClassRootPath.resolve("..\\classes").normalize());
-		LibraryManager.addLibrary(classRootPath);
-
-		argumentFile = LibraryManager.getArgumentFile();
 		
 		// Sets source path
-		srcPath.add(testClassRootPath.relativize(srcRootPath).toString());
-		srcPath.add(testClassRootPath.relativize(testMethodSrcPath).toString());
+		srcPath.add(testClassRootPath.relativize(srcRootPath));
+		srcPath.add(testClassRootPath.relativize(testMethodSrcPath));
 		
 		// Fix source file of anonymous and inner classes
 		srcPath.add(testClassRootPath.relativize(
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/main/java").toPath())
-				.toString()
 		);
 		
 		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
 			srcPath.add(
 					testClassRootPath.relativize(
 							new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/test/java").toPath())
-					.toString()
 			);
 		}
+
+		for (String cp : System.getProperty("java.class.path").split(";")) {
+			classPath.add(testClassRootPath.relativize(Path.of(cp)));
+		}
 		
-		jdb = new JDB(testClassRootPath, argumentFile, srcPath);
+		classPath.add(testClassRootPath.relativize(libJUnit4));
+		classPath.add(testClassRootPath.relativize(libHamcrest));
+
+		jdb = new JDB(testClassRootPath, classPath, srcPath);
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
 		
 		// -----{ DEBUG }-----
-		Logger.debug("Analyzer", "Srcpath: " + classPath);
+		Logger.debug("Analyzer", "Classpath: " + classPath);
 		Logger.debug("Analyzer", "Srcpath: " + srcPath);
 		Logger.debug("Analyzer", "Working directory: " + testClassRootPath);
 		// -----{ END DEBUG }-----

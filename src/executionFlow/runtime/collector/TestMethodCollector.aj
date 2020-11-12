@@ -26,9 +26,9 @@ import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
 import executionFlow.util.Checkpoint;
+import executionFlow.util.JUnit4Runner;
 import executionFlow.util.Logger;
 import executionFlow.util.Logger.Level;
-import executionFlow.util.JUnit4Runner;
 
 
 /**
@@ -40,7 +40,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.1
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -263,24 +263,23 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private void restart() throws IOException, InterruptedException
 	{
 		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		Path argumentFile;
+		Path libJUnit4 = LibraryManager.getLibrary("JUNIT_4");
+		Path libHamcrest = LibraryManager.getLibrary("HAMCREST");
 		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
+		
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
+		String classPath = System.getProperty("java.class.path") + ";" + libJUnit4 + ";" + libHamcrest;
 
 
-		LibraryManager.addLibrary(testClassRootPath);
-		LibraryManager.addLibrary(testClassRootPath.resolve("..\\classes").normalize());
-
-		argumentFile = LibraryManager.getArgumentFile();
-	
 		if (!checkpoint_initial.isActive()) {
 			checkpoint_initial.enable();
 		}
 		
 		// Resets methods called by tested invoked
 		mcti.delete();
-		JUnit4Runner.run(testClassRootPath, argumentFile, classSignature);
+		
+		JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 		
 		while (JUnit4Runner.isRunning()) {
 			Thread.sleep(2000);
