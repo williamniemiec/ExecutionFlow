@@ -311,7 +311,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	private String parseMultilineArgs(String currentLine, List<String> lines, int currentIndex) 
 	{
 		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
-		final String REGEX_MULTILINE_ARGS_CLOSE = "[\\s\\t)]+;[\\s\\t]*";
+		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)]+;[\\s\\t]*$";
 		
 		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
 		
@@ -323,23 +323,25 @@ public class TestMethodFileProcessor extends FileProcessor
 		
 		 mapping = new HashMap<>();
 		
+		 System.out.println("l: "+currentLine);
 		if (isMethodCallWithMultipleLinesArgument) {
 			int oldLine;
 			int newLine;
 			String nextLine = lines.get(currentIndex+1);
 			
-			
 			nextLine = removeInlineComment(nextLine);
 			
-			if (!insideMultilineArgs) {
-				multilineArgsStartIndex = currentIndex;
-				insideMultilineArgs = true;
-				
+			if (!insideMultilineArgs) {	
 				lines.set(currentIndex+1, "");
 				currentLine = currentLine + nextLine;
 				
 				oldLine = currentIndex+1+1;
 				newLine = currentIndex+1;
+				
+				if (nextLine.matches(REGEX_MULTILINE_ARGS_CLOSE)) {
+					multilineArgsStartIndex = currentIndex;
+					insideMultilineArgs = false;
+				}
 			}
 			else {
 				lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
