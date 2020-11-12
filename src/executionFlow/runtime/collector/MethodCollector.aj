@@ -57,6 +57,7 @@ public aspect MethodCollector extends RuntimeCollector
 		!skipAnnotation() &&
 		(junit4() || junit5()) &&
 		!junit4_internal() && !junit5_internal() &&
+		!get(* *.*) && !set(* *.*) &&
 		!execution(public int hashCode());
 
 	before(): methodCollector()
