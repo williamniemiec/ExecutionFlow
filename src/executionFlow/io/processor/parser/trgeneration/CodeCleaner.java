@@ -5,11 +5,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import executionFlow.util.DataUtil;
+import executionFlow.util.Pair;
+import executionFlow.util.balance.CurlyBracketBalance;
 
 
 /**
@@ -502,17 +507,20 @@ public class CodeCleaner {
 	
 	//turn for loops into while loops
 	private void convertForToWhile() {
-		final String REGEX_METHOD_DECLARATION = 
-				"^.*[\\s\\t]+((?!new)[A-z0-9\\_\\<\\>\\,\\[\\]\\.\\$])+[\\s\\t]+([A-z0-9\\_\\$]+)[\\s\\t]*\\(.*\\).*$";
+//		final String REGEX_METHOD_DECLARATION = 
+//				"^.*[\\s\\t]+((?!new)[A-z0-9\\_\\<\\>\\,\\[\\]\\.\\$])+[\\s\\t]+([A-z0-9\\_\\$]+)[\\s\\t]*\\(.*\\).*$";
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		List<Integer> loopsClosingLines = new ArrayList<Integer>();
+		List<Pair<String, CurlyBracketBalance>> cbb = new ArrayList<>(); // Stack of pair(variable, curly bracket balance)
 		Set<String> initVariables = new HashSet<>();
 		
 		
 		for (int i=0; i<processedCode.size(); i++) {
-			if (processedCode.get(i).matches(REGEX_METHOD_DECLARATION)) {
-				initVariables = new HashSet<>();
-			}
+			// Updates the scope visibility of variables already initialized
+			
+//			if (processedCode.get(i).matches(REGEX_METHOD_DECLARATION)) {
+//				initVariables = new HashSet<>();
+//			}
 			
 			if (processedCode.get(i).matches("^for.+$")) {
 				int depth = loopsClosingLines.size();
@@ -524,12 +532,25 @@ public class CodeCleaner {
 				String initVar = processedCode.get(i).substring(idx+1);
 				String varLabel = initVar.split("\\s")[1];
 				
+				
+					
+//					cbb.peek().second.parse(processedCode.get(i));
+//					
+//					if (cbb.peek().second.getBalance() < 0) {
+//						initVariables.remove(cbb.peek().first);
+//						cbb.pop();
+//					}
+//				System.out.println("l: "+processedCode.get(i));
+//				System.out.println("bef: "+cbb);
+				// Checks whether the variable has already been initialized
 				if (initVariables.contains(varLabel)) {
 					initVar = initVar.substring(initVar.indexOf(" ")+1);
 				}
 				else {
 					initVariables.add(varLabel);
+					cbb.add(Pair.of(varLabel, new CurlyBracketBalance()));
 				}
+//				System.out.println("af: "+cbb);
 				
 				processedCode.add(i, "%forcenode%" + initVar);
 				i++; //adjust for insertion
@@ -570,6 +591,19 @@ public class CodeCleaner {
 					mapping.put(i+depth, Helper.initArray(i));
 				}
 			}
+			
+			if (!cbb.isEmpty()) {
+				for (Iterator<Pair<String, CurlyBracketBalance>> it = cbb.iterator(); it.hasNext(); ) {
+					Pair<String, CurlyBracketBalance> item = it.next();
+					
+					item.second.parse(processedCode.get(i));
+					
+					if (item.second.getBalance() < 0) {
+						initVariables.remove(item.first);
+						it.remove();
+					}
+				}
+			}
 		}
 		
 		lineMappings.add(mapping);
@@ -602,6 +636,7 @@ public class CodeCleaner {
 				String type = forEachInformation.get(0);
 				String varName = forEachInformation.get(1);
 				String setName = forEachInformation.get(2);
+				String itName = DataUtil.generateVarName();
 				
 				mapping.put(i - addedLines, new ArrayList<>(Arrays.asList(i, i+1)));
 				
@@ -611,13 +646,13 @@ public class CodeCleaner {
 				}
 				
 				if (isArrayVar(setName, i)) {
-					processedCode.set(i, "for (Iterator<" + type + "> it = java.util.Arrays.asList(" + setName + ").iterator(); it.hasNext(); ) {");
+					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = java.util.Arrays.asList(" + setName + ").iterator(); " + itName + " .hasNext(); ) {");
 				}
 				else {
-					processedCode.set(i, "for (Iterator<" + type + "> it = " + setName + ".iterator(); it.hasNext(); ) {");
+					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = " + setName + ".iterator(); " + itName + ".hasNext(); ) {");
 				}
 				
-				processedCode.add(i+1, type + " " + varName + " = it.next();");
+				processedCode.add(i+1, type + " " + varName + " = " + itName + ".next();");
 				
 				addedLines++;
 				i++;
@@ -646,10 +681,13 @@ public class CodeCleaner {
 	
 	private String replacePrimitive(String str, String primitiveName, String objectName)
 	{
+		if (str.equals(primitiveName))
+			return objectName;
+		
 		String regexPrimitive = ".*[^A-z]+" + primitiveName + "[^A-z]+.*";
 		Pattern p = Pattern.compile(regexPrimitive);
 		Matcher m = p.matcher(str);
-		
+
 		while (m.find()) {
 			m = Pattern.compile(primitiveName).matcher(m.group());
 			
