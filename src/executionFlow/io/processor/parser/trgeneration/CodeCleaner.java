@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -129,15 +131,16 @@ public class CodeCleaner {
 		for (int i=0; i<processedCode.size(); i++) {
 			processedCode.set(i, removeMultiSingleLineComment(processedCode.get(i)));
 			
-			int idxSingle = Helper.getIndexOfReservedSymbol(processedCode.get(i), "//"); 
+//			int idxSingle = Helper.getIndexOfReservedSymbol(processedCode.get(i), "//");
+			int idxSingle = processedCode.get(i).indexOf("//");
+//			int idxMulti = processedCode.get(i).indexOf("//");
 			int idxMulti = Helper.getIndexOfReservedSymbol(processedCode.get(i), "/\\*"); 
 			int idx = (idxSingle >= 0 && idxMulti >= 0) ? 
 					Math.min(idxSingle, idxMulti) : Math.max(idxSingle, idxMulti);
-					
 			if (idx == -1) {
 				continue;
 			} else if (idx == idxSingle) {
-				processedCode.set(i, processedCode.get(i).substring(0, idx)); 
+				processedCode.set(i, processedCode.get(i).substring(0, idx));
 			} else {
 				i = eraseMultiLineComment(i, idx);
 			}
@@ -583,8 +586,9 @@ public class CodeCleaner {
 				mapping.put(i - addedLines, new ArrayList<>(Arrays.asList(i, i+1)));
 				
 				
-				if (type.matches(REGEX_PRIMITIVE_VAR))
-					type = primitiveToObject(type);
+				if (type.matches(REGEX_PRIMITIVE_VAR)) {
+					type = primitivesToObject(type);
+				}
 				
 				if (isArrayVar(setName, i)) {
 					processedCode.set(i, "for (Iterator<" + type + "> it = java.util.Arrays.asList(" + setName + ").iterator(); it.hasNext(); ) {");
@@ -605,16 +609,39 @@ public class CodeCleaner {
 		lineMappings.add(mapping);
 	}
 	
-	private String primitiveToObject(String type) {
-		return	type.contains("boolean")	?	"Boolean"	:	
-				type.contains("byte")		?	"Byte"		:
-				type.contains("char")		?	"Character"	:
-				type.contains("short")		?	"Short"		:
-				type.contains("int")		?	"Integer"	:
-				type.contains("float")		?	"Float"		:
-				type.contains("long")		?	"Long"		:
-				type.contains("double")		?	"Double"	:
-				"";		
+	private String primitivesToObject(String str)
+	{
+		str = replacePrimitive(str, "boolean", "Boolean");
+		str = replacePrimitive(str, "byte", "Byte");
+		str = replacePrimitive(str, "char", "Character");
+		str = replacePrimitive(str, "short", "Short");
+		str = replacePrimitive(str, "int", "Integer");
+		str = replacePrimitive(str, "float", "Float");
+		str = replacePrimitive(str, "long", "Long");
+		str = replacePrimitive(str, "double", "Double");
+		
+		
+		return str;
+	}
+	
+	private String replacePrimitive(String str, String primitiveName, String objectName)
+	{
+		String regexPrimitive = ".*[^A-z]+" + primitiveName + "[^A-z]+.*";
+		Pattern p = Pattern.compile(regexPrimitive);
+		Matcher m = p.matcher(str);
+		
+		while (m.find()) {
+			m = Pattern.compile(primitiveName).matcher(m.group());
+			
+			if (m.find()) {
+				int idxStart = m.start();
+				int idxEnd = m.end();
+			
+				str = str.substring(0, idxStart) + objectName + str.substring(idxEnd);
+			}
+		}
+		
+		return str;
 	}
 
 	private boolean isArrayVar(String setName, int currentIdx) {
@@ -649,6 +676,8 @@ public class CodeCleaner {
 		String buffer = "";
 		List<String> info = new ArrayList<>();
 		
+		
+		line = line.replaceAll(",\\ ", ",");
 		int i;
 		for(i = 3; i < line.length() && info.size() < 2; i++) {
 			if (line.charAt(i) != '(' && line.charAt(i) != ' ' && line.charAt(i) != '\t' && line.charAt(i) != ':') {
