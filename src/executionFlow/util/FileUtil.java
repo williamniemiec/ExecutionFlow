@@ -61,10 +61,11 @@ public class FileUtil
 		};
 		
 		
+		Files.deleteIfExists(file);
 		Files.createDirectories(file.getParent());
 		
 		try (BufferedWriter bw = Files.newBufferedWriter(file, encode, options)) {
-			for (String line : lines) {
+			for (String line : lines) {System.out.println(line);
 				bw.write(line);
 				bw.newLine();
 			}
