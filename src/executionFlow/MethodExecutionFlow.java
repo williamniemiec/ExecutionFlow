@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.ProcessedSourceFileExporter;
-import executionFlow.exporter.TestPathExportType;
+import executionFlow.exporter.file.ProcessedSourceFileExporter;
+import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.testpath.ConsoleExporter;
+import executionFlow.exporter.testpath.FileExporter;
+import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;

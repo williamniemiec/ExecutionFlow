@@ -1,4 +1,4 @@
-package executionFlow.exporter;
+package executionFlow.exporter.signature;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import executionFlow.exporter.testpath.TestPathExporter;
 import executionFlow.util.CSV;
 import executionFlow.util.Logger;
 import executionFlow.util.DataUtil;
@@ -33,7 +34,7 @@ import executionFlow.util.Pair;
  * @version		5.2.0
  * @since		2.0.0
  */
-public class TestedInvokedExporter implements ExporterExecutionFlow
+public class TestedInvokedExporter implements TestPathExporter
 {
 	//-------------------------------------------------------------------------
 	//		Attributes

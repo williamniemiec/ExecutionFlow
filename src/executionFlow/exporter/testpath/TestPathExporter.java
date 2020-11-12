@@ -1,4 +1,4 @@
-package executionFlow.exporter;
+package executionFlow.exporter.testpath;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import executionFlow.util.Pair;
  * @version		2.0.0
  * @since		1.0
  */
-public interface ExporterExecutionFlow 
+public interface TestPathExporter 
 {
 	/**
 	 * Exports test path.

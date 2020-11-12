@@ -15,10 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.exporter.ExporterExecutionFlow;
-import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.ProcessedSourceFileExporter;
-import executionFlow.exporter.TestPathExportType;
+import executionFlow.exporter.file.ProcessedSourceFileExporter;
+import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.testpath.TestPathExporter;
+import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.InvokedInfo;
@@ -66,7 +66,7 @@ public abstract class ExecutionFlow
 	 */
 	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
 	
-	protected ExporterExecutionFlow exporter;
+	protected TestPathExporter exporter;
 	protected MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
 	protected  ProcessedSourceFileExporter processedSourceFileExporter;
 	protected boolean exportCalledMethods;
@@ -254,7 +254,7 @@ public abstract class ExecutionFlow
 				invokedInfo, invokedFileManager
 		);
 		
-		// Stores processed file
+		// Exports processed file
 		processedSourceFileExporter.export(
 				invokedInfo.getSrcPath(), 
 				invokedSignature,
@@ -620,7 +620,7 @@ public abstract class ExecutionFlow
 	 * 
 	 * @return		This object to allow chained calls
 	 */
-	public ExecutionFlow setExporter(ExporterExecutionFlow exporter) 
+	public ExecutionFlow setExporter(TestPathExporter exporter) 
 	{
 		this.exporter = exporter;
 		

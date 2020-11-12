@@ -493,7 +493,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 										line.contains("@org.junit.jupiter.api.Test");
 			}
 
-			if (inTestAnnotationScope) {System.out.println("testScop");
+			if (inTestAnnotationScope) {
 				if (curlyBracketBalance_currentTestMethod != null) {
 					curlyBracketBalance_currentTestMethod.parse(line);
 				}
@@ -868,7 +868,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		//		Getters
 		//---------------------------------------------------------------------
 		/**
-		 * Gest test method declaration lines that are not part of the test 
+		 * Gets test method declaration lines that are not part of the test 
 		 * method provided in the constructor.
 		 * 
 		 * @return		Test method declaration lines

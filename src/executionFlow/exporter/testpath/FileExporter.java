@@ -1,4 +1,4 @@
-package executionFlow.exporter;
+package executionFlow.exporter.testpath;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,7 +25,7 @@ import executionFlow.util.Pair;
  * @version		3.0.0
  * @since		1.0
  */
-public class FileExporter implements ExporterExecutionFlow 
+public class FileExporter implements TestPathExporter 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes

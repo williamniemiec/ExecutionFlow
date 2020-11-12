@@ -15,7 +15,7 @@ import executionFlow.ExecutionFlow;
 import executionFlow.LibraryManager;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.RemoteControl;
-import executionFlow.exporter.TestedInvokedExporter;
+import executionFlow.exporter.signature.TestedInvokedExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.info.MethodInvokedInfo;
@@ -328,6 +328,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// Gets test paths of the collected methods and export them
 		ef = new MethodExecutionFlow(methodCollector);
 		ef.execute().export();
+		
 		// Exports tested methods to a CSV
 		ef.setExporter(new TestedInvokedExporter("Testers", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
@@ -415,7 +416,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(jp.getSignature().toString());
-//		className = jp.getTarget().getClass().getSimpleName();
 		classSignature = jp.getSignature().getDeclaringTypeName();
 		testClassPath = CollectorExecutionFlow.findBinPath(classSignature);
 		

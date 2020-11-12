@@ -37,7 +37,7 @@ public class LibraryManager
 	
 	
 	//-------------------------------------------------------------------------
-	//		Methods
+	//		Getters
 	//-------------------------------------------------------------------------
 	public static Path getLibrary(String libName) 
 	{
