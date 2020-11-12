@@ -587,7 +587,7 @@ public class CodeCleaner {
 					type = primitiveToObject(type);
 				
 				if (isArrayVar(setName, i)) {
-					processedCode.set(i, "for (Iterator<" + type + "> it = Arrays.asList(" + setName + ").iterator(); it.hasNext(); ) {");
+					processedCode.set(i, "for (Iterator<" + type + "> it = java.util.Arrays.asList(" + setName + ").iterator(); it.hasNext(); ) {");
 				}
 				else {
 					processedCode.set(i, "for (Iterator<" + type + "> it = " + setName + ".iterator(); it.hasNext(); ) {");
