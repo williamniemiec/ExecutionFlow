@@ -65,7 +65,7 @@ public class FileUtil
 		Files.createDirectories(file.getParent());
 		
 		try (BufferedWriter bw = Files.newBufferedWriter(file, encode, options)) {
-			for (String line : lines) {System.out.println(line);
+			for (String line : lines) {
 				bw.write(line);
 				bw.newLine();
 			}

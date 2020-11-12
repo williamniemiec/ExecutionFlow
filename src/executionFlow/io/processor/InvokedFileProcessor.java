@@ -262,12 +262,12 @@ public class InvokedFileProcessor extends FileProcessor
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
 		// Processing #1 - Same processing done in TRGeneration (application)
-//		codeCleaner = new CodeCleanerAdapter(lines);
-//		lines = codeCleaner.parse();
-//		cleanupMapping = codeCleaner.getMapping();
-//		
-//		if (cleanupMapping != null)
-//			mapping = cleanupMapping;
+		codeCleaner = new CodeCleanerAdapter(lines);
+		lines = codeCleaner.parse();
+		cleanupMapping = codeCleaner.getMapping();
+		
+		if (cleanupMapping != null)
+			mapping = cleanupMapping;
 		
 		// Processing #2 - Fixes the omission of lines in compilation
 		holePlug = new HolePlug(lines);
