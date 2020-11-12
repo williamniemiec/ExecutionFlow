@@ -568,6 +568,9 @@ public class CodeCleaner {
 	private void convertForEachToFor() {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		int addedLines = 0;
+		final String REGEX_PRIMITIVE_VAR= 
+				".*(boolean|char|byte|short|int|float|long|double).*";
+		
 		
 		for (int i=0; i<processedCode.size(); i++) {			
 			if (processedCode.get(i).matches("^for.+$")
@@ -578,8 +581,20 @@ public class CodeCleaner {
 				String setName = forEachInformation.get(2);
 				
 				mapping.put(i - addedLines, new ArrayList<>(Arrays.asList(i, i+1)));
-				processedCode.set(i, "for (Iterator<" + type + "> it = " + setName + ".iterator(); it.hasNext(); ) {");
+				
+				
+				if (type.matches(REGEX_PRIMITIVE_VAR))
+					type = primitiveToObject(type);
+				
+				if (isArrayVar(setName, i)) {
+					processedCode.set(i, "for (Iterator<" + type + "> it = Arrays.asList(" + setName + ").iterator(); it.hasNext(); ) {");
+				}
+				else {
+					processedCode.set(i, "for (Iterator<" + type + "> it = " + setName + ".iterator(); it.hasNext(); ) {");
+				}
+				
 				processedCode.add(i+1, type + " " + varName + " = it.next();");
+				
 				addedLines++;
 				i++;
 			} else {
@@ -590,6 +605,45 @@ public class CodeCleaner {
 		lineMappings.add(mapping);
 	}
 	
+	private String primitiveToObject(String type) {
+		return	type.contains("boolean")	?	"Boolean"	:	
+				type.contains("byte")		?	"Byte"		:
+				type.contains("char")		?	"Character"	:
+				type.contains("short")		?	"Short"		:
+				type.contains("int")		?	"Integer"	:
+				type.contains("float")		?	"Float"		:
+				type.contains("long")		?	"Long"		:
+				type.contains("double")		?	"Double"	:
+				"";		
+	}
+
+	private boolean isArrayVar(String setName, int currentIdx) {
+		final String REGEX_INVOKED_DECLARATION = 
+				"[\\s\\t]*(public|protected|private)[\\s\\t]+.+\\(.*\\)[\\s\\t]*\\{[\\s\\t]*$";
+		final String REGEX_ARRAY_VAR = 
+				"^.+(((\\.\\.\\.|\\[\\])[\\s\\t]+" + setName + ")|[\\s\\t]+" + setName + "\\[\\]).*$";
+		boolean isConstructorDeclaration;
+		boolean isMethodDeclaration;
+		boolean isArrayVariable = false;
+		String currentLine = processedCode.get(currentIdx);
+		
+		
+		do {
+			currentIdx--;
+			currentLine = processedCode.get(currentIdx);
+			
+			isConstructorDeclaration = currentLine.contains("new ");
+			isMethodDeclaration = currentLine.matches(REGEX_INVOKED_DECLARATION) && !isConstructorDeclaration;
+		}
+		while (!isMethodDeclaration && currentIdx > 0);
+		
+		if (currentIdx > 0) {
+			isArrayVariable = currentLine.matches(REGEX_ARRAY_VAR);
+		}
+		
+		return isArrayVariable;
+	}
+
 	// Given a line containing a for each statement, collect the necessary info
 	private List<String> extractForEachInfo(String line) {
 		String buffer = "";
