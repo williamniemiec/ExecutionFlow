@@ -144,7 +144,8 @@ public abstract aspect RuntimeCollector
 	protected boolean isMethodSignature(String signature)
 	{
 		return signature.matches("[A-z\\.]+(\\s|\\t)+([A-z0-9-_$]+\\.)+"
-				+ "[A-z0-9-_$]+\\([A-z0-9-\\._$,\\s]*\\)");
+				+ "[A-z0-9-_$]+\\([A-z0-9-\\._$,\\s]*\\)") && 
+				!signature.matches(".*\\.(access\\$[0-9]+\\().*");
 	}
 	
 	/**

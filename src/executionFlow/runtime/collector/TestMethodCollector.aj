@@ -15,7 +15,7 @@ import executionFlow.ExecutionFlow;
 import executionFlow.LibraryManager;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.RemoteControl;
-import executionFlow.exporter.TestedInvokedExporter;
+import executionFlow.exporter.signature.TestedInvokedExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.info.MethodInvokedInfo;
@@ -26,9 +26,9 @@ import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
 import executionFlow.util.Checkpoint;
-import executionFlow.util.Logging;
-import executionFlow.util.Logging.Level;
 import executionFlow.util.JUnit4Runner;
+import executionFlow.util.Logger;
+import executionFlow.util.Logger.Level;
 
 
 /**
@@ -40,7 +40,7 @@ import executionFlow.util.JUnit4Runner;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.1
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -152,7 +152,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			processTestMethod();
 		} 
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
-			Logging.showError(e.getMessage());
+			Logger.error(e.getMessage());
 			e.printStackTrace();
 			
 			System.exit(-1);	// Stops execution if a problem occurs
@@ -176,7 +176,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 				restart();
 			}
 			catch (IOException | InterruptedException e) {
-				Logging.showError("Restart - " + e.getMessage());
+				Logger.error("Restart - " + e.getMessage());
 				System.exit(-1);
 			}
 
@@ -223,7 +223,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	public static void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
 	{
 		int invocationLine;
-		
+
 		
 		// Updates constructor invocation lines If it is declared in the 
 		// same file as the processed test method file
@@ -263,24 +263,23 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private void restart() throws IOException, InterruptedException
 	{
 		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		Path argumentFile;
+		Path libJUnit4 = LibraryManager.getLibrary("JUNIT_4");
+		Path libHamcrest = LibraryManager.getLibrary("HAMCREST");
 		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
+		
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
+		String classPath = System.getProperty("java.class.path") + ";" + libJUnit4 + ";" + libHamcrest;
 
 
-		LibraryManager.addLibrary(testClassRootPath);
-		LibraryManager.addLibrary(testClassRootPath.resolve("..\\classes").normalize());
-
-		argumentFile = LibraryManager.getArgumentFile();
-	
 		if (!checkpoint_initial.isActive()) {
 			checkpoint_initial.enable();
 		}
 		
 		// Resets methods called by tested invoked
 		mcti.delete();
-		JUnit4Runner.run(testClassRootPath, argumentFile, classSignature);
+		
+		JUnit4Runner.run(testClassRootPath, classPath, classSignature);
 		
 		while (JUnit4Runner.isRunning()) {
 			Thread.sleep(2000);
@@ -329,6 +328,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// Gets test paths of the collected methods and export them
 		ef = new MethodExecutionFlow(methodCollector);
 		ef.execute().export();
+		
 		// Exports tested methods to a CSV
 		ef.setExporter(new TestedInvokedExporter("Testers", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
@@ -416,7 +416,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		
 		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(jp.getSignature().toString());
-//		className = jp.getTarget().getClass().getSimpleName();
 		classSignature = jp.getSignature().getDeclaringTypeName();
 		testClassPath = CollectorExecutionFlow.findBinPath(classSignature);
 		
@@ -436,7 +435,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 				.build();
 		} 
 		catch(IllegalArgumentException e) {
-			Logging.showError("Test method info - "+e.getMessage());
+			Logger.error("Test method info - "+e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -449,7 +448,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			"pre_processing.original"
 		);
 		
-		Logging.showDebug("Test method collector: "+testMethodInfo);
+		Logger.debug("Test method collector: "+testMethodInfo);
 	}
 	
 	/**
@@ -486,7 +485,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			return;
 		
 		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
-		Logging.Level logLevel = askLog();
+		Logger.Level logLevel = askLog();
 		
 		
 		checkpoint_appRunning.enable();
@@ -502,10 +501,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private void setLogLevel() throws IOException
 	{
 		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
-		Logging.Level logLevel = (Logging.Level)session.read("LOG_LEVEL");
+		Logger.Level logLevel = (Logger.Level)session.read("LOG_LEVEL");
 		
 		
-		Logging.setLevel(logLevel);
+		Logger.setLevel(logLevel);
 	}
 	
 	/**
@@ -531,16 +530,16 @@ public aspect TestMethodCollector extends RuntimeCollector
 	{
 		inTestMethod = checkpoint.exists();
 		
-		Logging.showDebug("Test method collector: "+testMethodInfo);
+		Logger.debug("Test method collector: "+testMethodInfo);
 		
 		if (!inTestMethod) {
-			Logging.showInfo("Pre-processing test method...");
+			Logger.info("Pre-processing test method...");
 			
 			checkpoint.enable();
 			
 			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 			
-			Logging.showInfo("Pre-processing completed");
+			Logger.info("Pre-processing completed");
 		}
 	}
 	
@@ -602,13 +601,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 		} 
 		catch (ClassNotFoundException e) {
 			hasError = true;
-			Logging.showError("Class FileManager not found");
+			Logger.error("Class FileManager not found");
 			e.printStackTrace();
 		} 
 		catch (IOException e) {
 			hasError = true;
-			Logging.showError("Could not recover the backup file of the test method");
-			Logging.showError("See more: https://github.com/williamniemiec/"
+			Logger.error("Could not recover the backup file of the test method");
+			Logger.error("See more: https://github.com/williamniemiec/"
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
 					+ "#could-not-recover-all-backup-files");
 			e.printStackTrace();
@@ -636,13 +635,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 		} 
 		catch (ClassNotFoundException e) {
 			hasError = true;
-			Logging.showError("Class FileManager not found");
+			Logger.error("Class FileManager not found");
 		 	e.printStackTrace();
 		} 
 		catch (IOException e) {
 			hasError = true;
-			Logging.showError("Could not recover all backup files for methods");
-			Logging.showError("See more: https://github.com/williamniemiec/"
+			Logger.error("Could not recover all backup files for methods");
+			Logger.error("See more: https://github.com/williamniemiec/"
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
 					+ "#could-not-recover-all-backup-files");
 			e.printStackTrace();
@@ -658,7 +657,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private Level askLog()
 	{
-		Logging.Level logLevel;
+		Logger.Level logLevel;
 		String[] options = {
 				"<html><body><div align='center'>None<br>(not recommended \u274C)</div></body></html>",
 				"Error", 
@@ -676,20 +675,20 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		switch (response) {
 			case 0:
-				logLevel = Logging.Level.OFF;
+				logLevel = Logger.Level.OFF;
 				break;
 			case 1:
-				logLevel = Logging.Level.ERROR;
+				logLevel = Logger.Level.ERROR;
 				break;
 			case 2:
-				logLevel = Logging.Level.WARNING;
+				logLevel = Logger.Level.WARNING;
 				break;
 			case 4:
-				logLevel = Logging.Level.DEBUG;
+				logLevel = Logger.Level.DEBUG;
 				break;
 			case 3:
 			default:
-				logLevel = Logging.Level.INFO;
+				logLevel = Logger.Level.INFO;
 		}
 		
 		return logLevel;

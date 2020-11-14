@@ -13,8 +13,8 @@ import java.util.Set;
 
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Clock;
-import executionFlow.util.Logging;
 import executionFlow.util.JDB;
+import executionFlow.util.Logger;
 import executionFlow.util.balance.RoundBracketBalance;
 
 
@@ -100,15 +100,15 @@ public class Analyzer
 	public Analyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException
 	{
 		List<Path> classPath = new ArrayList<>();
-		List<String> srcPath = new ArrayList<>();
+		List<Path> srcPath = new ArrayList<>();
 		int idx_dollarSign, idx_paramStart;
-		Path classRootPath;			// Root path where the compiled file of invoked class is
 		Path srcRootPath;			// Root path where the source file of the invoked is
 		Path testMethodSrcPath;		// Root path where the source file of test method class is. It 
 									// will be used as JDB root directory
 		Path testClassRootPath;		// Root path where the compiled file of test method class is. It 
 									// will be used as JDB root directory
-		Path argumentFile;
+		Path libJUnit4 = LibraryManager.getLibrary("JUNIT_4");
+		Path libHamcrest = LibraryManager.getLibrary("HAMCREST");
 		
 		
 		// Gets information about the test method of the invoked to be analyzed
@@ -132,43 +132,40 @@ public class Analyzer
 		
 		// Gets paths
 		srcRootPath = extractRootPathDirectory(invokedInfo.getSrcPath(), invokedInfo.getPackage());
-		classRootPath = extractRootPathDirectory(invokedInfo.getBinPath(), invokedInfo.getPackage());
 		testClassRootPath = extractRootPathDirectory(testMethodInfo.getBinPath(), testMethodInfo.getPackage());
 		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
-				
-		// Generates argument file
-		LibraryManager.addLibrary(testClassRootPath);
-		LibraryManager.addLibrary(testClassRootPath.resolve("..\\classes").normalize());
-		LibraryManager.addLibrary(classRootPath);
-
-		argumentFile = LibraryManager.getArgumentFile();
 		
 		// Sets source path
-		srcPath.add(testClassRootPath.relativize(srcRootPath).toString());
-		srcPath.add(testClassRootPath.relativize(testMethodSrcPath).toString());
+		srcPath.add(testClassRootPath.relativize(srcRootPath));
+		srcPath.add(testClassRootPath.relativize(testMethodSrcPath));
 		
 		// Fix source file of anonymous and inner classes
 		srcPath.add(testClassRootPath.relativize(
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/main/java").toPath())
-				.toString()
 		);
 		
 		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
 			srcPath.add(
 					testClassRootPath.relativize(
 							new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/test/java").toPath())
-					.toString()
 			);
 		}
+
+		for (String cp : System.getProperty("java.class.path").split(";")) {
+			classPath.add(testClassRootPath.relativize(Path.of(cp)));
+		}
 		
-		jdb = new JDB(testClassRootPath, argumentFile, srcPath);
+		classPath.add(testClassRootPath.relativize(libJUnit4));
+		classPath.add(testClassRootPath.relativize(libHamcrest));
+
+		jdb = new JDB(testClassRootPath, classPath, srcPath);
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
 		
 		// -----{ DEBUG }-----
-		Logging.showDebug("Analyzer", "Srcpath: " + classPath);
-		Logging.showDebug("Analyzer", "Srcpath: " + srcPath);
-		Logging.showDebug("Analyzer", "Working directory: " + testClassRootPath);
+		Logger.debug("Analyzer", "Classpath: " + classPath);
+		Logger.debug("Analyzer", "Srcpath: " + srcPath);
+		Logger.debug("Analyzer", "Working directory: " + testClassRootPath);
 		// -----{ END DEBUG }-----
 	}
 	
@@ -197,9 +194,9 @@ public class Analyzer
 		
 		
 		// -----{ DEBUG }-----
-		Logging.showDebug("Analyzer", "COMMAND: " + "clear ");
-		Logging.showDebug("Analyzer", "COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
-		Logging.showDebug("Analyzer", "COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
+		Logger.debug("Analyzer", "COMMAND: " + "clear ");
+		Logger.debug("Analyzer", "COMMAND: " + "stop at " + classInvocationSignature + ":" + invocationLine);
+		Logger.debug("Analyzer", "COMMAND: " + "run org.junit.runner.JUnitCore "+classInvocationSignature);
 		// -----{ END DEBUG }-----
 		
 		timeout = false;
@@ -248,7 +245,7 @@ public class Analyzer
 					
 					// Checks if method is within a loop
 					// -----{ DEBUG }-----
-					Logging.showDebug("Analyzer", "COMMAND: cont"); 
+					Logger.debug("Analyzer", "COMMAND: cont"); 
 					// -----{ END DEBUG }-----
 					
 					// Resets exit method
@@ -263,7 +260,7 @@ public class Analyzer
 					
 					// Enters the method, ignoring native methods
 					// -----{ DEBUG }-----
-					Logging.showDebug("Analyzer", "COMMAND: step into");
+					Logger.debug("Analyzer", "COMMAND: step into");
 					// -----{ END DEBUG }-----
 					
 					jdb.send("step into");
@@ -271,7 +268,7 @@ public class Analyzer
 					
 					while (isInternalCommand) {
 						// -----{ DEBUG }-----
-						Logging.showDebug("Analyzer", "COMMAND: next"); 
+						Logger.debug("Analyzer", "COMMAND: next"); 
 						// -----{ END DEBUG }-----
 						
 						jdb.send("next");
@@ -280,7 +277,7 @@ public class Analyzer
 				} 
 				else if (!endOfMethod) {
 					// -----{ DEBUG }-----
-					Logging.showDebug("Analyzer", "COMMAND: next");
+					Logger.debug("Analyzer", "COMMAND: next");
 					// -----{ END DEBUG }-----
 					
 					jdb.send("next");
@@ -299,9 +296,9 @@ public class Analyzer
 
 		// Exits JDB
 		// -----{ DEBUG }-----
-		Logging.showDebug("Analyzer", "COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
-		Logging.showDebug("Analyzer", "COMMAND: " + "exit");
-		Logging.showDebug("Analyzer", "COMMAND: " + "exit");
+		Logger.debug("Analyzer", "COMMAND: " + "clear " + classInvocationSignature + ":" + invocationLine);
+		Logger.debug("Analyzer", "COMMAND: " + "exit");
+		Logger.debug("Analyzer", "COMMAND: " + "exit");
 		// -----{ END DEBUG }-----
 		
 		jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
@@ -400,7 +397,7 @@ public class Analyzer
 				);
         	
         	if (line.contains("[INFO]") || line.contains("Exception occurred")) {
-				Logging.showError("Error while running JDB");
+				Logger.error("Error while running JDB");
 				System.exit(-1);
 			}
         	
@@ -409,7 +406,7 @@ public class Analyzer
         	}
         	
         	// -----{ DEBUG }-----
-    		Logging.showDebug("Analyzer", "LINE: "+line); 
+    		Logger.debug("Analyzer", "LINE: "+line); 
     		// -----{ END DEBUG }-----
         	
         	endOfMethod = endOfMethod == true ? endOfMethod : isEndOfTestMethod(line);
@@ -603,7 +600,7 @@ public class Analyzer
     			}
     			
     			// -----{ DEBUG }-----
-				Logging.showDebug("Analyzer", "SRC: "+srcLine); 
+				Logger.debug("Analyzer", "SRC: "+srcLine); 
     			// -----{ END DEBUG }-----	    		
     		}
 		} 
@@ -893,7 +890,7 @@ public class Analyzer
 			} 
 			catch (IOException | ClassNotFoundException e) {
 				invokedMethods = null;
-				Logging.showError("Called methods by tested invoked - " + e.getMessage());
+				Logger.error("Called methods by tested invoked - " + e.getMessage());
 				e.printStackTrace();
 			}
 		

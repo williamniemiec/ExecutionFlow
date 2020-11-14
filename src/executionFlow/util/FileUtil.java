@@ -61,6 +61,7 @@ public class FileUtil
 		};
 		
 		
+		Files.deleteIfExists(file);
 		Files.createDirectories(file.getParent());
 		
 		try (BufferedWriter bw = Files.newBufferedWriter(file, encode, options)) {

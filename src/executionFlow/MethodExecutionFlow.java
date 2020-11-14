@@ -2,21 +2,24 @@ package executionFlow;
 
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.exporter.ConsoleExporter;
-import executionFlow.exporter.FileExporter;
-import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.ProcessedSourceFileExporter;
-import executionFlow.exporter.TestPathExportType;
+import executionFlow.exporter.file.ProcessedSourceFileExporter;
+import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.testpath.ConsoleExporter;
+import executionFlow.exporter.testpath.FileExporter;
+import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
+import executionFlow.io.processor.InvokedFileProcessor;
+import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.MethodCollector;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 
 
 /**
@@ -121,7 +124,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 			return this;
 		
 		// -----{ DEBUG }-----
-		Logging.showDebug("MethodExecutionFlow", "collector: " + methodCollector.toString());
+		Logger.debug("MethodExecutionFlow", "collector: " + methodCollector.toString());
 		// -----{ END DEBUG }-----
 		
 		boolean gotoNextLine = false;
@@ -166,17 +169,55 @@ public class MethodExecutionFlow extends ExecutionFlow
 					
 					// Checks whether test path was generated inside a loop
 					gotoNextLine = tp.size() > 1;
+					
+					updateCollectorInvocationLines(
+							TestMethodFileProcessor.getMapping(), 
+							collector.getTestMethodInfo().getSrcPath()
+					);
+					
+					if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
+						updateCollectorInvocationLines(
+								InvokedFileProcessor.getMapping(), 
+								collector.getTestMethodInfo().getSrcPath()
+						);
+					}
 				} 
 				catch (InterruptedByTimeoutException e1) {
-					Logging.showError("Time exceeded");
+					Logger.error("Time exceeded");
 				} 
 				catch (IOException e2) {
-					Logging.showError(e2.getMessage());
+					Logger.error(e2.getMessage());
 					e2.printStackTrace();
 				}
 			}
 		}
 		
 		return this;
+	}
+	
+	/**
+	 * Updates the invocation line of method collector based on a mapping.
+	 * 
+	 * @param		mapping Mapping that will be used as base for the update
+	 * @param		testMethodSrcFile Test method source file
+	 */
+	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
+	{
+		int invocationLine;
+
+		
+		// Updates method invocation lines If it is declared in the 
+		// same file as the processed test method file
+		for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
+			for (CollectorInfo mc : methodCollectorList) {
+				invocationLine = mc.getMethodInfo().getInvocationLine();
+				
+				if (!mc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
+						!mapping.containsKey(invocationLine))
+					continue;
+				
+				mc.getMethodInfo().setInvocationLine(mapping.get(invocationLine));
+			}
+		}
 	}
 }

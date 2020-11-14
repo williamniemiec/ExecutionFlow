@@ -1,0 +1,24 @@
+package examples.methodCalledByTestedInvoked;                                                           
+public class MethodCalledByTestedInvoked_Class{                                                         
+     @executionFlow.runtime.CollectCalls public MethodCalledByTestedInvoked_Class(boolean callMethods){ 
+          if (callMethods) {                                                                            
+               A();                                                                                     
+               D();                                                                                     
+          }                                                                                             
+     }                                                                                                  
+     @executionFlow.runtime.CollectCalls public void A(){                                               
+          System.out.println("a");                                                                      
+          B();                                                                                          
+          C();                                                                                          
+     }                                                                                                  
+     @executionFlow.runtime.CollectCalls public void B(){                                               
+          System.out.println("b");                                                                      
+     }                                                                                                  
+     @executionFlow.runtime.CollectCalls public void C(){                                               
+          System.out.println("c");                                                                      
+          D();                                                                                          
+     }                                                                                                  
+     @executionFlow.runtime.CollectCalls public void D(){                                               
+          System.out.println("d");                                                                      
+     }                                                                                                  
+}                                                                                                       

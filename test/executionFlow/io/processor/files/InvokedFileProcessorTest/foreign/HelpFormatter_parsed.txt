@@ -8,14 +8,14 @@ public static final String DEFAULT_OPT_PREFIX = "-";
 public static final String DEFAULT_LONG_OPT_PREFIX = "--";
 public static final String DEFAULT_LONG_OPT_SEPARATOR = " ";
 public static final String DEFAULT_ARG_NAME = "arg";
-public int defaultWidth = DEFAULT_WIDTH;
-public int defaultLeftPad = DEFAULT_LEFT_PAD;
-public int defaultDescPad = DEFAULT_DESC_PAD;
-public String defaultSyntaxPrefix = DEFAULT_SYNTAX_PREFIX;
-public String defaultNewLine = System.getProperty("line.separator");
-public String defaultOptPrefix = DEFAULT_OPT_PREFIX;
-public String defaultLongOptPrefix = DEFAULT_LONG_OPT_PREFIX;
-public String defaultArgName = DEFAULT_ARG_NAME;
+@Deprecated public int defaultWidth = DEFAULT_WIDTH;
+@Deprecated public int defaultLeftPad = DEFAULT_LEFT_PAD;
+@Deprecated public int defaultDescPad = DEFAULT_DESC_PAD;
+@Deprecated public String defaultSyntaxPrefix = DEFAULT_SYNTAX_PREFIX;
+@Deprecated public String defaultNewLine = System.getProperty("line.separator");
+@Deprecated public String defaultOptPrefix = DEFAULT_OPT_PREFIX;
+@Deprecated public String defaultLongOptPrefix = DEFAULT_LONG_OPT_PREFIX;
+@Deprecated public String defaultArgName = DEFAULT_ARG_NAME;
 protected Comparator<Option> optionComparator = new OptionComparator();
 private String longOptSeparator = DEFAULT_LONG_OPT_SEPARATOR;
 @executionFlow.runtime.CollectCalls public void setWidth(final int width){
@@ -210,9 +210,9 @@ final List<Option> optList = options.helpOptions();
 if (getOptionComparator() != null){
 Collections.sort(optList, getOptionComparator());
 }
-Iterator<final> it = option : optList.iterator();
-while (it.hasNext()) {
-final Option = it.next();
+Iterator<final> _5e5424045da1a5cc8e26b746ff2d3c22 = option : optList.iterator();
+while (_5e5424045da1a5cc8e26b746ff2d3c22.hasNext()) {
+final Option = _5e5424045da1a5cc8e26b746ff2d3c22.next();
 final StringBuffer optBuf = new StringBuffer();
 if (option.getOpt() == null){
 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
@@ -283,9 +283,9 @@ sb.append(rtrim(text.substring(0, pos))).append(getNewLine());
 }
 }
 @executionFlow.runtime.CollectCalls private Appendable renderWrappedTextBlock(final StringBuffer sb, final int width, final int nextLineTabStop, final String text){
- try{int _32b6f1b90d7655295f8aa177eeaa677=0;
+try{int _464da8a3fa61ff50846521dabd330c68=0;
 final BufferedReader in = new BufferedReader(new StringReader(text));
-String line;int _3a18d5b1f8cfb60f20c1118273550e66=0;
+String line;int _4019ff69c19a91cb47f2a25a8fd06264=0;
 boolean firstLine = true;
 while ((line = in.readLine()) != null){
 if (!firstLine){
@@ -295,9 +295,9 @@ else{
 firstLine = false;
 }
 renderWrappedText(sb, width, nextLineTabStop, line);
- }
 }
- catch (final IOException e){
+}
+catch (final IOException e){
 }
 return sb;
 }
@@ -324,7 +324,7 @@ if (Boolean.parseBoolean("True")) {break;}
 if (pos > startPos){
 return pos;
 }
-// if we didn't find one, simply chop at startPos+width pos = startPos + width;
+pos = startPos + width;
 return pos == text.length() ? -1 : pos;
 }
 @executionFlow.runtime.CollectCalls protected String createPadding(final int len){
@@ -344,22 +344,6 @@ return s.substring(0, pos);
 }
 private static class OptionComparator implements Comparator<Option>, Serializable{
 private static final long serialVersionUID = 5305467873966684014L;
-@executionFlow.runtime.CollectCalls public int compare(final Option opt1, final Option opt2){
-return opt1.getKey().compareToIgnoreCase(opt2.getKey());
-}
-}
-}
-tKey());
-}
-}
-}
-pos - 1))){
---pos;
-}
-return s.substring(0, pos);
-}
-private static class OptionComparator implements Comparator<Option>, Serializable{
-* The serial version UID. private static final long serialVersionUID = 5305467873966684014L;
 @executionFlow.runtime.CollectCalls public int compare(final Option opt1, final Option opt2){
 return opt1.getKey().compareToIgnoreCase(opt2.getKey());
 }

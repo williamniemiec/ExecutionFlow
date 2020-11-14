@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.FileUtil;
 
 
@@ -20,7 +20,7 @@ import executionFlow.util.FileUtil;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.1
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor
@@ -268,8 +268,8 @@ public class TestMethodFileProcessor extends FileProcessor
 		}
 		
 		// -----{ DEBUG }-----
-		if (Logging.getLevel() == Logging.Level.DEBUG) {
-			Logging.showDebug("TestMethodFileProcessor", "Processed file");
+		if (Logger.getLevel() == Logger.Level.DEBUG) {
+			Logger.debug("TestMethodFileProcessor", "Processed file");
 			FileUtil.printFileWithLines(lines);
 		}
 		// -----{ END DEBUG }-----
@@ -311,7 +311,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	private String parseMultilineArgs(String currentLine, List<String> lines, int currentIndex) 
 	{
 		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
-		final String REGEX_MULTILINE_ARGS_CLOSE = "[\\s\\t)]+;[\\s\\t]*";
+		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)]+;[\\s\\t]*$";
 		
 		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
 		
@@ -320,26 +320,25 @@ public class TestMethodFileProcessor extends FileProcessor
 				currentLine.matches(REGEX_MULTILINE_ARGS) && 
 				(currentIndex+1 < lines.size());
 		
-		
-		 mapping = new HashMap<>();
-		
+
 		if (isMethodCallWithMultipleLinesArgument) {
 			int oldLine;
 			int newLine;
 			String nextLine = lines.get(currentIndex+1);
 			
-			
 			nextLine = removeInlineComment(nextLine);
 			
-			if (!insideMultilineArgs) {
-				multilineArgsStartIndex = currentIndex;
-				insideMultilineArgs = true;
-				
+			if (!insideMultilineArgs) {	
 				lines.set(currentIndex+1, "");
 				currentLine = currentLine + nextLine;
 				
 				oldLine = currentIndex+1+1;
 				newLine = currentIndex+1;
+				
+				if (nextLine.matches(REGEX_MULTILINE_ARGS_CLOSE)) {
+					multilineArgsStartIndex = currentIndex;
+					insideMultilineArgs = false;
+				}
 			}
 			else {
 				lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
@@ -350,20 +349,13 @@ public class TestMethodFileProcessor extends FileProcessor
 			}
 			
 			mapping.put(oldLine, newLine);
-//			if (mapping.containsKey(file)) {
-//				mapping.get(file).put(oldLine, newLine);
-//			}
-//			else {
-//				HashMap<Integer, Integer> currentMap = new HashMap<>(Map.of(oldLine, newLine));
-//				
-//				mapping.put(file, currentMap);				
-//			}
 		}
 		else if (insideMultilineArgs) {
 			insideMultilineArgs = false;
 			
 			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
 			currentLine = "";
+			mapping.put(currentIndex+1, multilineArgsStartIndex+1);
 		}
 		else if (currentLine.matches(REGEX_MULTILINE_ARGS_CLOSE) && multilineArgsStartIndex > 0) {
 			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);

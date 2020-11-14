@@ -15,10 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.exporter.ExporterExecutionFlow;
-import executionFlow.exporter.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.ProcessedSourceFileExporter;
-import executionFlow.exporter.TestPathExportType;
+import executionFlow.exporter.file.ProcessedSourceFileExporter;
+import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.testpath.TestPathExporter;
+import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.InvokedInfo;
@@ -30,7 +30,7 @@ import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.runtime.collector.TestMethodCollector;
-import executionFlow.util.Logging;
+import executionFlow.util.Logger;
 import executionFlow.util.FileUtil;
 import executionFlow.util.Pair;
 import executionFlow.util.formatter.JavaIndenter;
@@ -66,7 +66,7 @@ public abstract class ExecutionFlow
 	 */
 	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
 	
-	protected ExporterExecutionFlow exporter;
+	protected TestPathExporter exporter;
 	protected MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
 	protected  ProcessedSourceFileExporter processedSourceFileExporter;
 	protected boolean exportCalledMethods;
@@ -105,7 +105,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
 	}
 	
 	/**
@@ -254,7 +254,7 @@ public abstract class ExecutionFlow
 				invokedInfo, invokedFileManager
 		);
 		
-		// Stores processed file
+		// Exports processed file
 		processedSourceFileExporter.export(
 				invokedInfo.getSrcPath(), 
 				invokedSignature,
@@ -262,7 +262,7 @@ public abstract class ExecutionFlow
 		);
 		
 		// Computes test path from JDB
-		Logging.showInfo("Computing test path of invoked " 
+		Logger.info("Computing test path of invoked " 
 				+ invokedSignature + "...");
 		analyzer.run();
 
@@ -280,9 +280,9 @@ public abstract class ExecutionFlow
 		tp = analyzer.getTestPaths();
 		
 		if (tp.isEmpty() || tp.get(0).isEmpty())
-			Logging.showWarning("Test path is empty");
+			Logger.warning("Test path is empty");
 		else
-			Logging.showInfo("Test path has been successfully computed");				
+			Logger.info("Test path has been successfully computed");				
 
 		// Fix anonymous class signature
 		if (isConstructor) {
@@ -387,10 +387,10 @@ public abstract class ExecutionFlow
 		processTestMethod(testMethodInfo, testMethodFileManager);
 		processInvoked(testMethodFileManager, invokedFileManager, invSig);
 		
-		TestMethodCollector.updateCollectorInvocationLines(TestMethodFileProcessor.getMapping(), testMethodSrcFile);
-		
+		updateInvokedInfo(invokedInfo, TestMethodFileProcessor.getMapping());
+//		
 		if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
-			TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping(), testMethodSrcFile);
+			updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
 		}		
 		
 		return new Analyzer(invokedInfo, testMethodInfo);
@@ -408,19 +408,19 @@ public abstract class ExecutionFlow
 	private void processTestMethod(InvokedInfo testMethodInfo, FileManager testMethodFileManager) throws IOException 
 	{
 		if (!testMethodManager.wasProcessed(testMethodFileManager)) {
-			Logging.showInfo("Processing source file of test method "
+			Logger.info("Processing source file of test method "
 				+ testMethodInfo.getInvokedSignature().replaceAll("\\$", ".") + "...");
 			
 			try {
 				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
 			}
 			catch (java.lang.NoClassDefFoundError e) {
-				Logging.showError("Process test method - " + e.getMessage());
+				Logger.error("Process test method - " + e.getMessage());
 				e.printStackTrace();
 				System.exit(-1);
 			}
 			
-			Logging.showInfo("Processing completed");	
+			Logger.info("Processing completed");	
 		}
 	}
 	
@@ -442,7 +442,7 @@ public abstract class ExecutionFlow
 					!testMethodFileManager.getSrcFile().equals(invokedFileManager.getSrcFile());
 			
 			
-			Logging.showInfo("Processing source file of invoked - " 
+			Logger.info("Processing source file of invoked - " 
 				+ invSig + "...");
 			
 			invokedManager.parse(
@@ -450,7 +450,7 @@ public abstract class ExecutionFlow
 					autoRestore
 			).compile(invokedFileManager);
 			
-			Logging.showInfo("Processing completed");
+			Logger.info("Processing completed");
 		}
 	}
 	
@@ -620,7 +620,7 @@ public abstract class ExecutionFlow
 	 * 
 	 * @return		This object to allow chained calls
 	 */
-	public ExecutionFlow setExporter(ExporterExecutionFlow exporter) 
+	public ExecutionFlow setExporter(TestPathExporter exporter) 
 	{
 		this.exporter = exporter;
 		

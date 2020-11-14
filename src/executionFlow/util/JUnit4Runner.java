@@ -69,7 +69,31 @@ public class JUnit4Runner
 	 * 
 	 * @see			{@link #run(Path, List, String, boolean)}
 	 */
-	public static void run(Path workingDirectory, List<String> classPath, 
+	public static void run(Path workingDirectory, List<Path> classPath, 
+			String classSignature) throws IOException, InterruptedException
+	{
+		process = init(workingDirectory, classPath, classSignature);
+		
+		run(workingDirectory, classSignature, false);
+	}
+	
+	/**
+	 * Runs a JUnit 4 test file.
+	 * 
+	 * @param		workingDirectory Directory that will serve as a reference
+	 * for the execution of the process
+	 * @param		classPath Class path list that will be used in JUnit 4 
+	 * runner
+	 * @param		classSignature Class signature to begin execution
+	 * 
+	 * @throws		IOException If an error occurs while reading process output
+	 * @throws		InterruptedException If the process containing JUnit 4 is 
+	 * interrupted by another thread while it is waiting
+	 * @throws		IllegalStateException If process is null
+	 * 
+	 * @see			{@link #run(Path, List, String, boolean)}
+	 */
+	public static void run(Path workingDirectory, String classPath, 
 			String classSignature) throws IOException, InterruptedException
 	{
 		process = init(workingDirectory, classPath, classSignature);
@@ -195,17 +219,10 @@ public class JUnit4Runner
 	 * 
 	 * @throws		IOException If process cannot be created 
 	 */
-	private static Process init(Path workingDirectory, List<String> classPath, 
+	private static Process init(Path workingDirectory, List<Path> classPath, 
 			String classSignature) throws IOException
 	{
-		ProcessBuilder pb = new ProcessBuilder(
-			"java", "-cp", DataUtil.implode(classPath, ";"), 
-			"org.junit.runner.JUnitCore", classSignature
-		);
-		
-		pb.directory(workingDirectory.toFile());
-		
-		return pb.start();
+		return init(workingDirectory, DataUtil.implode(classPath, ";"), classSignature);
 	}
 	
 	/**
@@ -224,10 +241,26 @@ public class JUnit4Runner
 	private static Process init(Path workingDirectory, Path classPathArgumentFile, 
 			String classSignature) throws IOException
 	{
-		classPathArgumentFile = workingDirectory.relativize(classPathArgumentFile);
-
+		return init(workingDirectory, "@" + classPathArgumentFile, classSignature);
+	}
+	
+	/**
+	 * Initializes CMD with JUnit 4 running a test file.
+	 * 
+	 * @param		workingDirectory Directory that will serve as a reference
+	 * for the execution of the process
+	 * @param		classPath Class path that will be used in JUnit 4 runner
+	 * @param		classSignature Class signature to begin execution 
+	 * 
+	 * @return		CMD process running JUnit 4 test
+	 * 
+	 * @throws		IOException If process cannot be created 
+	 */
+	private static Process init(Path workingDirectory, String classPath, 
+			String classSignature) throws IOException
+	{
 		ProcessBuilder pb = new ProcessBuilder(
-			"java", "-cp", "@" + classPathArgumentFile, 
+			"java", "-cp", classPath, 
 			"org.junit.runner.JUnitCore", classSignature
 		);
 		

@@ -13,6 +13,22 @@ import executionFlow.runtime.SkipCollection;
 public class InvokedFileProcessorTest
 {
 	@Test
+	public void testAuxClass() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
+		String filename = "AuxClass";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
+		fp.processFile();
+	}
+	
+	@Test
 	public void forEachToFor() throws IOException
 	{
 		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
@@ -206,21 +222,21 @@ public class InvokedFileProcessorTest
 		fp.processFile();
 	}
 	
-//	@Test
-//	public void testElseNoCurlyBrackets() throws IOException
-//	{
-//		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-//		String filename = "test_else_noCurlyBraces";
-//		File f = new File(currentDir, filename+".java.txt");
-//		
-//		FileProcessor fp = new InvokedFileProcessor.Builder()
-//				.file(f.toPath())
-//				.outputDir(currentDir.toPath())
-//				.outputFilename(filename+"_parsed")
-//				.fileExtension("txt")
-//				.build();
-//		fp.processFile();
-//	}
+	@Test
+	public void testElseNoCurlyBrackets() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
+		String filename = "test_else_noCurlyBraces";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.build();
+		fp.processFile();
+	}
 	
 	@Test
 	public void testForeighCode1() throws IOException
@@ -303,37 +319,37 @@ public class InvokedFileProcessorTest
 		fp.processFile();
 	}
 	
-//	@Test
-//	public void testMethodInvokedSameLine() throws IOException
-//	{
-//		File currentDir = new File("test/executionFlow/io/processor/files/");
-//		String filename = "test_method_tested_invoked_same_file";
-//		File f = new File(currentDir, filename+"_parsed.txt");
-//		
-//		FileProcessor fp = new InvokedFileProcessor.Builder()
-//				.file(f.toPath())
-//				.outputDir(currentDir.toPath())
-//				.outputFilename(filename+"_parsed")
-//				.fileExtension("txt")
-//				.encode(FileEncoding.ISO_8859_1)
-//				.build();
-//		fp.processFile();
-//	}
+	@Test
+	public void testMethodInvokedSameLine() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/");
+		String filename = "test_method_tested_invoked_same_file";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.encode(FileEncoding.ISO_8859_1)
+				.build();
+		fp.processFile();
+	}
 	
-//	@Test
-//	public void testAnonymousClass() throws IOException
-//	{
-//		File currentDir = new File("test/executionFlow/io/processor/files/");
-//		String filename = "test_anonymous_class";
-//		File f = new File(currentDir, filename+"_parsed.txt");
-//		
-//		FileProcessor fp = new InvokedFileProcessor.Builder()
-//				.file(f.toPath())
-//				.outputDir(currentDir.toPath())
-//				.outputFilename(filename+"_parsed")
-//				.fileExtension("txt")
-//				.encode(FileEncoding.ISO_8859_1)
-//				.build();
-//		fp.processFile();
-//	}
+	@Test
+	public void testAnonymousClass() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/");
+		String filename = "test_anonymous_class";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new InvokedFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.encode(FileEncoding.ISO_8859_1)
+				.build();
+		fp.processFile();
+	}
 }

@@ -4,8 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import executionFlow.util.DataUtil;
+import executionFlow.util.Pair;
+import executionFlow.util.balance.CurlyBracketBalance;
 
 
 /**
@@ -128,16 +137,17 @@ public class CodeCleaner {
 	private void eliminateComments() {		
 		for (int i=0; i<processedCode.size(); i++) {
 			processedCode.set(i, removeMultiSingleLineComment(processedCode.get(i)));
-			
-			int idxSingle = Helper.getIndexOfReservedSymbol(processedCode.get(i), "//"); 
+
+//			int idxSingle = Helper.getIndexOfReservedSymbol(processedCode.get(i), "//");
+			int idxSingle = processedCode.get(i).indexOf("//");
+//			int idxMulti = processedCode.get(i).indexOf("//");
 			int idxMulti = Helper.getIndexOfReservedSymbol(processedCode.get(i), "/\\*"); 
 			int idx = (idxSingle >= 0 && idxMulti >= 0) ? 
 					Math.min(idxSingle, idxMulti) : Math.max(idxSingle, idxMulti);
-					
 			if (idx == -1) {
 				continue;
 			} else if (idx == idxSingle) {
-				processedCode.set(i, processedCode.get(i).substring(0, idx)); 
+				processedCode.set(i, processedCode.get(i).substring(0, idx));
 			} else {
 				i = eraseMultiLineComment(i, idx);
 			}
@@ -497,10 +507,21 @@ public class CodeCleaner {
 	
 	//turn for loops into while loops
 	private void convertForToWhile() {
+//		final String REGEX_METHOD_DECLARATION = 
+//				"^.*[\\s\\t]+((?!new)[A-z0-9\\_\\<\\>\\,\\[\\]\\.\\$])+[\\s\\t]+([A-z0-9\\_\\$]+)[\\s\\t]*\\(.*\\).*$";
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		List<Integer> loopsClosingLines = new ArrayList<Integer>();
+		List<Pair<String, CurlyBracketBalance>> cbb = new ArrayList<>(); // Stack of pair(variable, curly bracket balance)
+		Set<String> initVariables = new HashSet<>();
 		
-		for (int i=0; i<processedCode.size(); i++) {			
+		
+		for (int i=0; i<processedCode.size(); i++) {
+			// Updates the scope visibility of variables already initialized
+			
+//			if (processedCode.get(i).matches(REGEX_METHOD_DECLARATION)) {
+//				initVariables = new HashSet<>();
+//			}
+			
 			if (processedCode.get(i).matches("^for.+$")) {
 				int depth = loopsClosingLines.size();
 				int closingLine = Helper.findEndOfBlock(processedCode, i+3);
@@ -508,7 +529,30 @@ public class CodeCleaner {
 				// Move the initialization before the loop
 				mapping.put(i+depth, Helper.initArray(i));
 				int idx = processedCode.get(i).indexOf("(");
-				processedCode.add(i, "%forcenode%" + processedCode.get(i).substring(idx+1));
+				String initVar = processedCode.get(i).substring(idx+1);
+				String varLabel = initVar.contains(" ") ? initVar.split("\\s")[1] : initVar;
+				
+				
+					
+//					cbb.peek().second.parse(processedCode.get(i));
+//					
+//					if (cbb.peek().second.getBalance() < 0) {
+//						initVariables.remove(cbb.peek().first);
+//						cbb.pop();
+//					}
+//				System.out.println("l: "+processedCode.get(i));
+//				System.out.println("bef: "+cbb);
+				// Checks whether the variable has already been initialized
+				if (initVariables.contains(varLabel)) {
+					initVar = initVar.substring(initVar.indexOf(" ")+1);
+				}
+				else {
+					initVariables.add(varLabel);
+					cbb.add(Pair.of(varLabel, new CurlyBracketBalance()));
+				}
+//				System.out.println("af: "+cbb);
+				
+				processedCode.add(i, "%forcenode%" + initVar);
 				i++; //adjust for insertion
 
 				// Work with iterator step
@@ -547,6 +591,19 @@ public class CodeCleaner {
 					mapping.put(i+depth, Helper.initArray(i));
 				}
 			}
+			
+			if (!cbb.isEmpty()) {
+				for (Iterator<Pair<String, CurlyBracketBalance>> it = cbb.iterator(); it.hasNext(); ) {
+					Pair<String, CurlyBracketBalance> item = it.next();
+					
+					item.second.parse(processedCode.get(i));
+					
+					if (item.second.getBalance() < 0) {
+						initVariables.remove(item.first);
+						it.remove();
+					}
+				}
+			}
 		}
 		
 		lineMappings.add(mapping);
@@ -568,6 +625,9 @@ public class CodeCleaner {
 	private void convertForEachToFor() {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		int addedLines = 0;
+		final String REGEX_PRIMITIVE_VAR= 
+				".*(boolean|char|byte|short|int|float|long|double).*";
+		
 		
 		for (int i=0; i<processedCode.size(); i++) {			
 			if (processedCode.get(i).matches("^for.+$")
@@ -576,10 +636,24 @@ public class CodeCleaner {
 				String type = forEachInformation.get(0);
 				String varName = forEachInformation.get(1);
 				String setName = forEachInformation.get(2);
+				String itName = DataUtil.generateVarName();
 				
 				mapping.put(i - addedLines, new ArrayList<>(Arrays.asList(i, i+1)));
-				processedCode.set(i, "for (Iterator<" + type + "> it = " + setName + ".iterator(); it.hasNext(); ) {");
-				processedCode.add(i+1, type + " " + varName + " = it.next();");
+				
+				
+				if (type.matches(REGEX_PRIMITIVE_VAR)) {
+					type = primitivesToObject(type);
+				}
+				
+				if (isArrayVar(setName, i)) {
+					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = java.util.Arrays.asList(" + setName + ").iterator(); " + itName + " .hasNext(); ) {");
+				}
+				else {
+					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = " + setName + ".iterator(); " + itName + ".hasNext(); ) {");
+				}
+				
+				processedCode.add(i+1, type + " " + varName + " = " + itName + ".next();");
+				
 				addedLines++;
 				i++;
 			} else {
@@ -590,11 +664,78 @@ public class CodeCleaner {
 		lineMappings.add(mapping);
 	}
 	
+	private String primitivesToObject(String str)
+	{
+		str = replacePrimitive(str, "boolean", "Boolean");
+		str = replacePrimitive(str, "byte", "Byte");
+		str = replacePrimitive(str, "char", "Character");
+		str = replacePrimitive(str, "short", "Short");
+		str = replacePrimitive(str, "int", "Integer");
+		str = replacePrimitive(str, "float", "Float");
+		str = replacePrimitive(str, "long", "Long");
+		str = replacePrimitive(str, "double", "Double");
+		
+		
+		return str;
+	}
+	
+	private String replacePrimitive(String str, String primitiveName, String objectName)
+	{
+		if (str.equals(primitiveName))
+			return objectName;
+		
+		String regexPrimitive = ".*[^A-z]+" + primitiveName + "[^A-z]+.*";
+		Pattern p = Pattern.compile(regexPrimitive);
+		Matcher m = p.matcher(str);
+
+		while (m.find()) {
+			m = Pattern.compile(primitiveName).matcher(m.group());
+			
+			if (m.find()) {
+				int idxStart = m.start();
+				int idxEnd = m.end();
+			
+				str = str.substring(0, idxStart) + objectName + str.substring(idxEnd);
+			}
+		}
+		
+		return str;
+	}
+
+	private boolean isArrayVar(String setName, int currentIdx) {
+		final String REGEX_INVOKED_DECLARATION = 
+				"[\\s\\t]*(public|protected|private)[\\s\\t]+.+\\(.*\\)[\\s\\t]*\\{[\\s\\t]*$";
+		final String REGEX_ARRAY_VAR = 
+				"^.+(((\\.\\.\\.|\\[\\])[\\s\\t]+" + setName + ")|[\\s\\t]+" + setName + "\\[\\]).*$";
+		boolean isConstructorDeclaration;
+		boolean isMethodDeclaration;
+		boolean isArrayVariable = false;
+		String currentLine = processedCode.get(currentIdx);
+		
+		
+		do {
+			currentIdx--;
+			currentLine = processedCode.get(currentIdx);
+			
+			isConstructorDeclaration = currentLine.contains("new ");
+			isMethodDeclaration = currentLine.matches(REGEX_INVOKED_DECLARATION) && !isConstructorDeclaration;
+		}
+		while (!isMethodDeclaration && currentIdx > 0);
+		
+		if (currentIdx > 0) {
+			isArrayVariable = currentLine.matches(REGEX_ARRAY_VAR);
+		}
+		
+		return isArrayVariable;
+	}
+
 	// Given a line containing a for each statement, collect the necessary info
 	private List<String> extractForEachInfo(String line) {
 		String buffer = "";
 		List<String> info = new ArrayList<>();
 		
+		
+		line = line.replaceAll(",\\ ", ",");
 		int i;
 		for(i = 3; i < line.length() && info.size() < 2; i++) {
 			if (line.charAt(i) != '(' && line.charAt(i) != ' ' && line.charAt(i) != '\t' && line.charAt(i) != ':') {

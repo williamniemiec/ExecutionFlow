@@ -1,0 +1,3 @@
+examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()
+[17]
+

@@ -29,7 +29,40 @@ public class JDB
 	
 	//-------------------------------------------------------------------------
 	//		Constructors
-	//-------------------------------------------------------------------------	
+	//-------------------------------------------------------------------------
+	/**
+	 * Creates API for JDB.
+	 * 
+	 * @param		workingDirectory Directory that will serve as a reference
+	 * for the execution of the process
+	 * @param		classPath Class path that will be used in JDB
+	 * @param		srcPath Source path that will be used in JDB
+	 * @param		classSignature Class signature to begin debugging
+	 * @param		args Arguments passed to the main() method of classSignature
+	 */
+	public JDB(Path workingDirectory, String classPath, String srcPath, String classSignature, String classArgs)
+	{
+		if (classPath == null)
+			throw new IllegalStateException("Class path list cannot be empty");
+		
+		if (srcPath == null)
+			throw new IllegalStateException("Source path list cannot be empty");
+
+		classArgs = (classArgs == null) ? "" : classArgs;
+		classSignature = (classSignature == null) ? "" : classSignature;
+		
+		processBuilder = new ProcessBuilder(
+			"jdb",
+				"-sourcepath", srcPath,
+				"-classpath", classPath,
+				classSignature, 
+				classArgs
+		);
+		
+		if (workingDirectory != null)
+			processBuilder.directory(workingDirectory.toFile());
+	}
+	
 	/**
 	 * Creates API for JDB.
 	 * 
@@ -40,21 +73,15 @@ public class JDB
 	 * @param		classSignature Class signature to begin debugging
 	 * @param		args Arguments passed to the main() method of classSignature
 	 */
-	public JDB(Path workingDirectory, List<String> classPath, List<String> srcPath, String classSignature, String classArgs)
+	public JDB(Path workingDirectory, List<Path> classPath, List<Path> srcPath, String classSignature, String classArgs)
 	{
-		if (classPath == null)
-			throw new IllegalStateException("Class path list cannot be empty");
-		
-		if (srcPath == null)
-			throw new IllegalStateException("Source path list cannot be empty");
-
-		processBuilder = new ProcessBuilder(
-			"jdb",
-				"-sourcepath", DataUtil.implode(srcPath, ";"),
-				"-classpath", DataUtil.implode(classPath, ";"),
-				classSignature, classArgs
+		this(
+				workingDirectory, 
+				DataUtil.implode(classPath, ";"), 
+				DataUtil.implode(srcPath, ";"), 
+				classSignature, 
+				classArgs
 		);
-		processBuilder.directory(workingDirectory.toFile());
 	}
 	
 	/**
@@ -65,21 +92,15 @@ public class JDB
 	 * @param		classPath Class path list that will be used in JDB
 	 * @param		srcPath Source path list that will be used in JDB
 	 */
-	public JDB(Path workingDirectory, List<String> classPath, List<String> srcPath)
+	public JDB(Path workingDirectory, List<Path> classPath, List<Path> srcPath)
 	{
-		if (classPath == null)
-			throw new IllegalStateException("Class path list cannot be empty");
-		
-		if (srcPath == null)
-			throw new IllegalStateException("Source path list cannot be empty");
-
-		processBuilder = new ProcessBuilder(
-			"jdb",
-				"-sourcepath", DataUtil.implode(srcPath, ";"),
-				"-classpath", DataUtil.implode(classPath, ";")
+		this(
+				workingDirectory, 
+				DataUtil.implode(classPath, ";"), 
+				DataUtil.implode(srcPath, ";"),
+				null,
+				null
 		);
-		
-		processBuilder.directory(workingDirectory.toFile());
 	}
 	
 	/**
@@ -91,23 +112,15 @@ public class JDB
 	 * list that will be used in JDB
 	 * @param		srcPath Source path list that will be used in JDB
 	 */
-	public JDB(Path workingDirectory, Path classPathArgumentFile, List<String> srcPath)
+	public JDB(Path workingDirectory, Path classPathArgumentFile, List<Path> srcPath)
 	{
-		if (classPathArgumentFile == null)
-			throw new IllegalStateException("Argument file cannot be empty");
-		
-		if (srcPath == null)
-			throw new IllegalStateException("Source path list cannot be empty");
-
-		classPathArgumentFile =  workingDirectory.relativize(classPathArgumentFile);
-		
-		processBuilder = new ProcessBuilder(
-			"jdb",
-				"-sourcepath", DataUtil.implode(srcPath, ";"),
-				"-classpath", "@" + classPathArgumentFile
+		this(
+				workingDirectory, 
+				"@" + classPathArgumentFile, 
+				DataUtil.implode(srcPath, ";"),
+				null,
+				null
 		);
-		
-		processBuilder.directory(workingDirectory.toFile());
 	}
 	
 	/**
@@ -135,18 +148,14 @@ public class JDB
 	 * @param		classSignature Class signature to begin debugging
 	 * @param		args Arguments passed to the main() method of classSignature
 	 */
-	public JDB(List<String> classPath, List<String> srcPath, String classSignature, String classArgs)
+	public JDB(List<Path> classPath, List<Path> srcPath, String classSignature, String classArgs)
 	{
-		if (classPath == null)
-			throw new IllegalStateException("Class path list cannot be empty");
-		
-		if (srcPath == null)
-			throw new IllegalStateException("Source path list cannot be empty");
-
-		processBuilder = new ProcessBuilder(
-			"jdb",
-				"-sourcepath", DataUtil.implode(srcPath, ";"), 
-				"-classpath", DataUtil.implode(classPath, ";")
+		this(
+				null, 
+				DataUtil.implode(srcPath, ";"), 
+				DataUtil.implode(srcPath, ";"),
+				classSignature,
+				classArgs
 		);
 	}
 	
@@ -157,18 +166,14 @@ public class JDB
 	 * @param		classPath Class path list that will be used in JDB
 	 * @param		srcPath Source path list that will be used in JDB
 	 */
-	public JDB(List<String> classPath, List<String> srcPath)
+	public JDB(List<Path> classPath, List<Path> srcPath)
 	{
-		if (classPath == null)
-			throw new IllegalStateException("Class path list cannot be empty");
-		
-		if (srcPath == null)
-			throw new IllegalStateException("Source path list cannot be empty");
-
-		processBuilder = new ProcessBuilder(
-			"jdb",
-				"-sourcepath", DataUtil.implode(srcPath, ";"),
-				"-classpath", DataUtil.implode(classPath, ";")
+		this(
+				null, 
+				DataUtil.implode(srcPath, ";"), 
+				DataUtil.implode(srcPath, ";"),
+				null,
+				null
 		);
 	}
 	

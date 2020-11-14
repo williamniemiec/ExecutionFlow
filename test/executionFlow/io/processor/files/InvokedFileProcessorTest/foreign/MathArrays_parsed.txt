@@ -131,29 +131,29 @@ T previous = val[0];
 final int max = val.length;
 int i = 1;
 while (i < max) {
-final int comp;int _47b88b49150f8b39a6bc449e81719a77=0;
+final int comp;int _3b405265ccebbcff300fedde663bea4c=0;
 switch (dir) {
-case INCREASING:int _2b12818c31657cf7fff0ed50891f1f7f=0;
+case INCREASING:int _f0a736169583b8d08ecdcd54cda5f833=0;
 comp = previous.compareTo(val[i]);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _d8dd10d9321b25ae665cf92dd4863a9f=0;
+else {int _b210ef51badd575a640dec2ea248cbc=0;
 if (comp > 0) {
 return false;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
-case DECREASING:int _dd33cb71d3bd049e044caf9d2f928c8c=0;
+case DECREASING:int _7cf8f893478ae2215ef12f0d0c16a373=0;
 comp = val[i].compareTo(previous);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _8724975ac3eca48f49c1c98d1bcbb3ee=0;
+else {int _eef5026b9e4a0c9ac5fc2ed63c25a28=0;
 if (comp > 0) {
 return false;
 }
@@ -174,7 +174,7 @@ return checkOrder(val, dir, strict, false);
 if (a.length == b.length) {
 return true;
 }
-else {int _6260d6718bec8db4d08c2b8ca3d79edb=0;
+else {int _7713e367a2ec07bdce18602001e45c00=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
@@ -188,7 +188,7 @@ checkEqualLength(a, b, true);
 if (a.length == b.length) {
 return true;
 }
-else {int _6d902baddb033a9c3988d4f5da40be22=0;
+else {int _eadee135686ae1e9f437394fb4b10f24=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
@@ -201,32 +201,32 @@ checkEqualLength(a, b, true);
 public static boolean checkOrder(double[] val, OrderDirection dir, boolean strict, boolean abort) throws NonMonotonicSequenceException {
 double previous = val[0];
 final int max = val.length;
-int index;int _99de00395ae8ee0a11005083dd041d9d=0;
+int index;int _fec534ae58f9f761658149a01bd0129e=0;
 ITEM: for (index = 1;
 index < max;
 index++) {
 switch (dir) {
-case INCREASING:int _5ccaaf0eeec66b7825034b15b0a06b3c=0;
+case INCREASING:int _422fc3a0e0710967b930f9d4098c85db=0;
 if (strict) {
 if (val[index] <= previous) {
-break ITEM;int _9ae57fcfea9c1659661ecc3f7c2312a5=0;
+break ITEM;int _39cccc549c5d5a181960dd766cb200ea=0;
 }
 }
-else {int _61d984bd606f3a5f4e4a3dca4f021002=0;
+else {int _3467d83b2b83d7fa043d01426536a546=0;
 if (val[index] < previous) {
-break ITEM;int _fd8e76c4ec97450e74b3d1c5f281353=0;
+break ITEM;int _925719835b68265b2cb92e4d13823e32=0;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
-case DECREASING:int _fdbbe63340e305fb22795e55ee7cee7=0;
+case DECREASING:int _59ac47b4b6ff1d8b1bd3d9c1cbeeffe1=0;
 if (strict) {
 if (val[index] >= previous) {
-break ITEM;int _2d434979ea9bdc03c9e4b07fe2c94532=0;
+break ITEM;int _a9d1b0daf8c819e9e29c70e0903a74f8=0;
 }
 }
-else {int _8099bc03d9b428c831569155399db697=0;
+else {int _3d9a2a648a5e07bc81e0d28c8ea20b0d=0;
 if (val[index] > previous) {
-break ITEM;int _2735cc4eb196657ef312fd4dda6c1744=0;
+break ITEM;int _3945c372a6db2773dcfeac6f2613207d=0;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}
@@ -241,7 +241,7 @@ return true;
 if (abort) {
 throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);
 }
-else {int _6ce8feb72339050846a2e59977292f84=0;
+else {int _b5d35fdb41b1a04c2cca10d772bb873f=0;
 return false;
 }
 }
@@ -342,30 +342,30 @@ list.add(new PairDoubleInteger(x[i], i));
 i++;
 }
 final Comparator<PairDoubleInteger> comp = dir == MathArrays.OrderDirection.INCREASING ? new Comparator<PairDoubleInteger>() {
-@executionFlow.runtime.CollectCalls public int compare(PairDoubleInteger o1, PairDoubleInteger o2) {
+@Override public int compare(PairDoubleInteger o1, PairDoubleInteger o2) {
 return Double.compare(o1.getKey(), o2.getKey());
 }
 }
 : new Comparator<PairDoubleInteger>() {
-@executionFlow.runtime.CollectCalls public int compare(PairDoubleInteger o1, PairDoubleInteger o2) {
+@Override public int compare(PairDoubleInteger o1, PairDoubleInteger o2) {
 return Double.compare(o2.getKey(), o1.getKey());
 }
 }
 ;
 Collections.sort(list, comp);
 final int[] indices = new int[len];
-int i = 0;
+i = 0;
 while (i < len) {
 final PairDoubleInteger e = list.get(i);
 x[i] = e.getKey();
 indices[i] = e.getValue();
 i++;
 }
-int j = 0;
+j = 0;
 while (j < yListLen) {
 final double[] yInPlace = yList[j];
 final double[] yOrig = yInPlace.clone();
-int i = 0;
+i = 0;
 while (i < len) {
 yInPlace[i] = yOrig[indices[i]];
 i++;
@@ -460,12 +460,12 @@ i++;
 if (sum == 0) {
 throw new MathArithmeticException(LocalizedFormats.ARRAY_SUMS_TO_ZERO);
 }
-int i = 0;
+i = 0;
 while (i < len) {
 if (Double.isNaN(values[i])) {
 out[i] = Double.NaN;
 }
-else {int _6637f6243f4acc2175af99cf077859ed=0;
+else {int _e27025eabc291db33109a8d680fdf6ac=0;
 out[i] = values[i] * normalizedSum / sum;
 }
 i++;
@@ -473,17 +473,17 @@ i++;
 return out;
 }
 @executionFlow.runtime.CollectCalls public static <T> T[] buildArray(final Field<T> field, final int length) {
-T[] array = (T[]) Array.newInstance(field.getRuntimeClass(), length);
+@SuppressWarnings("unchecked") T[] array = (T[]) Array.newInstance(field.getRuntimeClass(), length);
 Arrays.fill(array, field.getZero());
 return array;
 }
-@executionFlow.runtime.CollectCalls public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-final T[][] array;int _25f9a9b1d6ed7a53359de15a05f3f87b=0;
+@SuppressWarnings("unchecked") public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
+final T[][] array;int _a805aa95105d60a252ce5d6b13d89375=0;
 if (columns < 0) {
 T[] dummyRow = buildArray(field, 0);
 array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
 }
-else {int _e170f16f7bab268b7a742b98e5fb0eab=0;
+else {int _3e2a8d9c58a2cbf6ce82f6812d005077=0;
 array = (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] {
 rows, columns }
 );
@@ -584,9 +584,9 @@ return verifyValues(values, begin, length, allowEmpty);
 }
 @executionFlow.runtime.CollectCalls public static double[] concatenate(double[] ...x) {
 int combinedLength = 0;
-Iterator<double[]> it = x.iterator();
-while (it.hasNext()) {
-double[] a = it.next();
+Iterator<double[]> _ceffb58acfc52f77e9a1e404dcbbbdb9 = x.iterator();
+while (_ceffb58acfc52f77e9a1e404dcbbbdb9.hasNext()) {
+double[] a = _ceffb58acfc52f77e9a1e404dcbbbdb9.next();
 combinedLength += a.length;
 ;
 }
@@ -608,36 +608,6 @@ int i = 0;
 while (i < data.length) {
 values.add(data[i]);
 i++;
-}
-final int count = values.size();
-final double[] out = new double[count];
-Iterator<Double> iterator = values.descendingIterator();
-int i = 0;
-while (iterator.hasNext()) {
-out[i++] = iterator.next();
-}
-return out;
-}
-}
-Iterator();
-int i = 0;
-while (iterator.hasNext()) {
-out[i++] = iterator.next();
-}
-return out;
-}
-}
-i++) {
-curLength = x[i].length;
-System.arraycopy(x[i], 0, combined, offset, curLength);
-offset += curLength;
-}
-return combined;
-}
-@executionFlow.runtime.CollectCalls public static double[] unique(double[] data) {
-TreeSet<Double> values = new TreeSet<>();
-for (int i = 0; i < data.length; i++) {
-values.add(data[i]);
 }
 final int count = values.size();
 final double[] out = new double[count];

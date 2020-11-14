@@ -28,27 +28,27 @@ public class TestClass
 	@Test @executionFlow.runtime._SkipInvoked
 	public void multilineAssert1()
 	{
-		assertEquals(param1, 							param2,									param3);				
+		assertEquals(param1, 							param2,					
 
-
+				param3);				
 	}
 	
 	@Test @executionFlow.runtime._SkipInvoked
 	public void multilineAssert2()
 	{
 		assertEquals (
-				param1, 								param2,									param3);				
+				param1, 								param2,					
 
-
+				param3);				
 	}
 	
 	@Test @executionFlow.runtime._SkipInvoked
 	public void multilineAssert3()
 	{
 		assertEquals (
-				param1, 								param2,									param3							);								
+				param1, 								param2,					
 
-
-
+				param3					
+		);								
 	}
 }
