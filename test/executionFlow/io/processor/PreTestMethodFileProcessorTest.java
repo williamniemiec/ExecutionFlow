@@ -15,6 +15,23 @@ import executionFlow.runtime.SkipCollection;
 public class PreTestMethodFileProcessorTest 
 {
 	@Test
+	public void testMethodWithInnerClass() throws IOException
+	{
+		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
+		String filename = "TestMethodWithInnerClass";
+		File f = new File(currentDir, filename+".java.txt");
+		
+		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
+				.file(f.toPath())
+				.outputDir(currentDir.toPath())
+				.outputFilename(filename+"_parsed")
+				.fileExtension("txt")
+				.testMethodSignature("org.jfree.chart.AreaChartTest.testDrawWithNullInfo()")
+				.build();
+		fp.processFile();
+	}
+	
+	@Test
 	public void testClassTest_firstMethod() throws IOException
 	{
 		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");

@@ -1,4 +1,4 @@
-package examples.methodCalledByTestedInvokeds;
+package examples.methodCalledByTestedInvoked;
 
 
 public class MethodCalledByTestedInvoked_Class 

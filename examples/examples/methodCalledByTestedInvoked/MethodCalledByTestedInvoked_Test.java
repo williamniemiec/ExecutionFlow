@@ -1,4 +1,4 @@
-package examples.methodCalledByTestedInvokeds;
+package examples.methodCalledByTestedInvoked;
 
 import org.junit.Test;
 

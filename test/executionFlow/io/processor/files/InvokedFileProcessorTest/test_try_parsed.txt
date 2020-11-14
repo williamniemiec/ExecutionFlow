@@ -5,20 +5,15 @@ import java.io.IOException;
 public class test_try{
 @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_try(int num){
 File f = new File("tmp");
-FileWriter fw;int _5e0e608e4ded91d829255cd3fa5a690c=0;
- try {int _9741338c0defdf2db59652c90120a3ba=0;
+FileWriter fw;int _7fac50a51c871f49ae46b5aeedc689cc=0;
+try {int _50ea59e0014421fe1f5884c368691847=0;
 fw = new FileWriter(f);
 fw.write('x');
 fw.close();
- f.delete();
+f.delete();
 }
- catch (IOException e) {
- return false;
-}
-return true;
-}
-}
-urn false;
+catch (IOException e) {
+return false;
 }
 return true;
 }

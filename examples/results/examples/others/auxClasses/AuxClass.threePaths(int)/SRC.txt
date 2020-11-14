@@ -61,7 +61,7 @@ public class AuxClass{
                if (letters[i] == Character.toUpperCase(letters[i])) {                                                     
                     response[i] =  Character.toLowerCase(letters[i]);                                                     
                }                                                                                                          
-               else {int _38c21d3efd514d5d5aaff19946ea9bd6=0;                                                             
+               else {int _eb324754abc054d05cce0a6b5e64dd0d=0;                                                             
                     response[i] =  Character.toUpperCase(letters[i]);                                                     
                }                                                                                                          
                i++;                                                                                                       
@@ -104,7 +104,7 @@ public class AuxClass{
      }                                                                                                                    
      @executionFlow.runtime.CollectCalls public ClassInterface anonymousObjectReturn(){                                   
           return new ClassInterface("test") {                                                                             
-               @executionFlow.runtime.CollectCalls public String interfaceMethod() {                                      
+               @Override public String interfaceMethod() {                                                                
                     String str = "test";                                                                                  
                     return str;                                                                                           
                }                                                                                                          
@@ -122,7 +122,7 @@ public class AuxClass{
      }                                                                                                                    
      @executionFlow.runtime.CollectCalls public static int countTotalArguments(Object... args){                           
           int i = 2;                                                                                                      
-          int k;int _43336c8be57e714a88f0124bc195f523=0;                                                                  
+          int k;int _c989ed95c3e55044f62ad428f2ca68d6=0;                                                                  
           k=0;                                                                                                            
           while (k<args.length) {                                                                                         
                k++;                                                                                                       

@@ -23,7 +23,7 @@ import executionFlow.runtime.SkipCollection;
 
 /**
  * Tests test path computation for the constructors of 
- * {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoked_Class} class using 
+ * {@link examples.methodCalledByTestedInvoked.InvokedMethodsByTestedInvoked_Class} class using 
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
@@ -34,11 +34,11 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 	//-------------------------------------------------------------------------
 	private static final Path PATH_SRC_TEST_METHOD = 
 			Path.of(ExecutionFlow.getAppRootPath().toString(), 
-					"examples/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Test.java");
+					"examples/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Test.java");
 	private static final Path PATH_BIN_TEST_METHOD = 
 			Path.of(ExecutionFlow.getAppRootPath().toString(), 
-					"bin/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Test.class");
-	private static final String PACKAGE_TEST_METHOD = "examples.methodCalledByTestedInvokeds";
+					"bin/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Test.class");
+	private static final String PACKAGE_TEST_METHOD = "examples.methodCalledByTestedInvoked";
 	
 	
 	//-------------------------------------------------------------------------
@@ -64,7 +64,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests constructor used by {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Test#T()}
+	 * Tests constructor used by {@link examples.methodCalledByTestedInvoked.InvokedMethodsByTestedInvoker_Test#T()}
 	 * test.
 	 */
 	@Test
@@ -74,12 +74,12 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {false};
 		Class<?>[] paramTypes = {boolean.class};
-		String signature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Class(boolean)";
-		String testMethodSignature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test.T()"; 
+		String signature = "examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Class(boolean)";
+		String testMethodSignature = "examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test.T()"; 
 		String key = signature + Arrays.toString(paramValues);
 		
 		
-		init("examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test", testMethodSignature);
+		init("examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test", testMethodSignature);
 		
 		// Informations about test method
 		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
@@ -90,8 +90,8 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		
 		// Informations about constructor
 		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
-			.binPath(Path.of("bin/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.class"))
-			.srcPath(Path.of("examples/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.java"))
+			.binPath(Path.of("bin/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.class"))
+			.srcPath(Path.of("examples/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.java"))
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
@@ -114,7 +114,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 	}
 	
 	/**
-	 * Tests constructor used by {@link examples.methodCalledByTestedInvokeds.InvokedMethodsByTestedInvoker_Test#T2()}
+	 * Tests constructor used by {@link examples.methodCalledByTestedInvoked.InvokedMethodsByTestedInvoker_Test#T2()}
 	 * test.
 	 */
 	@Test
@@ -124,12 +124,12 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {true};
 		Class<?>[] paramTypes = {boolean.class};
-		String signature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Class(boolean)";
-		String testMethodSignature = "examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test.T2()"; 
+		String signature = "examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Class(boolean)";
+		String testMethodSignature = "examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test.T2()"; 
 		String key = signature + Arrays.toString(paramValues);
 		
 		
-		init("examples.methodCalledByTestedInvokeds.MethodCalledByTestedInvoked_Test", testMethodSignature);
+		init("examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test", testMethodSignature);
 		
 		// Informations about test method
 		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
@@ -140,8 +140,8 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		
 		// Informations about constructor
 		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
-			.binPath(Path.of("bin/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.class"))
-			.srcPath(Path.of("examples/examples/methodCalledByTestedInvokeds/MethodCalledByTestedInvoked_Class.java"))
+			.binPath(Path.of("bin/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.class"))
+			.srcPath(Path.of("examples/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.java"))
 			.constructorSignature(signature)
 			.parameterTypes(paramTypes)
 			.args(paramValues)

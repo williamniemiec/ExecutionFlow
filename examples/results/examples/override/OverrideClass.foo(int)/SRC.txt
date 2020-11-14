@@ -10,6 +10,6 @@ public class OverrideTest{
                }                                                                                        
           }                                                                                             
           ;                                                                                             
-          try {		assertEquals(10000, oc.foo(10));} catch(Throwable _2794bfdca70e0e94ae66fe61910c2efa){} 
+          try {		assertEquals(10000, oc.foo(10));} catch(Throwable _de7864a1f85ccc4965ac7c02a964e2eb){} 
      }                                                                                                  
 }                                                                                                       

@@ -1,0 +1,4 @@
+examples.chainedCalls.ChainedCalls.testChainedMethods()
+[27, 28]
+[27, 28]
+

@@ -1,0 +1,3 @@
+examples.builderPattern.BuilderPatternTest.testBuilderPattern()
+[23, 24]
+

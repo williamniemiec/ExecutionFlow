@@ -28,7 +28,7 @@ public class ParameterizedTestAnnotation
 		AuxClass tc = new AuxClass(4);
 
 
-try {		assertEquals(1, tc.factorial(num));} catch(Throwable _288bc52e5c2f54f564aa5ea266a022b2){}
+try {		assertEquals(1, tc.factorial(num));} catch(Throwable _fbd5d3ae488f575a513b9e6374af9127){}
 	}
 	
 //	@executionFlow.runtime.SkipInvoked
@@ -36,14 +36,13 @@ try {		assertEquals(1, tc.factorial(num));} catch(Throwable _288bc52e5c2f54f564a
 //	@ValueSource(strings = {" ", "   ", "\t", "\n"})
 //	void nullEmptyAndBlankStrings(String text) 
 //	{
-//try {	    assertTrue(text == null || text.trim().isEmpty());} catch(Throwable _48076f65789d32e7fcd5ce317b46507){}
+//try {	    assertTrue(text == null || text.trim().isEmpty());} catch(Throwable _688bc49b497dc333cb1cadf278025b7e){}
 //	}
 	
-//	@org.junit.Test
+//	@ParameterizedTest
 //	@EnumSource(names = {"DAYS", "HOURS"}, value = ChronoUnit.class)
 //	void testWithEnumSourceInclude(ChronoUnit unit) 
 //	{
-//try {	    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));} catch(Throwable _305ed2eb2a2971440bd6483a9ec8a494){}
+//try {	    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));} catch(Throwable _b98502540724f07225cead8bd7fcc929){}
 //	}
 }
-
