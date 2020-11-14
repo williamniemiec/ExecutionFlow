@@ -384,7 +384,6 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				}
 				while (!cbb.isBalanceEmpty());
 				
-//				lines.set(idx, "//" + line);
 			}
 		}
 		
@@ -539,12 +538,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				}
 			}
 			
-			if (!ignoreMethod) {
-				line = parseInsideRepeatedTest(line);
-				
-				// Converts test annotation from JUnit 5 to JUnit 4
-				line = parseAnnotations(line);
-			}
+			line = parseInsideRepeatedTest(line);
+			
+			// Converts test annotation from JUnit 5 to JUnit 4
+			line = parseAnnotations(line);
 			
 			return line;
 		}
