@@ -345,7 +345,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			
 			
 			currentLine--;
-			
+			// Comments annotations of ignored methods
 			for (int i=totLines-1; i>=0; i--) {
 				line = lines.get(i);
 				
@@ -362,6 +362,29 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				
 				lines.set(i, line);
 				currentLine--;
+			}
+			
+			// Comments body of ignored methods
+			for (int idx : ignoredMethods) {
+				CurlyBracketBalance cbb = new CurlyBracketBalance();
+				
+				line = lines.get(idx);
+				
+				while (!line.contains("{")) {
+					lines.set(idx, "//" + line);
+					idx++;
+					line = lines.get(idx);
+				}
+				
+				do {
+					cbb.parse(line);
+					lines.set(idx, "//" + line);
+					idx++;
+					line = lines.get(idx);
+				}
+				while (!cbb.isBalanceEmpty());
+				
+//				lines.set(idx, "//" + line);
 			}
 		}
 		
@@ -560,7 +583,6 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 */
 		private String parseIgnore(String line)
 		{			
-			// If it is inside a method that should be ignored, comment its code
 			if (ignoreMethod) {
 				if (curlyBracketBalance_ignore == null)
 					curlyBracketBalance_ignore = new CurlyBracketBalance();
@@ -568,8 +590,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				curlyBracketBalance_ignore.parse(line);
 				
 				ignoreMethod = !curlyBracketBalance_ignore.isBalanceEmpty();
-
-				line = "//" + line;
+				ignoredMethods.add(currentLine);
 			}
 			
 			// If current method it is not the given test method, ignores it		

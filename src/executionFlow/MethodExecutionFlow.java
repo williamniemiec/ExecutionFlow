@@ -2,6 +2,7 @@ package executionFlow;
 
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import executionFlow.exporter.testpath.FileExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
+import executionFlow.io.processor.InvokedFileProcessor;
+import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.MethodCollector;
@@ -166,6 +169,18 @@ public class MethodExecutionFlow extends ExecutionFlow
 					
 					// Checks whether test path was generated inside a loop
 					gotoNextLine = tp.size() > 1;
+					
+					updateCollectorInvocationLines(
+							TestMethodFileProcessor.getMapping(), 
+							collector.getTestMethodInfo().getSrcPath()
+					);
+					
+					if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
+						updateCollectorInvocationLines(
+								InvokedFileProcessor.getMapping(), 
+								collector.getTestMethodInfo().getSrcPath()
+						);
+					}
 				} 
 				catch (InterruptedByTimeoutException e1) {
 					Logger.error("Time exceeded");
@@ -178,5 +193,31 @@ public class MethodExecutionFlow extends ExecutionFlow
 		}
 		
 		return this;
+	}
+	
+	/**
+	 * Updates the invocation line of method collector based on a mapping.
+	 * 
+	 * @param		mapping Mapping that will be used as base for the update
+	 * @param		testMethodSrcFile Test method source file
+	 */
+	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
+	{
+		int invocationLine;
+
+		
+		// Updates method invocation lines If it is declared in the 
+		// same file as the processed test method file
+		for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
+			for (CollectorInfo mc : methodCollectorList) {
+				invocationLine = mc.getMethodInfo().getInvocationLine();
+				
+				if (!mc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
+						!mapping.containsKey(invocationLine))
+					continue;
+				
+				mc.getMethodInfo().setInvocationLine(mapping.get(invocationLine));
+			}
+		}
 	}
 }

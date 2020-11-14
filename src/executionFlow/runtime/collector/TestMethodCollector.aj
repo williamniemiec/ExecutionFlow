@@ -223,7 +223,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	public static void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
 	{
 		int invocationLine;
-		
+
 		
 		// Updates constructor invocation lines If it is declared in the 
 		// same file as the processed test method file

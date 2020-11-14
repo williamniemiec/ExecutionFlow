@@ -20,7 +20,7 @@ import executionFlow.util.FileUtil;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.1
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor
@@ -320,10 +320,7 @@ public class TestMethodFileProcessor extends FileProcessor
 				currentLine.matches(REGEX_MULTILINE_ARGS) && 
 				(currentIndex+1 < lines.size());
 		
-		
-		 mapping = new HashMap<>();
-		
-		 System.out.println("l: "+currentLine);
+
 		if (isMethodCallWithMultipleLinesArgument) {
 			int oldLine;
 			int newLine;
@@ -352,20 +349,13 @@ public class TestMethodFileProcessor extends FileProcessor
 			}
 			
 			mapping.put(oldLine, newLine);
-//			if (mapping.containsKey(file)) {
-//				mapping.get(file).put(oldLine, newLine);
-//			}
-//			else {
-//				HashMap<Integer, Integer> currentMap = new HashMap<>(Map.of(oldLine, newLine));
-//				
-//				mapping.put(file, currentMap);				
-//			}
 		}
 		else if (insideMultilineArgs) {
 			insideMultilineArgs = false;
 			
 			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
 			currentLine = "";
+			mapping.put(currentIndex+1, multilineArgsStartIndex+1);
 		}
 		else if (currentLine.matches(REGEX_MULTILINE_ARGS_CLOSE) && multilineArgsStartIndex > 0) {
 			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);

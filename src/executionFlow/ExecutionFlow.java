@@ -105,15 +105,15 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
 	 * Sets test path export type.
 	 */
 	static {
-		EXPORT = TestPathExportType.CONSOLE;
-//		EXPORT = TestPathExportType.FILE;
+//		EXPORT = TestPathExportType.CONSOLE;
+		EXPORT = TestPathExportType.FILE;
 	}
 	
 
@@ -387,10 +387,10 @@ public abstract class ExecutionFlow
 		processTestMethod(testMethodInfo, testMethodFileManager);
 		processInvoked(testMethodFileManager, invokedFileManager, invSig);
 		
-		TestMethodCollector.updateCollectorInvocationLines(TestMethodFileProcessor.getMapping(), testMethodSrcFile);
-		
+		updateInvokedInfo(invokedInfo, TestMethodFileProcessor.getMapping());
+//		
 		if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
-			TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping(), testMethodSrcFile);
+			updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
 		}		
 		
 		return new Analyzer(invokedInfo, testMethodInfo);

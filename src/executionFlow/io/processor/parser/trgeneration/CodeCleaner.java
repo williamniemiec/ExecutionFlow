@@ -530,7 +530,7 @@ public class CodeCleaner {
 				mapping.put(i+depth, Helper.initArray(i));
 				int idx = processedCode.get(i).indexOf("(");
 				String initVar = processedCode.get(i).substring(idx+1);
-				String varLabel = initVar.split("\\s")[1];
+				String varLabel = initVar.contains(" ") ? initVar.split("\\s")[1] : initVar;
 				
 				
 					

@@ -2,8 +2,11 @@ package executionFlow;
 
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import executionFlow.exporter.file.ProcessedSourceFileExporter;
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
@@ -12,6 +15,8 @@ import executionFlow.exporter.testpath.FileExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
+import executionFlow.io.processor.InvokedFileProcessor;
+import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.util.Logger;
@@ -158,8 +163,43 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				Logger.error(e2.getMessage());
 				e2.printStackTrace();
 			}
+			
+			updateCollectorInvocationLines(
+					TestMethodFileProcessor.getMapping(), 
+					collector.getTestMethodInfo().getSrcPath()
+			);
+			
+			if (collector.getConstructorInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
+				updateCollectorInvocationLines(
+						InvokedFileProcessor.getMapping(), 
+						collector.getTestMethodInfo().getSrcPath()
+				);
+			}
 		}
 		
 		return this;
+	}
+	
+	/**
+	 * Updates the invocation line of constructor collector based on a mapping.
+	 * 
+	 * @param		mapping Mapping that will be used as base for the update
+	 * @param		testMethodSrcFile Test method source file
+	 */
+	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
+	{
+		int invocationLine;
+		
+		// Updates constructor invocation lines If it is declared in the 
+		// same file as the processed test method file
+		for (CollectorInfo cc : constructorCollector) {
+			invocationLine = cc.getConstructorInfo().getInvocationLine();
+			
+			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
+					!mapping.containsKey(invocationLine))
+				continue;
+			
+			cc.getConstructorInfo().setInvocationLine(mapping.get(invocationLine));
+		}
 	}
 }
