@@ -20,7 +20,7 @@ import executionFlow.util.FileUtil;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.1
+ * @version		5.2.2
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor
@@ -335,8 +335,11 @@ public class TestMethodFileProcessor extends FileProcessor
 				oldLine = currentIndex+1+1;
 				newLine = currentIndex+1;
 				
-				if (nextLine.matches(REGEX_MULTILINE_ARGS_CLOSE)) {
+				if (!nextLine.matches(REGEX_MULTILINE_ARGS_CLOSE)) {
 					multilineArgsStartIndex = currentIndex;
+					insideMultilineArgs = true;
+				}
+				else {
 					insideMultilineArgs = false;
 				}
 			}
