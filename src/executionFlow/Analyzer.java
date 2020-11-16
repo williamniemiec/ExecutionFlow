@@ -23,7 +23,7 @@ import executionFlow.util.balance.RoundBracketBalance;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.2
  * @since		2.0.0
  */
 public class Analyzer 
@@ -389,12 +389,15 @@ public class Analyzer
         	isInternalCommand = false;
         	line = jdb.read();
         	
-        	if (line.contains("Stopping due to deferred breakpoint errors"))
+        	if (line.contains("Stopping due to deferred breakpoint errors")) {
+        		jdb.quit();
+        		
         		throw new IOException("Incorrect invocation line {invocationLine: " 
     					+ invocationLine + ", test method signature: "
         				+ testMethodSignature + ")" + ", invokedSignature: " 
     					+ invokedSignature + "}"
 				);
+        	}
         	
         	if (line.contains("[INFO]") || line.contains("Exception occurred")) {
 				Logger.error("Error while running JDB");
