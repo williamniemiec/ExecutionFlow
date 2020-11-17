@@ -239,7 +239,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		String line;
 		List<String> lines = new ArrayList<>();
 		File outputFile;
-		
+
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -361,12 +361,14 @@ public class TestMethodFileProcessor extends FileProcessor
 			mapping.put(currentIndex+1, multilineArgsStartIndex+1);
 		}
 		else if (currentLine.matches(REGEX_MULTILINE_ARGS_CLOSE) && multilineArgsStartIndex > 0) {
+			insideMultilineArgs = false;
 			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
 			currentLine = "";
-			
-			multilineArgsStartIndex = -1;
 		}
 		
+		if (!insideMultilineArgs)
+			multilineArgsStartIndex = -1;
+
 		return currentLine;
 	}
 

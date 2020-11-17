@@ -24,18 +24,18 @@ this.userFunctions.put(function.getName(), function);
 return this;
 }
 @executionFlow.runtime.CollectCalls public ExpressionBuilder functions(Function... functions) {
-Iterator<Function> _553b7d52904d806dd331ece09f5a3119 = java.util.Arrays.asList(functions).iterator();
-while (_553b7d52904d806dd331ece09f5a3119 .hasNext()) {
-Function f = _553b7d52904d806dd331ece09f5a3119.next();
+Iterator<Function> _7333d09c2be9b210144cb3004b24cc3e = executionFlow.util.IteratorExtractor.extractIterator(functions).iterator();
+while (_7333d09c2be9b210144cb3004b24cc3e.hasNext()) {
+Function f = _7333d09c2be9b210144cb3004b24cc3e.next();
 this.userFunctions.put(f.getName(), f);
 ;
 }
 return this;
 }
 @executionFlow.runtime.CollectCalls public ExpressionBuilder functions(List<Function> functions) {
-Iterator<Function> _50d1854457397fdccc777675227765bd = functions.iterator();
-while (_50d1854457397fdccc777675227765bd.hasNext()) {
-Function f = _50d1854457397fdccc777675227765bd.next();
+Iterator<Function> _c58ecd3af91170e7c45209041942fb36 = executionFlow.util.IteratorExtractor.extractIterator(functions).iterator();
+while (_c58ecd3af91170e7c45209041942fb36.hasNext()) {
+Function f = _c58ecd3af91170e7c45209041942fb36.next();
 this.userFunctions.put(f.getName(), f);
 ;
 }
@@ -64,9 +64,9 @@ return this;
 }
 @executionFlow.runtime.CollectCalls private void checkOperatorSymbol(Operator op) {
 String name = op.getSymbol();
-Iterator<Character> _71e5d0355bad4d9e162d38e87897e767 = name.toCharArray().iterator();
-while (_71e5d0355bad4d9e162d38e87897e767.hasNext()) {
-Character ch = _71e5d0355bad4d9e162d38e87897e767.next();
+Iterator<Character> _7b3783fa849a5edf016c8b546a3b0415 = executionFlow.util.IteratorExtractor.extractIterator(name.toCharArray()).iterator();
+while (_7b3783fa849a5edf016c8b546a3b0415.hasNext()) {
+Character ch = _7b3783fa849a5edf016c8b546a3b0415.next();
 if (!Operator.isAllowedOperatorChar(ch)) {
 throw new IllegalArgumentException("The operator symbol '" + name + "' is invalid");
 }
@@ -74,18 +74,18 @@ throw new IllegalArgumentException("The operator symbol '" + name + "' is invali
 }
 }
 @executionFlow.runtime.CollectCalls public ExpressionBuilder operator(Operator... operators) {
-Iterator<Operator> _b1826045b1c96f667a89ddb16a4d9da4 = java.util.Arrays.asList(operators).iterator();
-while (_b1826045b1c96f667a89ddb16a4d9da4 .hasNext()) {
-Operator o = _b1826045b1c96f667a89ddb16a4d9da4.next();
+Iterator<Operator> _5484a2655cee251b819d3dcdc7ce89e = executionFlow.util.IteratorExtractor.extractIterator(operators).iterator();
+while (_5484a2655cee251b819d3dcdc7ce89e.hasNext()) {
+Operator o = _5484a2655cee251b819d3dcdc7ce89e.next();
 this.operator(o);
 ;
 }
 return this;
 }
 @executionFlow.runtime.CollectCalls public ExpressionBuilder operator(List<Operator> operators) {
-Iterator<Operator> _2d40b6aa3c25f1c54741655465347714 = operators.iterator();
-while (_2d40b6aa3c25f1c54741655465347714.hasNext()) {
-Operator o = _2d40b6aa3c25f1c54741655465347714.next();
+Iterator<Operator> _7470e8cf691b25bb296c2cdc9c4147de = executionFlow.util.IteratorExtractor.extractIterator(operators).iterator();
+while (_7470e8cf691b25bb296c2cdc9c4147de.hasNext()) {
+Operator o = _7470e8cf691b25bb296c2cdc9c4147de.next();
 this.operator(o);
 ;
 }
@@ -99,9 +99,9 @@ variableNames.add("pi");
 variableNames.add("π");
 variableNames.add("e");
 variableNames.add("φ");
-Iterator<String> _e5ae1ce12cf24849213ddd4b23fe479f = variableNames.iterator();
-while (_e5ae1ce12cf24849213ddd4b23fe479f.hasNext()) {
-String var = _e5ae1ce12cf24849213ddd4b23fe479f.next();
+Iterator<String> _41f11f602832c11e215a32630c6fa626 = executionFlow.util.IteratorExtractor.extractIterator(variableNames).iterator();
+while (_41f11f602832c11e215a32630c6fa626.hasNext()) {
+String var = _41f11f602832c11e215a32630c6fa626.next();
 if (Functions.getBuiltinFunction(var) != null || userFunctions.containsKey(var)) {
 throw new IllegalArgumentException("A variable can not have the same name as a function [" + var + "]");
 }

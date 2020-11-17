@@ -645,12 +645,14 @@ public class CodeCleaner {
 					type = primitivesToObject(type);
 				}
 				
-				if (isArrayVar(setName, i)) {
-					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = java.util.Arrays.asList(" + setName + ").iterator(); " + itName + " .hasNext(); ) {");
-				}
-				else {
-					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = " + setName + ".iterator(); " + itName + ".hasNext(); ) {");
-				}
+//				if (isArrayVar(setName, i)) {
+//					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = java.util.Arrays.asList(" + setName + ").iterator(); " + itName + " .hasNext(); ) {");
+//				}
+//				else {
+//					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = " + setName + ".iterator(); " + itName + ".hasNext(); ) {");
+//				}
+				
+				processedCode.set(i, "for (java.util.Iterator<" + type + "> " + itName + " = executionFlow.util.IteratorExtractor.extractIterator(" + setName + "); " + itName + ".hasNext(); ) {");
 				
 				processedCode.add(i+1, type + " " + varName + " = " + itName + ".next();");
 				
