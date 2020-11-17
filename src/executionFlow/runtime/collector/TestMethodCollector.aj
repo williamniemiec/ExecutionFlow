@@ -40,7 +40,7 @@ import executionFlow.util.Logger.Level;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.1
+ * @version		5.2.2
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -355,7 +355,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			    		return;
 			    	
 		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		    		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
+		    		Session session = new Session("session", ExecutionFlow.getCurrentProjectRoot().toFile());
 		    		
 		    		
 		    		if (JUnit4Runner.isRunning()) {
@@ -383,7 +383,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 					if (mcti.exists())
 						while (!mcti.delete());
 					
-					session.destroy();
+					//session.destroy();
 			    }
 			});
 		}
@@ -490,6 +490,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		checkpoint_appRunning.enable();
 		
+		session.destroy(); // Removes last session
 		session.save("LOG_LEVEL", logLevel);
 	}
 	

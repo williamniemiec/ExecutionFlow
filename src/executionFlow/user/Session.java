@@ -64,10 +64,12 @@ public class Session
 			sessionFile.delete();			
 		}
 		
+		sessionFile.createNewFile();
 		content.put(key, value);
-
+		
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(sessionFile))) {
 			oos.writeObject(content);
+			oos.flush();
 		}
 	}
 
