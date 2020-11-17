@@ -259,7 +259,7 @@ public class TestMethodFileProcessor extends FileProcessor
 			line = removeInlineComment(line);
 			
 			if (!(line.matches(REGEX_COMMENT_FULL_LINE) || line.isBlank())) {
-				line = parseTestAnnotation(line);
+				line = parseClassDeclaration(line);
 				line = parsePrints(line);
 				line = parseMultilineArgs(line, lines, i);
 			}
@@ -281,19 +281,27 @@ public class TestMethodFileProcessor extends FileProcessor
 	}
 	
 	/**
-	 * Adds {@link executionFlow.runtime._SkipInvoked} annotation next to 
-	 * 'Test' annotation.
+	 * Adds {@link executionFlow.runtime.SkipCollection} annotation next to 
+	 * class declarations.
 	 * 
 	 * @param		line Line to be analyzed
 	 * 
-	 * @return		Line with {@link executionFlow.runtime._SkipInvoked} if it
-	 * has 'Test' annotation. Otherwise, it returns the line sent by parameter
+	 * @return		Line with {@link executionFlow.runtime.SkipCollection} if it
+	 * contains a class declaration. Otherwise, it returns the line sent by 
+	 * parameter
 	 */
-	private String parseTestAnnotation(String line) 
+	private String parseClassDeclaration(String line) 
 	{
-		if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-			line += " @executionFlow.runtime._SkipInvoked";
+		String skipCollectionAnnotation = "@executionFlow.runtime.SkipCollection";
+		boolean isClassDeclaration = line.contains("class ") && !line.contains("new ");
+		
+		
+		if (isClassDeclaration && !line.contains(skipCollectionAnnotation)) {
+			line =  skipCollectionAnnotation + " " + line;
 		}
+//		if (line.contains("@Test") || line.contains("@org.junit.Test")) {
+//			line += " @executionFlow.runtime._SkipInvoked";
+//		}
 		
 		return line;
 	}
