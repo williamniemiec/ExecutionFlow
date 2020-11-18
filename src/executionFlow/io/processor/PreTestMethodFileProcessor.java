@@ -520,7 +520,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				if (curlyBracketBalance_currentTestMethod != null) {
 					curlyBracketBalance_currentTestMethod.parse(line);
 				}
-				else if (line.matches(REGEX_METHOD_DECLARATION) ) {//&& 
+				else if (line.matches(REGEX_METHOD_DECLARATION) ) {
 					curlyBracketBalance_currentTestMethod = new CurlyBracketBalance();
 					curlyBracketBalance_currentTestMethod.parse(line);
 					isSelectedTestMethod = extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature);
@@ -905,7 +905,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * stop if an assert fails.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		4.0.0
+	 * @version		5.2.2
 	 * @since 		2.0.0
 	 */
 	private class AssertParser
@@ -937,6 +937,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		{
 			int lastCurlyBracketInSameLine = line.lastIndexOf("}");
 			String varname = DataUtil.generateVarName();
+			int idxLastSemicolon = line.lastIndexOf(';');
 			
 			
 			// Checks if it is within a multiline assert
@@ -945,7 +946,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				
 				if (roundBracketsBalance == 0) {
 					inAssert = false;
-					endOfAssert = line.lastIndexOf(';') + 1;
+					endOfAssert = idxLastSemicolon + 1;
 					
 					if (lastCurlyBracketInSameLine != -1) {
 						line = line.substring(0, lastCurlyBracketInSameLine) 
@@ -974,6 +975,9 @@ public class PreTestMethodFileProcessor extends FileProcessor
 					// There is no comment next to the line
 					if (commentStart == -1)
 						if (lastCurlyBracketInSameLine != -1) {
+							if ((idxLastSemicolon) > lastCurlyBracketInSameLine)
+								lastCurlyBracketInSameLine = idxLastSemicolon;
+							
 							line = "try {" + line.substring(0, lastCurlyBracketInSameLine) + "} "
 								+ "catch(" + catchType + " " + varname + "){" + try_catch_message + "}}";
 						}
