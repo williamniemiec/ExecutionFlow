@@ -66,7 +66,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private FilesManager testMethodManager;
 	private FileManager testMethodFileManager;
 	private boolean isRepeatedTest;
-	private boolean skipTestMethod;
+	private static boolean skipTestMethod;
 	private volatile static boolean success;
 	
 	
@@ -125,6 +125,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{	
+		if (skipTestMethod) {
+			return;
+		}
+		
 		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
 			Logger.error("Development mode is off even in a development environment. "
 					+ "Turn it on in the ExecutionFlow class");
@@ -172,7 +176,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 		} 
 		catch (IOException e) {
 			Logger.error(e.getMessage());
-			restoreTestMethodFiles();
+			
+			testMethodManager.restoreAll();
+			deleteTestMethodBackupFiles();
+			disableCheckpoint(checkpoint);
+			reset();
+			
 			skipTestMethod = true;
 		}
 	}
@@ -623,7 +632,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		try {
 			if (ExecutionFlow.getTestMethodManager().load())
-				ExecutionFlow.getTestMethodManager().restoreAll();	
+				ExecutionFlow.getTestMethodManager().restoreAll();
 		} 
 		catch (ClassNotFoundException e) {
 			hasError = true;
