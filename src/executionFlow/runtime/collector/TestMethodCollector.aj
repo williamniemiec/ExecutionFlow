@@ -2,6 +2,7 @@ package executionFlow.runtime.collector;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private FilesManager testMethodManager;
 	private FileManager testMethodFileManager;
 	private boolean isRepeatedTest;
+	private boolean skipTestMethod;
 	private volatile static boolean success;
 	
 	
@@ -83,6 +85,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Intercepts JUnit 4 test methods.
 	 */
 	pointcut junit4():
+		!skipAnnotation() &&
 		!junit4_internal() && 
 		execution(@org.junit.Test * *.*());
 	
@@ -90,6 +93,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Intercepts JUnit 4 test methods.
 	 */
 	pointcut junit5():
+		!skipAnnotation() &&
 		!junit5_internal() && (
 			execution(@org.junit.jupiter.api.Test * *.*()) ||
 			execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
@@ -121,6 +125,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{	
+		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
+			Logger.error("Development mode is off even in a development environment. "
+					+ "Turn it on in the ExecutionFlow class");
+			System.exit(-1);
+		}
+		
 		// Prevents repeated tests from being performed more than once
 		if (finished && isRepeatedTest && 
 				!thisJoinPoint.getSignature().toString().equals(lastRepeatedTestSignature)) {
@@ -149,13 +159,21 @@ public aspect TestMethodCollector extends RuntimeCollector
 			onFirstRun();
 			setLogLevel();
 			clean();
-			processTestMethod();
 		} 
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());
 			e.printStackTrace();
 			
 			System.exit(-1);	// Stops execution if a problem occurs
+		}
+		
+		try {
+			processTestMethod();
+		} 
+		catch (IOException e) {
+			Logger.error(e.getMessage());
+			restoreTestMethodFiles();
+			skipTestMethod = true;
 		}
 	}
 	
@@ -164,6 +182,11 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	after(): testMethodCollector() 
 	{
+		if (skipTestMethod) {
+			skipTestMethod = false;
+			return;
+		}
+		
 		if (finished)
 			return;
 		
@@ -382,6 +405,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 					
 					if (mcti.exists())
 						while (!mcti.delete());
+					
+					finished = true;
 					
 					//session.destroy();
 			    }
