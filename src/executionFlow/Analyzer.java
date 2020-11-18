@@ -181,7 +181,8 @@ public class Analyzer
 	 * @return		Itself to allow chained calls
 	 * 
 	 * @throws		IOException If an error occurs while reading the output 
-	 * @throws		IllegalStateException If JDB has not been initialized
+	 * @throws		IllegalStateException If JDB has not been initialized or 
+	 * if invocation line is incorrect
 	 */
 	public Analyzer run() throws IOException 
 	{
@@ -287,6 +288,7 @@ public class Analyzer
 		catch (IOException e) {
 			// Exits jdb
 			try {
+				Clock.clearTimeout(TIMEOUT_ID);
 				jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
 				jdb.quit();
 			}
@@ -362,12 +364,12 @@ public class Analyzer
 	 * 
 	 * @return		If JDB is ready to receive commands.
 	 * 
-	 * @throws		IOException If it cannot read JDB output
+	 * @throws		IllegalStateException If invocation line is incorrect
 	 * 
 	 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
 	 * output on the console
 	 */
-	private boolean parseOutput() throws IOException
+	private boolean parseOutput() throws IllegalStateException
 	{
 		// TODO This method should be refactored
 		
@@ -392,7 +394,7 @@ public class Analyzer
         	if (line.contains("Stopping due to deferred breakpoint errors")) {
         		jdb.quit();
         		
-        		throw new IOException("Incorrect invocation line {invocationLine: " 
+        		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 
     					+ invocationLine + ", test method signature: "
         				+ testMethodSignature + ")" + ", invokedSignature: " 
     					+ invokedSignature + "}"
@@ -406,6 +408,12 @@ public class Analyzer
         	
         	if (isEmptyLine(line) || line.matches(REGEX_EMPTY_OUTPUT)) {
         		return false;
+        	}
+        	
+        	if (line.contains("The application exited")) {
+        		endOfMethod = true;
+        		exitMethod = false;
+        		return true;
         	}
         	
         	// -----{ DEBUG }-----

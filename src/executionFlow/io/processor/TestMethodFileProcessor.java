@@ -292,11 +292,12 @@ public class TestMethodFileProcessor extends FileProcessor
 	 */
 	private String parseClassDeclaration(String line) 
 	{
+		final String REGEX_SKIP_COLLECTION = ".*(@.+\\.SkipCollection).*";
 		String skipCollectionAnnotation = "@executionFlow.runtime.SkipCollection";
 		boolean isClassDeclaration = line.contains("class ") && !line.contains("new ");
 		
 		
-		if (isClassDeclaration && !line.contains(skipCollectionAnnotation)) {
+		if (isClassDeclaration && !line.matches(REGEX_SKIP_COLLECTION)) {
 			line =  skipCollectionAnnotation + " " + line;
 		}
 //		if (line.contains("@Test") || line.contains("@org.junit.Test")) {

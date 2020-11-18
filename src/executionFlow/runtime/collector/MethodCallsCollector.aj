@@ -42,7 +42,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 * {@link @executionFlow.runtime._SkipInvoked} annotation.
 	 */
 	pointcut invokedSignature(): 
-		!within(@executionFlow.runtime.SkipCollection *) &&
+		!skipAnnotation() &&
 		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
 		cflow(execution(@executionFlow.runtime._SkipInvoked * *.*(..))) && 
 		(junit4() || junit5()) &&
@@ -74,6 +74,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 * {@link @executionFlow.runtime.CollectCalls} annotation.
 	 */
 	pointcut invokedMethodsByTestedInvoker():
+		!skipAnnotation() &&
 		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
 		!get(* *.*) && !set(* *.*) && 
 		// Within a constructor

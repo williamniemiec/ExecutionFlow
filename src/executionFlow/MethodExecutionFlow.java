@@ -129,7 +129,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 		
 		boolean gotoNextLine = false;
 		List<List<Integer>> tp;
-		FileManager methodFileManager, testMethodFileManager;
+		FileManager methodFileManager;
+		FileManager testMethodFileManager;
 		
 		
 		// Generates test path for each collected method
@@ -185,9 +186,21 @@ public class MethodExecutionFlow extends ExecutionFlow
 				catch (InterruptedByTimeoutException e1) {
 					Logger.error("Time exceeded");
 				} 
-				catch (IOException e2) {
+				catch (IllegalStateException e2) {
 					Logger.error(e2.getMessage());
-					e2.printStackTrace();
+				}
+				catch (IOException e3) {
+					Logger.error(e3.getMessage());
+					
+					try {
+						methodFileManager.revertCompilation();
+						methodFileManager.revertParse();
+						testMethodFileManager.revertCompilation();
+						testMethodFileManager.revertParse();
+					} 
+					catch (IOException e) {
+						Logger.error("An error occurred while restoring the original files - " + e.getMessage());
+					}
 				}
 			}
 		}

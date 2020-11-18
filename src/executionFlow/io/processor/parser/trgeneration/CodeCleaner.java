@@ -652,7 +652,9 @@ public class CodeCleaner {
 //					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = " + setName + ".iterator(); " + itName + ".hasNext(); ) {");
 //				}
 				
-				processedCode.set(i, "for (java.util.Iterator<" + type + "> " + itName + " = executionFlow.util.IteratorExtractor.extractIterator(" + setName + "); " + itName + ".hasNext(); ) {");
+				processedCode.set(i, "for (java.util.Iterator<" + type + "> " + itName + 
+						" = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(" + setName + "); " + 
+						itName + ".hasNext(); ) {");
 				
 				processedCode.add(i+1, type + " " + varName + " = " + itName + ".next();");
 				

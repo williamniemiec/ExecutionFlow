@@ -21,7 +21,7 @@ import executionFlow.info.MethodInvokedInfo;
  * {@link executionFlow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.2
  * @since		1.0
  */
 public abstract aspect RuntimeCollector 
@@ -173,7 +173,8 @@ public abstract aspect RuntimeCollector
 	 */
 	protected boolean isTestMethodConstructor(String constructorSignature)
 	{
-		if (constructorSignature == null) { return true; }
+		if ((constructorSignature == null) || (testMethodSignature == null))
+			return true;
 		
 		String testMethodClassName, methodName;
 		String[] tmp;

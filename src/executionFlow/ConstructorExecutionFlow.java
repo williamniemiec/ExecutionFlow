@@ -124,7 +124,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		Logger.debug("ConstructorExecutionFlow", "collector: " + constructorCollector.toString());
 		// -----{ END DEBUG }-----
 		
-		FileManager constructorFileManager, testMethodFileManager;
+		FileManager constructorFileManager;
+		FileManager testMethodFileManager;
 		
 		
 		// Generates test path for each collected method
@@ -159,9 +160,21 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			catch (InterruptedByTimeoutException e1) {
 				Logger.error("Time exceeded");
 			} 
-			catch (IOException e2) {
+			catch (IllegalStateException e2) {
 				Logger.error(e2.getMessage());
-				e2.printStackTrace();
+			}
+			catch (IOException e3) {
+				Logger.error(e3.getMessage());
+				
+				try {
+					constructorFileManager.revertCompilation();
+					constructorFileManager.revertParse();
+					testMethodFileManager.revertCompilation();
+					testMethodFileManager.revertParse();
+				} 
+				catch (IOException e) {
+					Logger.error("An error occurred while restoring the original files - " + e.getMessage());
+				}
 			}
 			
 			updateCollectorInvocationLines(

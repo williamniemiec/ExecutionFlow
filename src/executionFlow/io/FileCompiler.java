@@ -1,6 +1,7 @@
 package executionFlow.io;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.aspectj.bridge.IMessage;
@@ -8,6 +9,7 @@ import org.aspectj.bridge.MessageHandler;
 import org.aspectj.tools.ajc.Main;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.LibraryManager;
 import executionFlow.util.Logger;
 
 
@@ -38,9 +40,10 @@ public class FileCompiler
 	{
 		Main compiler = new Main();
 		MessageHandler m = new MessageHandler();
-		String appRootPath = ExecutionFlow.getAppRootPath().toString();
+		Path appRootPath = ExecutionFlow.getAppRootPath();
 		String aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
 				appRootPath + "\\bin\\executionFlow\\runtime" : appRootPath + "\\executionFlow\\runtime";
+		boolean error = false;
 		
 		
 		compiler.run(
@@ -52,11 +55,11 @@ public class FileCompiler
 				encode.getName(),
 				"-classpath", 
 						System.getProperty("java.class.path") + ";" +
-						appRootPath + "\\lib\\aspectjrt.jar;" +
-						appRootPath + "\\lib\\junit-4.13.jar;" +
-						appRootPath + "\\lib\\hamcrest-all-1.3.jar;" +
-						appRootPath + "\\lib\\junit-jupiter-api-5.6.2.jar;" +
-						appRootPath + "\\lib\\junit-jupiter-params-5.6.2.jar;",
+						LibraryManager.getLibrary("JUNIT_4") + ";" +
+						LibraryManager.getLibrary("HAMCREST") + ";" +
+						LibraryManager.getLibrary("ASPECTJRT") + ";" +
+						LibraryManager.getLibrary("JUNIT_5_API") + ";" +
+						LibraryManager.getLibrary("JUNIT_5_PARAMS") + ";",
 				"-d", 
 				outputDir.toAbsolutePath().toString(), 
 				target.toAbsolutePath().toString()
@@ -64,18 +67,20 @@ public class FileCompiler
 		
 		compiler.quit();
 		
-		// -----{ DEBUG }-----
-		if (Logger.getLevel() == Logger.Level.DEBUG) {
-			IMessage[] ms = m.getMessages(null, true);
+		IMessage[] ms = m.getMessages(null, true);
+		
+		Logger.debug("FileCompilator", "start");
+		
+		for (var msg : ms) {
+			if (msg.toString().contains("error at"))
+				error = true;
 			
-			Logger.debug("FileCompilator", "start");
-			
-			for (var msg : ms) {
-				Logger.debug(msg.toString());
-			}
-			
-			Logger.debug("FileCompilator", "Output dir: " + outputDir.toAbsolutePath().toString());
+			Logger.debug(msg.toString());
 		}
-		// -----{ END DEBUG }----
+		
+		Logger.debug("FileCompilator", "Output dir: " + outputDir.toAbsolutePath().toString());
+		
+		if (error)
+			throw new IOException("Compilation error. Check the log for more information");
 	}
 }
