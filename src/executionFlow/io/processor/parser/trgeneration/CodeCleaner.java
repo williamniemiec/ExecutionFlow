@@ -520,6 +520,7 @@ public class CodeCleaner {
 				String REGEX_MULTI_INITILIZATION = "^.+(=.+,.+).+;$";
 				int depth = loopsClosingLines.size();
 				int closingLine = Helper.findEndOfBlock(processedCode, i+3);
+				
 				// Move the initialization before the loop
 				mapping.put(i+depth, Helper.initArray(i));
 				int idx = processedCode.get(i).indexOf("(");
@@ -553,8 +554,10 @@ public class CodeCleaner {
 							break;
 						}
 					}
+					
+					multiVarInline.clear();
 				}
-				else if (initVariables.contains(varLabel) && isVarDeclaration) {
+				else if (isVarDeclaration && initVariables.contains(varLabel)) {
 					initVar = initVar.substring(initVar.indexOf(" ")+1);
 				}
 				
