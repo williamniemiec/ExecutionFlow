@@ -5,7 +5,6 @@ import java.nio.channels.InterruptedByTimeoutException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import executionFlow.exporter.file.ProcessedSourceFileExporter;
@@ -31,7 +30,7 @@ import executionFlow.util.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.2
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
@@ -136,7 +135,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				collector.getConstructorInfo().getSrcPath(), 
 				collector.getConstructorInfo().getClassDirectory(),
 				collector.getConstructorInfo().getPackage(),
-				new InvokedFileProcessorFactory()
+				new InvokedFileProcessorFactory(),
+				"invoked.bkp"
 			);
 			
 			// Gets FileManager for test method file
@@ -145,7 +145,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 				collector.getTestMethodInfo().getSrcPath(), 
 				collector.getTestMethodInfo().getClassDirectory(),
 				collector.getTestMethodInfo().getPackage(),
-				new TestMethodFileProcessorFactory()
+				new TestMethodFileProcessorFactory(),
+				"testMethod.bkp"
 			);
 			
 			try {

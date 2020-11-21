@@ -3,6 +3,7 @@ package executionFlow;
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ import executionFlow.util.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.2
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -129,6 +130,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 		
 		boolean gotoNextLine = false;
 		List<List<Integer>> tp;
+		List<FileManager> methodFileManagers = new ArrayList<>();
 		FileManager methodFileManager;
 		FileManager testMethodFileManager;
 		
@@ -148,7 +150,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
-					new InvokedFileProcessorFactory()
+					new InvokedFileProcessorFactory(),
+					"invoked.bkp"
 				);
 
 				// Gets FileManager for test method file
@@ -157,8 +160,11 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getTestMethodInfo().getSrcPath(), 
 					collector.getTestMethodInfo().getClassDirectory(),
 					collector.getTestMethodInfo().getPackage(),
-					new TestMethodFileProcessorFactory()
+					new TestMethodFileProcessorFactory(),
+					"testMethod.bkp"
 				);
+				
+				methodFileManagers.add(methodFileManager);
 				
 				try {
 					tp = run(
@@ -192,22 +198,35 @@ public class MethodExecutionFlow extends ExecutionFlow
 				catch (IOException e3) {
 					Logger.error(e3.getMessage());
 					
-					try {
-						methodFileManager.revertCompilation();
-						methodFileManager.revertParse();
-						testMethodFileManager.revertCompilation();
-						testMethodFileManager.revertParse();
-					} 
-					catch (IOException e) {
-						Logger.error("An error occurred while restoring the original files - " + e.getMessage());
-					}
+					restoreOriginalFiles(methodFileManager);
+					restoreOriginalFiles(testMethodFileManager);
 				}
 			}
+		}
+		
+		for (FileManager fm : methodFileManagers) {			
+			restoreOriginalFiles(fm);
 		}
 		
 		return this;
 	}
 	
+	/**
+	 * Restores original files, displaying an error message if an error occurs.
+	 * 
+	 * @param		fm File manager
+	 */
+	private void restoreOriginalFiles(FileManager fm) 
+	{
+		try {
+			fm.revertCompilation();
+			fm.revertParse();
+		} 
+		catch (IOException e) {
+			Logger.error("An error occurred while restoring the original files - " + e.getMessage());
+		}
+	}
+
 	/**
 	 * Updates the invocation line of method collector based on a mapping.
 	 * 
