@@ -300,9 +300,6 @@ public class TestMethodFileProcessor extends FileProcessor
 		if (isClassDeclaration && !line.matches(REGEX_SKIP_COLLECTION)) {
 			line =  skipCollectionAnnotation + " " + line;
 		}
-//		if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-//			line += " @executionFlow.runtime._SkipInvoked";
-//		}
 		
 		return line;
 	}
@@ -320,7 +317,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	private String parseMultilineArgs(String currentLine, List<String> lines, int currentIndex) 
 	{
 		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
-		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)]+;[\\s\\t]*$";
+		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)}]+;[\\s\\t]*$";
 		
 		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
 		
