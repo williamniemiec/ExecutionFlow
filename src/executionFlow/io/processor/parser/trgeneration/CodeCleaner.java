@@ -134,13 +134,13 @@ public class CodeCleaner {
 		}
 	}
 	
-	private void eliminateComments() {		
+	private void eliminateComments() {
+		final String REGEX_LINE_COMMENT = "^(([\\s\\t]*\\/\\/.*)|.*\\/\\/[^;]+)$";
+		
 		for (int i=0; i<processedCode.size(); i++) {
 			processedCode.set(i, removeMultiSingleLineComment(processedCode.get(i)));
 
-//			int idxSingle = Helper.getIndexOfReservedSymbol(processedCode.get(i), "//");
-			int idxSingle = processedCode.get(i).indexOf("//");
-//			int idxMulti = processedCode.get(i).indexOf("//");
+			int idxSingle = processedCode.get(i).matches(REGEX_LINE_COMMENT) ? processedCode.get(i).indexOf("//") : -1;
 			int idxMulti = Helper.getIndexOfReservedSymbol(processedCode.get(i), "/\\*"); 
 			int idx = (idxSingle >= 0 && idxMulti >= 0) ? 
 					Math.min(idxSingle, idxMulti) : Math.max(idxSingle, idxMulti);
@@ -507,50 +507,68 @@ public class CodeCleaner {
 	
 	//turn for loops into while loops
 	private void convertForToWhile() {
-//		final String REGEX_METHOD_DECLARATION = 
-//				"^.*[\\s\\t]+((?!new)[A-z0-9\\_\\<\\>\\,\\[\\]\\.\\$])+[\\s\\t]+([A-z0-9\\_\\$]+)[\\s\\t]*\\(.*\\).*$";
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		List<Integer> loopsClosingLines = new ArrayList<Integer>();
 		List<Pair<String, CurlyBracketBalance>> cbb = new ArrayList<>(); // Stack of pair(variable, curly bracket balance)
 		Set<String> initVariables = new HashSet<>();
+		List<String> multiVarInline = new ArrayList<>();
 		
 		
 		for (int i=0; i<processedCode.size(); i++) {
-			// Updates the scope visibility of variables already initialized
-			
-//			if (processedCode.get(i).matches(REGEX_METHOD_DECLARATION)) {
-//				initVariables = new HashSet<>();
-//			}
-			
+			// Updates the scope visibility of variables already initialized		
 			if (processedCode.get(i).matches("^for.+$")) {
+				String REGEX_MULTI_INITILIZATION = "^.+(=.+,.+).+;$";
 				int depth = loopsClosingLines.size();
 				int closingLine = Helper.findEndOfBlock(processedCode, i+3);
-				
 				// Move the initialization before the loop
 				mapping.put(i+depth, Helper.initArray(i));
 				int idx = processedCode.get(i).indexOf("(");
 				String initVar = processedCode.get(i).substring(idx+1);
-				String varLabel = initVar.contains(" ") ? initVar.split("\\s")[1] : initVar;
+				boolean isVarDeclaration = initVar.matches("[\\s\\t]*([^\\s\\t]+)[\\s\\t]+([^\\s\\t]+)[\\s\\t]*=.+");
+				String varLabel;
+
 				
+				if (isVarDeclaration) {
+					varLabel = initVar.contains(" ") ? initVar.split("\\s")[1] : initVar;
+				}
+				else {
+					varLabel = initVar.contains(" ") ? initVar.split("\\s")[0] : initVar;
+				}
 				
+				if (initVar.matches(REGEX_MULTI_INITILIZATION)) {
+					Matcher m = Pattern.compile("[A-z$_0-9]+[\\s\\t]*=[\\s\\t]*").matcher(initVar);
 					
-//					cbb.peek().second.parse(processedCode.get(i));
-//					
-//					if (cbb.peek().second.getBalance() < 0) {
-//						initVariables.remove(cbb.peek().first);
-//						cbb.pop();
-//					}
-//				System.out.println("l: "+processedCode.get(i));
-//				System.out.println("bef: "+cbb);
+					while (m.find()) {
+						String varName = m.group().split("=")[0].trim();
+						
+						multiVarInline.add(varName);
+					}
+				}
+				
 				// Checks whether the variable has already been initialized
-				if (initVariables.contains(varLabel)) {
+				if (multiVarInline.size() > 1) {
+					for (String varname : multiVarInline) {
+						if (initVariables.contains(varname)) {
+							initVar = initVar.substring(initVar.indexOf(" ")+1).replaceAll(",", ";");
+							break;
+						}
+					}
+				}
+				else if (initVariables.contains(varLabel) && isVarDeclaration) {
 					initVar = initVar.substring(initVar.indexOf(" ")+1);
+				}
+				
+				if (multiVarInline.size() > 0) {
+					for (String varname : multiVarInline) {
+						initVariables.add(varname);
+						cbb.add(Pair.of(varname, new CurlyBracketBalance()));
+					}
 				}
 				else {
 					initVariables.add(varLabel);
 					cbb.add(Pair.of(varLabel, new CurlyBracketBalance()));
 				}
-//				System.out.println("af: "+cbb);
+				
 				
 				processedCode.add(i, "%forcenode%" + initVar);
 				i++; //adjust for insertion
