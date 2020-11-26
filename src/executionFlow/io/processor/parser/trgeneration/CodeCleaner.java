@@ -528,7 +528,7 @@ public class CodeCleaner {
 				boolean isVarDeclaration = initVar.matches("[\\s\\t]*([^\\s\\t]+)[\\s\\t]+([^\\s\\t]+)[\\s\\t]*=.+");
 				String varLabel;
 
-				
+
 				if (isVarDeclaration) {
 					varLabel = initVar.contains(" ") ? initVar.split("\\s")[1] : initVar;
 				}
@@ -537,12 +537,17 @@ public class CodeCleaner {
 				}
 				
 				if (initVar.matches(REGEX_MULTI_INITILIZATION)) {
-					Matcher m = Pattern.compile("[A-z$_0-9]+[\\s\\t]*=[\\s\\t]*").matcher(initVar);
+					Matcher m = Pattern.compile("[A-z$_0-9]+[\\s\\t]*=[^;]+").matcher(initVar);
 					
 					while (m.find()) {
-						String varName = m.group().split("=")[0].trim();
+						String[] vars = m.group().split(",");
 						
-						multiVarInline.add(varName);
+						for (String var : vars) {
+							String varName = var.split("=")[0].trim();
+							
+			
+							multiVarInline.add(varName);
+						}
 					}
 				}
 				
@@ -572,13 +577,12 @@ public class CodeCleaner {
 					cbb.add(Pair.of(varLabel, new CurlyBracketBalance()));
 				}
 				
-				
 				processedCode.add(i, "%forcenode%" + initVar);
 				i++; //adjust for insertion
 
 				// Work with iterator step
 				idx = processedCode.get(i+2).lastIndexOf(")");
-				String iteratorStep = processedCode.get(i+2).substring(0, idx);
+				String iteratorStep = processedCode.get(i+2).substring(0, idx).replaceAll(",", ";");
 				mapping.put(i+1+depth, new ArrayList<Integer>());
 				
 				// Clone the iterator to just before any continues present in the loop				
