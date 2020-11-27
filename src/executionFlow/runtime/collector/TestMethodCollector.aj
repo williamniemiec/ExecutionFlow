@@ -387,7 +387,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			    		return;
 			    	
 		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		    		Session session = new Session("session", ExecutionFlow.getCurrentProjectRoot().toFile());
+		    		Session session = new Session("session.ef", new File(System.getProperty("user.home")));
 		    		
 		    		
 		    		if (JUnit4Runner.isRunning()) {
@@ -518,7 +518,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (checkpoint_appRunning.isActive())
 			return;
 		
-		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
+		Session session = new Session("session.ef", new File(System.getProperty("user.home")));
 		Logger.Level logLevel = askLog();
 		
 		
