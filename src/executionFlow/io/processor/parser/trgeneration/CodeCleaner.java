@@ -657,6 +657,10 @@ public class CodeCleaner {
 		for (int i=0; i<processedCode.size(); i++) {			
 			if (processedCode.get(i).matches("^for.+$")
 					&& Helper.lineContainsReservedChar(processedCode.get(i), ":")) {
+				if (processedCode.get(i).contains("final ")) {
+					processedCode.set(i, processedCode.get(i).replace("final ", ""));
+				}
+				
 				List<String> forEachInformation = extractForEachInfo(processedCode.get(i));
 				String type = forEachInformation.get(0);
 				String varName = forEachInformation.get(1);
