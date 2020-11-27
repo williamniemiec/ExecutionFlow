@@ -365,11 +365,12 @@ public class Analyzer
 	 * @return		If JDB is ready to receive commands.
 	 * 
 	 * @throws		IllegalStateException If invocation line is incorrect
+	 * @throws		IOException If an internal error occurs while running JDB
 	 * 
 	 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
 	 * output on the console
 	 */
-	private boolean parseOutput() throws IllegalStateException
+	private boolean parseOutput() throws IOException, IllegalStateException
 	{
 		// TODO This method should be refactored
 		
@@ -379,7 +380,7 @@ public class Analyzer
 		final String REGEX_EMPTY_OUTPUT = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
 		int currentLine = -1;
 		String line, srcLine = null;
-		
+
 
 		if (!jdb.isReady()) {
 			try {
@@ -401,9 +402,8 @@ public class Analyzer
 				);
         	}
         	
-        	if (line.contains("[INFO]") || line.contains("Exception occurred")) {
-				Logger.error("Error while running JDB");
-				System.exit(-1);
+        	if (checkForInternalError(line)) {
+				throw new IOException("Error while running JDB");
 			}
         	
         	if (isEmptyLine(line) || line.matches(REGEX_EMPTY_OUTPUT)) {
@@ -619,6 +619,13 @@ public class Analyzer
 		return readyToReadInput;
 	}
 	
+	private boolean checkForInternalError(String line) 
+	{
+		return	line.contains("[INFO]") || 
+				line.contains("Exception occurred") || 
+				line.contains("Input stream closed.");
+	}
+
 	/**
 	 * Reads all available output.
 	 * 
