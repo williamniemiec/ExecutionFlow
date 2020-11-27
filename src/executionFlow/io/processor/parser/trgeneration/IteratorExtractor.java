@@ -7,6 +7,17 @@ import java.util.Iterator;
 
 public class IteratorExtractor
 {
+	@SuppressWarnings("unchecked")
+	public static <T> Iterator<T> extractIterator(T... l)
+	{
+		ArrayList<T> list = new ArrayList<>();
+		
+		for (T e : l)
+			list.add(e);
+		
+		return list.iterator();
+	}
+	
 	public static <T> Iterator<T> extractIterator(Collection<T> l)
 	{
 		return l.iterator();
