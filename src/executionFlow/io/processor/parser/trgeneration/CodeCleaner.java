@@ -74,7 +74,7 @@ public class CodeCleaner {
 		eliminateComments();
 		if (debug) System.out.println("CLEANUP: Eliminated comments");
 		trimLines();
-//		eliminateAnnotations();
+		eliminateAnnotations();
 		if (debug) System.out.println("CLEANUP: Eliminated annotations");
 		trimLines();
 		removeBlankLines();
@@ -194,7 +194,10 @@ public class CodeCleaner {
 	
 	private void eliminateAnnotations() {
 		for (int i=0; i<processedCode.size(); i++) {
-			if (processedCode.get(i).matches("^@.*")) {
+			boolean executionFlowAnnotation = processedCode.get(i).contains("executionFlow.");
+			boolean testAnnotation = processedCode.get(i).contains("Test");
+			
+			if (processedCode.get(i).matches("^@.*") && !executionFlowAnnotation && !testAnnotation) {
 				processedCode.set(i, "");
 			}
 		}		
