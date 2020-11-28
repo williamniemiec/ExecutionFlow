@@ -665,7 +665,10 @@ public class Analyzer
 		if (line == null || line.isEmpty() || !line.contains(","))
 			return -1;
 		
-		return Integer.valueOf(line.split(",")[2].split("=")[1].split(" ")[0].trim());
+		String lineNumber = line.split(",")[2].split("=")[1].split(" ")[0].trim();
+		lineNumber = lineNumber.replaceAll("\\.", "");
+		
+		return Integer.valueOf(lineNumber);
 	}
 	
 	/**
