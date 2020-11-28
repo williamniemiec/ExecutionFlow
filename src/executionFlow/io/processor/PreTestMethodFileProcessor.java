@@ -297,6 +297,9 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		AnnotationParser annotationParser = testMethodArgs == null ? 
 				new AnnotationParser(testMethodSignature) : 
 				new AnnotationParser(testMethodSignature, testMethodArgs);
+		boolean belongsToThePreviousLineVariable;
+		boolean insideBody;
+		String previousLine;
 
 		
 		// If an output directory is specified, processed file will be saved to it
@@ -313,6 +316,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		// Parses file line by line
 		for (int i=0; i<totLines; i++) {
 			line = lines.get(i);
+			previousLine = (i > 0) ? lines.get(i-1) : "";
+			
+			belongsToThePreviousLineVariable = previousLine.matches(".+=[\\s\\t]*$");
+			insideBody = previousLine.matches(".+\\{[\\s\\t]*$");
 			
 			// Checks if it is multiline comment
 			if (line.contains("/*") && !line.contains("*/")) {
@@ -324,7 +331,8 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			}
 			else {
 				// Process the line
-				if (!line.matches(REGEX_COMMENT_FULL_LINE)  && !insideMultilineComment) {
+				if (!line.matches(REGEX_COMMENT_FULL_LINE)  && 
+						!insideMultilineComment && !belongsToThePreviousLineVariable && !insideBody) {
 					line = assertParser.parse(line);
 					line = annotationParser.parse(line);
 				}
@@ -973,29 +981,28 @@ public class PreTestMethodFileProcessor extends FileProcessor
 						commentStart = line.indexOf("*/");
 					
 					// There is no comment next to the line
-					if (commentStart == -1)
+					if (commentStart == -1) {
 						if (lastCurlyBracketInSameLine != -1) {
 							if ((idxLastSemicolon) > lastCurlyBracketInSameLine)
 								lastCurlyBracketInSameLine = idxLastSemicolon;
 							
-							line = "try {" + line.substring(0, lastCurlyBracketInSameLine) + "} "
-								+ "catch(" + catchType + " " + varname + "){" + try_catch_message + "}}";
+							line = "try {" + line.substring(0, lastCurlyBracketInSameLine+1) + "} "
+								+ "catch(" + catchType + " " + varname + "){" + try_catch_message + "}";
 						}
 						else {
 							line = "try {" + line + "} "
 								+ "catch(" + catchType + " " + varname + "){" + try_catch_message + "}";
 						}
+					}
 					// There is a comment next to the line
 					else {
 						if (lastCurlyBracketInSameLine != -1) {
-							line = "try {" + line.substring(0, lastCurlyBracketInSameLine)
-							+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}"
-							+ line.substring(commentStart);
+							line = "try {" + line.substring(0, lastCurlyBracketInSameLine+1)
+							+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}";
 						}
 						else {
 							line = "try {" + line.substring(0, commentStart)
-								+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}"
-								+ line.substring(commentStart);
+								+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}";
 						}
 					}
 				}
