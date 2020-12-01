@@ -276,7 +276,7 @@ public class TestMethodFileProcessor extends FileProcessor
 
 		// Writes processed lines to a file
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
-
+		
 		return outputFile.getAbsolutePath();
 	}
 	
