@@ -14,6 +14,7 @@ import executionFlow.exporter.testpath.ConsoleExporter;
 import executionFlow.exporter.testpath.FileExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
@@ -179,13 +180,15 @@ public class MethodExecutionFlow extends ExecutionFlow
 					
 					updateCollectorInvocationLines(
 							TestMethodFileProcessor.getMapping(), 
-							collector.getTestMethodInfo().getSrcPath()
+							collector.getTestMethodInfo().getSrcPath(),
+							collector.getMethodInfo()
 					);
 					
 					if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
 						updateCollectorInvocationLines(
 								InvokedFileProcessor.getMapping(), 
-								collector.getTestMethodInfo().getSrcPath()
+								collector.getTestMethodInfo().getSrcPath(),
+								collector.getMethodInfo()
 						);
 					}
 				} 
@@ -232,8 +235,10 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * 
 	 * @param		mapping Mapping that will be used as base for the update
 	 * @param		testMethodSrcFile Test method source file
+	 * @param		currentInvokedInfo Current method info
 	 */
-	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
+	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile, 
+			InvokedInfo currentInvokedInfo)
 	{
 		int invocationLine;
 
@@ -242,6 +247,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 		// same file as the processed test method file
 		for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
 			for (CollectorInfo mc : methodCollectorList) {
+				if (mc.getMethodInfo().equals(currentInvokedInfo))
+					continue;
+				
 				invocationLine = mc.getMethodInfo().getInvocationLine();
 				
 				if (!mc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 

@@ -13,6 +13,7 @@ import executionFlow.exporter.testpath.ConsoleExporter;
 import executionFlow.exporter.testpath.FileExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
@@ -180,13 +181,15 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			
 			updateCollectorInvocationLines(
 					TestMethodFileProcessor.getMapping(), 
-					collector.getTestMethodInfo().getSrcPath()
+					collector.getTestMethodInfo().getSrcPath(),
+					collector.getConstructorInfo()
 			);
 			
 			if (collector.getConstructorInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
 				updateCollectorInvocationLines(
 						InvokedFileProcessor.getMapping(), 
-						collector.getTestMethodInfo().getSrcPath()
+						collector.getTestMethodInfo().getSrcPath(),
+						collector.getConstructorInfo()
 				);
 			}
 		}
@@ -199,14 +202,19 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * 
 	 * @param		mapping Mapping that will be used as base for the update
 	 * @param		testMethodSrcFile Test method source file
+	 * @param		currentInvokedInfo Current constructor info
 	 */
-	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
+	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile, 
+			InvokedInfo currentInvokedInfo)
 	{
 		int invocationLine;
 		
 		// Updates constructor invocation lines If it is declared in the 
 		// same file as the processed test method file
 		for (CollectorInfo cc : constructorCollector) {
+			if (cc.getConstructorInfo().equals(currentInvokedInfo))
+				continue;
+			
 			invocationLine = cc.getConstructorInfo().getInvocationLine();
 			
 			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
