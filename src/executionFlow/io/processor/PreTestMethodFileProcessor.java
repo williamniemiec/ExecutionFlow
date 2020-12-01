@@ -957,6 +957,9 @@ public class PreTestMethodFileProcessor extends FileProcessor
 					endOfAssert = idxLastSemicolon + 1;
 					
 					if (lastCurlyBracketInSameLine != -1) {
+						if ((idxLastSemicolon) > lastCurlyBracketInSameLine)
+							lastCurlyBracketInSameLine = idxLastSemicolon+1;
+						
 						line = line.substring(0, lastCurlyBracketInSameLine) 
 							+ "} catch(" + catchType + " " + varname + "){" + try_catch_message + "}"
 							+ line.substring(lastCurlyBracketInSameLine);
