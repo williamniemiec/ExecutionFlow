@@ -9,6 +9,8 @@ import java.util.Set;
 
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.MethodInvokedInfo;
+import executionFlow.io.processor.InvokedFileProcessor;
+import executionFlow.io.processor.TestMethodFileProcessor;
 
 
 /**
@@ -160,6 +162,8 @@ public abstract aspect RuntimeCollector
 		skipCollection = false;
 		lastInvocationLine = 0;
 		methodsCalledByTestedInvoked.clear();
+		TestMethodFileProcessor.clearMapping();
+		InvokedFileProcessor.clearMapping();
 	}
 	
 	/**
