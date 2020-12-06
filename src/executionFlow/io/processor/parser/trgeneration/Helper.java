@@ -114,12 +114,17 @@ public class Helper {
 		String fragment = "";
 		boolean insideQuote = false;
 		for (int i=0; i<text.length(); i++) {
+
 			if (text.charAt(i) == lookup && !insideQuote) {
 				fragments.add(fragment);
 				fragment = "";
 			} else if (text.charAt(i) == '"' && i>0 && text.charAt(i-1) != '\\') {
 				insideQuote = !insideQuote;
-			} else {
+			} else if (text.charAt(i) == '"') {
+				insideQuote = !insideQuote;
+				fragment += text.charAt(i);
+			} 
+			else {
 				fragment += text.charAt(i);
 			}
 		}
