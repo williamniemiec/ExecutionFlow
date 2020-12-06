@@ -20,7 +20,7 @@ import executionFlow.util.FileUtil;
  * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.1
+ * @version		5.2.2
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor
@@ -31,7 +31,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	private static final long serialVersionUID = 400L;
 		
 	private String fileExtension = "java";
-	private static Map<Integer, Integer> mapping;
+	private static Map<Integer, Integer> mapping = new HashMap<>();;
 	private boolean insideMultilineArgs = false;
 	private int multilineArgsStartIndex = -1;
 	
@@ -239,7 +239,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		String line;
 		List<String> lines = new ArrayList<>();
 		File outputFile;
-		
+
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -251,15 +251,13 @@ public class TestMethodFileProcessor extends FileProcessor
 		// Reads the source file and puts its lines in a list
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
-		mapping = new HashMap<>();
-		
 		// Parses file line by line
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
 			line = removeInlineComment(line);
 			
 			if (!(line.matches(REGEX_COMMENT_FULL_LINE) || line.isBlank())) {
-				line = parseTestAnnotation(line);
+				line = parseClassDeclaration(line);
 				line = parsePrints(line);
 				line = parseMultilineArgs(line, lines, i);
 			}
@@ -276,23 +274,29 @@ public class TestMethodFileProcessor extends FileProcessor
 
 		// Writes processed lines to a file
 		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
-
+		
 		return outputFile.getAbsolutePath();
 	}
 	
 	/**
-	 * Adds {@link executionFlow.runtime._SkipInvoked} annotation next to 
-	 * 'Test' annotation.
+	 * Adds {@link executionFlow.runtime.SkipCollection} annotation next to 
+	 * class declarations.
 	 * 
 	 * @param		line Line to be analyzed
 	 * 
-	 * @return		Line with {@link executionFlow.runtime._SkipInvoked} if it
-	 * has 'Test' annotation. Otherwise, it returns the line sent by parameter
+	 * @return		Line with {@link executionFlow.runtime.SkipCollection} if it
+	 * contains a class declaration. Otherwise, it returns the line sent by 
+	 * parameter
 	 */
-	private String parseTestAnnotation(String line) 
+	private String parseClassDeclaration(String line) 
 	{
-		if (line.contains("@Test") || line.contains("@org.junit.Test")) {
-			line += " @executionFlow.runtime._SkipInvoked";
+		final String REGEX_SKIP_COLLECTION = ".*(@.+\\.SkipCollection).*";
+		String skipCollectionAnnotation = "@executionFlow.runtime.SkipCollection";
+		boolean isClassDeclaration = line.contains("class ") && !line.contains("new ");
+		
+		
+		if (isClassDeclaration && !line.matches(REGEX_SKIP_COLLECTION)) {
+			line =  skipCollectionAnnotation + " " + line;
 		}
 		
 		return line;
@@ -311,7 +315,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	private String parseMultilineArgs(String currentLine, List<String> lines, int currentIndex) 
 	{
 		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
-		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)]+;[\\s\\t]*$";
+		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)}]+;[\\s\\t]*$";
 		
 		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
 		
@@ -335,8 +339,11 @@ public class TestMethodFileProcessor extends FileProcessor
 				oldLine = currentIndex+1+1;
 				newLine = currentIndex+1;
 				
-				if (nextLine.matches(REGEX_MULTILINE_ARGS_CLOSE)) {
+				if (!nextLine.matches(REGEX_MULTILINE_ARGS_CLOSE)) {
 					multilineArgsStartIndex = currentIndex;
+					insideMultilineArgs = true;
+				}
+				else {
 					insideMultilineArgs = false;
 				}
 			}
@@ -358,12 +365,14 @@ public class TestMethodFileProcessor extends FileProcessor
 			mapping.put(currentIndex+1, multilineArgsStartIndex+1);
 		}
 		else if (currentLine.matches(REGEX_MULTILINE_ARGS_CLOSE) && multilineArgsStartIndex > 0) {
+			insideMultilineArgs = false;
 			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
 			currentLine = "";
-			
-			multilineArgsStartIndex = -1;
 		}
 		
+		if (!insideMultilineArgs)
+			multilineArgsStartIndex = -1;
+
 		return currentLine;
 	}
 
@@ -430,5 +439,10 @@ public class TestMethodFileProcessor extends FileProcessor
 	public static Map<Integer, Integer> getMapping()
 	{
 		return mapping;
+	}
+	
+	public static void clearMapping()
+	{
+		mapping.clear();
 	}
 }

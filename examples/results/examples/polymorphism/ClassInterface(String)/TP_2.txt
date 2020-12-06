@@ -1,3 +1,0 @@
-examples.polymorphism.PolymorphismTest.testInterface()
-[5]
-

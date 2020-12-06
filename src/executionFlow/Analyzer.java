@@ -23,7 +23,7 @@ import executionFlow.util.balance.RoundBracketBalance;
  * it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.2
  * @since		2.0.0
  */
 public class Analyzer 
@@ -181,7 +181,8 @@ public class Analyzer
 	 * @return		Itself to allow chained calls
 	 * 
 	 * @throws		IOException If an error occurs while reading the output 
-	 * @throws		IllegalStateException If JDB has not been initialized
+	 * @throws		IllegalStateException If JDB has not been initialized or 
+	 * if invocation line is incorrect
 	 */
 	public Analyzer run() throws IOException 
 	{
@@ -287,6 +288,7 @@ public class Analyzer
 		catch (IOException e) {
 			// Exits jdb
 			try {
+				Clock.clearTimeout(TIMEOUT_ID);
 				jdb.send("clear " + classInvocationSignature + ":" + invocationLine, "exit", "exit");
 				jdb.quit();
 			}
@@ -362,12 +364,13 @@ public class Analyzer
 	 * 
 	 * @return		If JDB is ready to receive commands.
 	 * 
-	 * @throws		IOException If it cannot read JDB output
+	 * @throws		IllegalStateException If invocation line is incorrect
+	 * @throws		IOException If an internal error occurs while running JDB
 	 * 
 	 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
 	 * output on the console
 	 */
-	private boolean parseOutput() throws IOException
+	private boolean parseOutput() throws IOException, IllegalStateException
 	{
 		// TODO This method should be refactored
 		
@@ -377,7 +380,7 @@ public class Analyzer
 		final String REGEX_EMPTY_OUTPUT = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
 		int currentLine = -1;
 		String line, srcLine = null;
-		
+
 
 		if (!jdb.isReady()) {
 			try {
@@ -389,20 +392,28 @@ public class Analyzer
         	isInternalCommand = false;
         	line = jdb.read();
         	
-        	if (line.contains("Stopping due to deferred breakpoint errors"))
-        		throw new IOException("Incorrect invocation line {invocationLine: " 
+        	if (line.contains("Stopping due to deferred breakpoint errors")) {
+        		jdb.quit();
+        		
+        		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 
     					+ invocationLine + ", test method signature: "
         				+ testMethodSignature + ")" + ", invokedSignature: " 
     					+ invokedSignature + "}"
 				);
+        	}
         	
-        	if (line.contains("[INFO]") || line.contains("Exception occurred")) {
-				Logger.error("Error while running JDB");
-				System.exit(-1);
+        	if (checkForInternalError(line)) {
+				throw new IOException("Error while running JDB");
 			}
         	
         	if (isEmptyLine(line) || line.matches(REGEX_EMPTY_OUTPUT)) {
         		return false;
+        	}
+        	
+        	if (line.contains("The application exited")) {
+        		endOfMethod = true;
+        		exitMethod = false;
+        		return true;
         	}
         	
         	// -----{ DEBUG }-----
@@ -608,6 +619,13 @@ public class Analyzer
 		return readyToReadInput;
 	}
 	
+	private boolean checkForInternalError(String line) 
+	{
+		return	line.contains("[INFO]") || 
+				line.contains("Exception occurred") || 
+				line.contains("Input stream closed.");
+	}
+
 	/**
 	 * Reads all available output.
 	 * 
@@ -647,7 +665,10 @@ public class Analyzer
 		if (line == null || line.isEmpty() || !line.contains(","))
 			return -1;
 		
-		return Integer.valueOf(line.split(",")[2].split("=")[1].split(" ")[0].trim());
+		String lineNumber = line.split(",")[2].split("=")[1].split(" ")[0].trim();
+		lineNumber = lineNumber.replaceAll("\\.", "");
+		
+		return Integer.valueOf(lineNumber);
 	}
 	
 	/**

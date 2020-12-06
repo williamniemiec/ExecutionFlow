@@ -33,6 +33,9 @@ public class LibraryManager
 	static {
 		libraries.put("HAMCREST", ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
 		libraries.put("JUNIT_4", ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
+		libraries.put("ASPECTJRT", ExecutionFlow.getLibPath().resolve("aspectjrt.jar"));
+		libraries.put("JUNIT_5_API", ExecutionFlow.getLibPath().resolve("junit-jupiter-api-5.6.2.jar"));
+		libraries.put("JUNIT_5_PARAMS", ExecutionFlow.getLibPath().resolve("junit-jupiter-params-5.6.2.jar"));
 	}
 	
 	

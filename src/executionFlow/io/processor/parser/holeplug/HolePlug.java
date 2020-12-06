@@ -817,7 +817,7 @@ public class HolePlug
 	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.0.0
+	 * @version		5.2.2
 	 * @since 		5.0.0
 	 */
 	private class VariableParser
@@ -845,9 +845,7 @@ public class HolePlug
 			if (wasParsed)
 				return line;
 			
-			if (	!line.contains("return ") && !line.contains("return(") && 		
-					!line.contains("package ") && !line.contains("class ") && 
-					line.matches(REGEX_VARIABLE_DECLARATION_WITHOUT_INITIALIZATION)	) {
+			if (isVarDeclaration(line)) {
 				line = parse_varDeclaration(line);
 				wasParsed = true;
 			}
@@ -865,6 +863,23 @@ public class HolePlug
 		private String parse_varDeclaration(String line)
 		{
 			return line+"int "+DataUtil.generateVarName()+"=0;";
+		}
+		
+		/**
+		 * Checks whether a line is a variable declaration.
+		 * 
+		 * @param		line Line to be analyzed
+		 * 
+		 * @return		True if the line is a variable declaration; false otherwise
+		 */
+		private boolean isVarDeclaration(String line)
+		{
+			return	!line.contains("return ") && 
+					!line.contains("return(") &&
+					!line.contains("throw ") && 
+					!line.contains("package ") && 
+					!line.contains("class ") && 
+					line.matches(REGEX_VARIABLE_DECLARATION_WITHOUT_INITIALIZATION);
 		}
 	}
 	

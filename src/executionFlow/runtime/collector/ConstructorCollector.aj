@@ -106,7 +106,6 @@ public aspect ConstructorCollector extends RuntimeCollector
 		// Gets class path and source path
 		try {
 			// Class path and source path from method
-//			className = CollectorExecutionFlow.extractMethodName(signature);
 			srcPath = CollectorExecutionFlow.findSrcPath(classSignature);
 			classPath = CollectorExecutionFlow.findBinPath(classSignature);
 			

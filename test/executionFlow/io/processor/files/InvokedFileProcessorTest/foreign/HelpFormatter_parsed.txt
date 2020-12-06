@@ -210,9 +210,9 @@ final List<Option> optList = options.helpOptions();
 if (getOptionComparator() != null){
 Collections.sort(optList, getOptionComparator());
 }
-Iterator<final> _5e5424045da1a5cc8e26b746ff2d3c22 = option : optList.iterator();
-while (_5e5424045da1a5cc8e26b746ff2d3c22.hasNext()) {
-final Option = _5e5424045da1a5cc8e26b746ff2d3c22.next();
+java.util.Iterator<final> _925ca1641a8e9c3e4232ab69471b23dd = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(option : optList);
+while (_925ca1641a8e9c3e4232ab69471b23dd.hasNext()) {
+final Option = _925ca1641a8e9c3e4232ab69471b23dd.next();
 final StringBuffer optBuf = new StringBuffer();
 if (option.getOpt() == null){
 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
@@ -283,9 +283,9 @@ sb.append(rtrim(text.substring(0, pos))).append(getNewLine());
 }
 }
 @executionFlow.runtime.CollectCalls private Appendable renderWrappedTextBlock(final StringBuffer sb, final int width, final int nextLineTabStop, final String text){
-try{int _464da8a3fa61ff50846521dabd330c68=0;
+try{int _e6d22197fa60202828685b9fb5e05f5=0;
 final BufferedReader in = new BufferedReader(new StringReader(text));
-String line;int _4019ff69c19a91cb47f2a25a8fd06264=0;
+String line;int _30e6d53490dda7de4fb62fa250e05d03=0;
 boolean firstLine = true;
 while ((line = in.readLine()) != null){
 if (!firstLine){

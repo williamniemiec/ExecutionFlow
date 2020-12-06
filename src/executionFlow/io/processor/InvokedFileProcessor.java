@@ -249,7 +249,6 @@ public class InvokedFileProcessor extends FileProcessor
 		HolePlug holePlug;
 		Map<Integer, Integer> cleanupMapping;
 		
-		mapping = new HashMap<>();
 		
 		// If an output directory is specified, processed file will be saved to it
 		if (outputDir != null)
@@ -305,5 +304,10 @@ public class InvokedFileProcessor extends FileProcessor
 	public static Map<Integer, Integer> getMapping()
 	{
 		return mapping;
+	}
+	
+	public static void clearMapping()
+	{
+		mapping.clear();
 	}
 }

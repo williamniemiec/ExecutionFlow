@@ -1,3 +1,0 @@
-examples.others.OthersTest.testFactorial()
-[35, 36, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 41]
-

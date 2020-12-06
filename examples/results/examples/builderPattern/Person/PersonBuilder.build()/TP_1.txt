@@ -1,3 +1,0 @@
-examples.builderPattern.BuilderPatternTest.testBuilderPattern()
-[35]
-

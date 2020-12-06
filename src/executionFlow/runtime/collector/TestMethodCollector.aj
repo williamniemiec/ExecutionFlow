@@ -2,6 +2,7 @@ package executionFlow.runtime.collector;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ import executionFlow.util.Logger.Level;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.1
+ * @version		5.2.2
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -56,6 +57,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
 	private static Checkpoint checkpoint_appRunning =
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "app_running");
+	private static Session session = 
+			new Session("session.ef", new File(System.getProperty("user.home")));
 	private static int totalTests = -1;
 	private static String outputDir;
 	private String lastRepeatedTestSignature;
@@ -65,6 +68,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private FilesManager testMethodManager;
 	private FileManager testMethodFileManager;
 	private boolean isRepeatedTest;
+	private static boolean skipTestMethod;
 	private volatile static boolean success;
 	
 	
@@ -83,6 +87,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Intercepts JUnit 4 test methods.
 	 */
 	pointcut junit4():
+		!skipAnnotation() &&
 		!junit4_internal() && 
 		execution(@org.junit.Test * *.*());
 	
@@ -90,6 +95,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * Intercepts JUnit 4 test methods.
 	 */
 	pointcut junit5():
+		!skipAnnotation() &&
 		!junit5_internal() && (
 			execution(@org.junit.jupiter.api.Test * *.*()) ||
 			execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
@@ -121,6 +127,16 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	before(): testMethodCollector()
 	{	
+		if (skipTestMethod) {
+			return;
+		}
+		
+		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
+			Logger.error("Development mode is off even in a development environment. "
+					+ "Turn it on in the ExecutionFlow class");
+			System.exit(-1);
+		}
+		
 		// Prevents repeated tests from being performed more than once
 		if (finished && isRepeatedTest && 
 				!thisJoinPoint.getSignature().toString().equals(lastRepeatedTestSignature)) {
@@ -149,13 +165,26 @@ public aspect TestMethodCollector extends RuntimeCollector
 			onFirstRun();
 			setLogLevel();
 			clean();
-			processTestMethod();
 		} 
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());
 			e.printStackTrace();
 			
 			System.exit(-1);	// Stops execution if a problem occurs
+		}
+		
+		try {
+			processTestMethod();
+		} 
+		catch (IOException e) {
+			Logger.error(e.getMessage());
+			
+			testMethodManager.restoreAll();
+			deleteTestMethodBackupFiles();
+			disableCheckpoint(checkpoint);
+			reset();
+			
+			skipTestMethod = true;
 		}
 	}
 	
@@ -164,6 +193,11 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	after(): testMethodCollector() 
 	{
+		if (skipTestMethod) {
+			skipTestMethod = false;
+			return;
+		}
+		
 		if (finished)
 			return;
 		
@@ -355,7 +389,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 			    		return;
 			    	
 		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		    		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
 		    		
 		    		
 		    		if (JUnit4Runner.isRunning()) {
@@ -383,7 +416,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 					if (mcti.exists())
 						while (!mcti.delete());
 					
-					session.destroy();
+					finished = true;
+					
+					//session.destroy();
 			    }
 			});
 		}
@@ -484,12 +519,12 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (checkpoint_appRunning.isActive())
 			return;
 		
-		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
 		Logger.Level logLevel = askLog();
 		
 		
 		checkpoint_appRunning.enable();
 		
+		session.destroy(); // Removes last session
 		session.save("LOG_LEVEL", logLevel);
 	}
 	
@@ -500,7 +535,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private void setLogLevel() throws IOException
 	{
-		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
 		Logger.Level logLevel = (Logger.Level)session.read("LOG_LEVEL");
 		
 		
@@ -597,7 +631,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		try {
 			if (ExecutionFlow.getTestMethodManager().load())
-				ExecutionFlow.getTestMethodManager().restoreAll();	
+				ExecutionFlow.getTestMethodManager().restoreAll();
 		} 
 		catch (ClassNotFoundException e) {
 			hasError = true;

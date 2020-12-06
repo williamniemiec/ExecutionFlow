@@ -1,3 +1,0 @@
-examples.controlFlow.ControlFlowTest.doWhileTest()
-[80, 83, 86, 87, 88, 90, 86, 87, 88, 90, 86, 87, 88, 90, 86, 87, 88, 90, 86, 87, 88, 90, 91]
-

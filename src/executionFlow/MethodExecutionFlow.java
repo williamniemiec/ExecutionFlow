@@ -2,7 +2,6 @@ package executionFlow;
 
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +13,6 @@ import executionFlow.exporter.testpath.FileExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.processor.InvokedFileProcessor;
-import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.MethodCollector;
@@ -31,7 +28,7 @@ import executionFlow.util.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.2
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -47,7 +44,6 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * <ul> 
 	 */
 	private Map<Integer, List<CollectorInfo>> methodCollector;
-
 	
 	
 	//-------------------------------------------------------------------------
@@ -123,13 +119,12 @@ public class MethodExecutionFlow extends ExecutionFlow
 		if (methodCollector == null || methodCollector.isEmpty())
 			return this;
 		
-		// -----{ DEBUG }-----
 		Logger.debug("MethodExecutionFlow", "collector: " + methodCollector.toString());
-		// -----{ END DEBUG }-----
 		
 		boolean gotoNextLine = false;
 		List<List<Integer>> tp;
-		FileManager methodFileManager, testMethodFileManager;
+		FileManager methodFileManager;
+		FileManager testMethodFileManager;
 		
 		
 		// Generates test path for each collected method
@@ -147,7 +142,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getMethodInfo().getSrcPath(), 
 					collector.getMethodInfo().getClassDirectory(),
 					collector.getMethodInfo().getPackage(),
-					new InvokedFileProcessorFactory()
+					new InvokedFileProcessorFactory(),
+					"invoked.bkp"
 				);
 
 				// Gets FileManager for test method file
@@ -156,9 +152,10 @@ public class MethodExecutionFlow extends ExecutionFlow
 					collector.getTestMethodInfo().getSrcPath(), 
 					collector.getTestMethodInfo().getClassDirectory(),
 					collector.getTestMethodInfo().getPackage(),
-					new TestMethodFileProcessorFactory()
+					new TestMethodFileProcessorFactory(),
+					"testMethod.bkp"
 				);
-				
+
 				try {
 					tp = run(
 						collector.getTestMethodInfo(), 
@@ -169,25 +166,18 @@ public class MethodExecutionFlow extends ExecutionFlow
 					
 					// Checks whether test path was generated inside a loop
 					gotoNextLine = tp.size() > 1;
-					
-					updateCollectorInvocationLines(
-							TestMethodFileProcessor.getMapping(), 
-							collector.getTestMethodInfo().getSrcPath()
-					);
-					
-					if (collector.getMethodInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
-						updateCollectorInvocationLines(
-								InvokedFileProcessor.getMapping(), 
-								collector.getTestMethodInfo().getSrcPath()
-						);
-					}
 				} 
 				catch (InterruptedByTimeoutException e1) {
 					Logger.error("Time exceeded");
 				} 
-				catch (IOException e2) {
+				catch (IllegalStateException e2) {
 					Logger.error(e2.getMessage());
-					e2.printStackTrace();
+				}
+				catch (IOException e3) {
+					Logger.error(e3.getMessage());
+					
+					restoreOriginalFiles(methodFileManager);
+					restoreOriginalFiles(testMethodFileManager);
 				}
 			}
 		}
@@ -196,28 +186,18 @@ public class MethodExecutionFlow extends ExecutionFlow
 	}
 	
 	/**
-	 * Updates the invocation line of method collector based on a mapping.
+	 * Restores original files, displaying an error message if an error occurs.
 	 * 
-	 * @param		mapping Mapping that will be used as base for the update
-	 * @param		testMethodSrcFile Test method source file
+	 * @param		fm File manager
 	 */
-	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile)
+	private void restoreOriginalFiles(FileManager fm) 
 	{
-		int invocationLine;
-
-		
-		// Updates method invocation lines If it is declared in the 
-		// same file as the processed test method file
-		for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
-			for (CollectorInfo mc : methodCollectorList) {
-				invocationLine = mc.getMethodInfo().getInvocationLine();
-				
-				if (!mc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
-						!mapping.containsKey(invocationLine))
-					continue;
-				
-				mc.getMethodInfo().setInvocationLine(mapping.get(invocationLine));
-			}
+		try {
+			fm.revertCompilation();
+			fm.revertParse();
+		} 
+		catch (IOException e) {
+			Logger.error("An error occurred while restoring the original files - " + e.getMessage());
 		}
 	}
 }

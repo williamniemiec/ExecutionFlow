@@ -5,8 +5,8 @@ if (num < 0) {
 return "";
 }
 String response = ;
-int w;int _fc2eb6227021891c918a4464070544f1=0;
-int k;int _ff297a3558bd4f9d8e6ed38922b204cf=0;
+int w;int _be304ebdbec2ecc8a6dd672cc0e7d748=0;
+int k;int _ec4d9f09b8881e6f908bbbb78d49cf8a=0;
 if (num == 0) {
 response = "Number zero";
 w = 2;
@@ -14,7 +14,7 @@ w = 2;
 else if (num == 1) {
 response = "Number one";
 }
-else {int _5d24d405103a5b98e813cfb90858ef86=0;
+else {int _b3d8a566e5204972b3bbeb9e86f344f7=0;
 response = "Number "+num;
 }
 return response;

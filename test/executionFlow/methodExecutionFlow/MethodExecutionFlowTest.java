@@ -13,6 +13,8 @@ import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
+import executionFlow.io.processor.InvokedFileProcessor;
+import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.util.Logger;
 
@@ -143,7 +145,9 @@ public class MethodExecutionFlowTest
 		ExecutionFlow.getTestMethodManager().deleteBackup();
 		testMethodManager.deleteBackup();
 		testMethodManager = null;
-		ExecutionFlow.destroyTestMethodManager();		
+		ExecutionFlow.destroyTestMethodManager();
+		TestMethodFileProcessor.clearMapping();
+		InvokedFileProcessor.clearMapping();
 	}
 	
 	/**

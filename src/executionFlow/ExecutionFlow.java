@@ -105,7 +105,7 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
@@ -388,7 +388,7 @@ public abstract class ExecutionFlow
 		processInvoked(testMethodFileManager, invokedFileManager, invSig);
 		
 		updateInvokedInfo(invokedInfo, TestMethodFileProcessor.getMapping());
-//		
+		
 		if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
 			updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
 		}		
