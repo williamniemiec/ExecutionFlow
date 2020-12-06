@@ -17,7 +17,7 @@ import executionFlow.util.balance.RoundBracketBalance;
  * @version		5.2.3
  * @since		5.2.3
  */
-public class StandardJDBAnalyzer extends Analyzer {
+public class StandardTestPathAnalyzer extends Analyzer {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -46,7 +46,7 @@ public class StandardJDBAnalyzer extends Analyzer {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public StandardJDBAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException {
+	public StandardTestPathAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException {
 		super(invokedInfo, testMethodInfo);
 		
 		invokedNameContainsDollarSign = invoked.getInvokedName().substring(1).matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);

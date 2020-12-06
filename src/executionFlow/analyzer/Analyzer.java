@@ -63,7 +63,7 @@ public abstract class Analyzer {
 	public static Analyzer createStandardTestPathAnalyzer(InvokedInfo invokedInfo, 
 			InvokedInfo testMethodInfo) throws IOException
 	{
-		return new StandardJDBAnalyzer(invokedInfo, testMethodInfo);
+		return new StandardTestPathAnalyzer(invokedInfo, testMethodInfo);
 	}
 
 
