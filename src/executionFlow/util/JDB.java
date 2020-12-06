@@ -53,8 +53,8 @@ public class JDB
 		
 		processBuilder = new ProcessBuilder(
 			"jdb",
-				"-sourcepath", srcPath,
-				"-classpath", classPath,
+				"-sourcepath", srcPath.replaceAll("\\s", "%20"),
+				"-classpath", classPath.replaceAll("\\s", "%20"),
 				classSignature, 
 				classArgs
 		);
