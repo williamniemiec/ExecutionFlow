@@ -24,6 +24,8 @@ public abstract class InvokedInfo
 	protected int invocationLine;
 	protected Class<?>[] parameterTypes;
 	protected Object[] args;
+	private String invokedName;
+	private String name;
 	
 	
 	//-------------------------------------------------------------------------
@@ -298,5 +300,31 @@ public abstract class InvokedInfo
 	public Object[] getArgs() 
 	{
 		return args;
+	}
+	
+	public String getName()
+	{
+		if (name == null)
+			extractName();
+		
+		return name;
+	}
+
+	private void extractName() {
+		this.name = invokedSignature.substring(0, invokedSignature.indexOf("(")+1);
+	}
+
+	public String getInvokedName() {
+		if (invokedName == null)
+			extractInvokedName();
+		
+		return invokedName;
+	}
+
+	private void extractInvokedName() {
+		int idxParamStart = invokedSignature.indexOf("(");
+		
+		invokedName = invokedSignature.substring(0, idxParamStart);
+		invokedName = invokedName.substring(invokedName.lastIndexOf("."), idxParamStart);
 	}
 }

@@ -265,7 +265,7 @@ public abstract class ExecutionFlow
 		// Computes test path from JDB
 		Logger.info("Computing test path of invoked " 
 				+ invokedSignature + "...");
-		analyzer.run();
+		analyzer.analyze();
 
 		// Checks if time has been exceeded
 		if (Analyzer.getTimeout()) {
@@ -394,7 +394,7 @@ public abstract class ExecutionFlow
 			updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
 		}		
 		
-		return new Analyzer(invokedInfo, testMethodInfo);
+		return Analyzer.createStandardTestPathAnalyzer(invokedInfo, testMethodInfo);
 	}
 	
 	/**
