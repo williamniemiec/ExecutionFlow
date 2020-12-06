@@ -196,8 +196,9 @@ public class CodeCleaner {
 		for (int i=0; i<processedCode.size(); i++) {
 			boolean executionFlowAnnotation = processedCode.get(i).contains("executionFlow.");
 			boolean testAnnotation = processedCode.get(i).contains("Test");
+			boolean supressAnnotation = processedCode.get(i).contains("@SuppressWarnings");
 			
-			if (processedCode.get(i).matches("^@.*") && !executionFlowAnnotation && !testAnnotation) {
+			if (processedCode.get(i).matches("^@.*") && !executionFlowAnnotation && !testAnnotation && !supressAnnotation) {
 				processedCode.set(i, "");
 			}
 		}		
