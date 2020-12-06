@@ -31,7 +31,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	private static final long serialVersionUID = 400L;
 		
 	private String fileExtension = "java";
-	private static Map<Integer, Integer> mapping;
+	private static Map<Integer, Integer> mapping = new HashMap<>();;
 	private boolean insideMultilineArgs = false;
 	private int multilineArgsStartIndex = -1;
 	
@@ -251,8 +251,6 @@ public class TestMethodFileProcessor extends FileProcessor
 		// Reads the source file and puts its lines in a list
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
-		mapping = new HashMap<>();
-		
 		// Parses file line by line
 		for (int i=0; i<lines.size(); i++) {
 			line = lines.get(i);
@@ -441,5 +439,10 @@ public class TestMethodFileProcessor extends FileProcessor
 	public static Map<Integer, Integer> getMapping()
 	{
 		return mapping;
+	}
+	
+	public static void clearMapping()
+	{
+		mapping.clear();
 	}
 }
