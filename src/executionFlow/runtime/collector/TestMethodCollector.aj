@@ -57,6 +57,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
 	private static Checkpoint checkpoint_appRunning =
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "app_running");
+	private static Session session = 
+			new Session("session.ef", new File(System.getProperty("user.home")));
 	private static int totalTests = -1;
 	private static String outputDir;
 	private String lastRepeatedTestSignature;
@@ -387,7 +389,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 			    		return;
 			    	
 		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		    		Session session = new Session("session.ef", new File(System.getProperty("user.home")));
 		    		
 		    		
 		    		if (JUnit4Runner.isRunning()) {
@@ -518,7 +519,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (checkpoint_appRunning.isActive())
 			return;
 		
-		Session session = new Session("session.ef", new File(System.getProperty("user.home")));
 		Logger.Level logLevel = askLog();
 		
 		
@@ -535,7 +535,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private void setLogLevel() throws IOException
 	{
-		Session session = new Session("session", ExecutionFlow.getAppRootPath().toFile());
 		Logger.Level logLevel = (Logger.Level)session.read("LOG_LEVEL");
 		
 		
