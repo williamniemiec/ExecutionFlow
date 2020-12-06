@@ -2,10 +2,8 @@ package executionFlow;
 
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 import executionFlow.exporter.file.ProcessedSourceFileExporter;
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
@@ -13,10 +11,7 @@ import executionFlow.exporter.testpath.ConsoleExporter;
 import executionFlow.exporter.testpath.FileExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
-import executionFlow.io.processor.InvokedFileProcessor;
-import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.util.Logger;
@@ -42,8 +37,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	/**
 	 * Stores information about collected constructors.
 	 */
-	private Collection<CollectorInfo> constructorCollector;
-	
+	private Collection<CollectorInfo> constructorCollector;	
 	
 	
 	//-------------------------------------------------------------------------
@@ -126,7 +120,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		
 		FileManager constructorFileManager;
 		FileManager testMethodFileManager;
-		
+
 		
 		// Generates test path for each collected method
 		for (CollectorInfo collector : constructorCollector) {
@@ -178,50 +172,8 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 					Logger.error("An error occurred while restoring the original files - " + e.getMessage());
 				}
 			}
-			
-			updateCollectorInvocationLines(
-					TestMethodFileProcessor.getMapping(), 
-					collector.getTestMethodInfo().getSrcPath(),
-					collector.getConstructorInfo()
-			);
-			
-			if (collector.getConstructorInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
-				updateCollectorInvocationLines(
-						InvokedFileProcessor.getMapping(), 
-						collector.getTestMethodInfo().getSrcPath(),
-						collector.getConstructorInfo()
-				);
-			}
 		}
 		
 		return this;
-	}
-	
-	/**
-	 * Updates the invocation line of constructor collector based on a mapping.
-	 * 
-	 * @param		mapping Mapping that will be used as base for the update
-	 * @param		testMethodSrcFile Test method source file
-	 * @param		currentInvokedInfo Current constructor info
-	 */
-	private void updateCollectorInvocationLines(Map<Integer, Integer> mapping, Path testMethodSrcFile, 
-			InvokedInfo currentInvokedInfo)
-	{
-		int invocationLine;
-		
-		// Updates constructor invocation lines If it is declared in the 
-		// same file as the processed test method file
-		for (CollectorInfo cc : constructorCollector) {
-			if (cc.getConstructorInfo().equals(currentInvokedInfo))
-				continue;
-			
-			invocationLine = cc.getConstructorInfo().getInvocationLine();
-			
-			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
-					!mapping.containsKey(invocationLine))
-				continue;
-			
-			cc.getConstructorInfo().setInvocationLine(mapping.get(invocationLine));
-		}
 	}
 }
