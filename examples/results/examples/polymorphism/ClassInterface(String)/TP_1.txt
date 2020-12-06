@@ -1,3 +1,0 @@
-examples.polymorphism.PolymorphismTest.testParam()
-[5]
-

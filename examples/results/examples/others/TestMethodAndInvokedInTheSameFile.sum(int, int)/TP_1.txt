@@ -1,3 +1,0 @@
-examples.others.TestMethodAndInvokedInTheSameFile.methodInSameFileOfTestMethod()
-[10]
-

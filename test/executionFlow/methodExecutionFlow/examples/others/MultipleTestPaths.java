@@ -19,6 +19,7 @@ import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
+import executionFlow.util.Logger;
 
 
 /**

@@ -65,540 +65,540 @@ public class OthersTest extends MethodExecutionFlowTest
 	//-------------------------------------------------------------------------
 	//		Tests
 	//-------------------------------------------------------------------------
-//	/**
-//	 * Tests {@link examples.others.OthersTest.testEmptyTest()} test
-//	 * method.
-//	 */
-//	@Test
-//	public void testEmptyTest() throws Throwable 
-//	{
-//		/**
-//		 * Stores information about collected methods.
-//		 * <ul>
-//		 * 	<li><b>Key:</b> Method invocation line</li>
-//		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-//		 * </ul>
-//		 */
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 24;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testEmptyTest()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("factorial")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList()
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests {@link examples.others.OthersTest.testFactorial()} test
-//	 * method.
-//	 */
-//	@Test
-//	public void testFactorial() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 34;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testFactorial()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("factorial")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(35,36,37,38,39,37,38,39,37,38,39,37,38,39,37,41)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests {@link examples.others.OthersTest.testFactorial_zero()} test
-//	 * method.
-//	 */
-//	@Test
-//	public void testFactorial_zero() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 46;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testFactorial_zero()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("factorial")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(35,36,37,41)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests {@link examples.others.OthersTest.testFibonacci()} test
-//	 * method.
-//	 */
-//	@Test
-//	public void testFibonacci() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 58;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testFibonacci()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.fibonacci(int)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("fibonacci")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(44,45,46,47,48,49,50,51,52,48,49,50,51,52,48,49,50,51,52,48,54)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests {@link examples.others.OthersTest.testInternalCall()} test
-//	 * method.
-//	 */
-//	@Test
-//	public void testInternalCall() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 67;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testInternalCall()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.parseLetters_withInternalCall(char[])";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("parseLetters_withInternalCall")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(72,73,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,78)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests {@link examples.others.OthersTest.testStaticMethod_charSequence()} test
-//	 * method.
-//	 */
-//	@Test
-//	public void testStaticMethod_charSequence() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 76;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testStaticMethod_charSequence()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.parseLetters_noInternalCall(CharSequence)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("parseLetters_noInternalCall")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(
-//						57,58,59,60,61,62,67,60,61,62,67,60,61,62,67,60,61,62,67,60,
-//						61,62,67,60,61,64,65,67,60,61,64,65,67,60,61,64,65,67,60,61,
-//						64,65,67,60,61,64,65,67,60,69
-//				)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests {@link examples.others.OthersTest.testParamSignature_object()} test
-//	 * method.
-//	 */
-//	@Test
-//	public void testParamSignature_object() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 86;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testParamSignature_object()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.testObjParam(String)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("parseLetters_noInternalCall")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(96)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests first tested method of
-//	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
-//	 */
-//	@Test
-//	public void testMethodWithAuxMethods_m1() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 104;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testMethodWithAuxMethods()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.fibonacci(int)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("fibonacci")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(44,45,46,47,48,49,50,51,52,48,49,50,51,52,48,54)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests second tested method of
-//	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
-//	 */
-//	@Test
-//	public void testMethodWithAuxMethods_m2() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 105;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testMethodWithAuxMethods()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("factorial")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(35,36,37,38,39,37,38,39,37,38,39,37,41)
-//			),
-//			testPaths
-//		);
-//	}
+	/**
+	 * Tests {@link examples.others.OthersTest.testEmptyTest()} test
+	 * method.
+	 */
+	@Test
+	public void testEmptyTest() throws Throwable 
+	{
+		/**
+		 * Stores information about collected methods.
+		 * <ul>
+		 * 	<li><b>Key:</b> Method invocation line</li>
+		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
+		 * </ul>
+		 */
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 24;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testEmptyTest()";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("factorial")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList()
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.testFactorial()} test
+	 * method.
+	 */
+	@Test
+	public void testFactorial() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 34;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testFactorial()";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("factorial")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(35,36,37,38,39,37,38,39,37,38,39,37,38,39,37,41)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.testFactorial_zero()} test
+	 * method.
+	 */
+	@Test
+	public void testFactorial_zero() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 46;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testFactorial_zero()";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("factorial")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(35,36,37,41)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.testFibonacci()} test
+	 * method.
+	 */
+	@Test
+	public void testFibonacci() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 58;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testFibonacci()";
+		methodSignature = "examples.others.auxClasses.AuxClass.fibonacci(int)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("fibonacci")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(44,45,46,47,48,49,50,51,52,48,49,50,51,52,48,49,50,51,52,48,54)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.testInternalCall()} test
+	 * method.
+	 */
+	@Test
+	public void testInternalCall() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 67;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testInternalCall()";
+		methodSignature = "examples.others.auxClasses.AuxClass.parseLetters_withInternalCall(char[])";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("parseLetters_withInternalCall")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(72,73,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,78)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.testStaticMethod_charSequence()} test
+	 * method.
+	 */
+	@Test
+	public void testStaticMethod_charSequence() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 76;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testStaticMethod_charSequence()";
+		methodSignature = "examples.others.auxClasses.AuxClass.parseLetters_noInternalCall(CharSequence)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("parseLetters_noInternalCall")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(
+						57,58,59,60,61,62,67,60,61,62,67,60,61,62,67,60,61,62,67,60,
+						61,62,67,60,61,64,65,67,60,61,64,65,67,60,61,64,65,67,60,61,
+						64,65,67,60,61,64,65,67,60,69
+				)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.testParamSignature_object()} test
+	 * method.
+	 */
+	@Test
+	public void testParamSignature_object() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 86;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testParamSignature_object()";
+		methodSignature = "examples.others.auxClasses.AuxClass.testObjParam(String)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("parseLetters_noInternalCall")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(96)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests first tested method of
+	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
+	 */
+	@Test
+	public void testMethodWithAuxMethods_m1() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 104;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testMethodWithAuxMethods()";
+		methodSignature = "examples.others.auxClasses.AuxClass.fibonacci(int)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("fibonacci")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(44,45,46,47,48,49,50,51,52,48,49,50,51,52,48,54)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests second tested method of
+	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
+	 */
+	@Test
+	public void testMethodWithAuxMethods_m2() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 105;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testMethodWithAuxMethods()";
+		methodSignature = "examples.others.auxClasses.AuxClass.factorial(int)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("factorial")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(35,36,37,38,39,37,38,39,37,38,39,37,41)
+			),
+			testPaths
+		);
+	}
 	
 	/**
 	 * Tests first tested method of
@@ -657,176 +657,176 @@ public class OthersTest extends MethodExecutionFlowTest
 			testPaths
 		);
 	}
-//	
-//	/**
-//	 * Tests second tested method of
-//	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
-//	 */
-//	@Test
-//	public void testingMultipleMethods_m2() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 119;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.testingMultipleMethods()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.fibonacci(int)";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("fibonacci")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(44,45,46,47,48,49,50,51,52,48,49,50,51,52,48,54)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests {@link examples.others.OthersTest.onlyOneMethod()} test method.
-//	 */
-//	@Test
-//	public void onlyOneMethod() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 127;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.onlyOneMethod()";
-//		methodSignature = "examples.others.auxClasses.AuxClass.getNumber()";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("getNumber")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(99)
-//			),
-//			testPaths
-//		);
-//	}
-//	
-//	/**
-//	 * Tests {@link examples.others.OthersTest.methodCallMultiLineArgs()} test method.
-//	 */
-//	@Test
-//	public void methodCallMultiLineArgs_1() throws Throwable 
-//	{
-//		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-//		List<List<Integer>> testPaths;
-//		List<CollectorInfo> methodsInvoked = new ArrayList<>();
-//		String testMethodSignature, methodSignature;
-//		MethodInvokedInfo testMethodInfo, methodInfo;
-//		CollectorInfo ci;
-//		int invocationLine = 137;
-//		
-//		
-//		// Defines which methods will be collected
-//		testMethodSignature = "examples.others.OthersTest.anonymousObjectReturn()";
-//		methodSignature = "examples.others.auxClasses.ClassInterface.interfaceMethod()";
-//		
-//		init("examples.others.auxClasses.AuxClass", testMethodSignature);
-//		
-//		testMethodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_TEST_METHOD)
-//				.methodSignature(testMethodSignature)
-//				.srcPath(PATH_SRC_TEST_METHOD)
-//				.build();
-//		
-//		methodInfo = new MethodInvokedInfo.Builder()
-//				.binPath(PATH_BIN_METHOD)
-//				.srcPath(PATH_SRC_METHOD)
-//				.invocationLine(invocationLine)
-//				.methodSignature(methodSignature)
-//				.methodName("interfaceMethod")
-//				.build();
-//		
-//		ci = new CollectorInfo.Builder()
-//				.methodInfo(methodInfo)
-//				.testMethodInfo(testMethodInfo)
-//				.build();
-//		
-//		methodsInvoked.add(ci);
-//		methodCollector.put(invocationLine, methodsInvoked);
-//		
-//		// Computes test path
-//		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
-//		
-//		// Gets test path
-//		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
-//		
-//		assertEquals(
-//			Arrays.asList(
-//				Arrays.asList(108,109)
-//			),
-//			testPaths
-//		);
-//	}
+	
+	/**
+	 * Tests second tested method of
+	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
+	 */
+	@Test
+	public void testingMultipleMethods_m2() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 119;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.testingMultipleMethods()";
+		methodSignature = "examples.others.auxClasses.AuxClass.fibonacci(int)";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("fibonacci")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(44,45,46,47,48,49,50,51,52,48,49,50,51,52,48,54)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.onlyOneMethod()} test method.
+	 */
+	@Test
+	public void onlyOneMethod() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 127;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.onlyOneMethod()";
+		methodSignature = "examples.others.auxClasses.AuxClass.getNumber()";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("getNumber")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(99)
+			),
+			testPaths
+		);
+	}
+	
+	/**
+	 * Tests {@link examples.others.OthersTest.methodCallMultiLineArgs()} test method.
+	 */
+	@Test
+	public void methodCallMultiLineArgs_1() throws Throwable 
+	{
+		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		List<List<Integer>> testPaths;
+		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		String testMethodSignature, methodSignature;
+		MethodInvokedInfo testMethodInfo, methodInfo;
+		CollectorInfo ci;
+		int invocationLine = 137;
+		
+		
+		// Defines which methods will be collected
+		testMethodSignature = "examples.others.OthersTest.anonymousObjectReturn()";
+		methodSignature = "examples.others.auxClasses.ClassInterface.interfaceMethod()";
+		
+		init("examples.others.auxClasses.AuxClass", testMethodSignature);
+		
+		testMethodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_TEST_METHOD)
+				.methodSignature(testMethodSignature)
+				.srcPath(PATH_SRC_TEST_METHOD)
+				.build();
+		
+		methodInfo = new MethodInvokedInfo.Builder()
+				.binPath(PATH_BIN_METHOD)
+				.srcPath(PATH_SRC_METHOD)
+				.invocationLine(invocationLine)
+				.methodSignature(methodSignature)
+				.methodName("interfaceMethod")
+				.build();
+		
+		ci = new CollectorInfo.Builder()
+				.methodInfo(methodInfo)
+				.testMethodInfo(testMethodInfo)
+				.build();
+		
+		methodsInvoked.add(ci);
+		methodCollector.put(invocationLine, methodsInvoked);
+		
+		// Computes test path
+		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		
+		// Gets test path
+		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		
+		assertEquals(
+			Arrays.asList(
+				Arrays.asList(108,109)
+			),
+			testPaths
+		);
+	}
 }

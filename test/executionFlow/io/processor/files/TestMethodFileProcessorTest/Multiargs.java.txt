@@ -1,59 +1,23 @@
+public DefaultIntervalXYDataset createSampleDataset1() {
+        DefaultIntervalXYDataset d = new DefaultIntervalXYDataset();
+        double[] x1 = new double[] {1.0, 2.0, 3.0};
+        double[] x1Start = new double[] {0.9, 1.9, 2.9};
+        double[] x1End = new double[] {1.1, 2.1, 3.1};
+        double[] y1 = new double[] {4.0, 5.0, 6.0};
+        double[] y1Start = new double[] {1.09, 2.09, 3.09};
+        double[] y1End = new double[] {1.11, 2.11, 3.11};
+        double[][] data1 = new double[][] {x1, x1Start, x1End, y1, y1Start,
+                y1End};
+        d.addSeries("S1", data1);
 
-public abstract class RealDistributionAbstractTest {
-    /**
-     * Verify that density integrals match the distribution.
-     * The (filtered, sorted) cumulativeTestPoints array is used to source
-     * integration limits. The integral of the density (estimated using a
-     * Legendre-Gauss integrator) is compared with the cdf over the same
-     * interval. Test points outside of the domain of the density function
-     * are discarded.
-     */
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testDensityIntegrals() {
-        final double tol = 1.0e-9;
-        final BaseAbstractUnivariateIntegrator integrator =
-            new IterativeLegendreGaussIntegrator(5, 1.0e-12, 1.0e-10);
-        final UnivariateFunction d = new UnivariateFunction() {
-            public double value(double x) {
-                return distribution.density(x);
-            }
-        };
-        final ArrayList<Double> integrationTestPoints = new ArrayList<Double>();
-        for (int i = 0; i < cumulativeTestPoints.length; i++) {
-            if (Double.isNaN(cumulativeTestValues[i]) ||
-                    cumulativeTestValues[i] < 1.0e-5 ||
-                    cumulativeTestValues[i] > 1 - 1.0e-5) {
-                continue; // exclude integrals outside domain.
-            }
-            integrationTestPoints.add(cumulativeTestPoints[i]);
-        }
-        Collections.sort(integrationTestPoints);
-        for (int i = 1; i < integrationTestPoints.size(); i++) {
-            Assert.assertEquals(
-                    distribution.cumulativeProbability(  // FIXME @4.0 when rename happens
-                            integrationTestPoints.get(0), integrationTestPoints.get(i)),
-                            integrator.integrate(
-                                    1000000, // Triangle integrals are very slow to converge
-                                    d, integrationTestPoints.get(0),
-                                    integrationTestPoints.get(i)), tol);
-        }
+        double[] x2 = new double[] {11.0, 12.0, 13.0};
+        double[] x2Start = new double[] {10.9, 11.9, 12.9};
+        double[] x2End = new double[] {11.1, 12.1, 13.1};
+        double[] y2 = new double[] {14.0, 15.0, 16.0};
+        double[] y2Start = new double[] {11.09, 12.09, 13.09};
+        double[] y2End = new double[] {11.11, 12.11, 13.11};
+        double[][] data2 = new double[][] {x2, x2Start, x2End, y2, y2Start,
+                y2End};
+        d.addSeries("S2", data2);
+        return d;
     }
-
-    /**
-     * Verify that isSupportLowerBoundInclusvie returns true iff the lower bound
-     * is finite and density is non-NaN, non-infinite there.
-     */
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testIsSupportLowerBoundInclusive() {
-        final double lowerBound = distribution.getSupportLowerBound();
-        double result = Double.NaN;
-        result = distribution.density(lowerBound);
-        Assert.assertEquals(
-                !Double.isInfinite(lowerBound) && !Double.isNaN(result) &&
-                !Double.isInfinite(result),
-                distribution.isSupportLowerBoundInclusive());
-
-    }
-}

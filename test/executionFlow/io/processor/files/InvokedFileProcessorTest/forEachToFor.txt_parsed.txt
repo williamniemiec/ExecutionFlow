@@ -24,18 +24,18 @@ this.userFunctions.put(function.getName(), function);
 return this;
 }
 @executionFlow.runtime.CollectCalls public ExpressionBuilder functions(Function... functions) {
-Iterator<Function> _7333d09c2be9b210144cb3004b24cc3e = executionFlow.util.IteratorExtractor.extractIterator(functions).iterator();
-while (_7333d09c2be9b210144cb3004b24cc3e.hasNext()) {
-Function f = _7333d09c2be9b210144cb3004b24cc3e.next();
+java.util.Iterator<Function> _857d53aba12b553beb264b5db0586b7d = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(functions);
+while (_857d53aba12b553beb264b5db0586b7d.hasNext()) {
+Function f = _857d53aba12b553beb264b5db0586b7d.next();
 this.userFunctions.put(f.getName(), f);
 ;
 }
 return this;
 }
 @executionFlow.runtime.CollectCalls public ExpressionBuilder functions(List<Function> functions) {
-Iterator<Function> _c58ecd3af91170e7c45209041942fb36 = executionFlow.util.IteratorExtractor.extractIterator(functions).iterator();
-while (_c58ecd3af91170e7c45209041942fb36.hasNext()) {
-Function f = _c58ecd3af91170e7c45209041942fb36.next();
+java.util.Iterator<Function> _f8da0330b8a6bf4b1f5067aa4a9bf4dd = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(functions);
+while (_f8da0330b8a6bf4b1f5067aa4a9bf4dd.hasNext()) {
+Function f = _f8da0330b8a6bf4b1f5067aa4a9bf4dd.next();
 this.userFunctions.put(f.getName(), f);
 ;
 }
@@ -64,9 +64,9 @@ return this;
 }
 @executionFlow.runtime.CollectCalls private void checkOperatorSymbol(Operator op) {
 String name = op.getSymbol();
-Iterator<Character> _7b3783fa849a5edf016c8b546a3b0415 = executionFlow.util.IteratorExtractor.extractIterator(name.toCharArray()).iterator();
-while (_7b3783fa849a5edf016c8b546a3b0415.hasNext()) {
-Character ch = _7b3783fa849a5edf016c8b546a3b0415.next();
+java.util.Iterator<Character> _442572500dfed74a255cd614db0281e2 = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(name.toCharArray());
+while (_442572500dfed74a255cd614db0281e2.hasNext()) {
+Character ch = _442572500dfed74a255cd614db0281e2.next();
 if (!Operator.isAllowedOperatorChar(ch)) {
 throw new IllegalArgumentException("The operator symbol '" + name + "' is invalid");
 }
@@ -74,18 +74,18 @@ throw new IllegalArgumentException("The operator symbol '" + name + "' is invali
 }
 }
 @executionFlow.runtime.CollectCalls public ExpressionBuilder operator(Operator... operators) {
-Iterator<Operator> _5484a2655cee251b819d3dcdc7ce89e = executionFlow.util.IteratorExtractor.extractIterator(operators).iterator();
-while (_5484a2655cee251b819d3dcdc7ce89e.hasNext()) {
-Operator o = _5484a2655cee251b819d3dcdc7ce89e.next();
+java.util.Iterator<Operator> _1517a3c81ef4f4d02a28b44d8831be1a = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(operators);
+while (_1517a3c81ef4f4d02a28b44d8831be1a.hasNext()) {
+Operator o = _1517a3c81ef4f4d02a28b44d8831be1a.next();
 this.operator(o);
 ;
 }
 return this;
 }
 @executionFlow.runtime.CollectCalls public ExpressionBuilder operator(List<Operator> operators) {
-Iterator<Operator> _7470e8cf691b25bb296c2cdc9c4147de = executionFlow.util.IteratorExtractor.extractIterator(operators).iterator();
-while (_7470e8cf691b25bb296c2cdc9c4147de.hasNext()) {
-Operator o = _7470e8cf691b25bb296c2cdc9c4147de.next();
+java.util.Iterator<Operator> _edcbcd4738f92cf07e96a430efc625b5 = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(operators);
+while (_edcbcd4738f92cf07e96a430efc625b5.hasNext()) {
+Operator o = _edcbcd4738f92cf07e96a430efc625b5.next();
 this.operator(o);
 ;
 }
@@ -99,9 +99,9 @@ variableNames.add("pi");
 variableNames.add("π");
 variableNames.add("e");
 variableNames.add("φ");
-Iterator<String> _41f11f602832c11e215a32630c6fa626 = executionFlow.util.IteratorExtractor.extractIterator(variableNames).iterator();
-while (_41f11f602832c11e215a32630c6fa626.hasNext()) {
-String var = _41f11f602832c11e215a32630c6fa626.next();
+java.util.Iterator<String> _832e532f5e39217b9623bed3df6f371d = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(variableNames);
+while (_832e532f5e39217b9623bed3df6f371d.hasNext()) {
+String var = _832e532f5e39217b9623bed3df6f371d.next();
 if (Functions.getBuiltinFunction(var) != null || userFunctions.containsKey(var)) {
 throw new IllegalArgumentException("A variable can not have the same name as a function [" + var + "]");
 }

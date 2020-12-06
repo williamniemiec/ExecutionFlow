@@ -61,7 +61,7 @@ while (i<letters.length) {
 if (letters[i] == Character.toUpperCase(letters[i])) {
 response[i] =  Character.toLowerCase(letters[i]);
 }
-else {int _3a73f4a104fd3e1401c42633a74c7988=0;
+else {int _19ac2bf770d57a5bd4d8b4c7ddb5ce3a=0;
 response[i] =  Character.toUpperCase(letters[i]);
 }
 i++;
@@ -104,7 +104,7 @@ return response;
 }
 @executionFlow.runtime.CollectCalls public ClassInterface anonymousObjectReturn(){
 return new ClassInterface("test") {
-@Override public String interfaceMethod() {
+@executionFlow.runtime.CollectCalls public String interfaceMethod() {
 String str = "test";
 return str;
 }
@@ -122,7 +122,7 @@ return str + num;
 }
 @executionFlow.runtime.CollectCalls public static int countTotalArguments(Object... args){
 int i = 2;
-int k;int _dee4c1658c422cc8d6ce372e648c24f4=0;
+int k;int _736213ba45fa49cd1d03b6aea35faf29=0;
 k=0;
 while (k<args.length) {
 k++;

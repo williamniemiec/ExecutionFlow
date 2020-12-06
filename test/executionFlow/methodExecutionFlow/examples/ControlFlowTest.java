@@ -511,7 +511,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(94,95,94,95,94,97), testPaths.get(0));
+		assertEquals(Arrays.asList(95,96,95,96,95,98), testPaths.get(0));
 	}
 	
 	@Test
@@ -560,7 +560,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(108,111,112,114,111,112,114,111,115), testPaths.get(0));
+		assertEquals(Arrays.asList(109,112,113,115,112,113,115,112,116), testPaths.get(0));
 	}
 	
 	@Test
@@ -609,7 +609,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(100,101), testPaths.get(0));
+		assertEquals(Arrays.asList(101,102), testPaths.get(0));
 	}
 	
 	/**
@@ -662,7 +662,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(118,119,124), testPaths.get(0));
+		assertEquals(Arrays.asList(119,120,125), testPaths.get(0));
 	}
 	
 	/**
@@ -715,6 +715,6 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
 		
-		assertEquals(Arrays.asList(118,121,122,124), testPaths.get(0));
+		assertEquals(Arrays.asList(119,122,123,125), testPaths.get(0));
 	}
 }
