@@ -17,7 +17,7 @@ import executionFlow.util.formatter.JavaIndenter;
  * test path.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		5.2.0
  */
 public class ProcessedSourceFileExporter 
@@ -68,7 +68,7 @@ public class ProcessedSourceFileExporter
 		
 		fileContent = indenter.format(FileUtil.getLines(processedFile, Charset.defaultCharset()));
 		outputFile = Paths.get(
-				ExecutionFlow.getAppRootPath().toString(), 
+				ExecutionFlow.getCurrentProjectRoot().toString(), 
 				dirName,
 				DataUtil.generateDirectoryPath(invokedSignature, isConstructor),
 				filename
