@@ -10,10 +10,11 @@ import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.runtime.collector.CollectorExecutionFlow;
-import executionFlow.util.Logger;
 import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;
+import executionFlow.util.Logger;
 import executionFlow.util.balance.CurlyBracketBalance;
+import executionFlow.util.balance.RoundBracketBalance;
 
 
 /**
@@ -372,7 +373,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 				currentLine--;
 			}
 			
-			// Comments body of ignored methods
+			// Comments body of ignored methods			
 			for (int idx : ignoredMethods) {
 				CurlyBracketBalance cbb = new CurlyBracketBalance();
 				
@@ -389,7 +390,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 					cbb.parse(line);
 					lines.set(idx-1, "//" + line);
 					idx++;
-					
+
 				}
 				while (!cbb.isBalanceEmpty());
 				
@@ -913,7 +914,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * stop if an assert fails.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.2.2
+	 * @version		5.2.3
 	 * @since 		2.0.0
 	 */
 	private class AssertParser
@@ -926,7 +927,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		private String try_catch_message = "", catchType = "Throwable";
 		private int endOfAssert;
 		private int commentStart;
-		private int roundBracketsBalance = 0;
+		private RoundBracketBalance roundBracketsBalance = new RoundBracketBalance();
 		private boolean inAssert;
 		
 		
@@ -950,9 +951,11 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			
 			// Checks if it is within a multiline assert
 			if (inAssert) {
-				roundBracketsBalance += getRoundBracketsBalance(line);
+				roundBracketsBalance.parse(line);
+				//roundBracketsBalance += getRoundBracketsBalance(line);
 				
-				if (roundBracketsBalance == 0) {
+				//if (roundBracketsBalance == 0) {
+				if (roundBracketsBalance.isBalanceEmpty()) {
 					inAssert = false;
 					endOfAssert = idxLastSemicolon + 1;
 					
@@ -973,10 +976,10 @@ public class PreTestMethodFileProcessor extends FileProcessor
 			}
 			// Checks if it is an assert instruction
 			else if (PATTERN_ASSERT.matcher(line).find()) {
-				roundBracketsBalance = getRoundBracketsBalance(line);
+				roundBracketsBalance.parse(line);
 				
 				// Checks if it is an inline assert
-				if (roundBracketsBalance == 0) {
+				if (roundBracketsBalance.isBalanceEmpty()) {
 					// Checks if it is a comment next to the line
 					commentStart = line.indexOf("//");
 					

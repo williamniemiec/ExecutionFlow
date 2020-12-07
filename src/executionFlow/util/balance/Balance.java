@@ -77,4 +77,9 @@ public abstract class Balance
 	{
 		return alreadyIncreased;
 	}
+	
+	protected String removeStrings(String text) 
+	{
+		return text.replaceAll("\"[^\"]*\"", "");
+	}
 }

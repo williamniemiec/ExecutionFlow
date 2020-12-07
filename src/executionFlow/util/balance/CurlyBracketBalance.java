@@ -35,16 +35,17 @@ public class CurlyBracketBalance extends Balance
 	 */
 	public CurlyBracketBalance parse(String text)
 	{
-		int amountOpenCurlyBrackets = countOpenCurlyBrackets(text);
-		int amountClosedCurlyBrackets = countClosedCurlyBrackets(text);
+		String textWithoutString = removeStrings(text);
 		
+		int amountOpenCurlyBrackets = countOpenCurlyBrackets(textWithoutString);
+		int amountClosedCurlyBrackets = countClosedCurlyBrackets(textWithoutString);
 		
 		balance = balance + amountOpenCurlyBrackets - amountClosedCurlyBrackets;
 		alreadyIncreased = alreadyIncreased ? alreadyIncreased : amountOpenCurlyBrackets > 0;
 		
 		return this;
 	}
-	
+
 	/**
 	 * Counts how many open curly brackets are in a text.
 	 * 
@@ -58,7 +59,8 @@ public class CurlyBracketBalance extends Balance
 		Matcher openCBMatcher = pattern_openCurlyBrackets.matcher(text);
 		
 		int size;
-		for (size = 0; openCBMatcher.find(); size++);
+		for (size = 0; openCBMatcher.find(); size++)
+			;
 		
 		return size;
 	}
@@ -76,7 +78,8 @@ public class CurlyBracketBalance extends Balance
 		Matcher openCBMatcher = pattern_closedCurlyBrackets.matcher(text);
 		
 		int size;
-		for (size = 0; openCBMatcher.find(); size++);
+		for (size = 0; openCBMatcher.find(); size++)
+			;
 		
 		return size;
 	}

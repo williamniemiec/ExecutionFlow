@@ -106,15 +106,15 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
 	}
 	
 	/**
 	 * Sets test path export type.
 	 */
 	static {
-		EXPORT = TestPathExportType.CONSOLE;
-//		EXPORT = TestPathExportType.FILE;
+//		EXPORT = TestPathExportType.CONSOLE;
+		EXPORT = TestPathExportType.FILE;
 	}
 	
 

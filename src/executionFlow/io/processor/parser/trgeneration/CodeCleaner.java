@@ -572,11 +572,13 @@ public class CodeCleaner {
 				
 				if (multiVarInline.size() > 0) {
 					for (String varname : multiVarInline) {
-						initVariables.add(varname);
-						cbb.add(Pair.of(varname, new CurlyBracketBalance()));
+						if (!initVariables.contains(varname)) {
+							initVariables.add(varname);
+							cbb.add(Pair.of(varname, new CurlyBracketBalance()));
+						}
 					}
 				}
-				else {
+				else if (!initVariables.contains(varLabel)) {
 					initVariables.add(varLabel);
 					cbb.add(Pair.of(varLabel, new CurlyBracketBalance()));
 				}
