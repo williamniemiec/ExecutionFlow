@@ -35,7 +35,8 @@ public class CurlyBracketBalance extends Balance
 	 */
 	public CurlyBracketBalance parse(String text)
 	{
-		String textWithoutString = text.replaceAll("\"[^\"]+\"", "");
+		String textWithoutString = removeStrings(text);
+		
 		int amountOpenCurlyBrackets = countOpenCurlyBrackets(textWithoutString);
 		int amountClosedCurlyBrackets = countClosedCurlyBrackets(textWithoutString);
 		
@@ -44,7 +45,7 @@ public class CurlyBracketBalance extends Balance
 		
 		return this;
 	}
-	
+
 	/**
 	 * Counts how many open curly brackets are in a text.
 	 * 

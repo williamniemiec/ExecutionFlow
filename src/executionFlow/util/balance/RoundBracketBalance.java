@@ -35,10 +35,11 @@ public class RoundBracketBalance extends Balance
 	 */
 	public RoundBracketBalance parse(String text)
 	{
-		int amountOpenRoundBrackets = countOpenRoundBrackets(text);
-		int amountClosedRoundBrackets = countClosedRoundBrackets(text);
+		String textWithoutString = removeStrings(text);
 		
-		
+		int amountOpenRoundBrackets = countOpenRoundBrackets(textWithoutString);
+		int amountClosedRoundBrackets = countClosedRoundBrackets(textWithoutString);
+	
 		balance = balance + amountOpenRoundBrackets - amountClosedRoundBrackets;
 		alreadyIncreased = alreadyIncreased ? alreadyIncreased : amountOpenRoundBrackets > 0;
 		
