@@ -54,11 +54,14 @@ public class CurlyBracketBalance extends Balance
 	 */
 	private int countOpenCurlyBrackets(String text)
 	{
+		String textWithoutString = text.replaceAll("\\\".+\\\"", "");
+		
 		final Pattern pattern_openCurlyBrackets = Pattern.compile("\\{");
-		Matcher openCBMatcher = pattern_openCurlyBrackets.matcher(text);
+		Matcher openCBMatcher = pattern_openCurlyBrackets.matcher(textWithoutString);
 		
 		int size;
-		for (size = 0; openCBMatcher.find(); size++);
+		for (size = 0; openCBMatcher.find(); size++)
+			;
 		
 		return size;
 	}
