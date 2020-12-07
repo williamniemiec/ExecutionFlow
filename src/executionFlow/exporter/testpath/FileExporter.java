@@ -9,12 +9,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.util.Logger;
 import executionFlow.util.DataUtil;
+import executionFlow.util.Logger;
 import executionFlow.util.Pair;
 
 
@@ -98,6 +100,11 @@ public class FileExporter implements TestPathExporter
 		boolean alreadyExists;
 		File f = new File(savePath.toFile(), getTestPathName(savePath, testMethodSignature));
 		
+		testPaths = removeEmptyTestPaths(testPaths);
+		
+		if (testPaths.isEmpty())
+			return;
+		
 		Files.createDirectories(savePath);
 		alreadyExists = f.exists();
 		
@@ -113,13 +120,25 @@ public class FileExporter implements TestPathExporter
 			bfw.write(testPath.toString());		// Writes test path in the file	
 			bfw.newLine();
 		}
-			
+		
 		bfw.newLine();
 		bfw.close();
 		
 		Logger.info("Writing file "+f.getName()+" in "+f.getAbsolutePath());
 	}
 	
+	private List<List<Integer>> removeEmptyTestPaths(List<List<Integer>> testPaths) 
+	{
+		List<List<Integer>> tps = new ArrayList<>();
+		
+		for (List<Integer> tp : testPaths) {
+			if (!tp.isEmpty())
+				tps.add(tp);
+		}
+		
+		return tps;
+	}
+
 	/**
 	 * Removes test path folders that will be overwritten.
 	 * 
