@@ -689,8 +689,18 @@ public class CodeCleaner {
 				String setName = forEachInformation.get(2);
 				String itName = DataUtil.generateVarName();
 				
-				mapping.put(i - addedLines, new ArrayList<>(Arrays.asList(i, i+1)));
+				// Fix map generic type
+				if (processedCode.get(i).contains("<")) {
+					String insideFor = processedCode.get(i).substring(processedCode.get(i).indexOf("(")+1);
+					int idxEnd = insideFor.lastIndexOf(">");
+					
+					type = insideFor.substring(0, idxEnd+1);
+					forEachInformation = extractForEachInfo(processedCode.get(i).substring(0, processedCode.get(i).indexOf("<")) + processedCode.get(i).substring(processedCode.get(i).indexOf(">")+1) );
+					varName = forEachInformation.get(1);
+					setName = forEachInformation.get(2);
+				}
 				
+				mapping.put(i - addedLines, new ArrayList<>(Arrays.asList(i, i+1)));
 				
 				if (type.matches(REGEX_PRIMITIVE_VAR)) {
 					type = primitivesToObject(type);

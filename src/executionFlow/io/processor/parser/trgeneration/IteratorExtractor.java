@@ -3,6 +3,8 @@ package executionFlow.io.processor.parser.trgeneration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 
 public class IteratorExtractor
@@ -16,6 +18,11 @@ public class IteratorExtractor
 			list.add(e);
 		
 		return list.iterator();
+	}
+	
+	public static <T,K,V> Iterator<Map.Entry<? extends K, ? extends V>> extractIterator(Set<?> set)
+	{
+		return (Iterator<Map.Entry<? extends K, ? extends V>>) set.iterator();
 	}
 	
 	public static <T> Iterator<T> extractIterator(Collection<T> l)
