@@ -80,6 +80,6 @@ public abstract class Balance
 	
 	protected String removeStrings(String text) 
 	{
-		return text.replaceAll("\"[^\"]*\"", "");
+		return text.replaceAll("\\\\\"", "").replaceAll("\"[^\"]*\"", "");
 	}
 }
