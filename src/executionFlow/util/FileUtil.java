@@ -66,7 +66,7 @@ public class FileUtil
 		
 		try (BufferedWriter bw = Files.newBufferedWriter(file, encode, options)) {
 			for (String line : lines) {
-				bw.write(line);
+				bw.write(line.replaceAll("\\n", ""));
 				bw.newLine();
 			}
 		}
