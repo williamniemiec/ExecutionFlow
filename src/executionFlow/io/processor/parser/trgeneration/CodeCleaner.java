@@ -138,6 +138,9 @@ public class CodeCleaner {
 		final String REGEX_LINE_COMMENT = "^(([\\s\\t]*\\/\\/.*)|.*\\/\\/[^;]+)$";
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (processedCode.get(i).contains("@") && processedCode.get(i).contains("//"))
+				processedCode.set(i, processedCode.get(i).replaceAll("\\/\\/.+", ""));
+			
 			processedCode.set(i, removeMultiSingleLineComment(processedCode.get(i)));
 
 			int idxSingle = processedCode.get(i).matches(REGEX_LINE_COMMENT) ? processedCode.get(i).indexOf("//") : -1;
