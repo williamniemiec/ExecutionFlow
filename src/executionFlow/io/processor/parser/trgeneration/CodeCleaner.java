@@ -142,11 +142,24 @@ public class CodeCleaner {
 				processedCode.set(i, processedCode.get(i).replaceAll("\\/\\/.+", ""));
 			
 			processedCode.set(i, removeMultiSingleLineComment(processedCode.get(i)));
-
+			int idxLastOpenCurlyBracket = processedCode.get(i).lastIndexOf("{");
+			int idxComment = idxLastOpenCurlyBracket == -1 ? -1 : processedCode.get(i).substring(idxLastOpenCurlyBracket).indexOf("//");
 			int idxSingle = processedCode.get(i).matches(REGEX_LINE_COMMENT) ? processedCode.get(i).indexOf("//") : -1;
+			
+			// Removes comment after last open curly bracket
+			if (idxSingle == -1 && idxComment != -1) {
+				processedCode.set(i, processedCode.get(i).substring(0, idxLastOpenCurlyBracket));
+			}
+			
 			int idxMulti = Helper.getIndexOfReservedSymbol(processedCode.get(i), "/\\*"); 
+			if (idxMulti < 0 && processedCode.get(i).contains("/*")) {
+				idxMulti = processedCode.get(i).indexOf("/*");
+			}
+			
 			int idx = (idxSingle >= 0 && idxMulti >= 0) ? 
 					Math.min(idxSingle, idxMulti) : Math.max(idxSingle, idxMulti);
+					
+					
 			if (idx == -1) {
 				continue;
 			} else if (idx == idxSingle) {
