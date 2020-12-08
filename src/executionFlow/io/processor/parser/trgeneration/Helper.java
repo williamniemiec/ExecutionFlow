@@ -118,11 +118,14 @@ public class Helper {
 			if (text.charAt(i) == lookup && !insideQuote) {
 				fragments.add(fragment);
 				fragment = "";
-			} else if (text.charAt(i) == '"' && i>0 && text.charAt(i-1) != '\\') {
-				insideQuote = !insideQuote;
-			} else if (text.charAt(i) == '"') {
+			} else if (text.charAt(i) == '"' || text.charAt(i) == '\'') {
 				insideQuote = !insideQuote;
 				fragment += text.charAt(i);
+//			} else if ((text.charAt(i) == '"' || text.charAt(i) == '\'') && i>0 && text.charAt(i-1) != '\\') {
+//				insideQuote = !insideQuote;
+//			} else if (text.charAt(i) == '"' || text.charAt(i) == '\'') {
+//				insideQuote = !insideQuote;
+//				fragment += text.charAt(i);
 			} 
 			else {
 				fragment += text.charAt(i);
