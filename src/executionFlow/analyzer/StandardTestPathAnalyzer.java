@@ -52,6 +52,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		invokedNameContainsDollarSign = invoked.getInvokedName().substring(1).matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
 		anonymousConstructor = checkAnonymousConstructor(invokedInfo.getClassSignature());
 		testPath = new ArrayList<>();
+		testPaths = new ArrayList<>();
 	}
 	
 	
@@ -241,7 +242,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
     		// Gets the line on which the invoked is declared
     		boolean wasInvokedDeclarationLineNumberInitialized = invokedDeclarationLine > 0;
     		if (!wasInvokedDeclarationLineNumberInitialized && currentLine > 1) {
-    			if (isInvokedDeclarationLine(line) || inMethod) {
+    			if (isInvokedDeclarationLine(line, srcLine) || inMethod) {
     				invokedDeclarationLine = currentLine;        		
     			}
     		}
@@ -256,7 +257,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
     			returnedFromTestedInvoked = true;
     		}
     		
-    		if (!isInternalCommand && !ignore) {
+    		if (!isInternalCommand && !returnedFromTestedInvoked && !ignore) {
     			if (inMethod || insideConstructor)
     				analyzeLinesExecutedByInvoked(isEmptyMethod, currentLine, line, srcLine);
     			else if (willEnterInMethod(line)) {
@@ -393,14 +394,14 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		}
 	}
 	
-	private boolean isInvokedDeclarationLine(String line)
+	private boolean isInvokedDeclarationLine(String line, String srcLine)
 	{
 		final String regexConstructorWithDollarSignPlusNumbers = "^.+\\$[0-9]+\\.\\<init\\>.*$";
 		boolean hasInvokedName = line.contains(invoked.getInvokedName()+".") || 
 								 line.contains(invoked.getInvokedName()+"(");
 		boolean isInsideAnonymousConstructor = (anonymousConstructor && insideConstructor);
 		
-		return	//srcLine.contains("@executionFlow.runtime.CollectCalls") &&
+		return	srcLine.contains("@executionFlow.runtime.CollectCalls") &&
 				!line.contains(testMethod.getName()) &&
 				(isInsideAnonymousConstructor || hasInvokedName) && 
 				!line.split(",")[1].matches(regexConstructorWithDollarSignPlusNumbers);

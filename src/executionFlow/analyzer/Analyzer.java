@@ -52,8 +52,6 @@ public abstract class Analyzer {
 		this.testMethod = testMethodInfo;
 
 		initializeJDB(testMethodInfo, invokedInfo);
-		
-		testPaths = new ArrayList<>();
 	}
 	
 	
