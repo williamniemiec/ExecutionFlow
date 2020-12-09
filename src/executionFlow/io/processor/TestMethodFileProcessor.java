@@ -424,9 +424,11 @@ public class TestMethodFileProcessor extends FileProcessor
 			int idxStart = m.start();
 			int idxEnd = m.end();
 			
+			strWithBlankSpaces.append("\"");
 			for (int i=0; i<strLen; i++) {
 				strWithBlankSpaces.append(" ");
 			}
+			strWithBlankSpaces.append("\"");
 			
 			lineWithBlankStrings = lineWithBlankStrings.substring(0, idxStart) + strWithBlankSpaces + lineWithBlankStrings.substring(idxEnd);
 			strWithBlankSpaces = new StringBuilder();
