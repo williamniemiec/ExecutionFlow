@@ -47,7 +47,7 @@ import executionFlow.util.formatter.JavaIndenter;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -255,13 +255,6 @@ public abstract class ExecutionFlow
 				invokedInfo, invokedFileManager
 		);
 		
-		// Exports processed file
-		processedSourceFileExporter.export(
-				invokedInfo.getSrcPath(), 
-				invokedSignature,
-				isConstructor
-		);
-		
 		// Computes test path from JDB
 		Logger.info("Computing test path of invoked " 
 				+ invokedSignature + "...");
@@ -308,6 +301,13 @@ public abstract class ExecutionFlow
 				testMethodInfo.getInvokedSignature(),
 				invokedSignature
 		));
+		
+		// Exports processed file
+		processedSourceFileExporter.export(
+				invokedInfo.getSrcPath(), 
+				invokedSignature,
+				isConstructor
+		);
 		
 		// Exports methods called by tested invoked to a CSV
 		if (exportCalledMethods) {
