@@ -692,7 +692,7 @@ public class CodeCleaner {
 				// Fix map generic type
 				if (processedCode.get(i).contains("<")) {
 					String insideFor = processedCode.get(i).substring(processedCode.get(i).indexOf("(")+1);
-					int idxEnd = insideFor.lastIndexOf(">");
+					int idxEnd = insideFor.split(":")[0].lastIndexOf(">");
 					
 					type = insideFor.substring(0, idxEnd+1);
 					forEachInformation = extractForEachInfo(processedCode.get(i).substring(0, processedCode.get(i).indexOf("<")) + processedCode.get(i).substring(processedCode.get(i).indexOf(">")+1) );
