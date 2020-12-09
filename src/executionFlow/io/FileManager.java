@@ -215,6 +215,10 @@ public class FileManager implements Serializable
 		for (int i=0; i<packageFolders; i++) {
 			binDirectory = binDirectory.getParent();
 		}
+		
+		if (binDirectory.toAbsolutePath().toString().matches(".+(\\/|\\\\)org$")) {
+			binDirectory = binDirectory.getParent();
+		}
 
 		// Compiles parsed file. If an error has occurred in parsing, compiles 
 		// using ISO-8859-1 encoding

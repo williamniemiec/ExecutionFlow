@@ -135,6 +135,7 @@ public class CollectorExecutionFlow
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(prefix+path+className+".class")) {
+		        	file = Path.of(file.toAbsolutePath().toString().replaceAll("(\\/|\\\\)org(\\/|\\\\)org(\\/|\\\\)", "/org/"));
 		        	binPath = file;
 		        }
 		        
@@ -173,6 +174,7 @@ public class CollectorExecutionFlow
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(path+effectiveClassName+".java")) {
+		        	file = Path.of(file.toAbsolutePath().toString().replaceAll("(\\/|\\\\)org(\\/|\\\\)org(\\/|\\\\)", "/org/"));
 		        	srcPath = file;
 		        	return FileVisitResult.TERMINATE;
 		        }
