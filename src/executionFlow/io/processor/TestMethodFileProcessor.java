@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
@@ -413,11 +414,26 @@ public class TestMethodFileProcessor extends FileProcessor
 	 */
 	private String removeInlineComment(String line) 
 	{
+		String lineWithBlankStrings = line;
 		int idxCommentStart = line.indexOf("//");
+		StringBuilder strWithBlankSpaces = new StringBuilder();
+		Matcher m = Pattern.compile("\"[^\"]*\"").matcher(line);
 		
+		while (m.find()) {
+			int strLen = m.group().length()-2;
+			int idxStart = m.start();
+			int idxEnd = m.end();
+			
+			for (int i=0; i<strLen; i++) {
+				strWithBlankSpaces.append(" ");
+			}
+			
+			lineWithBlankStrings = lineWithBlankStrings.substring(0, idxStart) + strWithBlankSpaces + lineWithBlankStrings.substring(idxEnd);
+			strWithBlankSpaces = new StringBuilder();
+		}
 		
 		if (idxCommentStart != -1) {
-			line = line.substring(0, idxCommentStart);
+			lineWithBlankStrings = lineWithBlankStrings.substring(0, idxCommentStart);
 		}
 		
 		return line;
