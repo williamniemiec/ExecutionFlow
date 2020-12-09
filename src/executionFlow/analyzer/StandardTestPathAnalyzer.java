@@ -177,8 +177,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
     	checkIncorrectInvocationLine(line);
     	checkInternalError(line);
     	
-    	
-    	if (line.contains("The application exited") || line.contains("Caused by: ")) {
+    	if (line.contains("The application exited") || line.contains("FAILURES!!!") || line.contains("Caused by: ")) {
     		stopJDB = true;
     		returnedFromTestedInvoked = false;
     		return true;
