@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 
 public class IteratorExtractor
@@ -20,9 +21,14 @@ public class IteratorExtractor
 		return list.iterator();
 	}
 	
-	public static <T,K,V> Iterator<Map.Entry<? extends K, ? extends V>> extractIterator(Set<?> set)
+//	public static <T,K,V> Iterator<Map.Entry<? extends K, ? extends V>> extractIterator(Set<?> set)
+//	{
+//		return (Iterator<Map.Entry<? extends K, ? extends V>>) set.iterator();
+//	}
+	
+	public static <T, U> Iterator<Entry<T,U>> extractIterator(Set<Entry<T,U>> entrySet) 
 	{
-		return (Iterator<Map.Entry<? extends K, ? extends V>>) set.iterator();
+		return (Iterator<Map.Entry<T,U>>) entrySet.iterator();
 	}
 	
 	public static <T> Iterator<T> extractIterator(Collection<T> l)
