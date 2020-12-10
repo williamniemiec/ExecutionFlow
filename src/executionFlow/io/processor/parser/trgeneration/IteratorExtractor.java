@@ -26,9 +26,14 @@ public class IteratorExtractor
 //		return (Iterator<Map.Entry<? extends K, ? extends V>>) set.iterator();
 //	}
 	
-	public static <T, U> Iterator<Entry<T,U>> extractIterator(Set<Entry<T,U>> entrySet) 
+//	public static <T, U> Iterator<Entry<T,U>> extractIterator(Set<Entry<T,U>> entrySet) 
+//	{
+//		return (Iterator<Map.Entry<T,U>>) entrySet.iterator();
+//	}
+	
+	public static Iterator<Entry<?,?>> extractIterator(Set<Entry<?,?>> entrySet) 
 	{
-		return (Iterator<Map.Entry<T,U>>) entrySet.iterator();
+		return entrySet.iterator();
 	}
 	
 	public static <T> Iterator<T> extractIterator(Collection<T> l)
