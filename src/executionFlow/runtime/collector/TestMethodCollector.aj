@@ -41,7 +41,7 @@ import executionFlow.util.Logger.Level;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.2
+ * @version		5.2.3
  * @since		1.0
  */
 public aspect TestMethodCollector extends RuntimeCollector
@@ -645,6 +645,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
 					+ "#could-not-recover-all-backup-files");
 			e.printStackTrace();
+		}
+		catch (NullPointerException e) {
+			hasError = true;
 		}
 		
 		return hasError;
