@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since 		5.2.0
  */
 public class CodeCleanerAdapter extends CodeCleaner
@@ -65,10 +65,13 @@ public class CodeCleanerAdapter extends CodeCleaner
 	 */
 	public Map<Integer, Integer> getMapping()
 	{
+		if (lineMappings.isEmpty())
+			return new HashMap<>();
+		
 		Map<Integer, Integer> mapping = new HashMap<>();
-		
-		
-		for (Map.Entry<Integer, List<Integer>> map : lineMappings.get(lineMappings.size()-1).entrySet()) {
+		int totMap = (lineMappings.size() <= 1) ? 0 : lineMappings.size()-1;
+
+		for (Map.Entry<Integer, List<Integer>> map : lineMappings.get(totMap).entrySet()) {
 			int originalLine = map.getValue().get(0) + 1;
 			int newLine = map.getKey()+1;
 			

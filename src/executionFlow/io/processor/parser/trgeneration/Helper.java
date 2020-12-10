@@ -100,11 +100,17 @@ public class Helper {
 	
 	public static int findMatchingParenthesis(String text, int openParenthesisIdx) {
 		int depth = 0;
+		boolean insideStringOrChar = false;
 		for (int i=openParenthesisIdx+1; i<text.length(); i++) {
 			char ch = text.charAt(i);
-			if (ch == ')' && depth == 0) return i;
-			else if (ch == '(') depth++;
-			else if (ch == ')') depth--;
+			
+			if (ch == '"' || ch == '\'')
+				insideStringOrChar = !insideStringOrChar;
+			else if (!insideStringOrChar) {
+				if (ch == ')' && depth == 0) return i;
+				else if (ch == '(') depth++;
+				else if (ch == ')') depth--;
+			}
 		}
 		return -1;
 	}
