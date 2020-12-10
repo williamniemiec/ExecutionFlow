@@ -707,12 +707,14 @@ public class CodeCleaner {
 				}
 				
 				boolean isMapEntry = type.contains("Map.Entry");
+				String typeIterator = type;
 				
 				if (isMapEntry && type.contains("?")) {
-					type = "Map.Entry<?, ?>";
+//					type = "Map.Entry<?, ?>";
+					typeIterator = "?";
 				}
 				
-				processedCode.set(i, "for (java.util.Iterator<" + type + "> " + itName + 
+				processedCode.set(i, "for (java.util.Iterator<" + typeIterator + "> " + itName + 
 						" = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(" + setName + "); " + 
 						itName + ".hasNext(); ) {");
 				
