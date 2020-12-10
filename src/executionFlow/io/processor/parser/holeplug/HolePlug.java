@@ -631,7 +631,7 @@ public class HolePlug
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private final String REGEX_CONTINUE_BREAK = "^(\\ |\\t)*(continue|break)(\\ |\\t)*;";
+		private final String REGEX_CONTINUE_BREAK = "^(\\ |\\t)*(continue|break)(\\ |\\t)*[^;\\s\\t\\(\\)\\.]*;";
 		
 		
 		//---------------------------------------------------------------------
