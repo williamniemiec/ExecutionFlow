@@ -817,7 +817,7 @@ public class HolePlug
 	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.2.2
+	 * @version		5.2.3
 	 * @since 		5.0.0
 	 */
 	private class VariableParser
@@ -826,7 +826,7 @@ public class HolePlug
 		//		Attributes
 		//---------------------------------------------------------------------
 		private final String REGEX_VARIABLE_DECLARATION_WITHOUT_INITIALIZATION = 
-				"( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
+				"( |\\t)*(final(\\s|\\t)+)?[A-z0-9\\-_$<?>,\\.]+(\\s|\\t)[A-z0-9\\-_$]+(((,)[A-z0-9\\-_$]+)?)+;";
 		
 		
 		//---------------------------------------------------------------------
