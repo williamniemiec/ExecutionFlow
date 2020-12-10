@@ -198,8 +198,6 @@ public class StandardTestPathAnalyzer extends Analyzer {
 			inMethod = isInsideMethod(line);
 			newIteration = isNewIteration(line);
     		insideConstructor = line.contains(".<init>");
-    		
-    		
 
     		currentLine = (srcLine == null || srcLine.isEmpty()) ? getLine(line) : getSrcLine(srcLine);
     		
@@ -522,7 +520,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 			!inMethod && !returnedFromTestedInvoked &&
 			(
 				line.contains("Breakpoint hit") || 
-				( line.contains("line="+invoked.getInvocationLine()) && 
+				( getLine(line) == invoked.getInvocationLine() &&
 				  line.contains(testMethod.getClassSignature()) )
 			)
 		);
