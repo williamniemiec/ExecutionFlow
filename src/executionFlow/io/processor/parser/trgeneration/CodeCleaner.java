@@ -693,8 +693,8 @@ public class CodeCleaner {
 				if (processedCode.get(i).contains("<")) {
 					String insideFor = processedCode.get(i).substring(processedCode.get(i).indexOf("(")+1);
 					int idxEnd = insideFor.split(":")[0].lastIndexOf(">");
-					
-					type = insideFor.substring(0, idxEnd+1);
+
+					type = (idxEnd == -1) ? insideFor.split(":")[0].split(" ")[0] : insideFor.substring(0, idxEnd+1);
 					forEachInformation = extractForEachInfo(processedCode.get(i).substring(0, processedCode.get(i).indexOf("<")) + processedCode.get(i).substring(processedCode.get(i).indexOf(">")+1) );
 					varName = forEachInformation.get(1);
 					setName = forEachInformation.get(2);
@@ -706,18 +706,21 @@ public class CodeCleaner {
 					type = primitivesToObject(type);
 				}
 				
-//				if (isArrayVar(setName, i)) {
-//					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = java.util.Arrays.asList(" + setName + ").iterator(); " + itName + " .hasNext(); ) {");
-//				}
-//				else {
-//					processedCode.set(i, "for (Iterator<" + type + "> " + itName + " = " + setName + ".iterator(); " + itName + ".hasNext(); ) {");
-//				}
+				boolean isMapEntry = type.contains("Map.Entry");
+				
+				if (isMapEntry && type.contains("?")) {
+					type = "Map.Entry<?, ?>";
+				}
 				
 				processedCode.set(i, "for (java.util.Iterator<" + type + "> " + itName + 
 						" = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(" + setName + "); " + 
 						itName + ".hasNext(); ) {");
 				
-				processedCode.add(i+1, type + " " + varName + " = " + itName + ".next();");
+				if (isMapEntry) {
+					processedCode.add(i+1, type + " " + varName + " = (" + type + ")" + itName + ".next();");
+				}
+				else
+					processedCode.add(i+1, type + " " + varName + " = " + itName + ".next();");
 				
 				addedLines++;
 				i++;
