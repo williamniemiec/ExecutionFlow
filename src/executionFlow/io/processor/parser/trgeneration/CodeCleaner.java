@@ -707,18 +707,18 @@ public class CodeCleaner {
 				}
 				
 				boolean isMapEntry = type.contains("Map.Entry");
+				boolean isGenericType = type.matches("[A-Z]");
 				String typeIterator = type;
-				
-				if (isMapEntry && type.contains("?")) {
-//					type = "Map.Entry<?, ?>";
+
+				if ((isMapEntry && type.contains("?")) || isGenericType) {
 					typeIterator = "?";
 				}
-				
+
 				processedCode.set(i, "for (java.util.Iterator<" + typeIterator + "> " + itName + 
 						" = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(" + setName + "); " + 
 						itName + ".hasNext(); ) {");
 				
-				if (isMapEntry) {
+				if (isMapEntry || isGenericType) {
 					processedCode.add(i+1, type + " " + varName + " = (" + type + ")" + itName + ".next();");
 				}
 				else
