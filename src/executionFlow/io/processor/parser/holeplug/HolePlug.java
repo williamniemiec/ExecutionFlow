@@ -79,6 +79,7 @@ public class HolePlug
 		TryCatchFinallyParser tryFinallyParser = new TryCatchFinallyParser();
 		ContinueBreakParser continueBreakParser = new ContinueBreakParser();
 		DoWhileParser doWhileParser = new DoWhileParser();
+		WhileParser whileParser = new WhileParser();
 		SwitchParser switchParser = new SwitchParser();
 		VariableParser variableParser = new VariableParser();
 		boolean multilineComment = false;
@@ -159,6 +160,7 @@ public class HolePlug
 					line = tryFinallyParser.parse(line, nextLine);
 					line = continueBreakParser.parse(line, nextLine);
 					line = doWhileParser.parse(line, nextLine);
+					line = whileParser.parse(line);
 					line = switchParser.parse(line, nextLine);
 					line = variableParser.parse(line);
 				}
@@ -717,6 +719,70 @@ public class HolePlug
 		 * @return		Processed line (line + variable assignment command)
 		 */
 		private String parse_do(String line)
+		{
+			StringBuilder response = new StringBuilder();
+
+			if (line.contains("{")) {
+				int curlyBracketsIndex = line.indexOf('{');
+				
+				// Appends in response everything before '{' (including it) 
+				response.append(line.substring(0, curlyBracketsIndex+1));
+				
+				// Appends in response variable assignment command
+				response.append("int "+DataUtil.generateVarName()+"=0;");
+				
+				// Appends in response everything after '{' 
+				response.append(line.substring(curlyBracketsIndex+1));
+			} 
+			else {
+				throw new IllegalStateException("Code block must be enclosed in curly brackets; line: " + line);
+			}
+			
+			return response.toString();
+		}
+	}
+	/**
+	 * Responsible for handling while statements, being useful to ensure 
+	 * that {@link executionFlow.util.core.JDB} compute test paths correctly.
+	 * 
+	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+	 * @version		5.2.3
+	 * @since 		5.2.3
+	 */
+	private class WhileParser
+	{
+		//---------------------------------------------------------------------
+		//		Methods
+		//---------------------------------------------------------------------
+		/**
+		 * Parses only <code>while(true)</code>.
+		 * 
+		 * @param		line Line to be parsed
+		 * @param		nextLine Line following the line to be parsed
+		 * 
+		 * @return		Parsed lines
+		 */
+		public String parse(String line)
+		{
+			if (wasParsed)
+				return line;
+			
+			if (line.matches(".*while[\\s\\t]+\\([\\s\\t]*true[\\s\\t]*\\)[\\s\\t{]*[^}]")) {								
+				line = parse_while(line);
+				wasParsed = true;
+			}
+			
+			return line;
+		}
+		
+		/**
+		 * Parses line with 'while' keyword.
+		 * 
+		 * @param		Line with 'while' keyword
+		 * 
+		 * @return		Processed line (line + variable assignment command)
+		 */
+		private String parse_while(String line)
 		{
 			StringBuilder response = new StringBuilder();
 
