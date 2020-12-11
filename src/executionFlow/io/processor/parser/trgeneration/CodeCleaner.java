@@ -556,10 +556,10 @@ public class CodeCleaner {
 				// Move the initialization before the loop
 				mapping.put(i+depth, Helper.initArray(i));
 				int idx = processedCode.get(i).indexOf("(");
-				String initVar = processedCode.get(i).substring(idx+1);
+				String initVar = processedCode.get(i).substring(idx+1).trim();
 				boolean isVarDeclaration = initVar.matches("[\\s\\t]*([^\\s\\t]+)[\\s\\t]+([^\\s\\t]+)[\\s\\t]*=.+");
 				String varLabel;
-
+				
 
 				if (isVarDeclaration) {
 					if (initVar.contains(" "))
