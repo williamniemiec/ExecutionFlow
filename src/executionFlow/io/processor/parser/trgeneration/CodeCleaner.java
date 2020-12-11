@@ -83,6 +83,7 @@ public class CodeCleaner {
 		formatBrackets();
 		if (debug) System.out.println("CLEANUP: Formatted brackets");
 		trimLines();
+		convertEmptyForToWhile();
 		separateLinesWithSemicolons();
 		if (debug) System.out.println("CLEANUP: Separated lines with semicolons");
 		trimLines();
@@ -522,6 +523,16 @@ public class CodeCleaner {
 						|| startBlockLine.matches("^(%forcenode%)* finally.+$")) {
 					processedCode.set(i-1, "%forceendnode% " + processedCode.get(i-1));
 				}
+			}
+		}
+	}
+	
+	private void convertEmptyForToWhile() {
+		for (int i=0; i<processedCode.size(); i++) {
+			if (processedCode.get(i).matches("^for[\\s\\t]*\\([\\s\\t]*;[\\s\\t]*;[\\s\\t]*\\).*$")) { // for(;;)
+				Matcher m = Pattern.compile("for[\\s\\t]*\\([\\s\\t]*;[\\s\\t]*;[\\s\\t]*\\)").matcher(processedCode.get(i));
+				m.find();
+				processedCode.set(i, processedCode.get(i).replace(m.group(), "while(true)"));
 			}
 		}
 	}
