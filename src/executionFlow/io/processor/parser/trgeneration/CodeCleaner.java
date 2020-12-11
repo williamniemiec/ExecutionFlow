@@ -148,7 +148,7 @@ public class CodeCleaner {
 			
 			// Removes comment after last open curly bracket
 			if (idxSingle == -1 && idxComment != -1) {
-				processedCode.set(i, processedCode.get(i).substring(0, idxLastOpenCurlyBracket));
+				processedCode.set(i, processedCode.get(i).substring(0, idxLastOpenCurlyBracket+1));
 			}
 			
 			int idxMulti = Helper.getIndexOfReservedSymbol(processedCode.get(i), "/\\*"); 
@@ -270,6 +270,7 @@ public class CodeCleaner {
 			if (curLine.charAt(idx) != '{' && curLine.charAt(idx) != ';') {
 				int blockStart = idx;
 				int blockEnd = Helper.getIndexAfterPosition(curLine, ";", blockStart) + 1;
+				
 				String newLine = curLine.substring(0, blockStart)
 						+ "{ " + curLine.substring(blockStart, blockEnd)
 						+ " }";	
