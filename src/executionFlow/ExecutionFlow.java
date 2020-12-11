@@ -391,7 +391,7 @@ public abstract class ExecutionFlow
 		updateInvokedInfo(invokedInfo, TestMethodFileProcessor.getMapping());
 		
 		if (invokedInfo.getSrcPath().equals(testMethodSrcFile)) {
-			updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
+//			updateInvokedInfo(invokedInfo, InvokedFileProcessor.getMapping());
 			TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping(), testMethodSrcFile);
 		}		
 		
