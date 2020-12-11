@@ -1121,7 +1121,8 @@ public class HolePlug
 		//---------------------------------------------------------------------
 		public String parse(String line)
 		{
-			if (line.matches(".*([^A-z]+|[\\s\\t]*)final[\\s\\t]+.+")) {								
+			if (!line.contains("static ") && 
+					line.matches(".*([^A-z]+|[\\s\\t]*)final[\\s\\t]+.+")) {								
 				Matcher m = Pattern.compile("final[\\s\\t]+").matcher(line);
 				
 				if (m.find())
