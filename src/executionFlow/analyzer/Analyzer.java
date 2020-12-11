@@ -90,7 +90,7 @@ public abstract class Analyzer {
 			startJDB();
 			enableTimeout(timeoutID, timeoutTime);
 			run();
-		} catch (IOException e) {
+		} catch (IOException | IllegalStateException e) {
 			disableTimeout(timeoutID);
 			closeJDB();
 			
