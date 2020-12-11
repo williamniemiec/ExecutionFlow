@@ -562,11 +562,20 @@ public class CodeCleaner {
 
 
 				if (isVarDeclaration) {
-					varLabel = initVar.contains(" ") ? initVar.split("\\s")[1] : initVar;
+					if (initVar.contains(" "))
+						varLabel = initVar.split("\\s")[1];
+					else
+						varLabel = initVar;
 				}
 				else {
-					varLabel = initVar.contains(" ") ? initVar.split("\\s")[0] : initVar;
+					if (initVar.contains(" "))
+						varLabel = initVar.split("\\s")[0];
+					else
+						varLabel = initVar;
 				}
+
+				if (varLabel.contains("="))
+					varLabel = varLabel.split("=")[0];
 				
 				if (initVar.matches(REGEX_MULTI_INITILIZATION)) {
 					Matcher m = Pattern.compile("[A-z$_0-9]+[\\s\\t]*=[^;]+").matcher(initVar);
