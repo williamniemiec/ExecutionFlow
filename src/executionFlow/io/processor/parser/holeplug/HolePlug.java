@@ -82,6 +82,7 @@ public class HolePlug
 		WhileParser whileParser = new WhileParser();
 		SwitchParser switchParser = new SwitchParser();
 		VariableParser variableParser = new VariableParser();
+		FinalParser finalParser = new FinalParser();
 		boolean multilineComment = false;
 		
 		
@@ -163,6 +164,7 @@ public class HolePlug
 					line = whileParser.parse(line);
 					line = switchParser.parse(line, nextLine);
 					line = variableParser.parse(line);
+					line = finalParser.parse(line);
 				}
 			}
 			
@@ -1108,6 +1110,25 @@ public class HolePlug
 			if (currentNestingLevel == 0) { return false; }
 			
 			return elseBlocks_passedTwo.peek();
+		}
+	}
+	
+	private class FinalParser
+	// TODO should be in a separate class
+	{
+		//---------------------------------------------------------------------
+		//		Methods
+		//---------------------------------------------------------------------
+		public String parse(String line)
+		{
+			if (line.matches(".*([^A-z]+|[\\s\\t]*)final[\\s\\t]+.+")) {								
+				Matcher m = Pattern.compile("final[\\s\\t]+").matcher(line);
+				
+				if (m.find())
+					line = line.replaceAll(m.group(), "");
+			}
+			
+			return line;
 		}
 	}
 }
