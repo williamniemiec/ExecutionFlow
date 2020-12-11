@@ -45,7 +45,7 @@ public class CodeCleanerAdapter extends CodeCleaner
 		
 		for (int i=0; i<processedCode.size(); i++) {
 			line = processedCode.get(i);
-			line = line.replaceAll("%.+%", "");
+			line = line.replaceAll("%[\\s\\t]+%", "");
 			processedCode.set(i, line);
 		}
 	}
