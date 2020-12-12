@@ -267,11 +267,11 @@ public class CodeCleaner {
 			
 			idx++;
 			
-			while (curLine.charAt(idx) == ' ' || curLine.charAt(idx) == '\t') {
+			while (idx < curLine.length() && (curLine.charAt(idx) == ' ' || curLine.charAt(idx) == '\t')) {
 				idx++;
 			}
 			
-			if (curLine.charAt(idx) != '{' & curLine.charAt(idx) != ';') {
+			if (idx < curLine.length() && (curLine.charAt(idx) != '{' & curLine.charAt(idx) != ';')) {
 				int blockStart = idx;
 				int blockEnd = Helper.getIndexAfterPosition(curLine, ";", blockStart) + 1;
 				
