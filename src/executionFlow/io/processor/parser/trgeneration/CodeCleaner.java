@@ -247,6 +247,9 @@ public class CodeCleaner {
 		for (int i = 0; i < processedCode.size(); i++) {
 			String curLine = processedCode.get(i);
 			
+			if (curLine.contains("catch(Throwable _"))
+				continue;
+			
 			int idxWord = Helper.getIndexOfReservedString(curLine, "(while|if|for|else)");
 			if (idxWord == -1) continue;
 			
@@ -268,7 +271,7 @@ public class CodeCleaner {
 				idx++;
 			}
 			
-			if (curLine.charAt(idx) != '{' && curLine.charAt(idx) != ';') {
+			if (curLine.charAt(idx) != '{' & curLine.charAt(idx) != ';') {
 				int blockStart = idx;
 				int blockEnd = Helper.getIndexAfterPosition(curLine, ";", blockStart) + 1;
 				
@@ -455,8 +458,15 @@ public class CodeCleaner {
 		int removedLines = 0;
 
 		for (int i=0; i < processedCode.size(); i++) {
+			if (processedCode.get(i).contains("catch(Throwable _"))
+				continue;
+			
 			mapping.put(i+removedLines, Helper.initArray(i));
 			String curLine = processedCode.get(i);
+			
+			if (i+1 < processedCode.size() && 
+					processedCode.get(i+1).contains("catch(Throwable _"))
+				continue;
 			
 			while (!Helper.lineContainsReservedChar(curLine, ";")
 					&& !Helper.lineContainsReservedChar(curLine, "{") 
@@ -916,8 +926,11 @@ public class CodeCleaner {
 			endLines.addAll(currentMap.get(id));
 		} else {
 			List<Integer> directTargets = currentMap.get(id);
-			for (Integer target : directTargets) {
-				endLines.addAll(getFinalTargetLineId(target, depth + 1));
+			
+			if (directTargets != null) {
+				for (Integer target : directTargets) {
+					endLines.addAll(getFinalTargetLineId(target, depth + 1));
+				}
 			}
 		}
 		
