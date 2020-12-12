@@ -82,7 +82,7 @@ public class HolePlug
 		WhileParser whileParser = new WhileParser();
 		SwitchParser switchParser = new SwitchParser();
 		VariableParser variableParser = new VariableParser();
-		FinalParser finalParser = new FinalParser();
+//		FinalParser finalParser = new FinalParser();
 		boolean multilineComment = false;
 		
 		
@@ -164,7 +164,7 @@ public class HolePlug
 					line = whileParser.parse(line);
 					line = switchParser.parse(line, nextLine);
 					line = variableParser.parse(line);
-					line = finalParser.parse(line);
+//					line = finalParser.parse(line);
 				}
 			}
 			
@@ -663,7 +663,7 @@ public class HolePlug
 			
 			if (line.matches(REGEX_CONTINUE_BREAK)) {	
 				line = checkCurlyBracketNewLine(line, nextLine);
-				line = "if (Boolean.parseBoolean(\"True\")) {"+line+"}";
+				line = "if (Boolean.parseBoolean(\"True\")) {"+line+"}break;";
 				wasParsed = true;
 			}
 			
