@@ -1,9 +1,9 @@
 package executionFlow;
 
-import java.io.IOException;
-import java.nio.channels.InterruptedByTimeoutException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import executionFlow.exporter.file.ProcessedSourceFileExporter;
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
@@ -13,8 +13,6 @@ import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
-import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
-import executionFlow.util.Logger;
 
 
 /**
@@ -29,15 +27,11 @@ import executionFlow.util.Logger;
  * @version		5.2.3
  * @since		2.0.0
  */
-public class ConstructorExecutionFlow extends ExecutionFlow
-{
+public class ConstructorExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * Stores information about collected constructors.
-	 */
-	private Collection<CollectorInfo> constructorCollector;	
+	private Collection<List<CollectorInfo>> collectors;	
 	
 	
 	//-------------------------------------------------------------------------
@@ -50,8 +44,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * @param		constructorCollector Collected constructors from 
 	 * {@link executionFlow.runtime.ConstructorCollector}
 	 */
-	public ConstructorExecutionFlow(Collection<CollectorInfo> constructorCollector)
-	{
+	public ConstructorExecutionFlow(Collection<CollectorInfo> constructorCollector) {
 		this(constructorCollector, true);
 	}
 	
@@ -63,9 +56,12 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * @param		exportCalledMethods If true, signature of methods called by tested 
 	 * constructor will be exported to a CSV file
 	 */
-	public ConstructorExecutionFlow(Collection<CollectorInfo> constructorCollector, boolean exportCalledMethods)
-	{
-		this.constructorCollector = constructorCollector;
+	public ConstructorExecutionFlow(Collection<CollectorInfo> constructorCollector, boolean exportCalledMethods) {
+		List<CollectorInfo> constructorCollectorList = new ArrayList<>(constructorCollector); 
+		Collection<List<CollectorInfo>> c = new ArrayList<>();
+		c.add(constructorCollectorList);
+		this.collectors = c;
+		
 		this.exportCalledMethods = exportCalledMethods;
 		
 		computedTestPaths = new HashMap<>();
@@ -107,82 +103,13 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	@Override
-	public ExecutionFlow execute()
-	{
-		if ((constructorCollector == null) || constructorCollector.isEmpty())
-			return this;
-		
-		dumpCollector();
-		
-		// Generates test path for each collected method
-		for (CollectorInfo collector : constructorCollector) {
-			FileManager constructorFileManager = createInvokedFileManager(collector);
-			FileManager testMethodFileManager = createTestMethodFileManager(collector);
-			
-			try {
-				run(
-					collector.getTestMethodInfo(), 
-					testMethodFileManager, 
-					collector.getConstructorInfo(), 
-					constructorFileManager
-				);
-
-			} 
-			catch (InterruptedByTimeoutException e1) {
-				Logger.error("Time exceeded");
-			} 
-			catch (IllegalStateException e2) {
-				Logger.error(e2.getMessage());
-			}
-			catch (IOException e3) {
-				Logger.error(e3.getMessage());
-				
-				try {
-					constructorFileManager.revertCompilation();
-					constructorFileManager.revertParse();
-					testMethodFileManager.revertCompilation();
-					testMethodFileManager.revertParse();
-				} 
-				catch (IOException e) {
-					Logger.error(
-							"An error occurred while restoring the original files - " 
-							+ e.getMessage()
-					);
-				}
-			}
-		}
-		
-		return this;
+	protected Collection<List<CollectorInfo>> getCollectors() {
+		return collectors;
 	}
-
-	private void dumpCollector() {
-		Logger.debug(
-				this.getClass().getName(), 
-				"collector: " + constructorCollector.toString()
-		);
-	}
-
-
-	private FileManager createTestMethodFileManager(CollectorInfo collector) {
-		// Gets FileManager for test method file
-		FileManager testMethodFileManager;
-		testMethodFileManager = new FileManager(
-			collector.getTestMethodInfo().getClassSignature(),
-			collector.getTestMethodInfo().getSrcPath(), 
-			collector.getTestMethodInfo().getClassDirectory(),
-			collector.getTestMethodInfo().getPackage(),
-			new TestMethodFileProcessorFactory(),
-			"testMethod.bkp"
-		);
-		return testMethodFileManager;
-	}
-
-
-	private FileManager createInvokedFileManager(CollectorInfo collector) {
+	
+	protected FileManager createInvokedFileManager(CollectorInfo collector) {
 		// Gets FileManager for method file
-		FileManager constructorFileManager;
-		constructorFileManager = new FileManager(
+		return new FileManager(
 			collector.getConstructorInfo().getClassSignature(),
 			collector.getConstructorInfo().getSrcPath(), 
 			collector.getConstructorInfo().getClassDirectory(),
@@ -190,6 +117,5 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 			new InvokedFileProcessorFactory(),
 			"invoked.bkp"
 		);
-		return constructorFileManager;
 	}
 }

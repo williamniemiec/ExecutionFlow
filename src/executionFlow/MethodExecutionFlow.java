@@ -1,7 +1,6 @@
 package executionFlow;
 
-import java.io.IOException;
-import java.nio.channels.InterruptedByTimeoutException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +13,7 @@ import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
-import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.MethodCollector;
-import executionFlow.util.Logger;
 
 
 /**
@@ -31,19 +28,11 @@ import executionFlow.util.Logger;
  * @version		5.2.3
  * @since		2.0.0
  */
-public class MethodExecutionFlow extends ExecutionFlow
-{
+public class MethodExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * Collected methods from {@link executionFlow.runtime.MethodCollector}.
-	 * <ul>
-	 * 	<li><b>Key:</b> Method invocation line</li>
-	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-	 * <ul> 
-	 */
-	private Map<Integer, List<CollectorInfo>> methodCollector;
+	private Collection<List<CollectorInfo>> methodCollectors;
 	
 
 	//-------------------------------------------------------------------------
@@ -54,8 +43,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * 
 	 * @param		collectedMethods Collected methods from {@link MethodCollector}
 	 */
-	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods)
-	{
+	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods) {
 		this(collectedMethods, true);
 	}
 	
@@ -67,9 +55,8 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 * @param		exportCalledMethods If true, signature of methods called by tested 
 	 * method will be exported to a CSV file
 	 */
-	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, boolean exportCalledMethods)
-	{
-		this.methodCollector = collectedMethods;
+	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, boolean exportCalledMethods) {
+		this.methodCollectors = collectedMethods.values();
 		this.exportCalledMethods = exportCalledMethods;
 		
 		computedTestPaths = new HashMap<>();
@@ -78,8 +65,11 @@ public class MethodExecutionFlow extends ExecutionFlow
 		setMethodsCalledByTestedInvokedExporter();
 		setTestPathExporter();
 	}
-
-
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	private void setMethodsCalledByTestedInvokedExporter() {
 		if (isDevelopment()) {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
@@ -108,88 +98,12 @@ public class MethodExecutionFlow extends ExecutionFlow
 		}
 	}
 	
+	protected Collection<List<CollectorInfo>> getCollectors() {
+		return methodCollectors;
+	}
 	
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
-	@Override
-	public ExecutionFlow execute()
-	{
-		if (methodCollector == null || methodCollector.isEmpty())
-			return this;
-		
-		dumpCollector();
-		
-		boolean gotoNextLine = false;
-		List<List<Integer>> tp;
-		
-		
-		// Generates test path for each collected method
-		for (List<CollectorInfo> collectors : methodCollector.values()) {
-			gotoNextLine = false;
-			
-			// Computes test path for each collected method that is invoked in the same line
-			for (CollectorInfo collector : collectors) {
-				if (gotoNextLine)
-					break;
-
-				FileManager methodFileManager = createInvokedFileManager(collector);
-				FileManager testMethodFileManager = createTestMethodFileManager(collector);
-
-				try {
-					tp = run(
-						collector.getTestMethodInfo(), 
-						testMethodFileManager, 
-						collector.getMethodInfo(), 
-						methodFileManager
-					);
-					
-					// Checks whether test path was generated inside a loop
-					gotoNextLine = tp.size() > 1;
-				} 
-				catch (InterruptedByTimeoutException e1) {
-					Logger.error("Time exceeded");
-				} 
-				catch (IllegalStateException e2) {
-					Logger.error(e2.getMessage());
-				}
-				catch (IOException e3) {
-					Logger.error(e3.getMessage());
-					
-					restoreOriginalFiles(methodFileManager);
-					restoreOriginalFiles(testMethodFileManager);
-				}
-			}
-		}
-		
-		return this;
-	}
-
-	private void dumpCollector() {
-		Logger.debug(
-				this.getClass().getName(), 
-				"collector: " + methodCollector.toString()
-		);
-	}
-
-
-	private FileManager createTestMethodFileManager(CollectorInfo collector) {
-		FileManager testMethodFileManager;
-		testMethodFileManager = new FileManager(
-			collector.getTestMethodInfo().getClassSignature(),
-			collector.getTestMethodInfo().getSrcPath(), 
-			collector.getTestMethodInfo().getClassDirectory(),
-			collector.getTestMethodInfo().getPackage(),
-			new TestMethodFileProcessorFactory(),
-			"testMethod.bkp"
-		);
-		return testMethodFileManager;
-	}
-
-
-	private FileManager createInvokedFileManager(CollectorInfo collector) {
-		FileManager methodFileManager;
-		methodFileManager = new FileManager(
+	protected FileManager createInvokedFileManager(CollectorInfo collector) {
+		FileManager methodFileManager = new FileManager(
 			collector.getMethodInfo().getClassSignature(),
 			collector.getMethodInfo().getSrcPath(), 
 			collector.getMethodInfo().getClassDirectory(),
@@ -197,22 +111,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 			new InvokedFileProcessorFactory(),
 			"invoked.bkp"
 		);
+		
 		return methodFileManager;
-	}
-	
-	/**
-	 * Restores original files, displaying an error message if an error occurs.
-	 * 
-	 * @param		fm File manager
-	 */
-	private void restoreOriginalFiles(FileManager fm) 
-	{
-		try {
-			fm.revertCompilation();
-			fm.revertParse();
-		} 
-		catch (IOException e) {
-			Logger.error("An error occurred while restoring the original files - " + e.getMessage());
-		}
 	}
 }

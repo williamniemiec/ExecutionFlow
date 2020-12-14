@@ -12,6 +12,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,8 @@ import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
+import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
+import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.TestMethodCollector;
 import executionFlow.util.Logger;
 import executionFlow.util.FileUtil;
@@ -97,6 +100,10 @@ public abstract class ExecutionFlow
 	private static Path appRoot;
 	private static Path currentProjectRoot;
 
+	// List<CollectorInfo>: invokedCollectorInfo + TestMethodCollectorInfo
+	// Collection.size > 1 if it is called from a loop
+//	protected Collection<List<CollectorInfo>> collectors;
+
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -133,23 +140,12 @@ public abstract class ExecutionFlow
 	 */
 	public static void init(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException
 	{
-		if (testMethodManager == null) {
-			try {
-				testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true, restoreOriginalFiles);
-			} 
-			catch (ClassNotFoundException e) {
-				throw new ClassNotFoundException("Class FileManager not found");
-			} 
-			catch (IOException e) {
-				throw new IOException(
-						"Could not recover the backup file of the test method\n"
-						+ "See more: https://github.com/williamniemiec/"
-						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
-						+ "#could-not-recover-all-backup-files"
-				);
-			}
-		}
+		initializeTestMethodManager(restoreOriginalFiles);
+		initializeInvokedManager(restoreOriginalFiles);
+	}
 
+	private static void initializeInvokedManager(boolean restoreOriginalFiles)
+			throws ClassNotFoundException, IOException {
 		if (invokedManager == null) {
 			try {
 				invokedManager = new FilesManager(ProcessorType.INVOKED, true, restoreOriginalFiles);
@@ -164,6 +160,26 @@ public abstract class ExecutionFlow
 			catch (IOException e) {
 				throw new IOException(
 						"Could not recover all backup files for methods\n"
+						+ "See more: https://github.com/williamniemiec/"
+						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+						+ "#could-not-recover-all-backup-files"
+				);
+			}
+		}
+	}
+
+	private static void initializeTestMethodManager(boolean restoreOriginalFiles)
+			throws ClassNotFoundException, IOException {
+		if (testMethodManager == null) {
+			try {
+				testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true, restoreOriginalFiles);
+			} 
+			catch (ClassNotFoundException e) {
+				throw new ClassNotFoundException("Class FileManager not found");
+			} 
+			catch (IOException e) {
+				throw new IOException(
+						"Could not recover the backup file of the test method\n"
 						+ "See more: https://github.com/williamniemiec/"
 						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
 						+ "#could-not-recover-all-backup-files"
@@ -205,17 +221,104 @@ public abstract class ExecutionFlow
 	 * 
 	 * @return		This object to allow chained calls
 	 */
-	public abstract ExecutionFlow execute();
+	public final ExecutionFlow execute() {
+		if ((getCollectors() == null) || getCollectors().isEmpty())
+			return this;
+		
+		boolean gotoNextLine = false;
+		
+		dumpCollectors();
+		
+		for (List<CollectorInfo> collectors : getCollectors()) {
+			gotoNextLine = false;
+		
+			for (CollectorInfo collector : collectors) {
+				if (gotoNextLine)
+					break;
+				
+				FileManager invokedFileManager = createInvokedFileManager(collector);
+				FileManager testMethodFileManager = createTestMethodFileManager(collector);
+				
+				try {
+					List<List<Integer>> tp = run(
+						collector.getTestMethodInfo(), 
+						testMethodFileManager, 
+						collector.getConstructorInfo(), 
+						invokedFileManager
+					);
+	
+					// Checks whether test path was generated inside a loop
+					gotoNextLine = tp.size() > 1;
+				} 
+				catch (InterruptedByTimeoutException e1) {
+					Logger.error("Time exceeded");
+				} 
+				catch (IllegalStateException e2) {
+					Logger.error(e2.getMessage());
+				}
+				catch (IOException e3) {
+					restoreOriginalFiles(invokedFileManager);
+					restoreOriginalFiles(testMethodFileManager);					
+				}
+			}
+		}
+		
+		return this;
+	}
+
+	protected abstract Collection<List<CollectorInfo>> getCollectors();
+
+	private void dumpCollectors() {
+		Logger.debug(
+				this.getClass().getName(), 
+				"collector: " + getCollectors().toString()
+		);
+	}
+	
+	private FileManager createTestMethodFileManager(CollectorInfo collector) {
+		FileManager testMethodFileManager;
+		testMethodFileManager = new FileManager(
+			collector.getTestMethodInfo().getClassSignature(),
+			collector.getTestMethodInfo().getSrcPath(), 
+			collector.getTestMethodInfo().getClassDirectory(),
+			collector.getTestMethodInfo().getPackage(),
+			new TestMethodFileProcessorFactory(),
+			"testMethod.bkp"
+		);
+		return testMethodFileManager;
+	}
+
+
+	protected abstract FileManager createInvokedFileManager(CollectorInfo collector);
+	
+	/**
+	 * Restores original files, displaying an error message if an error occurs.
+	 * 
+	 * @param		fm File manager
+	 */
+	private void restoreOriginalFiles(FileManager fm) 
+	{
+		try {
+			fm.revertCompilation();
+			fm.revertParse();
+		} 
+		catch (IOException e) {
+			Logger.error(
+					"An error occurred while restoring the original files - " 
+					+ e.getMessage()
+			);
+		}
+	}
 	
 	/**
 	 * Exports the result.
 	 * 
-	 * @throws		IllegalArgumentException If exporter is null
+	 * @throws		IllegalStateException If exporter is null
 	 */
 	public void export() 
 	{
 		if (exporter == null)
-			throw new IllegalArgumentException("Exporter cannot be null");
+			throw new IllegalStateException("Exporter cannot be null");
 		
 		exporter.export(computedTestPaths);
 	}
@@ -244,18 +347,14 @@ public abstract class ExecutionFlow
 	protected List<List<Integer>> run(InvokedInfo testMethodInfo, FileManager testMethodFileManager, 
 			InvokedInfo invokedInfo, FileManager invokedFileManager) throws IOException, InterruptedByTimeoutException
 	{
-		List<List<Integer>> tp = new ArrayList<>();
 		Analyzer analyzer;
-		String invokedSignature = invokedInfo.getInvokedSignature().replaceAll("\\$", ".");
-		boolean isConstructor = invokedInfo instanceof ConstructorInvokedInfo;
-	
-		
 		analyzer = analyze(
 				testMethodInfo, testMethodFileManager, 
 				invokedInfo, invokedFileManager
 		);
 		
 		// Computes test path from JDB
+		String invokedSignature = invokedInfo.getInvokedSignature().replaceAll("\\$", ".");
 		Logger.info("Computing test path of invoked " 
 				+ invokedSignature + "...");
 		analyzer.analyze();
@@ -271,6 +370,7 @@ public abstract class ExecutionFlow
 			throw new InterruptedByTimeoutException();
 		}
 		
+		List<List<Integer>> tp = new ArrayList<>();
 		tp = analyzer.getTestPaths();
 		
 		if (tp.isEmpty() || tp.get(0).isEmpty())
@@ -279,6 +379,7 @@ public abstract class ExecutionFlow
 			Logger.info("Test path has been successfully computed");				
 
 		// Fix anonymous class signature
+		boolean isConstructor = invokedInfo instanceof ConstructorInvokedInfo;
 		if (isConstructor) {
 			if (invokedInfo.getInvokedSignature() != analyzer.getAnalyzedInvokedSignature()) {
 				if (analyzer.getAnalyzedInvokedSignature().isBlank()) {
@@ -296,19 +397,25 @@ public abstract class ExecutionFlow
 			invokedSignature = invokedSignature.replaceAll("\\$", ".");
 		}
 		
-		// Stores each computed test path
-		storeTestPath(tp, Pair.of(
-				testMethodInfo.getInvokedSignature(),
-				invokedSignature
-		));
+		storeTestPath(tp, Pair.of(testMethodInfo.getInvokedSignature(),	invokedSignature));
 		
+		exportProcessedSourceFile(invokedInfo, invokedSignature, isConstructor);
+		exportMethodsCalledByTestedInvoked(analyzer, invokedSignature);
+
+		return tp;
+	}
+
+	private void exportProcessedSourceFile(InvokedInfo invokedInfo, String invokedSignature, boolean isConstructor)
+			throws IOException {
 		// Exports processed file
 		processedSourceFileExporter.export(
 				invokedInfo.getSrcPath(), 
 				invokedSignature,
 				isConstructor
 		);
-		
+	}
+
+	private void exportMethodsCalledByTestedInvoked(Analyzer analyzer, String invokedSignature) {
 		// Exports methods called by tested invoked to a CSV
 		if (exportCalledMethods) {
 			invokedMethodsExporter.export(
@@ -318,8 +425,6 @@ public abstract class ExecutionFlow
 		}
 
 		analyzer.deleteMethodsCalledByTestedInvoked();
-
-		return tp;
 	}
 	
 	/**
