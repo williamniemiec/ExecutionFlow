@@ -8,6 +8,7 @@ import executionFlow.util.Logger;
 public class ProcessingManager {
 	private static FilesManager testMethodManager;
 	private static FilesManager invokedManager;
+//	private static ProcessingManager instance;
 //	private FileManager testMethodFileManager;
 //	private FileManager invokedFileManager;
 	
@@ -22,11 +23,16 @@ public class ProcessingManager {
 	 * found
 	 * @throws		IOException If backup files could not be restored
 	 */
-	public ProcessingManager(boolean restoreOriginalFiles) 
-			throws ClassNotFoundException, IOException {
+	public  ProcessingManager(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException {
 		initializeTestMethodManager(restoreOriginalFiles);
 		initializeInvokedManager(restoreOriginalFiles);
 	}
+	
+//	public void init(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException
+//	{
+//		initializeTestMethodManager(restoreOriginalFiles);
+//		initializeInvokedManager(restoreOriginalFiles);
+//	}
 
 	private static void initializeInvokedManager(boolean restoreOriginalFiles)
 			throws ClassNotFoundException, IOException {
@@ -153,7 +159,7 @@ public class ProcessingManager {
 	 * @throws		IOException If an error occurs during processing or 
 	 * compilation
 	 */
-	public void processInvoked(FileManager invokedFileManager, FileManager testMethodFileManager) throws IOException 
+	public void processInvoked(FileManager testMethodFileManager, FileManager invokedFileManager) throws IOException 
 	{
 		if (!invokedManager.wasProcessed(invokedFileManager)) {
 			boolean autoRestore = 
@@ -216,4 +222,11 @@ public class ProcessingManager {
 		if (invokedManager.load())
 			invokedManager.restoreAll();
 	}
+
+//	public static ProcessingManager getInstance() {
+//		if (instance == null)
+//			instance = new ProcessingManager();
+//		
+//		return instance;
+//	}
 }

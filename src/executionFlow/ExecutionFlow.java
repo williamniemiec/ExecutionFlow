@@ -194,6 +194,7 @@ public abstract class ExecutionFlow
 			updateInvocationLine(collector.getInvokedInfo(), TestMethodFileProcessor.getMapping());
 			Logger.info("Processing completed");
 			
+			
 			Logger.info("Processing source file of invoked - " 
 					+ collector.getInvokedInfo().getConcreteInvokedSignature() + "...");
 			Logger.info("Processing completed");
@@ -222,6 +223,7 @@ public abstract class ExecutionFlow
 			Logger.error(e2.getMessage());
 		}
 		catch (IOException e3) {
+			Logger.error(e3.getMessage());
 			processingManager.restoreInvokedOriginalFile(invokedFileManager);
 			processingManager.restoreTestMethodOriginalFile(testMethodFileManager);					
 		}
