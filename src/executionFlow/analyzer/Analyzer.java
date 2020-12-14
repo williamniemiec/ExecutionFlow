@@ -315,4 +315,20 @@ public abstract class Analyzer {
 	public static boolean getTimeout() {
 		return timeout;
 	}
+
+
+	public boolean wasTestPathObtainedInALoop() {
+		if (testPaths == null)
+			return false;
+		
+		return testPaths.size() > 1;
+	}
+
+
+	public boolean hasTestPaths() {
+		if (testPaths == null)
+			return false;
+		
+		return !testPaths.isEmpty() && !testPaths.get(0).isEmpty();
+	}
 }

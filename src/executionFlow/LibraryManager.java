@@ -13,7 +13,7 @@ import executionFlow.util.FileUtil;
  * Responsible for gathering all libraries that the application needs.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.1
+ * @version		5.2.3
  * @since		5.2.0
  */
 public class LibraryManager 
@@ -21,21 +21,21 @@ public class LibraryManager
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static Map<String, Path> libraries = new HashMap<>();
-	
 	private static final Path ARGUMENT_FILE = 
 			Path.of(System.getProperty("user.home"), ".ef_dependencies.txt");
+	private static Map<String, Path> libraries = new HashMap<>();
+	private static Path libPath;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	static {
-		libraries.put("HAMCREST", ExecutionFlow.getLibPath().resolve("hamcrest-all-1.3.jar"));
-		libraries.put("JUNIT_4", ExecutionFlow.getLibPath().resolve("junit-4.13.jar"));
-		libraries.put("ASPECTJRT", ExecutionFlow.getLibPath().resolve("aspectjrt.jar"));
-		libraries.put("JUNIT_5_API", ExecutionFlow.getLibPath().resolve("junit-jupiter-api-5.6.2.jar"));
-		libraries.put("JUNIT_5_PARAMS", ExecutionFlow.getLibPath().resolve("junit-jupiter-params-5.6.2.jar"));
+		libraries.put("HAMCREST", getLibPath().resolve("hamcrest-all-1.3.jar"));
+		libraries.put("JUNIT_4", getLibPath().resolve("junit-4.13.jar"));
+		libraries.put("ASPECTJRT", getLibPath().resolve("aspectjrt.jar"));
+		libraries.put("JUNIT_5_API", getLibPath().resolve("junit-jupiter-api-5.6.2.jar"));
+		libraries.put("JUNIT_5_PARAMS", getLibPath().resolve("junit-jupiter-params-5.6.2.jar"));
 	}
 	
 	
@@ -65,5 +65,25 @@ public class LibraryManager
 		);
 		
 		return ARGUMENT_FILE;
+	}
+	
+	/**
+	 * Finds directory of application libraries and stores it in {@link #libPath}.
+	 * 
+	 * @param		appRoot Application root path
+	 * 
+	 * @implSpec	Lazy initialization
+	 */
+	public static Path getLibPath()
+	{
+		if (libPath != null)
+			return libPath;
+		
+		libPath = Path.of(
+				ExecutionFlow.getAppRootPath().toAbsolutePath().toString(), 
+				"lib"
+		);
+
+		return libPath;
 	}
 }

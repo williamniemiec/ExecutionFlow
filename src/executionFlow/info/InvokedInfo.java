@@ -628,9 +628,11 @@ public class InvokedInfo
 		return methodType(returnType, parameterTypes);
 	}
 	
-	public String getConcreteMethodSignature()
+	public String getConcreteInvokedSignature()
 	{
-		return (concreteMethodSignature == null) ? invokedSignature : concreteMethodSignature;
+		return (concreteMethodSignature == null) ? 
+				invokedSignature.replaceAll("\\$", ".") 
+				: concreteMethodSignature.replaceAll("\\$", ".");
 	}
 	
 	public void setConcreteMethodSignature(String concreteMethodSignature) 

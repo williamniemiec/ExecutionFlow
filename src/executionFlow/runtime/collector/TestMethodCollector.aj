@@ -16,11 +16,11 @@ import executionFlow.ExecutionFlow;
 import executionFlow.LibraryManager;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.RemoteControl;
-import executionFlow.exporter.signature.TestedInvokedExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
+import executionFlow.io.ProcessingManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
@@ -59,7 +59,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static Session session = 
 			new Session("session.ef", new File(System.getProperty("user.home")));
 	private static int totalTests = -1;
-	private static String outputDir;
 	private String lastRepeatedTestSignature;
 	private String testClassName;
 	private String testClassPackage;
@@ -70,13 +69,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static boolean skipTestMethod;
 	private volatile static boolean success;
 	
-	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	static {
-		outputDir = ExecutionFlow.isDevelopment() ? "examples\\results" : "results";
-	}
+	private static ProcessingManager processingManager;
 	
 	
 	//-------------------------------------------------------------------------
@@ -158,7 +151,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 		onShutdown();
 
 		try {
-			ExecutionFlow.init(!checkpoint_initial.isActive());
+//			ExecutionFlow.init(!checkpoint_initial.isActive());
+			processingManager = new ProcessingManager(!checkpoint_initial.isActive());
 			setTestMethodInfo(thisJoinPoint);
 			onEachTestMethod();
 			onFirstRun();
@@ -343,7 +337,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (totalTests == 0) {
 			// Restores original method files and its compiled files
 			hasError = restoreInvokedFiles();
-			ExecutionFlow.getInvokedManager().deleteBackup();
+			processingManager.deleteInvokedFileManagerBackup();
 			
 			// Resets totalTests
 			totalTests = -1;
@@ -355,25 +349,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 	
 	public static void processCollectedInvoked()
 	{
-		ExecutionFlow ef;
-		
-		
-		// Gets test paths of the collected methods and export them
-		ef = new MethodExecutionFlow(methodCollector);
-		ef.execute().export();
-		
-		// Exports tested methods to a CSV
-		ef.setExporter(new TestedInvokedExporter("Testers", 
-				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
-			.export();
-		
-		ef = new ConstructorExecutionFlow(constructorCollector.values());
-		ef.execute().export();
-		
-		// Exports tested constructors to a CSV
-		ef.setExporter(new TestedInvokedExporter("Testers", 
-				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)))
-			.export();
+		ExecutionFlow methodExecutionFlow = 
+				new MethodExecutionFlow(processingManager, methodCollector);
+		ExecutionFlow constructorExecutionFlow = 
+				new ConstructorExecutionFlow(processingManager, constructorCollector.values());
+
+		methodExecutionFlow.execute();
+		constructorExecutionFlow.execute();
 	}
 
 	/**
@@ -404,8 +386,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			    	if (testMethodManager != null)
 			    		testMethodManager.restoreAll();
 			    	
-			    	if (ExecutionFlow.getInvokedManager() != null)
-			    		ExecutionFlow.getInvokedManager().deleteBackup();
+			    	processingManager.deleteInvokedFileManagerBackup();
 			    	
 			    	deleteTestMethodBackupFiles();
 					disableCheckpoint(checkpoint);
@@ -581,15 +562,15 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private void deleteTestMethodBackupFiles()
 	{
-		if (ExecutionFlow.getTestMethodManager() != null)
-			ExecutionFlow.getTestMethodManager().deleteBackup();
+		if (processingManager.isTestMethodManagerInitialized())
+			processingManager.deleteTestMethodFileManagerBackup();
 		
 		if (testMethodManager != null) {
 			testMethodManager.deleteBackup();
 			testMethodManager = null;
 		}
 		
-		ExecutionFlow.destroyTestMethodManager();
+		processingManager.destroyTestMethodManager();
 	}
 	
 	/**
@@ -622,15 +603,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private boolean restoreTestMethodFiles()
 	{
-		if (ExecutionFlow.getTestMethodManager() == null)
+		if (!processingManager.isTestMethodManagerInitialized())
 			return false;
 		
 		boolean hasError = false;
 		
 		
 		try {
-			if (ExecutionFlow.getTestMethodManager().load())
-				ExecutionFlow.getTestMethodManager().restoreAll();
+			processingManager.restoreTestMethodOriginalFiles();
 		} 
 		catch (ClassNotFoundException e) {
 			hasError = true;
@@ -659,15 +639,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private boolean restoreInvokedFiles()
 	{
-		if (ExecutionFlow.getInvokedManager() == null)
+		if (!processingManager.isInvokedManagerInitialized())
 			return false;
 		
 		boolean hasError = false;
 		
 		
 		try {
-			if (ExecutionFlow.getInvokedManager().load())
-				ExecutionFlow.getInvokedManager().restoreAll();	
+			processingManager.restoreInvokedOriginalFiles();
 		} 
 		catch (ClassNotFoundException e) {
 			hasError = true;

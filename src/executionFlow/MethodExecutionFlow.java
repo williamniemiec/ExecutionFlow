@@ -1,18 +1,13 @@
 package executionFlow;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.exporter.file.ProcessedSourceFileExporter;
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.testpath.ConsoleExporter;
-import executionFlow.exporter.testpath.FileExporter;
-import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
-import executionFlow.io.FileManager;
-import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
+import executionFlow.io.ProcessingManager;
 import executionFlow.runtime.collector.MethodCollector;
 
 
@@ -32,7 +27,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Collection<List<CollectorInfo>> methodCollectors;
+	private List<CollectorInfo> collectors;
 	
 
 	//-------------------------------------------------------------------------
@@ -43,30 +38,26 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	 * 
 	 * @param		collectedMethods Collected methods from {@link MethodCollector}
 	 */
-	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods) {
-		this(collectedMethods, true);
-	}
-	
-	/**
-	 * Computes test path for collected methods. Using this constructor,
-	 * the invoked methods by tested constructor will be exported to a CSV file.
-	 * 
-	 * @param		collectedMethods Collected methods from {@link MethodCollector}
-	 * @param		exportCalledMethods If true, signature of methods called by tested 
-	 * method will be exported to a CSV file
-	 */
-	public MethodExecutionFlow(Map<Integer, List<CollectorInfo>> collectedMethods, boolean exportCalledMethods) {
-		this.methodCollectors = collectedMethods.values();
-		this.exportCalledMethods = exportCalledMethods;
+	public MethodExecutionFlow(ProcessingManager processingManager, 
+			Map<Integer, List<CollectorInfo>> collectedMethods) {
+		super(processingManager);
 		
+		this.collectors = new ArrayList<>();
 		computedTestPaths = new HashMap<>();
 		
-		
+		storeCollectedMethods(collectedMethods);
 		setMethodsCalledByTestedInvokedExporter();
-		setTestPathExporter();
 	}
 	
 	
+	private void storeCollectedMethods(Map<Integer, List<CollectorInfo>> collectedMethods) {
+		// Stores only the first collector of each line, since the test path of
+		// methods called within a loop will be obtained at once
+		for (List<CollectorInfo> collector : collectedMethods.values()) {
+			collectors.add(collector.get(0));
+		}
+	}
+
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -75,41 +66,15 @@ public class MethodExecutionFlow extends ExecutionFlow {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
 					"MethodsCalledByTestedMethod", "examples\\results"
 			);
-			
-			processedSourceFileExporter = new ProcessedSourceFileExporter("examples\\results");
 		}
 		else {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
 					"MethodsCalledByTestedMethod", "results"
 			);
-			
-			processedSourceFileExporter = new ProcessedSourceFileExporter("results");
 		}
 	}
 	
-	private void setTestPathExporter() {
-		if (isDevelopment()) {
-			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-				new FileExporter("examples\\results", false);
-		}
-		else {
-			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-				new FileExporter("results", false);
-		}
-	}
-	
-	protected Collection<List<CollectorInfo>> getCollectors() {
-		return methodCollectors;
-	}
-	
-	protected FileManager createInvokedFileManager(CollectorInfo collector) {
-		return new FileManager(
-			collector.getInvokedInfo().getClassSignature(),
-			collector.getInvokedInfo().getSrcPath(), 
-			collector.getInvokedInfo().getClassDirectory(),
-			collector.getInvokedInfo().getPackage(),
-			new InvokedFileProcessorFactory(),
-			"invoked.bkp"
-		);
+	protected List<CollectorInfo> getCollectors() {
+		return collectors;
 	}
 }

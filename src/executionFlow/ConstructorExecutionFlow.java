@@ -5,14 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import executionFlow.exporter.file.ProcessedSourceFileExporter;
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.testpath.ConsoleExporter;
-import executionFlow.exporter.testpath.FileExporter;
-import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.info.CollectorInfo;
-import executionFlow.io.FileManager;
-import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
+import executionFlow.io.ProcessingManager;
 
 
 /**
@@ -31,7 +26,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Collection<List<CollectorInfo>> collectors;	
+	private List<CollectorInfo> collectors;	
 	
 	
 	//-------------------------------------------------------------------------
@@ -44,30 +39,14 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	 * @param		constructorCollector Collected constructors from 
 	 * {@link executionFlow.runtime.ConstructorCollector}
 	 */
-	public ConstructorExecutionFlow(Collection<CollectorInfo> constructorCollector) {
-		this(constructorCollector, true);
-	}
-	
-	/**
-	 * Computes test path for collected constructors.
-	 * 
-	 * @param		constructorCollector Collected constructors from 
-	 * {@link executionFlow.runtime.ConstructorCollector}
-	 * @param		exportCalledMethods If true, signature of methods called by tested 
-	 * constructor will be exported to a CSV file
-	 */
-	public ConstructorExecutionFlow(Collection<CollectorInfo> constructorCollector, boolean exportCalledMethods) {
-		List<CollectorInfo> constructorCollectorList = new ArrayList<>(constructorCollector); 
-		Collection<List<CollectorInfo>> c = new ArrayList<>();
-		c.add(constructorCollectorList);
-		this.collectors = c;
-		
-		this.exportCalledMethods = exportCalledMethods;
+	public ConstructorExecutionFlow(ProcessingManager processingManager, 
+			Collection<CollectorInfo> constructorCollector) {
+		super(processingManager);
+		this.collectors = new ArrayList<>(constructorCollector);
 		
 		computedTestPaths = new HashMap<>();
 		
 		setMethodsCalledByTestedInvokedExporter();
-		setTestPathExporter();
 	}
 
 
@@ -76,26 +55,11 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
 					"MethodsCalledByTestedConstructor", "examples\\results"
 			);
-			
-			processedSourceFileExporter = new ProcessedSourceFileExporter("examples\\results");
 		}
 		else {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
 					"MethodsCalledByTestedConstructor", "results"
 			);
-			
-			processedSourceFileExporter = new ProcessedSourceFileExporter("results");
-		}
-	}
-	
-	private void setTestPathExporter() {
-		if (isDevelopment()) {
-			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-				new FileExporter("examples\\results", true);
-		}
-		else {
-			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-				new FileExporter("results", true);
 		}
 	}
 	
@@ -108,19 +72,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 		return true;
 	}
 	
-	protected Collection<List<CollectorInfo>> getCollectors() {
+	protected List<CollectorInfo> getCollectors() {
 		return collectors;
-	}
-	
-	protected FileManager createInvokedFileManager(CollectorInfo collector) {
-		// Gets FileManager for method file
-		return new FileManager(
-			collector.getInvokedInfo().getClassSignature(),
-			collector.getInvokedInfo().getSrcPath(), 
-			collector.getInvokedInfo().getClassDirectory(),
-			collector.getInvokedInfo().getPackage(),
-			new InvokedFileProcessorFactory(),
-			"invoked.bkp"
-		);
 	}
 }
