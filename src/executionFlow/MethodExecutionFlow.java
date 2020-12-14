@@ -28,7 +28,7 @@ import executionFlow.util.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.2
+ * @version		5.2.3
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow
@@ -45,25 +45,7 @@ public class MethodExecutionFlow extends ExecutionFlow
 	 */
 	private Map<Integer, List<CollectorInfo>> methodCollector;
 	
-	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	/**
-	 * Defines how the export will be done.
-	 */
-	{
-		if (isDevelopment()) {
-			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-				new FileExporter("examples\\results", false);
-		}
-		else {
-			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-				new FileExporter("results", false);
-		}
-	}
-	
-	
+
 	//-------------------------------------------------------------------------
 	//		Constructors
 	//-------------------------------------------------------------------------
@@ -93,6 +75,12 @@ public class MethodExecutionFlow extends ExecutionFlow
 		computedTestPaths = new HashMap<>();
 		
 		
+		setMethodsCalledByTestedInvokedExporter();
+		setTestPathExporter();
+	}
+
+
+	private void setMethodsCalledByTestedInvokedExporter() {
 		if (isDevelopment()) {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
 					"MethodsCalledByTestedMethod", "examples\\results"
@@ -109,6 +97,17 @@ public class MethodExecutionFlow extends ExecutionFlow
 		}
 	}
 	
+	private void setTestPathExporter() {
+		if (isDevelopment()) {
+			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
+				new FileExporter("examples\\results", false);
+		}
+		else {
+			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
+				new FileExporter("results", false);
+		}
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -119,12 +118,10 @@ public class MethodExecutionFlow extends ExecutionFlow
 		if (methodCollector == null || methodCollector.isEmpty())
 			return this;
 		
-		Logger.debug("MethodExecutionFlow", "collector: " + methodCollector.toString());
+		dumpCollector();
 		
 		boolean gotoNextLine = false;
 		List<List<Integer>> tp;
-		FileManager methodFileManager;
-		FileManager testMethodFileManager;
 		
 		
 		// Generates test path for each collected method
@@ -135,26 +132,9 @@ public class MethodExecutionFlow extends ExecutionFlow
 			for (CollectorInfo collector : collectors) {
 				if (gotoNextLine)
 					break;
-				
-				// Gets FileManager for method file
-				methodFileManager = new FileManager(
-					collector.getMethodInfo().getClassSignature(),
-					collector.getMethodInfo().getSrcPath(), 
-					collector.getMethodInfo().getClassDirectory(),
-					collector.getMethodInfo().getPackage(),
-					new InvokedFileProcessorFactory(),
-					"invoked.bkp"
-				);
 
-				// Gets FileManager for test method file
-				testMethodFileManager = new FileManager(
-					collector.getTestMethodInfo().getClassSignature(),
-					collector.getTestMethodInfo().getSrcPath(), 
-					collector.getTestMethodInfo().getClassDirectory(),
-					collector.getTestMethodInfo().getPackage(),
-					new TestMethodFileProcessorFactory(),
-					"testMethod.bkp"
-				);
+				FileManager methodFileManager = createInvokedFileManager(collector);
+				FileManager testMethodFileManager = createTestMethodFileManager(collector);
 
 				try {
 					tp = run(
@@ -183,6 +163,41 @@ public class MethodExecutionFlow extends ExecutionFlow
 		}
 		
 		return this;
+	}
+
+	private void dumpCollector() {
+		Logger.debug(
+				this.getClass().getName(), 
+				"collector: " + methodCollector.toString()
+		);
+	}
+
+
+	private FileManager createTestMethodFileManager(CollectorInfo collector) {
+		FileManager testMethodFileManager;
+		testMethodFileManager = new FileManager(
+			collector.getTestMethodInfo().getClassSignature(),
+			collector.getTestMethodInfo().getSrcPath(), 
+			collector.getTestMethodInfo().getClassDirectory(),
+			collector.getTestMethodInfo().getPackage(),
+			new TestMethodFileProcessorFactory(),
+			"testMethod.bkp"
+		);
+		return testMethodFileManager;
+	}
+
+
+	private FileManager createInvokedFileManager(CollectorInfo collector) {
+		FileManager methodFileManager;
+		methodFileManager = new FileManager(
+			collector.getMethodInfo().getClassSignature(),
+			collector.getMethodInfo().getSrcPath(), 
+			collector.getMethodInfo().getClassDirectory(),
+			collector.getMethodInfo().getPackage(),
+			new InvokedFileProcessorFactory(),
+			"invoked.bkp"
+		);
+		return methodFileManager;
 	}
 	
 	/**

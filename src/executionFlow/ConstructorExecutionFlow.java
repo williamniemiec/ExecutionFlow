@@ -26,7 +26,7 @@ import executionFlow.util.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.2
+ * @version		5.2.3
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow
@@ -38,24 +38,6 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	 * Stores information about collected constructors.
 	 */
 	private Collection<CollectorInfo> constructorCollector;	
-	
-	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	/**
-	 * Defines how the export will be done.
-	 */
-	{
-		if (isDevelopment()) {
-			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-				new FileExporter("examples\\results", true);
-		}
-		else {
-			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
-				new FileExporter("results", true);
-		}
-	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -88,6 +70,12 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		
 		computedTestPaths = new HashMap<>();
 		
+		setMethodsCalledByTestedInvokedExporter();
+		setTestPathExporter();
+	}
+
+
+	private void setMethodsCalledByTestedInvokedExporter() {
 		if (isDevelopment()) {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
 					"MethodsCalledByTestedConstructor", "examples\\results"
@@ -104,6 +92,17 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 		}
 	}
 	
+	private void setTestPathExporter() {
+		if (isDevelopment()) {
+			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
+				new FileExporter("examples\\results", true);
+		}
+		else {
+			exporter = EXPORT.equals(TestPathExportType.CONSOLE) ? new ConsoleExporter() : 
+				new FileExporter("results", true);
+		}
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -111,38 +110,15 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 	@Override
 	public ExecutionFlow execute()
 	{
-		if (constructorCollector == null || constructorCollector.isEmpty())
+		if ((constructorCollector == null) || constructorCollector.isEmpty())
 			return this;
 		
-		// -----{ DEBUG }-----
-		Logger.debug("ConstructorExecutionFlow", "collector: " + constructorCollector.toString());
-		// -----{ END DEBUG }-----
-		
-		FileManager constructorFileManager;
-		FileManager testMethodFileManager;
-
+		dumpCollector();
 		
 		// Generates test path for each collected method
 		for (CollectorInfo collector : constructorCollector) {
-			// Gets FileManager for method file
-			constructorFileManager = new FileManager(
-				collector.getConstructorInfo().getClassSignature(),
-				collector.getConstructorInfo().getSrcPath(), 
-				collector.getConstructorInfo().getClassDirectory(),
-				collector.getConstructorInfo().getPackage(),
-				new InvokedFileProcessorFactory(),
-				"invoked.bkp"
-			);
-			
-			// Gets FileManager for test method file
-			testMethodFileManager = new FileManager(
-				collector.getTestMethodInfo().getClassSignature(),
-				collector.getTestMethodInfo().getSrcPath(), 
-				collector.getTestMethodInfo().getClassDirectory(),
-				collector.getTestMethodInfo().getPackage(),
-				new TestMethodFileProcessorFactory(),
-				"testMethod.bkp"
-			);
+			FileManager constructorFileManager = createInvokedFileManager(collector);
+			FileManager testMethodFileManager = createTestMethodFileManager(collector);
 			
 			try {
 				run(
@@ -169,11 +145,51 @@ public class ConstructorExecutionFlow extends ExecutionFlow
 					testMethodFileManager.revertParse();
 				} 
 				catch (IOException e) {
-					Logger.error("An error occurred while restoring the original files - " + e.getMessage());
+					Logger.error(
+							"An error occurred while restoring the original files - " 
+							+ e.getMessage()
+					);
 				}
 			}
 		}
 		
 		return this;
+	}
+
+	private void dumpCollector() {
+		Logger.debug(
+				this.getClass().getName(), 
+				"collector: " + constructorCollector.toString()
+		);
+	}
+
+
+	private FileManager createTestMethodFileManager(CollectorInfo collector) {
+		// Gets FileManager for test method file
+		FileManager testMethodFileManager;
+		testMethodFileManager = new FileManager(
+			collector.getTestMethodInfo().getClassSignature(),
+			collector.getTestMethodInfo().getSrcPath(), 
+			collector.getTestMethodInfo().getClassDirectory(),
+			collector.getTestMethodInfo().getPackage(),
+			new TestMethodFileProcessorFactory(),
+			"testMethod.bkp"
+		);
+		return testMethodFileManager;
+	}
+
+
+	private FileManager createInvokedFileManager(CollectorInfo collector) {
+		// Gets FileManager for method file
+		FileManager constructorFileManager;
+		constructorFileManager = new FileManager(
+			collector.getConstructorInfo().getClassSignature(),
+			collector.getConstructorInfo().getSrcPath(), 
+			collector.getConstructorInfo().getClassDirectory(),
+			collector.getConstructorInfo().getPackage(),
+			new InvokedFileProcessorFactory(),
+			"invoked.bkp"
+		);
+		return constructorFileManager;
 	}
 }
