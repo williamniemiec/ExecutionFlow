@@ -103,6 +103,11 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	@Override
+	protected boolean isConstructor() {
+		return true;
+	}
+	
 	protected Collection<List<CollectorInfo>> getCollectors() {
 		return collectors;
 	}
@@ -110,10 +115,10 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	protected FileManager createInvokedFileManager(CollectorInfo collector) {
 		// Gets FileManager for method file
 		return new FileManager(
-			collector.getConstructorInfo().getClassSignature(),
-			collector.getConstructorInfo().getSrcPath(), 
-			collector.getConstructorInfo().getClassDirectory(),
-			collector.getConstructorInfo().getPackage(),
+			collector.getInvokedInfo().getClassSignature(),
+			collector.getInvokedInfo().getSrcPath(), 
+			collector.getInvokedInfo().getClassDirectory(),
+			collector.getInvokedInfo().getPackage(),
 			new InvokedFileProcessorFactory(),
 			"invoked.bkp"
 		);

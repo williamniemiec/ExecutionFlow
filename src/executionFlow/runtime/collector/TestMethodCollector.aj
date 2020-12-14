@@ -19,7 +19,6 @@ import executionFlow.RemoteControl;
 import executionFlow.exporter.signature.TestedInvokedExporter;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
-import executionFlow.info.MethodInvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
@@ -262,26 +261,26 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// Updates constructor invocation lines If it is declared in the 
 		// same file as the processed test method file
 		for (CollectorInfo cc : constructorCollector.values()) {
-			invocationLine = cc.getConstructorInfo().getInvocationLine();
+			invocationLine = cc.getInvokedInfo().getInvocationLine();
 			
 			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
 					!mapping.containsKey(invocationLine))
 				continue;
 			
-			cc.getConstructorInfo().setInvocationLine(mapping.get(invocationLine));
+			cc.getInvokedInfo().setInvocationLine(mapping.get(invocationLine));
 		}
 		
 		// Updates method invocation lines If it is declared in the 
 		// same file as the processed test method file
 		for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
 			for (CollectorInfo mc : methodCollectorList) {
-				invocationLine = mc.getMethodInfo().getInvocationLine();
+				invocationLine = mc.getInvokedInfo().getInvocationLine();
 				
 				if (!mc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
 						!mapping.containsKey(invocationLine))
 					continue;
 				
-				mc.getMethodInfo().setInvocationLine(mapping.get(invocationLine));
+				mc.getInvokedInfo().setInvocationLine(mapping.get(invocationLine));
 			}
 		}
 	}
@@ -299,7 +298,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		Path libJUnit4 = LibraryManager.getLibrary("JUNIT_4");
 		Path libHamcrest = LibraryManager.getLibrary("HAMCREST");
-		Path testClassRootPath = MethodInvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
+		Path testClassRootPath = InvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
 		
 		String classSignature = testClassPackage.isEmpty() ? 
 				testClassName : testClassPackage + "." + testClassName;
@@ -457,14 +456,14 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// Gets source file path of the test method
 		testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
 		testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
-		testClassPackage = MethodInvokedInfo.extractPackage(testClassSignature);
+		testClassPackage = InvokedInfo.extractPackage(testClassSignature);
 		testSrcPath = CollectorExecutionFlow.findSrcPath(testClassSignature);
 		testMethodArgs = jp.getArgs();
 
 		try {
-			testMethodInfo = new MethodInvokedInfo.Builder()
+			testMethodInfo = new InvokedInfo.Builder()
 				.binPath(testClassPath)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.args(testMethodArgs)
 				.srcPath(testSrcPath)
 				.build();
@@ -477,7 +476,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		testMethodFileManager = new FileManager(
 			classSignature,
 			testSrcPath,
-			MethodInvokedInfo.getCompiledFileDirectory(testClassPath),
+			InvokedInfo.getCompiledFileDirectory(testClassPath),
 			testClassPackage,
 			new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs),
 			"pre_processing.original"

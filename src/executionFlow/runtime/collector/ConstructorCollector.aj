@@ -8,7 +8,7 @@ import java.util.Set;
 import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.ConstructorInvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.util.Logger;
 
 
@@ -135,7 +135,7 @@ public aspect ConstructorCollector extends RuntimeCollector
 	private void collectConstructor(JoinPoint jp, String signature, Path srcPath, Path classPath)
 	{
 		CollectorInfo collectorInfo;
-		ConstructorInvokedInfo constructorInvokedInfo;
+		InvokedInfo constructorInvokedInfo;
 		Class<?>[] paramTypes;
 		Object[] paramValues;
 		String key = invocationLine + signature;
@@ -150,19 +150,16 @@ public aspect ConstructorCollector extends RuntimeCollector
 			paramValues = jp.getArgs();			
 		}
 		
-		constructorInvokedInfo = new ConstructorInvokedInfo.Builder()
+		constructorInvokedInfo = new InvokedInfo.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
-				.constructorSignature(signature)
+				.invokedSignature(signature)
 				.parameterTypes(paramTypes)
 				.args(paramValues)
 				.invocationLine(invocationLine)
 				.build();
 			
-		collectorInfo = new CollectorInfo.Builder()
-			.constructorInfo(constructorInvokedInfo)
-			.testMethodInfo(testMethodInfo)
-			.build();
+		collectorInfo = new CollectorInfo(constructorInvokedInfo, testMethodInfo);
 		
 		if (!constructorCollector.containsKey(key))
 			constructorCollector.put(key, collectorInfo);

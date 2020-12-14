@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.MethodInvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
 
@@ -68,7 +68,7 @@ public abstract aspect RuntimeCollector
 	protected static Map<String, String> anonymousClassSignatures = new HashMap<>();
 
 	protected static String testMethodSignature;
-	protected static MethodInvokedInfo testMethodInfo;
+	protected static InvokedInfo testMethodInfo;
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
 	protected static Object[] testMethodArgs;

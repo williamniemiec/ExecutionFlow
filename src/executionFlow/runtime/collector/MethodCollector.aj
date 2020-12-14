@@ -9,7 +9,7 @@ import java.util.List;
 import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.MethodInvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.util.Logger;
 
 
@@ -138,7 +138,7 @@ public aspect MethodCollector extends RuntimeCollector
 	{
 		CollectorInfo ci;
 		List<CollectorInfo> list;
-		MethodInvokedInfo methodInfo;
+		InvokedInfo methodInfo;
 		Class<?>[] paramTypes;
 		Class<?> returnType;
 		String methodName = CollectorExecutionFlow.extractMethodName(signature);
@@ -160,10 +160,10 @@ public aspect MethodCollector extends RuntimeCollector
 		paramTypes = CollectorExecutionFlow.extractParamTypes(jp);
 		returnType = CollectorExecutionFlow.extractReturnType(jp);
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 			.binPath(classPath)
-			.methodSignature(signature)
-			.methodName(methodName)
+			.invokedSignature(signature)
+			.invokedName(methodName)
 			.returnType(returnType)
 			.parameterTypes(paramTypes)
 			.args(jp.getArgs())
@@ -175,10 +175,11 @@ public aspect MethodCollector extends RuntimeCollector
 			methodInfo.setConcreteMethodSignature(concreteMethodSignature);
 		}
 		
-		ci = new CollectorInfo.Builder()
-			.methodInfo(methodInfo)
-			.testMethodInfo(testMethodInfo)
-			.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
+//		ci = new CollectorInfo.Builder()
+//			.methodInfo(methodInfo)
+//			.testMethodInfo(testMethodInfo)
+//			.build();
 		
 		lastInvocationLine = invocationLine;
 		

@@ -16,17 +16,19 @@ public class CollectorInfo
 	/**
 	 * Stores {@link MethodInvokedInfo information} about a method.
 	 */
-	private InvokedInfo methodInfo;
+//	private InvokedInfo methodInfo;
+	
+	private InvokedInfo invokedInfo;
 	
 	/**
 	 * Stores {@link MethodInvokedInfo information} about a test method.
 	 */
 	private InvokedInfo testMethodInfo;
 	
-	/**
-	 * Stores {@link ConstructorInvokedInfo information} about a constructor.
-	 */
-	private InvokedInfo constructorInfo;
+//	/**
+//	 * Stores {@link ConstructorInvokedInfo information} about a constructor.
+//	 */
+//	private InvokedInfo constructorInfo;
 	
 	
 	//-------------------------------------------------------------------------
@@ -35,15 +37,14 @@ public class CollectorInfo
 	/**
 	 * Stores information about a method, constructor and test method.
 	 * 
-	 * @param		methodInfo Information about a method
-	 * @param		constructorInfo Information about a constructor
+	 * @param		invokedInfo Information about a method or constructor
 	 * @param		testMethodInfo Information about a test method
 	 */
-	private CollectorInfo(InvokedInfo methodInfo, InvokedInfo constructorInfo, 
-			InvokedInfo testMethodInfo)
+	public CollectorInfo(InvokedInfo invokedInfo, InvokedInfo testMethodInfo)
 	{
-		this.methodInfo = methodInfo;
-		this.constructorInfo = constructorInfo;
+//		this.methodInfo = methodInfo;
+//		this.constructorInfo = constructorInfo;
+		this.invokedInfo = invokedInfo;
 		this.testMethodInfo = testMethodInfo;
 	}
 	
@@ -60,85 +61,85 @@ public class CollectorInfo
 	 * 	<li>constructorInfo</li>
 	 * </ul>
 	 */
-	public static class Builder
-	{
-		private InvokedInfo methodInfo;
-		private InvokedInfo testMethodInfo;
-		private InvokedInfo constructorInfo;
-		
-		
-		/**
-		 * @param		methodInfo Informations about a method
-		 * 
-		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If methodInfo is null
-		 */
-		public Builder methodInfo(InvokedInfo methodInfo)
-		{
-			if (methodInfo == null)
-				throw new IllegalArgumentException("Method's info cannot be null");
-			
-			this.methodInfo = methodInfo;
-			
-			return this;
-		}
-		
-		/**
-		 * @param		testMethodInfo Informations about a test method
-		 * 
-		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If testMethodInfo is null
-		 */
-		public Builder testMethodInfo(InvokedInfo testMethodInfo)
-		{
-			if (testMethodInfo == null)
-				throw new IllegalArgumentException("Test method's info cannot be null");
-			
-			this.testMethodInfo = testMethodInfo;
-			
-			return this;
-		}
-		
-		/**
-		 * @param		constructorInfo Informations about a constructor
-		 * 
-		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If constructorInfo is null
-		 */
-		public Builder constructorInfo(InvokedInfo constructorInfo)
-		{
-			if (constructorInfo == null)
-				throw new IllegalArgumentException("Constructor's info cannot be null");
-			
-			this.constructorInfo = constructorInfo;
-			
-			return this;
-		}
-		
-		/**
-		 * Creates {@link CollectorInfo} instance. It is necessary to provide 
-		 * at least one of the following fields: <br />
-		 * <ul>
-		 * 	<li>methodInfo</li>
-		 * 	<li>testMethodInfo</li>
-		 * 	<li>constructorInfo</li>
-		 * </ul>
-		 * 
-		 * @throws		IllegalArgumentException If all fields above are null
-		 */
-		public CollectorInfo build()
-		{
-			if (methodInfo == null && testMethodInfo == null && constructorInfo == null)
-				throw new IllegalArgumentException("It is necessary to provide "
-						+ "at least one of the following fields: methodInfo, "
-						+ "testMethodInfo or constructorInfo");
-				
-			return new CollectorInfo(methodInfo, constructorInfo, testMethodInfo);
-		}
-	}
+//	public static class Builder
+//	{
+//		private InvokedInfo methodInfo;
+//		private InvokedInfo testMethodInfo;
+//		private InvokedInfo constructorInfo;
+//		
+//		
+//		/**
+//		 * @param		methodInfo Informations about a method
+//		 * 
+//		 * @return		Builder to allow chained calls
+//		 * 
+//		 * @throws		IllegalArgumentException If methodInfo is null
+//		 */
+//		public Builder methodInfo(InvokedInfo methodInfo)
+//		{
+//			if (methodInfo == null)
+//				throw new IllegalArgumentException("Method's info cannot be null");
+//			
+//			this.methodInfo = methodInfo;
+//			
+//			return this;
+//		}
+//		
+//		/**
+//		 * @param		testMethodInfo Informations about a test method
+//		 * 
+//		 * @return		Builder to allow chained calls
+//		 * 
+//		 * @throws		IllegalArgumentException If testMethodInfo is null
+//		 */
+//		public Builder testMethodInfo(InvokedInfo testMethodInfo)
+//		{
+//			if (testMethodInfo == null)
+//				throw new IllegalArgumentException("Test method's info cannot be null");
+//			
+//			this.testMethodInfo = testMethodInfo;
+//			
+//			return this;
+//		}
+//		
+//		/**
+//		 * @param		constructorInfo Informations about a constructor
+//		 * 
+//		 * @return		Builder to allow chained calls
+//		 * 
+//		 * @throws		IllegalArgumentException If constructorInfo is null
+//		 */
+//		public Builder constructorInfo(InvokedInfo constructorInfo)
+//		{
+//			if (constructorInfo == null)
+//				throw new IllegalArgumentException("Constructor's info cannot be null");
+//			
+//			this.constructorInfo = constructorInfo;
+//			
+//			return this;
+//		}
+//		
+//		/**
+//		 * Creates {@link CollectorInfo} instance. It is necessary to provide 
+//		 * at least one of the following fields: <br />
+//		 * <ul>
+//		 * 	<li>methodInfo</li>
+//		 * 	<li>testMethodInfo</li>
+//		 * 	<li>constructorInfo</li>
+//		 * </ul>
+//		 * 
+//		 * @throws		IllegalArgumentException If all fields above are null
+//		 */
+//		public CollectorInfo build()
+//		{
+//			if (methodInfo == null && testMethodInfo == null && constructorInfo == null)
+//				throw new IllegalArgumentException("It is necessary to provide "
+//						+ "at least one of the following fields: methodInfo, "
+//						+ "testMethodInfo or constructorInfo");
+//				
+//			return new CollectorInfo(methodInfo, constructorInfo, testMethodInfo);
+//		}
+//	}
 	
 
 	//-------------------------------------------------------------------------
@@ -148,9 +149,8 @@ public class CollectorInfo
 	public String toString() 
 	{
 		return "CollectorInfo ["
-				+ "methodInfo=" + methodInfo 
-				+ ", testMethodInfo=" + testMethodInfo 
-				+ ", constructorInfo=" + constructorInfo
+				+ "invokedInfo=" + invokedInfo 
+				+ ", testMethodInfo=" + testMethodInfo
 			+ "]";
 	}
 
@@ -158,18 +158,13 @@ public class CollectorInfo
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
-	public InvokedInfo getMethodInfo() 
+	public InvokedInfo getInvokedInfo() 
 	{
-		return methodInfo;
+		return invokedInfo;
 	}
 	
 	public InvokedInfo getTestMethodInfo() 
 	{
 		return testMethodInfo;
-	}
-	
-	public InvokedInfo getConstructorInfo() 
-	{
-		return constructorInfo;
 	}
 }

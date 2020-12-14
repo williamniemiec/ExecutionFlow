@@ -4,14 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.channels.InterruptedByTimeoutException;
-import java.nio.charset.Charset;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -19,25 +13,19 @@ import java.util.Map;
 import executionFlow.analyzer.Analyzer;
 import executionFlow.exporter.file.ProcessedSourceFileExporter;
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.testpath.TestPathExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
+import executionFlow.exporter.testpath.TestPathExporter;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.ConstructorInvokedInfo;
 import executionFlow.info.InvokedInfo;
-import executionFlow.info.MethodInvokedInfo;
-import executionFlow.io.FileEncoding;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
-import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.TestMethodCollector;
 import executionFlow.util.Logger;
-import executionFlow.util.FileUtil;
 import executionFlow.util.Pair;
-import executionFlow.util.formatter.JavaIndenter;
 
 
 /**
@@ -100,10 +88,6 @@ public abstract class ExecutionFlow
 	private static Path appRoot;
 	private static Path currentProjectRoot;
 
-	// List<CollectorInfo>: invokedCollectorInfo + TestMethodCollectorInfo
-	// Collection.size > 1 if it is called from a loop
-//	protected Collection<List<CollectorInfo>> collectors;
-
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -113,15 +97,15 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
 	 * Sets test path export type.
 	 */
 	static {
-//		EXPORT = TestPathExportType.CONSOLE;
-		EXPORT = TestPathExportType.FILE;
+		EXPORT = TestPathExportType.CONSOLE;
+//		EXPORT = TestPathExportType.FILE;
 	}
 	
 
@@ -243,7 +227,7 @@ public abstract class ExecutionFlow
 					List<List<Integer>> tp = run(
 						collector.getTestMethodInfo(), 
 						testMethodFileManager, 
-						collector.getConstructorInfo(), 
+						collector.getInvokedInfo(), 
 						invokedFileManager
 					);
 	
@@ -275,7 +259,7 @@ public abstract class ExecutionFlow
 		);
 	}
 	
-	private FileManager createTestMethodFileManager(CollectorInfo collector) {
+	protected FileManager createTestMethodFileManager(CollectorInfo collector) {
 		FileManager testMethodFileManager;
 		testMethodFileManager = new FileManager(
 			collector.getTestMethodInfo().getClassSignature(),
@@ -379,39 +363,41 @@ public abstract class ExecutionFlow
 			Logger.info("Test path has been successfully computed");				
 
 		// Fix anonymous class signature
-		boolean isConstructor = invokedInfo instanceof ConstructorInvokedInfo;
-		if (isConstructor) {
+//		boolean isConstructor = invokedInfo instanceof ConstructorInvokedInfo;
+		if (isConstructor()) {
 			if (invokedInfo.getInvokedSignature() != analyzer.getAnalyzedInvokedSignature()) {
 				if (analyzer.getAnalyzedInvokedSignature().isBlank()) {
-					((ConstructorInvokedInfo)invokedInfo)
-						.setInvokedSignature(invokedInfo.getInvokedSignature().replaceAll("\\$", "."));
+					invokedInfo.setInvokedSignature(invokedInfo.getInvokedSignature().replaceAll("\\$", "."));
 				}
 				else {
-					((ConstructorInvokedInfo)invokedInfo)
-						.setInvokedSignature(analyzer.getAnalyzedInvokedSignature());
+					invokedInfo.setInvokedSignature(analyzer.getAnalyzedInvokedSignature());
 				}
 			}
 		}
 		else {
-			invokedSignature = ((MethodInvokedInfo)invokedInfo).getConcreteMethodSignature();
+			invokedSignature = invokedInfo.getConcreteMethodSignature();
 			invokedSignature = invokedSignature.replaceAll("\\$", ".");
 		}
 		
 		storeTestPath(tp, Pair.of(testMethodInfo.getInvokedSignature(),	invokedSignature));
 		
-		exportProcessedSourceFile(invokedInfo, invokedSignature, isConstructor);
+		exportProcessedSourceFile(invokedInfo, invokedSignature);
 		exportMethodsCalledByTestedInvoked(analyzer, invokedSignature);
 
 		return tp;
 	}
 
-	private void exportProcessedSourceFile(InvokedInfo invokedInfo, String invokedSignature, boolean isConstructor)
+	protected boolean isConstructor() {
+		return false;
+	}
+
+	private void exportProcessedSourceFile(InvokedInfo invokedInfo, String invokedSignature)
 			throws IOException {
 		// Exports processed file
 		processedSourceFileExporter.export(
 				invokedInfo.getSrcPath(), 
 				invokedSignature,
-				isConstructor
+				isConstructor()
 		);
 	}
 

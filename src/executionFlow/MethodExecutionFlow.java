@@ -103,15 +103,13 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	}
 	
 	protected FileManager createInvokedFileManager(CollectorInfo collector) {
-		FileManager methodFileManager = new FileManager(
-			collector.getMethodInfo().getClassSignature(),
-			collector.getMethodInfo().getSrcPath(), 
-			collector.getMethodInfo().getClassDirectory(),
-			collector.getMethodInfo().getPackage(),
+		return new FileManager(
+			collector.getInvokedInfo().getClassSignature(),
+			collector.getInvokedInfo().getSrcPath(), 
+			collector.getInvokedInfo().getClassDirectory(),
+			collector.getInvokedInfo().getPackage(),
 			new InvokedFileProcessorFactory(),
 			"invoked.bkp"
 		);
-		
-		return methodFileManager;
 	}
 }
