@@ -663,7 +663,11 @@ public class HolePlug
 			
 			if (line.matches(REGEX_CONTINUE_BREAK)) {	
 				line = checkCurlyBracketNewLine(line, nextLine);
-				line = "if (Boolean.parseBoolean(\"True\")) {"+line+"}break;";
+				line = "if (Boolean.parseBoolean(\"True\")) {"+line+"}";
+				
+				if (line.contains("break;"))
+					line += "break;";
+				
 				wasParsed = true;
 			}
 			
