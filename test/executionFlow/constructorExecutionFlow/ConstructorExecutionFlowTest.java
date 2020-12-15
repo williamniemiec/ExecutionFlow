@@ -2,13 +2,19 @@ package executionFlow.constructorExecutionFlow;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import executionFlow.RemoteControl;
+import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
+import executionFlow.MethodExecutionFlow;
+import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
@@ -29,7 +35,23 @@ public class ConstructorExecutionFlowTest
 	protected static FileManager testMethodFileManager;
 	protected static FilesManager testMethodManager;
 	protected static ProcessingManager processingManager;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	protected List<List<Integer>> computeTestPath(Collection<CollectorInfo> collection, 
+			String testMethodSignature, String methodSignature)
+	{
+		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, collection);
 		
+		ef.disableCalledMethodsByTestedInvokedExport();
+		ef.disableProcesedSourceFileExport();
+		ef.disableTestPathExport();
+		
+		return ef.execute().getTestPaths(testMethodSignature, methodSignature);
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Test preparers
@@ -55,9 +77,6 @@ public class ConstructorExecutionFlowTest
 		processingManager = new ProcessingManager(false);
 		processingManager.destroyTestMethodManager();
 		processingManager = new ProcessingManager(true);
-//		ExecutionFlow.init(false);
-//		ExecutionFlow.destroyTestMethodManager();
-//		ExecutionFlow.init(true);
 				
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
@@ -135,17 +154,13 @@ public class ConstructorExecutionFlowTest
 			return;
 		
 		processingManager.restoreTestMethodOriginalFiles();
-//		if (ExecutionFlow.getTestMethodManager().load())
-//			ExecutionFlow.getTestMethodManager().restoreAll();	
 		
 		testMethodManager.restoreAll();
 		
-		//ExecutionFlow.getTestMethodManager().deleteBackup();
 		processingManager.deleteTestMethodFileManagerBackup();
 		testMethodManager.deleteBackup();
 		testMethodManager = null;
-		processingManager.destroyTestMethodManager();
-//		ExecutionFlow.destroyTestMethodManager();		
+		processingManager.destroyTestMethodManager();		
 	}
 	
 	@BeforeClass
@@ -163,9 +178,6 @@ public class ConstructorExecutionFlowTest
 		processingManager.restoreInvokedOriginalFiles();
 		processingManager.deleteInvokedFileManagerBackup();
 		processingManager.destroyInvokedManager();
-//		ExecutionFlow.getInvokedManager().deleteBackup();
-		
-//		ExecutionFlow.destroyInvokedManager();
 		
 		RemoteControl.close();
 	}

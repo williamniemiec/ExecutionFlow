@@ -103,9 +103,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		
 		constructorCollector.put(key, ci);
 		
-		// Gets test paths of the collected constructors and export them
-		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, constructorCollector.values());
-		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
+		testPaths = computeTestPath(constructorCollector.values(), testMethodSignature, signature);
 		
 		assertEquals(Arrays.asList(4), testPaths.get(0));
 	}
@@ -150,9 +148,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		
 		constructorCollector.put(key, ci);
 		
-		// Gets test paths of the collected constructors and export them
-		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, constructorCollector.values());
-		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
+		testPaths = computeTestPath(constructorCollector.values(), testMethodSignature, signature);
 		
 		assertEquals(Arrays.asList(4,5,6), testPaths.get(0));
 	}

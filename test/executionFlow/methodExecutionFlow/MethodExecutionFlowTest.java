@@ -2,12 +2,17 @@ package executionFlow.methodExecutionFlow;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import executionFlow.ExecutionFlow;
+import executionFlow.MethodExecutionFlow;
 import executionFlow.RemoteControl;
+import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
@@ -30,6 +35,22 @@ public class MethodExecutionFlowTest
 	protected static FileManager testMethodFileManager;
 	protected static FilesManager testMethodManager;
 	protected static ProcessingManager processingManager;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	protected List<List<Integer>> computeTestPath(Map<Integer, List<CollectorInfo>> methodCollector, 
+			String testMethodSignature, String methodSignature)
+	{
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
+		
+		ef.disableCalledMethodsByTestedInvokedExport();
+		ef.disableProcesedSourceFileExport();
+		ef.disableTestPathExport();
+		
+		return ef.execute().getTestPaths(testMethodSignature, methodSignature);
+	}
 	
 	
 	//-------------------------------------------------------------------------

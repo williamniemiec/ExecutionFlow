@@ -110,11 +110,7 @@ public class ComplexTests extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(
 			Arrays.asList(
@@ -168,11 +164,7 @@ public class ComplexTests extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 
 		assertEquals(Arrays.asList(20,23,24,25,26,27,25,26,27,25,26,27,25,26,27,25,29), testPaths.get(0));
 	}
@@ -218,11 +210,7 @@ public class ComplexTests extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(20,21), testPaths.get(0));
 	}
@@ -268,11 +256,7 @@ public class ComplexTests extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(32,33,34,35,36,34,35,36,34,35,36,34,35,36,34,38), testPaths.get(0));
 	}

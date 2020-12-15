@@ -101,9 +101,7 @@ public class InnerClassTest extends ConstructorExecutionFlowTest
 		
 		constructorCollector.put(key, ci);
 		
-		// Gets test paths of the collected constructors and export them
-		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, constructorCollector.values());
-		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
+		testPaths = computeTestPath(constructorCollector.values(), testMethodSignature, signature.replaceAll("\\$", "."));
 		
 		assertEquals(Arrays.asList(5),	testPaths.get(0));
 	}
@@ -148,9 +146,7 @@ public class InnerClassTest extends ConstructorExecutionFlowTest
 		
 		constructorCollector.put(key, ci);
 		
-		// Gets test paths of the collected constructors and export them
-		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, constructorCollector.values());
-		testPaths = ef.execute().getTestPaths(testMethodSignature, signature.replaceAll("\\$", "."));
+		testPaths = computeTestPath(constructorCollector.values(), testMethodSignature, signature.replaceAll("\\$", "."));
 		
 		assertEquals(Arrays.asList(10),	testPaths.get(0));
 	}

@@ -110,11 +110,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(7,8), testPaths.get(0));
 	}
@@ -156,11 +152,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(7,10,11,12,20), testPaths.get(0));
 	}
@@ -202,11 +194,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(7,10,11,14,15,20), testPaths.get(0));
 	}
@@ -248,11 +236,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(7,10,11,14,17,18,20), testPaths.get(0));
 	}
@@ -294,11 +278,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(23,24,25,26,27,28,29,34), testPaths.get(0));
 	}
@@ -340,11 +320,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(37,38,39,40,42,43), testPaths.get(0));
 	}
@@ -386,11 +362,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(47,48,55,56,57,58,59,77), testPaths.get(0));
 	}
@@ -478,11 +450,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(95,96,95,96,95,98), testPaths.get(0));
 	}
@@ -524,11 +492,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(109,112,113,115,112,113,115,112,116), testPaths.get(0));
 	}
@@ -570,11 +534,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(101,102), testPaths.get(0));
 	}
@@ -620,11 +580,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(119,120,125), testPaths.get(0));
 	}
@@ -670,11 +626,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(119,122,123,125), testPaths.get(0));
 	}

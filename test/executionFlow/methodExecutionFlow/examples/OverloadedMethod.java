@@ -114,11 +114,7 @@ public class OverloadedMethod extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(
 			Arrays.asList(
@@ -169,11 +165,7 @@ public class OverloadedMethod extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
 		
 		assertEquals(
 			Arrays.asList(

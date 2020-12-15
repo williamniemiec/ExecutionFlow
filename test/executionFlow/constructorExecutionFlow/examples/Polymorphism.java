@@ -101,9 +101,7 @@ public class Polymorphism extends ConstructorExecutionFlowTest
 		
 		constructorCollector.put(key, ci);
 		
-		// Gets test paths of the collected constructors and export them
-		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, constructorCollector.values());
-		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
+		testPaths = computeTestPath(constructorCollector.values(), testMethodSignature, signature);
 		
 		assertEquals(Arrays.asList(5), testPaths.get(0));
 	}
