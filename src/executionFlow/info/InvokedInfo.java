@@ -37,7 +37,8 @@ public class InvokedInfo
 	
 	private InvokedInfo(Path binPath, Path srcPath, int invocationLine,
 			String methodSignature, String methodName,
-			Class<?> returnType, Class<?>[] parameterTypes, Object[] args) 
+			Class<?> returnType, Class<?>[] parameterTypes, Object[] args,
+			boolean isConstructor) 
 	{
 		this.binPath = binPath;
 		this.srcPath = srcPath;
@@ -47,6 +48,9 @@ public class InvokedInfo
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
+		
+		if (isConstructor)
+			this.classSignature = invokedSignature;
 	}
 	
 	
@@ -72,6 +76,7 @@ public class InvokedInfo
 		private Class<?>[] parameterTypes;
 		private Object[] args;
 		private Class<?> returnType = void.class;
+		private boolean isConstructor = false;
 		
 		
 		/**
@@ -171,6 +176,13 @@ public class InvokedInfo
 			return this;
 		}
 		
+		public Builder isConstructor(boolean isConstructor)
+		{
+			this.isConstructor = isConstructor;
+			
+			return this;
+		}
+		
 		/**
 		 * @param		parameterTypes Types of invoked's parameters
 		 * 
@@ -254,7 +266,7 @@ public class InvokedInfo
 			
 			return new InvokedInfo(
 				binPath, srcPath, invocationLine, invokedSignature, 
-				invokedName, returnType, parameterTypes, args
+				invokedName, returnType, parameterTypes, args, isConstructor
 			);
 		}
 	}

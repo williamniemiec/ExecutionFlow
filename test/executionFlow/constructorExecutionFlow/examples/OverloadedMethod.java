@@ -91,6 +91,7 @@ public class OverloadedMethod extends ConstructorExecutionFlowTest
 			.binPath(Path.of("bin/examples/overloadedMethod/OverloadClass.class"))
 			.srcPath(Path.of("examples/examples/overloadedMethod/OverloadClass.java"))
 			.invokedSignature(signature)
+			.isConstructor(true)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(10)

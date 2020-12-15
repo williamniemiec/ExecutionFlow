@@ -19,7 +19,7 @@ public class FileCompilerTest
 		Path target = ExecutionFlow.getAppRootPath().resolve(Path.of("examples", "examples", "others", "SimpleTestPath.java"));
 		Path outputDir = ExecutionFlow.getAppRootPath().resolve("bin");
 		
-		Logger.setLevel(Logger.Level.DEBUG);
+//		Logger.setLevel(Logger.Level.DEBUG);
 		
 		FileCompiler.compile(target, outputDir, FileEncoding.UTF_8);
 	}

@@ -16,23 +16,23 @@ public class TestClass
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
-try {		assertEquals(24, artc.factorial(4)); }} catch(Throwable _e04181e09b2dcad9973884262195768){}
+try {		assertEquals(24, artc.factorial(4)); }} catch(Throwable _cc9b8a1c8ef36e7812e2592ba89a38ea){}
 
 //	@org.junit.Test
 ////	public void testFoo()
 //	{
 //		assertEquals("1", "1");
-//try {		assertEquals("1", "2");	} catch(Throwable _b87e2b8e84c688eda1d7f00e763f6f4d){}
+//try {		assertEquals("1", "2");	} catch(Throwable _17b4491e320a7a5f719cc8c06dd2363){}
 //	}
 	
 //	@org.junit.Test
 ////	public void assertFailInTheMiddleTest() 
 //	{
 //		TestClass tc = new TestClass(99);
-//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _c60d9160f648a30e4a4bb1e9d5c314bd){}
+//try {		assertEquals("one", tc.threePaths(1));} catch(Throwable _87275473a7a36511e396c497dd83b467){}
 //try {		assertEquals("nine", 
-//				tc.threePaths(3));} catch(Throwable _aa90106d44939f7c497b4cb1e0a0b490){}		// It will fail
-//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _76f12ded34f3e43837d6c70d9f4e00e5){}
+//				tc.threePaths(3));} catch(Throwable _d805275936b5f09e0f02c84b4967df3a){}		// It will fail
+//try {		assertEquals("two", tc.threePaths(2));} catch(Throwable _53330a38b4404871aa412aac126aa6f2){}
 //	}
 	
 //	@org.junit.Test

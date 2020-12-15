@@ -8,9 +8,6 @@ import executionFlow.util.Logger;
 public class ProcessingManager {
 	private static FilesManager testMethodManager;
 	private static FilesManager invokedManager;
-//	private static ProcessingManager instance;
-//	private FileManager testMethodFileManager;
-//	private FileManager invokedFileManager;
 	
 	/**
 	 * Initializes invoked managers. If some error occurs, should stop the
@@ -23,18 +20,12 @@ public class ProcessingManager {
 	 * found
 	 * @throws		IOException If backup files could not be restored
 	 */
-	public  ProcessingManager(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException {
+	public ProcessingManager(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException {
 		initializeTestMethodManager(restoreOriginalFiles);
 		initializeInvokedManager(restoreOriginalFiles);
 	}
-	
-//	public void init(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException
-//	{
-//		initializeTestMethodManager(restoreOriginalFiles);
-//		initializeInvokedManager(restoreOriginalFiles);
-//	}
 
-	private static void initializeInvokedManager(boolean restoreOriginalFiles)
+	private void initializeInvokedManager(boolean restoreOriginalFiles)
 			throws ClassNotFoundException, IOException {
 		if (invokedManager == null) {
 			try {
@@ -58,7 +49,7 @@ public class ProcessingManager {
 		}
 	}
 
-	private static void initializeTestMethodManager(boolean restoreOriginalFiles)
+	private void initializeTestMethodManager(boolean restoreOriginalFiles)
 			throws ClassNotFoundException, IOException {
 		if (testMethodManager == null) {
 			try {
@@ -81,7 +72,7 @@ public class ProcessingManager {
 	/**
 	 * Sets {@link #testMethodManager} to null.
 	 */
-	public static void destroyTestMethodManager()
+	public void destroyTestMethodManager()
 	{
 		testMethodManager = null;
 	}
@@ -89,19 +80,9 @@ public class ProcessingManager {
 	/**
 	 * Sets {@link #invokedManager} to null.
 	 */
-	public static void destroyInvokedManager()
+	public void destroyInvokedManager()
 	{
 		invokedManager = null;
-	}
-	
-	public void restoreTestMethodOriginalFile(FileManager testMethodFileManager)
-	{
-		restoreOriginalFile(testMethodFileManager);
-	}
-	
-	public void restoreInvokedOriginalFile(FileManager invokedFileManager)
-	{
-		restoreOriginalFile(invokedFileManager);
 	}
 	
 	/**
@@ -109,7 +90,7 @@ public class ProcessingManager {
 	 * 
 	 * @param		fm File manager
 	 */
-	private void restoreOriginalFile(FileManager fm) 
+	public void restoreOriginalFile(FileManager fm) 
 	{
 		try {
 			fm.revertCompilation();
@@ -159,7 +140,8 @@ public class ProcessingManager {
 	 * @throws		IOException If an error occurs during processing or 
 	 * compilation
 	 */
-	public void processInvoked(FileManager testMethodFileManager, FileManager invokedFileManager) throws IOException 
+	public void processInvoked(FileManager testMethodFileManager, FileManager invokedFileManager) 
+			throws IOException 
 	{
 		if (!invokedManager.wasProcessed(invokedFileManager)) {
 			boolean autoRestore = 
@@ -179,16 +161,6 @@ public class ProcessingManager {
 		return (invokedManager != null);
 	}
 	
-//	public boolean loadTestMethodManager() throws ClassNotFoundException, IOException
-//	{
-//		return testMethodManager.load();
-//	}
-//	
-//	public boolean loadInvokedManager() throws ClassNotFoundException, IOException
-//	{
-//		return invokedManager.load();
-//	}
-	
 	public void deleteTestMethodFileManagerBackup()
 	{
 		if (!isTestMethodManagerInitialized())
@@ -199,10 +171,10 @@ public class ProcessingManager {
 	
 	public void deleteInvokedFileManagerBackup()
 	{
-		if (!isTestMethodManagerInitialized())
+		if (!isInvokedManagerInitialized())
 			return;
 		
-		testMethodManager.deleteBackup();
+		invokedManager.deleteBackup();
 	}
 	
 	public void restoreTestMethodOriginalFiles() throws ClassNotFoundException, IOException
@@ -222,11 +194,4 @@ public class ProcessingManager {
 		if (invokedManager.load())
 			invokedManager.restoreAll();
 	}
-
-//	public static ProcessingManager getInstance() {
-//		if (instance == null)
-//			instance = new ProcessingManager();
-//		
-//		return instance;
-//	}
 }

@@ -16,9 +16,9 @@ import executionFlow.ExecutionFlow;
 import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
-import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.runtime.SkipCollection;
+import executionFlow.util.Logger;
 
 
 /**
@@ -93,6 +93,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 			.binPath(Path.of("bin/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.class"))
 			.srcPath(Path.of("examples/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.java"))
 			.invokedSignature(signature)
+			.isConstructor(true)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(19)
@@ -138,6 +139,8 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 			.binPath(Path.of("bin/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.class"))
 			.srcPath(Path.of("examples/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.java"))
 			.invokedSignature(signature)
+			.isConstructor(true)
+			.isConstructor(true)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(32)

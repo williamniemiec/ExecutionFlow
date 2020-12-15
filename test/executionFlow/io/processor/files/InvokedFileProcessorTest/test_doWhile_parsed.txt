@@ -5,9 +5,9 @@ import java.io.IOException;
 public class test_doWhile{
 @executionFlow.runtime.CollectCalls public void doWhile(int num){
 int i = num;
-do {int _141e6dd1cfa4f1b52e8c529124b4e4=0;
+do {int _e35bfe5ba4d701d801d3864b996cfc1c=0;
 if (i < 0) {
-if (Boolean.parseBoolean("True")) {break;}
+if (Boolean.parseBoolean("True")) {break;}break;
 }
 i--;
 }

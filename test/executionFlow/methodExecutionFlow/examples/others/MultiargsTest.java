@@ -134,7 +134,6 @@ public class MultiargsTest extends MethodExecutionFlowTest
 		CollectorInfo ci;
 		int invocationLine = 26;
 		
-		Logger.setLevel(Logger.Level.DEBUG);
 		// Defines which methods will be collected
 		testMethodSignature = "examples.others.MultiargsTest.methodCallMultLineArgsWithBrokenLines()";
 		methodSignature = "examples.others.auxClasses.AuxClass.identity(int, int, int, int, int)";

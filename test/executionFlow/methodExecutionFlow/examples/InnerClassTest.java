@@ -157,7 +157,7 @@ public class InnerClassTest extends MethodExecutionFlowTest
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
+		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature.replaceAll("\\$", "."));
 		
 		assertEquals(
 			Arrays.asList(

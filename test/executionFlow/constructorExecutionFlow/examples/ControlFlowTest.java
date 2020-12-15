@@ -95,6 +95,7 @@ public class ControlFlowTest extends ConstructorExecutionFlowTest
 			.binPath(Path.of("bin/examples/controlFlow/TestClass_ControlFlow.class"))
 			.srcPath(Path.of("examples/examples/controlFlow/TestClass_ControlFlow.java"))
 			.invokedSignature(signature)
+			.isConstructor(true)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(18)

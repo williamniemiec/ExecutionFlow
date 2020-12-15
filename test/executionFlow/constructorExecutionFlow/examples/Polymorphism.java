@@ -16,7 +16,6 @@ import executionFlow.ExecutionFlow;
 import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
-import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.runtime.SkipCollection;
 
@@ -91,6 +90,7 @@ public class Polymorphism extends ConstructorExecutionFlowTest
 			.binPath(Path.of("bin/examples/polymorphism/ClassInterface.class"))
 			.srcPath(Path.of("examples/examples/polymorphism/ClassInterface.java"))
 			.invokedSignature(signature)
+			.isConstructor(true)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(31)

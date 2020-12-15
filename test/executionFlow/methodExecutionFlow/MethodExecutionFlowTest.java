@@ -77,9 +77,6 @@ public class MethodExecutionFlowTest
 		processingManager = new ProcessingManager(false);
 		processingManager.destroyTestMethodManager();
 		processingManager = new ProcessingManager(true);
-//		ExecutionFlow.init(false);
-//		ExecutionFlow.destroyTestMethodManager();
-//		ExecutionFlow.init(true);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override

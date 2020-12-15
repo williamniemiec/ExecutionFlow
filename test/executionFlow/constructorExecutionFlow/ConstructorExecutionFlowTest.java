@@ -4,22 +4,22 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import executionFlow.RemoteControl;
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
-import executionFlow.MethodExecutionFlow;
+import executionFlow.RemoteControl;
 import executionFlow.info.CollectorInfo;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
 import executionFlow.io.ProcessingManager;
 import executionFlow.io.ProcessorType;
+import executionFlow.io.processor.InvokedFileProcessor;
+import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.util.Logger;
 
@@ -41,7 +41,7 @@ public class ConstructorExecutionFlowTest
 	//		Methods
 	//-------------------------------------------------------------------------
 	protected List<List<Integer>> computeTestPath(Collection<CollectorInfo> collection, 
-			String testMethodSignature, String methodSignature)
+			String testMethodSignature, String constructorSignature)
 	{
 		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, collection);
 		
@@ -49,7 +49,7 @@ public class ConstructorExecutionFlowTest
 		ef.disableProcesedSourceFileExport();
 		ef.disableTestPathExport();
 		
-		return ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		return ef.execute().getTestPaths(testMethodSignature, constructorSignature);
 	}
 	
 	
@@ -160,7 +160,9 @@ public class ConstructorExecutionFlowTest
 		processingManager.deleteTestMethodFileManagerBackup();
 		testMethodManager.deleteBackup();
 		testMethodManager = null;
-		processingManager.destroyTestMethodManager();		
+		processingManager.destroyTestMethodManager();
+		TestMethodFileProcessor.clearMapping();
+		InvokedFileProcessor.clearMapping();
 	}
 	
 	@BeforeClass

@@ -95,21 +95,22 @@ public abstract class ExecutionFlow
 	 * Sets test path export type.
 	 */
 	static {
-		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
+//		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
+		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------	
 	protected ExecutionFlow(ProcessingManager processingManager)
-	{
-		setTestPathExporter();
+	{		
 		this.processingManager = processingManager;
-		
 		this.processedSourceFileExporter = isDevelopment() ? 
 				new ProcessedSourceFileExporter("examples\\results")
 				: new ProcessedSourceFileExporter("results");
+				
+		setTestPathExporter();
 	}
 	
 
@@ -188,20 +189,8 @@ public abstract class ExecutionFlow
 		FileManager testMethodFileManager = createTestMethodFileManager(collector);
 		
 		try {
-			Logger.info("Processing source file of test method "
-					+ collector.getTestMethodInfo().getConcreteInvokedSignature() + "...");
-			processingManager.processTestMethod(testMethodFileManager);
-			updateInvocationLine(collector.getInvokedInfo(), TestMethodFileProcessor.getMapping());
-			Logger.info("Processing completed");
-			
-			
-			Logger.info("Processing source file of invoked - " 
-					+ collector.getInvokedInfo().getConcreteInvokedSignature() + "...");
-			Logger.info("Processing completed");
-			processingManager.processInvoked(testMethodFileManager, invokedFileManager);
-			if (collector.getInvokedInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
-				TestMethodCollector.updateCollectorInvocationLines(InvokedFileProcessor.getMapping(), collector.getTestMethodInfo().getSrcPath());
-			}	
+			processTestMethod(collector, testMethodFileManager);
+			processInvokedMethod(collector, testMethodFileManager, invokedFileManager);
 			
 			runDebugger(collector);
 			
@@ -213,7 +202,7 @@ public abstract class ExecutionFlow
 			
 			storeTestPath(
 					collector.getTestMethodInfo().getInvokedSignature(), 
-					collector.getInvokedInfo().getInvokedSignature()
+					collector.getInvokedInfo().getConcreteInvokedSignature()
 			);
 		} 
 		catch (InterruptedByTimeoutException e1) {
@@ -224,10 +213,39 @@ public abstract class ExecutionFlow
 		}
 		catch (IOException e3) {
 			Logger.error(e3.getMessage());
-			processingManager.restoreInvokedOriginalFile(invokedFileManager);
-			processingManager.restoreTestMethodOriginalFile(testMethodFileManager);					
+			processingManager.restoreOriginalFile(invokedFileManager);
+			processingManager.restoreOriginalFile(testMethodFileManager);					
 		}
 	}
+
+	private void processInvokedMethod(CollectorInfo collector, FileManager testMethodFileManager, FileManager invokedFileManager) throws IOException {
+		Logger.info("Processing source file of invoked - " 
+				+ collector.getInvokedInfo().getConcreteInvokedSignature() + "...");
+		
+		processingManager.processInvoked(testMethodFileManager, invokedFileManager);
+		
+		Logger.info("Processing completed");
+		
+		if (collector.getInvokedInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
+			TestMethodCollector.updateCollectorInvocationLines(
+					InvokedFileProcessor.getMapping(), 
+					collector.getTestMethodInfo().getSrcPath()
+			);
+		}	
+	}
+
+	private void processTestMethod(CollectorInfo collector, FileManager testMethodFileManager)
+			throws IOException {
+		Logger.info("Processing source file of test method "
+				+ collector.getTestMethodInfo().getConcreteInvokedSignature() + "...");
+		
+		processingManager.processTestMethod(testMethodFileManager);
+		
+		updateInvocationLine(collector.getInvokedInfo(), TestMethodFileProcessor.getMapping());
+		
+		Logger.info("Processing completed");
+	}
+
 
 	private FileManager createTestMethodFileManager(CollectorInfo collector) {
 		FileManager testMethodFileManager;

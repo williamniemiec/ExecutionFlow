@@ -91,6 +91,7 @@ public class BuilderPatternTest extends ConstructorExecutionFlowTest
 			.binPath(Path.of("bin/examples/builderPattern/Person$PersonBuilder.class"))
 			.srcPath(Path.of("examples/examples/builderPattern/Person.java"))
 			.invokedSignature(signature)
+			.isConstructor(true)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(14)

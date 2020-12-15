@@ -91,6 +91,7 @@ public class ChainedCalls extends ConstructorExecutionFlowTest
 			.binPath(Path.of("bin/examples/chainedCalls/Calculator.class"))
 			.srcPath(Path.of("examples/examples/chainedCalls/Calculator.java"))
 			.invokedSignature(signature)
+			.isConstructor(true)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(12)

@@ -5,8 +5,8 @@ import java.io.IOException;
 public class test_try{
 @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_try(int num){
 File f = new File("tmp");
-FileWriter fw;int _972df7bf9b2845d77b559e48f84efcbd=0;
-try{int _d9e19e7de210fc6cd87659b2059ff625=0;
+FileWriter fw;int _d2072343cd50fea0393d6238fc531fc7=0;
+try{int _1e965fd22f76f5a651682778c5b006bc=0;
 fw = new FileWriter(f);
 fw.write('x');
 fw.close();
@@ -19,8 +19,8 @@ return true;
 }
 @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_try2(int num){
 File f = new File("tmp");
-FileWriter fw;int _9eceb0f9ea103e7070957aad1763f81f=0;
-try{int _b8d2f982ce698d78d999d839cfd9ed9f=0;
+FileWriter fw;int _3d0647949ab13692e6a09d6c8dee3501=0;
+try{int _83aaeb24cc3687a0af3cfe0a5a5a3db3=0;
 fw = new FileWriter(f);
 fw.write('x');
 fw.close();
