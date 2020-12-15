@@ -1,0 +1,3 @@
+examples.controlFlow.ControlFlowTest.inlineIfElse()
+[101, 102]
+

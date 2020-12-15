@@ -1,0 +1,15 @@
+package examples.override;                                                                              
+import static org.junit.Assert.assertEquals;                                                            
+import org.junit.Test;                                                                                  
+@executionFlow.runtime.SkipCollection public class OverrideTest{                                        
+     @org.junit.Test public void testOverloadedMethod3(){                                               
+          OverrideClass oc = new OverrideClass() {                                                      
+               @Override public int foo(int num){                                                       
+                    num *= 1000;                                                                        
+                    return (int)num;                                                                    
+               }                                                                                        
+          }                                                                                             
+          ;                                                                                             
+          try {		assertEquals(10000, oc.foo(10));} catch(Throwable _f9f40fda0d4eec658ca29acdeb04a9ef){} 
+     }                                                                                                  
+}                                                                                                       

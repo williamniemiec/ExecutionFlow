@@ -48,6 +48,7 @@ public class MethodExecutionFlowTest
 		ef.disableCalledMethodsByTestedInvokedExport();
 		ef.disableProcesedSourceFileExport();
 		ef.disableTestPathExport();
+		ef.disableTestersExport();
 		
 		return ef.execute().getTestPaths(testMethodSignature, methodSignature);
 	}

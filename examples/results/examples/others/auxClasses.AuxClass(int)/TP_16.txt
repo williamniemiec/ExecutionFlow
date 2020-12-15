@@ -1,0 +1,4 @@
+examples.junit5.RepeatedTestAnnotation.test1()
+[12]
+[12]
+
