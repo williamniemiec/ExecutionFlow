@@ -11,8 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.util.Logger;
 import executionFlow.util.FileUtil;
+import executionFlow.util.Logger;
+import executionFlow.util.balance.RoundBracketBalance;
 
 
 /**
@@ -317,10 +318,14 @@ public class TestMethodFileProcessor extends FileProcessor
 	{
 		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
 		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)}]+;[\\s\\t]*$";
+		RoundBracketBalance rbb = new RoundBracketBalance();
 		
 		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
 		
+		rbb.parse(currentLine);
+		
 		boolean isMethodCallWithMultipleLinesArgument = 
+				!rbb.isBalanceEmpty() &&
 				!classKeywords.matcher(currentLine).find() && 
 				currentLine.matches(REGEX_MULTILINE_ARGS) && 
 				(currentIndex+1 < lines.size());
