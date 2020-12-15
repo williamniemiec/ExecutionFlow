@@ -194,12 +194,12 @@ public abstract class ExecutionFlow
 		if (isDevelopment()) {
 			testPathExporter = TEST_PATH_EXPORTER.equals(TestPathExportType.CONSOLE) ? 
 					new ConsoleExporter() 
-					: new FileExporter("examples\\results", false);
+					: new FileExporter("examples\\results", isConstructor());
 		}
 		else {
 			testPathExporter = TEST_PATH_EXPORTER.equals(TestPathExportType.CONSOLE) ? 
 					new ConsoleExporter() 
-					: new FileExporter("results", false);
+					: new FileExporter("results", isConstructor());
 		}
 	}
 
@@ -312,7 +312,7 @@ public abstract class ExecutionFlow
 	}
 
 	private void runDebugger(CollectorInfo collector) throws IOException, InterruptedByTimeoutException {
-		Logger.info("Computing test path of invoked " + collector.getInvokedInfo().getInvokedSignature() + "...");
+		Logger.info("Computing test path of invoked " + collector.getInvokedInfo().getConcreteInvokedSignature() + "...");
 		
 		analyzer = Analyzer.createStandardTestPathAnalyzer(collector.getInvokedInfo(), collector.getTestMethodInfo());
 		analyzer.analyze();
