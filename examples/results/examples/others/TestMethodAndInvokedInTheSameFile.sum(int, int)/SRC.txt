@@ -4,7 +4,7 @@ import org.junit.Test;
 @executionFlow.runtime.SkipCollection public class TestMethodAndInvokedInTheSameFile{                           
      @org.junit.Test public void methodInSameFileOfTestMethod() {                                               
           int a = 2, b = 3;                                                                                     
-          try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _625e2ac2bb954bdd52574bfa70813b6b){} 
+          try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _18a9908f58dc1460fb2f479b01d40e3c){} 
      }                                                                                                          
      @executionFlow.runtime.CollectCalls private int sum(int a, int b){                                         
           return a + b;                                                                                         

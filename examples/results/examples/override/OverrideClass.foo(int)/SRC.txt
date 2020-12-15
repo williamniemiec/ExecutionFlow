@@ -10,6 +10,6 @@ import org.junit.Test;
                }                                                                                        
           }                                                                                             
           ;                                                                                             
-          try {		assertEquals(10000, oc.foo(10));} catch(Throwable _f9f40fda0d4eec658ca29acdeb04a9ef){} 
+          try {		assertEquals(10000, oc.foo(10));} catch(Throwable _131bca5597a4e7f70beebe2a944d3cd0){} 
      }                                                                                                  
 }                                                                                                       
