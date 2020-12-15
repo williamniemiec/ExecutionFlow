@@ -176,14 +176,17 @@ public class Helper {
 		int depth = 0;
 		
 		while (curLineId < sourceCode.size() && closingLine == -1) {
-			String curLine = sourceCode.get(curLineId);
-			if (Helper.lineContainsReservedChar(curLine, "{")) {
-				depth++;
-			} else if (Helper.lineContainsReservedChar(curLine, "}") && depth > 0) {
-				depth--;
-			} else if (Helper.lineContainsReservedChar(curLine, "}")) {
-				closingLine = curLineId;
+			if (!sourceCode.get(curLineId).contains("} catch(Throwable _")) {
+				String curLine = sourceCode.get(curLineId);
+				if (Helper.lineContainsReservedChar(curLine, "{")) {
+					depth++;
+				} else if (Helper.lineContainsReservedChar(curLine, "}") && depth > 0) {
+					depth--;
+				} else if (Helper.lineContainsReservedChar(curLine, "}")) {
+					closingLine = curLineId;
+				}
 			}
+			
 			curLineId++;
 		}
 
