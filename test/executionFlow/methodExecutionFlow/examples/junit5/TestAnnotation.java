@@ -15,7 +15,7 @@ import org.junit.Test;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.MethodInvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
@@ -75,7 +75,7 @@ public class TestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 28;
 		
@@ -91,30 +91,27 @@ public class TestAnnotation extends MethodExecutionFlowTest
 				Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/TestAnnotation.java")
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/TestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/TestAnnotation.java"))
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);

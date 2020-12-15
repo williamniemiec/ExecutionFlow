@@ -15,7 +15,7 @@ import org.junit.Test;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.MethodInvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
@@ -84,7 +84,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 24;
 		
@@ -95,30 +95,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -142,7 +139,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 34;
 		
@@ -153,30 +150,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -200,7 +194,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 46;
 		
@@ -211,30 +205,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -258,7 +249,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 58;
 		
@@ -269,30 +260,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("fibonacci")
+				.invokedSignature(methodSignature)
+				.invokedName("fibonacci")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -317,7 +305,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 67;
 		
@@ -328,30 +316,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("parseLetters_withInternalCall")
+				.invokedSignature(methodSignature)
+				.invokedName("parseLetters_withInternalCall")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -375,7 +360,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 76;
 		
@@ -386,30 +371,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("parseLetters_noInternalCall")
+				.invokedSignature(methodSignature)
+				.invokedName("parseLetters_noInternalCall")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -437,7 +419,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 86;
 		
@@ -448,30 +430,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("parseLetters_noInternalCall")
+				.invokedSignature(methodSignature)
+				.invokedName("parseLetters_noInternalCall")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -495,7 +474,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 104;
 		
@@ -506,30 +485,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("fibonacci")
+				.invokedSignature(methodSignature)
+				.invokedName("fibonacci")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -553,7 +529,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 105;
 		
@@ -564,30 +540,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -611,7 +584,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 118;
 		
@@ -622,30 +595,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -669,7 +639,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 119;
 		
@@ -680,30 +650,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("fibonacci")
+				.invokedSignature(methodSignature)
+				.invokedName("fibonacci")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -726,7 +693,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 127;
 		
@@ -737,30 +704,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("getNumber")
+				.invokedSignature(methodSignature)
+				.invokedName("getNumber")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -783,7 +747,7 @@ public class OthersTest extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 137;
 		
@@ -794,30 +758,27 @@ public class OthersTest extends MethodExecutionFlowTest
 		
 		init("examples.others.auxClasses.AuxClass", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("interfaceMethod")
+				.invokedSignature(methodSignature)
+				.invokedName("interfaceMethod")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);

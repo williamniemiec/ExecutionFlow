@@ -16,7 +16,7 @@ import org.junit.Test;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.MethodInvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
@@ -84,7 +84,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 38;
 		
@@ -101,31 +101,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				-1
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(-1)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -149,7 +146,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 38;
 		
@@ -166,31 +163,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				0
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(0)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -214,7 +208,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 38;
 		
@@ -231,31 +225,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				1
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(1)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("factorial")
+				.invokedSignature(methodSignature)
+				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -279,7 +270,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 45;
 		
@@ -296,31 +287,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {" "}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(" ")
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("trim")
+				.invokedSignature(methodSignature)
+				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -344,7 +332,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 45;
 		
@@ -361,31 +349,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {"   "}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args("   ")
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("trim")
+				.invokedSignature(methodSignature)
+				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -409,7 +394,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 45;
 		
@@ -426,31 +411,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {"\t"}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args("\t")
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("trim")
+				.invokedSignature(methodSignature)
+				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -474,7 +456,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 45;
 		
@@ -491,31 +473,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {"\n"}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args("\n")
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("trim")
+				.invokedSignature(methodSignature)
+				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -539,7 +518,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 52;
 		
@@ -556,31 +535,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {null}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(new Object[] {null})
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("trim")
+				.invokedSignature(methodSignature)
+				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -612,7 +588,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 59;
 		
@@ -629,31 +605,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {"I", -1}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args("I", -1)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("countTotalArguments")
+				.invokedSignature(methodSignature)
+				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -677,7 +650,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 59;
 		
@@ -694,31 +667,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {"II", 0}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args("II", 0)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("countTotalArguments")
+				.invokedSignature(methodSignature)
+				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -742,7 +712,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 59;
 		
@@ -759,31 +729,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {"III", 1}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args("III", 1)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("countTotalArguments")
+				.invokedSignature(methodSignature)
+				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -807,7 +774,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 66;
 		
@@ -824,31 +791,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {"Hello", 5}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args("Hello", 5)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("concatStrNum")
+				.invokedSignature(methodSignature)
+				.invokedName("concatStrNum")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -872,7 +836,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 66;
 		
@@ -889,31 +853,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				new Object[] {"Hello", 5}
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args("JUnit 5", 7)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("concatStrNum")
+				.invokedSignature(methodSignature)
+				.invokedName("concatStrNum")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -937,7 +898,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 80;
 		
@@ -954,31 +915,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				ChronoUnit.DAYS
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(ChronoUnit.DAYS)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("countTotalArguments")
+				.invokedSignature(methodSignature)
+				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -1002,7 +960,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 80;
 		
@@ -1019,31 +977,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				ChronoUnit.HOURS
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(ChronoUnit.HOURS)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("countTotalArguments")
+				.invokedSignature(methodSignature)
+				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -1067,7 +1022,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 87;
 		
@@ -1084,31 +1039,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				ChronoUnit.DAYS
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(ChronoUnit.DAYS)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("countTotalArguments")
+				.invokedSignature(methodSignature)
+				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
@@ -1132,7 +1084,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 87;
 		
@@ -1149,31 +1101,28 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				ChronoUnit.HOURS
 		 );
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/junit5/ParameterizedTestAnnotation.class"))
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/junit5/ParameterizedTestAnnotation.java"))
 				.args(ChronoUnit.HOURS)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/others/auxClasses/AuxClass.class"))
 				.srcPath(Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/others/auxClasses/AuxClass.java"))
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("countTotalArguments")
+				.invokedSignature(methodSignature)
+				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);

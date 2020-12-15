@@ -15,7 +15,7 @@ import org.junit.Test;
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.MethodInvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
@@ -88,7 +88,7 @@ public class InvokedMethodsByTestedInvoked extends MethodExecutionFlowTest
 		List<List<Integer>> testPaths;
 		List<CollectorInfo> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
-		MethodInvokedInfo testMethodInfo, methodInfo;
+		InvokedInfo testMethodInfo, methodInfo;
 		CollectorInfo ci;
 		int invocationLine = 20;
 		
@@ -99,30 +99,27 @@ public class InvokedMethodsByTestedInvoked extends MethodExecutionFlowTest
 		
 		init("examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test", testMethodSignature);
 		
-		testMethodInfo = new MethodInvokedInfo.Builder()
+		testMethodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_TEST_METHOD)
-				.methodSignature(testMethodSignature)
+				.invokedSignature(testMethodSignature)
 				.srcPath(PATH_SRC_TEST_METHOD)
 				.build();
 		
-		methodInfo = new MethodInvokedInfo.Builder()
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(PATH_BIN_METHOD)
 				.srcPath(PATH_SRC_METHOD)
 				.invocationLine(invocationLine)
-				.methodSignature(methodSignature)
-				.methodName("A")
+				.invokedSignature(methodSignature)
+				.invokedName("A")
 				.build();
 		
-		ci = new CollectorInfo.Builder()
-				.methodInfo(methodInfo)
-				.testMethodInfo(testMethodInfo)
-				.build();
+		ci = new CollectorInfo(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
 		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(methodCollector, false);
+		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
 		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);

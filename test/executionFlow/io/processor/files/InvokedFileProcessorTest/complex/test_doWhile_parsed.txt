@@ -5,14 +5,14 @@ import java.io.IOException;
 public class test_doWhile{
 @executionFlow.runtime.CollectCalls public void doWhile(int num){
 int i = 0, k = 0;
-do{int _e0fd59b52d1db962202557fd072a6edd=0;
+do{int _c6c2615a39ffbdbedf79546e54e4d66f=0;
 k++;
 }
 while (i < num);
 }
 @executionFlow.runtime.CollectCalls public void doWhile2(int num){
 int i = 0, k = 0;
-do{int _d7c308ed994034418d3b30806d2fff70=0;
+do{int _c293749e5a76aff35e4f1e15b676895b=0;
 k++;
 }
 while (i < num);

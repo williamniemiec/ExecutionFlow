@@ -4,9 +4,9 @@ public class test_else{
 if (num < 0) {
 return "";
 }
-String response = ;
-int w;int _be304ebdbec2ecc8a6dd672cc0e7d748=0;
-int k;int _ec4d9f09b8881e6f908bbbb78d49cf8a=0;
+String response = "";
+int w;int _60c32cf6974206f7bed7c5a8114f7ac3=0;
+int k;int _10dbd30a3a2b85ef5b071e7d44641252=0;
 if (num == 0) {
 response = "Number zero";
 w = 2;
@@ -14,7 +14,7 @@ w = 2;
 else if (num == 1) {
 response = "Number one";
 }
-else {int _b3d8a566e5204972b3bbeb9e86f344f7=0;
+else {int _e149634db717133754780c084a889aea=0;
 response = "Number "+num;
 }
 return response;

@@ -8,10 +8,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import executionFlow.RemoteControl;
-import executionFlow.ExecutionFlow;
-import executionFlow.info.MethodInvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
+import executionFlow.io.ProcessingManager;
 import executionFlow.io.ProcessorType;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
@@ -29,7 +29,8 @@ public class MethodExecutionFlowTest
 	//-------------------------------------------------------------------------
 	protected static FileManager testMethodFileManager;
 	protected static FilesManager testMethodManager;
-		
+	protected static ProcessingManager processingManager;
+	
 	
 	//-------------------------------------------------------------------------
 	//		Test preparers
@@ -52,9 +53,12 @@ public class MethodExecutionFlowTest
 			Object... testMethodArgs) throws IOException, ClassNotFoundException
 	{
 		// Initializes ExecutionFlow and loads invoked manager
-		ExecutionFlow.init(false);
-		ExecutionFlow.destroyTestMethodManager();
-		ExecutionFlow.init(true);
+		processingManager = new ProcessingManager(false);
+		processingManager.destroyTestMethodManager();
+		processingManager = new ProcessingManager(true);
+//		ExecutionFlow.init(false);
+//		ExecutionFlow.destroyTestMethodManager();
+//		ExecutionFlow.init(true);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
@@ -76,7 +80,7 @@ public class MethodExecutionFlowTest
 			testMethodFileManager = new FileManager(
 				classSignature,
 				srcTestMethod,
-				MethodInvokedInfo.getCompiledFileDirectory(binTestMethod),
+				InvokedInfo.getCompiledFileDirectory(binTestMethod),
 				packageTestMethod,
 				new PreTestMethodFileProcessorFactory(testMethodSignature),
 				"original_pre_processing"
@@ -86,7 +90,7 @@ public class MethodExecutionFlowTest
 			testMethodFileManager = new FileManager(
 				classSignature,
 				srcTestMethod,
-				MethodInvokedInfo.getCompiledFileDirectory(binTestMethod),
+				InvokedInfo.getCompiledFileDirectory(binTestMethod),
 				packageTestMethod,
 				new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs),
 				"original_pre_processing"
@@ -134,18 +138,17 @@ public class MethodExecutionFlowTest
 	@After
 	public void restoreTestMethod() throws ClassNotFoundException, IOException
 	{
-		if (ExecutionFlow.getTestMethodManager() == null)
+		if (!processingManager.isTestMethodManagerInitialized())
 			return;
-		
-		if (ExecutionFlow.getTestMethodManager().load())
-			ExecutionFlow.getTestMethodManager().restoreAll();	
+			
+		processingManager.restoreTestMethodOriginalFiles();
 		
 		testMethodManager.restoreAll();
 		
-		ExecutionFlow.getTestMethodManager().deleteBackup();
+		processingManager.deleteTestMethodFileManagerBackup();
 		testMethodManager.deleteBackup();
 		testMethodManager = null;
-		ExecutionFlow.destroyTestMethodManager();
+		processingManager.destroyTestMethodManager();
 		TestMethodFileProcessor.clearMapping();
 		InvokedFileProcessor.clearMapping();
 	}
@@ -156,15 +159,12 @@ public class MethodExecutionFlowTest
 	@AfterClass
 	public static void restoreInvoked() throws ClassNotFoundException, IOException
 	{
-		if (ExecutionFlow.getInvokedManager() == null)
+		if (!processingManager.isInvokedManagerInitialized())
 			return;
 		
-		if (ExecutionFlow.getInvokedManager().load())
-			ExecutionFlow.getInvokedManager().restoreAll();	
-		
-		ExecutionFlow.getInvokedManager().deleteBackup();
-		
-		ExecutionFlow.destroyInvokedManager();
+		processingManager.restoreInvokedOriginalFiles();
+		processingManager.deleteInvokedFileManagerBackup();
+		processingManager.destroyInvokedManager();
 		
 		RemoteControl.close();
 	}

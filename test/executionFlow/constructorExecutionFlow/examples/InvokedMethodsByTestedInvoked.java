@@ -15,8 +15,8 @@ import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
 import executionFlow.info.CollectorInfo;
-import executionFlow.info.ConstructorInvokedInfo;
-import executionFlow.info.MethodInvokedInfo;
+import executionFlow.info.InvokedInfo;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.runtime.SkipCollection;
 
@@ -82,32 +82,29 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		init("examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test", testMethodSignature);
 		
 		// Informations about test method
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
+		InvokedInfo testMethodInfo = new InvokedInfo.Builder()
 			.binPath(PATH_BIN_TEST_METHOD)
 			.srcPath(PATH_SRC_TEST_METHOD)
-			.methodSignature(testMethodSignature)
+			.invokedSignature(testMethodSignature)
 			.build();
 		
 		// Informations about constructor
-		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
+		InvokedInfo cii = new InvokedInfo.Builder()
 			.binPath(Path.of("bin/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.class"))
 			.srcPath(Path.of("examples/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.java"))
-			.constructorSignature(signature)
+			.invokedSignature(signature)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(19)
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo.Builder()
-			.constructorInfo(cii)
-			.testMethodInfo(testMethodInfo)
-			.build();
+		CollectorInfo ci = new CollectorInfo(cii, testMethodInfo);
 		
 		constructorCollector.put(key, ci);
 		
 		// Gets test paths of the collected constructors and export them
-		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
+		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, constructorCollector.values());
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
 		assertEquals(Arrays.asList(4), testPaths.get(0));
@@ -132,32 +129,29 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 		init("examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test", testMethodSignature);
 		
 		// Informations about test method
-		MethodInvokedInfo testMethodInfo = new MethodInvokedInfo.Builder()
+		InvokedInfo testMethodInfo = new InvokedInfo.Builder()
 			.binPath(PATH_BIN_TEST_METHOD)
 			.srcPath(PATH_SRC_TEST_METHOD)
-			.methodSignature(testMethodSignature)
+			.invokedSignature(testMethodSignature)
 			.build();
 		
 		// Informations about constructor
-		ConstructorInvokedInfo cii = new ConstructorInvokedInfo.Builder()
+		InvokedInfo cii = new InvokedInfo.Builder()
 			.binPath(Path.of("bin/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.class"))
 			.srcPath(Path.of("examples/examples/methodCalledByTestedInvoked/MethodCalledByTestedInvoked_Class.java"))
-			.constructorSignature(signature)
+			.invokedSignature(signature)
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(32)
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo.Builder()
-			.constructorInfo(cii)
-			.testMethodInfo(testMethodInfo)
-			.build();
+		CollectorInfo ci = new CollectorInfo(cii, testMethodInfo);
 		
 		constructorCollector.put(key, ci);
 		
 		// Gets test paths of the collected constructors and export them
-		ExecutionFlow ef = new ConstructorExecutionFlow(constructorCollector.values(), false);
+		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, constructorCollector.values());
 		testPaths = ef.execute().getTestPaths(testMethodSignature, signature);
 		
 		assertEquals(Arrays.asList(4,5,6), testPaths.get(0));
