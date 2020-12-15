@@ -457,16 +457,9 @@ public class CodeCleaner {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		int removedLines = 0;
 
-		for (int i=0; i < processedCode.size(); i++) {
-			if (processedCode.get(i).contains("catch(Throwable _"))
-				continue;
-			
+		for (int i=0; i < processedCode.size(); i++) {			
 			mapping.put(i+removedLines, Helper.initArray(i));
 			String curLine = processedCode.get(i);
-			
-			if (i+1 < processedCode.size() && 
-					processedCode.get(i+1).contains("catch(Throwable _"))
-				continue;
 			
 			while (!Helper.lineContainsReservedChar(curLine, ";")
 					&& !Helper.lineContainsReservedChar(curLine, "{") 
@@ -476,10 +469,13 @@ public class CodeCleaner {
 					) {
 				String separator = (curLine.charAt(curLine.length()-1) != ' '
 									&& processedCode.get(i+1).charAt(0) != ' ' ? " " : "");
-				processedCode.set(i, curLine + separator + processedCode.get(i+1));
-				processedCode.remove(i+1);
-
-				removedLines++;
+				
+				if (!processedCode.get(i+1).contains("catch(Throwable _")) {
+					processedCode.set(i, curLine + separator + processedCode.get(i+1));
+					processedCode.remove(i+1);
+					removedLines++;
+				}
+				
 				mapping.put(i+removedLines, Helper.initArray(i));
 				curLine = processedCode.get(i);
 			}
