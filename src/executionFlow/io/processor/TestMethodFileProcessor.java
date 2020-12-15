@@ -419,11 +419,15 @@ public class TestMethodFileProcessor extends FileProcessor
 	 */
 	private String removeInlineComment(String line) 
 	{
+		if (!line.contains("//"))
+			return line;
+		
 		String lineWithBlankStrings = line;
-		int idxCommentStart = line.indexOf("//");
 		StringBuilder strWithBlankSpaces = new StringBuilder();
 		Matcher m = Pattern.compile("\"[^\"]*\"").matcher(line);
 		
+		
+		// Replace strings with blank strings
 		while (m.find()) {
 			int strLen = m.group().length()-2;
 			int idxStart = m.start();
@@ -439,11 +443,13 @@ public class TestMethodFileProcessor extends FileProcessor
 			strWithBlankSpaces = new StringBuilder();
 		}
 		
+		int idxCommentStart = lineWithBlankStrings.indexOf("//");
+		
 		if (idxCommentStart != -1) {
-			lineWithBlankStrings = lineWithBlankStrings.substring(0, idxCommentStart);
+			line = line.substring(0, idxCommentStart);
 		}
 		
-		return lineWithBlankStrings;
+		return line;
 	}
 	
 	
