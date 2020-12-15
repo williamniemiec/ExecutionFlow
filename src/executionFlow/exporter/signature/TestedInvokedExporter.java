@@ -8,10 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.exporter.testpath.TestPathExporter;
 import executionFlow.util.CSV;
-import executionFlow.util.Logger;
 import executionFlow.util.DataUtil;
+import executionFlow.util.Logger;
 import executionFlow.util.Pair;
 
 
@@ -34,7 +33,7 @@ import executionFlow.util.Pair;
  * @version		5.2.0
  * @since		2.0.0
  */
-public class TestedInvokedExporter implements TestPathExporter
+public class TestedInvokedExporter
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -75,13 +74,10 @@ public class TestedInvokedExporter implements TestPathExporter
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	@Override
-	public void export(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) 
+	public void export(Set<Pair<String, String>> signatures) 
 	{
-		if (classTestPaths == null || classTestPaths.isEmpty())
+		if (signatures == null || signatures.isEmpty())
 			return;
-		
-		Set<Pair<String, String>> signatures = classTestPaths.keySet();
 		
 		/**
 		 * Stores tested invoked signature along with its invoked method

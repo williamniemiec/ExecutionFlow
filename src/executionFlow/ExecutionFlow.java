@@ -12,6 +12,7 @@ import java.util.Map;
 import executionFlow.analyzer.Analyzer;
 import executionFlow.exporter.file.ProcessedSourceFileExporter;
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
+import executionFlow.exporter.signature.TestedInvokedExporter;
 import executionFlow.exporter.testpath.ConsoleExporter;
 import executionFlow.exporter.testpath.FileExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
@@ -72,12 +73,15 @@ public abstract class ExecutionFlow
 	private TestPathExporter testPathExporter;
 	protected MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
 	protected ProcessedSourceFileExporter processedSourceFileExporter;
+	private TestedInvokedExporter testersExporter;
 
 	private boolean exportTestPaths = true;
 	private boolean exportCalledMethods = true;
 	private boolean exportProcessedSourceFile = true;
+	private boolean exportTesters = true;
 
 	private ProcessingManager processingManager;
+
 
 	
 	//-------------------------------------------------------------------------
@@ -109,7 +113,20 @@ public abstract class ExecutionFlow
 		this.processedSourceFileExporter = isDevelopment() ? 
 				new ProcessedSourceFileExporter("examples\\results")
 				: new ProcessedSourceFileExporter("results");
-				
+		
+		if (isDevelopment()) {
+			this.testersExporter = new TestedInvokedExporter(
+					"Testers", 
+					new File(getCurrentProjectRoot().toFile(), "examples\\results")
+			);
+		}
+		else {
+			this.testersExporter = new TestedInvokedExporter(
+					"Testers", 
+					new File(getCurrentProjectRoot().toFile(), "results")
+			);
+		}
+		
 		setTestPathExporter();
 	}
 	
@@ -167,10 +184,12 @@ public abstract class ExecutionFlow
 		}
 		
 		exportTestPaths();
+		testersExporter.export(computedTestPaths.keySet());
 		
 		return this;
 	}
-	
+
+
 	private void setTestPathExporter() {
 		if (isDevelopment()) {
 			testPathExporter = TEST_PATH_EXPORTER.equals(TestPathExportType.CONSOLE) ? 
@@ -196,14 +215,16 @@ public abstract class ExecutionFlow
 			
 			if (isConstructor())
 				fixAnonymousClassSignature(collector.getInvokedInfo());					
-																
-			exportProcessedSourceFile(collector.getInvokedInfo());
-			exportMethodsCalledByTestedInvoked(collector.getInvokedInfo().getInvokedSignature());
 			
-			storeTestPath(
-					collector.getTestMethodInfo().getInvokedSignature(), 
-					collector.getInvokedInfo().getConcreteInvokedSignature()
-			);
+			if (analyzer.hasTestPaths()) {
+				exportProcessedSourceFile(collector.getInvokedInfo());
+				exportMethodsCalledByTestedInvoked(collector.getInvokedInfo().getInvokedSignature());
+				
+				storeTestPath(
+						collector.getTestMethodInfo().getInvokedSignature(), 
+						collector.getInvokedInfo().getConcreteInvokedSignature()
+				);
+			}
 		} 
 		catch (InterruptedByTimeoutException e1) {
 			Logger.error("Time exceeded");
@@ -375,6 +396,9 @@ public abstract class ExecutionFlow
 		Pair<String, String> signaturesInfo = Pair.of(testMethodSignature, invokedSignature);
 		
 		for (List<Integer> testPath : testPaths) {
+			if (testPath.isEmpty())
+				continue;
+			
 			// Checks if test path belongs to a stored test method and invoked
 			if (computedTestPaths.containsKey(signaturesInfo)) {
 				classTestPathInfo = computedTestPaths.get(signaturesInfo);
@@ -549,5 +573,13 @@ public abstract class ExecutionFlow
 	
 	public void disableProcesedSourceFileExport() {
 		exportProcessedSourceFile = false;
+	}
+	
+	public void enableTestersExport() {
+		exportTesters = true;
+	}
+	
+	public void disableTestersExport() {
+		exportTesters = false;
 	}
 }
