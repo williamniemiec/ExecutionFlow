@@ -392,19 +392,20 @@ public class TestMethodFileProcessor extends FileProcessor
 	private String parsePrints(String line) 
 	{
 		if (line.contains("System.out.print")) {
-			String[] tmp = line.split(";");
-			StringBuilder response = new StringBuilder();
-			
-			
-			// Deletes print's from the line
-			for (String term : tmp) {
-				if (!term.contains("System.out.print")) {
-					response.append(term);
-					response.append(";");
-				}
-			}
-			
-			line = response.toString();
+			line = line.replaceAll(".*System\\.out\\.print(ln)?\\(.+\\);", "");
+//			String[] tmp = line.split(";");
+//			StringBuilder response = new StringBuilder();
+//			
+//			
+//			// Deletes print's from the line
+//			for (String term : tmp) {
+//				if (!term.contains("System.out.print")) {
+//					response.append(term);
+//					response.append(";");
+//				}
+//			}
+//			
+//			line = response.toString();
 		}
 		
 		return line;

@@ -206,7 +206,7 @@ public class HolePlug
 	 * {@link executionFlow.util.core.JDB} execution.
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 * @version		5.0.0
+	 * @version		5.2.3
 	 * @since 		5.0.0
 	 */
 	private class PrintParser
@@ -229,23 +229,24 @@ public class HolePlug
 				return line;
 			
 			if (line.contains("System.out.print")) {
-				String[] tmp = line.split(";");
-				StringBuilder response = new StringBuilder();
-				
-				
-				// Deletes print's from the line (it will replace it with 
-				// 'Boolean.parseBoolean("True")') to avoid problems with
-				// JDB
-				for (String term : tmp) {
-					if (!term.contains("System.out.print")) {
-						response.append("Boolean.parseBoolean(\"True\")");
-						response.append(";");
-					}
-					response.append(term);
-					response.append(";");
-				}
-				
-				line = response.toString();
+				line = line.replaceAll(".*System\\.out\\.print(ln)?\\(.+\\);", "Boolean.parseBoolean(\"True\");");
+//				String[] tmp = line.replaceAll("\"[^\"]*\"", "").split(";");
+//				StringBuilder response = new StringBuilder();
+//				
+//				
+//				// Deletes print's from the line (it will replace it with 
+//				// 'Boolean.parseBoolean("True")') to avoid problems with
+//				// JDB
+//				for (String term : tmp) {
+//					if (!term.contains("System.out.print")) {
+//						response.append("Boolean.parseBoolean(\"True\")");
+//						response.append(";");
+//					}
+//					response.append(term);
+//					response.append(";");
+//				}
+//				
+//				line = response.toString();
 				wasParsed = true;
 			}
 			
