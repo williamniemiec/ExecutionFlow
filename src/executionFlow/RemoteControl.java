@@ -1,10 +1,8 @@
 package executionFlow;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 
 /**
@@ -12,7 +10,7 @@ import javax.swing.JFrame;
  * commands to the application.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		5.1.0
  */
 public class RemoteControl 
@@ -20,11 +18,11 @@ public class RemoteControl
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private volatile static JFrame window = null;
-	private final static int MAIN_FRAME_WIDTH = 365;
-	private final static int MAIN_FRAME_HEIGHT = 100;
-	private final static int MAIN_FRAME_X = 100;
-	private final static int MAIN_FRAME_Y = 100;
+	private static volatile JFrame window = null;
+	private static final int MAIN_FRAME_WIDTH = 365;
+	private static final int MAIN_FRAME_HEIGHT = 100;
+	private static final int MAIN_FRAME_X = 100;
+	private static final int MAIN_FRAME_Y = 100;
 	
 	
 	//-------------------------------------------------------------------------
@@ -63,22 +61,37 @@ public class RemoteControl
 	 */
 	private static void createWindow()
 	{		
-		// Stop button creation
+		JButton stop = createStopButton();
+		
+		createWindow(stop);
+	}
+
+
+	private static void createWindow(JButton stop) {
+		window = new JFrame("Execution Flow - Remote control");
+		window.add(stop);
+		window.setBounds(
+				MAIN_FRAME_X, 
+				MAIN_FRAME_Y, 
+				MAIN_FRAME_WIDTH, 
+				MAIN_FRAME_HEIGHT
+		);
+		window.setResizable(false);
+		window.toFront();
+		window.setDefaultCloseOperation(
+				WindowConstants.DO_NOTHING_ON_CLOSE
+		);
+	}
+
+
+	private static JButton createStopButton() {
 		JButton stop = new JButton("Stop");
 		
 		stop.setFocusPainted(false);
-		stop.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Runtime.getRuntime().exit(-1);
-			}
-		});
-				
-		// Window creation
-		window = new JFrame("Execution Flow - Remote control");
-		window.add(stop);
-		window.setBounds(MAIN_FRAME_X, MAIN_FRAME_Y, MAIN_FRAME_WIDTH, MAIN_FRAME_HEIGHT);
-		window.setResizable(false);
-		window.toFront();
-		window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		stop.addActionListener(event ->
+				Runtime.getRuntime().exit(-1)
+		);
+		
+		return stop;
 	}
 }
