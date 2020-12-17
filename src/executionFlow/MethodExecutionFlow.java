@@ -46,7 +46,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 		computedTestPaths = new HashMap<>();
 		
 		storeCollectedMethods(collectedMethods);
-		setMethodsCalledByTestedInvokedExporter();
+		initializeMethodsCalledByTestedInvokedExporter();
 	}
 	
 	
@@ -61,7 +61,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void setMethodsCalledByTestedInvokedExporter() {
+	private void initializeMethodsCalledByTestedInvokedExporter() {
 		if (isDevelopment()) {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
 					"MethodsCalledByTestedMethod", "examples\\results"

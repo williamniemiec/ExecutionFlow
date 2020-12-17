@@ -42,15 +42,18 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	public ConstructorExecutionFlow(ProcessingManager processingManager, 
 			Collection<CollectorInfo> constructorCollector) {
 		super(processingManager);
+		
 		this.collectors = new ArrayList<>(constructorCollector);
+		this.computedTestPaths = new HashMap<>();
 		
-		computedTestPaths = new HashMap<>();
-		
-		setMethodsCalledByTestedInvokedExporter();
+		initializeMethodsCalledByTestedInvokedExporter();
 	}
-
-
-	private void setMethodsCalledByTestedInvokedExporter() {
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void initializeMethodsCalledByTestedInvokedExporter() {
 		if (isDevelopment()) {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
 					"MethodsCalledByTestedConstructor", "examples\\results"
@@ -63,15 +66,12 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 		}
 	}
 	
-	
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
 	@Override
 	protected boolean isConstructor() {
 		return true;
 	}
 	
+	@Override
 	protected List<CollectorInfo> getCollectors() {
 		return collectors;
 	}

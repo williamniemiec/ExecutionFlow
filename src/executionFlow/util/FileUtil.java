@@ -2,6 +2,7 @@ package executionFlow.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -169,5 +170,35 @@ public class FileUtil
 		for (int i=0; i<fileContent.size(); i++) {
 			System.out.printf("%-5d\t%s\n", i+1, fileContent.get(i));
 		}
+	}
+	
+	public static File searchDirectory(String directoryName, File workingDirectory)
+	{
+		File currentDirectory = workingDirectory;
+		boolean hasSrcFolder = false;
+		
+		// Searches for a path containing a directory with the provided name
+		while (!hasSrcFolder) {
+			hasSrcFolder = hasFileWithName(directoryName, currentDirectory);
+			
+			// If there is not a directory named with the provided name, 
+			// searches in the parent folder
+			if (!hasSrcFolder) {
+				currentDirectory = new File(currentDirectory.getParent());
+			}
+		}
+		
+		return currentDirectory;
+	}
+
+	private static boolean hasFileWithName(String name, File workingDirectory) {
+		String[] files = workingDirectory.list();
+		
+		for (int i=0; i<files.length; i++) {
+			if (files[i].equals(name))
+				return true;
+		}
+		
+		return false;
 	}
 }
