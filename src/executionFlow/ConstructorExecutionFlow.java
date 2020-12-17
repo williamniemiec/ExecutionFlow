@@ -56,12 +56,16 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	private void initializeMethodsCalledByTestedInvokedExporter() {
 		if (isDevelopment()) {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-					"MethodsCalledByTestedConstructor", "examples\\results"
+					"MethodsCalledByTestedConstructor", 
+					"examples\\results",
+					true
 			);
 		}
 		else {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-					"MethodsCalledByTestedConstructor", "results"
+					"MethodsCalledByTestedConstructor", 
+					"results",
+					true
 			);
 		}
 	}

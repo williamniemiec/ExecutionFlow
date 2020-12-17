@@ -73,7 +73,7 @@ public class FileExporter implements TestPathExporter
 				
 				// Gets save path
 				Path savePath = Paths.get(ExecutionFlow.getCurrentProjectRoot().toString(), dirName,
-					DataUtil.generateDirectoryPath(signatures.second, isConstructor));
+					DataUtil.generateDirectoryPathFromSignature(signatures.second, isConstructor));
 				
 				// Writes test paths in the file
 				writeFile(e.getValue(), savePath, signatures.first);
@@ -151,7 +151,7 @@ public class FileExporter implements TestPathExporter
 		for (Pair<String, String> signatures : classTestPaths.keySet()) {	
 			// Gets save path
 			Path savePath = Paths.get(ExecutionFlow.getAppRootPath().toString(), dirName,
-					DataUtil.generateDirectoryPath(signatures.second, isConstructor));
+					DataUtil.generateDirectoryPathFromSignature(signatures.second, isConstructor));
 			
 			File dir = savePath.toFile(), testPathFile;
 			String[] files;

@@ -64,12 +64,16 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	private void initializeMethodsCalledByTestedInvokedExporter() {
 		if (isDevelopment()) {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-					"MethodsCalledByTestedMethod", "examples\\results"
+					"MethodsCalledByTestedMethod", 
+					"examples\\results",
+					false
 			);
 		}
 		else {
 			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-					"MethodsCalledByTestedMethod", "results"
+					"MethodsCalledByTestedMethod", 
+					"results",
+					false
 			);
 		}
 	}

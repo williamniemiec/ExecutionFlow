@@ -139,7 +139,7 @@ public class DataUtil
 	 * 
 	 * @return		Generated path
 	 */
-	public static String generateDirectoryPath(String invokedSignature, boolean isConstructor)
+	public static String generateDirectoryPathFromSignature(String invokedSignature, boolean isConstructor)
 	{
 		String[] signatureFields = invokedSignature.split("\\.");
 		String folderPath = getFolderPath(signatureFields, isConstructor);

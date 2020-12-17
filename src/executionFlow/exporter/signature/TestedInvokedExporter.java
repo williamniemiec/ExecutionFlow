@@ -30,7 +30,7 @@ import executionFlow.util.Pair;
  * <b>Note:</b> An invoked can be a method or a constructor
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		2.0.0
  */
 public class TestedInvokedExporter
@@ -39,14 +39,15 @@ public class TestedInvokedExporter
 	//		Attributes
 	//-------------------------------------------------------------------------
 	/**
-	 * Stores the signature of the tested invoked along with test methods that
-	 * tests these invoked.
+	 * Stores tested invoked signature along with its invoked method
+	 * signatures.
+	 * 
 	 * <ul>
 	 * 	<li><b>Key:</b> Invoked signature</li>
-	 * 	<li><b>Value:</b> List of test methods that tests the invoked</li>
+	 * 	<li><b>Value:</b> List of test methods that tests an invoked</li>
 	 * </ul>
 	 */
-	private Map<String, List<String>> invoked_testMethods;
+	private Map<String, List<String>> invokedMethodSignatures;
 	
 	private File output;
 	
@@ -79,46 +80,20 @@ public class TestedInvokedExporter
 		if (signatures == null || signatures.isEmpty())
 			return;
 		
-		/**
-		 * Stores tested invoked signature along with its invoked method
-		 * signatures.
-		 * 
-		 * <ul>
-		 * 	<li><b>Key:</b> Invoked signature</li>
-		 * 	<li><b>Value:</b> List of test methods that tests an invoked</li>
-		 * </ul>
-		 */
-		Map<String, List<String>> invokedMethodSignatures = new HashMap<>();
+		this.invokedMethodSignatures = new HashMap<>();
 
-		
-		Logger.info("Exporting invokers along with test methods that test them to CSV...");
-		
-		// Gets invoked along with test methods that test it
-		invoked_testMethods = extractTestedInvoked(signatures);
-		
-		// Reads CSV (if it already exists)
-		try {
-			for (List<String> line : CSV.read(output, ";")) {
-				List<String> invokedMethod = new ArrayList<>();
-				
-				
-				for (int i=1; i<line.size(); i++) {
-					invokedMethod.add(line.get(i));
-				}
-				
-				invokedMethodSignatures.put(line.get(0), invokedMethod);
-			}			
-		} 
-		catch (IOException e) { }
-		
-		// Erases CSV file
-		output.delete();
-		
-		// Merges current CSV file with new collected invoked and its test methods
-		DataUtil.mergesMaps(invoked_testMethods, invokedMethodSignatures);
+		mergeWithStoredExport(signatures);
+		storeExportFile();
+	}
+
+
+	private void storeExportFile() {
+		Logger.debug("Exporting invokers along with test methods that test them to CSV...");
 		
 		// Writes collected invoked along with a list of test methods that 
 		// call them to a CSV file
+		output.delete();
+		
 		try {
 			for (Map.Entry<String, List<String>> e : invokedMethodSignatures.entrySet()) {
 				List<String> content = e.getValue();
@@ -129,12 +104,32 @@ public class TestedInvokedExporter
 			}
 		} 
 		catch (IOException e1) {
-			Logger.error("CSV - " + e1.getMessage());
-			e1.printStackTrace();
+			Logger.debug("CSV - " + e1.getMessage());
 		}
 		
-		Logger.info("The export was successful");
-		Logger.info("Location: " + output.getAbsolutePath().toString());
+		Logger.debug("The export was successful");
+		Logger.debug("Location: " + output.getAbsolutePath());
+	}
+
+
+	private void mergeWithStoredExport(Set<Pair<String, String>> signatures) {
+		try {
+			for (List<String> line : CSV.read(output, ";")) {
+				List<String> invokedMethod = new ArrayList<>();
+				
+				for (int i=1; i<line.size(); i++) {
+					invokedMethod.add(line.get(i));
+				}
+				
+				invokedMethodSignatures.put(line.get(0), invokedMethod);
+				
+				DataUtil.mergesMaps(
+						extractInvokedWithTesters(signatures), 
+						invokedMethodSignatures
+				);
+			}			
+		} 
+		catch (IOException e) {}
 	}
 	
 	
@@ -149,34 +144,37 @@ public class TestedInvokedExporter
 	 * 
 	 * @return		Map with the above structure
 	 */
-	private Map<String, List<String>> extractTestedInvoked(Set<Pair<String, String>> signatures)
+	private Map<String, List<String>> extractInvokedWithTesters(Set<Pair<String, String>> signatures)
 	{
-		Map<String, List<String>> response = new HashMap<>();
-		
+		Map<String, List<String>> invokedWithTesters = new HashMap<>();
 		
 		// Converts Set<SignaturesInfo> -> Map<String, List<String>>, where:
 		// 		Key:	Invoked signature
 		//		Value:	List of test methods that tests an invoked
 		for (Pair<String, String> signaturesInfo : signatures) {
-			// If the invoked signature is already in response, add the 
-			// test method signature in it
-			if (response.containsKey(signaturesInfo.second)) {
-				List<String> testMethodSignatures = response.get(signaturesInfo.second);
-				
-				
-				testMethodSignatures.add(signaturesInfo.first);
+			if (invokedWithTesters.containsKey(signaturesInfo.second)) {
+				storeExistingInvoked(invokedWithTesters, signaturesInfo);
 			}
-			// Else adds the invoked signature along with the test method
-			// signatures
 			else {
-				List<String> testMethodSignatures = new ArrayList<>();
-				
-				
-				testMethodSignatures.add(signaturesInfo.first);
-				response.put(signaturesInfo.second, testMethodSignatures);
+				storeNewInvoked(invokedWithTesters, signaturesInfo);
 			}
 		}
 		
-		return response;
+		return invokedWithTesters;
+	}
+
+	private void storeNewInvoked(Map<String, List<String>> invokedWithTesters, 
+			Pair<String, String> signaturesInfo) {
+		List<String> testMethodSignatures = new ArrayList<>();
+		testMethodSignatures.add(signaturesInfo.first);
+		
+		invokedWithTesters.put(signaturesInfo.second, testMethodSignatures);
+	}
+
+
+	private void storeExistingInvoked(Map<String, List<String>> invokedWithTesters,
+			Pair<String, String> signaturesInfo) {
+		List<String> testMethodSignatures = invokedWithTesters.get(signaturesInfo.second);
+		testMethodSignatures.add(signaturesInfo.first);
 	}
 }

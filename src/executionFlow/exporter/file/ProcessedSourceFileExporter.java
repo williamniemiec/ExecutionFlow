@@ -26,6 +26,7 @@ public class ProcessedSourceFileExporter
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private String dirName;
+	private boolean isConstructor;
 
 	
 	//-------------------------------------------------------------------------
@@ -37,10 +38,10 @@ public class ProcessedSourceFileExporter
 	 * 
 	 * @param		dirName Directory name
 	 */
-	public ProcessedSourceFileExporter(String dirName)
+	public ProcessedSourceFileExporter(String dirName, boolean isConstructor)
 	{
 		this.dirName = dirName;
-		
+		this.isConstructor = isConstructor;
 	}
 	
 	
@@ -58,22 +59,34 @@ public class ProcessedSourceFileExporter
 	 * 
 	 * @throws		IOException If it is not possible to store file
 	 */
-	public void export(Path processedFile, String invokedSignature, boolean isConstructor) throws IOException
+	public void export(Path processedFile, String invokedSignature) throws IOException
 	{
-		String filename = "SRC.txt";
-		JavaIndenter indenter = new JavaIndenter();
-		Path outputFile;
-		List<String> fileContent;
-		
-		
-		fileContent = indenter.format(FileUtil.getLines(processedFile, Charset.defaultCharset()));
-		outputFile = Paths.get(
-				ExecutionFlow.getCurrentProjectRoot().toString(), 
-				dirName,
-				DataUtil.generateDirectoryPath(invokedSignature, isConstructor),
-				filename
-		);
+		List<String> fileContent = getFileContent(processedFile);
+		Path outputFile = generateOutputPath(invokedSignature);
 		
 		FileUtil.putLines(fileContent, outputFile, Charset.defaultCharset());
+	}
+
+
+	private Path generateOutputPath(String invokedSignature) {
+		return Paths.get(
+				ExecutionFlow.getCurrentProjectRoot().toString(), 
+				dirName,
+				DataUtil.generateDirectoryPathFromSignature(invokedSignature, isConstructor),
+				"SRC.txt"
+		);
+	}
+
+
+	private List<String> getFileContent(Path processedFile) throws IOException {
+		List<String> fileContent = FileUtil.getLines(
+				processedFile, Charset.defaultCharset()
+		);
+		
+		JavaIndenter indenter = new JavaIndenter();
+		
+		fileContent = indenter.format(fileContent);
+		
+		return fileContent;
 	}
 }

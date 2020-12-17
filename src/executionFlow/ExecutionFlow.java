@@ -120,8 +120,8 @@ public abstract class ExecutionFlow
 
 	private void initializeProcessedSourceFileExporter() {
 		this.processedSourceFileExporter = isDevelopment() ? 
-				new ProcessedSourceFileExporter("examples\\results")
-				: new ProcessedSourceFileExporter("results");
+				new ProcessedSourceFileExporter("examples\\results", isConstructor())
+				: new ProcessedSourceFileExporter("results", isConstructor());
 	}
 
 
@@ -380,21 +380,22 @@ public abstract class ExecutionFlow
 		
 		processedSourceFileExporter.export(
 				invokedInfo.getSrcPath(), 
-				invokedInfo.getConcreteInvokedSignature(),
-				isConstructor()
+				invokedInfo.getConcreteInvokedSignature()
 		);
 	}
 
 	private void exportMethodsCalledByTestedInvoked(String invokedSignature) {
+		// Exports methods called by tested invoked to a CSV
 		if (!exportCalledMethods || !analyzer.hasTestPaths())
 			return;
 		
-		// Exports methods called by tested invoked to a CSV
-		invokedMethodsExporter.export(
-				invokedSignature, 
-				analyzer.getMethodsCalledByTestedInvoked(), 
-				isConstructor()
-		);
+		try {
+			invokedMethodsExporter.export(
+					invokedSignature, 
+					analyzer.getMethodsCalledByTestedInvoked()
+			);
+		} catch (IOException e) {
+		}
 
 		analyzer.deleteMethodsCalledByTestedInvoked();
 	}
