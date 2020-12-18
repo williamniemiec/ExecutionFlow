@@ -1,7 +1,9 @@
 package executionFlow;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -19,6 +21,7 @@ public class LibraryManager
 	//-------------------------------------------------------------------------
 	private static Map<String, Path> libraries = new HashMap<>();
 	private static Path libPath;
+	private static List<Path> javaClassPath;
 	
 	
 	//-------------------------------------------------------------------------
@@ -68,5 +71,20 @@ public class LibraryManager
 				ExecutionFlow.getAppRootPath().toAbsolutePath().toString(), 
 				"lib"
 		);
+	}
+	
+	public static List<Path> getJavaClassPath()	{
+		if (javaClassPath == null)
+			initializeJavaClassPath();
+		
+		return javaClassPath;
+	}
+
+	private static void initializeJavaClassPath() {
+		javaClassPath = new ArrayList<>();
+		
+		for (String path : System.getProperty("java.class.path").split("\\;")) {
+			javaClassPath.add(Path.of(path));
+		}
 	}
 }

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 import executionFlow.ExecutionFlow;
@@ -237,14 +238,16 @@ public class FileManager implements Serializable
 	}
 
 	private List<Path> generateClasspath() {
-		return List.of(
-				Path.of(System.getProperty("java.class.path")),
-				LibraryManager.getLibrary("JUNIT_4"),
-				LibraryManager.getLibrary("HAMCREST"),
-				LibraryManager.getLibrary("ASPECTJRT"),
-				LibraryManager.getLibrary("JUNIT_5_API"),
-				LibraryManager.getLibrary("JUNIT_5_PARAMS")
-		);
+		List<Path> classPaths = new ArrayList<>();
+		
+		classPaths.addAll(LibraryManager.getJavaClassPath());
+		classPaths.add(LibraryManager.getLibrary("JUNIT_4"));
+		classPaths.add(LibraryManager.getLibrary("HAMCREST"));
+		classPaths.add(LibraryManager.getLibrary("ASPECTJRT"));
+		classPaths.add(LibraryManager.getLibrary("JUNIT_5_API"));
+		classPaths.add(LibraryManager.getLibrary("JUNIT_5_PARAMS"));
+		
+		return classPaths;
 	}
 	
 	/**
