@@ -460,7 +460,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			InvokedInfo.getCompiledFileDirectory(testClassPath),
 			testClassPackage,
 			new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs),
-			"pre_processing.original"
+			"pretestmethod.bkp"
 		);
 		
 		Logger.debug("Test method collector: "+testMethodInfo);

@@ -179,7 +179,7 @@ public class FilesManager
 			save();
 		}
 		
-		fm.parseFile(autoRestore);
+		fm.processFile(autoRestore);
 		
 		return this;
 	}

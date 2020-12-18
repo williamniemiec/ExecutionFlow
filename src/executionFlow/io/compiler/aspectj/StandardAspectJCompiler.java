@@ -25,6 +25,31 @@ import executionFlow.util.Logger;
  */
 public class StandardAspectJCompiler implements Compiler
 {
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
+	private Main compiler;
+	private MessageHandler messageHandler;
+	private List<Path> classpaths;
+	private Path inpath;
+	private List<String> commands;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private StandardAspectJCompiler(Path inpath, List<Path> classpaths) 
+	{
+		this.compiler = new Main();
+		this.messageHandler = new MessageHandler();
+		this.inpath = inpath;
+		this.classpaths = classpaths;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Builder
+	//-------------------------------------------------------------------------
 	public static class Builder implements AspectJCompilerBuilder {
 		private List<Path> classpaths;
 		private Path inpath;
@@ -42,32 +67,6 @@ public class StandardAspectJCompiler implements Compiler
 		public Compiler build() {
 			return new StandardAspectJCompiler(inpath, classpaths);
 		}
-	}
-
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private Main compiler;
-	private MessageHandler messageHandler;
-	private List<Path> classpaths;
-	private Path inpath;
-	private List<String> commands;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	public StandardAspectJCompiler() 
-	{
-		compiler = new Main();
-		messageHandler = new MessageHandler();
-	}
-	
-	public StandardAspectJCompiler(Path inpath, List<Path> classpaths) 
-	{
-		this();
-		this.inpath = inpath;
-		this.classpaths = classpaths;
 	}
 	
 	

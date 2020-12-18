@@ -201,4 +201,10 @@ public class FileUtil
 		
 		return false;
 	}
+	
+	public static String extractFilenameWithoutExtension(Path file) {
+		String filenameWithExtension = file.getName(file.getNameCount()-1).toString(); 
+		
+		return filenameWithExtension.split("\\.")[0];
+	}
 }

@@ -16,6 +16,7 @@ import executionFlow.io.compiler.Compiler;
 import executionFlow.io.compiler.CompilerFactory;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.factory.FileProcessorFactory;
+import executionFlow.util.FileUtil;
 import executionFlow.util.Logger;
 
 
@@ -23,7 +24,7 @@ import executionFlow.util.Logger;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		1.3
  */
 public class FileManager implements Serializable
@@ -34,38 +35,18 @@ public class FileManager implements Serializable
 	private static final long serialVersionUID = 200L;
 	
 	private transient Path srcFile;
-	private transient Path originalSrcFile; 
+	private transient Path srcFileBackup; 
 	private transient Path binFile;
-	private transient Path originalBinFile;
+	private transient Path binFileBackup;
 	private transient Path binDirectory;
-	private String classSignature;
-	private String filename;
-	private String classPackage;
-	private FileProcessor fp;
+	private FileProcessor fileProcessor;
 	private boolean charsetError;
 	private boolean lastWasError;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
-	//-------------------------------------------------------------------------
-	/**
-	 * Manages file analyzer and compiler. Using this constructor, backup files
-	 * will end with '.original'.
-	 * 
-	 * @param		classSignature Signature of the public class of the file
-	 * @param		srcFilePath Path of java file
-	 * @param		binDirectory Path of directory where .class of java file is
-	 * @param		classPackage Package of the class of the java file
-	 * @param		fileParserFactory Factory that will produce 
-	 * {@link FileProcessor} that will be used for parsing file
-	 */
-	public FileManager(String classSignature, Path srcFilePath, Path binDirectory, 
-			String classPackage, FileProcessorFactory fileParserFactory)
-	{
-		this(classSignature, srcFilePath, binDirectory, classPackage, fileParserFactory, "original");
-	}
-	
+	//-------------------------------------------------------------------------	
 	/**
 	 * Manages file analyzer and compiler.
 	 * 
@@ -85,39 +66,59 @@ public class FileManager implements Serializable
 		if (!Files.exists(srcFilePath))
 			throw new IllegalArgumentException("srcFilePath does not exist: " + srcFilePath);
 		
-		this.srcFile = srcFilePath;
-		this.binDirectory = binDirectory;
-		this.classPackage = classPackage;
-		this.filename = srcFilePath.getName(srcFilePath.getNameCount()-1).toString().split("\\.")[0];
-		this.fp = fileParserFactory.newFileProcessor(
-			srcFile, 
-			binDirectory, 
-			filename+"_parsed", 
-			FileEncoding.UTF_8
+		String filename = FileUtil.extractFilenameWithoutExtension(srcFilePath);
+		
+		this.binDirectory = extractRootBinDirectory(binDirectory, classPackage);
+		this.binFile = binDirectory.resolve(Path.of(filename + ".class"));
+		this.binFileBackup = binDirectory.resolve(
+				Path.of(filename + ".class." + backupExtensionName)
 		);
-		this.binFile = Path.of(binDirectory+"/"+filename+".class");
-		this.originalSrcFile = Path.of(srcFilePath.toAbsolutePath().toString()+"."+backupExtensionName); 
-		this.originalBinFile = Path.of(binDirectory+"/"+filename+".class."+backupExtensionName);
-		this.classSignature = classSignature;
+		
+		this.srcFile = srcFilePath;
+		this.srcFileBackup = Path.of(
+				srcFilePath.toAbsolutePath().toString() 
+				+ "." + backupExtensionName
+		);
+		
+		this.fileProcessor = fileParserFactory.newFileProcessor(
+				srcFile, 
+				binDirectory, 
+				filename+"_parsed", 
+				FileEncoding.UTF_8
+		);
 	}
-	
+
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	private Path extractRootBinDirectory(Path binDirectory, String classPackage) {
+		Path rootBinDirectory = binDirectory;
+		
+		int packageFolders = classPackage.isEmpty() || (classPackage == null) ? 
+				0 : classPackage.split("\\.").length;
+		
+		for (int i=0; i<packageFolders; i++) {
+			rootBinDirectory = rootBinDirectory.getParent();
+		}
+		
+		if (rootBinDirectory.toAbsolutePath().toString().matches(".+(\\/|\\\\)org$")) {
+			rootBinDirectory = rootBinDirectory.getParent();
+		}
+		
+		return rootBinDirectory;
+	}
+	
 	@Override
 	public String toString() 
 	{
 		return "FileManager ["
-				+ "classSignature=" + classSignature
-				+ ", srcFile=" + srcFile 
-				+ ", originalSrcFile=" + originalSrcFile 
+				+ "srcFile=" + srcFile
+				+ ", originalSrcFile=" + srcFileBackup 
 				+ ", compiledFile="	+ binFile 
-				+ ", originalClassPath=" + originalBinFile 
-				+ ", filename=" + filename
-				+ ", classOutput=" + binDirectory 
-				+ ", classPackage=" + classPackage 
-				+ ", fp=" + fp 
+				+ ", originalClassPath=" + binFileBackup
+				+ ", classOutput=" + binDirectory
+				+ ", fileProcessor=" + fileProcessor 
 				+ ", charsetError="	+ charsetError 
 				+ ", lastWasError=" + lastWasError 
 			+ "]";
@@ -154,54 +155,49 @@ public class FileManager implements Serializable
 	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertParse()} function.
 	 */
-	public FileManager parseFile(boolean autoRestore) throws IOException
+	public FileManager processFile(boolean autoRestore) throws IOException
 	{
-		// Saves .java file to allow to restore it after
 		if (autoRestore)
 			createSrcBackupFile();
 		
-		// Parses file
-		Path out;
+		Path processedFile = processFile();
 		
-		// Tries to parse file using UTF-8 encoding. If an error occurs, tries 
-		// to parse the file using ISO-8859-1 encoding
+		storeProcessedFile(processedFile);
+		
+		return this;
+	}
+
+	private Path processFile() throws IOException {
+		Path processedFile;
+		
 		try {	
-			out = Path.of(fp.processFile());
+			processedFile = processFileUsing(FileEncoding.UTF_8);
 		} 
 		catch(IOException e) {	
 			charsetError = true;
-			fp.setEncoding(FileEncoding.ISO_8859_1);
 			
 			try {
-				out = Path.of(fp.processFile());
+				processedFile = processFileUsing(FileEncoding.ISO_8859_1);
 			} 
 			catch (IOException e1) {
 				throw new IOException("Parsing failed");
 			}
 		}
 		
-		// Changes parsed file name to the same as received filename
-		if (Files.exists(out)) {
-			Files.move(out, srcFile, StandardCopyOption.REPLACE_EXISTING);
-		}
-		
-		return this;
+		return processedFile;
 	}
-	
-	/**
-	 * Parses and process file, saving modified file in the same file passed 
-	 * to constructor.
-	 * 
-	 * @return		This object to allow chained calls
-	 * 
-	 * @throws		IOException If file encoding cannot be defined
-	 * 
-	 * @implNote	This function overwrite file passed to the constructor! To
-	 * restore the original file, call {@link #revertParse()} function.
-	 */
-	public FileManager parseFile() throws IOException
-	{
-		return parseFile(true);
+
+	private Path processFileUsing(FileEncoding encoding) throws IOException {
+		fileProcessor.setEncoding(encoding);
+
+		return Path.of(fileProcessor.processFile());
+	}
+
+	private void storeProcessedFile(Path processedFile) throws IOException {
+		// Changes parsed file name to the same as received filename
+		if (Files.exists(processedFile)) {
+			Files.move(processedFile, srcFile, StandardCopyOption.REPLACE_EXISTING);
+		}
 	}
 	
 	/**
@@ -213,36 +209,11 @@ public class FileManager implements Serializable
 	 */
 	public FileManager compileFile() throws IOException 
 	{
-		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
-								0 : classPackage.split("\\.").length;
-		Path aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
-				ExecutionFlow.getAppRootPath().resolve(Path.of("bin", "executionFlow", "runtime")) 
-				: ExecutionFlow.getAppRootPath().resolve(Path.of("executionFlow", "runtime"));
-		List<Path> classpath = List.of(
-				Path.of(System.getProperty("java.class.path")),
-				LibraryManager.getLibrary("JUNIT_4"),
-				LibraryManager.getLibrary("HAMCREST"),
-				LibraryManager.getLibrary("ASPECTJRT"),
-				LibraryManager.getLibrary("JUNIT_5_API"),
-				LibraryManager.getLibrary("JUNIT_5_PARAMS")
-		);
-		
 		Compiler compiler = CompilerFactory.createStandardAspectJCompiler()
-				.inpath(aspectsRootDirectory)
-				.classpath(classpath)
+				.inpath(generateAspectsRootDirectory())
+				.classpath(generateClasspath())
 				.build();
-		
-		// Sets path to the compiler
-		for (int i=0; i<packageFolders; i++) {
-			binDirectory = binDirectory.getParent();
-		}
-		
-		if (binDirectory.toAbsolutePath().toString().matches(".+(\\/|\\\\)org$")) {
-			binDirectory = binDirectory.getParent();
-		}
 
-		// Compiles parsed file. If an error has occurred in parsing, compiles 
-		// using ISO-8859-1 encoding
 		try {
 			if (charsetError)	
 				compiler.compile(srcFile, binDirectory, FileEncoding.ISO_8859_1);
@@ -256,6 +227,23 @@ public class FileManager implements Serializable
 		
 		return this;
 	}
+
+	private Path generateAspectsRootDirectory() {
+		return ExecutionFlow.isDevelopment() ? 
+				ExecutionFlow.getAppRootPath().resolve(Path.of("bin", "executionFlow", "runtime")) 
+				: ExecutionFlow.getAppRootPath().resolve(Path.of("executionFlow", "runtime"));
+	}
+
+	private List<Path> generateClasspath() {
+		return List.of(
+				Path.of(System.getProperty("java.class.path")),
+				LibraryManager.getLibrary("JUNIT_4"),
+				LibraryManager.getLibrary("HAMCREST"),
+				LibraryManager.getLibrary("ASPECTJRT"),
+				LibraryManager.getLibrary("JUNIT_5_API"),
+				LibraryManager.getLibrary("JUNIT_5_PARAMS")
+		);
+	}
 	
 	/**
 	 * Deletes modified file and restores original file. This function does not
@@ -267,10 +255,11 @@ public class FileManager implements Serializable
 	 */
 	public FileManager revertParse() throws IOException
 	{
+		if (!hasSrcBackupStored())
+			return this;
+		
 		try {
-			if (Files.exists(originalSrcFile)) {
-				Files.move(originalSrcFile, srcFile, StandardCopyOption.REPLACE_EXISTING);
-			}
+			Files.move(srcFileBackup, srcFile, StandardCopyOption.REPLACE_EXISTING);
 		} 
 		catch (IOException e) {
 			throw new IOException("Revert parse without backup");
@@ -288,10 +277,11 @@ public class FileManager implements Serializable
 	 */
 	public FileManager revertCompilation() throws IOException
 	{
+		if (!hasBinBackupStored())
+			return this;
+		
 		try {
-			if (Files.exists(originalBinFile)) {
-				Files.move(originalBinFile, binFile, StandardCopyOption.REPLACE_EXISTING);
-			}
+			Files.move(binFileBackup, binFile, StandardCopyOption.REPLACE_EXISTING);
 		} 
 		catch (IOException e) {
 			throw new IOException("Revert compilation without backup");
@@ -307,7 +297,7 @@ public class FileManager implements Serializable
 	 */
 	public boolean hasBinBackupStored()
 	{
-		return Files.exists(originalBinFile);
+		return Files.exists(binFileBackup);
 	}
 	
 	/**
@@ -317,7 +307,7 @@ public class FileManager implements Serializable
 	 */
 	public boolean hasSrcBackupStored()
 	{
-		return Files.exists(originalSrcFile);
+		return Files.exists(srcFileBackup);
 	}
 	
 	/**
@@ -334,12 +324,12 @@ public class FileManager implements Serializable
 		try {
 			Files.copy(
 				binFile,
-				originalBinFile, 
+				binFileBackup, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
 		} 
-		catch (IOException e) {			// If already exists a .original, this means
-			try {							// that last compiled file was not restored
+		catch (IOException e) {			// If already exists a backup file, this means
+			try {						// that last compiled file was not restored
 				revertCompilation();	
 				
 				if (!lastWasError) {
@@ -370,12 +360,12 @@ public class FileManager implements Serializable
 		try {
 			Files.copy(
 				srcFile, 
-				originalSrcFile, 
+				srcFileBackup, 
 				StandardCopyOption.COPY_ATTRIBUTES
 			);
 		} 
-		catch (IOException e) {		// If already exists a .original, this means
-			try {						// that last parsed file was not restored
+		catch (IOException e) {		// If already exists a backup file, this means
+			try {					// that last parsed file was not restored
 				revertParse();
 				
 				if (!lastWasError) {
@@ -406,11 +396,6 @@ public class FileManager implements Serializable
 		return binFile;
 	}
 	
-	public String getClassSignature()
-	{
-		return classSignature;
-	}
-	
 	
 	//-------------------------------------------------------------------------
 	//		Serialization and deserialization methods
@@ -422,8 +407,8 @@ public class FileManager implements Serializable
 			oos.writeUTF(srcFile.toAbsolutePath().toString());
 			oos.writeUTF(binDirectory.toAbsolutePath().toString());
 			oos.writeUTF(binFile.toAbsolutePath().toString());
-			oos.writeUTF(originalSrcFile.toAbsolutePath().toString());
-			oos.writeUTF(originalBinFile.toAbsolutePath().toString());
+			oos.writeUTF(srcFileBackup.toAbsolutePath().toString());
+			oos.writeUTF(binFileBackup.toAbsolutePath().toString());
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -437,8 +422,8 @@ public class FileManager implements Serializable
 			this.srcFile = Path.of(ois.readUTF());
 			this.binDirectory = Path.of(ois.readUTF());
 			this.binFile = Path.of(ois.readUTF());
-			this.originalSrcFile = Path.of(ois.readUTF());
-			this.originalBinFile = Path.of(ois.readUTF());
+			this.srcFileBackup = Path.of(ois.readUTF());
+			this.binFileBackup = Path.of(ois.readUTF());
 		} 
 		catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
