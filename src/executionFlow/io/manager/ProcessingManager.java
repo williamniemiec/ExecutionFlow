@@ -7,9 +7,17 @@ import executionFlow.util.Logger;
 
 
 public class ProcessingManager {
+	
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static FilesManager testMethodManager;
 	private static FilesManager invokedManager;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	/**
 	 * Initializes invoked managers. If some error occurs, should stop the
 	 * application execution; otherwise, the original files that have been 
@@ -22,52 +30,54 @@ public class ProcessingManager {
 	 * @throws		IOException If backup files could not be restored
 	 */
 	public ProcessingManager(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException {
-		initializeTestMethodManager(restoreOriginalFiles);
-		initializeInvokedManager(restoreOriginalFiles);
+		try {
+			initializeProcessingManagers(restoreOriginalFiles);
+		}
+		catch (ClassNotFoundException e) {
+			throw new ClassNotFoundException("Class FileManager not found");
+		} 
+		catch (IOException e) {
+			throw new IOException(
+					"Could not recover all backup files for methods\n"
+					+ "See more: https://github.com/williamniemiec/"
+					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
+					+ "#could-not-recover-all-backup-files"
+			);
+		}
+	}
+
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void initializeProcessingManagers(boolean restoreOriginalFiles) 
+			throws ClassNotFoundException, IOException {
+		if (testMethodManager == null)
+			initializeTestMethodManager(restoreOriginalFiles);
+		
+		if (invokedManager == null)
+			initializeInvokedManager(restoreOriginalFiles);
+	}
+	
+	private void initializeTestMethodManager(boolean restoreOriginalFiles)
+			throws ClassNotFoundException, IOException {
+		testMethodManager = new FilesManager(
+				ProcessorType.TEST_METHOD, 
+				true, 
+				restoreOriginalFiles
+		);
 	}
 
 	private void initializeInvokedManager(boolean restoreOriginalFiles)
 			throws ClassNotFoundException, IOException {
-		if (invokedManager == null) {
-			try {
-				invokedManager = new FilesManager(ProcessorType.INVOKED, true, restoreOriginalFiles);
-				
-				// Loads files that have already been processed
-				if (!restoreOriginalFiles)
-					invokedManager.load();
-			} 
-			catch (ClassNotFoundException e) {
-				throw new ClassNotFoundException("Class FileManager not found");
-			} 
-			catch (IOException e) {
-				throw new IOException(
-						"Could not recover all backup files for methods\n"
-						+ "See more: https://github.com/williamniemiec/"
-						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
-						+ "#could-not-recover-all-backup-files"
-				);
-			}
-		}
-	}
-
-	private void initializeTestMethodManager(boolean restoreOriginalFiles)
-			throws ClassNotFoundException, IOException {
-		if (testMethodManager == null) {
-			try {
-				testMethodManager = new FilesManager(ProcessorType.TEST_METHOD, true, restoreOriginalFiles);
-			} 
-			catch (ClassNotFoundException e) {
-				throw new ClassNotFoundException("Class FileManager not found");
-			} 
-			catch (IOException e) {
-				throw new IOException(
-						"Could not recover the backup file of the test method\n"
-						+ "See more: https://github.com/williamniemiec/"
-						+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
-						+ "#could-not-recover-all-backup-files"
-				);
-			}
-		}
+		invokedManager = new FilesManager(
+				ProcessorType.INVOKED, 
+				true, 
+				restoreOriginalFiles
+		);
+		
+		if (!restoreOriginalFiles)
+			invokedManager.load();
 	}
 	
 	/**
@@ -93,18 +103,33 @@ public class ProcessingManager {
 	 */
 	public void restoreOriginalFile(FileManager fm) 
 	{
+		restoreBinaryFile(fm);
+		restoreSourceFile(fm);
+	}
+
+	private void restoreBinaryFile(FileManager fm) {
 		try {
 			fm.revertCompilation();
-			fm.revertParse();
 		} 
 		catch (IOException e) {
 			Logger.error(
-					"An error occurred while restoring the original files - " 
+					"An error occurred while restoring the original binary file - " 
 					+ e.getMessage()
 			);
 		}
 	}
-	
+
+	private void restoreSourceFile(FileManager fm) {
+		try {
+			fm.revertProcessing();
+		} 
+		catch (IOException e) {
+			Logger.error(
+					"An error occurred while restoring the original source file - " 
+					+ e.getMessage()
+			);
+		}
+	}
 	
 	/**
 	 * Processes test method source file.
@@ -115,20 +140,23 @@ public class ProcessingManager {
 	 * @throws		IOException If an error occurs during processing or 
 	 * compilation
 	 */
-	public void processTestMethod(FileManager testMethodFileManager) throws IOException 
+	public void processTestMethod(FileManager testMethodFileManager) 
+			throws IOException 
 	{
-		if (!testMethodManager.wasProcessed(testMethodFileManager)) {
-			try {
-				testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
-			}
-			catch (java.lang.NoClassDefFoundError e) {
-				Logger.error("Process test method - " + e.getMessage());
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			
-			Logger.info("Processing completed");	
+		if (testMethodManager.wasProcessed(testMethodFileManager))
+			return;
+		
+		try {
+			testMethodManager.parse(testMethodFileManager);
+			testMethodManager.compile(testMethodFileManager);
 		}
+		catch (java.lang.NoClassDefFoundError e) {
+			Logger.error("Process test method - " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		
+		Logger.info("Processing completed");	
 	}
 	
 	/**
@@ -141,15 +169,18 @@ public class ProcessingManager {
 	 * @throws		IOException If an error occurs during processing or 
 	 * compilation
 	 */
-	public void processInvoked(FileManager testMethodFileManager, FileManager invokedFileManager) 
-			throws IOException 
+	public void processInvoked(FileManager testMethodFileManager, 
+			FileManager invokedFileManager) throws IOException 
 	{
-		if (!invokedManager.wasProcessed(invokedFileManager)) {
-			boolean autoRestore = 
-					!testMethodFileManager.getSrcFile().equals(invokedFileManager.getSrcFile());
-			
-			invokedManager.parse(invokedFileManager, autoRestore).compile(invokedFileManager);
-		}
+		if (invokedManager.wasProcessed(invokedFileManager))
+			return;
+		
+		boolean autoRestore = 
+				!testMethodFileManager.getSrcFile()
+				.equals(invokedFileManager.getSrcFile());
+		
+		invokedManager.parse(invokedFileManager, autoRestore);
+		invokedManager.compile(invokedFileManager);
 	}
 	
 	public boolean isTestMethodManagerInitialized()
@@ -178,7 +209,8 @@ public class ProcessingManager {
 		invokedManager.deleteBackup();
 	}
 	
-	public void restoreTestMethodOriginalFiles() throws ClassNotFoundException, IOException
+	public void restoreTestMethodOriginalFiles() 
+			throws ClassNotFoundException, IOException
 	{
 		if (!isTestMethodManagerInitialized())
 			return;
@@ -187,7 +219,8 @@ public class ProcessingManager {
 			testMethodManager.restoreAll();
 	}
 	
-	public void restoreInvokedOriginalFiles() throws ClassNotFoundException, IOException
+	public void restoreInvokedOriginalFiles() 
+			throws ClassNotFoundException, IOException
 	{
 		if (!isInvokedManagerInitialized())
 			return;

@@ -398,7 +398,7 @@ public class FilesManager
 		boolean success = true;
 		
 		try {
-			fm.revertParse();
+			fm.revertProcessing();
 		} 
 		catch (IOException e) {
 			success = false;

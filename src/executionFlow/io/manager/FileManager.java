@@ -155,7 +155,7 @@ public class FileManager implements Serializable
 	 * @throws		IOException If file encoding cannot be defined
 	 * 
 	 * @implNote	This function overwrite file passed to the constructor! To
-	 * restore the original file, call {@link #revertParse()} function.
+	 * restore the original file, call {@link #revertProcessing()} function.
 	 */
 	public FileManager processFile(boolean autoRestore) throws IOException
 	{
@@ -255,7 +255,7 @@ public class FileManager implements Serializable
 	 * 
 	 * @throws		IOException If file has not a backup file
 	 */
-	public FileManager revertParse() throws IOException
+	public FileManager revertProcessing() throws IOException
 	{
 		if (!hasSrcBackupStored())
 			return this;
@@ -368,7 +368,7 @@ public class FileManager implements Serializable
 		} 
 		catch (IOException e) {		// If already exists a backup file, this means
 			try {					// that last parsed file was not restored
-				revertParse();
+				revertProcessing();
 				
 				if (!lastWasError) {
 					lastWasError = true;
