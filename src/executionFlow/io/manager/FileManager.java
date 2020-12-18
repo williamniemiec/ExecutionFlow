@@ -1,4 +1,4 @@
-package executionFlow.io;
+package executionFlow.io.manager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,9 +11,9 @@ import java.util.List;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.LibraryManager;
+import executionFlow.io.FileEncoding;
 import executionFlow.io.compiler.Compiler;
 import executionFlow.io.compiler.CompilerFactory;
-import executionFlow.io.compiler.FileEncoding;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.factory.FileProcessorFactory;
 import executionFlow.util.Logger;

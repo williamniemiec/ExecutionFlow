@@ -7,7 +7,7 @@ import java.util.List;
 
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import executionFlow.info.InvokedContainer;
-import executionFlow.io.ProcessingManager;
+import executionFlow.io.manager.ProcessingManager;
 
 
 /**

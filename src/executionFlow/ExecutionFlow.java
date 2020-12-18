@@ -19,8 +19,8 @@ import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.exporter.testpath.TestPathExporter;
 import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
-import executionFlow.io.ProcessingManager;
+import executionFlow.io.manager.FileManager;
+import executionFlow.io.manager.ProcessingManager;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
@@ -63,7 +63,7 @@ public abstract class ExecutionFlow
 	/**
 	 * Sets if environment is development. This will affect
 	 * {@link #getAppRootPath()} and 
-	 * {@link executionFlow.io.StandardAspectJCompiler#compile()}.
+	 * {@link executionFlow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
 	 */
 	private static final boolean DEVELOPMENT;
 	

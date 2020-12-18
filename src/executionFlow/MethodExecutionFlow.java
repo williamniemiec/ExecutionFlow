@@ -7,7 +7,7 @@ import java.util.Map;
 
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import executionFlow.info.InvokedContainer;
-import executionFlow.io.ProcessingManager;
+import executionFlow.io.manager.ProcessingManager;
 import executionFlow.runtime.collector.MethodCollector;
 
 

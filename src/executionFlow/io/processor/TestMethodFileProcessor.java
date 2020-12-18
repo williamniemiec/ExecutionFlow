@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.io.compiler.FileEncoding;
+import executionFlow.io.FileEncoding;
 import executionFlow.util.FileUtil;
 import executionFlow.util.Logger;
 import executionFlow.util.balance.RoundBracketBalance;

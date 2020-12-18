@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 
-import executionFlow.io.compiler.FileEncoding;
+import executionFlow.io.FileEncoding;
 
 
 /**
