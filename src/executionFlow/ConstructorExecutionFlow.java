@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.io.ProcessingManager;
 
 
@@ -26,7 +26,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private List<CollectorInfo> collectors;	
+	private List<InvokedContainer> collectors;	
 	
 	
 	//-------------------------------------------------------------------------
@@ -40,7 +40,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	 * {@link executionFlow.runtime.ConstructorCollector}
 	 */
 	public ConstructorExecutionFlow(ProcessingManager processingManager, 
-			Collection<CollectorInfo> constructorCollector) {
+			Collection<InvokedContainer> constructorCollector) {
 		super(processingManager);
 		
 		this.collectors = new ArrayList<>(constructorCollector);
@@ -76,7 +76,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	}
 	
 	@Override
-	protected List<CollectorInfo> getCollectors() {
+	protected List<InvokedContainer> getCollectors() {
 		return collectors;
 	}
 }

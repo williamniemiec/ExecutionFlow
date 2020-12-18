@@ -17,7 +17,7 @@ import executionFlow.exporter.testpath.ConsoleExporter;
 import executionFlow.exporter.testpath.FileExporter;
 import executionFlow.exporter.testpath.TestPathExportType;
 import executionFlow.exporter.testpath.TestPathExporter;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.ProcessingManager;
@@ -201,7 +201,7 @@ public abstract class ExecutionFlow
 		
 		dumpCollectors();
 		
-		for (CollectorInfo collector : getCollectors()) {
+		for (InvokedContainer collector : getCollectors()) {
 			parseCollector(collector);
 		}
 		
@@ -211,7 +211,7 @@ public abstract class ExecutionFlow
 		return this;
 	}
 	
-	private void parseCollector(CollectorInfo collector) {
+	private void parseCollector(InvokedContainer collector) {
 		FileManager invokedFileManager = createInvokedFileManager(collector);
 		FileManager testMethodFileManager = createTestMethodFileManager(collector);
 		
@@ -252,7 +252,7 @@ public abstract class ExecutionFlow
 			testersExporter.export(computedTestPaths.keySet());
 	}
 
-	private void processInvokedMethod(CollectorInfo collector, FileManager testMethodFileManager, 
+	private void processInvokedMethod(InvokedContainer collector, FileManager testMethodFileManager, 
 			FileManager invokedFileManager) throws IOException {
 		Logger.info("Processing source file of invoked - " 
 				+ collector.getInvokedInfo().getConcreteInvokedSignature() + "...");
@@ -269,7 +269,7 @@ public abstract class ExecutionFlow
 		}	
 	}
 
-	private void processTestMethod(CollectorInfo collector, 
+	private void processTestMethod(InvokedContainer collector, 
 			FileManager testMethodFileManager) throws IOException {
 		Logger.info(
 				"Processing source file of test method "
@@ -288,7 +288,7 @@ public abstract class ExecutionFlow
 	}
 
 
-	private FileManager createTestMethodFileManager(CollectorInfo collector) {
+	private FileManager createTestMethodFileManager(InvokedContainer collector) {
 		FileManager testMethodFileManager;
 		testMethodFileManager = new FileManager(
 			collector.getTestMethodInfo().getClassSignature(),
@@ -301,7 +301,7 @@ public abstract class ExecutionFlow
 		return testMethodFileManager;
 	}
 
-	private FileManager createInvokedFileManager(CollectorInfo collector) {
+	private FileManager createInvokedFileManager(InvokedContainer collector) {
 			return new FileManager(
 				collector.getInvokedInfo().getClassSignature(),
 				collector.getInvokedInfo().getSrcPath(), 
@@ -321,7 +321,7 @@ public abstract class ExecutionFlow
 		}
 	}
 
-	private void runDebugger(CollectorInfo collector) 
+	private void runDebugger(InvokedContainer collector) 
 			throws IOException, InterruptedByTimeoutException {
 		Logger.info(
 				"Computing test path of invoked " 
@@ -347,7 +347,7 @@ public abstract class ExecutionFlow
 		}
 	}
 
-	protected abstract List<CollectorInfo> getCollectors();
+	protected abstract List<InvokedContainer> getCollectors();
 
 	private void dumpCollectors() {
 		Logger.debug(

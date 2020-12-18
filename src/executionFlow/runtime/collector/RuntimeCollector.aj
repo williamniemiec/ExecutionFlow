@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
@@ -45,7 +45,7 @@ public abstract aspect RuntimeCollector
 	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 	 * </ul>
 	 */
-	protected static Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+	protected static Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 	
 	/**
 	 * Stores information about collected constructor.<hr/>
@@ -55,7 +55,7 @@ public abstract aspect RuntimeCollector
 	 * 	<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
-	protected static Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
+	protected static Map<String, InvokedContainer> constructorCollector = new LinkedHashMap<>();
 
 	/**
 	 * Stores anonymous class signature where it is created and where it is 

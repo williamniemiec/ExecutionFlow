@@ -16,7 +16,7 @@ import executionFlow.ExecutionFlow;
 import executionFlow.LibraryManager;
 import executionFlow.MethodExecutionFlow;
 import executionFlow.RemoteControl;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileManager;
 import executionFlow.io.FilesManager;
@@ -254,7 +254,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		// Updates constructor invocation lines If it is declared in the 
 		// same file as the processed test method file
-		for (CollectorInfo cc : constructorCollector.values()) {
+		for (InvokedContainer cc : constructorCollector.values()) {
 			invocationLine = cc.getInvokedInfo().getInvocationLine();
 			
 			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
@@ -266,8 +266,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		// Updates method invocation lines If it is declared in the 
 		// same file as the processed test method file
-		for (List<CollectorInfo> methodCollectorList : methodCollector.values()) {
-			for (CollectorInfo mc : methodCollectorList) {
+		for (List<InvokedContainer> methodCollectorList : methodCollector.values()) {
+			for (InvokedContainer mc : methodCollectorList) {
 				invocationLine = mc.getInvokedInfo().getInvocationLine();
 				
 				if (!mc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 

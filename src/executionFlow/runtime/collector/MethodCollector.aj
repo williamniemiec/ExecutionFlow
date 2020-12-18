@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.aspectj.lang.JoinPoint;
 
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Logger;
 
@@ -136,8 +136,8 @@ public aspect MethodCollector extends RuntimeCollector
 	 */
 	private void collectMethod(JoinPoint jp, String signature, int invocationLine)
 	{
-		CollectorInfo ci;
-		List<CollectorInfo> list;
+		InvokedContainer ci;
+		List<InvokedContainer> list;
 		InvokedInfo methodInfo;
 		Class<?>[] paramTypes;
 		Class<?> returnType;
@@ -175,7 +175,7 @@ public aspect MethodCollector extends RuntimeCollector
 			methodInfo.setConcreteMethodSignature(concreteMethodSignature);
 		}
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 //		ci = new CollectorInfo.Builder()
 //			.methodInfo(methodInfo)
 //			.testMethodInfo(testMethodInfo)

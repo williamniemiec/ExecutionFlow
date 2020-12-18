@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.io.ProcessingManager;
 import executionFlow.runtime.collector.MethodCollector;
 
@@ -27,7 +27,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private List<CollectorInfo> collectors;
+	private List<InvokedContainer> collectors;
 	
 
 	//-------------------------------------------------------------------------
@@ -39,7 +39,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	 * @param		collectedMethods Collected methods from {@link MethodCollector}
 	 */
 	public MethodExecutionFlow(ProcessingManager processingManager, 
-			Map<Integer, List<CollectorInfo>> collectedMethods) {
+			Map<Integer, List<InvokedContainer>> collectedMethods) {
 		super(processingManager);
 		
 		this.collectors = new ArrayList<>();
@@ -50,10 +50,10 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	}
 	
 	
-	private void storeCollectedMethods(Map<Integer, List<CollectorInfo>> collectedMethods) {
+	private void storeCollectedMethods(Map<Integer, List<InvokedContainer>> collectedMethods) {
 		// Stores only the first collector of each line, since the test path of
 		// methods called within a loop will be obtained at once
-		for (List<CollectorInfo> collector : collectedMethods.values()) {
+		for (List<InvokedContainer> collector : collectedMethods.values()) {
 			collectors.add(collector.get(0));
 		}
 	}
@@ -78,7 +78,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 		}
 	}
 	
-	protected List<CollectorInfo> getCollectors() {
+	protected List<InvokedContainer> getCollectors() {
 		return collectors;
 	}
 }

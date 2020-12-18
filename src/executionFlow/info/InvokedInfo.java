@@ -248,22 +248,8 @@ public class InvokedInfo
 		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public InvokedInfo build() throws IllegalArgumentException
+		public InvokedInfo build()
 		{
-			StringBuilder nullFields = new StringBuilder();
-			
-			
-			if (binPath == null)
-				nullFields.append("classPath").append(", ");
-			if (srcPath == null)
-				nullFields.append("srcPath").append(", ");
-			if (invokedSignature == null)
-				nullFields.append("invokedSignature").append(", ");
-			
-			if (nullFields.length() > 0)
-				throw new IllegalArgumentException("Required fields cannot be null: "
-						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
-			
 			return new InvokedInfo(
 				binPath, srcPath, invocationLine, invokedSignature, 
 				invokedName, returnType, parameterTypes, args, isConstructor
@@ -274,35 +260,7 @@ public class InvokedInfo
 	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------
-	/**
-	 * Extracts the types of parameters from the invoked.
-	 * 
-	 * @param		parametersTypes Types of each invoked's parameter
-	 * 
-	 * @return		String with the name of each type separated by commas
-	 */
-	public String extractParameterTypes()
-	{
-		if (parameterTypes == null) { return ""; }
-		StringBuilder response = new StringBuilder();
-		
-		// Stores the name of all types of parameter
-		for (var parameterType : parameterTypes) {
-			// Removes signature
-			String[] tmp = parameterType.getTypeName().split("\\."); 
-			
-			// Adds only the name of the parameter type
-			response.append(tmp[tmp.length-1] +",");
-		}
-		
-		if (response.length() > 0)
-			// Removes last comma
-			response.deleteCharAt(response.length()-1);	
-		
-		return response.toString();
-	}
-	
+	//-------------------------------------------------------------------------	
 	/**
 	 * Extracts class signature from an invoked signature.
 	 * 
@@ -312,22 +270,22 @@ public class InvokedInfo
 	 */
 	public static String extractClassSignature(String invokedSignature)
 	{
-		StringBuilder response = new StringBuilder();
+		if ((invokedSignature == null) || invokedSignature.isBlank())
+			return "";
+		
+		StringBuilder classSignature = new StringBuilder();
 		String[] terms = invokedSignature.split("\\.");
 
-		
-		// Appends all terms of signature, without the last
 		for (int i=0; i<terms.length-1; i++) {
-			response.append(terms[i]);
-			response.append(".");
+			classSignature.append(terms[i]);
+			classSignature.append(".");
 		}
 		
-		if (response.length() > 0) {
-			// Removes last dot
-			response.deleteCharAt(response.length()-1);
-		}
+		// Removes last dot
+		if (classSignature.length() > 0)
+			classSignature.deleteCharAt(classSignature.length()-1);
 		
-		return response.toString();
+		return classSignature.toString();
 	}
 	
 	/**
@@ -338,23 +296,22 @@ public class InvokedInfo
 	 */
 	public static String extractPackage(String classSignature)
 	{
-		if (classSignature == null || classSignature.isEmpty()) { return ""; }
+		if (classSignature == null || classSignature.isEmpty())
+			return "";
 		
 		String[] tmp = classSignature.split("\\.");
-		StringBuilder response = new StringBuilder();
+		StringBuilder pkg = new StringBuilder();
 		
-		// Appends all terms of signature, without the last
 		for (int i=0; i<tmp.length-1; i++) {
-			response.append(tmp[i]);
-			response.append(".");
+			pkg.append(tmp[i]);
+			pkg.append(".");
 		}
 		
-		if (response.length() > 0) {
-			// Removes last dot
-			response.deleteCharAt(response.length()-1);
-		}
+		// Removes last dot
+		if (pkg.length() > 0)
+			pkg.deleteCharAt(pkg.length()-1);
 		
-		return response.toString();
+		return pkg.toString();
 	}
 	
 	/**
@@ -369,32 +326,18 @@ public class InvokedInfo
 	 */
 	public static Path extractClassRootDirectory(Path classPath, String classPackage)
 	{
-		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
-				0 : classPackage.split("\\.").length;
+		int packageFolders = 0;
+		
+		if (!(classPackage.isEmpty() || (classPackage == null)))
+			packageFolders = classPackage.split("\\.").length;
 
 		classPath = classPath.getParent();
-		
-		// Sets path to the compiler
+
 		for (int i=0; i<packageFolders; i++) {
 			classPath = classPath.getParent();
 		}
 		
 		return classPath;
-	}
-	
-	/**
-	 * Gets invoked signature without return type.
-	 * 
-	 * @param		invokedSignature Invoked signature
-	 * 
-	 * @return		Invoked signature without return type
-	 */
-	public static String getInvokedSignatureWithoutReturnType(String invokedSignature)
-	{
-		int index = invokedSignature.indexOf(" ");
-		
-		
-		return invokedSignature.substring(index+1);
 	}
 	
 	/**
@@ -404,16 +347,29 @@ public class InvokedInfo
 	 */
 	public boolean belongsToAnonymousClass()
 	{
-		String sig = getClassSignature();
-		String[] terms = sig.split("\\$");
-		boolean response = false;
-		
-		
-		if (terms.length > 1) {
-			response = terms[terms.length-1].matches("[0-9]+");
-		}
+		String[] terms = getClassSignature().split("\\$");
 
-		return response;
+		if (terms.length <= 1)
+			return false;
+		
+		return terms[terms.length-1].matches("[0-9]+");
+	}
+	
+	@Override
+	public String toString() 
+	{
+		return "InvokedInfo ["
+				+ "methodName=" + methodName 
+				+ ", binPath=" + binPath 
+				+ ", srcPath=" + srcPath
+				+ ", classSignature=" + getClassSignature()
+				+ ", classPackage=" + getPackage()
+				+ ", methodSignature=" + invokedSignature 
+				+ ", invocationLine=" + invocationLine 
+				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
+				+ ", args="	+ Arrays.toString(args) 
+				+ ", returnType=" + returnType 
+			+ "]";
 	}
 	
 	
@@ -483,7 +439,7 @@ public class InvokedInfo
 	 */
 	public int getInvocationLine()
 	{
-		return this.invocationLine;
+		return invocationLine;
 	}
 	
 	/**
@@ -549,13 +505,9 @@ public class InvokedInfo
 	public String getName()
 	{
 		if (name == null)
-			extractName();
+			name = invokedSignature.substring(0, invokedSignature.indexOf("(")+1);
 		
 		return name;
-	}
-
-	private void extractName() {
-		this.name = invokedSignature.substring(0, invokedSignature.indexOf("(")+1);
 	}
 
 	public String getInvokedName() {
@@ -570,23 +522,6 @@ public class InvokedInfo
 		
 		invokedName = invokedSignature.substring(0, idxParamStart);
 		invokedName = invokedName.substring(invokedName.lastIndexOf("."), idxParamStart);
-	}
-	
-	@Override
-	public String toString() 
-	{
-		return "InvokedInfo ["
-				+ "methodName=" + methodName 
-				+ ", binPath=" + binPath 
-				+ ", srcPath=" + srcPath
-				+ ", classSignature=" + getClassSignature()
-				+ ", classPackage=" + getPackage()
-				+ ", methodSignature=" + invokedSignature 
-				+ ", invocationLine=" + invocationLine 
-				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
-				+ ", args="	+ Arrays.toString(args) 
-				+ ", returnType=" + returnType 
-			+ "]";
 	}
 	
 	//-------------------------------------------------------------------------
@@ -642,9 +577,10 @@ public class InvokedInfo
 	
 	public String getConcreteInvokedSignature()
 	{
-		return (concreteMethodSignature == null) ? 
-				invokedSignature.replaceAll("\\$", ".") 
-				: concreteMethodSignature.replaceAll("\\$", ".");
+		if (concreteMethodSignature == null)
+			concreteMethodSignature = invokedSignature.replaceAll("\\$", ".");
+		
+		return concreteMethodSignature;
 	}
 	
 	public void setConcreteMethodSignature(String concreteMethodSignature) 
