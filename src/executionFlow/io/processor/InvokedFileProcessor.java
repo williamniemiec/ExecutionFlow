@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.io.FileEncoding;
+import executionFlow.io.compiler.FileEncoding;
 import executionFlow.io.processor.parser.holeplug.HolePlug;
 import executionFlow.io.processor.parser.trgeneration.CodeCleanerAdapter;
 import executionFlow.util.Logger;

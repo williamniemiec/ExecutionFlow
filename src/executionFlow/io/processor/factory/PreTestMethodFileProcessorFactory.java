@@ -2,7 +2,7 @@ package executionFlow.io.processor.factory;
 
 import java.nio.file.Path;
 
-import executionFlow.io.FileEncoding;
+import executionFlow.io.compiler.FileEncoding;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.PreTestMethodFileProcessor;
 

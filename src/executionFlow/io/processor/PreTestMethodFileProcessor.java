@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.io.FileEncoding;
+import executionFlow.io.compiler.FileEncoding;
 import executionFlow.runtime.collector.CollectorExecutionFlow;
 import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;

@@ -7,7 +7,13 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
+import executionFlow.ExecutionFlow;
+import executionFlow.LibraryManager;
+import executionFlow.io.compiler.Compiler;
+import executionFlow.io.compiler.CompilerFactory;
+import executionFlow.io.compiler.FileEncoding;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.factory.FileProcessorFactory;
 import executionFlow.util.Logger;
@@ -209,7 +215,22 @@ public class FileManager implements Serializable
 	{
 		int packageFolders = classPackage.isEmpty() || classPackage == null ? 
 								0 : classPackage.split("\\.").length;
+		Path aspectsRootDirectory = ExecutionFlow.isDevelopment() ? 
+				ExecutionFlow.getAppRootPath().resolve(Path.of("bin", "executionFlow", "runtime")) 
+				: ExecutionFlow.getAppRootPath().resolve(Path.of("executionFlow", "runtime"));
+		List<Path> classpath = List.of(
+				Path.of(System.getProperty("java.class.path")),
+				LibraryManager.getLibrary("JUNIT_4"),
+				LibraryManager.getLibrary("HAMCREST"),
+				LibraryManager.getLibrary("ASPECTJRT"),
+				LibraryManager.getLibrary("JUNIT_5_API"),
+				LibraryManager.getLibrary("JUNIT_5_PARAMS")
+		);
 		
+		Compiler compiler = CompilerFactory.createStandardAspectJCompiler()
+				.inpath(aspectsRootDirectory)
+				.classpath(classpath)
+				.build();
 		
 		// Sets path to the compiler
 		for (int i=0; i<packageFolders; i++) {
@@ -224,9 +245,9 @@ public class FileManager implements Serializable
 		// using ISO-8859-1 encoding
 		try {
 			if (charsetError)	
-				FileCompiler.compile(srcFile, binDirectory, FileEncoding.ISO_8859_1);
+				compiler.compile(srcFile, binDirectory, FileEncoding.ISO_8859_1);
 			else
-				FileCompiler.compile(srcFile, binDirectory, FileEncoding.UTF_8);
+				compiler.compile(srcFile, binDirectory, FileEncoding.UTF_8);
 		} 
 		catch (java.lang.NoClassDefFoundError e) {
 			Logger.error("aspectjtools.jar not found");

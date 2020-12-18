@@ -63,7 +63,7 @@ public abstract class ExecutionFlow
 	/**
 	 * Sets if environment is development. This will affect
 	 * {@link #getAppRootPath()} and 
-	 * {@link executionFlow.io.FileCompiler#compile()}.
+	 * {@link executionFlow.io.StandardAspectJCompiler#compile()}.
 	 */
 	private static final boolean DEVELOPMENT;
 	
@@ -93,15 +93,15 @@ public abstract class ExecutionFlow
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	/**
 	 * Sets test path export type.
 	 */
 	static {
-//		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-		TEST_PATH_EXPORTER = TestPathExportType.FILE;
+		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
+//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
 	
 	
