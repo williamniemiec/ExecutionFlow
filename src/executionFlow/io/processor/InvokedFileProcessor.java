@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.parser.holeplug.HolePlug;
-import executionFlow.io.processor.parser.trgeneration.CodeCleanerAdapter;
+import executionFlow.io.processing.invoked.holeplug.HolePlug;
+import executionFlow.io.processing.invoked.trgeneration.CodeCleanerAdapter;
 import executionFlow.util.FileUtil;
 import executionFlow.util.Logger;
 import executionFlow.util.formatter.JavaIndenter;
