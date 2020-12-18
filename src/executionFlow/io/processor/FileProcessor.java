@@ -15,7 +15,7 @@ import executionFlow.io.FileEncoding;
  * classes that implement this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		2.0.0
  */
 public abstract class FileProcessor implements Serializable 
@@ -27,7 +27,7 @@ public abstract class FileProcessor implements Serializable
 	
 	protected FileEncoding encode = FileEncoding.UTF_8;
 	protected transient Path file;
-	protected transient Path outputDir;
+	protected transient Path outputFile;
 	protected String outputFilename;
 	
 	
@@ -77,7 +77,7 @@ public abstract class FileProcessor implements Serializable
 		try {
 			oos.defaultWriteObject();
 			oos.writeUTF(file.toAbsolutePath().toString());
-			oos.writeUTF(outputDir.toAbsolutePath().toString());
+			oos.writeUTF(outputFile.toAbsolutePath().toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -88,7 +88,7 @@ public abstract class FileProcessor implements Serializable
 		try {
 			ois.defaultReadObject();
 			this.file = Path.of(ois.readUTF());
-			this.outputDir = Path.of(ois.readUTF());
+			this.outputFile = Path.of(ois.readUTF());
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}

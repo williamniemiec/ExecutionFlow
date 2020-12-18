@@ -551,7 +551,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			
 			checkpoint.enable();
 			
-			testMethodManager.parse(testMethodFileManager).compile(testMethodFileManager);
+			testMethodManager.processFile(testMethodFileManager).compile(testMethodFileManager);
 			
 			Logger.info("Pre-processing completed");
 		}

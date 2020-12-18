@@ -1,6 +1,5 @@
 package executionFlow.io.processor;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -10,8 +9,8 @@ import java.util.Map;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.parser.holeplug.HolePlug;
 import executionFlow.io.processor.parser.trgeneration.CodeCleanerAdapter;
-import executionFlow.util.Logger;
 import executionFlow.util.FileUtil;
+import executionFlow.util.Logger;
 import executionFlow.util.formatter.JavaIndenter;
 
 
@@ -21,7 +20,7 @@ import executionFlow.util.formatter.JavaIndenter;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor
@@ -41,32 +40,10 @@ public class InvokedFileProcessor extends FileProcessor
 	 */
 	private static Map<Integer, Integer> mapping = new HashMap<>();
 	
-	private String fileExtension = "java";
-	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	/**
-	 * Adds instructions in parts of the code that does not exist when 
-	 * converting it to bytecode. Using this constructor, file encoding will be 
-	 * UTF-8.
-	 * 
-	 * @param		file Path of the file to be parsed
-	 * @param		outputDir Directory where parsed file will be saved
-	 * @param		outputFilename Name of the parsed file
-	 * @param		fileExtension Output file extension (without dot)
-	 * (default is java)
-	 */ 
-	private InvokedFileProcessor(Path file, Path outputDir, 
-			String outputFilename, String fileExtension)
-	{
-		this.file = file;
-		this.outputDir = outputDir;
-		this.outputFilename = outputFilename;
-		this.fileExtension = fileExtension;
-	}
-	
 	/**
 	 * Adds instructions in parts of the code that does not exist when 
 	 * converting it to bytecode.
@@ -81,8 +58,16 @@ public class InvokedFileProcessor extends FileProcessor
 	private InvokedFileProcessor(Path file, Path outputDir, String outputFilename,
 			String fileExtension, FileEncoding encode)
 	{
-		this(file, outputDir, outputFilename, fileExtension);
-		this.encode = encode;
+		this.file = file;
+		this.outputFilename = outputFilename;
+		
+		if (outputDir == null)
+			outputFile = Path.of(outputFilename + "." + fileExtension);
+		else	
+			outputFile = outputDir.resolve(outputFilename + "." + fileExtension);
+		
+		if (encode != null)
+			this.encode = encode;
 	}
 	
 	
@@ -217,9 +202,9 @@ public class InvokedFileProcessor extends FileProcessor
 				throw new IllegalArgumentException("Required fields cannot be null: "
 						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
 			
-			return	encode == null ? 
-					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension) : 
-					new InvokedFileProcessor(file, outputDir, outputFilename, fileExtension, encode);
+			return new InvokedFileProcessor(
+					file, outputDir, outputFilename, fileExtension, encode
+			);
 		}
 	}
 	
@@ -243,50 +228,53 @@ public class InvokedFileProcessor extends FileProcessor
 		if (file == null)
 			return "";
 		
-		List<String> lines;
-		File outputFile;
-		CodeCleanerAdapter codeCleaner;
-		HolePlug holePlug;
-		Map<Integer, Integer> cleanupMapping;
+		List<String> lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
+		lines = doProcessing(lines);
 		
-		// If an output directory is specified, processed file will be saved to it
-		if (outputDir != null)
-			outputFile = new File(outputDir.toFile(), outputFilename + "." + fileExtension);
-		// Otherwise processed file will be saved in current directory
-		else	
-			outputFile = new File(outputFilename + "." + fileExtension);
+		FileUtil.putLines(lines, outputFile, encode.getStandardCharset());
+
+		dump(lines);
 		
-		// Reads the source file and puts its lines in a list
-		lines = FileUtil.getLines(file, encode.getStandardCharset());
+		return outputFile.toString();
+	}
+
+	private List<String> doProcessing(List<String> lines) {
+		lines = doTRGenerationProcesing(lines);
+		lines = doHolePlugProcessing(lines);
 		
-		// Processing #1 - Same processing done in TRGeneration (application)
-		codeCleaner = new CodeCleanerAdapter(lines);
+		return lines;
+	}
+
+	private List<String> doTRGenerationProcesing(List<String> lines) {
+		CodeCleanerAdapter codeCleaner = new CodeCleanerAdapter(lines);
 		lines = codeCleaner.parse();
-		cleanupMapping = codeCleaner.getMapping();
+		
+		Map<Integer, Integer> cleanupMapping = codeCleaner.getMapping();
 		
 		if (cleanupMapping != null)
 			mapping = cleanupMapping;
 		
-		// Processing #2 - Fixes the omission of lines in compilation
+		return lines;
+	}
+
+	private List<String> doHolePlugProcessing(List<String> lines) {
+		HolePlug holePlug;
 		holePlug = new HolePlug(lines);
 		lines = holePlug.parse();
-		
-		// Writes processed lines to a file
-		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
+		return lines;
+	}
 
-		// -----{ DEBUG }-----
-		if (Logger.getLevel() == Logger.Level.DEBUG) {
-			JavaIndenter indenter = new JavaIndenter();
-			List<String> formatedFile = indenter.format(lines);
-
-			
-			Logger.debug("InvokedFileProcessor", "Processed file");
-			FileUtil.printFileWithLines(formatedFile);
-		}
-		// -----{ END DEBUG }-----
+	private void dump(List<String> lines) {
+		if (Logger.getLevel() != Logger.Level.DEBUG)
+			return;
 		
-		return outputFile.getAbsolutePath();
+		JavaIndenter indenter = new JavaIndenter();
+		List<String> formatedFile = indenter.format(lines);
+
+		Logger.debug("InvokedFileProcessor", "Processed file");
+		FileUtil.printFileWithLines(formatedFile);
+		
 	}
 	
 	//-------------------------------------------------------------------------

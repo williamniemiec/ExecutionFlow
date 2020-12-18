@@ -147,7 +147,7 @@ public class ProcessingManager {
 			return;
 		
 		try {
-			testMethodManager.parse(testMethodFileManager);
+			testMethodManager.processFile(testMethodFileManager);
 			testMethodManager.compile(testMethodFileManager);
 		}
 		catch (java.lang.NoClassDefFoundError e) {
@@ -179,7 +179,7 @@ public class ProcessingManager {
 				!testMethodFileManager.getSrcFile()
 				.equals(invokedFileManager.getSrcFile());
 		
-		invokedManager.parse(invokedFileManager, autoRestore);
+		invokedManager.processFile(invokedFileManager, autoRestore);
 		invokedManager.compile(invokedFileManager);
 	}
 	

@@ -59,7 +59,7 @@ public class FilesManager
 	 * <code>_EF_ + type.getName() + _FILES.ef</code>
 	 * 
 	 * @param		type Type of parser that will be used in 
-	 * {@link #parse(FileManager)}
+	 * {@link #processFile(FileManager)}
 	 * @param		autoDelete If true, if there are backup files, it will 
 	 * delete them after restore them
 	 * @param		autoRestore If true and if there are backup files, restore them
@@ -97,7 +97,7 @@ public class FilesManager
 	 * <code>_EF_ + type.getName() + _FILES.ef</code>
 	 * 
 	 * @param		type Type of parser that will be used in 
-	 * {@link #parse(FileManager)}
+	 * {@link #processFile(FileManager)}
 	 * @param		autoDelete If true, if there are backup files, it will 
 	 * delete them after restore them
 	 * @param		restore If true and if there are backup files, restore them
@@ -167,7 +167,7 @@ public class FilesManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesManager parse(FileManager fm, boolean autoRestore) throws IOException
+	public FilesManager processFile(FileManager fm, boolean autoRestore) throws IOException
 	{
 		if (wasProcessed(fm))
 			return this;
@@ -198,9 +198,9 @@ public class FilesManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesManager parse(FileManager fm) throws IOException
+	public FilesManager processFile(FileManager fm) throws IOException
 	{
-		return parse(fm, true);
+		return processFile(fm, true);
 	}
 	
 	/**
