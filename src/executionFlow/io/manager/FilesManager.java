@@ -26,6 +26,7 @@ import executionFlow.io.processor.ProcessorType;
  * @since		2.0.0
  */
 public class FilesManager 
+// TODO FilesManager -> ProcessingManager?
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -36,7 +37,7 @@ public class FilesManager
 	/**
 	 * Stores hashcode of FileManager that have already been processed 
 	 */
-	private Set<Integer> parsedFiles;
+	private Set<Integer> processedFiles;
 	
 	/**
 	 * Stores hashcode of FileManager that have already been compiled 
@@ -61,26 +62,27 @@ public class FilesManager
 	 * {@link #parse(FileManager)}
 	 * @param		autoDelete If true, if there are backup files, it will 
 	 * delete them after restore them
-	 * @param		restore If true and if there are backup files, restore them
+	 * @param		autoRestore If true and if there are backup files, restore them
 	 * 
 	 * @throws		IOException If an error occurs during class deserialization
 	 * (while restoring backup files)
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found  
 	 */
-	public FilesManager(ProcessorType type, boolean autoDelete, boolean restore) 
+	public FilesManager(ProcessorType type, boolean autoDelete, boolean autoRestore) 
 			throws ClassNotFoundException, IOException
 	{
-		files = new HashSet<>(); 
-		parsedFiles = new HashSet<>();
-		compiledFiles = new HashSet<>();
-		backupFile = new File(ExecutionFlow.getCurrentProjectRoot().toFile(), 
-				"_EF_"+type.getName()+"_FILES.ef");
+		this.files = new HashSet<>(); 
+		this.processedFiles = new HashSet<>();
+		this.compiledFiles = new HashSet<>();
 		this.autoDelete = autoDelete;
+		
+		this.backupFile = new File(
+				ExecutionFlow.getCurrentProjectRoot().toFile(), 
+				"_EF_" + type.getName() + "_FILES.ef"
+		);
 
-		// If there are files modified from the last execution that were not
-		// restored, restore them
-		if (restore && this.hasBackupStored()) {
+		if (autoRestore && hasBackupStored()) {
 			restoreFromBackup();
 		}		
 	}
@@ -147,7 +149,7 @@ public class FilesManager
 		return "FilesManager ["
 				+ "backupFile=" + backupFile 
 				+ ", files=" + files 
-				+ ", parsedFiles=" + parsedFiles
+				+ ", processedFiles=" + processedFiles
 				+ ", compiledFiles=" + compiledFiles 
 				+ ", autoDelete=" + autoDelete 
 			+ "]";
@@ -167,21 +169,22 @@ public class FilesManager
 	 */
 	public FilesManager parse(FileManager fm, boolean autoRestore) throws IOException
 	{
-		int key = fm.hashCode();
-
-		if (parsedFiles.contains(key))
+		if (wasProcessed(fm))
 			return this;
 		
-		parsedFiles.add(key);
+		fm.processFile(autoRestore);
+		markFileAsProcessed(fm);
+		
+		return this;
+	}
+
+	private void markFileAsProcessed(FileManager fm) throws IOException {
+		processedFiles.add(fm.hashCode());
 
 		if (!files.contains(fm)) {
 			files.add(fm);
 			save();
 		}
-		
-		fm.processFile(autoRestore);
-		
-		return this;
 	}
 	
 	/**
@@ -212,21 +215,23 @@ public class FilesManager
 	 */
 	public FilesManager compile(FileManager fm) throws IOException
 	{	
-		int key = fm.hashCode();
-		
-		if (compiledFiles.contains(fm.hashCode()))
+		if (wasCompiled(fm))
 			return this;
 		
-		compiledFiles.add(key);
+		fm.createBackupBinFile().compileFile();
+
+		markFileAsCompiled(fm);
+		
+		return this;
+	}
+
+	private void markFileAsCompiled(FileManager fm) throws IOException {
+		compiledFiles.add(fm.hashCode());
 		
 		if (!files.contains(fm)) {
 			files.add(fm);
 			save();
 		}
-
-		fm.createBackupBinFile().compileFile();
-		
-		return this;
 	}
 	
 	/**
@@ -238,7 +243,7 @@ public class FilesManager
 	 */
 	public boolean wasProcessed(FileManager fm)
 	{
-		return parsedFiles.contains(fm.hashCode());
+		return processedFiles.contains(fm.hashCode());
 	}
 	
 	/**
@@ -258,9 +263,9 @@ public class FilesManager
 	 * 
 	 * @return		If the restore was successful
 	 */
-	public boolean restoreAll()
+	public void restoreAll()
 	{
-		return restoreAll(files);
+		restoreAll(files);
 	}
 	
 	/**
@@ -289,11 +294,11 @@ public class FilesManager
 	 */
 	public void save() throws IOException
 	{
-		ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFile));
-		ois.writeObject(files);
-		ois.writeObject(parsedFiles);
-		ois.writeObject(compiledFiles);
-		ois.close();
+		try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFile))) {
+			ois.writeObject(files);
+			ois.writeObject(processedFiles);
+			ois.writeObject(compiledFiles);
+		}
 	}
 	
 	/**
@@ -312,17 +317,15 @@ public class FilesManager
 	@SuppressWarnings("unchecked")
 	public boolean load() throws IOException, ClassNotFoundException
 	{
-		if (!hasBackupStored()) { return false; }
+		if (!hasBackupStored())
+			return false;
 		
 		boolean error = false;
 		
-		
-		try {
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile));
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile))) {
 			this.files = (HashSet<FileManager>)ois.readObject();
-			this.parsedFiles = (Set<Integer>)ois.readObject();
+			this.processedFiles = (Set<Integer>)ois.readObject();
 			this.compiledFiles = (Set<Integer>)ois.readObject();
-			ois.close();
 		} 
 		catch (FileNotFoundException e) {
 			this.files = null;
@@ -344,7 +347,7 @@ public class FilesManager
 	 */
 	public boolean remove(FileManager fm)
 	{
-		parsedFiles.remove(fm.hashCode());
+		processedFiles.remove(fm.hashCode());
 		compiledFiles.remove(fm.hashCode());
 		
 		return files.remove(fm);
@@ -354,46 +357,54 @@ public class FilesManager
 	 * Restores all original files that have been modified.
 	 * 
 	 * @param		files List of modified files
-	 * 
-	 * @return		If the restore was successful
 	 */
-	private boolean restoreAll(Set<FileManager> files)
+	private void restoreAll(Set<FileManager> files)
 	{
 		if (files == null)
-			return false;
+			return;
 		
-		boolean error = false;
 		Iterator<FileManager> it = files.iterator();
 		
-		// Restores source file and compilation file for each modified file
 		while (it.hasNext()) {
 			FileManager fm = it.next(); 
 			
-			// Restores source and compilation file
-			try {
-				fm.revertParse();
-			} 
-			catch (IOException e) {
-				error = true;
-			}
-			
-			try {
-				fm.revertCompilation();
-			} 
-			catch (IOException e) {
-				error = true;
-			}
-			
-			if (!error) {
-				try {
-					it.remove();
-				}
-				catch (ConcurrentModificationException e)
-				{}
-			}
+			revertProcessingUsingFileManager(fm);
+			revertCompilationUsingFileManager(fm);
+			removeFileManager(it);
+		}
+	}
+
+	private void removeFileManager(Iterator<FileManager> it) {
+		try {
+			it.remove();
+		}
+		catch (ConcurrentModificationException e)
+		{}
+	}
+
+	private boolean revertCompilationUsingFileManager(FileManager fm) {
+		boolean success = true;
+		
+		try {
+			fm.revertCompilation();
+		} 
+		catch (IOException e) {
+			success = false;
+		}
+		return success;
+	}
+
+	private boolean revertProcessingUsingFileManager(FileManager fm) {
+		boolean success = true;
+		
+		try {
+			fm.revertParse();
+		} 
+		catch (IOException e) {
+			success = false;
 		}
 		
-		return !error;
+		return success;
 	}
 	
 	/**

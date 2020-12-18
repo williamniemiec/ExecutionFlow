@@ -95,8 +95,10 @@ public class FileManager implements Serializable
 	private Path extractRootBinDirectory(Path binDirectory, String classPackage) {
 		Path rootBinDirectory = binDirectory;
 		
-		int packageFolders = classPackage.isEmpty() || (classPackage == null) ? 
-				0 : classPackage.split("\\.").length;
+		int packageFolders = 0;
+		
+		if ((classPackage != null) && !classPackage.isEmpty())
+			packageFolders = classPackage.split("\\.").length;
 		
 		for (int i=0; i<packageFolders; i++) {
 			rootBinDirectory = rootBinDirectory.getParent();
