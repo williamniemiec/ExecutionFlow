@@ -31,7 +31,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 400L;
 		
-	private static Map<Integer, Integer> mapping = new HashMap<>();;
+	private static Map<Integer, Integer> mapping = new HashMap<>();
 	private boolean insideMultilineArgs = false;
 	private int multilineArgsStartIndex = -1;
 	
@@ -237,63 +237,56 @@ public class TestMethodFileProcessor extends FileProcessor
 	{
 		if (file == null)
 			return "";
-
-		final String REGEX_COMMENT_FULL_LINE = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		String line;
-		List<String> lines = new ArrayList<>();
 		
-		// Reads the source file and puts its lines in a list
-		lines = FileUtil.getLines(file, encode.getStandardCharset());
+		List<String> lines = FileUtil.getLines(file, encode.getStandardCharset());
 		
-		// Parses file line by line
-		for (int i=0; i<lines.size(); i++) {
-			line = lines.get(i);
-			line = removeInlineComment(line);
-			
-			if (!(line.matches(REGEX_COMMENT_FULL_LINE) || line.isBlank())) {
-				line = parseClassDeclaration(line);
-				line = parsePrints(line);
-				line = parseMultilineArgs(line, lines, i);
-			}
-			
-			lines.set(i, line);
-		}
+		lines = doProcessing(lines);
 		
-		// -----{ DEBUG }-----
-		if (Logger.getLevel() == Logger.Level.DEBUG) {
-			Logger.debug("TestMethodFileProcessor", "Processed file");
-			FileUtil.printFileWithLines(lines);
-		}
-		// -----{ END DEBUG }-----
-
-		// Writes processed lines to a file
+		dump(lines);
+		
 		FileUtil.putLines(lines, outputFile, encode.getStandardCharset());
 		
 		return outputFile.toString();
 	}
 	
-	/**
-	 * Adds {@link executionFlow.runtime.SkipCollection} annotation next to 
-	 * class declarations.
-	 * 
-	 * @param		line Line to be analyzed
-	 * 
-	 * @return		Line with {@link executionFlow.runtime.SkipCollection} if it
-	 * contains a class declaration. Otherwise, it returns the line sent by 
-	 * parameter
-	 */
-	private String parseClassDeclaration(String line) 
+	public List<String> doProcessing(List<String> lines)
 	{
-		final String REGEX_SKIP_COLLECTION = ".*(@.+\\.SkipCollection).*";
-		String skipCollectionAnnotation = "@executionFlow.runtime.SkipCollection";
-		boolean isClassDeclaration = line.contains("class ") && !line.contains("new ");
+		List<String> processedLines = lines;
 		
 		
-		if (isClassDeclaration && !line.matches(REGEX_SKIP_COLLECTION)) {
-			line =  skipCollectionAnnotation + " " + line;
+		
+//		String line;
+//
+//		for (int i=0; i<lines.size(); i++) {
+//			line = processLine(lines.get(i));
+//			
+//			processedLines.set(i, line);
+//		}
+		
+		return processedLines;
+	}
+
+	private String processLine(String line) {
+		final String regexCommentFullLine = 
+				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
+		
+		line = removeInlineComment(line);
+		
+		if (!(line.matches(regexCommentFullLine) || line.isBlank())) {
+			line = parseClassDeclaration(line);
+			line = parsePrints(line);
+			line = parseMultilineArgs(line, lines, i);
 		}
 		
 		return line;
+	}
+
+	private void dump(List<String> lines) {
+		if (Logger.getLevel() != Logger.Level.DEBUG)
+			return;
+		
+		Logger.debug("TestMethodFileProcessor", "Processed file");
+		FileUtil.printFileWithLines(lines);
 	}
 	
 	/**
@@ -375,35 +368,6 @@ public class TestMethodFileProcessor extends FileProcessor
 	}
 
 	/**
-	 * Removes calls to print methods.
-	 * 
-	 * @param		line Line to be analyzed
-	 * 
-	 * @return		Line without calls to print methods
-	 */
-	private String parsePrints(String line) 
-	{
-		if (line.contains("System.out.print")) {
-			line = line.replaceAll(".*System\\.out\\.print(ln)?\\(.+\\);", "");
-//			String[] tmp = line.split(";");
-//			StringBuilder response = new StringBuilder();
-//			
-//			
-//			// Deletes print's from the line
-//			for (String term : tmp) {
-//				if (!term.contains("System.out.print")) {
-//					response.append(term);
-//					response.append(";");
-//				}
-//			}
-//			
-//			line = response.toString();
-		}
-		
-		return line;
-	}
-
-	/**
 	 * Removes inline comment.
 	 * 
 	 * @param		line Line to which inline comment will be removed.
@@ -415,16 +379,26 @@ public class TestMethodFileProcessor extends FileProcessor
 		if (!line.contains("//"))
 			return line;
 		
+		String processedLine = replaceStringWithBlankSpaces(line);
+
+		if (processedLine.contains("//")) {
+			processedLine = processedLine.substring(0, processedLine.indexOf("//"));
+		}
+		
+		return processedLine;
+	}
+
+	private String replaceStringWithBlankSpaces(String line) {
 		String lineWithBlankStrings = line;
+		
 		StringBuilder strWithBlankSpaces = new StringBuilder();
-		Matcher m = Pattern.compile("\"[^\"]*\"").matcher(line);
 		
+		Matcher matcherContentBetweenQuotes = Pattern.compile("\"[^\"]*\"").matcher(line);
 		
-		// Replace strings with blank strings
-		while (m.find()) {
-			int strLen = m.group().length()-2;
-			int idxStart = m.start();
-			int idxEnd = m.end();
+		while (matcherContentBetweenQuotes.find()) {
+			int strLen = matcherContentBetweenQuotes.group().length() - 2; // -2 to disregard slashes
+			int idxStart = matcherContentBetweenQuotes.start();
+			int idxEnd = matcherContentBetweenQuotes.end();
 			
 			strWithBlankSpaces.append("\"");
 			for (int i=0; i<strLen; i++) {
@@ -432,17 +406,14 @@ public class TestMethodFileProcessor extends FileProcessor
 			}
 			strWithBlankSpaces.append("\"");
 			
-			lineWithBlankStrings = lineWithBlankStrings.substring(0, idxStart) + strWithBlankSpaces + lineWithBlankStrings.substring(idxEnd);
+			lineWithBlankStrings = lineWithBlankStrings.substring(0, idxStart) 
+					+ strWithBlankSpaces 
+					+ lineWithBlankStrings.substring(idxEnd);
+			
 			strWithBlankSpaces = new StringBuilder();
 		}
 		
-		int idxCommentStart = lineWithBlankStrings.indexOf("//");
-		
-		if (idxCommentStart != -1) {
-			line = line.substring(0, idxCommentStart);
-		}
-		
-		return line;
+		return lineWithBlankStrings;
 	}
 	
 	
