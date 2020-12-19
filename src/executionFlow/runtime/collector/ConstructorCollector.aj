@@ -34,16 +34,20 @@ import executionFlow.util.Logger;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		1.0
  */
-public aspect ConstructorCollector extends RuntimeCollector
-{
+@SuppressWarnings("unused")
+public aspect ConstructorCollector extends RuntimeCollector {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static Set<String> collectedConstructors = new HashSet<>();
 	private static int invocationLine = 0;
+	private Path classPath;
+	private Path srcPath;
+	private String signature;
 	
 	
 	//-------------------------------------------------------------------------
@@ -53,115 +57,171 @@ public aspect ConstructorCollector extends RuntimeCollector
 	 * Intercepts object instantiation and gets its invocation line.
 	 */
 	pointcut constructorInvocationLineCollector(): 
-		!skipAnnotation() &&
-		(junit4() || junit5()) &&
-		call(*.new(..));
-	
-	before(): constructorInvocationLineCollector()
-	{
-		invocationLine = thisJoinPoint.getSourceLocation().getLine();
-	}
+		!skipAnnotation()
+		&& (junit4() || junit5())
+		&& call(*.new(..));
 	
 	/**
 	 * Intercepts object instantiation within test methods.
 	 */
-	pointcut constructorCollector(): 
-		!skipAnnotation() &&
-		!(junit4_internal() || junit5_internal()) &&
-		call(*.new(..)) && 
-		!cflowbelow(withincode(* *(..))) &&
-		!within(executionFlow..*) &&
-		!within(ConstructorCollector);
+	pointcut classInstantiation(): 
+		!skipAnnotation()
+		&& !(junit4_internal() || junit5_internal())
+		&& call(*.new(..))
+		&& !cflowbelow(withincode(* *(..)))
+		&& !within(executionFlow..*)
+		&& !within(ConstructorCollector);
 	
-	before(): constructorCollector()
-	{
-		if (invocationLine <= 0)
-			return;
-		
-		final String REGEX_CONSTRUCTOR = "[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
-		final String REGEX_ANONYMOUS_CLASS = ".+\\$[0-9]+.+";
-		String signature, classSignature;
-		Path classPath, srcPath;
-		
-
-		signature = thisJoinPoint.getSignature().toString();
-		
-		if (signature.contains("java.") || !signature.matches(REGEX_CONSTRUCTOR))
+	
+	//-------------------------------------------------------------------------
+	//		Join points
+	//-------------------------------------------------------------------------
+	before(): constructorInvocationLineCollector() {
+		invocationLine = thisJoinPoint.getSourceLocation().getLine();
+	}
+	
+	before(): classInstantiation() {
+		if (!hasValidState())
 			return;
 
-		// Gets correct signature of inner classes
-		signature = thisJoinPoint.getSignature().getDeclaringTypeName() 
-				+ signature.substring(signature.indexOf("("));
-
-		if (signature.matches(REGEX_ANONYMOUS_CLASS) ||	
-				collectedConstructors.contains(signature) || 
-				(testMethodInfo == null)) {
+		signature = getSignature(thisJoinPoint);
+		
+		if (!isValidConstructorSignature() || isAnonymousClassSignature() 
+				|| alreadyCollected())
 			return;
-		}
 		
 		collectedConstructors.add(signature);
+	
+		collectSourceAndBinaryPaths();
 		
-		classSignature = signature.split("\\(")[0];
+		if (srcPath == null || classPath == null)
+			return;
 		
-		// Gets class path and source path
+		collectConstructor(thisJoinPoint);
+		
+		invocationLine = 0;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private boolean hasValidState() {
+		return !(invocationLine <= 0 || (testMethodInfo == null));
+	}
+	
+	private String getSignature(JoinPoint jp) {
+		return jp.getSignature().getDeclaringTypeName() 
+				+ jp.getSignature().toString().substring(signature.indexOf("("));
+	}
+	
+	private boolean isValidConstructorSignature() {
+		return	!signature.contains("java.")
+				&& isConstructorSignature();
+	}
+	
+	private boolean isConstructorSignature() {
+		final String regexConstructor = 
+				"[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
+		
+		return signature.matches(regexConstructor);
+	}
+	
+	private boolean isAnonymousClassSignature() {
+		final String regexAnonymousConstructor = ".+\\$[0-9]+.+";
+		
+		return signature.matches(regexAnonymousConstructor);
+	}
+	
+	private boolean alreadyCollected() {
+		return collectedConstructors.contains(signature);
+	}
+	
+	private void collectSourceAndBinaryPaths() {		
 		try {
-			// Class path and source path from method
-			srcPath = CollectorExecutionFlow.findSrcPath(classSignature);
-			classPath = CollectorExecutionFlow.findBinPath(classSignature);
-			
-			if (srcPath == null || classPath == null) {
-				Logger.warning("The constructor with the following signature" 
-						+ " will be skiped because its source file and / or " 
-						+ " binary file cannot be found: " + signature);
-				return;
-			}
-			
-			collectConstructor(thisJoinPoint, signature, srcPath, classPath);
-			invocationLine = 0;
+			findSrcAndBinPath();
 		} 
 		catch (IOException e1) {
-			e1.printStackTrace();
+			Logger.error(e1.getMessage());
 		}
 	}
 	
-	/**
-	 * Collects current constructor.
-	 * 
-	 * @param		jp Join point
-	 * @param		signature Constructor signature
-	 * @param		srcPath Constructor source file
-	 * @param		classPath Constructor binary file
-	 */
-	private void collectConstructor(JoinPoint jp, String signature, Path srcPath, Path classPath)
-	{
-		InvokedContainer collectorInfo;
-		InvokedInfo constructorInvokedInfo;
-		Class<?>[] paramTypes;
-		Object[] paramValues;
+	private void findSrcAndBinPath() throws IOException {
+		String classSignature = extractClassSignatureFromSignature(signature);
+		
+		srcPath = CollectorExecutionFlow.findSrcPath(classSignature);
+		classPath = CollectorExecutionFlow.findBinPath(classSignature);
+		
+		if (srcPath == null || classPath == null) {
+			Logger.warning("The constructor with the following signature" 
+					+ " will be skiped because its source file and / or " 
+					+ " binary file cannot be found: " + signature);
+		}
+	}
+	
+	private String extractClassSignatureFromSignature(String signature) {
+		return signature.split("\\(")[0];
+	}
+	
+	private void collectConstructor(JoinPoint jp) {
 		String key = invocationLine + signature;
 		
+		if (constructorCollector.containsKey(key))
+			return;
 		
-		if (jp.getArgs() == null || jp.getArgs().length == 0) {
-			paramTypes = new Class<?>[0];
-			paramValues = new Object[0];
-		} 
-		else {
-			paramTypes = CollectorExecutionFlow.extractParamTypes(jp.getArgs());
-			paramValues = jp.getArgs();			
-		}
-		
-		constructorInvokedInfo = new InvokedInfo.Builder()
+		InvokedInfo constructorInvokedInfo = new InvokedInfo.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
 				.invokedSignature(signature)
-				.parameterTypes(paramTypes)
-				.args(paramValues)
+				.parameterTypes(getParameterTypes(jp))
+				.args(getParameterValues(jp))
 				.invocationLine(invocationLine)
 				.build();
-			
-		collectorInfo = new InvokedContainer(constructorInvokedInfo, testMethodInfo);
 		
-		if (!constructorCollector.containsKey(key))
-			constructorCollector.put(key, collectorInfo);
+		constructorCollector.put(
+				key, 
+				new InvokedContainer(constructorInvokedInfo, testMethodInfo)
+		);
+	}
+	
+	private Class<?>[] getParameterTypes(JoinPoint jp) {
+		if (jp.getArgs() == null || jp.getArgs().length == 0)
+			return new Class<?>[0];
+		
+		return extractParamTypes(jp.getArgs());	
+		
+	}
+	
+	private Class<?>[] extractParamTypes(Object[] args) {
+		if (args == null || args.length == 0)
+			return new Class<?>[0];
+		
+		int i = 0;
+		Class<?>[] paramTypes = new Class<?>[args.length];
+		for (Object o : args) { 
+			if (o != null)
+				paramTypes[i++] = normalizeClass(o.getClass());
+		}
+		
+		return paramTypes;
+	}
+	
+	private static Class<?> normalizeClass(Class<?> c) {
+		if 		(c == Boolean.class) 	{ return	boolean.class;	}
+		else if	(c == Byte.class) 		{ return 	byte.class; 	}
+		else if	(c == Character.class) 	{ return 	char.class; 	}
+		else if	(c == Short.class) 		{ return 	short.class; 	}
+		else if	(c == Integer.class)	{ return	int.class; 		}
+		else if	(c == Float.class) 		{ return	float.class; 	}
+		else if	(c == Long.class) 		{ return	long.class; 	}
+		else if	(c == Double.class) 	{ return	double.class; 	}
+		else return c;
+	}
+	
+	private Object[] getParameterValues(JoinPoint jp) {
+		if ((jp.getArgs() == null) || (jp.getArgs().length == 0))
+			return new Object[0];
+		
+		return jp.getArgs();
 	}
 }

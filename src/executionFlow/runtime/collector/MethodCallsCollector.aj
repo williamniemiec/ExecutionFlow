@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.aspectj.lang.JoinPoint;
+
 import executionFlow.ExecutionFlow;
 import executionFlow.util.Logger;
 
@@ -23,9 +25,10 @@ import executionFlow.util.Logger;
  * must have {@link executionFlow.runtime._SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		2.0.0
  */
+@SuppressWarnings("unused")
 public aspect MethodCallsCollector extends RuntimeCollector
 {
 	//-------------------------------------------------------------------------
@@ -42,91 +45,116 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 * {@link @executionFlow.runtime._SkipInvoked} annotation.
 	 */
 	pointcut invokedSignature(): 
-		!skipAnnotation() &&
-		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
-		cflow(execution(@executionFlow.runtime._SkipInvoked * *.*(..))) && 
-		(junit4() || junit5()) &&
-		!junit4_internal() && !junit5_internal() &&
-		!get(* *.*) && !set(* *.*) &&
-		!execution(public int hashCode());
+		!skipAnnotation()
+		&& !withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
+		&& cflow(execution(@executionFlow.runtime._SkipInvoked * *.*(..)))
+		&& (junit4() || junit5())
+		&& !junit4_internal() && !junit5_internal()
+		&& !get(* *.*) 
+		&& !set(* *.*)
+		&& !execution(public int hashCode());
 	
-	before(): invokedSignature()
-	{
-		String signature = thisJoinPoint.getSignature().toString();
-
-		
-		if (isNativeMethod(signature)) 
-			return;
-
-		if (signature.indexOf("(") == -1) 
-			return;
-		
-		// Gets correct signature of inner classes
-		invocationSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
-				+ thisJoinPoint.getSignature().getName() + signature.substring(signature.indexOf("("));
-		
-		// Stores current invoker signature without its return type
-		invocationSignature = CollectorExecutionFlow.extractMethodSignature(signature);
-	}
+	pointcut insideConstructor():
+		withincode(@executionFlow.runtime.CollectCalls *.new(..))  
+		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..)));
+	
+	pointcut insideMethod():
+		withincode(@executionFlow.runtime.CollectCalls * *(..))
+		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls *.new(..)))  
+		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..)));
 	
 	/**
 	 * Intercepts methods called within an invoked with 
 	 * {@link @executionFlow.runtime.CollectCalls} annotation.
 	 */
-	pointcut invokedMethodsByTestedInvoker():
-		!skipAnnotation() &&
-		!withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) &&
-		!get(* *.*) && !set(* *.*) && 
-		// Within a constructor
-		( withincode(@executionFlow.runtime.CollectCalls *.new(..)) && 
-		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..))) ) ||
-		// Within a method
-		( withincode(@executionFlow.runtime.CollectCalls * *(..)) && 
-		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls *.new(..))) && 
-		  !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..))) );
+	pointcut invokedMethodByTestedInvoker():
+		!skipAnnotation()
+		&& !withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
+		&& !get(* *.*) 
+		&& !set(* *.*) 
+		&& insideConstructor()
+		|| insideMethod();
 	
-	before(): invokedMethodsByTestedInvoker()
+	
+	//-------------------------------------------------------------------------
+	//		Join points
+	//-------------------------------------------------------------------------
+	before(): invokedSignature()
 	{
-		String methodCalledSignature = thisJoinPoint.getSignature().toString();
-
-		
-		if (!isMethodSignature(methodCalledSignature))
+		if (isNativeMethod(thisJoinPoint) || !isValidSignature(thisJoinPoint)) 
 			return;
 		
-		if (isNativeMethod(methodCalledSignature))
-			return;
-
-		if (invocationSignature == null)
+		invocationSignature = getSignature(thisJoinPoint);
+		invocationSignature = removeReturnTypeFromSignature(invocationSignature);
+	}
+	
+	
+	before(): invokedMethodByTestedInvoker()
+	{
+		if ((invocationSignature == null) || !isMethodSignature(thisJoinPoint) 
+				|| isNativeMethod(thisJoinPoint))
 			return;
 		
-		// Removes return type from the signature of the method called
-		methodCalledSignature = thisJoinPoint.getSignature().getDeclaringTypeName() + "." 
-				+ thisJoinPoint.getSignature().getName() + methodCalledSignature.substring(methodCalledSignature.indexOf("("));
-		methodCalledSignature = methodCalledSignature.replaceAll("\\$", ".");
+		collectMethod(extractMethodCalledSignature(thisJoinPoint));
 
-		// Stores method called in methodsCalledByTestedInvoked
-		if (!methodsCalledByTestedInvoked.containsKey(invocationSignature)) {
-			Set<String> invokedMethods = new HashSet<>();
-			
-			
-			invokedMethods.add(methodCalledSignature);
-			methodsCalledByTestedInvoked.put(invocationSignature, invokedMethods);
+		storeCollectedMethods();
+	}
+	
+
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private boolean isValidSignature(JoinPoint jp) {
+		String signature = jp.getSignature().toString();
+		
+		return signature.contains("(");
+	}
+
+	private String getSignature(JoinPoint jp) {
+		StringBuilder signature = new StringBuilder();
+		
+		signature.append(jp.getSignature().getDeclaringTypeName());
+		signature.append(".");
+		signature.append(jp.getSignature().getName());
+		signature.append(signature.substring(signature.indexOf("(")));
+
+		return signature.toString();
+	}
+	
+	private String removeReturnTypeFromSignature(String signature) {
+		return signature.substring(signature.indexOf(' ') + 1);
+	}
+	
+	private String extractMethodCalledSignature(JoinPoint jp) {
+		StringBuilder methodSignature = new StringBuilder();
+		String signature = jp.getSignature().toString();
+		
+		methodSignature.append(jp.getSignature().getDeclaringTypeName());
+		methodSignature.append(".");
+		methodSignature.append(jp.getSignature().getName());
+		methodSignature.append(signature.substring(signature.indexOf("(")));
+
+		return methodSignature.toString().replaceAll("\\$", ".");
+	}
+	
+	private void collectMethod(String signature) {
+		if (methodsCalledByTestedInvoked.containsKey(invocationSignature)) {
+			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invocationSignature);
+			invokedMethods.add(signature);
 		}
 		else {
-			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invocationSignature);
+			Set<String> invokedMethods = new HashSet<>();
+			invokedMethods.add(signature);
 			
-			
-			invokedMethods.add(methodCalledSignature);
+			methodsCalledByTestedInvoked.put(invocationSignature, invokedMethods);
 		}
-
-		write();
 	}
 	
 	/**
 	 * Saves methods called by tested invoked. It will save to a file named
 	 * 'mcti.ef' (Methods Called by Tested Invoked).
 	 */
-	private void write()
+	private void storeCollectedMethods()
 	{
 		if (methodsCalledByTestedInvoked.isEmpty())
 			return;
@@ -152,43 +180,58 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 */
 	private void load() throws FileNotFoundException, IOException
 	{
-		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		File file = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		
-		
-		if (!f.exists())
+		if (!file.exists())
 			return;
 
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 			@SuppressWarnings("unchecked")
-			Map<String, Set<String>> map = (Map<String, Set<String>>) ois.readObject();
+			Map<String, Set<String>> storedCollection = 
+					(Map<String, Set<String>>) ois.readObject();
 			
-			
-			for (Map.Entry<String, Set<String>> e : map.entrySet()) {
-				// Merges methods called by tested invoked with saved collection
-				if (methodsCalledByTestedInvoked.containsKey(e.getKey())) {
-					Set<String> methodsCalled = methodsCalledByTestedInvoked.get(e.getKey());
-					
-					
-					for (String invokedMethod : e.getValue())
-						methodsCalled.add(invokedMethod);
-					
-					for (String methodCalled : e.getValue()) {
-						if (!methodsCalled.contains(methodCalled)) {
-							methodsCalled.add(methodCalled);
-						}
-					}
-					
-					methodsCalledByTestedInvoked.put(e.getKey(), methodsCalled);		
-				}
-				// Saves collected methods called by tested invoked
-				else {
-					methodsCalledByTestedInvoked.put(e.getKey(), e.getValue());							
-				}
-			}
+			combineCollectedMethodWithStoredCollection(storedCollection);
 		}
 		catch(java.io.EOFException | ClassNotFoundException e) {
-			f.delete();
+			file.delete();
 		}
+	}
+	//Merges methods called by tested invoked with saved collection
+	private void combineCollectedMethodWithStoredCollection(Map<String, Set<String>> storedCollection) {
+		for (Map.Entry<String, Set<String>> e : storedCollection.entrySet()) {
+			String storedInvocationSignature = e.getKey();
+			Set<String> storedMethodsCalled = e.getValue();
+			
+			if (methodsCalledByTestedInvoked.containsKey(storedInvocationSignature)) {
+				mergeCollectedMethodWithStoredCollection(
+						storedInvocationSignature, 
+						storedMethodsCalled
+				);
+			}
+			else {
+				methodsCalledByTestedInvoked.put(
+						storedInvocationSignature, 
+						storedMethodsCalled
+				);							
+			}
+		}
+	}
+	
+	private void mergeCollectedMethodWithStoredCollection(String storedInvocationSignature, 
+			Set<String> storedMethodsCalled) {
+		Set<String> currentMethodsCalled = 
+				methodsCalledByTestedInvoked.get(storedInvocationSignature);
+
+		for (String invokedMethod : storedMethodsCalled)
+			currentMethodsCalled.add(invokedMethod);
+		
+		for (String methodCalled : storedMethodsCalled) {
+			if (!currentMethodsCalled.contains(methodCalled)) {
+				currentMethodsCalled.add(methodCalled);
+			}
+		}
+		
+		methodsCalledByTestedInvoked.put(storedInvocationSignature, currentMethodsCalled);
 	}
 	
 	/**
@@ -201,10 +244,9 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 */
 	private void store() throws FileNotFoundException, IOException
 	{
-		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		File file = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		
-		
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
 			oos.writeObject(methodsCalledByTestedInvoked);
 		}
 	}

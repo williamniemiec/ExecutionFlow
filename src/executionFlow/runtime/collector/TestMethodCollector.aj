@@ -114,6 +114,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 		(junit4() || junit5()) &&
 		!junit4_internal() && !junit5_internal() && !withincode(@org.junit.Test * *.*());
 	
+	//-------------------------------------------------------------------------
+	//		Join points
+	//-------------------------------------------------------------------------
+	
 	/**
 	 * Executed before each test method.
 	 */
@@ -430,7 +434,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		Path testSrcPath;
 		
 		
-		testMethodSignature = CollectorExecutionFlow.extractMethodSignature(jp.getSignature().toString());
+		testMethodSignature = removeReturnTypeFromSignature(jp.getSignature().toString());
 		classSignature = jp.getSignature().getDeclaringTypeName();
 		testClassPath = CollectorExecutionFlow.findBinPath(classSignature);
 		
@@ -464,6 +468,10 @@ public aspect TestMethodCollector extends RuntimeCollector
 		);
 		
 		Logger.debug("Test method collector: "+testMethodInfo);
+	}
+	
+	private String removeReturnTypeFromSignature(String signature) {
+		return signature.substring(signature.indexOf(' ') + 1);
 	}
 	
 	/**

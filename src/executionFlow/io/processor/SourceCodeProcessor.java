@@ -80,6 +80,6 @@ public abstract class SourceCodeProcessor {
 //	}
 //	
 	protected String getNextLine() {
-		return (currentIdx < sourceCode.size()) ? sourceCode.get(currentIdx+1) : "";
+		return (currentIdx+1 < sourceCode.size()) ? sourceCode.get(currentIdx+1) : "";
 	}
 }

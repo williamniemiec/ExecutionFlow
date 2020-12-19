@@ -2,50 +2,22 @@ package executionFlow.io.processor.testmethod;
 
 import java.util.List;
 
-public class PrintCallProcessor {
+import executionFlow.io.processor.SourceCodeProcessor;
+
+public class PrintCallProcessor extends SourceCodeProcessor{
 
 	//---------------------------------------------------------------------
-	//	Attributes
+	//		Constructor
 	//---------------------------------------------------------------------
-	private boolean inComment;
-	
+	public PrintCallProcessor(List<String> sourceCode) {
+		super(sourceCode, true);
+	}
 	
 	//---------------------------------------------------------------------
 	//		Methods
 	//---------------------------------------------------------------------
-	public List<String> processLines(List<String> lines) {
-		List<String> processedLines = lines;
-		
-		for (int i = 0; i < lines.size(); i++) {
-			checkComments(lines.get(i));
-			
-			if (!inComment) {
-				String processedLine = processLine(lines.get(i));
-			
-				processedLines.set(i, processedLine);
-			}
-		}
-		
-		return processedLines;
-	}
-	
-	private void checkComments(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		
-		if (line.matches(regexCommentFullLine))
-			inComment = true;
-		
-		if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
-		}
-		else if (inComment && line.contains("*/")) {
-			inComment = false;
-		}
-	}
-	
-	
-	private String processLine(String line) {
+	@Override
+	protected String processLine(String line) {
 		String processedLine = line;
 		
 		if (line.contains("System.out.print")) {

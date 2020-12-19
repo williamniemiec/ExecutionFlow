@@ -4,50 +4,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class InlineCommentProcessor {
+import executionFlow.io.processor.SourceCodeProcessor;
+
+public class InlineCommentProcessor extends SourceCodeProcessor {
 
 	//---------------------------------------------------------------------
-	//		Attributes
+	//		Constructor
 	//---------------------------------------------------------------------
-	private boolean inComment;
+	public InlineCommentProcessor(List<String> sourceCode) {
+		super(sourceCode, true);
+	}
 	
 	
 	//---------------------------------------------------------------------
 	//		Methods
 	//---------------------------------------------------------------------
-	public List<String> processLines(List<String> lines) {
-		List<String> processedLines = lines;
-		
-		for (int i = 0; i < lines.size(); i++) {
-			checkComments(lines.get(i));
-			
-			if (!inComment) {
-				String processedLine = processLine(lines.get(i));
-			
-				processedLines.set(i, processedLine);
-			}
-		}
-		
-		return processedLines;
-	}
-
-	private void checkComments(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		
-		if (line.matches(regexCommentFullLine))
-			inComment = true;
-		
-		if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
-		}
-		else if (inComment && line.contains("*/")) {
-			inComment = false;
-		}
-	}
-
-
-	private String processLine(String line) {
+	@Override
+	protected String processLine(String line) {
 		if (!line.contains("//"))
 			return line;
 		

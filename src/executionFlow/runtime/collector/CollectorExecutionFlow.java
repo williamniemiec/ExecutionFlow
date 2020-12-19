@@ -74,27 +74,7 @@ public class CollectorExecutionFlow
 		return response;
 	}
 	
-	/**
-	 * Given the parameters of a method, discover the class of each of these 
-	 * parameters.
-	 * 
-	 * @param	args Parameter values of a method
-	 * 
-	 * @return	The classes of these parameter values
-	 */
-	public static Class<?>[] extractParamTypes(Object[] args) 
-	{
-		if (args == null || args.length == 0) { return new Class<?>[0]; }
-		
-		int i = 0;
-		Class<?>[] paramTypes = new Class<?>[args.length];
-		for (Object o : args) { 
-			if (o != null)
-				paramTypes[i++] = normalizeClass(o.getClass());
-		}
-		
-		return paramTypes;
-	}
+	
 	
 	/**
 	 * Extracts parameter types of a method.
@@ -184,21 +164,6 @@ public class CollectorExecutionFlow
 		});
 		
 		return srcPath;
-	}
-
-	/**
-	 * Extracts method's class signature without return type.
-	 * 
-	 * @param	signature Method signature
-	 * 
-	 * @return	Name of the package + name of the class + name of the 
-	 * method(param1, param2,...)
-	 */
-	public static String extractMethodSignature(String signature)
-	{
-		int index_endReturnType = signature.indexOf(' ');
-		
-		return signature.substring(index_endReturnType+1);
 	}
 	
 	/**
@@ -343,30 +308,6 @@ public class CollectorExecutionFlow
 		
 		
 		return terms[terms.length-1];
-	}
-	
-	/**
-	 * Converts a wrapper class in primitive. If the class is not a
-	 * wrapper class, returns itself.
-	 * 
-	 * @param	c Class to be normalized
-	 * 
-	 * @return	Normalized class
-	 */
-	private static Class<?> normalizeClass(Class<?> c)
-	{
-		Class<?> response = c;
-		
-		if 		(c == Boolean.class) 	{ response = boolean.class; }
-		else if	(c == Byte.class) 		{ response = byte.class; }
-		else if	(c == Character.class) 	{ response = char.class; }
-		else if	(c == Short.class) 		{ response = short.class; }
-		else if	(c == Integer.class)	{ response = int.class; }
-		else if	(c == Float.class) 		{ response = float.class; }
-		else if	(c == Long.class) 		{ response = long.class; }
-		else if	(c == Double.class) 	{ response = double.class; }
-		
-		return response;
 	}
 	
 	/**

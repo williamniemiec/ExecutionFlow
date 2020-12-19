@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aspectj.lang.JoinPoint;
+
 import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.processor.InvokedFileProcessor;
@@ -128,12 +130,14 @@ public abstract aspect RuntimeCollector
 	 * 
 	 * @return		If the method is a native method or JUnit method
 	 */
-	protected boolean isNativeMethod(String methodSignature)
+	protected boolean isNativeMethod(JoinPoint jp)
 	{
-		return	methodSignature == null || 
-				methodSignature.contains("java.") || 
-				methodSignature.contains("jdk.") ||
-				methodSignature.contains("org.junit.");
+		String signature = jp.getSignature().toString();
+		
+		return	signature == null || 
+				signature.contains("java.") || 
+				signature.contains("jdk.") ||
+				signature.contains("org.junit.");
 	}
 	
 	/**
@@ -143,8 +147,10 @@ public abstract aspect RuntimeCollector
 	 * 
 	 * @return		If the signature is a method signature
 	 */
-	protected boolean isMethodSignature(String signature)
+	protected boolean isMethodSignature(JoinPoint jp)
 	{
+		String signature = jp.getSignature().toString();
+		
 		return signature.matches("[A-z\\.]+(\\s|\\t)+([A-z0-9-_$]+\\.)+"
 				+ "[A-z0-9-_$]+\\([A-z0-9-\\._$,\\s]*\\)") && 
 				!signature.matches(".*\\.(access\\$[0-9]+\\().*");

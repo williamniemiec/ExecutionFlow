@@ -60,6 +60,10 @@ public aspect MethodCollector extends RuntimeCollector
 		!get(* *.*) && !set(* *.*) &&
 		!execution(public int hashCode());
 
+	//-------------------------------------------------------------------------
+	//		Join points
+	//-------------------------------------------------------------------------
+	
 	before(): methodCollector()
 	{
 		// Gets method invocation line
@@ -72,7 +76,7 @@ public aspect MethodCollector extends RuntimeCollector
 		
 		fixAnonymousSignature(thisJoinPoint);
 
-		if (!isMethodSignature(signature) || isNativeMethod(signature))
+		if (!isMethodSignature(thisJoinPoint) || isNativeMethod(thisJoinPoint))
 			return;
 		
 		// Ignores methods in the method test (with @Test) (it will only consider internal calls)

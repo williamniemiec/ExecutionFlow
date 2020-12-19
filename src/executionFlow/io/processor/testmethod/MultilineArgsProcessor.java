@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import executionFlow.io.processor.SourceCodeProcessor;
 import executionFlow.util.balance.RoundBracketBalance;
 
 /**
  * Converts method calls with arguments on multiple lines to a call with 
  * arguments on a single line.
  */
-public class MultilineArgsProcessor {
+public class MultilineArgsProcessor /*extends SourceCodeProcessor*/ {
 
 	//---------------------------------------------------------------------
 	//		Attributes
@@ -20,6 +21,14 @@ public class MultilineArgsProcessor {
 	private static Map<Integer, Integer> mapping = new HashMap<>();
 	private boolean insideMultilineArgs = false;
 	private int idxMethodInvocation = -1;
+	
+	
+	//---------------------------------------------------------------------
+	//		Constructor
+	//---------------------------------------------------------------------
+//	protected MultilineArgsProcessor(List<String> sourceCode) {
+//		super(sourceCode, true);
+//	}
 	
 	
 	//---------------------------------------------------------------------

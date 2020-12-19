@@ -251,14 +251,14 @@ public class TestMethodFileProcessor extends FileProcessor
 	{
 		List<String> processedLines = lines;
 		
-		InlineCommentProcessor inlineCommentProcessor = new InlineCommentProcessor();
-		processedLines = inlineCommentProcessor.processLines(processedLines);
+		InlineCommentProcessor inlineCommentProcessor = new InlineCommentProcessor(processedLines);
+		processedLines = inlineCommentProcessor.processLines();
 		
-		ClassDeclarationProcessor classDeclarationProcessor = new ClassDeclarationProcessor();
-		processedLines = classDeclarationProcessor.processLines(processedLines);
+		ClassDeclarationProcessor classDeclarationProcessor = new ClassDeclarationProcessor(processedLines);
+		processedLines = classDeclarationProcessor.processLines();
 		
-		PrintCallProcessor printCallProcessor = new PrintCallProcessor();
-		processedLines = printCallProcessor.processLines(processedLines);
+		PrintCallProcessor printCallProcessor = new PrintCallProcessor(processedLines);
+		processedLines = printCallProcessor.processLines();
 		
 		MultilineArgsProcessor multilineArgsProcessor = new MultilineArgsProcessor();
 		processedLines = multilineArgsProcessor.processLines(processedLines);
