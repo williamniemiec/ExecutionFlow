@@ -79,7 +79,7 @@ public abstract class SourceCodeProcessor {
 //		sourceCode.remove(idx);
 //	}
 //	
-//	protected String getNextLine() {
-//		return (currentIdx < sourceCode.size()) ? sourceCode.get(currentIdx+1) : "";
-//	}
+	protected String getNextLine() {
+		return (currentIdx < sourceCode.size()) ? sourceCode.get(currentIdx+1) : "";
+	}
 }

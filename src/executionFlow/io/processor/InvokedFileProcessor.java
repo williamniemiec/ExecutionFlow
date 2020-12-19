@@ -261,7 +261,7 @@ public class InvokedFileProcessor extends FileProcessor
 	private List<String> doHolePlugProcessing(List<String> lines) {
 		HolePlug holePlug;
 		holePlug = new HolePlug(lines);
-		lines = holePlug.parse();
+		lines = holePlug.processLines();
 		return lines;
 	}
 

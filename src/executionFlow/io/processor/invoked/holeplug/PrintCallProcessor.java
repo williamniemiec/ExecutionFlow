@@ -2,50 +2,23 @@ package executionFlow.io.processor.invoked.holeplug;
 
 import java.util.List;
 
-public class PrintCallProcessor {
+import executionFlow.io.processor.SourceCodeProcessor;
 
-	//---------------------------------------------------------------------
-	//	Attributes
-	//---------------------------------------------------------------------
-	private boolean inComment;
-	
-	
+public class PrintCallProcessor extends SourceCodeProcessor {
+
 	//---------------------------------------------------------------------
 	//		Methods
 	//---------------------------------------------------------------------
-	public List<String> processLines(List<String> lines) {
-		List<String> processedLines = lines;
-		
-		for (int i = 0; i < lines.size(); i++) {
-			checkComments(lines.get(i));
-			
-			if (!inComment) {
-				String processedLine = processLine(lines.get(i));
-			
-				processedLines.set(i, processedLine);
-			}
-		}
-		
-		return processedLines;
+	protected PrintCallProcessor(List<String> sourceCode) {
+		super(sourceCode, true);
 	}
 	
-	private void checkComments(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		
-		if (line.matches(regexCommentFullLine))
-			inComment = true;
-		
-		if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
-		}
-		else if (inComment && line.contains("*/")) {
-			inComment = false;
-		}
-	}
-	
-	
-	private String processLine(String line) {
+
+	//---------------------------------------------------------------------
+	//		Methods
+	//---------------------------------------------------------------------
+	@Override
+	protected String processLine(String line) {
 		String processedLine = line;
 		
 		if (line.contains("System.out.print")) {

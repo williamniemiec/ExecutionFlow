@@ -21,8 +21,8 @@ public class ContinueBreakProcessor extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	protected ContinueBreakProcessor(List<String> sourceCode, boolean ignoreComments) {
-		super(sourceCode, ignoreComments);
+	protected ContinueBreakProcessor(List<String> sourceCode) {
+		super(sourceCode, true);
 	}
 	
 	
