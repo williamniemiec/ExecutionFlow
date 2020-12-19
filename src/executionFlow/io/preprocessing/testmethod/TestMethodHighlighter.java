@@ -1,7 +1,9 @@
 package executionFlow.io.preprocessing.testmethod;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import executionFlow.runtime.collector.CollectorExecutionFlow;
 import executionFlow.util.DataUtil;
 import executionFlow.util.balance.CurlyBracketBalance;
 
@@ -33,7 +35,11 @@ public class TestMethodHighlighter {
 	//		Constructor
 	//---------------------------------------------------------------------
 	public TestMethodHighlighter(String testMethodSignature) {
-		this.testMethodSignature = testMethodSignature;
+		this.testMethodSignature = CollectorExecutionFlow.extractMethodName(testMethodSignature) + 
+		testMethodSignature.substring(testMethodSignature.indexOf("(")).replace(" ", "");
+		
+//		this.testMethodSignature = testMethodSignature;
+		this.ignoredMethods = new ArrayList<>();
 	}
 
 	
@@ -144,7 +150,7 @@ public class TestMethodHighlighter {
 				!extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
 			if (curlyBracketBalance_ignore == null)
 				curlyBracketBalance_ignore = new CurlyBracketBalance();
-			
+
 			curlyBracketBalance_ignore.parse(line);
 			inTestMethodSignature = false;
 			ignoreMethod = true;
@@ -249,6 +255,9 @@ public class TestMethodHighlighter {
 	private String extractParametersFromMethodDeclaration(String line) {
 		StringBuilder methodParams = new StringBuilder();
 		String methodParamsAndArgs = DataUtil.extractContentBetweenParenthesis(line);
+		
+		if (methodParamsAndArgs.isBlank())
+			return "";
 		
 		for (String param : methodParamsAndArgs.split(",")) {
 			methodParams.append(param.trim().split(" ")[0]);
