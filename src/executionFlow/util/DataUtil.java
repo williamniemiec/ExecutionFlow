@@ -276,4 +276,14 @@ public class DataUtil
 		
 		return m.group();
 	}
+	
+	public static String extractContentBetweenParenthesis(String content) {
+		Pattern patternContentInParenthesis = Pattern.compile("\\(.*\\)");
+		Matcher contentBetweenParenthesis = patternContentInParenthesis.matcher(content);
+		
+		if (contentBetweenParenthesis.find())
+			return contentBetweenParenthesis.group().replace("(", "").replace(")", "");
+			
+		return "";
+	}
 }

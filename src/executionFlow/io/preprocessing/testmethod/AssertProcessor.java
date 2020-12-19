@@ -36,8 +36,7 @@ public class AssertProcessor {
 	//---------------------------------------------------------------------
 	//		Methods
 	//---------------------------------------------------------------------
-	public List<String> processLines(List<String> lines)
-	{
+	public List<String> processLines(List<String> lines) {
 		List<String> processedLines = lines;
 		
 		for (int i = 0; i < lines.size(); i++) {

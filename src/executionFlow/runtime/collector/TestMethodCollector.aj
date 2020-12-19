@@ -328,7 +328,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		
 		if (totalTests < 0) {
-			totalTests = PreTestMethodFileProcessor.getTotalIgnoredMethods() ;
+			totalTests = PreTestMethodFileProcessor.getTotalTests() - 1;
 		}
 		else {
 			totalTests--;

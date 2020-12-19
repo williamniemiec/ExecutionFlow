@@ -1,6 +1,5 @@
 package executionFlow.io.processor;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ public class TestMethodFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 400L;
 		
-	private String fileExtension = "java";
 	private static Map<Integer, Integer> mapping = new HashMap<>();;
 	private boolean insideMultilineArgs = false;
 	private int multilineArgsStartIndex = -1;
@@ -57,9 +55,12 @@ public class TestMethodFileProcessor extends FileProcessor
 			String outputFilename, String fileExtension)
 	{
 		this.file = file;
-		this.outputDir = outputDir;
 		this.outputFilename = outputFilename;
-		this.fileExtension = fileExtension;
+		
+		if (outputDir != null)
+			outputFile = outputDir.resolve(outputFilename + "." + fileExtension);
+		else	
+			outputFile = Path.of(outputFilename + "." + fileExtension);
 	}
 	
 	/**
@@ -240,15 +241,6 @@ public class TestMethodFileProcessor extends FileProcessor
 		final String REGEX_COMMENT_FULL_LINE = "^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
 		String line;
 		List<String> lines = new ArrayList<>();
-		File outputFile;
-
-		
-		// If an output directory is specified, processed file will be saved to it
-		if (outputDir != null)
-			outputFile = new File(outputDir.toFile(), outputFilename + "." + fileExtension);
-		// Else processed file will be saved in current directory
-		else	
-			outputFile = new File(outputFilename + "." + fileExtension);
 		
 		// Reads the source file and puts its lines in a list
 		lines = FileUtil.getLines(file, encode.getStandardCharset());
@@ -275,9 +267,9 @@ public class TestMethodFileProcessor extends FileProcessor
 		// -----{ END DEBUG }-----
 
 		// Writes processed lines to a file
-		FileUtil.putLines(lines, outputFile.toPath(), encode.getStandardCharset());
+		FileUtil.putLines(lines, outputFile, encode.getStandardCharset());
 		
-		return outputFile.getAbsolutePath();
+		return outputFile.toString();
 	}
 	
 	/**
