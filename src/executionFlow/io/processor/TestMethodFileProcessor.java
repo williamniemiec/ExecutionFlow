@@ -2,17 +2,17 @@ package executionFlow.io.processor;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import executionFlow.io.FileEncoding;
+import executionFlow.io.processing.testmethod.ClassDeclarationProcessor;
+import executionFlow.io.processing.testmethod.InlineCommentProcessor;
+import executionFlow.io.processing.testmethod.MultilineArgsProcessor;
+import executionFlow.io.processing.testmethod.PrintCallProcessor;
 import executionFlow.util.FileUtil;
 import executionFlow.util.Logger;
-import executionFlow.util.balance.RoundBracketBalance;
 
 
 /**
@@ -32,8 +32,6 @@ public class TestMethodFileProcessor extends FileProcessor
 	private static final long serialVersionUID = 400L;
 		
 	private static Map<Integer, Integer> mapping = new HashMap<>();
-	private boolean insideMultilineArgs = false;
-	private int multilineArgsStartIndex = -1;
 	
 	
 	//-------------------------------------------------------------------------
@@ -253,32 +251,20 @@ public class TestMethodFileProcessor extends FileProcessor
 	{
 		List<String> processedLines = lines;
 		
+		InlineCommentProcessor inlineCommentProcessor = new InlineCommentProcessor();
+		processedLines = inlineCommentProcessor.processLines(processedLines);
 		
+		ClassDeclarationProcessor classDeclarationProcessor = new ClassDeclarationProcessor();
+		processedLines = classDeclarationProcessor.processLines(processedLines);
 		
-//		String line;
-//
-//		for (int i=0; i<lines.size(); i++) {
-//			line = processLine(lines.get(i));
-//			
-//			processedLines.set(i, line);
-//		}
+		PrintCallProcessor printCallProcessor = new PrintCallProcessor();
+		processedLines = printCallProcessor.processLines(processedLines);
+		
+		MultilineArgsProcessor multilineArgsProcessor = new MultilineArgsProcessor();
+		processedLines = multilineArgsProcessor.processLines(processedLines);
+		mapping = multilineArgsProcessor.getMapping();
 		
 		return processedLines;
-	}
-
-	private String processLine(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		
-		line = removeInlineComment(line);
-		
-		if (!(line.matches(regexCommentFullLine) || line.isBlank())) {
-			line = parseClassDeclaration(line);
-			line = parsePrints(line);
-			line = parseMultilineArgs(line, lines, i);
-		}
-		
-		return line;
 	}
 
 	private void dump(List<String> lines) {
@@ -287,134 +273,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		
 		Logger.debug("TestMethodFileProcessor", "Processed file");
 		FileUtil.printFileWithLines(lines);
-	}
-	
-	/**
-	 * Converts method calls with arguments on multiple lines to a call with 
-	 * arguments on a single line.
-	 * 
-	 * @param		currentLine Line corresponding to the current index
-	 * @param		lines File lines
-	 * @param		currentIndex Current line index
-	 * 
-	 * @return		Line with arguments on a single line
-	 */
-	private String parseMultilineArgs(String currentLine, List<String> lines, int currentIndex) 
-	{
-		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
-		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)}]+;[\\s\\t]*$";
-		RoundBracketBalance rbb = new RoundBracketBalance();
-		
-		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
-		
-		rbb.parse(currentLine);
-		
-		boolean isMethodCallWithMultipleLinesArgument = 
-				!rbb.isBalanceEmpty() &&
-				!classKeywords.matcher(currentLine).find() && 
-				currentLine.matches(REGEX_MULTILINE_ARGS) && 
-				(currentIndex+1 < lines.size());
-		
-
-		if (isMethodCallWithMultipleLinesArgument) {
-			int oldLine;
-			int newLine;
-			String nextLine = lines.get(currentIndex+1);
-			
-			nextLine = removeInlineComment(nextLine);
-			
-			if (!insideMultilineArgs) {	
-				lines.set(currentIndex+1, "");
-				currentLine = currentLine + nextLine;
-				
-				oldLine = currentIndex+1+1;
-				newLine = currentIndex+1;
-				
-				if (!nextLine.matches(REGEX_MULTILINE_ARGS_CLOSE)) {
-					multilineArgsStartIndex = currentIndex;
-					insideMultilineArgs = true;
-				}
-				else {
-					insideMultilineArgs = false;
-				}
-			}
-			else {
-				lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
-				currentLine = "";
-				
-				oldLine = currentIndex+1;
-				newLine = multilineArgsStartIndex+1;
-			}
-			
-			mapping.put(oldLine, newLine);
-		}
-		else if (insideMultilineArgs) {
-			insideMultilineArgs = false;
-			
-			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
-			currentLine = "";
-			mapping.put(currentIndex+1, multilineArgsStartIndex+1);
-		}
-		else if (currentLine.matches(REGEX_MULTILINE_ARGS_CLOSE) && multilineArgsStartIndex > 0) {
-			insideMultilineArgs = false;
-			lines.set(multilineArgsStartIndex, lines.get(multilineArgsStartIndex) + currentLine);
-			currentLine = "";
-		}
-		
-		if (!insideMultilineArgs)
-			multilineArgsStartIndex = -1;
-
-		return currentLine;
-	}
-
-	/**
-	 * Removes inline comment.
-	 * 
-	 * @param		line Line to which inline comment will be removed.
-	 * 
-	 * @return		Line without inline comment
-	 */
-	private String removeInlineComment(String line) 
-	{
-		if (!line.contains("//"))
-			return line;
-		
-		String processedLine = replaceStringWithBlankSpaces(line);
-
-		if (processedLine.contains("//")) {
-			processedLine = processedLine.substring(0, processedLine.indexOf("//"));
-		}
-		
-		return processedLine;
-	}
-
-	private String replaceStringWithBlankSpaces(String line) {
-		String lineWithBlankStrings = line;
-		
-		StringBuilder strWithBlankSpaces = new StringBuilder();
-		
-		Matcher matcherContentBetweenQuotes = Pattern.compile("\"[^\"]*\"").matcher(line);
-		
-		while (matcherContentBetweenQuotes.find()) {
-			int strLen = matcherContentBetweenQuotes.group().length() - 2; // -2 to disregard slashes
-			int idxStart = matcherContentBetweenQuotes.start();
-			int idxEnd = matcherContentBetweenQuotes.end();
-			
-			strWithBlankSpaces.append("\"");
-			for (int i=0; i<strLen; i++) {
-				strWithBlankSpaces.append(" ");
-			}
-			strWithBlankSpaces.append("\"");
-			
-			lineWithBlankStrings = lineWithBlankStrings.substring(0, idxStart) 
-					+ strWithBlankSpaces 
-					+ lineWithBlankStrings.substring(idxEnd);
-			
-			strWithBlankSpaces = new StringBuilder();
-		}
-		
-		return lineWithBlankStrings;
-	}
+	}	
 	
 	
 	//-------------------------------------------------------------------------
