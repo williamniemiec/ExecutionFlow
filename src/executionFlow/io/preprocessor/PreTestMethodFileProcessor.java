@@ -1,13 +1,14 @@
-package executionFlow.io.processor;
+package executionFlow.io.preprocessor;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.io.preprocessing.testmethod.AnnotationProcessor;
-import executionFlow.io.preprocessing.testmethod.AssertProcessor;
-import executionFlow.io.preprocessing.testmethod.TestMethodHighlighter;
+import executionFlow.io.preprocessor.testmethod.AnnotationProcessor;
+import executionFlow.io.preprocessor.testmethod.AssertProcessor;
+import executionFlow.io.preprocessor.testmethod.TestMethodHighlighter;
+import executionFlow.io.processor.FileProcessor;
 import executionFlow.util.FileUtil;
 import executionFlow.util.Logger;
 

@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.io.processing.testmethod.ClassDeclarationProcessor;
-import executionFlow.io.processing.testmethod.InlineCommentProcessor;
-import executionFlow.io.processing.testmethod.MultilineArgsProcessor;
-import executionFlow.io.processing.testmethod.PrintCallProcessor;
+import executionFlow.io.processor.testmethod.ClassDeclarationProcessor;
+import executionFlow.io.processor.testmethod.InlineCommentProcessor;
+import executionFlow.io.processor.testmethod.MultilineArgsProcessor;
+import executionFlow.io.processor.testmethod.PrintCallProcessor;
 import executionFlow.util.FileUtil;
 import executionFlow.util.Logger;
 

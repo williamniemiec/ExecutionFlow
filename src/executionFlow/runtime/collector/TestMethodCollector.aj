@@ -21,7 +21,7 @@ import executionFlow.info.InvokedInfo;
 import executionFlow.io.manager.FileManager;
 import executionFlow.io.manager.FilesManager;
 import executionFlow.io.manager.ProcessingManager;
-import executionFlow.io.processor.PreTestMethodFileProcessor;
+import executionFlow.io.preprocessor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.ProcessorType;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
