@@ -132,13 +132,9 @@ public aspect MethodCollector extends RuntimeCollector {
 		
 		signature.append(".");
 		signature.append(jp.getSignature().getName());
-		signature.append(getSignatureWithoutParameters(jp.getSignature().toString()));
+		signature.append(CollectorUtil.removeParametersFromSignature(jp.getSignature().toString()));
 		
 		return signature.toString();
-	}
-	
-	private String getSignatureWithoutParameters(String signature) {
-		return signature.substring(signature.indexOf("("));
 	}
 	
 	private boolean isValidState(JoinPoint jp) {
@@ -271,7 +267,7 @@ public aspect MethodCollector extends RuntimeCollector {
 		concreteMethodSignature.append(getConstructorName(jp));
 		concreteMethodSignature.append(".");
 		concreteMethodSignature.append(jp.getSignature().getName());
-		concreteMethodSignature.append(getSignatureWithoutParameters(signature));
+		concreteMethodSignature.append(CollectorUtil.removeParametersFromSignature(signature));
 		
 		return isValidSignature(concreteMethodSignature.toString()) ?
 				concreteMethodSignature.toString()

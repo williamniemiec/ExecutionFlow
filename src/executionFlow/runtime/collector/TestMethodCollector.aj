@@ -84,24 +84,36 @@ public aspect TestMethodCollector extends RuntimeCollector
 		&& insideJUnitTest()
 		&& !withincode(@org.junit.Test * *.*());
 	
+	protected pointcut JUnit4Annotation():
+		execution(@org.junit.Test * *.*());
+	
+	protected pointcut JUnit5Annotation():
+		execution(@org.junit.jupiter.api.Test * *.*())
+		|| execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..))
+		|| execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
+	
 	
 	//-------------------------------------------------------------------------
 	//		Join points
-	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------	
 	before(): insideJUnit5RepeatedTest() {
 		isRepeatedTest = true;
 	}
 	
-	before(): insideTestMethod() {	
-		if (skipTestMethod) {
-			return;
-		}
-		
+	private void checkDevelopmentMode() {
 		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
-			Logger.error("Development mode is off even in a development environment. "
-					+ "Turn it on in the ExecutionFlow class");
+			Logger.error("Development mode is off even in a development "
+					+ "environment. Turn it on in the ExecutionFlow class");
+			
 			System.exit(-1);
 		}
+	}
+	
+	before(): insideTestMethod() {	
+		if (skipTestMethod)
+			return;
+		
+		checkDevelopmentMode();
 		
 		// Prevents repeated tests from being performed more than once
 		if (finished && isRepeatedTest && 

@@ -112,7 +112,8 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	
 	private String getSignature(JoinPoint jp) {
 		return jp.getSignature().getDeclaringTypeName() 
-				+ jp.getSignature().toString().substring(signature.indexOf("("));
+				+ CollectorUtil.removeParametersFromSignature(jp.getSignature().toString());
+		
 	}
 	
 	private boolean isValidConstructorSignature() {

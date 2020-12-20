@@ -95,7 +95,7 @@ public abstract aspect RuntimeCollector
 		JUnit4Annotation()
 		&& !JUnit4InternalCall();
 	
-	private pointcut JUnit4Annotation():
+	protected pointcut JUnit4Annotation():
 		withincode(@org.junit.Test * *.*());
 	
 	protected pointcut JUnit4InternalCall():
@@ -107,7 +107,7 @@ public abstract aspect RuntimeCollector
 		JUnit5Annotation()
 		&& !JUnit5InternalCall();
 		
-	private pointcut JUnit5Annotation():
+	protected pointcut JUnit5Annotation():
 		withincode(@org.junit.jupiter.api.Test * *.*()) 
 		|| withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) 
 		|| withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..));

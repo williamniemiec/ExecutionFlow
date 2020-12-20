@@ -285,4 +285,9 @@ public class CollectorUtil
 		
 		return response.toString();
 	}
+
+	public static String removeParametersFromSignature(String signature) 
+	{
+		return signature.substring(signature.indexOf("("));
+	}
 }
