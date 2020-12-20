@@ -10,6 +10,7 @@ import executionFlow.io.preprocessor.testmethod.AssertProcessor;
 import executionFlow.io.preprocessor.testmethod.TestMethodHighlighter;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.util.FileUtil;
+import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.Logger;
 
 
@@ -288,7 +289,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	}
 
 	private void dump(List<String> lines) {
-		if (Logger.getLevel() != Logger.Level.DEBUG)
+		if (Logger.getLevel() != LogLevel.DEBUG)
 			return;
 		
 		Logger.debug("PreTestMethodFileProcessor", "Processed file");

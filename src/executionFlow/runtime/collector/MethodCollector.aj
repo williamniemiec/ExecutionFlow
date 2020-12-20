@@ -132,7 +132,7 @@ public aspect MethodCollector extends RuntimeCollector {
 		
 		signature.append(".");
 		signature.append(jp.getSignature().getName());
-		signature.append(CollectorUtil.removeParametersFromSignature(jp.getSignature().toString()));
+		signature.append(removeParametersFromSignature(jp.getSignature().toString()));
 		
 		return signature.toString();
 	}
@@ -152,6 +152,18 @@ public aspect MethodCollector extends RuntimeCollector {
 		String testMethodClassName = extractClassNameFromClassSignature(testMethodSignature);
 		
 		return objectClassName.equals(testMethodClassName);
+	}
+	
+	public static String extractClassNameFromClassSignature(String classSignature) {
+		String response;
+		String[] tmp = classSignature.split("\\.");
+		
+		if (tmp.length < 1)
+			response = tmp[0];
+		else
+			response = tmp[tmp.length-1];
+		
+		return response;	
 	}
 	
 	private boolean belongsToTestMethod(JoinPoint jp) {
@@ -206,8 +218,8 @@ public aspect MethodCollector extends RuntimeCollector {
 	private void findSrcAndBinPath(JoinPoint jp) throws IOException {
 		String classSignature = getClassSignature(jp);
 				
-		classPath = CollectorUtil.findBinPath(classSignature);
-		srcPath = CollectorUtil.findSrcPath(classSignature);
+		classPath = ClassPathSearcher.findBinPath(classSignature);
+		srcPath = ClassPathSearcher.findSrcPath(classSignature);
 		
 		if ((srcPath == null) || (classPath == null)) {
 			Logger.warning("The method with the following signature" 
@@ -227,7 +239,7 @@ public aspect MethodCollector extends RuntimeCollector {
 		InvokedInfo methodInfo = new InvokedInfo.Builder()
 				.binPath(classPath)
 				.invokedSignature(signature)
-				.invokedName(CollectorUtil.extractMethodName(signature))
+				.invokedName(InvokedInfo.extractMethodName(signature))
 				.parameterTypes(getParameterTypes(jp))
 				.args(getParameterValues(jp))
 				.returnType(extractReturnType(jp))
@@ -267,7 +279,7 @@ public aspect MethodCollector extends RuntimeCollector {
 		concreteMethodSignature.append(getConstructorName(jp));
 		concreteMethodSignature.append(".");
 		concreteMethodSignature.append(jp.getSignature().getName());
-		concreteMethodSignature.append(CollectorUtil.removeParametersFromSignature(signature));
+		concreteMethodSignature.append(removeParametersFromSignature(signature));
 		
 		return isValidSignature(concreteMethodSignature.toString()) ?
 				concreteMethodSignature.toString()

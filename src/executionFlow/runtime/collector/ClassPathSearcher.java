@@ -14,62 +14,25 @@ import org.aspectj.lang.Signature;
 import executionFlow.ExecutionFlow;
 
 
-/**
- * Helper class used by collectors.
- * 
- * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since		5.2.3
- */
-public class CollectorUtil 
+public class ClassPathSearcher 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * Necessary for {@link #findClassPath} method;
-	 */
 	private static Path binPath;
-	
 	private static Path srcPath;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private ClassPathSearcher() {
+	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	/**
-	 * Extracts package name of a method signature.
-	 * 
-	 * @param	signature Signature of the method
-	 * 
-	 * @return	Package name
-	 */
-	public static String extractPackageName(String signature)
-	{
-		String response = "";
-		Pattern p = Pattern.compile("([A-z0-9\\-_$]+\\.)+");
-		Matcher m = p.matcher(signature);
-
-		if (m.find()) {
-			String[] tmp = m.group().split("\\.");
-			StringBuilder sb = new StringBuilder();
-			
-			for (int i=0; i<tmp.length-1; i++) {
-				sb.append(tmp[i]);
-				sb.append(".");
-			}
-			
-			if (sb.length() > 0) {
-				// Removes last dot
-				sb.deleteCharAt(sb.length()-1);		
-			}
-			
-			response = sb.toString();
-		}
-		
-		return response;
-	}
-	
 	/**
 	 * When executed it will determine the absolute path of a class.
 	 * 
@@ -148,75 +111,6 @@ public class CollectorUtil
 	}
 	
 	/**
-	 * Extracts class name from a signature.
-	 * 
-	 * @param	signature Signature of a method or class
-	 * 
-	 * @return	Name of this class or method
-	 */
-	public static String extractMethodName(String signature) 
-	{
-		String methodName = "";
-		
-		Pattern p = Pattern.compile("\\.[A-z0-9-_$]+\\(");
-		Matcher m = p.matcher(signature);
-		
-		if (m.find()) {
-			methodName = m.group();					// ".<methodName>("
-			p = Pattern.compile("[A-z0-9-_$]+");
-			m = p.matcher(methodName);
-			
-			if (m.find())
-				methodName = m.group();				// "<methodName>"
-		}
-		
-		return methodName;
-	}
-	
-	
-	
-	/**
-	 * Extracts the return type of a method.
-	 * 
-	 * @param	s Method signature
-	 * 
-	 * @return	Return type of the method
-	 */
-	public static String extractReturnType(Signature s)
-	{
-		String signature = s.toLongString();
-		String[] terms = signature.substring(0, signature.indexOf("(")).split(" ");
-		
-		
-		return terms[terms.length-2];
-	}
-	
-	/**
-	 * Gets directory where a test method is.
-	 * 
-	 * @param		testClassPath Test method file path
-	 * 
-	 * @return		Directory where a test method is
-	 */
-	public static String getTestClassDirectory(String testClassPath)
-	{
-		StringBuilder response = new StringBuilder();
-		String[] terms = testClassPath.split("\\\\");
-		
-		
-		for (int i=0; i<terms.length-1; i++) {
-			response.append(terms[i]);
-			response.append("\\");
-		}
-		
-		if (response.length() > 0) {
-			response.deleteCharAt(response.length()-1);
-		}
-		
-		return response.toString();
-	}
-	
-	/**
 	 * Gets class name from a class signature.
 	 * 
 	 * @param		classSignature Class signature
@@ -255,10 +149,5 @@ public class CollectorUtil
 		}
 		
 		return response.toString();
-	}
-
-	public static String removeParametersFromSignature(String signature) 
-	{
-		return signature.substring(signature.indexOf("("));
 	}
 }

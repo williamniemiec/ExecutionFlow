@@ -12,6 +12,7 @@ import executionFlow.io.processor.testmethod.InlineCommentProcessor;
 import executionFlow.io.processor.testmethod.MultilineArgsProcessor;
 import executionFlow.io.processor.testmethod.PrintCallProcessor;
 import executionFlow.util.FileUtil;
+import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.Logger;
 
 
@@ -268,7 +269,7 @@ public class TestMethodFileProcessor extends FileProcessor
 	}
 
 	private void dump(List<String> lines) {
-		if (Logger.getLevel() != Logger.Level.DEBUG)
+		if (Logger.getLevel() != LogLevel.DEBUG)
 			return;
 		
 		Logger.debug("TestMethodFileProcessor", "Processed file");

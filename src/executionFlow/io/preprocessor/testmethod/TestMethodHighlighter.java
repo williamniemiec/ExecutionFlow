@@ -3,7 +3,7 @@ package executionFlow.io.preprocessor.testmethod;
 import java.util.ArrayList;
 import java.util.List;
 
-import executionFlow.runtime.collector.CollectorUtil;
+import executionFlow.info.InvokedInfo;
 import executionFlow.util.DataUtil;
 import executionFlow.util.balance.CurlyBracketBalance;
 
@@ -35,7 +35,7 @@ public class TestMethodHighlighter {
 	//		Constructor
 	//---------------------------------------------------------------------
 	public TestMethodHighlighter(String testMethodSignature) {
-		this.testMethodSignature = CollectorUtil.extractMethodName(testMethodSignature) + 
+		this.testMethodSignature = InvokedInfo.extractMethodName(testMethodSignature) + 
 		testMethodSignature.substring(testMethodSignature.indexOf("(")).replace(" ", "");
 		
 //		this.testMethodSignature = testMethodSignature;

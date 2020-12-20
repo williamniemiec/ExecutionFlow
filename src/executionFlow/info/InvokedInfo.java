@@ -5,6 +5,8 @@ import static java.lang.invoke.MethodType.methodType;
 import java.lang.invoke.MethodType;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -260,7 +262,33 @@ public class InvokedInfo
 	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------		
+	//-------------------------------------------------------------------------
+	/**
+	 * Extracts class name from a signature.
+	 * 
+	 * @param	signature Signature of a method or class
+	 * 
+	 * @return	Name of this class or method
+	 */
+	public static String extractMethodName(String signature) 
+	{
+		String methodName = "";
+		
+		Pattern p = Pattern.compile("\\.[A-z0-9-_$]+\\(");
+		Matcher m = p.matcher(signature);
+		
+		if (m.find()) {
+			methodName = m.group();					// ".<methodName>("
+			p = Pattern.compile("[A-z0-9-_$]+");
+			m = p.matcher(methodName);
+			
+			if (m.find())
+				methodName = m.group();				// "<methodName>"
+		}
+		
+		return methodName;
+	}
+	
 	/**
 	 * Extracts package from a class signature.
 	 * 

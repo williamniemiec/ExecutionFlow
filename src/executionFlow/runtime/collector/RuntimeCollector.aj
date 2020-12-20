@@ -25,7 +25,7 @@ import executionFlow.io.processor.TestMethodFileProcessor;
  * {@link executionFlow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.2
+ * @version		5.2.3
  * @since		1.0
  */
 public abstract aspect RuntimeCollector 
@@ -73,7 +73,6 @@ public abstract aspect RuntimeCollector
 	protected static InvokedInfo testMethodInfo;
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
-//	protected static Object[] testMethodArgs;
 	protected static Map<String, Set<String>> methodsCalledByTestedInvoked = new HashMap<>();
 	
 	
@@ -131,24 +130,22 @@ public abstract aspect RuntimeCollector
 	{
 		String signature = jp.getSignature().toString();
 		
-		return	signature == null || 
-				signature.contains("java.") || 
-				signature.contains("jdk.") ||
-				signature.contains("org.junit.");
+		return	(signature == null)
+				|| signature.contains("java.") 
+				|| signature.contains("jdk.")
+				|| signature.contains("org.junit.");
 	}
 	
 	protected boolean isMethodSignature(JoinPoint jp)
 	{
+		final String regexMethodSignature = "[A-z\\.]+(\\s|\\t)+([A-z0-9-_$]+\\.)+"
+				+ "[A-z0-9-_$]+\\([A-z0-9-\\._$,\\s]*\\)";
 		String signature = jp.getSignature().toString();
 		
-		return signature.matches("[A-z\\.]+(\\s|\\t)+([A-z0-9-_$]+\\.)+"
-				+ "[A-z0-9-_$]+\\([A-z0-9-\\._$,\\s]*\\)") && 
-				!signature.matches(".*\\.(access\\$[0-9]+\\().*");
+		return	signature.matches(regexMethodSignature) 
+				&& !signature.matches(".*\\.(access\\$[0-9]+\\().*");
 	}
-	
-	/**
-	 * Sets default value for all attributes.
-	 */
+
 	protected void reset()
 	{
 		collectedMethods.clear();
@@ -162,38 +159,8 @@ public abstract aspect RuntimeCollector
 		InvokedFileProcessor.clearMapping();
 	}
 	
-	/**
-	 * Extracts class name from a class signature.
-	 * 
-	 * @param	classSignature Signature of the class
-	 * 
-	 * @return	Name of the class
-	 */
-	public static String extractClassNameFromClassSignature(String classSignature)
+	protected String removeParametersFromSignature(String signature) 
 	{
-		String response;
-		String[] tmp = classSignature.split("\\.");
-		
-		if (tmp.length < 1)
-			response = tmp[0];
-		else
-			response = tmp[tmp.length-1];
-		
-		return response;	
-	}
-	
-	/**
-	 * Checks if a signature belongs to a builder class.
-	 * 
-	 * @param		signature Signature to be analyzed
-	 * 
-	 * @return		If the signature belongs to a builder class
-	 */
-	protected boolean isBuilderClass(String signature)
-	{
-		String[] tmp = signature.split("\\.");
-		
-		
-		return tmp[tmp.length-2].toLowerCase().contains("builder");
+		return signature.substring(signature.indexOf("("));
 	}
 }

@@ -11,6 +11,7 @@ import executionFlow.io.processor.invoked.holeplug.HolePlug;
 import executionFlow.io.processor.invoked.trgeneration.CodeCleanerAdapter;
 import executionFlow.util.FileUtil;
 import executionFlow.util.formatter.JavaIndenter;
+import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.Logger;
 
 
@@ -266,7 +267,7 @@ public class InvokedFileProcessor extends FileProcessor
 	}
 
 	private void dump(List<String> lines) {
-		if (Logger.getLevel() != Logger.Level.DEBUG)
+		if (Logger.getLevel() != LogLevel.DEBUG)
 			return;
 		
 		JavaIndenter indenter = new JavaIndenter();

@@ -312,8 +312,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 		String classSignature = getClassSignature(jp);
 				
 		try {
-			classPath = CollectorUtil.findBinPath(classSignature);
-			srcPath = CollectorUtil.findSrcPath(classSignature);
+			classPath = ClassPathSearcher.findBinPath(classSignature);
+			srcPath = ClassPathSearcher.findSrcPath(classSignature);
 		}
 		catch(IOException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());

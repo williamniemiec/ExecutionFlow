@@ -112,7 +112,7 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	
 	private String getSignature(JoinPoint jp) {
 		return jp.getSignature().getDeclaringTypeName() 
-				+ CollectorUtil.removeParametersFromSignature(jp.getSignature().toString());
+				+ removeParametersFromSignature(jp.getSignature().toString());
 		
 	}
 	
@@ -150,8 +150,8 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	private void findSrcAndBinPath() throws IOException {
 		String classSignature = extractClassSignatureFromSignature(signature);
 		
-		srcPath = CollectorUtil.findSrcPath(classSignature);
-		classPath = CollectorUtil.findBinPath(classSignature);
+		srcPath = ClassPathSearcher.findSrcPath(classSignature);
+		classPath = ClassPathSearcher.findBinPath(classSignature);
 		
 		if (srcPath == null || classPath == null) {
 			Logger.warning("The constructor with the following signature" 
