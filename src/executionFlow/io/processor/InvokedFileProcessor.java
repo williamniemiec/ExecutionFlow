@@ -229,11 +229,11 @@ public class InvokedFileProcessor extends FileProcessor
 		if (file == null)
 			return "";
 		
-		List<String> lines = FileUtil.getLines(file, encode.getStandardCharset());
+		List<String> lines = FileUtil.readLines(file, encode.getStandardCharset());
 		
 		lines = doProcessing(lines);
 		
-		FileUtil.putLines(lines, outputFile, encode.getStandardCharset());
+		FileUtil.writeLines(lines, outputFile, encode.getStandardCharset());
 
 		dump(lines);
 		

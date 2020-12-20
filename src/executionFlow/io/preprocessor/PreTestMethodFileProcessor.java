@@ -261,13 +261,13 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		if (file == null)
 			return "";
 		
-		List<String> lines = FileUtil.getLines(file, encode.getStandardCharset());
+		List<String> lines = FileUtil.readLines(file, encode.getStandardCharset());
 		
 		lines = doProcessing(lines);
 		
 		dump(lines);
 		
-		FileUtil.putLines(lines, outputFile, encode.getStandardCharset());
+		FileUtil.writeLines(lines, outputFile, encode.getStandardCharset());
 		
 		return outputFile.toString();
 	}

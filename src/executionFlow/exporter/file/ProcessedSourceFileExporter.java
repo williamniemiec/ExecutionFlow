@@ -64,7 +64,7 @@ public class ProcessedSourceFileExporter
 		List<String> fileContent = getFileContent(processedFile);
 		Path outputFile = generateOutputPath(invokedSignature);
 		
-		FileUtil.putLines(fileContent, outputFile, Charset.defaultCharset());
+		FileUtil.writeLines(fileContent, outputFile, Charset.defaultCharset());
 	}
 
 
@@ -79,7 +79,7 @@ public class ProcessedSourceFileExporter
 
 
 	private List<String> getFileContent(Path processedFile) throws IOException {
-		List<String> fileContent = FileUtil.getLines(
+		List<String> fileContent = FileUtil.readLines(
 				processedFile, Charset.defaultCharset()
 		);
 		

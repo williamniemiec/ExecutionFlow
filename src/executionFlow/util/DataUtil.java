@@ -19,6 +19,13 @@ import java.util.regex.Pattern;
 public class DataUtil 
 {
 	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private DataUtil() {
+	}
+	
+	
+	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
@@ -56,11 +63,10 @@ public class DataUtil
 	{
 		for (Map.Entry<String, List<String>> e : map1.entrySet()) {
 			String keyMap1 = e.getKey();
-			List<String> contentMap2;
 
-			
 			// Adds content from first Map to the second
 			for (String contentMap1 : e.getValue()) {
+				List<String> contentMap2;
 				// If second Map contains the same key as the first, add all
 				// the content of this key from first Map in the second
 				if (map2.containsKey(keyMap1)) {
@@ -77,47 +83,6 @@ public class DataUtil
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Given two lists, adds all content from the first list to the second.
-	 * 
-	 * @param		<T> List type
-	 * @param		l1 Some list
-	 * @param		l2 List that will be merge with l1 
-	 */
-	public static <T> void mergeLists(List<T> l1, List<T> l2)
-	{
-		for (T l1e : l1) {	// l1e: list 1's element
-			if (!l2.contains(l1e)) {
-				l2.add(l1e);
-			}
-		}
-	}
-	
-	/**
-	 * Gets all keys that contains a value.
-	 * 
-	 * @param		<T1> Key type
-	 * @param		<T2> Value type
-	 * @param		map Map to be analyzed
-	 * @param		value Value associated with the key to be searched
-	 * 
-	 * @return		List of keys associated with the specified value or empty
-	 * list if there is no key associated with the value
-	 */
-	public static <T1, T2> List<T1> findKeyFromValue(Map<T1, T2> map, T2 value)
-	{
-		List<T1> keys = new ArrayList<>();
-		
-		
-		for (Map.Entry<T1, T2>  m : map.entrySet()) {
-			if (m.getValue().equals(value)) {
-				keys.add(m.getKey());
-			}
-		}
-		
-		return keys;
 	}
 	
 	/**
@@ -165,22 +130,20 @@ public class DataUtil
 	 */
 	private static String getFolderPath(String[] signatureFields, boolean isConstructor)
 	{
-		String folderPath = "";
-		StringBuilder sb = new StringBuilder();
+		StringBuilder folderPath = new StringBuilder();
 		int size = isConstructor ? signatureFields.length-1 : signatureFields.length-2;
 		
-		
 		for (int i=0; i<size; i++) {
-			sb.append(signatureFields[i]);
-			sb.append("/");
+			folderPath.append(signatureFields[i]);
+			folderPath.append("/");
 		}
 		
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length()-1);	// Removes last slash
-			folderPath = sb.toString();
+		// Removes last slash
+		if (folderPath.length() > 0) {
+			folderPath.deleteCharAt(folderPath.length()-1);	
 		}
 		
-		return folderPath;
+		return folderPath.toString();
 	}
 	
 	/**
@@ -194,32 +157,24 @@ public class DataUtil
 	 */
 	private static String getFolderName(String[] signatureFields, boolean isConstructor)
 	{
-		String response = null;
-		
+		String folderName = "";
 		
 		if (isConstructor) {
-			// Extracts class name
 			String className = signatureFields[signatureFields.length-1];
 			
 			if (!className.contains("("))
 				className += "()";
 			
-			response = className;
+			folderName = className;
 		}
-		else {
-			String className, methodName;
+		else {			
+			String className = signatureFields[signatureFields.length-2];
+			String methodName = signatureFields[signatureFields.length-1];
 			
-			
-			// Extracts class name
-			className = signatureFields[signatureFields.length-2];
-			
-			// Extracts invoked name with parameter types
-			methodName = signatureFields[signatureFields.length-1];
-			
-			response = className+"."+methodName;
+			folderName = className + "." + methodName;
 		}
 		
-		return response;
+		return folderName;
 	}
 	
 	/**
@@ -231,19 +186,19 @@ public class DataUtil
 	 */
 	public static String md5(String text)
 	{
-		String response;
-		MessageDigest m;
-		
+		String md5Text;
 		
 		try {
-			m = MessageDigest.getInstance("MD5");
-			m.update(text.getBytes(),0,text.length());
-			response = new BigInteger(1,m.digest()).toString(16);
-		} catch (NoSuchAlgorithmException e) {
-			response = text;
+			MessageDigest m = MessageDigest.getInstance("MD5");
+			m.update(text.getBytes(), 0, text.length());
+			
+			md5Text = new BigInteger(1, m.digest()).toString(16);
+		} 
+		catch (NoSuchAlgorithmException e) {
+			md5Text = text;
 		}
 		
-		return response;
+		return md5Text;
 	}
 	
 	/**
@@ -254,7 +209,12 @@ public class DataUtil
 	 */
 	public static String generateVarName()
 	{
-		return "_"+md5(String.valueOf(new Date().getTime()+(Math.random()*9999+1)));
+		return ("_" + md5(String.valueOf(generateRandomNumber())));
+	}
+	
+	private static double generateRandomNumber() 
+	{
+		return (new Date().getTime() + (Math.random() * 9999 + 1));
 	}
 	
 	/**
@@ -266,9 +226,8 @@ public class DataUtil
 	 */
 	public static String getIndentation(String line)
 	{
-		final String REGEX_INDENT = "^(\\ |\\t)+";
-		Matcher m = Pattern.compile(REGEX_INDENT).matcher(line);
-		
+		final String regexIndent = "^(\\ |\\t)+";
+		Matcher m = Pattern.compile(regexIndent).matcher(line);
 		
 		if (!m.find())
 			return "";
@@ -280,9 +239,9 @@ public class DataUtil
 		Pattern patternContentInParenthesis = Pattern.compile("\\(.*\\)");
 		Matcher contentBetweenParenthesis = patternContentInParenthesis.matcher(content);
 		
-		if (contentBetweenParenthesis.find())
-			return contentBetweenParenthesis.group().replace("(", "").replace(")", "");
-			
-		return "";
+		if (!contentBetweenParenthesis.find())
+			return "";
+		
+		return contentBetweenParenthesis.group().replace("(", "").replace(")", "");
 	}
 }
