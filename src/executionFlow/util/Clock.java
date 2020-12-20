@@ -29,6 +29,12 @@ public class Clock
 	
 	
 	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private Clock() {
+	}
+	
+	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
@@ -49,17 +55,22 @@ public class Clock
 		
 		Timer t = new Timer();
 		
+		t.schedule(createTaskFromRoutine(routine), delay);
 		
 		timeoutRoutines.put(id, t);
-		t.schedule(new TimerTask(){
+		
+		return true;
+	}
+	
+	private static TimerTask createTaskFromRoutine(Runnable routine) 
+	{
+		return new TimerTask() {
 		    @Override
 		    public void run()
 		    {
 		       routine.run();
 		    }
-		}, delay);
-		
-		return true;
+		};
 	}
 	
 	/**
@@ -80,15 +91,9 @@ public class Clock
 		
 		Timer t = new Timer();
 		
+		t.scheduleAtFixedRate(createTaskFromRoutine(routine), 0, interval);
 		
 		intervalRoutines.put(id, t);
-		t.scheduleAtFixedRate(new TimerTask(){
-		    @Override
-		    public void run()
-		    {
-		       routine.run();
-		    }
-		}, 0, interval);
 		
 		return true;
 	}
@@ -101,10 +106,11 @@ public class Clock
 	 */
 	public static void clearInterval(int id)
 	{
-		if (intervalRoutines.containsKey(id)) {
-			intervalRoutines.get(id).cancel();
-			intervalRoutines.remove(id);
-		}
+		if (!intervalRoutines.containsKey(id))
+			return;
+		
+		intervalRoutines.get(id).cancel();
+		intervalRoutines.remove(id);
 	}
 	
 	/**
@@ -115,9 +121,11 @@ public class Clock
 	 */
 	public static void clearTimeout(int id)
 	{
-		if (timeoutRoutines.containsKey(id)) {
-			timeoutRoutines.get(id).cancel();
-			timeoutRoutines.remove(id);
-		}
+		if (!timeoutRoutines.containsKey(id))
+			return;
+		
+		timeoutRoutines.get(id).cancel();
+		timeoutRoutines.remove(id);
+		
 	}
 }

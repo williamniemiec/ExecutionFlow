@@ -37,7 +37,7 @@ public class Checkpoint
 	 */
 	public Checkpoint(Path location, String name)
 	{
-		checkpointFile = Path.of(location.toAbsolutePath().toString(), name+".checkpoint");
+		checkpointFile = location.resolve(name + ".checkpoint");
 	}
 	
 	
@@ -54,6 +54,29 @@ public class Checkpoint
 	 */
 	public void enable() throws IOException
 	{
+		prepareCheckpoint();
+		checkpointFileThread = createCheckpoint();
+		checkpointFileThread.start();
+	}
+
+	private Thread createCheckpoint() {
+		Runnable r = () -> {
+			try (FileReader fr = new FileReader(checkpointFile.toFile())) {
+				while (!end) {
+					try {
+						Thread.sleep(200);
+					} 
+					catch (InterruptedException e) {}
+				}
+			} 
+			catch (FileNotFoundException e) {} 
+			catch (IOException e) {}
+		};
+		
+		return new Thread(r);
+	}
+
+	private void prepareCheckpoint() throws IOException {
 		end = false;
 		
 		try {
@@ -61,28 +84,6 @@ public class Checkpoint
 			Files.createFile(checkpointFile);
 		} 
 		catch(FileAlreadyExistsException e) {}
-		
-		Runnable r = () -> {
-			try (FileReader fr = new FileReader(checkpointFile.toFile())) {
-				while (!end) {
-					try {
-						Thread.sleep(200);
-					} 
-					catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			} 
-			catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} 
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		};
-		
-		checkpointFileThread = new Thread(r);
-		checkpointFileThread.start();
 	}
 	
 	/**
@@ -98,8 +99,11 @@ public class Checkpoint
 		if (checkpointFileThread == null)
 			return;
 		
-		end = true;
-		
+		disableCheckpoint();
+		destroyCheckpoint();
+	}
+
+	private void destroyCheckpoint() throws IOException {
 		try {
 			Thread.sleep(50);
 			checkpointFileThread.join();
@@ -108,6 +112,10 @@ public class Checkpoint
 		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void disableCheckpoint() {
+		end = true;
 	}
 	
 	/**
@@ -131,11 +139,10 @@ public class Checkpoint
 	 */
 	public boolean isEnabled()
 	{
-		// If the checkpoint does not exist, it is not active
 		if (!exists()) 
 			return false;
 		
-		boolean response = false;
+		boolean enabled = false;
 		
 		// Tries to delete the checkpoint file. If no exception is thrown, it 
 		// means that the checkpoint is not active; otherwise, it is active
@@ -146,10 +153,10 @@ public class Checkpoint
 			Files.createFile(checkpointFile);
 		} 
 		catch (SecurityException | IOException e) {
-			response = true;
+			enabled = true;
 		}
 		
-		return response;
+		return enabled;
 	}
 	
 	/**

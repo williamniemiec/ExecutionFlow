@@ -33,13 +33,12 @@ public class DataUtil
 	{
 		StringBuilder response = new StringBuilder();
 		
-		
 		for (T p : list) {
 			response.append(p);
 			response.append(delimiter);
 		}
 		
-		// Removes last semicolon
+		// Removes last delimiter
 		if (response.length() > 1) {
 			response.deleteCharAt(response.length()-1);
 		}
