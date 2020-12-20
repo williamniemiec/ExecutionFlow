@@ -121,7 +121,7 @@ public class Checkpoint
 	}
 	
 	/**
-	 * Checks if the checkpoint is in execution.
+	 * Checks if the checkpoint is active.
 	 * 
 	 * @return		If the checkpoint is in execution
 	 * 
@@ -129,7 +129,7 @@ public class Checkpoint
 	 * this, it means that the checkpoint is active; otherwise, the checkpoint
 	 * is active, so it must recreate the checkpoint file that was deleted
 	 */
-	public boolean isActive()
+	public boolean isEnabled()
 	{
 		// If the checkpoint does not exist, it is not active
 		if (!exists()) 
