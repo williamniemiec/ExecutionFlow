@@ -11,7 +11,7 @@ import org.aspectj.tools.ajc.Main;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.io.compiler.Compiler;
-import executionFlow.util.Logger;
+import executionFlow.util.logger.Logger;
 
 
 /**

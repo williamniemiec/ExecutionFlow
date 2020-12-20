@@ -27,8 +27,8 @@ import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.TestMethodCollector;
 import executionFlow.util.FileUtil;
-import executionFlow.util.Logger;
 import executionFlow.util.Pair;
+import executionFlow.util.logger.Logger;
 
 
 /**

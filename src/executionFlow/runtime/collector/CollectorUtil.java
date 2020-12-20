@@ -217,35 +217,6 @@ public class CollectorUtil
 	}
 	
 	/**
-	 * Extracts package from a class signature.
-	 * 
-	 * @param classSignature Signature of the class
-	 * 
-	 * @return Class package
-	 */
-	public static String extractPackageFromMethodSignature(String methodSignature)
-	{
-		if (methodSignature == null || methodSignature.isEmpty())
-			return "";
-		
-		String[] tmp = methodSignature.split("\\.");
-		StringBuilder response = new StringBuilder();
-		
-		// Appends all terms of signature, without the last
-		for (int i=0; i<tmp.length-2; i++) {
-			response.append(tmp[i]);
-			response.append(".");
-		}
-		
-		if (response.length() > 0) {
-			// Removes last dot
-			response.deleteCharAt(response.length()-1);
-		}
-		
-		return response.toString();
-	}
-	
-	/**
 	 * Gets class name from a class signature.
 	 * 
 	 * @param		classSignature Class signature

@@ -15,8 +15,8 @@ import java.util.Map;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.util.DataUtil;
-import executionFlow.util.Logger;
 import executionFlow.util.Pair;
+import executionFlow.util.logger.Logger;
 
 
 /**

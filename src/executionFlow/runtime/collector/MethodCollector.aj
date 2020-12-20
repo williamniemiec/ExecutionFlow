@@ -12,7 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 
 import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.util.Logger;
+import executionFlow.util.logger.Logger;
 
 /**
  * Collects various information about methods called by a JUnit test.

@@ -12,7 +12,7 @@ import executionFlow.io.processor.testmethod.InlineCommentProcessor;
 import executionFlow.io.processor.testmethod.MultilineArgsProcessor;
 import executionFlow.io.processor.testmethod.PrintCallProcessor;
 import executionFlow.util.FileUtil;
-import executionFlow.util.Logger;
+import executionFlow.util.logger.Logger;
 
 
 /**

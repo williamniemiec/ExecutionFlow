@@ -10,8 +10,8 @@ import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.invoked.holeplug.HolePlug;
 import executionFlow.io.processor.invoked.trgeneration.CodeCleanerAdapter;
 import executionFlow.util.FileUtil;
-import executionFlow.util.Logger;
 import executionFlow.util.formatter.JavaIndenter;
+import executionFlow.util.logger.Logger;
 
 
 /**

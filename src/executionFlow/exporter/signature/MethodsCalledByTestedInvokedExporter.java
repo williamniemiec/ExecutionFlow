@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.util.CSV;
-import executionFlow.util.Logger;
 import executionFlow.util.DataUtil;
+import executionFlow.util.logger.Logger;
 
 
 /**

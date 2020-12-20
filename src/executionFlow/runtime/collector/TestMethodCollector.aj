@@ -27,8 +27,9 @@ import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
 import executionFlow.util.Checkpoint;
 import executionFlow.util.JUnit4Runner;
-import executionFlow.util.Logger;
-import executionFlow.util.Logger.Level;
+import executionFlow.util.logger.LogLevel;
+import executionFlow.util.logger.LogView;
+import executionFlow.util.logger.Logger;
 
 
 /**
@@ -581,7 +582,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			return;
 		
 		session.destroy();
-		session.save("LOG_LEVEL", askLogLevel());		
+		session.save("LOG_LEVEL", LogView.askLogLevel());		
 		
 		firstRunCheckpoint.enable();
 	}
@@ -593,7 +594,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private void initializeLogger() throws IOException
 	{
-		Logger.Level logLevel = (Logger.Level)session.read("LOG_LEVEL");
+		LogLevel logLevel = (LogLevel)session.read("LOG_LEVEL");
 		Logger.setLevel(logLevel);
 	}
 	
@@ -717,49 +718,5 @@ public aspect TestMethodCollector extends RuntimeCollector
 		}
 		
 		return success;
-	}
-	
-	/**
-	 * Asks the user what level of logging will be used.
-	 * 
-	 * @return		Selected log level
-	 */
-	private Level askLogLevel()
-	{
-		Logger.Level logLevel;
-		String[] options = {
-				"<html><body><div align='center'>None<br>(not recommended \u274C)</div></body></html>",
-				"Error", 
-				"Warning",
-				"<html><body><div align='center'>Info<br>(recommended \u2714)</div></body></html>", 
-				"Debug"
-		};
-		
-		int response = JOptionPane.showOptionDialog(
-				null, "Choose log level", "Log option", 
-				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
-				null, options, options[3]
-		);
-		
-		
-		switch (response) {
-			case 0:
-				logLevel = Logger.Level.OFF;
-				break;
-			case 1:
-				logLevel = Logger.Level.ERROR;
-				break;
-			case 2:
-				logLevel = Logger.Level.WARNING;
-				break;
-			case 4:
-				logLevel = Logger.Level.DEBUG;
-				break;
-			case 3:
-			default:
-				logLevel = Logger.Level.INFO;
-		}
-		
-		return logLevel;
 	}
 }

@@ -10,7 +10,7 @@ import executionFlow.io.preprocessor.testmethod.AssertProcessor;
 import executionFlow.io.preprocessor.testmethod.TestMethodHighlighter;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.util.FileUtil;
-import executionFlow.util.Logger;
+import executionFlow.util.logger.Logger;
 
 
 /**

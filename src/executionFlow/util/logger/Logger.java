@@ -1,4 +1,4 @@
-package executionFlow.util;
+package executionFlow.util.logger;
 
 
 /**
@@ -7,43 +7,19 @@ package executionFlow.util;
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
 public class Logger 
-{
-	//-------------------------------------------------------------------------
-	//		Enumerations
-	//-------------------------------------------------------------------------
-	public enum Level {
-		/**
-		 * Disables all messages.
-		 */
-		OFF,
-		
-		/**
-		 * Displays only error messages.
-		 */
-		ERROR, 
-		
-		/**
-		 * Displays error and warning messages.
-		 */
-		WARNING, 
-		
-		/**
-		 * Displays error, warning and info messages.
-		 */
-		INFO,
-		
-		/**
-		 * Displays error, warning, info and debug messages.
-		 */
-		DEBUG
-	}
-	
-	
+{	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final int PADDING_LEFT = 8;
-	private static Level level = Level.INFO;
+	private static LogLevel level = LogLevel.INFO;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private Logger() {
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -79,8 +55,8 @@ public class Logger
 	 */
 	public static void info(String message, boolean breakLine)
 	{
-		boolean shouldDisplay =	(level == Level.DEBUG) || 
-								(level == Level.INFO);
+		boolean shouldDisplay =	(level == LogLevel.DEBUG) || 
+								(level == LogLevel.INFO);
 		
 		
 		if (!shouldDisplay)
@@ -122,7 +98,7 @@ public class Logger
 	 */
 	public static void error(String message, boolean breakLine)
 	{
-		boolean shouldDisplay =	(level != Level.OFF);
+		boolean shouldDisplay =	(level != LogLevel.OFF);
 		
 		
 		if (!shouldDisplay)
@@ -164,9 +140,9 @@ public class Logger
 	 */
 	public static void warning(String message, boolean breakLine)
 	{
-		boolean shouldDisplay = (level == Level.DEBUG) ||
-								(level == Level.INFO) ||
-								(level == Level.WARNING);
+		boolean shouldDisplay = (level == LogLevel.DEBUG) ||
+								(level == LogLevel.INFO) ||
+								(level == LogLevel.WARNING);
 		
 		
 		if (!shouldDisplay)
@@ -223,7 +199,7 @@ public class Logger
 	 */
 	public static void debug(String message, boolean breakLine)
 	{
-		boolean shouldDisplay = (level == Level.DEBUG);
+		boolean shouldDisplay = (level == LogLevel.DEBUG);
 		
 		
 		if (!shouldDisplay)
@@ -240,23 +216,23 @@ public class Logger
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	/**
-	 * Gets output level. The level defines what type of message will be 
-	 * displayed.
+	 * Gets current log level. The log level defines what type of message will 
+	 * be displayed.
 	 * 
-	 * @return		Current level
+	 * @return		Current log level
 	 */
-	public static Level getLevel()
+	public static LogLevel getLevel()
 	{
 		return level;
 	}
 	
 	/**
-	 * Sets output level. The level defines what type of message will be 
+	 * Sets log level. The level defines what type of message will be 
 	 * displayed.
 	 * 
 	 * @param		level New level
 	 */
-	public static void setLevel(Level level)
+	public static void setLevel(LogLevel level)
 	{
 		Logger.level = level;
 	}

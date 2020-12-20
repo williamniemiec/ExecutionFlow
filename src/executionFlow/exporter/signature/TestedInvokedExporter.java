@@ -10,8 +10,8 @@ import java.util.Set;
 
 import executionFlow.util.CSV;
 import executionFlow.util.DataUtil;
-import executionFlow.util.Logger;
 import executionFlow.util.Pair;
+import executionFlow.util.logger.Logger;
 
 
 /**

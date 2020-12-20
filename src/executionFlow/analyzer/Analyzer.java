@@ -16,7 +16,7 @@ import executionFlow.LibraryManager;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.Clock;
 import executionFlow.util.JDB;
-import executionFlow.util.Logger;
+import executionFlow.util.logger.Logger;
 
 
 /**

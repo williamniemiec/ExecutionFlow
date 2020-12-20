@@ -14,7 +14,7 @@ import java.util.Set;
 import org.aspectj.lang.JoinPoint;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.util.Logger;
+import executionFlow.util.logger.Logger;
 
 
 /**
