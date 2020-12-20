@@ -80,42 +80,39 @@ public abstract aspect RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-	/**
-	 * Intercepts methods and classes with skip annotations.
-	 */
 	pointcut skipAnnotation():
-		within(@executionFlow.runtime.SkipCollection *) ||
-		withincode(@executionFlow.runtime.SkipInvoked * *.*(..)) ||
-		withincode(@executionFlow.runtime._SkipInvoked * *.*(..)) ||
-		execution(@executionFlow.runtime.SkipInvoked * *.*(..)) ||
-		execution(@executionFlow.runtime._SkipInvoked * *.*(..)); 
+		within(@executionFlow.runtime.SkipCollection *)
+		|| withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
+		|| withincode(@executionFlow.runtime._SkipInvoked * *.*(..))
+		|| execution(@executionFlow.runtime.SkipInvoked * *.*(..))
+		|| execution(@executionFlow.runtime._SkipInvoked * *.*(..)); 
 	
-	/**
-	 * Intercepts test methods with JUnit 4 test annotation.
-	 */
-	pointcut junit4():
+	protected pointcut insideJUnitTest():
+		insideJUnit4Test() 
+		|| insideJUnit5Test();
+	
+	protected pointcut insideJUnit4Test():
+		JUnit4Annotation()
+		&& !JUnit4InternalCall();
+	
+	private pointcut JUnit4Annotation():
 		withincode(@org.junit.Test * *.*());
 	
-	/**
-	 * Intercepts test methods with JUnit 5 test annotation.
-	 */
-	pointcut junit5():
-		withincode(@org.junit.jupiter.api.Test * *.*()) ||
-		withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
-		withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..));
-	
-	/**
-	 * Intercepts methods from JUnit 4.
-	 */
-	pointcut junit4_internal():
-		call(* org.junit.runner.JUnitCore.runClasses(..)) ||
-		call(void org.junit.Assert.*(..)) ||
-		call(void org.junit.Assert.fail());
-	
-	/**
-	 * Intercepts methods from JUnit 5.
-	 */
-	pointcut junit5_internal():
+	protected pointcut JUnit4InternalCall():
+		call(* org.junit.runner.JUnitCore.runClasses(..))
+		|| call(void org.junit.Assert.*(..))
+		|| call(void org.junit.Assert.fail());
+
+	protected pointcut insideJUnit5Test():
+		JUnit5Annotation()
+		&& !JUnit5InternalCall();
+		
+	private pointcut JUnit5Annotation():
+		withincode(@org.junit.jupiter.api.Test * *.*()) 
+		|| withincode(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) 
+		|| withincode(@org.junit.jupiter.api.RepeatedTest * *.*(..));
+
+	protected pointcut JUnit5InternalCall():
 		call(void org.junit.jupiter.api.Assertions.*(..));
 	
 	

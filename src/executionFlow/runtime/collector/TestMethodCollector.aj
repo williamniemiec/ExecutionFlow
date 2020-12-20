@@ -75,54 +75,24 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-	/**
-	 * Intercepts JUnit 4 test methods.
-	 */
-	pointcut junit4():
-		!skipAnnotation() &&
-		!junit4_internal() && 
-		execution(@org.junit.Test * *.*());
+	pointcut insideJUnit5RepeatedTest():
+		!skipAnnotation() 
+		&& execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
 	
-	/**
-	 * Intercepts JUnit 4 test methods.
-	 */
-	pointcut junit5():
-		!skipAnnotation() &&
-		!junit5_internal() && (
-			execution(@org.junit.jupiter.api.Test * *.*()) ||
-			execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..)) ||
-			execution(@org.junit.jupiter.api.RepeatedTest * *.*(..))
-		);
+	pointcut insideTestMethod():
+		!skipAnnotation() 
+		&& insideJUnitTest()
+		&& !withincode(@org.junit.Test * *.*());
 	
-	/**
-	 * Intercepts repeated tests.
-	 */
-	pointcut junit5_repeatedTest():
-		!skipAnnotation() &&
-		execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
-	
-	before(): junit5_repeatedTest()
-	{
-		isRepeatedTest = true;
-	}
-	
-	/**
-	 * Intercept test methods.
-	 */
-	pointcut testMethodCollector():
-		!skipAnnotation() &&
-		(junit4() || junit5()) &&
-		!junit4_internal() && !junit5_internal() && !withincode(@org.junit.Test * *.*());
 	
 	//-------------------------------------------------------------------------
 	//		Join points
 	//-------------------------------------------------------------------------
+	before(): insideJUnit5RepeatedTest() {
+		isRepeatedTest = true;
+	}
 	
-	/**
-	 * Executed before each test method.
-	 */
-	before(): testMethodCollector()
-	{	
+	before(): insideTestMethod() {	
 		if (skipTestMethod) {
 			return;
 		}
@@ -184,12 +154,8 @@ public aspect TestMethodCollector extends RuntimeCollector
 			skipTestMethod = true;
 		}
 	}
-	
-	/**
-	 * Executed after the end of a test method.
-	 */
-	after(): testMethodCollector() 
-	{
+
+	after(): insideTestMethod() {
 		if (skipTestMethod) {
 			skipTestMethod = false;
 			return;
@@ -436,13 +402,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		testMethodSignature = removeReturnTypeFromSignature(jp.getSignature().toString());
 		classSignature = jp.getSignature().getDeclaringTypeName();
-		testClassPath = CollectorExecutionFlow.findBinPath(classSignature);
+		testClassPath = CollectorUtil.findBinPath(classSignature);
 		
 		// Gets source file path of the test method
 		testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
-		testClassName = CollectorExecutionFlow.extractClassNameFromClassSignature(testClassSignature);
+		testClassName = CollectorUtil.extractClassNameFromClassSignature(testClassSignature);
 		testClassPackage = InvokedInfo.extractPackage(testClassSignature);
-		testSrcPath = CollectorExecutionFlow.findSrcPath(testClassSignature);
+		testSrcPath = CollectorUtil.findSrcPath(testClassSignature);
 		testMethodArgs = jp.getArgs();
 
 		try {

@@ -58,7 +58,7 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	 */
 	pointcut constructorInvocationLineCollector(): 
 		!skipAnnotation()
-		&& (junit4() || junit5())
+		&& (insideJUnit4Test() || insideJUnit5Test())
 		&& call(*.new(..));
 	
 	/**
@@ -66,7 +66,7 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	 */
 	pointcut classInstantiation(): 
 		!skipAnnotation()
-		&& !(junit4_internal() || junit5_internal())
+		&& !(JUnit4InternalCall() || JUnit5InternalCall())
 		&& call(*.new(..))
 		&& !cflowbelow(withincode(* *(..)))
 		&& !within(executionFlow..*)
@@ -149,8 +149,8 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	private void findSrcAndBinPath() throws IOException {
 		String classSignature = extractClassSignatureFromSignature(signature);
 		
-		srcPath = CollectorExecutionFlow.findSrcPath(classSignature);
-		classPath = CollectorExecutionFlow.findBinPath(classSignature);
+		srcPath = CollectorUtil.findSrcPath(classSignature);
+		classPath = CollectorUtil.findBinPath(classSignature);
 		
 		if (srcPath == null || classPath == null) {
 			Logger.warning("The constructor with the following signature" 

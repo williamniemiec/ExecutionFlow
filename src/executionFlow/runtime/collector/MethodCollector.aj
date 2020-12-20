@@ -56,9 +56,7 @@ public aspect MethodCollector extends RuntimeCollector {
 	 */
 	pointcut insideTestedMethod(): 
 		!skipAnnotation() 
-		&& (junit4() || junit5())
-		&& !junit4_internal() 
-		&& !junit5_internal()
+		&& insideJUnitTest()
 		&& !get(* *.*) 
 		&& !set(* *.*)
 		&& !execution(public int hashCode());
@@ -212,8 +210,8 @@ public aspect MethodCollector extends RuntimeCollector {
 	private void findSrcAndBinPath(JoinPoint jp) throws IOException {
 		String classSignature = getClassSignature(jp);
 				
-		classPath = CollectorExecutionFlow.findBinPath(classSignature);
-		srcPath = CollectorExecutionFlow.findSrcPath(classSignature);
+		classPath = CollectorUtil.findBinPath(classSignature);
+		srcPath = CollectorUtil.findSrcPath(classSignature);
 		
 		if ((srcPath == null) || (classPath == null)) {
 			Logger.warning("The method with the following signature" 
@@ -233,7 +231,7 @@ public aspect MethodCollector extends RuntimeCollector {
 		InvokedInfo methodInfo = new InvokedInfo.Builder()
 				.binPath(classPath)
 				.invokedSignature(signature)
-				.invokedName(CollectorExecutionFlow.extractMethodName(signature))
+				.invokedName(CollectorUtil.extractMethodName(signature))
 				.parameterTypes(getParameterTypes(jp))
 				.args(getParameterValues(jp))
 				.returnType(extractReturnType(jp))

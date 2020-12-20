@@ -1,7 +1,6 @@
 package executionFlow.runtime.collector;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,22 +9,19 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
-import org.aspectj.lang.reflect.MethodSignature;
 
 import executionFlow.ExecutionFlow;
 
 
 /**
- * Helper class used to extract the collected data that will be relevant to 
- * {@link ExecutionFlow} class.
+ * Helper class used by collectors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		4.0.0
- * @since		1.0
+ * @version		5.2.3
+ * @since		5.2.3
  */
-public class CollectorExecutionFlow 
+public class CollectorUtil 
 {
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -255,7 +251,7 @@ public class CollectorExecutionFlow
 	 * 
 	 * @return		Class name
 	 */
-	private static String extractClassNameFromClassSignature(String classSignature) 
+	public static String extractClassNameFromClassSignature(String classSignature) 
 	{
 		String terms[] = classSignature.split("\\.");
 		

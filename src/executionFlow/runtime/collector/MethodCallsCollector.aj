@@ -48,8 +48,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 		!skipAnnotation()
 		&& !withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
 		&& cflow(execution(@executionFlow.runtime._SkipInvoked * *.*(..)))
-		&& (junit4() || junit5())
-		&& !junit4_internal() && !junit5_internal()
+		&& insideJUnitTest()
 		&& !get(* *.*) 
 		&& !set(* *.*)
 		&& !execution(public int hashCode());
