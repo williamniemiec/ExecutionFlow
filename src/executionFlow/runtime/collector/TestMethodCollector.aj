@@ -43,6 +43,7 @@ import executionFlow.util.Logger.Level;
  * @version		5.2.3
  * @since		1.0
  */
+//@SuppressWarnings("unused")
 public aspect TestMethodCollector extends RuntimeCollector
 {
 	//-------------------------------------------------------------------------
@@ -50,26 +51,33 @@ public aspect TestMethodCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	private static boolean inTestMethod = true;
 	private static boolean finished;
-	private static Checkpoint checkpoint =
+	
+	
+	private static Checkpoint currentTestMethodCheckpoint =
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "Test_Method");
 	private static Checkpoint checkpoint_initial = 
 			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
-	private static Checkpoint checkpoint_appRunning =
+	private static Checkpoint firstRunCheckpoint =
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "app_running");
 	private static Session session = 
 			new Session("session.ef", new File(System.getProperty("user.home")));
-	private static int totalTests = -1;
+	
+	
+	private static int remainingTests = -1;
 	private String lastRepeatedTestSignature;
-	private String testClassName;
-	private String testClassPackage;
-	private Path testClassPath;
+//	private String testClassName;
+//	private String testClassPackage;
+//	private Path testClassPath;
 	private FilesManager testMethodManager;
 	private FileManager testMethodFileManager;
 	private boolean isRepeatedTest;
-	private static boolean skipTestMethod;
+	private static boolean errorProcessingTestMethod;
 	private volatile static boolean success;
 	
 	private static ProcessingManager processingManager;
+	
+	private Path classPath;
+	private Path srcPath;
 	
 	
 	//-------------------------------------------------------------------------
@@ -110,66 +118,44 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	before(): insideTestMethod() {	
-		if (skipTestMethod)
+		if (errorProcessingTestMethod)
 			return;
 		
 		checkDevelopmentMode();
-		
-		// Prevents repeated tests from being performed more than once
-		if (finished && isRepeatedTest && 
-				!thisJoinPoint.getSignature().toString().equals(lastRepeatedTestSignature)) {
-			isRepeatedTest = false;
-		}
-		
-		// If it is in another test method and it it is not a repeated test 
-		// then should run the application
-		if (finished && inTestMethod && !isRepeatedTest) {
-			finished = false;
-			inTestMethod = true;
-		}
+		checkRepeatedTest(thisJoinPoint);
 		
 		if (finished)
 			return;
 		
 		reset();
-		success = false;
-		
 		onShutdown();
-
+		
+		testMethodSignature = getSignature(thisJoinPoint);
+		
 		try {
-//			ExecutionFlow.init(!checkpoint_initial.isActive());
+			findSrcAndBinPath(thisJoinPoint);
 			processingManager = new ProcessingManager(!checkpoint_initial.isActive());
-			setTestMethodInfo(thisJoinPoint);
+			initializeTestMethodInfo(thisJoinPoint);
+			initializeFileManager(thisJoinPoint);
 			onEachTestMethod();
 			onFirstRun();
-			setLogLevel();
-			clean();
+			initializeLogger();
+			cleanLastRun();
 		} 
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());
-			e.printStackTrace();
 			
-			System.exit(-1);	// Stops execution if a problem occurs
+			System.exit(-1);
 		}
 		
-		try {
-			processTestMethod();
-		} 
-		catch (IOException e) {
-			Logger.error(e.getMessage());
-			
-			testMethodManager.restoreAll();
-			deleteTestMethodBackupFiles();
-			disableCheckpoint(checkpoint);
-			reset();
-			
-			skipTestMethod = true;
-		}
+		dump();
+		
+		doPreprocessing();
 	}
 
 	after(): insideTestMethod() {
-		if (skipTestMethod) {
-			skipTestMethod = false;
+		if (errorProcessingTestMethod) {
+			errorProcessingTestMethod = false;
 			return;
 		}
 		
@@ -179,10 +165,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 		// Runs a new process of the application. This code block must only be
 		// executed once per test file
 		if (!inTestMethod) {
-			boolean hasError = false;
 			
 			try {
-				restart();
+				restart(thisJoinPoint);
 			}
 			catch (IOException | InterruptedException e) {
 				Logger.error("Restart - " + e.getMessage());
@@ -194,16 +179,25 @@ public aspect TestMethodCollector extends RuntimeCollector
 			isRepeatedTest = false;
 			lastRepeatedTestSignature = thisJoinPoint.getSignature().toString();
 			
-			hasError = restoreTestMethodFiles();
-			hasError = onExitTestMethod();
-
-			testMethodManager.restoreAll();
+			updateRemainingTests();
+			boolean successfullRestoration = false;
+			successfullRestoration = restoreTestMethodFiles();
 			
+			if (remainingTests == 0) {
+				successfullRestoration = restoreInvokedFiles();
+				processingManager.deleteInvokedFileManagerBackup();
+			}
+			
+			testMethodManager.restoreAll();
 			deleteTestMethodBackupFiles();
-			disableCheckpoint(checkpoint);
+			
+			if (remainingTests == 0)				
+				RemoteControl.close();
+			
+			disableCheckpoint(currentTestMethodCheckpoint);
 			
 			// Stops execution if an error occurs
-			if (hasError) {
+			if (!successfullRestoration) {
 				System.exit(-1);
 			}
 			
@@ -217,10 +211,63 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		processCollectedInvoked();
 		
-		// Prepares for next test
 		reset();	
 		success = true;
 	}
+	
+	private void updateRemainingTests() {
+		if (remainingTests < 0) {
+			remainingTests = PreTestMethodFileProcessor.getTotalTests() - 1;
+		}
+		else {
+			remainingTests--;
+		}
+
+		if (remainingTests == 0) {
+			remainingTests = -1;
+		}
+	}
+
+	private void dump() {
+		Logger.debug("Test method collector: " + testMethodInfo);
+	}
+	
+	private void checkRepeatedTest(JoinPoint jp) {
+		// Prevents repeated tests from being performed more than once
+		if (finished && isRepeatedTest && 
+				!jp.getSignature().toString().equals(lastRepeatedTestSignature)) {
+			isRepeatedTest = false;
+		}
+		
+		if (finished && inTestMethod && !isRepeatedTest) {
+			finished = false;
+			inTestMethod = true;
+		}
+	}
+	
+	private void doPreprocessing() {
+		try {
+			processTestMethod();
+		} 
+		catch (IOException e) {
+			Logger.error(e.getMessage());
+			
+			testMethodManager.restoreAll();
+			deleteTestMethodBackupFiles();
+			disableCheckpoint(currentTestMethodCheckpoint);
+			reset();
+			
+			errorProcessingTestMethod = true;
+		}
+	}
+	
+	@Override
+	protected void reset() {
+		super.reset();
+		
+		success = false;
+	}
+	
 	
 	/**
 	 * Updates the invocation line of constructor and method collector based on
@@ -269,27 +316,26 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * @throws		InterruptedException If the process containing 
 	 * {@link JUnit4Runner} is interrupted while it is waiting  
 	 */
-	private void restart() throws IOException, InterruptedException
+	private void restart(JoinPoint jp) throws IOException, InterruptedException
 	{
-		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		Path libJUnit4 = LibraryManager.getLibrary("JUNIT_4");
-		Path libHamcrest = LibraryManager.getLibrary("HAMCREST");
-		Path testClassRootPath = InvokedInfo.extractClassRootDirectory(testClassPath, testClassPackage);
-		
-		String classSignature = testClassPackage.isEmpty() ? 
-				testClassName : testClassPackage + "." + testClassName;
-		String classPath = System.getProperty("java.class.path") + ";" + libJUnit4 + ";" + libHamcrest;
-
-
 		if (!checkpoint_initial.isActive()) {
 			checkpoint_initial.enable();
 		}
 		
 		// Resets methods called by tested invoked
+		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		mcti.delete();
 		
-		JUnit4Runner.run(testClassRootPath, classPath, classSignature);
+		JUnit4Runner.run(
+				generateClassRootDirectory(), 
+				generateClasspaths(), 
+				getClassSignature(jp)
+		);
 		
+		waitForJUnit4Runner();
+	}
+	
+	private void waitForJUnit4Runner() throws IOException, InterruptedException {
 		while (JUnit4Runner.isRunning()) {
 			Thread.sleep(2000);
 			
@@ -299,93 +345,115 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	/**
-	 * Defines what to do when leaving a test method.
+	 * Extracts class root directory. <br />
+	 * Example: <br />
+	 * <li><b>Class path:</b> C:/app/bin/packageName1/packageName2/className.java</li>
+	 * <li><b>Class root directory:</b> C:/app/bin</li>
 	 * 
-	 * @return		True if an error has been occurred while restoring invoked 
-	 * files
+	 * @param		classPath Path where compiled file is
+	 * @param		classPackage Package of this class
+	 * @return		Class root directory
 	 */
-	private boolean onExitTestMethod()
-	{
-		boolean hasError = false;
+	private Path generateClassRootDirectory() {
+		Path binRootPath = classPath;
+		String classPackage = getClassPackage();
+		int packageFolders = 0;
 		
-		
-		if (totalTests < 0) {
-			totalTests = PreTestMethodFileProcessor.getTotalTests() - 1;
-		}
-		else {
-			totalTests--;
-		}
+		if (!(classPackage.isEmpty() || (classPackage == null)))
+			packageFolders = classPackage.split("\\.").length;
 
-		if (totalTests == 0) {
-			// Restores original method files and its compiled files
-			hasError = restoreInvokedFiles();
-			processingManager.deleteInvokedFileManagerBackup();
-			
-			// Resets totalTests
-			totalTests = -1;
-			RemoteControl.close();
+		binRootPath = binRootPath.getParent();
+
+		for (int i=0; i<packageFolders; i++) {
+			binRootPath = binRootPath.getParent();
 		}
 		
-		return hasError;
+		return binRootPath;
 	}
 	
-	public static void processCollectedInvoked()
-	{
-		ExecutionFlow methodExecutionFlow = 
-				new MethodExecutionFlow(processingManager, methodCollector);
-		ExecutionFlow constructorExecutionFlow = 
-				new ConstructorExecutionFlow(processingManager, constructorCollector.values());
-
+	private String getClassPackage() {
+		if ((testMethodSignature == null) || testMethodSignature.isEmpty())
+			return "";
+		
+		String[] terms = testMethodSignature.split("\\.");
+		StringBuilder classPackage = new StringBuilder();
+		
+		for (int i=0; i<terms.length-2; i++) {
+			classPackage.append(terms[i]);
+			classPackage.append(".");
+		}
+		
+		// Removes last dot
+		if (classPackage.length() > 0) {
+			classPackage.deleteCharAt(classPackage.length()-1);
+		}
+		
+		return classPackage.toString();
+	}
+	
+	private List<Path> generateClasspaths() {
+		List<Path> classpaths = LibraryManager.getJavaClassPath();
+		classpaths.add(LibraryManager.getLibrary("JUNIT_4"));
+		classpaths.add(LibraryManager.getLibrary("HAMCREST"));
+		
+		return classpaths;
+	}
+	
+	public static void processCollectedInvoked() {
+		ExecutionFlow methodExecutionFlow = new MethodExecutionFlow(
+				processingManager, 
+				methodCollector
+		);
 		methodExecutionFlow.execute();
+		
+		ExecutionFlow constructorExecutionFlow = new ConstructorExecutionFlow(
+				processingManager, 
+				constructorCollector.values()
+		);
 		constructorExecutionFlow.execute();
 	}
 
-	/**
-	 * Defines what to do when the application is closed.
-	 */
-	private void onShutdown()
-	{
-		try {
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-			    public void run() {
-			    	if (success)
-			    		return;
-			    	
-		    		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		    		
-		    		
-		    		if (JUnit4Runner.isRunning()) {
-				    	try {
-							JUnit4Runner.quit();
-						} 
-				    	catch (IOException e) {}
-		    		}
-			    	    		
-			    	// Restores original files			    	
-			    	restoreTestMethodFiles();
-			    	restoreInvokedFiles();
-			    	
-			    	if (testMethodManager != null)
-			    		testMethodManager.restoreAll();
-			    	
-			    	processingManager.deleteInvokedFileManagerBackup();
-			    	
-			    	deleteTestMethodBackupFiles();
-					disableCheckpoint(checkpoint);
-					disableCheckpoint(checkpoint_initial);
-					disableCheckpoint(checkpoint_appRunning);
-					
-					if (mcti.exists())
-						while (!mcti.delete());
-					
-					finished = true;
-					
-					//session.destroy();
-			    }
-			});
-		}
-		catch (IllegalStateException e) {}
+	private void onShutdown() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+		    	if (success)
+		    		return;
+		 
+	    		if (JUnit4Runner.isRunning()) {
+			    	try {
+						JUnit4Runner.quit();
+					} 
+			    	catch (IOException e) {}
+	    		}
+		    	    				    	
+	    		restoreOriginalFiles();
+		    	
+		    	processingManager.deleteInvokedFileManagerBackup();
+		    	deleteTestMethodBackupFiles();
+				disableCheckpoint(currentTestMethodCheckpoint);
+				disableCheckpoint(checkpoint_initial);
+				disableCheckpoint(firstRunCheckpoint);
+				
+				// WaitRestartEnd
+//					File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+//					if (mcti.exists())
+//						while (!mcti.delete());
+				
+				finished = true;
+				
+				//session.destroy();
+		    }
+		});
 	}
+	
+	private void restoreOriginalFiles() {
+		restoreTestMethodFiles();
+    	restoreInvokedFiles();
+    	
+    	if (testMethodManager != null)
+    		testMethodManager.restoreAll();
+	}
+	
 	
 	/**
 	 * Sets test method info, which are:
@@ -405,67 +473,94 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * @throws		IOException If an error occurs while searching for test 
 	 * method source and binary file
 	 */
-	@SuppressWarnings("unused")
-	private void setTestMethodInfo(JoinPoint jp) throws IOException
-	{
-		String classSignature, testClassSignature;
-		Path testSrcPath;
-		
-		
-		testMethodSignature = removeReturnTypeFromSignature(jp.getSignature().toString());
-		classSignature = jp.getSignature().getDeclaringTypeName();
-		testClassPath = CollectorUtil.findBinPath(classSignature);
-		
-		// Gets source file path of the test method
-		testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
-		testClassName = CollectorUtil.extractClassNameFromClassSignature(testClassSignature);
-		testClassPackage = InvokedInfo.extractPackage(testClassSignature);
-		testSrcPath = CollectorUtil.findSrcPath(testClassSignature);
-		testMethodArgs = jp.getArgs();
-
+	private void initializeTestMethodInfo(JoinPoint jp) throws IOException {
 		try {
-			testMethodInfo = new InvokedInfo.Builder()
-				.binPath(testClassPath)
-				.invokedSignature(testMethodSignature)
-				.args(testMethodArgs)
-				.srcPath(testSrcPath)
-				.build();
+			createTestMethodInfo(jp);
 		} 
 		catch(IllegalArgumentException e) {
 			Logger.error("Test method info - "+e.getMessage());
-			e.printStackTrace();
 		}
-		
+	}
+	
+	private void createTestMethodInfo(JoinPoint jp) {
+		testMethodInfo = new InvokedInfo.Builder()
+				.binPath(classPath)
+				.srcPath(srcPath)
+				.invokedSignature(testMethodSignature)
+				.args(getParameterValues(jp))
+				.build();
+	}
+	
+	private void initializeFileManager(JoinPoint jp) {
 		testMethodFileManager = new FileManager(
-			classSignature,
-			testSrcPath,
-			InvokedInfo.getCompiledFileDirectory(testClassPath),
-			testClassPackage,
-			new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs),
+			getClassSignature(jp),
+			srcPath,
+			InvokedInfo.getCompiledFileDirectory(classPath),
+			InvokedInfo.extractPackage(getClassSignature(jp)),
+			new PreTestMethodFileProcessorFactory(testMethodSignature, getParameterValues(jp)),
 			"pretestmethod.bkp"
 		);
+	}
+	
+	private void findSrcAndBinPath(JoinPoint jp) throws IOException {
+		String classSignature = getClassSignature(jp);
+				
+		classPath = CollectorUtil.findBinPath(classSignature);
+		srcPath = CollectorUtil.findSrcPath(classSignature);
 		
-		Logger.debug("Test method collector: "+testMethodInfo);
+		if ((srcPath == null) || (classPath == null)) {
+			Logger.warning("The method with the following signature" 
+					+ " will be skiped because its source file and / or " 
+					+ " binary file cannot be found: " + testMethodSignature);
+		}
+	}
+	
+	private String getSignature(JoinPoint jp) {
+		return removeReturnTypeFromSignature(jp.getSignature().toString());
+	}
+	
+	private String getClassSignature(JoinPoint jp) {
+		if (jp == null)
+			return "";
+		
+		StringBuilder classSignature = new StringBuilder();
+		String[] terms = jp.getSignature().toString().split("\\.");
+
+		for (int i=0; i<terms.length-1; i++) {
+			classSignature.append(terms[i]);
+			classSignature.append(".");
+		}
+		
+		// Removes last dot
+		if (classSignature.length() > 0)
+			classSignature.deleteCharAt(classSignature.length()-1);
+		
+		return classSignature.toString();
+	}
+	
+	private Object[] getParameterValues(JoinPoint jp) {
+		return jp.getArgs();
 	}
 	
 	private String removeReturnTypeFromSignature(String signature) {
 		return signature.substring(signature.indexOf(' ') + 1);
 	}
 	
-	/**
-	 * Performs actions for each test method performed.
-	 * 
-	 * @throws		IOException If an error occurs while restoring backup files
-	 * @throws		ClassNotFoundException If class {@link FileManager} is not
-	 * found 
-	 */
-	private void onEachTestMethod() throws IOException, ClassNotFoundException
-	{
-		if (!((testMethodManager == null) && !checkpoint.isActive()))
+	private void onEachTestMethod() throws IOException, ClassNotFoundException {
+		if (runningTestMethod())
 			return;
 		
-		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
+		initializeTestMethodManager();
 		RemoteControl.open();
+	}
+	
+	private boolean runningTestMethod() {
+		return	(testMethodManager != null) 
+				|| currentTestMethodCheckpoint.isActive();
+	}
+	
+	private void initializeTestMethodManager() throws ClassNotFoundException, IOException {
+		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false, true);
 	}
 	
 	/**
@@ -482,16 +577,13 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private void onFirstRun() throws IOException
 	{
-		if (checkpoint_appRunning.isActive())
+		if (firstRunCheckpoint.isActive())
 			return;
 		
-		Logger.Level logLevel = askLog();
+		session.destroy();
+		session.save("LOG_LEVEL", askLogLevel());		
 		
-		
-		checkpoint_appRunning.enable();
-		
-		session.destroy(); // Removes last session
-		session.save("LOG_LEVEL", logLevel);
+		firstRunCheckpoint.enable();
 	}
 	
 	/**
@@ -499,11 +591,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * 
 	 * @throws		IOException If an error occurred while loading the session
 	 */
-	private void setLogLevel() throws IOException
+	private void initializeLogger() throws IOException
 	{
 		Logger.Level logLevel = (Logger.Level)session.read("LOG_LEVEL");
-		
-		
 		Logger.setLevel(logLevel);
 	}
 	
@@ -512,11 +602,11 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * 
 	 * @throws		IOException If the checkpoint is active
 	 */
-	private void clean() throws IOException
+	private void cleanLastRun() throws IOException
 	{
-		if (checkpoint.exists() && !checkpoint.isActive()) {
+		if (currentTestMethodCheckpoint.exists() && !currentTestMethodCheckpoint.isActive()) {
 			testMethodManager.deleteBackup();
-			checkpoint.delete();
+			currentTestMethodCheckpoint.delete();
 		}
 	}
 	
@@ -528,16 +618,15 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private void processTestMethod() throws IOException
 	{
-		inTestMethod = checkpoint.exists();
-		
-		Logger.debug("Test method collector: "+testMethodInfo);
+		inTestMethod = currentTestMethodCheckpoint.exists();
 		
 		if (!inTestMethod) {
+			currentTestMethodCheckpoint.enable();
+			
 			Logger.info("Pre-processing test method...");
 			
-			checkpoint.enable();
-			
-			testMethodManager.processFile(testMethodFileManager).compile(testMethodFileManager);
+			testMethodManager.processFile(testMethodFileManager);
+			testMethodManager.compile(testMethodFileManager);
 			
 			Logger.info("Pre-processing completed");
 		}
@@ -559,27 +648,20 @@ public aspect TestMethodCollector extends RuntimeCollector
 		processingManager.destroyTestMethodManager();
 	}
 	
-	/**
-	 * Disables a checkpoint.
-	 * 
-	 * @return		If an error has occurred
-	 */
-	private boolean disableCheckpoint(Checkpoint checkpoint)
-	{
+	private boolean disableCheckpoint(Checkpoint checkpoint) {
 		if (checkpoint == null)
-			return false;
+			return true;
 		
-		boolean hasError = false;
-		
+		boolean success = true;
 		
 		try {
 			checkpoint.disable();
 		} 
 		catch (IOException e) {
-			hasError = true;
+			success = false;
 		}
 		
-		return hasError;
+		return success;
 	}
 	
 	/**
@@ -589,22 +671,18 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 */
 	private boolean restoreTestMethodFiles()
 	{
-		if (!processingManager.isTestMethodManagerInitialized())
-			return false;
-		
-		boolean hasError = false;
-		
+		boolean success = true;
 		
 		try {
 			processingManager.restoreTestMethodOriginalFiles();
 		} 
 		catch (ClassNotFoundException e) {
-			hasError = true;
+			success = false;
 			Logger.error("Class FileManager not found");
 			e.printStackTrace();
 		} 
 		catch (IOException e) {
-			hasError = true;
+			success = false;
 			Logger.error("Could not recover the backup file of the test method");
 			Logger.error("See more: https://github.com/williamniemiec/"
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
@@ -612,35 +690,25 @@ public aspect TestMethodCollector extends RuntimeCollector
 			e.printStackTrace();
 		}
 		catch (NullPointerException e) {
-			hasError = true;
+			success = false;
 		}
 		
-		return hasError;
+		return success;
 	}
 	
-	/**
-	 * Restores original invoked files.
-	 * 
-	 * @return		If an error has occurred
-	 */
-	private boolean restoreInvokedFiles()
-	{
-		if (!processingManager.isInvokedManagerInitialized())
-			return false;
-		
-		boolean hasError = false;
-		
+	private boolean restoreInvokedFiles() {
+		boolean success = true;
 		
 		try {
 			processingManager.restoreInvokedOriginalFiles();
 		} 
 		catch (ClassNotFoundException e) {
-			hasError = true;
+			success = false;
 			Logger.error("Class FileManager not found");
 		 	e.printStackTrace();
 		} 
 		catch (IOException e) {
-			hasError = true;
+			success = false;
 			Logger.error("Could not recover all backup files for methods");
 			Logger.error("See more: https://github.com/williamniemiec/"
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
@@ -648,7 +716,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 			e.printStackTrace();
 		}
 		
-		return hasError;
+		return success;
 	}
 	
 	/**
@@ -656,7 +724,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	 * 
 	 * @return		Selected log level
 	 */
-	private Level askLog()
+	private Level askLogLevel()
 	{
 		Logger.Level logLevel;
 		String[] options = {

@@ -219,19 +219,20 @@ public class CollectorUtil
 	/**
 	 * Extracts package from a class signature.
 	 * 
-	 * @param signature Signature of the class
+	 * @param classSignature Signature of the class
 	 * 
 	 * @return Class package
 	 */
-	public static String extractPackage(String signature)
+	public static String extractPackageFromMethodSignature(String methodSignature)
 	{
-		if (signature == null || signature.isEmpty()) { return ""; }
+		if (methodSignature == null || methodSignature.isEmpty())
+			return "";
 		
-		String[] tmp = signature.split("\\.");
+		String[] tmp = methodSignature.split("\\.");
 		StringBuilder response = new StringBuilder();
 		
 		// Appends all terms of signature, without the last
-		for (int i=0; i<tmp.length-1; i++) {
+		for (int i=0; i<tmp.length-2; i++) {
 			response.append(tmp[i]);
 			response.append(".");
 		}
@@ -254,7 +255,6 @@ public class CollectorUtil
 	public static String extractClassNameFromClassSignature(String classSignature) 
 	{
 		String terms[] = classSignature.split("\\.");
-		
 		
 		return terms[terms.length-1];
 	}

@@ -73,7 +73,7 @@ public abstract aspect RuntimeCollector
 	protected static InvokedInfo testMethodInfo;
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
-	protected static Object[] testMethodArgs;
+//	protected static Object[] testMethodArgs;
 	protected static Map<String, Set<String>> methodsCalledByTestedInvoked = new HashMap<>();
 	
 	

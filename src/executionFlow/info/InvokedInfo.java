@@ -260,34 +260,7 @@ public class InvokedInfo
 	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------	
-	/**
-	 * Extracts class signature from an invoked signature.
-	 * 
-	 * @param		invokedSignature Invoked signature
-	 * 
-	 * @return		Class signature
-	 */
-	public static String extractClassSignature(String invokedSignature)
-	{
-		if ((invokedSignature == null) || invokedSignature.isBlank())
-			return "";
-		
-		StringBuilder classSignature = new StringBuilder();
-		String[] terms = invokedSignature.split("\\.");
-
-		for (int i=0; i<terms.length-1; i++) {
-			classSignature.append(terms[i]);
-			classSignature.append(".");
-		}
-		
-		// Removes last dot
-		if (classSignature.length() > 0)
-			classSignature.deleteCharAt(classSignature.length()-1);
-		
-		return classSignature.toString();
-	}
-	
+	//-------------------------------------------------------------------------		
 	/**
 	 * Extracts package from a class signature.
 	 * 
@@ -315,32 +288,6 @@ public class InvokedInfo
 	}
 	
 	/**
-	 * Extracts class root directory. <br />
-	 * Example: <br />
-	 * <li><b>Class path:</b> C:/app/bin/packageName1/packageName2/className.java</li>
-	 * <li><b>Class root directory:</b> C:/app/bin</li>
-	 * 
-	 * @param		classPath Path where compiled file is
-	 * @param		classPackage Package of this class
-	 * @return		Class root directory
-	 */
-	public static Path extractClassRootDirectory(Path classPath, String classPackage)
-	{
-		int packageFolders = 0;
-		
-		if (!(classPackage.isEmpty() || (classPackage == null)))
-			packageFolders = classPackage.split("\\.").length;
-
-		classPath = classPath.getParent();
-
-		for (int i=0; i<packageFolders; i++) {
-			classPath = classPath.getParent();
-		}
-		
-		return classPath;
-	}
-	
-	/**
 	 * Checks whether the invoked belongs to an anonymous class.
 	 * 
 	 * @return		If the invoked belongs to an anonymous class
@@ -353,6 +300,33 @@ public class InvokedInfo
 			return false;
 		
 		return terms[terms.length-1].matches("[0-9]+");
+	}
+	
+	/**
+	 * Extracts class signature from an invoked signature.
+	 * 
+	 * @param		invokedSignature Invoked signature
+	 * 
+	 * @return		Class signature
+	 */
+	private String extractClassSignature()
+	{
+		if ((invokedSignature == null) || invokedSignature.isBlank())
+			return "";
+		
+		StringBuilder classSignature = new StringBuilder();
+		String[] terms = invokedSignature.split("\\.");
+
+		for (int i=0; i<terms.length-1; i++) {
+			classSignature.append(terms[i]);
+			classSignature.append(".");
+		}
+		
+		// Removes last dot
+		if (classSignature.length() > 0)
+			classSignature.deleteCharAt(classSignature.length()-1);
+		
+		return classSignature.toString();
 	}
 	
 	@Override
@@ -427,7 +401,7 @@ public class InvokedInfo
 	public String getClassSignature()
 	{
 		if (classSignature == null)
-			classSignature = extractClassSignature(invokedSignature);
+			classSignature = extractClassSignature();
 		
 		return classSignature; 
 	}
