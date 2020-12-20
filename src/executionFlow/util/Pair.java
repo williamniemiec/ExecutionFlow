@@ -16,8 +16,8 @@ public class Pair<T1, T2>
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	public T1 first;
-	public T2 second;
+	private T1 first;
+	private T2 second;
 	
 	
 	//-------------------------------------------------------------------------
@@ -63,10 +63,10 @@ public class Pair<T1, T2>
 		if (o == null)							{	return false;	}
 		if (o.getClass() != this.getClass())	{	return false;	} 
 		if (o == this)							{	return true;	}
+		if (o instanceof Pair)					{	return true;	}
 		
-		return	o instanceof Pair && 
-				((Pair)o).first.equals(this.first) && 
-				((Pair)o).second.equals(this.second);
+		return	((Pair)o).first.equals(this.first) 
+				&& ((Pair)o).second.equals(this.second);
 	}
 	
 	/**
@@ -83,4 +83,28 @@ public class Pair<T1, T2>
 	{
         return new Pair<T1, T2>(first, second);
     }
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters & Setters
+	//-------------------------------------------------------------------------
+	public T1 getFirst()
+	{
+		return first;
+	}
+	
+	public void setFirst(T1 first)
+	{
+		this.first = first;
+	}
+	
+	public T2 getSecond()
+	{
+		return second;
+	}
+	
+	public void setSecond(T2 second)
+	{
+		this.second = second;
+	}
 }

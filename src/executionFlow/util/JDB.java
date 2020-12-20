@@ -40,13 +40,14 @@ public class JDB
 	 * @param		classSignature Class signature to begin debugging
 	 * @param		args Arguments passed to the main() method of classSignature
 	 */
-	public JDB(Path workingDirectory, String classPath, String srcPath, String classSignature, String classArgs)
+	private JDB(Path workingDirectory, String classPath, String srcPath, 
+			String classSignature, String classArgs)
 	{
 		if (classPath == null)
-			throw new IllegalStateException("Class path list cannot be empty");
+			throw new IllegalStateException("Class path cannot be empty");
 		
 		if (srcPath == null)
-			throw new IllegalStateException("Source path list cannot be empty");
+			throw new IllegalStateException("Source path cannot be empty");
 
 		classArgs = (classArgs == null) ? "" : classArgs;
 		classSignature = (classSignature == null) ? "" : classSignature;
@@ -63,132 +64,82 @@ public class JDB
 			processBuilder.directory(workingDirectory.toFile());
 	}
 	
-	/**
-	 * Creates API for JDB.
-	 * 
-	 * @param		workingDirectory Directory that will serve as a reference
-	 * for the execution of the process
-	 * @param		classPath Class path list that will be used in JDB
-	 * @param		srcPath Source path list that will be used in JDB
-	 * @param		classSignature Class signature to begin debugging
-	 * @param		args Arguments passed to the main() method of classSignature
-	 */
-	public JDB(Path workingDirectory, List<Path> classPath, List<Path> srcPath, String classSignature, String classArgs)
-	{
-		this(
-				workingDirectory, 
-				DataUtil.implode(classPath, ";"), 
-				DataUtil.implode(srcPath, ";"), 
-				classSignature, 
-				classArgs
-		);
-	}
 	
-	/**
-	 * Creates API for JDB.
-	 * 
-	 * @param		workingDirectory Directory that will serve as a reference
-	 * for the execution of the process
-	 * @param		classPath Class path list that will be used in JDB
-	 * @param		srcPath Source path list that will be used in JDB
-	 */
-	public JDB(Path workingDirectory, List<Path> classPath, List<Path> srcPath)
+	//-------------------------------------------------------------------------
+	//		Builder
+	//-------------------------------------------------------------------------
+	public static class Builder
 	{
-		this(
-				workingDirectory, 
-				DataUtil.implode(classPath, ";"), 
-				DataUtil.implode(srcPath, ";"),
-				null,
-				null
-		);
-	}
-	
-	/**
-	 * Creates API for JDB.
-	 * 
-	 * @param		workingDirectory Directory that will serve as a reference
-	 * for the execution of the process
-	 * @param		classPathArgumentFile Argument file containing class path 
-	 * list that will be used in JDB
-	 * @param		srcPath Source path list that will be used in JDB
-	 */
-	public JDB(Path workingDirectory, Path classPathArgumentFile, List<Path> srcPath)
-	{
-		this(
-				workingDirectory, 
-				"@" + classPathArgumentFile, 
-				DataUtil.implode(srcPath, ";"),
-				null,
-				null
-		);
-	}
-	
-	/**
-	 * Creates API for JDB.
-	 * 
-	 * @param		workingDirectory Directory that will serve as a reference
-	 * for the execution of the process
-	 * @param		classSignature Class signature to begin debugging
-	 * @param		args Arguments passed to the main() method of classSignature
-	 */
-	public JDB(Path workingDirectory, String classSignature, String args)
-	{
-		processBuilder = new ProcessBuilder(
-			"jdb",	classSignature, args
-		);
-		processBuilder.directory(workingDirectory.toFile());
-	}
-	
-	/**
-	 * Creates API for JDB. Using this constructor, working directory will be
-	 * current directory.
-	 * 
-	 * @param		classPath Class path list that will be used in JDB
-	 * @param		srcPath Source path list that will be used in JDB
-	 * @param		classSignature Class signature to begin debugging
-	 * @param		args Arguments passed to the main() method of classSignature
-	 */
-	public JDB(List<Path> classPath, List<Path> srcPath, String classSignature, String classArgs)
-	{
-		this(
-				null, 
-				DataUtil.implode(srcPath, ";"), 
-				DataUtil.implode(srcPath, ";"),
-				classSignature,
-				classArgs
-		);
-	}
-	
-	/**
-	 * Creates API for JDB. Using this constructor, working directory will be
-	 * current directory.
-	 * 
-	 * @param		classPath Class path list that will be used in JDB
-	 * @param		srcPath Source path list that will be used in JDB
-	 */
-	public JDB(List<Path> classPath, List<Path> srcPath)
-	{
-		this(
-				null, 
-				DataUtil.implode(srcPath, ";"), 
-				DataUtil.implode(srcPath, ";"),
-				null,
-				null
-		);
-	}
-	
-	/**
-	 * Creates API for JDB. Using this constructor, working directory will be
-	 * current directory.
-	 * 
-	 * @param		classSignature Class signature to begin debugging
-	 * @param		args Arguments passed to the main() method of classSignature
-	 */
-	public JDB(String classSignature, String args)
-	{
-		processBuilder = new ProcessBuilder(
-			"jdb",	classSignature, args
-		);
+		private Path argumentFile; 
+		private Path workingDirectory;
+		private List<Path> classPath;
+		private List<Path> srcPath;
+		private String classSignature;
+		private String classArgs;
+		
+		public Builder argumentFile(Path argumentFile)
+		{
+			this.argumentFile = argumentFile;
+			return this;
+		}
+		
+		public Builder workingDirectory(Path workingDirectory)
+		{
+			this.workingDirectory = workingDirectory;
+			return this;
+		}
+		
+		public Builder classPath(List<Path> classPath)
+		{
+			this.classPath = classPath;
+			return this;
+		}
+		
+		public Builder srcPath(List<Path> srcPath)
+		{
+			this.srcPath = srcPath;
+			return this;
+		}
+		
+		public Builder classSignature(String classSignature)
+		{
+			this.classSignature = classSignature;
+			return this;
+		}
+		
+		public Builder classArgs(String classArgs)
+		{
+			this.classArgs = classArgs;
+			return this;
+		}
+		
+		public JDB build()
+		{
+			if (classPath == null)
+				classPath = new ArrayList<>();
+			
+			if (srcPath == null)
+				srcPath = new ArrayList<>();
+			
+			if (argumentFile == null) {
+				return new JDB(
+						workingDirectory, 
+						DataUtil.implode(classPath, ";"), 
+						DataUtil.implode(srcPath, ";"), 
+						classSignature, 
+						classArgs
+				);
+			}
+			else {
+				return new JDB(
+						workingDirectory, 
+						"@" + argumentFile, 
+						DataUtil.implode(srcPath, ";"), 
+						classSignature, 
+						classArgs
+				);
+			}
+		}
 	}
 	
 	
@@ -204,10 +155,19 @@ public class JDB
 	 */
 	public JDB start() throws IOException
 	{
+		initializeJDB();
+		onShutdown();
+		
+		return this;
+	}
+
+	private void initializeJDB() throws IOException {
 		process = processBuilder.start();
 		out = new JDBOutput();
 		in = new JDBInput();
-		
+	}
+
+	private void onShutdown() {
 		try {
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 			    public void run() {
@@ -224,9 +184,6 @@ public class JDB
 		}
 		catch (IllegalStateException e)
 		{}
-
-		
-		return this;
 	}
 
 	/**
@@ -349,8 +306,12 @@ public class JDB
 		 */
 		public JDBInput()
 		{
-			this.input = new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(process.getOutputStream())), true);
+			this.input = new PrintWriter(
+					new BufferedWriter(
+							new OutputStreamWriter(
+									process.getOutputStream())), 
+					true
+			);
 		}
 		
 		
@@ -418,8 +379,10 @@ public class JDB
          */
 		public JDBOutput()
 		{
-			output = new BufferedReader(new InputStreamReader(
-					process.getInputStream()));
+			output = new BufferedReader(
+					new InputStreamReader(
+							process.getInputStream()
+			));
 		}
 		
 		
@@ -470,7 +433,6 @@ public class JDB
 		{
 			List<String> response = new ArrayList<>();
 			
-			
 			while (output.ready()) {
 				response.add(read());
 			}
@@ -486,7 +448,7 @@ public class JDB
 			try {
 				output.close();
 			} 
-			catch (IOException e) { }
+			catch (IOException e) {}
 		}
 	}
 }

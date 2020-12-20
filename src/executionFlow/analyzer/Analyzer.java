@@ -155,7 +155,11 @@ public abstract class Analyzer {
 		List<Path> srcPath = getSourcePath(invokedInfo, testMethodInfo, testClassRootPath);
 		List<Path> classPath = getClassPath(testClassRootPath);
 
-		jdb = new JDB(testClassRootPath, classPath, srcPath);
+		jdb = new JDB.Builder()
+				.workingDirectory(testClassRootPath)
+				.classPath(classPath)
+				.srcPath(srcPath)
+				.build();
 		
 		Logger.debug("Analyzer", "Classpath: " + classPath);
 		Logger.debug("Analyzer", "Srcpath: " + srcPath);
