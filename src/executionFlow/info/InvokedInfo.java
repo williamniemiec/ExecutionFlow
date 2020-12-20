@@ -577,7 +577,7 @@ public class InvokedInfo
 	
 	public String getConcreteInvokedSignature()
 	{
-		if (concreteMethodSignature == null)
+		if ((concreteMethodSignature == null) || concreteMethodSignature.isBlank())
 			concreteMethodSignature = invokedSignature.replaceAll("\\$", ".");
 		
 		return concreteMethodSignature;

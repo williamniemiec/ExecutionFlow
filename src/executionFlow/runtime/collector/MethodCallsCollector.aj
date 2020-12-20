@@ -29,8 +29,8 @@ import executionFlow.util.Logger;
  * @since		2.0.0
  */
 @SuppressWarnings("unused")
-public aspect MethodCallsCollector extends RuntimeCollector
-{
+public aspect MethodCallsCollector extends RuntimeCollector {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -79,8 +79,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	//-------------------------------------------------------------------------
 	//		Join points
 	//-------------------------------------------------------------------------
-	before(): invokedSignature()
-	{
+	before(): invokedSignature() {
 		if (isNativeMethod(thisJoinPoint) || !isValidSignature(thisJoinPoint)) 
 			return;
 		
@@ -88,9 +87,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 		invocationSignature = removeReturnTypeFromSignature(invocationSignature);
 	}
 	
-	
-	before(): invokedMethodByTestedInvoker()
-	{
+	before(): invokedMethodByTestedInvoker() {
 		if ((invocationSignature == null) || !isMethodSignature(thisJoinPoint) 
 				|| isNativeMethod(thisJoinPoint))
 			return;
@@ -154,8 +151,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 * Saves methods called by tested invoked. It will save to a file named
 	 * 'mcti.ef' (Methods Called by Tested Invoked).
 	 */
-	private void storeCollectedMethods()
-	{
+	private void storeCollectedMethods() {
 		if (methodsCalledByTestedInvoked.isEmpty())
 			return;
 		
@@ -178,8 +174,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 * opened for reading.
 	 * @throws		IOException If 'mcti.ef' cannot be read
 	 */
-	private void load() throws FileNotFoundException, IOException
-	{
+	private void load() throws FileNotFoundException, IOException {
 		File file = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		
 		if (!file.exists())
@@ -242,8 +237,7 @@ public aspect MethodCallsCollector extends RuntimeCollector
 	 * opened for reading.
 	 * @throws		IOException If 'mcti.ef' cannot be written
 	 */
-	private void store() throws FileNotFoundException, IOException
-	{
+	private void store() throws FileNotFoundException, IOException {
 		File file = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {

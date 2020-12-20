@@ -140,13 +140,6 @@ public abstract aspect RuntimeCollector
 				signature.contains("org.junit.");
 	}
 	
-	/**
-	 * Returns if a signature is a method signature.
-	 * 
-	 * @param		signature Signature to be analyzed
-	 * 
-	 * @return		If the signature is a method signature
-	 */
 	protected boolean isMethodSignature(JoinPoint jp)
 	{
 		String signature = jp.getSignature().toString();
@@ -173,28 +166,23 @@ public abstract aspect RuntimeCollector
 	}
 	
 	/**
-	 * Checks if a signature of a constructor is from a test method 
-	 * constructor.
+	 * Extracts class name from a class signature.
 	 * 
-	 * @param		constructorSignature Signature of the constructor
+	 * @param	classSignature Signature of the class
 	 * 
-	 * @return		If the signature of the constructor is from a test method 
-	 * constructor
+	 * @return	Name of the class
 	 */
-	protected boolean isTestMethodConstructor(String constructorSignature)
+	public static String extractClassNameFromClassSignature(String classSignature)
 	{
-		if ((constructorSignature == null) || (testMethodSignature == null))
-			return true;
+		String response;
+		String[] tmp = classSignature.split("\\.");
 		
-		String testMethodClassName, methodName;
-		String[] tmp;
+		if (tmp.length < 1)
+			response = tmp[0];
+		else
+			response = tmp[tmp.length-1];
 		
-		
-		testMethodClassName = CollectorExecutionFlow.getClassName(testMethodSignature);
-		tmp = constructorSignature.split("\\@")[0].split("\\.");
-		methodName = tmp[tmp.length-1];
-		
-		return methodName.equals(testMethodClassName);
+		return response;	
 	}
 	
 	/**

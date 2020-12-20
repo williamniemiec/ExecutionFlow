@@ -440,7 +440,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		// Gets source file path of the test method
 		testClassSignature = InvokedInfo.extractClassSignature(testMethodSignature);
-		testClassName = CollectorExecutionFlow.getClassName(testClassSignature);
+		testClassName = CollectorExecutionFlow.extractClassNameFromClassSignature(testClassSignature);
 		testClassPackage = InvokedInfo.extractPackage(testClassSignature);
 		testSrcPath = CollectorExecutionFlow.findSrcPath(testClassSignature);
 		testMethodArgs = jp.getArgs();

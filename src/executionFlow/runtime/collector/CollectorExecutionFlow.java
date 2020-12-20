@@ -74,21 +74,6 @@ public class CollectorExecutionFlow
 		return response;
 	}
 	
-	
-	
-	/**
-	 * Extracts parameter types of a method.
-	 * 
-	 * @param	jp JoinPoint with the method
-	 * 
-	 * @return	Classes of parameter types of the method
-	 */
-	public static Class<?>[] extractParamTypes(JoinPoint jp)
-	{
-		Method method = ((MethodSignature) jp.getSignature()).getMethod();
-		return method.getParameterTypes();
-	}
-	
 	/**
 	 * When executed it will determine the absolute path of a class.
 	 * 
@@ -184,6 +169,7 @@ public class CollectorExecutionFlow
 			methodName = m.group();					// ".<methodName>("
 			p = Pattern.compile("[A-z0-9-_$]+");
 			m = p.matcher(methodName);
+			
 			if (m.find())
 				methodName = m.group();				// "<methodName>"
 		}
@@ -191,25 +177,7 @@ public class CollectorExecutionFlow
 		return methodName;
 	}
 	
-	/**
-	 * Extracts class name from a class signature.
-	 * 
-	 * @param	classSignature Signature of the class
-	 * 
-	 * @return	Name of the class
-	 */
-	public static String getClassName(String classSignature)
-	{
-		String response;
-		String[] tmp = classSignature.split("\\.");
-		
-		if (tmp.length < 1)
-			response = tmp[0];
-		else
-			response = tmp[tmp.length-1];
-		
-		return response;	
-	}
+	
 	
 	/**
 	 * Extracts the return type of a method.
@@ -225,21 +193,6 @@ public class CollectorExecutionFlow
 		
 		
 		return terms[terms.length-2];
-	}
-	
-	/**
-	 * Extracts the return type of a method.
-	 * 
-	 * @param	jp JoinPoint with the method
-	 * 
-	 * @return	Class of return type of the method
-	 */
-	public static Class<?> extractReturnType(JoinPoint jp)
-	{
-		Method method = ((MethodSignature) jp.getSignature()).getMethod();
-		
-		
-		return method.getReturnType();
 	}
 	
 	/**
