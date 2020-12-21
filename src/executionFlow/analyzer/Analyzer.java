@@ -86,7 +86,6 @@ public abstract class Analyzer {
 			startJDB();
 			enableTimeout(timeoutID, timeoutTime);
 			run();
-			waitForJDB();
 		}
 		finally {
 			disableTimeout(timeoutID);
@@ -96,15 +95,6 @@ public abstract class Analyzer {
 		mergeMethodsCalledByTestedInvoked();
 		
 		return this;
-	}
-	
-	private void waitForJDB() {
-		try {
-			jdb.waitFor();
-		} 
-		catch (InterruptedException e) {
-			Logger.error(e.getMessage());
-		}
 	}
 
 	protected abstract void run() throws IOException;
