@@ -38,6 +38,7 @@ public abstract class Analyzer {
 	protected InvokedInfo invoked;
 	protected InvokedInfo testMethod;
 	protected JDB jdb;
+	protected boolean stopJDB;
 	private List<String> commands;
 	
 	
@@ -155,6 +156,7 @@ public abstract class Analyzer {
 	}
 
 	private void closeJDB() {
+		stopJDB = true;
 		jdb.send(buildExitCommand());
 		jdb.quit();
 	}

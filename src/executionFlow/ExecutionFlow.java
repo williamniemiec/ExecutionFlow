@@ -81,6 +81,7 @@ public abstract class ExecutionFlow {
 		this.processingManager = processingManager;
 		this.exportManager = new ExportManager(isDevelopment(), isConstructor());
 		this.computedTestPaths = new HashMap<>();
+		this.processedSourceFiles = new HashMap<>();
 	}
 	
 
@@ -155,7 +156,7 @@ public abstract class ExecutionFlow {
 			Logger.error(e3.getMessage());
 			
 			processingManager.restoreOriginalFile(invokedFileManager);
-			processingManager.restoreOriginalFile(testMethodFileManager);					
+			processingManager.restoreOriginalFile(testMethodFileManager);
 		}
 	}
 
@@ -197,7 +198,7 @@ public abstract class ExecutionFlow {
 	}
 
 	private void updateCollectors(Path testMethodSrcPath, Path invokedSrcPath) {
-		if (invokedSrcPath.equals(testMethodSrcPath))
+		if (!invokedSrcPath.equals(testMethodSrcPath))
 			return;
 
 		TestMethodCollector.updateCollectorInvocationLines(
@@ -234,7 +235,7 @@ public abstract class ExecutionFlow {
 									  Map<Integer, Integer> mapping) {
 		if (mapping == null)
 			return;
-		
+
 		if (mapping.containsKey(invokedInfo.getInvocationLine())) {
 			invokedInfo.setInvocationLine(mapping.get(invokedInfo.getInvocationLine()));
 		}
