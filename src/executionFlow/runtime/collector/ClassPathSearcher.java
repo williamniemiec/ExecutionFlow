@@ -6,10 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.aspectj.lang.Signature;
 
 import executionFlow.ExecutionFlow;
 
@@ -50,6 +46,7 @@ public class ClassPathSearcher
 		// Gets folder where .class is
 		String path = extractPathFromSignature(classSignature);
 		String prefix = ExecutionFlow.isDevelopment() ? "bin\\" : "";
+		String filename = prefix + path + className + ".class";
 
 		
 		binPath = null;
@@ -58,7 +55,7 @@ public class ClassPathSearcher
 		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith(prefix+path+className+".class")) {
+		        if (file.toString().endsWith(filename)) {
 		        	file = Path.of(file.toAbsolutePath().toString().replaceAll("(\\/|\\\\)org(\\/|\\\\)org(\\/|\\\\)", "/org/"));
 		        	binPath = file;
 		        }
@@ -90,6 +87,8 @@ public class ClassPathSearcher
 		// Gets path where .java is
 		String path = extractPathFromSignature(classSignature);
 		
+		String filename = path + effectiveClassName + ".java";
+		
 		
 		srcPath = null;
 		
@@ -97,7 +96,7 @@ public class ClassPathSearcher
 		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith(path+effectiveClassName+".java")) {
+		        if (file.toString().endsWith(filename)) {
 		        	file = Path.of(file.toAbsolutePath().toString().replaceAll("(\\/|\\\\)org(\\/|\\\\)org(\\/|\\\\)", "/org/"));
 		        	srcPath = file;
 		        	return FileVisitResult.TERMINATE;

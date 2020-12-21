@@ -52,7 +52,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static boolean inTestMethod = true;
 	private static boolean finished;
 	
-	
 	private static Checkpoint currentTestMethodCheckpoint =
 			new Checkpoint(ExecutionFlow.getAppRootPath(), "Test_Method");
 	private static Checkpoint checkpoint_initial = 
@@ -62,7 +61,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private static Session session = 
 			new Session("session.ef", new File(System.getProperty("user.home")));
 	
-	
 	private static int remainingTests = -1;
 	private String lastRepeatedTestSignature;
 	private FilesManager testMethodManager;
@@ -70,9 +68,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private boolean isRepeatedTest;
 	private static boolean errorProcessingTestMethod;
 	private volatile static boolean success;
-	
 	private static ProcessingManager processingManager;
-	
 	private Path classPath;
 	private Path srcPath;
 	
@@ -122,6 +118,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 		
 		collectSourceAndBinaryPaths(thisJoinPoint);
 		collectTestMethod(thisJoinPoint);
+		
+		if ((classPath == null) || (srcPath == null))
+			return;
 
 		initializeManagers(thisJoinPoint);
 		
@@ -140,6 +139,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 			errorProcessingTestMethod = false;
 			return;
 		}
+		
+		if ((classPath == null) || (srcPath == null))
+			return;
 		
 		if (finished)
 			return;
@@ -229,6 +231,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	private boolean restoreTestMethodFiles() {
+		if (processingManager == null)
+			return true;
+		
 		boolean success = true;
 		
 		try {
@@ -254,6 +259,9 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	private boolean restoreInvokedFiles() {
+		if (processingManager == null)
+			return true;
+		
 		boolean success = true;
 		
 		try {
@@ -341,7 +349,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 		if (classSignature.length() > 0)
 			classSignature.deleteCharAt(classSignature.length()-1);
 		
-		return classSignature.toString();
+		return removeReturnTypeFromSignature(classSignature.toString());
 	}
 	
 	private void initializeManagers(JoinPoint thisJoinPoint) {

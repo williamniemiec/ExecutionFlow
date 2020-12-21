@@ -28,11 +28,15 @@ public class JUnit4Runner
 	private boolean stopped;
 	private boolean displayVersion;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	private JUnit4Runner(Path workingDirectory, String classPath, String classSignature, 
 			boolean displayVersion)
 	{
 		this.displayVersion = displayVersion;
-		
+
 		processBuilder =  new ProcessBuilder(
 			"java", 
 				"-cp", classPath, 
