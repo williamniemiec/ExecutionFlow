@@ -12,12 +12,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.info.InvokedContainer;
 import executionFlow.util.DataUtil;
-import executionFlow.util.Pair;
 import executionFlow.util.logger.Logger;
-
 
 /**
  * Exports computed test path to a file.
@@ -26,8 +26,8 @@ import executionFlow.util.logger.Logger;
  * @version		5.2.3
  * @since		1.0
  */
-public class FileExporter implements TestPathExporter 
-{
+public class FileExporter implements TestPathExporter {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -46,8 +46,7 @@ public class FileExporter implements TestPathExporter
 	 * @param		dirName Directory name
 	 * @param		isConstructor If the invoked is a constructor
 	 */
-	public FileExporter(String dirName, boolean isConstructor)
-	{
+	public FileExporter(String dirName, boolean isConstructor) {
 		this.dirName = dirName;
 		this.isConstructor = isConstructor;
 	}
@@ -57,25 +56,27 @@ public class FileExporter implements TestPathExporter
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) 
-	{
+	public void export(Map<InvokedContainer, List<List<Integer>>> classTestPaths) {
 		if (classTestPaths == null || classTestPaths.isEmpty())
 			return;
 		
 		try {
-			removeConflictingExportFiles(classTestPaths);
+			removeConflictingExportFiles(classTestPaths.keySet());
 		
-			for (Map.Entry<Pair<String, String>, List<List<Integer>>> e : classTestPaths.entrySet()) {
-				Pair<String, String> signatures = e.getKey();
+			for (Map.Entry<InvokedContainer, List<List<Integer>>> e : classTestPaths.entrySet()) {
+				InvokedContainer invokedContainer = e.getKey();
 				List<List<Integer>> testPaths = e.getValue();
-				String testMethodSignature = signatures.getFirst();
-				String invokedSignature = signatures.getSecond();
 	
 
-				this.exportFile = generateDirectoryFromSignature(invokedSignature);
+				this.exportFile = generateDirectoryFromSignature(
+						invokedContainer.getInvokedInfo().getConcreteInvokedSignature()
+				);
 				
 				testPaths = removeEmptyTestPaths(testPaths);
-				storeExportFile(testPaths, testMethodSignature);
+				storeExportFile(
+						testPaths, 
+						invokedContainer.getTestMethodInfo().getInvokedSignature()
+				);
 			}
 
 			Logger.info("Test paths have been successfully exported!");
@@ -158,26 +159,22 @@ public class FileExporter implements TestPathExporter
 	}
 
 	/**
-	 * Removes test path export files that will be overwritten.
+	 * Removes test path export files that will be overwritten (avoids 
+	 * creating duplicate files).
 	 * 
 	 * @param		classTestPaths Collected test paths
 	 * 
 	 * @throws		IOException If any test path file to be removed is in use
 	 */
-	private void removeConflictingExportFiles(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) 
+	private void removeConflictingExportFiles(Set<InvokedContainer> invokedContainer) 
 			throws IOException
 	{
-		// Removes test path folders that will be overwritten (avoids 
-		// creating duplicate files)
-		for (Pair<String, String> signatures : classTestPaths.keySet()) {
-			String testMethodSignature = signatures.getFirst();
-			String invokedSignature = signatures.getSecond();
-			
-			File testPathExportDirectory = generateDirectoryFromSignature(invokedSignature).toFile();
+		for (InvokedContainer container : invokedContainer) {		
+			File testPathExportDirectory = generateDirectoryFromSignature(container.getInvokedInfo().getConcreteInvokedSignature()).toFile();
 			
 			removeTestPathExportFileWithTestMethodSignature(
 					testPathExportDirectory, 
-					testMethodSignature
+					container.getTestMethodInfo().getInvokedSignature()
 			);
 		}
 	}

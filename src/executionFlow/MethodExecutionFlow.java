@@ -8,11 +8,9 @@ import java.util.Map;
 import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import executionFlow.info.InvokedContainer;
 import executionFlow.io.manager.ProcessingManager;
-import executionFlow.runtime.collector.MethodCollector;
-
 
 /**
- * Generates data for collected methods. Among these data:
+ * For each collected method, obtain the following information:
  * <ul>
  * 	<li>Test path</li>
  * 	<li>Methods called by this method</li>
@@ -24,6 +22,7 @@ import executionFlow.runtime.collector.MethodCollector;
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -31,25 +30,23 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	
 
 	//-------------------------------------------------------------------------
-	//		Constructors
+	//		Constructor
 	//-------------------------------------------------------------------------
-	/**
-	 * Computes test path for collected methods.
-	 * 
-	 * @param		collectedMethods Collected methods from {@link MethodCollector}
-	 */
 	public MethodExecutionFlow(ProcessingManager processingManager, 
 			Map<Integer, List<InvokedContainer>> collectedMethods) {
 		super(processingManager);
 		
 		this.collectors = new ArrayList<>();
-		computedTestPaths = new HashMap<>();
+		this.computedTestPaths = new HashMap<>();
 		
 		storeCollectedMethods(collectedMethods);
 		initializeMethodsCalledByTestedInvokedExporter();
 	}
-	
-	
+
+
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	private void storeCollectedMethods(Map<Integer, List<InvokedContainer>> collectedMethods) {
 		// Stores only the first collector of each line, since the test path of
 		// methods called within a loop will be obtained at once
@@ -57,27 +54,18 @@ public class MethodExecutionFlow extends ExecutionFlow {
 			collectors.add(collector.get(0));
 		}
 	}
-
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
+	
 	private void initializeMethodsCalledByTestedInvokedExporter() {
-		if (isDevelopment()) {
-			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-					"MethodsCalledByTestedMethod", 
-					"examples\\results",
-					false
-			);
-		}
-		else {
-			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-					"MethodsCalledByTestedMethod", 
-					"results",
-					false
-			);
-		}
+		String outputPath = isDevelopment() ? "examples\\results" : "results";
+		
+		invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
+				"MethodsCalledByTestedMethod", 
+				outputPath,
+				true
+		);
 	}
 	
+	@Override
 	protected List<InvokedContainer> getCollectors() {
 		return collectors;
 	}

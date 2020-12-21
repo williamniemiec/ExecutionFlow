@@ -1,6 +1,5 @@
 package executionFlow.exporter.testpath;
 
-
 /**
  * Contains all types of test path exports.
  * 
@@ -8,8 +7,8 @@ package executionFlow.exporter.testpath;
  * @version		2.0.0
  * @since		2.0.0
  */
-public enum TestPathExportType 
-{
+public enum TestPathExportType {
+	
 	//-------------------------------------------------------------------------
 	//		Enumerations
 	//-------------------------------------------------------------------------

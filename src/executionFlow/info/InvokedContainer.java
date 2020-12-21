@@ -44,8 +44,56 @@ public class InvokedContainer
 				+ ", testMethodInfo=" + testMethodInfo
 			+ "]";
 	}
-
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		
+		result = prime * result + ((invokedInfo == null) ? 0 
+				: invokedInfo.getConcreteInvokedSignature().hashCode());
+		result = prime * result + ((testMethodInfo == null) ? 0 
+				: testMethodInfo.getInvokedSignature().hashCode());
+		
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		
+		if (obj == null)
+			return false;
+		
+		if (getClass() != obj.getClass())
+			return false;
+		
+		InvokedContainer other = (InvokedContainer) obj;
+		
+		if (invokedInfo == null) {
+			if (other.invokedInfo != null)
+				return false;
+		} 
+		else if (!invokedInfo.equals(other.invokedInfo))
+			return false;
+		
+		if (testMethodInfo == null) {
+			if (other.testMethodInfo != null)
+				return false;
+		} 
+		else if (!testMethodInfo.equals(other.testMethodInfo))
+			return false;
+		
+		if (!invokedInfo.getConcreteInvokedSignature().equals(
+				other.invokedInfo.getConcreteInvokedSignature()))
+			return false;
+		
+		return testMethodInfo.getConcreteInvokedSignature().equals(
+				other.testMethodInfo.getConcreteInvokedSignature());
+	}
+
+
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------

@@ -30,10 +30,8 @@ import executionFlow.util.FileUtil;
 import executionFlow.util.Pair;
 import executionFlow.util.logger.Logger;
 
-
 /**
- * Generates data for each collected invoked, where an invoked can be a method
- * or a constructor. Among these data:
+ * For each collected method or constructor, obtain the following information:
  * <ul>
  * 	<li>Test path</li>
  * 	<li>Methods called by this method</li>
@@ -44,8 +42,8 @@ import executionFlow.util.logger.Logger;
  * @version		5.2.3
  * @since		1.0
  */
-public abstract class ExecutionFlow 
-{
+public abstract class ExecutionFlow {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -58,7 +56,8 @@ public abstract class ExecutionFlow
 	 * 	<li><b>Value:</b> List of test paths</li>
 	 * </ul>
 	 */
-	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
+//	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
+	protected Map<InvokedContainer, List<List<Integer>>> computedTestPaths;
 	
 	/**
 	 * Sets if environment is development. This will affect
@@ -229,9 +228,14 @@ public abstract class ExecutionFlow
 				exportMethodsCalledByTestedInvoked(collector.getInvokedInfo().getInvokedSignature());
 				
 				storeTestPath(
-						collector.getTestMethodInfo().getInvokedSignature(), 
-						collector.getInvokedInfo().getConcreteInvokedSignature()
-				);
+						new InvokedContainer(
+								collector.getInvokedInfo(), 
+								collector.getTestMethodInfo()
+				));
+//				storeTestPath(
+//						collector.getTestMethodInfo().getInvokedSignature(), 
+//						collector.getInvokedInfo().getConcreteInvokedSignature()
+//				);
 			}
 		} 
 		catch (InterruptedByTimeoutException e1) {
@@ -374,7 +378,8 @@ public abstract class ExecutionFlow
 		return false;
 	}
 
-	private void exportProcessedSourceFile(InvokedInfo invokedInfo) throws IOException {
+	private void exportProcessedSourceFile(InvokedInfo invokedInfo) 
+			throws IOException {
 		if (!exportProcessedSourceFile)
 			return;
 		
@@ -400,60 +405,48 @@ public abstract class ExecutionFlow
 		analyzer.deleteMethodsCalledByTestedInvoked();
 	}
 	
-	/**
-	 * Stores test paths for an invoked. The test paths are stored in 
-	 * {@link #computedTestPaths}.
-	 * 
-	 * @param		testPaths Test paths of this invoked
-	 * @param		signaturesInfo Informations about test method along with 
-	 * the invoked
-	 */
-	protected void storeTestPath(String testMethodSignature, String invokedSignature)
-	{
-		Pair<String, String> signaturesInfo = Pair.of(testMethodSignature, invokedSignature);
-		
+	protected void storeTestPath(InvokedContainer invokedContainer) {
 		if (analyzer.hasTestPaths())
-			storeAllTestPaths(signaturesInfo);
+			storeAllTestPaths(invokedContainer);
 		else
-			storeEmptyTestPath(signaturesInfo);
+			storeEmptyTestPath(invokedContainer);
 	}
 	
-	private void storeAllTestPaths(Pair<String, String> signaturesInfo) {
+	private void storeAllTestPaths(InvokedContainer invokedContainer) {
 		for (List<Integer> testPath : analyzer.getTestPaths()) {	
 			if (testPath.isEmpty())
 				continue;
 			
-			if (computedTestPaths.containsKey(signaturesInfo)) {
-				storeExistingTestPath(signaturesInfo, testPath);
+			if (computedTestPaths.containsKey(invokedContainer)) {
+				storeExistingTestPath(invokedContainer, testPath);
 			} 
 			else {	
-				storeNewTestPath(signaturesInfo, testPath);
+				storeNewTestPath(invokedContainer, testPath);
 			}
 		}
 	}
 
-	private void storeNewTestPath(Pair<String, String> signaturesInfo, 
-			List<Integer> testPath) {
+	private void storeNewTestPath(InvokedContainer invokedContainer, 
+								  List<Integer> testPath) {
 		List<List<Integer>> testPaths = new ArrayList<>();
 		testPaths.add(testPath);
 	
-		computedTestPaths.put(signaturesInfo, testPaths);
+		computedTestPaths.put(invokedContainer, testPaths);
 	}
 
 
-	private void storeExistingTestPath(Pair<String, String> signaturesInfo, 
-			List<Integer> testPath) {
-		List<List<Integer>> testPaths = computedTestPaths.get(signaturesInfo);
+	private void storeExistingTestPath(InvokedContainer invokedContainer, 
+									   List<Integer> testPath) {
+		List<List<Integer>> testPaths = computedTestPaths.get(invokedContainer);
 		testPaths.add(testPath);
 	}
 
 
-	private void storeEmptyTestPath(Pair<String, String> signaturesInfo) {
-		// If test path is empty, stores test method and invoked with an empty list
+	private void storeEmptyTestPath(InvokedContainer invokedContainer) {
 		List<List<Integer>> classTestPathInfo = new ArrayList<>();
 		classTestPathInfo.add(new ArrayList<>());
 		
-		computedTestPaths.put(signaturesInfo, classTestPathInfo);
+		computedTestPaths.put(invokedContainer, classTestPathInfo);
 	}
 
 	/**
@@ -462,8 +455,8 @@ public abstract class ExecutionFlow
 	 * @param		invokedInfo Invoked to be updated
 	 * @param		mapping Mapping that will be used as base for the update
 	 */
-	private void updateInvocationLine(InvokedInfo invokedInfo, Map<Integer, Integer> mapping)
-	{
+	private void updateInvocationLine(InvokedInfo invokedInfo, 
+									  Map<Integer, Integer> mapping) {
 		if (mapping == null)
 			return;
 		
@@ -559,7 +552,7 @@ public abstract class ExecutionFlow
 	 * @implNote	It must only be called after method {@link #execute()} has 
 	 * been executed
 	 */
-	public Map<Pair<String, String>, List<List<Integer>>> getTestPaths()
+	public Map<InvokedContainer, List<List<Integer>>> getTestPaths()
 	{
 		return computedTestPaths;
 	}
@@ -576,12 +569,9 @@ public abstract class ExecutionFlow
 	 * @implNote	It must only be called after method {@link #execute()} has 
 	 * been executed
 	 */
-	public List<List<Integer>> getTestPaths(String testMethodSignature, 
-			String invokedSignature)
+	public List<List<Integer>> getTestPaths(InvokedContainer container)
 	{
-		return computedTestPaths.get(
-				Pair.of(testMethodSignature, invokedSignature)
-		);
+		return computedTestPaths.get(container);
 	}
 	
 	public void enableTestPathExport() {

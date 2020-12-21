@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import executionFlow.info.InvokedContainer;
 import executionFlow.util.CSV;
 import executionFlow.util.DataUtil;
-import executionFlow.util.Pair;
 import executionFlow.util.logger.Logger;
 
 
@@ -75,14 +75,14 @@ public class TestedInvokedExporter
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public void export(Set<Pair<String, String>> signatures) 
+	public void export(Set<InvokedContainer> invokedContainer) 
 	{
-		if (signatures == null || signatures.isEmpty())
+		if (invokedContainer == null || invokedContainer.isEmpty())
 			return;
 		
 		this.invokedMethodSignatures = new HashMap<>();
 
-		mergeWithStoredExport(signatures);
+		mergeWithStoredExport(invokedContainer);
 		storeExportFile();
 	}
 
@@ -112,7 +112,7 @@ public class TestedInvokedExporter
 	}
 
 
-	private void mergeWithStoredExport(Set<Pair<String, String>> signatures) {
+	private void mergeWithStoredExport(Set<InvokedContainer> invokedContainer) {
 		try {
 			for (List<String> line : CSV.read(output, ";")) {
 				List<String> invokedMethod = new ArrayList<>();
@@ -124,7 +124,7 @@ public class TestedInvokedExporter
 				invokedMethodSignatures.put(line.get(0), invokedMethod);
 				
 				DataUtil.mergesMaps(
-						extractInvokedWithTesters(signatures), 
+						extractInvokedWithTesters(invokedContainer), 
 						invokedMethodSignatures
 				);
 			}			
@@ -144,19 +144,19 @@ public class TestedInvokedExporter
 	 * 
 	 * @return		Map with the above structure
 	 */
-	private Map<String, List<String>> extractInvokedWithTesters(Set<Pair<String, String>> signatures)
+	private Map<String, List<String>> extractInvokedWithTesters(Set<InvokedContainer> invokedContainer)
 	{
 		Map<String, List<String>> invokedWithTesters = new HashMap<>();
 		
 		// Converts Set<SignaturesInfo> -> Map<String, List<String>>, where:
 		// 		Key:	Invoked signature
 		//		Value:	List of test methods that tests an invoked
-		for (Pair<String, String> signaturesInfo : signatures) {
-			if (invokedWithTesters.containsKey(signaturesInfo.getSecond())) {
-				storeExistingInvoked(invokedWithTesters, signaturesInfo);
+		for (InvokedContainer container : invokedContainer) {
+			if (invokedWithTesters.containsKey(container.getInvokedInfo().getConcreteInvokedSignature())) {
+				storeExistingInvoked(invokedWithTesters, container);
 			}
 			else {
-				storeNewInvoked(invokedWithTesters, signaturesInfo);
+				storeNewInvoked(invokedWithTesters, container);
 			}
 		}
 		
@@ -164,17 +164,17 @@ public class TestedInvokedExporter
 	}
 
 	private void storeNewInvoked(Map<String, List<String>> invokedWithTesters, 
-			Pair<String, String> signaturesInfo) {
+			InvokedContainer container) {
 		List<String> testMethodSignatures = new ArrayList<>();
-		testMethodSignatures.add(signaturesInfo.getFirst());
+		testMethodSignatures.add(container.getTestMethodInfo().getInvokedSignature());
 		
-		invokedWithTesters.put(signaturesInfo.getSecond(), testMethodSignatures);
+		invokedWithTesters.put(container.getInvokedInfo().getConcreteInvokedSignature(), testMethodSignatures);
 	}
 
 
 	private void storeExistingInvoked(Map<String, List<String>> invokedWithTesters,
-			Pair<String, String> signaturesInfo) {
-		List<String> testMethodSignatures = invokedWithTesters.get(signaturesInfo.getSecond());
-		testMethodSignatures.add(signaturesInfo.getFirst());
+			InvokedContainer container) {
+		List<String> testMethodSignatures = invokedWithTesters.get(container.getInvokedInfo().getConcreteInvokedSignature());
+		testMethodSignatures.add(container.getTestMethodInfo().getInvokedSignature());
 	}
 }

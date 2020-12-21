@@ -56,7 +56,7 @@ public class JUnit4Runner
 		private Path workingDirectory;
 		private List<Path> classPath;
 		private String classSignature;
-		private boolean displayVersion;
+		private boolean displayVersion = false;
 		
 		public Builder argumentFile(Path argumentFile)
 		{
@@ -143,8 +143,9 @@ public class JUnit4Runner
 			if (line.contains("OK (")) {
 				totalTests = Integer.valueOf(extractNumbers(line));
 			}
-			else if (line.contains("JUnit version") && displayVersion) {
-				System.out.println(line);
+			else if (line.contains("JUnit version")) {
+				if (displayVersion)
+					System.out.println(line);
 			}
 			else if (!error){
 				System.out.println(line);

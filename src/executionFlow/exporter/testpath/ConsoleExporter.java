@@ -3,7 +3,7 @@ package executionFlow.exporter.testpath;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.util.Pair;
+import executionFlow.info.InvokedContainer;
 import executionFlow.util.console.style.ConsoleHeader;
 
 
@@ -14,8 +14,8 @@ import executionFlow.util.console.style.ConsoleHeader;
  * @version		5.2.3
  * @since		1.0
  */
-public class ConsoleExporter implements TestPathExporter 
-{
+public class ConsoleExporter implements TestPathExporter {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -27,7 +27,7 @@ public class ConsoleExporter implements TestPathExporter
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) 
+	public void export(Map<InvokedContainer, List<List<Integer>>> classTestPaths) 
 	{
 		if (classTestPaths == null || classTestPaths.isEmpty())
 			return;
@@ -40,8 +40,8 @@ public class ConsoleExporter implements TestPathExporter
 		printFooter();
 	}
 
-	private void printBody(Map<Pair<String, String>, List<List<Integer>>> classTestPaths) {
-		for (Map.Entry<Pair<String, String>, List<List<Integer>>> e : classTestPaths.entrySet()) {
+	private void printBody(Map<InvokedContainer, List<List<Integer>>> classTestPaths) {
+		for (Map.Entry<InvokedContainer, List<List<Integer>>> e : classTestPaths.entrySet()) {
 			printSignatures(e.getKey());
 			printAllTestPaths(e.getValue());
 		}
@@ -56,9 +56,9 @@ public class ConsoleExporter implements TestPathExporter
 		System.out.println();
 	}
 
-	private void printSignatures(Pair<String, String> signatures) {
-		String testMethodSignature = signatures.getFirst();
-		String invokedSignature = signatures.getSecond();
+	private void printSignatures(InvokedContainer invokedContainer) {
+		String testMethodSignature = invokedContainer.getTestMethodInfo().getInvokedSignature();
+		String invokedSignature = invokedContainer.getInvokedInfo().getConcreteInvokedSignature();
 
 		if (testMethodSignature == null) { 
 			testMethodSignature = ""; 

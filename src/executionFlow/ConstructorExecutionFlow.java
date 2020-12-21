@@ -9,9 +9,8 @@ import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import executionFlow.info.InvokedContainer;
 import executionFlow.io.manager.ProcessingManager;
 
-
 /**
- * Generates data for collected constructors. Among these data:
+ * For each collected constructor, obtain the following information:
  * <ul>
  * 	<li>Test path</li>
  * 	<li>Methods called by this method</li>
@@ -23,6 +22,7 @@ import executionFlow.io.manager.ProcessingManager;
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -54,20 +54,13 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	//		Methods
 	//-------------------------------------------------------------------------
 	private void initializeMethodsCalledByTestedInvokedExporter() {
-		if (isDevelopment()) {
-			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-					"MethodsCalledByTestedConstructor", 
-					"examples\\results",
-					true
-			);
-		}
-		else {
-			invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-					"MethodsCalledByTestedConstructor", 
-					"results",
-					true
-			);
-		}
+		String outputPath = isDevelopment() ? "examples\\results" : "results";
+		
+		invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
+				"MethodsCalledByTestedConstructor", 
+				outputPath,
+				true
+		);
 	}
 	
 	@Override
