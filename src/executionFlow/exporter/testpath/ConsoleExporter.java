@@ -57,8 +57,8 @@ public class ConsoleExporter implements TestPathExporter
 	}
 
 	private void printSignatures(Pair<String, String> signatures) {
-		String testMethodSignature = signatures.first;
-		String invokedSignature = signatures.second;
+		String testMethodSignature = signatures.getFirst();
+		String invokedSignature = signatures.getSecond();
 
 		if (testMethodSignature == null) { 
 			testMethodSignature = ""; 

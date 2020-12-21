@@ -670,10 +670,10 @@ public class CodeCleaner {
 				for (Iterator<Pair<String, CurlyBracketBalance>> it = cbb.iterator(); it.hasNext(); ) {
 					Pair<String, CurlyBracketBalance> item = it.next();
 					
-					item.second.parse(processedCode.get(i));
+					item.getSecond().parse(processedCode.get(i));
 					
-					if (item.second.getBalance() < 0) {
-						initVariables.remove(item.first);
+					if (item.getSecond().getBalance() < 0) {
+						initVariables.remove(item.getFirst());
 						it.remove();
 					}
 				}

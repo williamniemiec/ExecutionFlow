@@ -68,8 +68,8 @@ public class FileExporter implements TestPathExporter
 			for (Map.Entry<Pair<String, String>, List<List<Integer>>> e : classTestPaths.entrySet()) {
 				Pair<String, String> signatures = e.getKey();
 				List<List<Integer>> testPaths = e.getValue();
-				String testMethodSignature = signatures.first;
-				String invokedSignature = signatures.second;
+				String testMethodSignature = signatures.getFirst();
+				String invokedSignature = signatures.getSecond();
 	
 
 				this.exportFile = generateDirectoryFromSignature(invokedSignature);
@@ -170,8 +170,8 @@ public class FileExporter implements TestPathExporter
 		// Removes test path folders that will be overwritten (avoids 
 		// creating duplicate files)
 		for (Pair<String, String> signatures : classTestPaths.keySet()) {
-			String testMethodSignature = signatures.first;
-			String invokedSignature = signatures.second;
+			String testMethodSignature = signatures.getFirst();
+			String invokedSignature = signatures.getSecond();
 			
 			File testPathExportDirectory = generateDirectoryFromSignature(invokedSignature).toFile();
 			

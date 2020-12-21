@@ -152,7 +152,7 @@ public class TestedInvokedExporter
 		// 		Key:	Invoked signature
 		//		Value:	List of test methods that tests an invoked
 		for (Pair<String, String> signaturesInfo : signatures) {
-			if (invokedWithTesters.containsKey(signaturesInfo.second)) {
+			if (invokedWithTesters.containsKey(signaturesInfo.getSecond())) {
 				storeExistingInvoked(invokedWithTesters, signaturesInfo);
 			}
 			else {
@@ -166,15 +166,15 @@ public class TestedInvokedExporter
 	private void storeNewInvoked(Map<String, List<String>> invokedWithTesters, 
 			Pair<String, String> signaturesInfo) {
 		List<String> testMethodSignatures = new ArrayList<>();
-		testMethodSignatures.add(signaturesInfo.first);
+		testMethodSignatures.add(signaturesInfo.getFirst());
 		
-		invokedWithTesters.put(signaturesInfo.second, testMethodSignatures);
+		invokedWithTesters.put(signaturesInfo.getSecond(), testMethodSignatures);
 	}
 
 
 	private void storeExistingInvoked(Map<String, List<String>> invokedWithTesters,
 			Pair<String, String> signaturesInfo) {
-		List<String> testMethodSignatures = invokedWithTesters.get(signaturesInfo.second);
-		testMethodSignatures.add(signaturesInfo.first);
+		List<String> testMethodSignatures = invokedWithTesters.get(signaturesInfo.getSecond());
+		testMethodSignatures.add(signaturesInfo.getFirst());
 	}
 }

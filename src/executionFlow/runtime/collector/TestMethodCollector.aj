@@ -195,12 +195,17 @@ public aspect TestMethodCollector extends RuntimeCollector
 		    	if (success)
 		    		return;
 		 
-	    		if (JUnit4Runner.isRunning()) {
-			    	try {
-						JUnit4Runner.quit();
+		    	if (Session.hasKeyShared("JUNIT4_RUNNER")) {
+					try {
+						JUnit4Runner runner = (JUnit4Runner)Session.readShared("JUNIT4_RUNNER");
+						runner.quit();
 					} 
-			    	catch (IOException e) {}
-	    		}
+					catch (IOException e) {
+					}
+					finally {
+						Session.removeShared("JUNIT4_RUNNER");						
+					}
+		    	}
 		    	    				    	
 	    		restoreOriginalFiles();
 		    	
@@ -211,8 +216,6 @@ public aspect TestMethodCollector extends RuntimeCollector
 				disableCheckpoint(firstRunCheckpoint);;
 				
 				finished = true;
-				
-				//session.destroy();
 		    }
 		});
 	}
@@ -564,19 +567,26 @@ public aspect TestMethodCollector extends RuntimeCollector
 			// Resets methods called by tested invoked
 			File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 			mcti.delete();
-			
-			JUnit4Runner.run(
-					generateClassRootDirectory(), 
-					generateClasspaths(), 
-					getClassSignature(jp)
-			);
-			
+
+			runJUnitRunner(jp);
 			waitForJUnit4Runner();
 		}
 		catch (IOException | InterruptedException e) {
 			Logger.error("Restart - " + e.getMessage());
 			System.exit(-1);
 		}
+	}
+	
+	private void runJUnitRunner(JoinPoint jp) throws IOException, InterruptedException {
+		JUnit4Runner junit4Runner = new JUnit4Runner.Builder()
+				.workingDirectory(generateClassRootDirectory())
+				.classPath(generateClasspaths())
+				.classSignature(getClassSignature(jp))
+				.build();
+		
+		Session.saveShared("JUNIT4_RUNNER", junit4Runner);
+		
+		junit4Runner.run();
 	}
 	
 	/**
@@ -635,12 +645,16 @@ public aspect TestMethodCollector extends RuntimeCollector
 	}
 	
 	private void waitForJUnit4Runner() throws IOException, InterruptedException {
-		while (JUnit4Runner.isRunning()) {
+		JUnit4Runner junit4Runner = (JUnit4Runner) Session.readShared("JUNIT4_RUNNER");
+		
+		while (junit4Runner.isRunning()) {
 			Thread.sleep(2000);
 			
 			if (!checkpoint_initial.isEnabled())
-				JUnit4Runner.quit();
+				junit4Runner.quit();
 		}
+		
+		Session.removeShared("JUNIT4_RUNNER");
 	}
 	
 	private void afterEachTestMethod(JoinPoint jp) {

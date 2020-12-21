@@ -23,8 +23,9 @@ public class Session
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	private transient Map<String, Object> content;
+	private volatile Map<String, Object> content;
 	private File sessionFile;
+	private static volatile Map<String, Object> sharedContent = new HashMap<>();
 	
 	
 	//-----------------------------------------------------------------------
@@ -65,12 +66,18 @@ public class Session
 		}
 		
 		sessionFile.createNewFile();
+		
 		content.put(key, value);
 		
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(sessionFile))) {
 			oos.writeObject(content);
 			oos.flush();
 		}
+	}
+	
+	public static synchronized void saveShared(String key, Object value) throws IOException
+	{
+		sharedContent.put(key, value);
 	}
 
 	/**
@@ -95,6 +102,14 @@ public class Session
 		return content.get(key);
 	}
 	
+	public static Object readShared(String key) throws IOException
+	{
+		if (!sharedContent.containsKey(key))
+			throw new IllegalStateException("Key not found");
+		
+		return sharedContent.get(key);
+	}
+	
 	/**
 	 * Checks  if there is data stored in the session with the specified key.
 	 * 
@@ -105,6 +120,19 @@ public class Session
 	public boolean hasKey(String key)
 	{
 		return content.containsKey(key);
+	}
+	
+	public static boolean hasKeyShared(String key)
+	{
+		return sharedContent.containsKey(key);
+	}
+	
+	public static void removeShared(String key)
+	{
+		if (!sharedContent.containsKey(key))
+			return;
+		
+		sharedContent.remove(key);
 	}
 	
 	/**
