@@ -154,14 +154,14 @@ public class StandardAspectJCompiler implements Compiler
 	}
 
 	private void dump(Path outputDir) {
-		Logger.debug(this.getClass().getSimpleName(), "start");
+		Logger.debug(this.getClass(), "start");
 		
 		for (IMessage message : messageHandler.getMessages(null, true)) {
 			Logger.debug(message.toString());
 		}
 		
 		Logger.debug(
-				this.getClass().getSimpleName(),
+				this.getClass(),
 				"Output dir: " + outputDir.toAbsolutePath().toString()
 		);
 	}

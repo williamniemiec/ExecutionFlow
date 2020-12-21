@@ -273,7 +273,7 @@ public class InvokedFileProcessor extends FileProcessor
 		JavaIndenter indenter = new JavaIndenter();
 		List<String> formatedFile = indenter.format(lines);
 
-		Logger.debug("InvokedFileProcessor", "Processed file");
+		Logger.debug(this.getClass(), "Processed file");
 		FileUtil.printFileWithLines(formatedFile);
 		
 	}

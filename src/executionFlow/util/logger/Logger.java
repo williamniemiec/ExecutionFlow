@@ -164,9 +164,15 @@ public class Logger
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
 	 */
-	public static void debug(String classname, String message)
+	public static void debug(Class<?> source, String message)
 	{
-		debug("- " + classname + " - " + message, true);
+		debug("{ " + getClassName(source) + " } " + message, true);
+	}
+	
+	private static String getClassName(Class<?> source) {
+		String[] terms = source.getName().split("\\.");
+		
+		return terms[terms.length-1]; 
 	}
 	
 	/**

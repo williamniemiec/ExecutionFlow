@@ -116,7 +116,7 @@ public abstract class Analyzer {
 	private void clearBreakpoints() {
 		commands.add("clear");
 		
-		Logger.debug("Analyzer", "COMMAND: clear");
+		Logger.debug(this.getClass(), "COMMAND: clear");
 	}
 	
 	private void initializeRunClass() {
@@ -130,7 +130,7 @@ public abstract class Analyzer {
 		
 		commands.add(command.toString());
 		
-		Logger.debug("Analyzer", "COMMAND: " + command.toString());
+		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
 	}
 
 	private void initializeBreakpoint() {
@@ -142,7 +142,7 @@ public abstract class Analyzer {
 		
 		commands.add(command.toString());
 		
-		Logger.debug("Analyzer", "COMMAND: " + command.toString());
+		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
 	}
 
 	private void closeJDB() {
@@ -171,14 +171,14 @@ public abstract class Analyzer {
 		
 		commands.add(command.toString());
 		
-		Logger.debug("Analyzer", "COMMAND: " + command.toString());
+		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
 	}
 
 	private void exitCommand() {
 		commands.add("exit");
 		commands.add("exit");
 		
-		Logger.debug("Analyzer", "COMMAND: exit");
+		Logger.debug(this.getClass(), "COMMAND: exit");
 	}
 	
 	private void disableTimeout(final int TIMEOUT_ID) {
@@ -213,9 +213,9 @@ public abstract class Analyzer {
 				.srcPath(srcPath)
 				.build();
 		
-		Logger.debug("Analyzer", "Classpath: " + classPath);
-		Logger.debug("Analyzer", "Srcpath: " + srcPath);
-		Logger.debug("Analyzer", "Working directory: " + testClassRootPath);
+		Logger.debug(this.getClass(), "Classpath: " + classPath);
+		Logger.debug(this.getClass(), "Srcpath: " + srcPath);
+		Logger.debug(this.getClass(), "Working directory: " + testClassRootPath);
 	}
 	
 	

@@ -272,7 +272,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		if (Logger.getLevel() != LogLevel.DEBUG)
 			return;
 		
-		Logger.debug("TestMethodFileProcessor", "Processed file");
+		Logger.debug(this.getClass(), "Processed file");
 		FileUtil.printFileWithLines(lines);
 	}	
 	

@@ -306,7 +306,7 @@ public abstract class ExecutionFlow {
 
 	private void dump() {
 		Logger.debug(
-				this.getClass().getName(), 
+				this.getClass(), 
 				"collector: " + getCollectors().toString()
 		);
 	}

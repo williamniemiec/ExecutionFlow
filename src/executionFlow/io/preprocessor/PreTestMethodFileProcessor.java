@@ -292,7 +292,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		if (Logger.getLevel() != LogLevel.DEBUG)
 			return;
 		
-		Logger.debug("PreTestMethodFileProcessor", "Processed file");
+		Logger.debug(this.getClass(), "Processed file");
 		FileUtil.printFileWithLines(lines);
 	}
 	
