@@ -6,17 +6,13 @@ import java.net.URISyntaxException;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import executionFlow.analyzer.Analyzer;
-import executionFlow.exporter.file.ProcessedSourceFileExporter;
-import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.signature.TestedInvokedExporter;
-import executionFlow.exporter.testpath.ConsoleExporter;
-import executionFlow.exporter.testpath.FileExporter;
-import executionFlow.exporter.testpath.TestPathExportType;
-import executionFlow.exporter.testpath.TestPathExporter;
+import executionFlow.analyzer.AnalyzerFactory;
+import executionFlow.exporter.ExportManager;
 import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.manager.FileManager;
@@ -27,7 +23,6 @@ import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionFlow.runtime.collector.TestMethodCollector;
 import executionFlow.util.FileUtil;
-import executionFlow.util.Pair;
 import executionFlow.util.logger.Logger;
 
 /**
@@ -47,41 +42,22 @@ public abstract class ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected static final TestPathExportType TEST_PATH_EXPORTER;
-	
 	/**
 	 * Stores computed test paths from a class.<br />
 	 * <ul>
-	 * 	<li><b>Key:</b> {@link Pair} (test method signature, invoked signature)</li>
+	 * 	<li><b>Key:</b> Test method and tested invoked</li>
 	 * 	<li><b>Value:</b> List of test paths</li>
 	 * </ul>
 	 */
-//	protected Map<Pair<String, String>, List<List<Integer>>> computedTestPaths;
 	protected Map<InvokedContainer, List<List<Integer>>> computedTestPaths;
 	
-	/**
-	 * Sets if environment is development. This will affect
-	 * {@link #getAppRootPath()} and 
-	 * {@link executionFlow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
-	 */
-	private static final boolean DEVELOPMENT;
-	
+	private static final boolean DEVELOPMENT;	
 	private static Path appRoot;
 	private static Path currentProjectRoot;
-	private Analyzer analyzer;
-	
-	private TestPathExporter testPathExporter;
-	protected MethodsCalledByTestedInvokedExporter invokedMethodsExporter;
-	protected ProcessedSourceFileExporter processedSourceFileExporter;
-	private TestedInvokedExporter testersExporter;
-
-	private boolean exportTestPaths = true;
-	private boolean exportCalledMethods = true;
-	private boolean exportProcessedSourceFile = true;
-	private boolean exportTesters = true;
-
 	private ProcessingManager processingManager;
-
+	private Analyzer analyzer;
+	private Map<String, Path> processedSourceFiles;
+	private ExportManager exportManager;
 
 	
 	//-------------------------------------------------------------------------
@@ -89,67 +65,22 @@ public abstract class ExecutionFlow {
 	//-------------------------------------------------------------------------	
 	/**
 	 * Sets environment. If the code is executed outside project, that is,
-	 * through a jar file, it must be false.
+	 * through a jar file, it must be false. It will affect
+	 * {@link #getAppRootPath()} and 
+	 * {@link executionFlow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
 	 */
 	static {
 		DEVELOPMENT = true;
-	}
-	
-	/**
-	 * Sets test path export type.
-	 */
-	static {
-		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------	
-	protected ExecutionFlow(ProcessingManager processingManager)
-	{		
+	protected ExecutionFlow(ProcessingManager processingManager) {		
 		this.processingManager = processingManager;
-		
-		initializeProcessedSourceFileExporter();
-		initializeTestersExporter();
-		initializeTestPathExporter();
-	}
-
-
-	private void initializeProcessedSourceFileExporter() {
-		this.processedSourceFileExporter = isDevelopment() ? 
-				new ProcessedSourceFileExporter("examples\\results", isConstructor())
-				: new ProcessedSourceFileExporter("results", isConstructor());
-	}
-
-
-	private void initializeTestersExporter() {
-		if (isDevelopment()) {
-			this.testersExporter = new TestedInvokedExporter(
-					"Testers", 
-					new File(getCurrentProjectRoot().toFile(), "examples\\results")
-			);
-		}
-		else {
-			this.testersExporter = new TestedInvokedExporter(
-					"Testers", 
-					new File(getCurrentProjectRoot().toFile(), "results")
-			);
-		}
-	}
-	
-	private void initializeTestPathExporter() {
-		if (isDevelopment()) {
-			testPathExporter = TEST_PATH_EXPORTER.equals(TestPathExportType.CONSOLE) ? 
-					new ConsoleExporter() 
-					: new FileExporter("examples\\results", isConstructor());
-		}
-		else {
-			testPathExporter = TEST_PATH_EXPORTER.equals(TestPathExportType.CONSOLE) ? 
-					new ConsoleExporter() 
-					: new FileExporter("results", isConstructor());
-		}
+		this.exportManager = new ExportManager(isDevelopment(), isConstructor());
+		this.computedTestPaths = new HashMap<>();
 	}
 	
 
@@ -162,8 +93,7 @@ public abstract class ExecutionFlow {
 	 * 
 	 * @return		If it is development environment
 	 */
-	public static boolean isDevelopment()
-	{
+	public static boolean isDevelopment() {
 		return DEVELOPMENT;
 	}
 	
@@ -177,37 +107,30 @@ public abstract class ExecutionFlow {
 	 * 	<li>Exports processed source file</li>
 	 * </ul>
 	 * 
-	 * @param		testMethodInfo Test method information
-	 * @param		testMethodFileManager Test method file information
-	 * @param		invokedInfo Invoked information
-	 * @param		invokedFileManager Invoked file information
-
-	 * @return		Test path or empty list if there is no test path
-	 * 
-	 * @throws 		IOException  If an error occurs while computing test path 
-	 * or exporting processed source file
-	 * @throws 		InterruptedByTimeoutException If runtime has been exceeded 
+	 * @return		Itself to allow chained calls
 	 */
-	/**
-	 * Walks the invoked recording its test paths and save the result in
-	 * {@link #computedTestPaths}.
-	 * 
-	 * @return		This object to allow chained calls
-	 */
-	public final ExecutionFlow execute() {
+	public final ExecutionFlow run() {
 		if ((getCollectors() == null) || getCollectors().isEmpty())
 			return this;
 		
-		dumpCollectors();
+		dump();
 		
 		for (InvokedContainer collector : getCollectors()) {
 			parseCollector(collector);
 		}
 		
-		exportTestPaths();
-		exportTesters();
+		export();
 		
 		return this;
+	}
+	
+	private void export() {
+		exportManager.exportTestPaths(computedTestPaths);
+		exportManager.exportTesters(computedTestPaths.keySet());
+		exportManager.exportProcessedSourceFiles(processedSourceFiles);
+		exportManager.exportMethodsCalledByTestedInvoked(
+				analyzer.getMethodsCalledByTestedInvoked()
+		);
 	}
 	
 	private void parseCollector(InvokedContainer collector) {
@@ -220,23 +143,7 @@ public abstract class ExecutionFlow {
 			
 			runDebugger(collector);
 			
-			if (isConstructor())
-				fixAnonymousClassSignature(collector.getInvokedInfo());					
-			
-			if (analyzer.hasTestPaths()) {
-				exportProcessedSourceFile(collector.getInvokedInfo());
-				exportMethodsCalledByTestedInvoked(collector.getInvokedInfo().getInvokedSignature());
-				
-				storeTestPath(
-						new InvokedContainer(
-								collector.getInvokedInfo(), 
-								collector.getTestMethodInfo()
-				));
-//				storeTestPath(
-//						collector.getTestMethodInfo().getInvokedSignature(), 
-//						collector.getInvokedInfo().getConcreteInvokedSignature()
-//				);
-			}
+			storeResults(collector);
 		} 
 		catch (InterruptedByTimeoutException e1) {
 			Logger.error("Time exceeded");
@@ -246,35 +153,61 @@ public abstract class ExecutionFlow {
 		}
 		catch (IOException e3) {
 			Logger.error(e3.getMessage());
+			
 			processingManager.restoreOriginalFile(invokedFileManager);
 			processingManager.restoreOriginalFile(testMethodFileManager);					
 		}
 	}
-	
-	private void exportTesters() {
-		if (exportTesters)
-			testersExporter.export(computedTestPaths.keySet());
+
+	private void storeResults(InvokedContainer collector) {
+		if (!analyzer.hasTestPaths())
+			return;
+		
+		if (isConstructor())
+			fixAnonymousClassSignature(collector.getInvokedInfo());
+		
+		storeTestPath(
+				new InvokedContainer(
+						collector.getInvokedInfo(), 
+						collector.getTestMethodInfo()
+		));
+		
+		processedSourceFiles.put(
+				collector.getInvokedInfo().getConcreteInvokedSignature(),
+				collector.getInvokedInfo().getSrcPath()
+		);
 	}
 
-	private void processInvokedMethod(InvokedContainer collector, FileManager testMethodFileManager, 
-			FileManager invokedFileManager) throws IOException {
+	private void processInvokedMethod(InvokedContainer collector, 
+									  FileManager testMethodFileManager, 
+									  FileManager invokedFileManager) throws IOException {
 		Logger.info("Processing source file of invoked - " 
-				+ collector.getInvokedInfo().getConcreteInvokedSignature() + "...");
+				+ collector.getInvokedInfo().getConcreteInvokedSignature() 
+				+ "..."
+		);
 		
 		processingManager.processInvoked(testMethodFileManager, invokedFileManager);
 		
-		Logger.info("Processing completed");
+		updateCollectors(
+				collector.getTestMethodInfo().getSrcPath(), 
+				collector.getInvokedInfo().getSrcPath()
+		);
 		
-		if (collector.getInvokedInfo().getSrcPath().equals(collector.getTestMethodInfo().getSrcPath())) {
-			TestMethodCollector.updateCollectorInvocationLines(
-					InvokedFileProcessor.getMapping(), 
-					collector.getTestMethodInfo().getSrcPath()
-			);
-		}	
+		Logger.info("Processing completed");
+	}
+
+	private void updateCollectors(Path testMethodSrcPath, Path invokedSrcPath) {
+		if (invokedSrcPath.equals(testMethodSrcPath))
+			return;
+
+		TestMethodCollector.updateCollectorInvocationLines(
+				InvokedFileProcessor.getMapping(), 
+				testMethodSrcPath
+		);
 	}
 
 	private void processTestMethod(InvokedContainer collector, 
-			FileManager testMethodFileManager) throws IOException {
+								   FileManager testMethodFileManager) throws IOException {
 		Logger.info(
 				"Processing source file of test method "
 				+ collector.getTestMethodInfo().getConcreteInvokedSignature() 
@@ -290,11 +223,25 @@ public abstract class ExecutionFlow {
 		
 		Logger.info("Processing completed");
 	}
-
+	
+	/**
+	 * Updates the invocation line of an invoked based on a mapping.
+	 * 
+	 * @param		invokedInfo Invoked to be updated
+	 * @param		mapping Mapping that will be used as base for the update
+	 */
+	private void updateInvocationLine(InvokedInfo invokedInfo, 
+									  Map<Integer, Integer> mapping) {
+		if (mapping == null)
+			return;
+		
+		if (mapping.containsKey(invokedInfo.getInvocationLine())) {
+			invokedInfo.setInvocationLine(mapping.get(invokedInfo.getInvocationLine()));
+		}
+	}
 
 	private FileManager createTestMethodFileManager(InvokedContainer collector) {
-		FileManager testMethodFileManager;
-		testMethodFileManager = new FileManager(
+		return new FileManager(
 			collector.getTestMethodInfo().getClassSignature(),
 			collector.getTestMethodInfo().getSrcPath(), 
 			collector.getTestMethodInfo().getClassDirectory(),
@@ -302,18 +249,17 @@ public abstract class ExecutionFlow {
 			new TestMethodFileProcessorFactory(),
 			"testMethod.bkp"
 		);
-		return testMethodFileManager;
 	}
 
 	private FileManager createInvokedFileManager(InvokedContainer collector) {
-			return new FileManager(
-				collector.getInvokedInfo().getClassSignature(),
-				collector.getInvokedInfo().getSrcPath(), 
-				collector.getInvokedInfo().getClassDirectory(),
-				collector.getInvokedInfo().getPackage(),
-				new InvokedFileProcessorFactory(),
-				"invoked.bkp"
-			);
+		return new FileManager(
+			collector.getInvokedInfo().getClassSignature(),
+			collector.getInvokedInfo().getSrcPath(), 
+			collector.getInvokedInfo().getClassDirectory(),
+			collector.getInvokedInfo().getPackage(),
+			new InvokedFileProcessorFactory(),
+			"invoked.bkp"
+		);
 	}
 
 	private void fixAnonymousClassSignature(InvokedInfo invokedInfo) {
@@ -333,76 +279,39 @@ public abstract class ExecutionFlow {
 				+ "..."
 		);
 		
-		analyzer = Analyzer.createStandardTestPathAnalyzer(
+		analyzer = AnalyzerFactory.createStandardTestPathAnalyzer(
 				collector.getInvokedInfo(), 
 				collector.getTestMethodInfo()
 		);
 		analyzer.analyze();
 
-		// Checks if time has been exceeded
-		if (Analyzer.getTimeout()) {
-			try {
-				Thread.sleep(2000);
-			} 
-			catch (InterruptedException e) 
-			{}
-			
-			throw new InterruptedByTimeoutException();
-		}
+		checkDebuggerTimeout();
+	}
+
+	private void checkDebuggerTimeout() throws InterruptedByTimeoutException {
+		if (!Analyzer.checkTimeout())
+			return;
+		
+		try {
+			Thread.sleep(2000);
+		} 
+		catch (InterruptedException e) 
+		{}
+		
+		throw new InterruptedByTimeoutException();
 	}
 
 	protected abstract List<InvokedContainer> getCollectors();
 
-	private void dumpCollectors() {
+	private void dump() {
 		Logger.debug(
 				this.getClass().getName(), 
 				"collector: " + getCollectors().toString()
 		);
 	}
 	
-	/**
-	 * Exports test paths.
-	 * 
-	 * @throws		IllegalStateException If exporter is null
-	 */
-	private void exportTestPaths() 
-	{
-		if (!exportTestPaths)
-			return;
-		
-		testPathExporter.export(computedTestPaths);
-	}
-	
-	
 	protected boolean isConstructor() {
 		return false;
-	}
-
-	private void exportProcessedSourceFile(InvokedInfo invokedInfo) 
-			throws IOException {
-		if (!exportProcessedSourceFile)
-			return;
-		
-		processedSourceFileExporter.export(
-				invokedInfo.getSrcPath(), 
-				invokedInfo.getConcreteInvokedSignature()
-		);
-	}
-
-	private void exportMethodsCalledByTestedInvoked(String invokedSignature) {
-		// Exports methods called by tested invoked to a CSV
-		if (!exportCalledMethods || !analyzer.hasTestPaths())
-			return;
-		
-		try {
-			invokedMethodsExporter.export(
-					invokedSignature, 
-					analyzer.getMethodsCalledByTestedInvoked()
-			);
-		} catch (IOException e) {
-		}
-
-		analyzer.deleteMethodsCalledByTestedInvoked();
 	}
 	
 	protected void storeTestPath(InvokedContainer invokedContainer) {
@@ -417,12 +326,10 @@ public abstract class ExecutionFlow {
 			if (testPath.isEmpty())
 				continue;
 			
-			if (computedTestPaths.containsKey(invokedContainer)) {
+			if (computedTestPaths.containsKey(invokedContainer))
 				storeExistingTestPath(invokedContainer, testPath);
-			} 
-			else {	
+			else	
 				storeNewTestPath(invokedContainer, testPath);
-			}
 		}
 	}
 
@@ -434,38 +341,17 @@ public abstract class ExecutionFlow {
 		computedTestPaths.put(invokedContainer, testPaths);
 	}
 
-
 	private void storeExistingTestPath(InvokedContainer invokedContainer, 
 									   List<Integer> testPath) {
 		List<List<Integer>> testPaths = computedTestPaths.get(invokedContainer);
 		testPaths.add(testPath);
 	}
 
-
 	private void storeEmptyTestPath(InvokedContainer invokedContainer) {
 		List<List<Integer>> classTestPathInfo = new ArrayList<>();
 		classTestPathInfo.add(new ArrayList<>());
 		
 		computedTestPaths.put(invokedContainer, classTestPathInfo);
-	}
-
-	/**
-	 * Updates the invocation line of an invoked based on a mapping.
-	 * 
-	 * @param		invokedInfo Invoked to be updated
-	 * @param		mapping Mapping that will be used as base for the update
-	 */
-	private void updateInvocationLine(InvokedInfo invokedInfo, 
-									  Map<Integer, Integer> mapping) {
-		if (mapping == null)
-			return;
-		
-		int currentInvocationLine = invokedInfo.getInvocationLine();
-		
-
-		if (mapping.containsKey(currentInvocationLine)) {
-			invokedInfo.setInvocationLine(mapping.get(currentInvocationLine));
-		}
 	}
 	
 	
@@ -480,8 +366,7 @@ public abstract class ExecutionFlow {
 	 * 
 	 * @implSpec	Lazy initialization
 	 */
-	public static Path getCurrentProjectRoot()
-	{
+	public static Path getCurrentProjectRoot() {
 		if (currentProjectRoot == null)
 			initializeCurrentProjectRoot();
 		
@@ -494,7 +379,6 @@ public abstract class ExecutionFlow {
 		currentProjectRoot = FileUtil.searchDirectory("src", currentDirectory).toPath();
 	}
 
-
 	/**
 	 * Gets application root path, based on class {@link ExecutionFlow} location.
 	 * 
@@ -502,8 +386,7 @@ public abstract class ExecutionFlow {
 	 * 
 	 * @implSpec	Lazy initialization
 	 */
-	public static Path getAppRootPath()
-	{
+	public static Path getAppRootPath() {
 		if (appRoot == null)
 			initializeAppRoot();
 		
@@ -539,7 +422,6 @@ public abstract class ExecutionFlow {
 		}
 	}
 
-
 	/**
 	 * Gets computed test path.It will return the following map:
 	 * <ul>
@@ -549,11 +431,10 @@ public abstract class ExecutionFlow {
 	 * 
 	 * @return		Computed test path
 	 * 
-	 * @implNote	It must only be called after method {@link #execute()} has 
+	 * @implNote	It must only be called after method {@link #run()} has 
 	 * been executed
 	 */
-	public Map<InvokedContainer, List<List<Integer>>> getTestPaths()
-	{
+	public Map<InvokedContainer, List<List<Integer>>> getTestPaths() {
 		return computedTestPaths;
 	}
 	
@@ -566,43 +447,14 @@ public abstract class ExecutionFlow {
 	 * @return		List of test paths for the specified invoked or empty list
 	 * if specified invoked has not a test path
 	 * 
-	 * @implNote	It must only be called after method {@link #execute()} has 
+	 * @implNote	It must only be called after method {@link #run()} has 
 	 * been executed
 	 */
-	public List<List<Integer>> getTestPaths(InvokedContainer container)
-	{
+	public List<List<Integer>> getTestPaths(InvokedContainer container) {
 		return computedTestPaths.get(container);
 	}
 	
-	public void enableTestPathExport() {
-		exportTestPaths = true;
-	}
-	
-	public void disableTestPathExport() {
-		exportTestPaths = false;
-	}
-	
-	public void enableCalledMethodsByTestedInvokedExport() {
-		exportCalledMethods = true;
-	}
-	
-	public void disableCalledMethodsByTestedInvokedExport() {
-		exportCalledMethods = false;
-	}
-	
-	public void enableProcesedSourceFileExport() {
-		exportProcessedSourceFile = true;
-	}
-	
-	public void disableProcesedSourceFileExport() {
-		exportProcessedSourceFile = false;
-	}
-	
-	public void enableTestersExport() {
-		exportTesters = true;
-	}
-	
-	public void disableTestersExport() {
-		exportTesters = false;
+	public ExportManager getExportManager() {
+		return exportManager;
 	}
 }

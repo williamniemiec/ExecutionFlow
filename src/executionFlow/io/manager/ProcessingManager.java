@@ -31,7 +31,7 @@ public class ProcessingManager {
 	 */
 	public ProcessingManager(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException {
 		try {
-			initializeProcessingManagers(restoreOriginalFiles);
+			initializeInvokedManagers(restoreOriginalFiles);
 		}
 		catch (ClassNotFoundException e) {
 			throw new ClassNotFoundException("Class FileManager not found");
@@ -50,7 +50,7 @@ public class ProcessingManager {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void initializeProcessingManagers(boolean restoreOriginalFiles) 
+	private void initializeInvokedManagers(boolean restoreOriginalFiles) 
 			throws ClassNotFoundException, IOException {
 		if (testMethodManager == null)
 			initializeTestMethodManager(restoreOriginalFiles);

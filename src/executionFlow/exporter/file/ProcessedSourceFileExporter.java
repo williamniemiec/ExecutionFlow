@@ -5,6 +5,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.util.DataUtil;
@@ -48,6 +50,13 @@ public class ProcessedSourceFileExporter
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	public void export(Map<String, Path> processedSourceFiles) throws IOException {
+		for (Map.Entry<String, Path> srcFiles : processedSourceFiles.entrySet()) {
+			exportRegistry(srcFiles.getKey(), srcFiles.getValue());
+		}
+	}
+	
+	
 	/**
 	 * Exports processed file to the following path: <br />
 	 * 	<code>dirName/package1/package2/.../className.invokedName(parameterTypes)/SRC.txt</code>
@@ -59,7 +68,7 @@ public class ProcessedSourceFileExporter
 	 * 
 	 * @throws		IOException If it is not possible to store file
 	 */
-	public void export(Path processedFile, String invokedSignature) throws IOException
+	private void exportRegistry(String invokedSignature, Path processedFile) throws IOException
 	{
 		List<String> fileContent = getFileContent(processedFile);
 		Path outputFile = generateOutputPath(invokedSignature);

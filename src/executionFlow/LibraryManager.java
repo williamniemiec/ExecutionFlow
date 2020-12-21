@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Responsible for gathering all libraries that the application needs.
  * 
@@ -14,8 +13,8 @@ import java.util.Map;
  * @version		5.2.3
  * @since		5.2.0
  */
-public class LibraryManager 
-{
+public class LibraryManager {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -46,8 +45,7 @@ public class LibraryManager
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
-	public static Path getLibrary(String libName) 
-	{
+	public static Path getLibrary(String libName) {
 		return libraries.get(libName);
 	}
 	
@@ -58,8 +56,7 @@ public class LibraryManager
 	 * 
 	 * @implSpec	Lazy initialization
 	 */
-	public static Path getLibPath()
-	{
+	public static Path getLibPath()	{
 		if (libPath == null)
 			initializeLibPath();
 		

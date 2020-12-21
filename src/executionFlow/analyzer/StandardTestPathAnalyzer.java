@@ -8,7 +8,6 @@ import executionFlow.info.InvokedInfo;
 import executionFlow.util.balance.RoundBracketBalance;
 import executionFlow.util.logger.Logger;
 
-
 /**
  * Standard strategy for computing test path of a method and records the 
  * methods called by it.
@@ -18,6 +17,7 @@ import executionFlow.util.logger.Logger;
  * @since		5.2.3
  */
 public class StandardTestPathAnalyzer extends Analyzer {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -46,7 +46,8 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public StandardTestPathAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException {
+	public StandardTestPathAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) 
+			throws IOException {
 		super(invokedInfo, testMethodInfo);
 		
 		invokedNameContainsDollarSign = invoked.getInvokedName().substring(1).matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
@@ -86,7 +87,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 				wasNewIteration = true;
 				
 				sendJDB("step into");
-				parseAll();
+				readAllOutput();
 				skipInternalCalls();
 			} 
 			else if (!stopJDB) {
@@ -96,34 +97,28 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private void fixAnonymousConstructorTestPaths() {
-		if (anonymousConstructor && testPath.size() > 1) {
-			testPath.remove(testPath.size() - 1);
-			testPath.remove(0);
-		}
+		if (!anonymousConstructor || testPath.size() <= 1)
+			return;
+		
+		testPath.remove(testPath.size() - 1);
+		testPath.remove(0);
 	}
 	
 	private void getsReadyForTheNextTest() {
 		testPath = new ArrayList<>();
 		lastLineAdded = -1;
-		
-		// Resets exit method
 		returnedFromTestedInvoked = false;
 		inMethod = false;
 		lastAddWasReturn = false;
 	}
 	
 	private void sendJDB(String command) {
-		Logger.debug("Analyzer", "COMMAND: " + command);
 		jdb.send(command);
+		
+		Logger.debug(this.getClass().getName(), "COMMAND: " + command);
 	}
 	
-	/**
-	 * Reads all available output.
-	 * 
-	 * @throws		IOException If it cannot read JDB output
-	 */
-	private void parseAll() throws IOException
-	{
+	private void readAllOutput() throws IOException	{
 		while (!parseOutput())
 			;
 	}
@@ -131,7 +126,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	private void skipInternalCalls() throws IOException {
 		while (isInternalCommand) {					
 			sendJDB("next");
-			parseAll();
+			readAllOutput();
 		}
 	}
 	
@@ -153,26 +148,34 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
 	 * output on the console
 	 */
+	
+	private boolean isJDBReady() {
+		if (jdb.isReady())
+			return true;
+		
+		try {
+			Thread.sleep(200);
+		} 
+		catch (InterruptedException e) {
+		}
+		
+		return false;
+	}
+	
 	private boolean parseOutput() throws IOException {
+		if (!isJDBReady())
+			return false;
+		
 		boolean readyToReadInput = false;
 		boolean ignore = false;
 		boolean isEmptyMethod = false;
 		int currentLine = -1;
 		String line;
 		String srcLine = null;
-		
-		if (!jdb.isReady()) {
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) 
-    		{}
-			
-			return false;
-		}
 		       	
     	isInternalCommand = false;
     	line = jdb.read();
-    	Logger.debug("Analyzer", "LINE: "+line);
+    	Logger.debug("Analyzer", "LINE: " + line);
     	
     	checkIncorrectInvocationLine(line);
     	checkInternalError(line);

@@ -280,6 +280,10 @@ public class JDB
 		return out.isReady();
 	}
 	
+	public void waitFor() throws InterruptedException {
+		process.waitFor();
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Inner classes

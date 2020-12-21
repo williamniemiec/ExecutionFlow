@@ -2,10 +2,8 @@ package executionFlow;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
-import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import executionFlow.info.InvokedContainer;
 import executionFlow.io.manager.ProcessingManager;
 
@@ -44,25 +42,12 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 		super(processingManager);
 		
 		this.collectors = new ArrayList<>(constructorCollector);
-		this.computedTestPaths = new HashMap<>();
-		
-		initializeMethodsCalledByTestedInvokedExporter();
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------
-	private void initializeMethodsCalledByTestedInvokedExporter() {
-		String outputPath = isDevelopment() ? "examples\\results" : "results";
-		
-		invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-				"MethodsCalledByTestedConstructor", 
-				outputPath,
-				true
-		);
-	}
-	
+	//-------------------------------------------------------------------------	
 	@Override
 	protected boolean isConstructor() {
 		return true;

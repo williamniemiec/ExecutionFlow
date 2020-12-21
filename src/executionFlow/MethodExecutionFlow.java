@@ -1,11 +1,9 @@
 package executionFlow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import executionFlow.info.InvokedContainer;
 import executionFlow.io.manager.ProcessingManager;
 
@@ -37,10 +35,8 @@ public class MethodExecutionFlow extends ExecutionFlow {
 		super(processingManager);
 		
 		this.collectors = new ArrayList<>();
-		this.computedTestPaths = new HashMap<>();
 		
 		storeCollectedMethods(collectedMethods);
-		initializeMethodsCalledByTestedInvokedExporter();
 	}
 
 
@@ -53,16 +49,6 @@ public class MethodExecutionFlow extends ExecutionFlow {
 		for (List<InvokedContainer> collector : collectedMethods.values()) {
 			collectors.add(collector.get(0));
 		}
-	}
-	
-	private void initializeMethodsCalledByTestedInvokedExporter() {
-		String outputPath = isDevelopment() ? "examples\\results" : "results";
-		
-		invokedMethodsExporter = new MethodsCalledByTestedInvokedExporter(
-				"MethodsCalledByTestedMethod", 
-				outputPath,
-				true
-		);
 	}
 	
 	@Override

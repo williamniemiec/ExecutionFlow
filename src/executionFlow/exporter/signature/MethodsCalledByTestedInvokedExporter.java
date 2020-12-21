@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,13 @@ public class MethodsCalledByTestedInvokedExporter
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	public void export(Map<String, Set<String>> methodsCalledByAllTestedInvoked) 
+			throws IOException {
+		for (Map.Entry<String, Set<String>> mcti : methodsCalledByAllTestedInvoked.entrySet()) {
+			exportRegistry(mcti.getKey(), mcti.getValue());
+		}
+	}
+	
 	/**
 	 * Exports signature of methods called by a tested invoked in a CSV file.
 	 * 
@@ -82,7 +90,7 @@ public class MethodsCalledByTestedInvokedExporter
 	 * @param		isConstructor If the invoked is a constructor
 	 * @throws IOException 
 	 */
-	public void export(String invokedSignature, Set<String> methodsCalledByTestedInvoked) 
+	private void exportRegistry(String invokedSignature, Set<String> methodsCalledByTestedInvoked) 
 			throws IOException
 	{
 		if (methodsCalledByTestedInvoked == null || methodsCalledByTestedInvoked.isEmpty()) {

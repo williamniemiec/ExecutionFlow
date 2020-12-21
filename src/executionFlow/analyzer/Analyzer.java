@@ -20,23 +20,25 @@ import executionFlow.util.logger.Logger;
 
 
 /**
- * Computes the test path of a method and records the methods called by it.
+ * Computes the test path for a method or constructor using a debugger.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		5.2.3
  * @since		2.0.0
  */
 public abstract class Analyzer {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected volatile static boolean timeout;
-	protected String analyzedInvokedSignature = "";
+	protected static volatile boolean timeout;
 	protected volatile List<List<Integer>> testPaths;
-	protected JDB jdb;
-	protected volatile boolean lock;
+	protected String analyzedInvokedSignature;
+	protected Map<String, Set<String>> methodsCalledByTestedInvoked;
 	protected InvokedInfo invoked;
 	protected InvokedInfo testMethod;
+	protected JDB jdb;
+	private List<String> commands;
 	
 	
 	//-------------------------------------------------------------------------
@@ -47,21 +49,14 @@ public abstract class Analyzer {
 	 * 
 	 * @throws		IOException If occurs an error while fetching dependencies
 	 */
-	protected Analyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) throws IOException	{
+	protected Analyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) 
+			throws IOException	{
 		this.invoked = invokedInfo;
 		this.testMethod = testMethodInfo;
+		this.methodsCalledByTestedInvoked = new HashMap<>();
+		this.analyzedInvokedSignature = "";
 
 		initializeJDB(testMethodInfo, invokedInfo);
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Factories
-	//-------------------------------------------------------------------------	
-	public static Analyzer createStandardTestPathAnalyzer(InvokedInfo invokedInfo, 
-			InvokedInfo testMethodInfo) throws IOException
-	{
-		return new StandardTestPathAnalyzer(invokedInfo, testMethodInfo);
 	}
 
 
@@ -90,42 +85,108 @@ public abstract class Analyzer {
 			startJDB();
 			enableTimeout(timeoutID, timeoutTime);
 			run();
-		} catch (IOException | IllegalStateException e) {
+			waitForJDB();
+		}
+		finally {
 			disableTimeout(timeoutID);
 			closeJDB();
-			
-			throw e;
 		}
 		
-		closeJDB();
-		waitForTimeout();
-		disableTimeout(timeoutID);
+		mergeMethodsCalledByTestedInvoked();
 		
 		return this;
 	}
 	
+	private void waitForJDB() {
+		try {
+			jdb.waitFor();
+		} 
+		catch (InterruptedException e) {
+			Logger.error(e.getMessage());
+		}
+	}
+
 	protected abstract void run() throws IOException;
 	
 	private void startJDB() throws IOException {
-		Logger.debug("Analyzer", "COMMAND: " + "clear ");
-		Logger.debug("Analyzer", "COMMAND: " + "stop at " + testMethod.getClassSignature() + ":" + invoked.getInvocationLine());
-		Logger.debug("Analyzer", "COMMAND: " + "run org.junit.runner.JUnitCore " + testMethod.getClassSignature());
-		
-		jdb.start().send("clear", "stop at " + testMethod.getClassSignature() + ":" + invoked.getInvocationLine(),
-				"run org.junit.runner.JUnitCore "+testMethod.getClassSignature());
+		jdb.start().send(buildInitCommand());
 	}
 	
-	private void closeJDB() {
-		Logger.debug("Analyzer", "COMMAND: " + "clear " + testMethod.getClassSignature() + ":" + invoked.getInvocationLine());
-		Logger.debug("Analyzer", "COMMAND: " + "exit");
+	private String[] buildInitCommand() {
+		commands = new ArrayList<>();
 		
-		jdb.send("clear " + testMethod.getClassSignature() + ":" + invoked.getInvocationLine(), "exit", "exit");
-		jdb.quit();
+		clearBreakpoints();
+		initializeBreakpoint();
+		initializeRunClass();
+		
+		return commands.toArray(new String[] {});
+	}
+	
+	private void clearBreakpoints() {
+		commands.add("clear");
+		
+		Logger.debug("Analyzer", "COMMAND: clear");
+	}
+	
+	private void initializeRunClass() {
+		StringBuilder command = new StringBuilder();
+		
+		command.append("stop at");
+		command.append(" ");
+		command.append(testMethod.getClassSignature());
+		command.append(":");
+		command.append(invoked.getInvocationLine());
+		
+		commands.add(command.toString());
+		
+		Logger.debug("Analyzer", "COMMAND: " + command.toString());
 	}
 
-	private void waitForTimeout() {
-		// Waits for timeout thread to finish running (if running)
-		while (lock);
+	private void initializeBreakpoint() {
+		StringBuilder command = new StringBuilder();
+	
+		command.append("run org.junit.runner.JUnitCore");
+		command.append(" ");
+		command.append(testMethod.getClassSignature());
+		
+		commands.add(command.toString());
+		
+		Logger.debug("Analyzer", "COMMAND: " + command.toString());
+	}
+
+	private void closeJDB() {
+		jdb.send(buildExitCommand());
+		jdb.quit();
+	}
+	
+	private String[] buildExitCommand() {
+		commands = new ArrayList<>();
+		
+		clearLastBreakpoint();
+		exitCommand();
+		
+		return commands.toArray(new String[] {});
+	}
+
+	private void clearLastBreakpoint() {
+		StringBuilder command = new StringBuilder();
+		
+		command.append("clear");
+		command.append(" ");
+		command.append(testMethod.getClassSignature());
+		command.append(":");
+		command.append(invoked.getInvocationLine());
+		
+		commands.add(command.toString());
+		
+		Logger.debug("Analyzer", "COMMAND: " + command.toString());
+	}
+
+	private void exitCommand() {
+		commands.add("exit");
+		commands.add("exit");
+		
+		Logger.debug("Analyzer", "COMMAND: exit");
 	}
 	
 	private void disableTimeout(final int TIMEOUT_ID) {
@@ -137,20 +198,19 @@ public abstract class Analyzer {
 		
 		Clock.setTimeout(() -> {
 			File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-	
-			lock = true;
-			
+
 			mcti.delete();
 			jdb.quit();
 			testPaths.clear();
 			Analyzer.setTimeout(true);
-			
-			lock = false;
 		}, TIMEOUT_ID, TIMEOUT_TIME);
 	}
 	
 	private void initializeJDB(InvokedInfo testMethodInfo, InvokedInfo invokedInfo) {
-		Path testClassRootPath = extractRootPathDirectory(testMethodInfo.getBinPath(), testMethodInfo.getPackage());
+		Path testClassRootPath = extractRootPathDirectory(
+				testMethodInfo.getBinPath(), 
+				testMethodInfo.getPackage()
+		);
 		
 		List<Path> srcPath = getSourcePath(invokedInfo, testMethodInfo, testClassRootPath);
 		List<Path> classPath = getClassPath(testClassRootPath);
@@ -211,36 +271,43 @@ public abstract class Analyzer {
 
 	private List<Path> getClassPath(Path testClassRootPath) {
 		List<Path> classPath = new ArrayList<>();
+		
 		for (String cp : System.getProperty("java.class.path").split(";")) {
 			classPath.add(testClassRootPath.relativize(Path.of(cp)));
 		}
+		
 		classPath.add(testClassRootPath.relativize(LibraryManager.getLibrary("JUNIT_4")));
 		classPath.add(testClassRootPath.relativize(LibraryManager.getLibrary("HAMCREST")));
+		
 		return classPath;
 	}
 
-	private List<Path> getSourcePath(InvokedInfo invokedInfo, InvokedInfo testMethodInfo, Path testClassRootPath) {
-		Path testMethodSrcPath;		// Root path where the source file of test method class is. It will be used as JDB root directory
-		testMethodSrcPath = extractRootPathDirectory(testMethodInfo.getSrcPath(), testMethodInfo.getPackage());
-		
-		// Sets source path
+	private List<Path> getSourcePath(InvokedInfo invokedInfo, 
+									 InvokedInfo testMethodInfo,
+									 Path testClassRootPath) {
 		List<Path> srcPath = new ArrayList<>();
-		// Root path where the source file of the invoked is
-		Path srcRootPath = extractRootPathDirectory(invokedInfo.getSrcPath(), invokedInfo.getPackage());
+		
+		Path srcRootPath = extractRootPathDirectory(
+				invokedInfo.getSrcPath(), 
+				invokedInfo.getPackage()
+		);
 		srcPath.add(testClassRootPath.relativize(srcRootPath));
+		
+		Path testMethodSrcPath = extractRootPathDirectory(
+				testMethodInfo.getSrcPath(), 
+				testMethodInfo.getPackage()
+		);
 		srcPath.add(testClassRootPath.relativize(testMethodSrcPath));
 		
 		// Fix source file of anonymous and inner classes
-		srcPath.add(testClassRootPath.relativize(
-				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/main/java").toPath())
-		);
+		Path mavenSrcPath = ExecutionFlow.getCurrentProjectRoot().resolve(Path.of("src", "main", "java"));
+		srcPath.add(testClassRootPath.relativize(mavenSrcPath));
 		
+		Path mavenTestPath = ExecutionFlow.getCurrentProjectRoot().resolve(Path.of("src", "test", "java"));
 		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
-			srcPath.add(
-					testClassRootPath.relativize(
-							new File(ExecutionFlow.getCurrentProjectRoot().toFile(), "/src/test/java").toPath())
-			);
+			srcPath.add(testClassRootPath.relativize(mavenTestPath));
 		}
+		
 		return srcPath;
 	}
 	
@@ -268,58 +335,67 @@ public abstract class Analyzer {
 	 * by tested invoked will be deleted. Therefore, this method can only be 
 	 * called once for each {@link #run JDB execution}
 	 */
+	public Map<String, Set<String>> getMethodsCalledByTestedInvoked() {
+		return methodsCalledByTestedInvoked;
+	}
+	
 	@SuppressWarnings("unchecked")
-	public Set<String> getMethodsCalledByTestedInvoked() {
-		File f = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+	private Map<String, Set<String>> loadMethodsCalledByTestedInvoked() {
 		Map<String, Set<String>> invokedMethods = new HashMap<>();
-		String invokedSignatureWithoutDollarSign = invoked.getInvokedSignature().replaceAll("\\$", ".");
+		File file = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 		
-		
-		if (f.exists()) {
-			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+		if (file.exists()) {
+			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 				invokedMethods = (Map<String, Set<String>>) ois.readObject();
 			} 
 			catch (IOException | ClassNotFoundException e) {
-				invokedMethods = null;
-				Logger.error("Called methods by tested invoked - " + e.getMessage());
-				e.printStackTrace();
+				Logger.error("Methods called by tested invoked - " + e.getMessage());
 			}
 		
-			f.delete();
+			file.delete();
 		}
-
-		return invokedMethods.containsKey(invokedSignatureWithoutDollarSign) ? 
-				invokedMethods.get(invokedSignatureWithoutDollarSign) : null;
+		
+		return invokedMethods;
 	}
 	
-	/**
-	 * Gets computed test path.
-	 * 
-	 * @return		Computed test path
-	 */
+	private void mergeMethodsCalledByTestedInvoked() {
+		Map<String, Set<String>> invokedMethods = loadMethodsCalledByTestedInvoked();
+		
+		for (Map.Entry<String, Set<String>> mcti : invokedMethods.entrySet()) {
+			if (methodsCalledByTestedInvoked.containsKey(mcti.getKey())) {
+				methodsCalledByTestedInvoked.get(mcti.getKey()).addAll(mcti.getValue());
+			}
+		}
+	}
+	
 	public List<List<Integer>> getTestPaths() { 	
 		return testPaths;
 	}
 	
 	/**
-	 * Defines whether the execution time has been exceeded.
-	 * 
-	 * @param		status True if the execution time has been exceeded; false 
-	 * otherwise
+	 * Enables 10-minute timeout.
 	 */
-	public static void setTimeout(boolean status) {
+	public static void enableTimeout() {
+		timeout = true;
+	}
+	
+	/**
+	 * Disables 10-minute timeout.
+	 */
+	public static void disableTimeout() {
+		timeout = false;
+	}
+	
+	static void setTimeout(boolean status) {
 		timeout = status;
 	}
 	
 	/**
-	 * Checks if the execution time has been exceeded.
-	 * 
-	 * @return		True if the execution time has been exceeded; false otherwise
+	 * @return		True if runtime has been exceeded; false otherwise
 	 */
-	public static boolean getTimeout() {
+	public static boolean checkTimeout() {
 		return timeout;
 	}
-
 
 	public boolean wasTestPathObtainedInALoop() {
 		if (testPaths == null)
@@ -327,7 +403,6 @@ public abstract class Analyzer {
 		
 		return testPaths.size() > 1;
 	}
-
 
 	public boolean hasTestPaths() {
 		if (testPaths == null)
