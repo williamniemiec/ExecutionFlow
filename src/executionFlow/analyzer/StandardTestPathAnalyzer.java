@@ -132,22 +132,6 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	private boolean parseOutput() throws IOException {
 		if (!isJDBReady())
 			return false;
@@ -264,7 +248,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		
 		checkBalanceOfParentheses();
 		initializeInvokedDeclarationLineNumber();
-		
+
 		if (!isInternalCommand && !returnedFromTestedInvoked() && !shouldIgnore()) {
 			if (inMethod || insideConstructor) {
 				analyzeLinesExecutedByInvoked();
@@ -408,7 +392,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		if (!isInvokedDeclarationLine(line, srcLine) && !inMethod)
 			return;
 
-		if (wasInvokedDeclarationLineNumberInitialized() || (currentLine <= 1))
+		if (!wasInvokedDeclarationLineNumberInitialized() && (currentLine > 1))
 			invokedDeclarationLine = currentLine;        		
 	}
 	
@@ -482,7 +466,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	private void analyzeLinesExecutedByInvoked() {
 		if (finishedTestedInvoked)
 			return;
-
+		
 		if (line.contains(testMethod.getName())) {
 			finishedTestedInvoked = true;
 			inMethod = false;
