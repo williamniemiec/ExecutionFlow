@@ -6,7 +6,6 @@ import java.util.Map;
 import executionFlow.info.InvokedContainer;
 import executionFlow.util.console.style.ConsoleHeader;
 
-
 /**
  * Displays the results on the console.
  * 

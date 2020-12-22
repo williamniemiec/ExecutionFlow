@@ -1,6 +1,5 @@
 package executionFlow.info;
 
-
 /**
  * Stores information about a method or constructor along with a test method.
  * 
@@ -8,8 +7,8 @@ package executionFlow.info;
  * @version		5.2.3
  * @since		5.2.3
  */
-public class InvokedContainer 
-{
+public class InvokedContainer {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -25,9 +24,17 @@ public class InvokedContainer
 	 * 
 	 * @param		invokedInfo Information about a method or constructor
 	 * @param		testMethodInfo Information about a test method
+	 * 
+	 * @throws		IllegalArgumentException If invoked info or test method info
+	 * is null
 	 */
-	public InvokedContainer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo)
-	{
+	public InvokedContainer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) {
+		if (invokedInfo == null)
+			throw new IllegalArgumentException("Invoked info cannot be null");
+		
+		if (testMethodInfo == null)
+			throw new IllegalArgumentException("Test method info cannot be null");
+		
 		this.invokedInfo = invokedInfo;
 		this.testMethodInfo = testMethodInfo;
 	}
@@ -37,8 +44,7 @@ public class InvokedContainer
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public String toString() 
-	{
+	public String toString() {
 		return "CollectorInfo ["
 				+ "invokedInfo=" + invokedInfo 
 				+ ", testMethodInfo=" + testMethodInfo
@@ -71,18 +77,10 @@ public class InvokedContainer
 		
 		InvokedContainer other = (InvokedContainer) obj;
 		
-		if (invokedInfo == null) {
-			if (other.invokedInfo != null)
-				return false;
-		} 
-		else if (!invokedInfo.equals(other.invokedInfo))
+		if (!invokedInfo.equals(other.invokedInfo))
 			return false;
 		
-		if (testMethodInfo == null) {
-			if (other.testMethodInfo != null)
-				return false;
-		} 
-		else if (!testMethodInfo.equals(other.testMethodInfo))
+		if (!testMethodInfo.equals(other.testMethodInfo))
 			return false;
 		
 		if (!invokedInfo.getConcreteInvokedSignature().equals(
@@ -97,13 +95,11 @@ public class InvokedContainer
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
-	public InvokedInfo getInvokedInfo() 
-	{
+	public InvokedInfo getInvokedInfo() {
 		return invokedInfo;
 	}
 	
-	public InvokedInfo getTestMethodInfo() 
-	{
+	public InvokedInfo getTestMethodInfo() {
 		return testMethodInfo;
 	}
 }

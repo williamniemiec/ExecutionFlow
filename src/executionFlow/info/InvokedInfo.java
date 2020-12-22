@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Stores information about an invoked, where an invoked can be a 
  * method or a constructor. 
@@ -17,8 +16,8 @@ import java.util.regex.Pattern;
  * @version		5.2.3
  * @since		2.0.0
  */
-public class InvokedInfo 
-{
+public class InvokedInfo {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -37,7 +36,7 @@ public class InvokedInfo
 	private Class<?> returnType;
 	
 	
-	private InvokedInfo(Path binPath, Path srcPath, int invocationLine,
+	protected InvokedInfo(Path binPath, Path srcPath, int invocationLine,
 			String methodSignature, String methodName,
 			Class<?> returnType, Class<?>[] parameterTypes, Object[] args,
 			boolean isConstructor) 
