@@ -1,4 +1,4 @@
-package executionFlow.io.processor;
+package executionFlow.io;
 
 import java.util.List;
 
@@ -71,15 +71,11 @@ public abstract class SourceCodeProcessor {
 		
 		sourceCode.set(idx, content);
 	}
-	
-//	protected void removeSourceCodeLine(int idx) {
-//		if (idx <= sourceCode.size())
-//			throw new IllegalArgumentException("Index out of bounds");
-//		
-//		sourceCode.remove(idx);
-//	}
-//	
+
 	protected String getNextLine() {
-		return (currentIdx+1 < sourceCode.size()) ? sourceCode.get(currentIdx+1) : "";
+		if (currentIdx+1 >= sourceCode.size())
+			return "";
+		
+		return sourceCode.get(currentIdx+1);
 	}
 }

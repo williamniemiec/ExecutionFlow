@@ -3,31 +3,33 @@ package executionFlow.io.preprocessor.testmethod;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import executionFlow.io.SourceCodeProcessor;
 import executionFlow.util.DataUtil;
 import executionFlow.util.balance.RoundBracketBalance;
 
 /**
- * Adds try-catch to all asserts so that test method execution does not
+ * Surround asserts with try-catch so that test method execution does not
  * stop if an assert fails.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		5.2.3
  * @since 		5.2.3
  */
-public class AssertProcessor {
+public class AssertProcessor extends SourceCodeProcessor {
 
 	//---------------------------------------------------------------------
 	//		Attributes
 	//---------------------------------------------------------------------
 	private final RoundBracketBalance roundBracketsBalance;
 	private boolean inAssert;
-	private boolean inComment;
 	
 	
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	public AssertProcessor() {
+	public AssertProcessor(List<String> sourceCode) {
+		super(sourceCode, true);
+		
 		roundBracketsBalance = new RoundBracketBalance();
 		inAssert = false;
 	}
@@ -36,39 +38,8 @@ public class AssertProcessor {
 	//---------------------------------------------------------------------
 	//		Methods
 	//---------------------------------------------------------------------
-	public List<String> processLines(List<String> lines) {
-		List<String> processedLines = lines;
-		
-		for (int i = 0; i < lines.size(); i++) {
-			checkComments(lines.get(i));
-			
-			if (!inComment) {
-				String processedLine = processLine(lines.get(i));
-			
-				processedLines.set(i, processedLine);
-			}
-		}
-		
-		return processedLines;
-	}
-
-	private void checkComments(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		
-		if (line.matches(regexCommentFullLine))
-			inComment = true;
-		
-		if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
-		}
-		else if (inComment && line.contains("*/")) {
-			inComment = false;
-		}
-	}
-
-
-	private String processLine(String line) {
+	@Override
+	protected String processLine(String line) {
 		String processedLine = line;
 		
 		if (inAssert)
@@ -82,21 +53,18 @@ public class AssertProcessor {
 	private String processMultilineAssert(String line) {
 		if (!roundBracketsBalance.parse(line).isBalanceEmpty())
 			return line;
-		
-		int idxLastSemicolon = line.lastIndexOf(';');
-		int lastCurlyBracketInSameLine = line.lastIndexOf("}");
-		int endOfAssert = idxLastSemicolon + 1;
-		
+
 		inAssert = false;
 		
-		if (lastCurlyBracketInSameLine != -1) {
-			if ((idxLastSemicolon) > lastCurlyBracketInSameLine)
-				lastCurlyBracketInSameLine = idxLastSemicolon+1;
+		if (line.contains("}") && (line.lastIndexOf(';')) <= line.lastIndexOf("}")) {
+			int lastCurlyBracketInSameLine = line.lastIndexOf("}");
 			
 			line = buildTryCatchStatement(line.substring(0, lastCurlyBracketInSameLine) , "") 
 					+ line.substring(lastCurlyBracketInSameLine);
 		}
 		else {
+			int endOfAssert = line.lastIndexOf(';') + 1;
+			
 			line = buildTryCatchStatement(line.substring(0, endOfAssert), "") 
 					+ line.substring(endOfAssert);
 		}
@@ -114,6 +82,7 @@ public class AssertProcessor {
 	private String processAssert(String line) {
 		if (!roundBracketsBalance.parse(line).isBalanceEmpty()) {
 			inAssert = true;
+			
 			return "try {" + line;
 		}
 		
@@ -132,12 +101,10 @@ public class AssertProcessor {
 	private String processLineWithComment(String line) {	
 		String tryContent;
 		
-		if (line.contains("}")) {
+		if (line.contains("}"))
 			tryContent = line.substring(0, line.lastIndexOf("}") + 1);
-		}
-		else {
+		else
 			tryContent = line.substring(0, getStartIndexOfInlineComment(line));
-		}
 		
 		return buildTryCatchStatement(tryContent, "");
 	}
@@ -149,25 +116,6 @@ public class AssertProcessor {
 			commentStart = line.indexOf("*/");
 		
 		return commentStart;
-	}
-
-	private String processLineWithoutComment(String line) {
-		String tryContent;
-		
-		if (line.contains("}")) {
-			int lastCurlyBracketInSameLine = line.lastIndexOf("}");
-			int idxLastSemicolon = line.lastIndexOf(';');
-
-			if (idxLastSemicolon > lastCurlyBracketInSameLine)
-				tryContent = line.substring(0, idxLastSemicolon + 1);
-			else
-				tryContent = line.substring(0, lastCurlyBracketInSameLine + 1);
-		}
-		else {
-			tryContent = line;
-		}
-		
-		return buildTryCatchStatement(tryContent, "");
 	}
 	
 	private String buildTryCatchStatement(String tryContent, String catchContent) {
@@ -187,5 +135,21 @@ public class AssertProcessor {
 		statement.append("}");
 		
 		return statement.toString();
+	}
+
+	private String processLineWithoutComment(String line) {
+		String tryContent;
+		
+		if (line.contains("}")) {
+			if (line.lastIndexOf(';') > line.lastIndexOf("}"))
+				tryContent = line.substring(0, line.lastIndexOf(';') + 1);
+			else
+				tryContent = line.substring(0, line.lastIndexOf("}") + 1);
+		}
+		else {
+			tryContent = line;
+		}
+		
+		return buildTryCatchStatement(tryContent, "");
 	}
 }

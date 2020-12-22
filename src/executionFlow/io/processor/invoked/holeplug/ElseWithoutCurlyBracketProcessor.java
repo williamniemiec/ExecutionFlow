@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
-import executionFlow.io.processor.SourceCodeProcessor;
+import executionFlow.io.SourceCodeProcessor;
 import executionFlow.util.balance.CurlyBracketBalance;
 
 public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {

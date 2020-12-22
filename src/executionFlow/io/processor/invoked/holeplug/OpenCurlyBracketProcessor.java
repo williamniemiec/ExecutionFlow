@@ -2,7 +2,7 @@ package executionFlow.io.processor.invoked.holeplug;
 
 import java.util.List;
 
-import executionFlow.io.processor.SourceCodeProcessor;
+import executionFlow.io.SourceCodeProcessor;
 
 /**
  * Checks if an opening curly bracket is in next line or not. If it is,

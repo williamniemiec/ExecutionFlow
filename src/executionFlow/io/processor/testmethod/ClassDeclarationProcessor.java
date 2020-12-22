@@ -2,7 +2,7 @@ package executionFlow.io.processor.testmethod;
 
 import java.util.List;
 
-import executionFlow.io.processor.SourceCodeProcessor;
+import executionFlow.io.SourceCodeProcessor;
 
 /**
  * Adds {@link executionFlow.runtime.SkipCollection} annotation next to 

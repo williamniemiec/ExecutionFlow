@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.io.processor.SourceCodeProcessor;
+import executionFlow.io.SourceCodeProcessor;
 
 public class InlineCommentProcessor extends SourceCodeProcessor {
 
