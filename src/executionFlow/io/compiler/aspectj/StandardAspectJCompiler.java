@@ -13,7 +13,6 @@ import executionFlow.io.FileEncoding;
 import executionFlow.io.compiler.Compiler;
 import executionFlow.util.logger.Logger;
 
-
 /**
  * Responsible for compiling Java files.
  * 
@@ -23,8 +22,8 @@ import executionFlow.util.logger.Logger;
  * @version		5.2.3
  * @since		1.3
  */
-public class StandardAspectJCompiler implements Compiler
-{
+public class StandardAspectJCompiler implements Compiler {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -38,8 +37,7 @@ public class StandardAspectJCompiler implements Compiler
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private StandardAspectJCompiler(Path inpath, List<Path> classpaths) 
-	{
+	private StandardAspectJCompiler(Path inpath, List<Path> classpaths) {
 		this.compiler = new Main();
 		this.messageHandler = new MessageHandler();
 		this.inpath = inpath;
@@ -54,16 +52,22 @@ public class StandardAspectJCompiler implements Compiler
 		private List<Path> classpaths;
 		private Path inpath;
 		
+		
+		@Override
 		public Builder inpath (Path inpath) {
 			this.inpath = inpath;
+			
 			return this;
 		}
 		
+		@Override
 		public Builder classpath(List<Path> classpath) {
 			this.classpaths = classpath;
+			
 			return this;
 		}
 		
+		@Override
 		public Compiler build() {
 			return new StandardAspectJCompiler(inpath, classpaths);
 		}
@@ -73,17 +77,9 @@ public class StandardAspectJCompiler implements Compiler
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	/**
-	 * Compiles .java file.
-	 * 
-	 * @param		target Path of source file to be compiled
-	 * @param		outputDir Path where generated .class will be saved
-	 * @param		encode File encoding
-	 * 
-	 * @throws		IOException If an error occurs during compilation
-	 */
-	public void compile(Path target, Path outputDir, FileEncoding encode) throws IOException
-	{
+	@Override
+	public void compile(Path target, Path outputDir, FileEncoding encode) 
+			throws IOException {
 		compiler.run(
 			buildCommands(target, outputDir, encode),
 			messageHandler
@@ -110,49 +106,51 @@ public class StandardAspectJCompiler implements Compiler
 		return commands.toArray(new String[] {});
 	}
 
-	private void initializeTarget(Path target) {
-		commands.add(target.toAbsolutePath().toString());
+	private void ignoreUncheckedWarnings() {
+		commands.add("-Xlint:ignore");
 	}
-
-	private void initializeOutput(Path outputDir) {
-		commands.add("-d");
-		initializeTarget(outputDir);
-	}
-
-	private void initializeClassPaths() {
-		if (classpaths != null) {
-			commands.add("-classpath");
-			StringBuilder cps = new StringBuilder();
-			
-			for (Path classpath : classpaths) {
-				cps.append(classpath.toAbsolutePath().toString());
-				cps.append(";");
-			}
-			
-			commands.add(cps.toString());
-		}
-	}
-
-	private void initializeEncoding(FileEncoding encode) {
-		commands.add("-encoding");
-		commands.add(encode.getName());
-	}
-
-	private void initializeCompilerVersion() {
-		commands.add("-9.0");
-	}
-
+	
 	private void initializeInpath() {
 		if (inpath != null) {
 			commands.add("-inpath");
 			commands.add(inpath.toAbsolutePath().toString());
 		}
 	}
-
-	private void ignoreUncheckedWarnings() {
-		commands.add("-Xlint:ignore");
+	
+	private void initializeCompilerVersion() {
+		commands.add("-9.0");
 	}
 
+	private void initializeEncoding(FileEncoding encode) {
+		commands.add("-encoding");
+		commands.add(encode.getName());
+	}
+	
+	private void initializeClassPaths() {
+		if (classpaths == null)
+			return;
+
+		StringBuilder cps = new StringBuilder();
+		
+		commands.add("-classpath");
+		
+		for (Path classpath : classpaths) {
+			cps.append(classpath.toAbsolutePath().toString());
+			cps.append(";");
+		}
+		
+		commands.add(cps.toString());
+	}
+	
+	private void initializeOutput(Path outputDir) {
+		commands.add("-d");
+		initializeTarget(outputDir);
+	}
+	
+	private void initializeTarget(Path target) {
+		commands.add(target.toAbsolutePath().toString());
+	}
+	
 	private void dump(Path outputDir) {
 		Logger.debug(this.getClass(), "start");
 		
@@ -173,21 +171,5 @@ public class StandardAspectJCompiler implements Compiler
 		}
 		
 		return false;
-	}
-	
-	public void setClassPath(List<Path> classpath) {
-		this.classpaths = classpath;
-	}
-	
-	public void setClassPath(Path... classpath) {
-		this.classpaths = new ArrayList<>();
-		
-		for (Path path : classpath) {
-			this.classpaths.add(path);			
-		}
-	}
-	
-	public void setInpath(Path inpath) {
-		this.inpath = inpath;
 	}
 }
