@@ -15,6 +15,9 @@ import executionFlow.io.SourceCodeProcessor;
  * a randomly chosen function and can be replaced by any other function
  * that returns true.
  *
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
  */
 public class ContinueBreakProcessor extends SourceCodeProcessor {
 	

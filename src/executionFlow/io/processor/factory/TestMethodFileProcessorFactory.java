@@ -6,7 +6,6 @@ import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
 
-
 /**
  * Responsible for generating {@link TestMethodFileProcessor} classes.
  * 
@@ -14,15 +13,15 @@ import executionFlow.io.processor.TestMethodFileProcessor;
  * @version		3.0.0
  * @since		2.0.0
  */
-public class TestMethodFileProcessorFactory extends FileProcessorFactory
-{
+public class TestMethodFileProcessorFactory extends FileProcessorFactory {
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
 	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
-			String outputFilename, FileEncoding encode) 
-	{
+										  String outputFilename, 
+										  FileEncoding encode) {
 		return new TestMethodFileProcessor.Builder()
 				.file(filepath)
 				.outputDir(outputDir)

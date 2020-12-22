@@ -7,6 +7,10 @@ import executionFlow.io.SourceCodeProcessor;
 /**
  * Adds {@link executionFlow.runtime.CollectCalls} annotation in method and
  * constructor declarations.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
  */
 public class InvokedProcessor extends SourceCodeProcessor {
 	

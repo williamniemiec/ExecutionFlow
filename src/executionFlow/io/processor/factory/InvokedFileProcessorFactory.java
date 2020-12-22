@@ -6,7 +6,6 @@ import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.InvokedFileProcessor;
 
-
 /**
  * Responsible for generating {@link InvokedFileProcessor} classes.
  * 
@@ -14,15 +13,15 @@ import executionFlow.io.processor.InvokedFileProcessor;
  * @version		5.2.0
  * @since		2.0.0
  */
-public class InvokedFileProcessorFactory extends FileProcessorFactory
-{
+public class InvokedFileProcessorFactory extends FileProcessorFactory {
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
 	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
-			String outputFilename, FileEncoding encode) 
-	{
+										  String outputFilename, 
+										  FileEncoding encode) {
 		return new InvokedFileProcessor.Builder()
 				.file(filepath)
 				.outputDir(outputDir)

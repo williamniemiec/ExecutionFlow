@@ -8,6 +8,10 @@ import executionFlow.util.DataUtil;
 /**
  * Add an instruction in variable declarations without 
  * initialization.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
  */
 public class UninitializedVariableProcessor extends SourceCodeProcessor {
 	

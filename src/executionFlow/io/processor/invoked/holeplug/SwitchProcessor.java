@@ -8,6 +8,10 @@ import executionFlow.util.DataUtil;
 /**
  * Process 'switch' code block (most specifically, line with 'case' or 
  * 'default' keyword).
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
  */
 public class SwitchProcessor extends SourceCodeProcessor {
 

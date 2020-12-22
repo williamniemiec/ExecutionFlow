@@ -11,9 +11,11 @@ import executionFlow.util.DataUtil;
  * <ul>
  * 	<li>Adds an instruction in else statements</li>
  * 	<li>Adjusts lines containing closing curly bracket + instruction</li>
- * 	<li>Adds curly brackets in else blocks that does not have curly 
- * 	brackets</li>
  * </ul>
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
  */
 public class ElseProcessor extends SourceCodeProcessor {
 

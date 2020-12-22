@@ -9,6 +9,10 @@ import executionFlow.util.DataUtil;
 /**
  * Makes adjustments to lines of code to allow test paths to be
  * computed correctly. It will add an instruction in do statements.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
  */
 public class DoWhileProcessor extends SourceCodeProcessor {
 

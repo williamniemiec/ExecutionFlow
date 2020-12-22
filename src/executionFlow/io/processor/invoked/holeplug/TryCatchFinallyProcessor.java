@@ -5,15 +5,15 @@ import java.util.List;
 import executionFlow.io.SourceCodeProcessor;
 import executionFlow.util.DataUtil;
 
+/**
+ * 
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
+ */
 public class TryCatchFinallyProcessor extends SourceCodeProcessor {
 
-	//---------------------------------------------------------------------
-	//		Attributes
-	//---------------------------------------------------------------------
-	
-//	private boolean removedClosedCB;
-	
-	
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
@@ -56,41 +56,4 @@ public class TryCatchFinallyProcessor extends SourceCodeProcessor {
 		
 		return statement.toString();
 	}
-	
-	/**
-	 * Adjust lines containing closed curly bracket + catch statement. Also, it
-	 * will add an instruction in try and finally statements.
-	 * 
-	 * @param		line Line to be parsed
-	 * @param		nextLine Line following the line to be parsed
-	 * 
-	 * @return		Parsed line		
-	 */
-//	public String parse(String line, String nextLine)
-//	{
-//		if (removedClosedCB) {
-//			removedClosedCB = false;
-//			line = line.substring(line.indexOf("}")+1);
-//		}
-//		
-//		if (line.matches(REGEX_TRY_FINALLY)) {
-//			line = putVariableNextToOpenCurlyBracket(line);
-//		}
-//		
-//		final String REGEX_CATCH_NEXT_TO_CLOSED_CURLY_BRACKET = 
-//				"(\\t|\\ )*\\}(\\t|\\ )*catch(\\t|\\ )*[\\(|\\{]+.*";
-//		if (nextLine.matches(REGEX_CATCH_NEXT_TO_CLOSED_CURLY_BRACKET)) {
-//			if (line.contains("//")) {
-//				int idx_comment = line.indexOf("//");
-//				
-//				line = line.substring(0, idx_comment) + "}" + line.substring(idx_comment);
-//			}
-//			else
-//				line += "}";
-//			
-//			removedClosedCB = true;
-//		}
-//		
-//		return line;
-//	}
 }

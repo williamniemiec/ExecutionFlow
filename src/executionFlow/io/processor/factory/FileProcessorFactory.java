@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.FileProcessor;
 
-
 /**
  * Responsible for generating {@link FileProcessor} classes.
  * 
@@ -13,8 +12,8 @@ import executionFlow.io.processor.FileProcessor;
  * @version		2.0.0
  * @since		2.0.0
  */
-public abstract class FileProcessorFactory
-{
+public abstract class FileProcessorFactory {
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -29,5 +28,6 @@ public abstract class FileProcessorFactory
 	 * @return		FileProcessor instance 
 	 */
 	public abstract FileProcessor newFileProcessor(Path filepath, Path outputDir, 
-			String outputFilename, FileEncoding encode);
+												   String outputFilename, 
+												   FileEncoding encode);
 }

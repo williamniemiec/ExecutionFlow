@@ -6,7 +6,6 @@ import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.PreTestMethodFileProcessor;
 
-
 /**
  * Responsible for generating {@link PreTestMethodFileProcessor} classes.
  * 
@@ -14,8 +13,8 @@ import executionFlow.io.processor.PreTestMethodFileProcessor;
  * @version		3.0.0
  * @since		2.0.0
  */
-public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
-{
+public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -33,8 +32,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	 * @param		testMethodSignature Test method signature
 	 * @param		args Test method arguments
 	 */
-	public PreTestMethodFileProcessorFactory(String testMethodSignature, Object[] args)
-	{
+	public PreTestMethodFileProcessorFactory(String testMethodSignature, Object[] args) {
 		this(testMethodSignature);
 		
 		if (args != null && args.length > 0)
@@ -47,8 +45,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	 * 
 	 * @param		testMethodSignature Test method signature
 	 */
-	public PreTestMethodFileProcessorFactory(String testMethodSignature)
-	{ 
+	public PreTestMethodFileProcessorFactory(String testMethodSignature) { 
 		this.testMethodSignature = testMethodSignature;
 	}
 	
@@ -58,8 +55,8 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory
 	//-------------------------------------------------------------------------
 	@Override
 	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
-			String outputFilename, FileEncoding encode) 
-	{
+										  String outputFilename, 
+										  FileEncoding encode) {
 		return new PreTestMethodFileProcessor.Builder()
 				.file(filepath)
 				.outputDir(outputDir)

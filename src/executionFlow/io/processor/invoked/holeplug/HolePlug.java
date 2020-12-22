@@ -2,7 +2,6 @@ package executionFlow.io.processor.invoked.holeplug;
 
 import java.util.List;
 
-
 /**
  * Adds instructions to pieces of code that are omitted during compilation.
  * Are they:
@@ -19,8 +18,8 @@ import java.util.List;
  * @version		5.2.3
  * @since 		5.0.0
  */
-public class HolePlug 
-{
+public class HolePlug {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -30,8 +29,7 @@ public class HolePlug
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public HolePlug(List<String> sourceCode)
-	{
+	public HolePlug(List<String> sourceCode) {
 		this.sourceCode = sourceCode;
 	}
 	
@@ -62,58 +60,71 @@ public class HolePlug
 	private void addInstructionNextToUninitializedVariables() {
 		UninitializedVariableProcessor uninitializedVariableProcessor = 
 				new UninitializedVariableProcessor(sourceCode);
+		
 		sourceCode = uninitializedVariableProcessor.processLines();
 	}
 
 	private void addInstructionInSwitchStructures() {
 		SwitchProcessor switchProcessor = new SwitchProcessor(sourceCode);
+		
 		sourceCode = switchProcessor.processLines();
 	}
 
 	private void addInstructionNextToWhileKeywords() {
 		WhileProcessor whileProcessor = new WhileProcessor(sourceCode);
+		
 		sourceCode = whileProcessor.processLines();
 	}
 
 	private void addInstructionNextToDoWhileKeywords() {
 		DoWhileProcessor doWhileProcessor = new DoWhileProcessor(sourceCode);
+		
 		sourceCode = doWhileProcessor.processLines();
 	}
 
 	private void addInstructionNextToContinueBreakKeywords() {
-		ContinueBreakProcessor continueBreakProcessor = new ContinueBreakProcessor(sourceCode);
+		ContinueBreakProcessor continueBreakProcessor =
+				new ContinueBreakProcessor(sourceCode);
+		
 		sourceCode = continueBreakProcessor.processLines();
 	}
 
 	private void addInstructionNextToTryFinallyKeywords() {
-		TryCatchFinallyProcessor tryCatchFinallyProcessor = new TryCatchFinallyProcessor(sourceCode);
+		TryCatchFinallyProcessor tryCatchFinallyProcessor = 
+				new TryCatchFinallyProcessor(sourceCode);
+		
 		sourceCode = tryCatchFinallyProcessor.processLines();
 	}
 
 	private void addInstructionNextToElseKeywords() {
 		ElseProcessor elseProcessor = new ElseProcessor(sourceCode);
+		
 		sourceCode = elseProcessor.processLines();
 	}
 
 	private void addCurlyBracketsInElseStatementsWithoutCurlyBrackets() {
 		ElseWithoutCurlyBracketProcessor processor = 
 				new ElseWithoutCurlyBracketProcessor(sourceCode);
+		
 		sourceCode = processor.processLines();
 	}
 
 	private void putCollectAnnotationNextToInvokedDeclarations() {
 		InvokedProcessor invokedProcessor = new InvokedProcessor(sourceCode);
+		
 		sourceCode = invokedProcessor.processLines();
 	}
 
 	private void removePrintCalls() {
 		PrintCallProcessor printCallProcessor = new PrintCallProcessor(sourceCode);
+		
 		sourceCode = printCallProcessor.processLines();
 	}
 
 	private void moveAloneOpenCurlyBracketsToThePreviousLine() {
 		OpenCurlyBracketProcessor openCurlyBracketProcessor = 
 				new OpenCurlyBracketProcessor(sourceCode);
+		
 		sourceCode = openCurlyBracketProcessor.processLines();
 	}
 }

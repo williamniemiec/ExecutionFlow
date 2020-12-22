@@ -5,8 +5,11 @@ import java.util.List;
 import executionFlow.io.SourceCodeProcessor;
 
 /**
- * Checks if an opening curly bracket is in next line or not. If it is,
- * moves it to the end of current line.
+ * Moves aloonen opening curly bracket to the previous line.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
  */
 public class OpenCurlyBracketProcessor extends SourceCodeProcessor {
 

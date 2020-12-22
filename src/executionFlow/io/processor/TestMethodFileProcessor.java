@@ -17,7 +17,8 @@ import executionFlow.util.logger.Logger;
 
 /**
  * Processes test java file adding annotations to disable collectors while 
- * running {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
+ * running {@link executionFlow.util.core.JDB JDB}. Also, disables print calls,
+ * removes inline comments and converts multiline calls to inline calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		5.2.3
@@ -38,7 +39,8 @@ public class TestMethodFileProcessor extends FileProcessor {
 	//-------------------------------------------------------------------------		
 	/**
 	 * Processes test java file adding annotations to disable collectors while 
-	 * running {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
+	 * running {@link executionFlow.util.core.JDB JDB}. Also, disables print calls,
+	 * removes inline comments and converts multiline calls to inline calls.
 	 * 
 	 * @param		file Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
@@ -255,13 +257,11 @@ public class TestMethodFileProcessor extends FileProcessor {
 	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	public static Map<Integer, Integer> getMapping()
-	{
+	public static Map<Integer, Integer> getMapping() {
 		return mapping;
 	}
 	
-	public static void clearMapping()
-	{
+	public static void clearMapping() {
 		mapping.clear();
 	}
 }

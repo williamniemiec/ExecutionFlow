@@ -7,6 +7,13 @@ import java.util.regex.Pattern;
 import executionFlow.io.SourceCodeProcessor;
 import executionFlow.util.balance.CurlyBracketBalance;
 
+/**
+ * Adds curly brackets in else blocks that does not have curly brackets.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
+ */
 public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 
 	//---------------------------------------------------------------------
@@ -14,9 +21,7 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	private ElseBlockManager elseBlockManager = new ElseBlockManager();
 	
-	private final String REGEX_CATCH = "[\\s\\t\\}]*catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
-	private final String REGEX_IF_ELSE_CLOSED_CURLY_BRACKET = "(\\t|\\ )*\\}(\\t|\\ )*(else if|else)(\\t|\\ )*(\\(|\\{).*";
-	private boolean elseWithoutCurlyBrackets;
+	private boolean inElseWithoutCurlyBrackets;
 	private boolean inlineCommand;
 	private boolean removeClosedCurlyBracketFromNextLine;
 	
@@ -37,73 +42,124 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		return processLine(line, getNextLine());
 	}
 	
-	
-	private String processLine(String line, String nextLine)
-	{
-		// TODO should be refactored
+	private String processLine(String line, String nextLine) {
+		String processedLine = line;
+		
 		if (removeClosedCurlyBracketFromNextLine) {
 			removeClosedCurlyBracketFromNextLine = false;
-			line = line.substring(line.indexOf("}")+1);
+			processedLine = line.substring(line.indexOf("}") + 1);
 		}
 
-		if (inlineCommand) {
-			line = processInlineCommand(line);
+		if (inlineCommand)
+			return processInlineCommand(processedLine);	
+
+		if (hasClosingCurlyBracketNextToIf(nextLine))
+			processedLine = moveClosedCurlyBracketToCurrentLine(processedLine);
+
+		if (inElseWithoutCurlyBrackets)
+			processedLine = processElseWithoutCurlyBracket(processedLine, nextLine);
+
+		processedLine = checkElseBlocks(processedLine);
+
+		if (isElseKeyword(processedLine))
+			parseElse(processedLine, nextLine);
+		
+		return processedLine;
+	}
+	
+	private String processInlineCommand(String line) {
+		inlineCommand = false;
+		
+		elseBlockManager.decreaseBalance();
+		
+		if (elseBlockManager.isCurrentBalanceEmpty())
+			elseBlockManager.removeCurrentElseBlock();
+		
+		if (elseBlockManager.getCurrentNestingLevel() == 0)
+			inElseWithoutCurlyBrackets = false;
+		
+		return line + "}";
+	}
+	
+	private boolean hasClosingCurlyBracketNextToIf(String nextLine) {
+		final String regexClosedCurlyBracketNextToIfElse = "(\\t|\\ )*"
+				+ "\\}(\\t|\\ )*(else if|else)(\\t|\\ )*(\\(|\\{).*";
+		
+		return nextLine.matches(regexClosedCurlyBracketNextToIfElse);
+	}
+
+	private String moveClosedCurlyBracketToCurrentLine(String line) {
+		String processedLine = line;
+		
+		if (line.contains("//")) {
+			int idxStartComment = line.indexOf("//");
+			
+			processedLine = line.substring(0, idxStartComment) 
+					+ "}" 
+					+ line.substring(idxStartComment);
 		}
 		else {
-			// Checks if a closing curly bracket is on the same line as an
-			// else-if or if statement
-			if (nextLine.matches(REGEX_IF_ELSE_CLOSED_CURLY_BRACKET)) {
-				
-				if (line.contains("//")) {
-					int idx_comment = line.indexOf("//");
-					
-					line = line.substring(0, idx_comment) + "}" + line.substring(idx_comment);
-				}
-				else
-					line += "}";
-				
-				removeClosedCurlyBracketFromNextLine = true;
-			}
-			
-			// Checks if parser is within a else block without curly brackets
-			if (elseWithoutCurlyBrackets) {
-				line = processElseWithoutCurlyBracket(line, nextLine);
-			}
-
-			// Checks if any else blocks have reached at the end. If yes,
-			// append '}' in the line, removes this else block and check
-			// other else blocks (if there is another)
-			while (	elseBlockManager.getCurrentNestingLevel() > 0 && 
-					elseBlockManager.getCurrentBalance() == 1 && 
-					elseBlockManager.hasBalanceAlreadyPassedTwo()) {
-				line += "}";
-				elseBlockManager.removeCurrentElseBlock();
-			}
-
-			// If there are not else blocks, it means that parser left else
-			// code block
-			if (elseBlockManager.getCurrentNestingLevel() == 0) {
-				elseWithoutCurlyBrackets = false;
-			}
-
-			// Else
-			if (isElseKeyword(line)) {
-				if (isInlineElseWithMoreThanOneLine(line)) {
-					elseWithoutCurlyBrackets = true;	// Else it is a else code block with more than one line
-				}
-				
-				if (elseWithoutCurlyBrackets) {
-					elseBlockManager.createNewElseBlock();
-					elseBlockManager.parse(line);
-					
-					if (!nextLine.contains("{") && isInlineCommand(nextLine)) {
-						inlineCommand = true;
-					}
-				}
-			}
+			processedLine += "}";
 		}
 		
-		return line;
+		removeClosedCurlyBracketFromNextLine = true;
+		
+		return processedLine;
+	}
+	
+	private String processElseWithoutCurlyBracket(String line, String nextLine) {
+		elseBlockManager.parse(line);
+		
+		if (!isInsideElseWithoutCurlyBrackets())
+			return line;
+		
+		String processedLine = line;
+		
+		if (hasCatchKeyword(line)) {
+			if (line.contains("{") && !line.contains("}")) {
+				elseBlockManager.incrementBalance();
+			} 
+			else if (line.contains("{") && line.contains("}")) {
+				processedLine += "}";
+				elseBlockManager.removeCurrentElseBlock();
+				
+				if (elseBlockManager.getCurrentNestingLevel() == 0)
+					inElseWithoutCurlyBrackets = false;
+			}
+		} 
+		else if (!hasCatchKeyword(nextLine)) {	
+			processedLine += "}";
+			elseBlockManager.removeCurrentElseBlock();
+			
+			if (elseBlockManager.getCurrentNestingLevel() == 0)
+				inElseWithoutCurlyBrackets = false;
+		}
+			
+		return processedLine;
+	}
+	
+	private boolean isInsideElseWithoutCurlyBrackets() {
+		return !elseBlockManager.isCurrentBalanceEmpty();
+	}
+	
+	private boolean hasCatchKeyword(String line) {
+		final String regexCatchKeyword = "[\\s\\t\\}]*"
+				+ "catch(\\ |\\t)*\\(.*\\)(\\ |\\t)*";
+		
+		return line.matches(regexCatchKeyword);
+	}
+	
+	private void parseElse(String line, String nextLine) {
+		if (isInlineElseWithMoreThanOneLine(line))
+			inElseWithoutCurlyBrackets = true;
+		
+		if (inElseWithoutCurlyBrackets) {
+			elseBlockManager.createNewElseBlock();
+			elseBlockManager.parse(line);
+			
+			if (!nextLine.contains("{") && isInlineCommand(nextLine))
+				inlineCommand = true;
+		}
 	}
 	
 	private boolean isInlineCommand(String line) {
@@ -111,64 +167,38 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 	}
 	
 	private boolean isInlineElseWithMoreThanOneLine(String line) {
-		String afterElse = line.substring(line.indexOf("else")+4);
+		String afterElse = line.substring(line.indexOf("else") + 4);
 		
-		return afterElse.isEmpty() || afterElse.matches("^(\\s|\\t)+$");
+		return	afterElse.isEmpty() 
+				|| afterElse.matches("^(\\s|\\t)+$");
 	}
 
-
-	private String processElseWithoutCurlyBracket(String line, String nextLine) {
-		elseBlockManager.parse(line);
+	private String checkElseBlocks(String line) {
+		StringBuilder processedLine = new StringBuilder(line);
 		
-		// Checks if else block balance is empty
-		if (elseBlockManager.isCurrentBalanceEmpty()) {
-			// Checks if it is a line with 'catch' keyword
-			if (line.matches(REGEX_CATCH)) {
-				// Updates else block balance
-				if (line.contains("{") && !line.contains("}")) {
-					elseBlockManager.incrementBalance();
-				} 
-				else if (line.contains("{") && line.contains("}")) {
-					line += "}";
-					elseBlockManager.removeCurrentElseBlock();
-					
-					if (elseBlockManager.getCurrentNestingLevel() == 0)
-						elseWithoutCurlyBrackets = false;
-				}
-			} 
-			else if (!nextLine.matches(REGEX_CATCH)) {	// Checks if next line does not have 'catch' keyword
-				line += "}";
-				elseBlockManager.removeCurrentElseBlock();
-				
-				if (elseBlockManager.getCurrentNestingLevel() == 0)
-					elseWithoutCurlyBrackets = false;
-			}
-		}
-		return line;
-	}
-
-
-	private String processInlineCommand(String line) {
-		inlineCommand = false;
-		
-		line = line +"}";
-		elseBlockManager.decreaseBalance();
-		
-		if (elseBlockManager.isCurrentBalanceEmpty()) {
+		while (areThereAnyElseBlockThatReachedAtTheEnd()) {
+			processedLine.append("}");
 			elseBlockManager.removeCurrentElseBlock();
 		}
+
+		if (elseBlockManager.getCurrentNestingLevel() == 0)
+			inElseWithoutCurlyBrackets = false;
 		
-		if (elseBlockManager.getCurrentNestingLevel() == 0) {
-			elseWithoutCurlyBrackets = false;
-		}
-		return line;
+		return processedLine.toString();
+	}
+
+	private boolean areThereAnyElseBlockThatReachedAtTheEnd() {
+		return	elseBlockManager.hasBalanceAlreadyPassedTwo()
+				&& (elseBlockManager.getCurrentBalance() == 1) 
+				&& (elseBlockManager.getCurrentNestingLevel() > 0);
 	}
 	
 	private boolean isElseKeyword(String line) {
-		final Pattern patternElse = 
-				Pattern.compile("[\\s\\t\\}]*else(\\ |\\t|\\}|$)+.*");
+		final Pattern patternElse = Pattern.compile("[\\s\\t\\}]*"
+				+ "else(\\ |\\t|\\}|$)+.*");
 		
-		return !line.contains("if") && patternElse.matcher(line).find();
+		return	!line.contains("if") 
+				&& patternElse.matcher(line).find();
 	}
 	
 	
@@ -180,8 +210,8 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 	 * is used only for else blocks without curly brackets, because its 
 	 * usefulness is add curly brackets in these blocks.
 	 */
-	private class ElseBlockManager
-	{
+	private class ElseBlockManager {
+		
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
@@ -193,21 +223,21 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		/**
 		 * Stores curly bracket balance for each else block nesting level.
 		 */
-		private Stack<CurlyBracketBalance> elseBlocks_balance;
+		private Stack<CurlyBracketBalance> elseBlocksBalance;
 		
 		/**
 		 * Stores if at any time the curly bracket balance of each else block 
 		 * nesting level was equal to 2.
 		 */
-		private Stack<Boolean> elseBlocks_passedTwo;
+		private Stack<Boolean> elseBlocksPassedTwo;
 		
 		
 		//---------------------------------------------------------------------
-		//		Initialization block
+		//		Constructor
 		//---------------------------------------------------------------------
-		{
-			elseBlocks_balance = new Stack<>();
-			elseBlocks_passedTwo = new Stack<>();
+		public ElseBlockManager() {
+			elseBlocksBalance = new Stack<>();
+			elseBlocksPassedTwo = new Stack<>();
 		}
 		
 		
@@ -219,35 +249,33 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		 * 
 		 * @param		line Line with curly brackets
 		 */
-		public void parse(String line)
-		{
-			elseBlocks_balance.peek().parse(line);
+		public void parse(String line) {
+			elseBlocksBalance.peek().parse(line);
 		}
 		
 		/**
 		 * Creates a new else block, storing it at the 
-		 * {@link #elseBlocks_balance else blocks stack}. It will also 
+		 * {@link #elseBlocksBalance else blocks stack}. It will also 
 		 * increment {@link #currentNestingLevel current nesting level}.
 		 */
-		public void createNewElseBlock()
-		{
+		public void createNewElseBlock() {
 			currentNestingLevel++;
-			elseBlocks_balance.push(new CurlyBracketBalance());
-			elseBlocks_passedTwo.push(false);
+			elseBlocksBalance.push(new CurlyBracketBalance());
+			elseBlocksPassedTwo.push(false);
 		}
 		
 		/**
 		 * Removes else block of {@link #currentNestingLevel current nesting level} 
-		 * from the {@link #elseBlocks_balance else blocks stack}. If stack is 
+		 * from the {@link #elseBlocksBalance else blocks stack}. If stack is 
 		 * empty, do not do anything.
 		 */
-		public void removeCurrentElseBlock()
-		{
-			if (elseBlocks_balance.size() > 0) {
-				elseBlocks_balance.pop();
-				elseBlocks_passedTwo.pop();
-				currentNestingLevel--;
-			}
+		public void removeCurrentElseBlock() {
+			if (elseBlocksBalance.size() <= 0)
+				return;
+			
+			elseBlocksBalance.pop();
+			elseBlocksPassedTwo.pop();
+			currentNestingLevel--;
 		}
 		
 		/**
@@ -255,8 +283,7 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		 * 
 		 * @return		Current nesting level
 		 */
-		public int getCurrentNestingLevel()
-		{
+		public int getCurrentNestingLevel() {
 			return currentNestingLevel;
 		}
 		
@@ -267,15 +294,15 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		 * 
 		 * @apiNote		Should be called only when an open curly bracket is found
 		 */
-		public void incrementBalance()
-		{
-			if (currentNestingLevel != 0) {
-				elseBlocks_balance.peek().increaseBalance();
-				
-				if (elseBlocks_balance.peek().getBalance() >= 2) {
-					elseBlocks_passedTwo.pop();
-					elseBlocks_passedTwo.push(true);
-				}
+		public void incrementBalance() {
+			if (currentNestingLevel == 0)
+				return;
+			
+			elseBlocksBalance.peek().increaseBalance();
+			
+			if (elseBlocksBalance.peek().getBalance() >= 2) {
+				elseBlocksPassedTwo.pop();
+				elseBlocksPassedTwo.push(true);
 			}
 		}
 		
@@ -286,10 +313,11 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		 * 
 		 * @apiNote		Should be called only when a closed curly bracket is found
 		 */
-		public void decreaseBalance()
-		{
-			if (currentNestingLevel != 0)
-				elseBlocks_balance.peek().decreaseBalance();
+		public void decreaseBalance() {
+			if (currentNestingLevel == 0)
+				return;
+			
+			elseBlocksBalance.peek().decreaseBalance();
 		}
 		
 		/**
@@ -299,11 +327,11 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		 * 
 		 * @return		Current balance or -1 if nesting level is zero
 		 */
-		public int getCurrentBalance()
-		{
-			if (currentNestingLevel == 0) { return -1; }
+		public int getCurrentBalance() {
+			if (currentNestingLevel == 0)
+				return -1;
 			
-			return elseBlocks_balance.peek().getBalance();
+			return elseBlocksBalance.peek().getBalance();
 		}
 		
 		/**
@@ -312,11 +340,11 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		 * 
 		 * @return		If balance is zero
 		 */
-		public boolean isCurrentBalanceEmpty()
-		{
-			if (currentNestingLevel == 0) { return true; }
+		public boolean isCurrentBalanceEmpty() {
+			if (currentNestingLevel == 0)
+				return true;
 			
-			return elseBlocks_balance.peek().isBalanceEmpty();
+			return elseBlocksBalance.peek().isBalanceEmpty();
 		}
 		
 		/**
@@ -325,11 +353,11 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		 * 
 		 * @return		If at any time the balance was equal to 2
 		 */
-		private boolean hasBalanceAlreadyPassedTwo()
-		{
-			if (currentNestingLevel == 0) { return false; }
+		private boolean hasBalanceAlreadyPassedTwo() {
+			if (currentNestingLevel == 0)
+				return false;
 			
-			return elseBlocks_passedTwo.peek();
+			return elseBlocksPassedTwo.peek();
 		}
 	}
 }
