@@ -242,25 +242,23 @@ public abstract class ExecutionFlow {
 	}
 
 	private FileManager createTestMethodFileManager(InvokedContainer collector) {
-		return new FileManager(
-			collector.getTestMethodInfo().getClassSignature(),
-			collector.getTestMethodInfo().getSrcPath(), 
-			collector.getTestMethodInfo().getClassDirectory(),
-			collector.getTestMethodInfo().getPackage(),
-			new TestMethodFileProcessorFactory(),
-			"testMethod.bkp"
-		);
+		return new FileManager.Builder()
+				.srcPath(collector.getTestMethodInfo().getSrcPath())
+				.binDirectory(collector.getTestMethodInfo().getClassDirectory())
+				.classPackage(collector.getTestMethodInfo().getPackage())
+				.backupExtensionName("testMethod.bkp")
+				.fileParserFactory(new TestMethodFileProcessorFactory())
+				.build();
 	}
 
 	private FileManager createInvokedFileManager(InvokedContainer collector) {
-		return new FileManager(
-			collector.getInvokedInfo().getClassSignature(),
-			collector.getInvokedInfo().getSrcPath(), 
-			collector.getInvokedInfo().getClassDirectory(),
-			collector.getInvokedInfo().getPackage(),
-			new InvokedFileProcessorFactory(),
-			"invoked.bkp"
-		);
+		return new FileManager.Builder()
+				.srcPath(collector.getInvokedInfo().getSrcPath())
+				.binDirectory(collector.getInvokedInfo().getClassDirectory())
+				.classPackage(collector.getInvokedInfo().getPackage())
+				.backupExtensionName("invoked.bkp")
+				.fileParserFactory(new InvokedFileProcessorFactory())
+				.build();
 	}
 
 	private void fixAnonymousClassSignature(InvokedInfo invokedInfo) {

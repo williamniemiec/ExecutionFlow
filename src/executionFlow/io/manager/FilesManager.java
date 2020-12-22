@@ -15,36 +15,33 @@ import java.util.Set;
 import executionFlow.ExecutionFlow;
 import executionFlow.io.processor.ProcessorType;
 
-
 /**
  * Responsible for managing the processing and compilation from files. Its main 
  * responsibility is not to perform unnecessary processing, that is, processing
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
+ * @version		5.2.3
  * @since		2.0.0
  */
-public class FilesManager 
-// TODO FilesManager -> ProcessingManager?
-{
+public class FilesManager {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private boolean autoDelete;
 	private File backupFile;
 	private HashSet<FileManager> files;
 	
 	/**
-	 * Stores hashcode of FileManager that have already been processed 
+	 * Stores hashcode of FileManager that have already been processed.
 	 */
 	private Set<Integer> processedFiles;
 	
 	/**
-	 * Stores hashcode of FileManager that have already been compiled 
+	 * Stores hashcode of FileManager that have already been compiled.
 	 */
 	private Set<Integer> compiledFiles;
-	
-	private boolean autoDelete;
 	
 	
 	//-------------------------------------------------------------------------
@@ -70,8 +67,7 @@ public class FilesManager
 	 * found  
 	 */
 	public FilesManager(ProcessorType type, boolean autoDelete, boolean autoRestore) 
-			throws ClassNotFoundException, IOException
-	{
+			throws ClassNotFoundException, IOException {
 		this.files = new HashSet<>(); 
 		this.processedFiles = new HashSet<>();
 		this.compiledFiles = new HashSet<>();
@@ -108,8 +104,7 @@ public class FilesManager
 	 * found  
 	 */
 	public FilesManager(ProcessorType type, boolean autoDelete)
-			throws ClassNotFoundException, IOException
-	{
+			throws ClassNotFoundException, IOException {
 		this(type, autoDelete, true);
 	}
 	
@@ -134,8 +129,7 @@ public class FilesManager
 	 * @throws		ClassNotFoundException If class {@link FileManager} is not
 	 * found  
 	 */
-	public FilesManager(boolean autoDelete) throws ClassNotFoundException, IOException
-	{
+	public FilesManager(boolean autoDelete) throws ClassNotFoundException, IOException {
 		this(ProcessorType.INVOKED, autoDelete, true);
 	}
 	
@@ -143,18 +137,103 @@ public class FilesManager
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	@Override
-	public String toString() 
-	{
-		return "FilesManager ["
-				+ "backupFile=" + backupFile 
-				+ ", files=" + files 
-				+ ", processedFiles=" + processedFiles
-				+ ", compiledFiles=" + compiledFiles 
-				+ ", autoDelete=" + autoDelete 
-			+ "]";
+	/**
+	 * Restores list of files modified in the last execution.
+	 * 
+	 * @throws		IOException If an error occurs during class deserialization 
+	 * @throws		ClassNotFoundException If class {@link FileManager} is not
+	 * found 
+	 */
+	private void restoreFromBackup() throws IOException, ClassNotFoundException {
+		if (!backupFile.exists())
+			return;
+		
+		restoreAll(readFileManagersFromBackupFile());
+		
+		if (autoDelete)
+			deleteBackup();
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	private HashSet<FileManager> readFileManagersFromBackupFile() 
+			throws IOException, ClassNotFoundException {
+		HashSet<FileManager> fileManagers = new HashSet<>();
+		
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile))) {
+			fileManagers = (HashSet<FileManager>) ois.readObject();
+		}
+		
+		return fileManagers;
+	}
+	
+	/**
+	 * Restores all original files that have been modified.
+	 * 
+	 * @param		files List of modified files
+	 */
+	private void restoreAll(Set<FileManager> files) {
+		if (files == null)
+			return;
+		
+		Iterator<FileManager> it = files.iterator();
+		
+		while (it.hasNext()) {
+			FileManager fm = it.next(); 
+			
+			revertProcessingUsingFileManager(fm);
+			revertCompilationUsingFileManager(fm);
+			removeFileManager(it);
+		}
+	}
+	
+	private boolean revertProcessingUsingFileManager(FileManager fm) {
+		boolean success = true;
+		
+		try {
+			fm.revertProcessing();
+		} 
+		catch (IOException e) {
+			success = false;
+		}
+		
+		return success;
+	}
+	
+	private boolean revertCompilationUsingFileManager(FileManager fm) {
+		boolean success = true;
+		
+		try {
+			fm.revertCompilation();
+		} 
+		catch (IOException e) {
+			success = false;
+		}
+		
+		return success;
+	}
+	
+	private boolean removeFileManager(Iterator<FileManager> it) {
+		boolean success = true;
+		
+		try {
+			it.remove();
+		}
+		catch (ConcurrentModificationException e) {
+			success = false;
+		}
+		
+		return success;
+	}
+	
+	/**
+	 * Checks if exists a backup file.
+	 * 
+	 * @return		If exists a backup file
+	 */
+	public boolean hasBackupStored() {
+		return backupFile.exists();
+	}
+	
 	/**
 	 * Parses file from its {@link FileManager}.
 	 * 
@@ -167,8 +246,8 @@ public class FilesManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesManager processFile(FileManager fm, boolean autoRestore) throws IOException
-	{
+	public FilesManager processFile(FileManager fm, boolean autoRestore) 
+			throws IOException {
 		if (wasProcessed(fm))
 			return this;
 		
@@ -178,12 +257,37 @@ public class FilesManager
 		return this;
 	}
 
+	/**
+	 * Checks if the file has already been parsed.
+	 * 
+	 * @param		fm File manager of the file
+	 * 
+	 * @return		If the file has already been parsed
+	 */
+	public boolean wasProcessed(FileManager fm) {
+		return processedFiles.contains(fm.hashCode());
+	}
+	
 	private void markFileAsProcessed(FileManager fm) throws IOException {
 		processedFiles.add(fm.hashCode());
 
 		if (!files.contains(fm)) {
 			files.add(fm);
 			save();
+		}
+	}
+	
+	/**
+	 * Serializes list of FileManagers to allow modified files to be restored 
+	 * in case the program is interrupted without having restored these files.
+	 * 
+	 * @throws		IOException If an error occurs during class serialization 
+	 */
+	public void save() throws IOException {
+		try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFile))) {
+			ois.writeObject(files);
+			ois.writeObject(processedFiles);
+			ois.writeObject(compiledFiles);
 		}
 	}
 	
@@ -198,8 +302,7 @@ public class FilesManager
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesManager processFile(FileManager fm) throws IOException
-	{
+	public FilesManager processFile(FileManager fm) throws IOException {
 		return processFile(fm, true);
 	}
 	
@@ -213,16 +316,27 @@ public class FilesManager
 	 * @throws		IOException If an error occurs during compilation or during
 	 * class serialization
 	 */
-	public FilesManager compile(FileManager fm) throws IOException
-	{	
+	public FilesManager compile(FileManager fm) throws IOException {	
 		if (wasCompiled(fm))
 			return this;
 		
-		fm.createBackupBinFile().compileFile();
+		fm.createBackupBinFile();
+		fm.compileFile();
 
 		markFileAsCompiled(fm);
 		
 		return this;
+	}
+	
+	/**
+	 * Checks if the file has already been compiled.
+	 * 
+	 * @param		fm File manager of the file
+	 * 
+	 * @return		If the file has already been compiled
+	 */
+	public boolean wasCompiled(FileManager fm) {
+		return compiledFiles.contains(fm.hashCode());
 	}
 
 	private void markFileAsCompiled(FileManager fm) throws IOException {
@@ -235,70 +349,19 @@ public class FilesManager
 	}
 	
 	/**
-	 * Checks if the file has already been parsed.
-	 * 
-	 * @param		fm File manager of the file
-	 * 
-	 * @return		If the file has already been parsed
-	 */
-	public boolean wasProcessed(FileManager fm)
-	{
-		return processedFiles.contains(fm.hashCode());
-	}
-	
-	/**
-	 * Checks if the file has already been compiled.
-	 * 
-	 * @param		fm File manager of the file
-	 * 
-	 * @return		If the file has already been compiled
-	 */
-	public boolean wasCompiled(FileManager fm)
-	{
-		return compiledFiles.contains(fm.hashCode());
-	}
-	
-	/**
 	 * Restores all original files that have been modified.
 	 * 
 	 * @return		If the restore was successful
 	 */
-	public void restoreAll()
-	{
+	public void restoreAll() {
 		restoreAll(files);
 	}
 	
 	/**
 	 * Deletes backup file
 	 */
-	public void deleteBackup()
-	{
+	public void deleteBackup() {
 		backupFile.delete();
-	}
-	
-	/**
-	 * Checks if exists a backup file.
-	 * 
-	 * @return		If exists a backup file
-	 */
-	public boolean hasBackupStored()
-	{
-		return backupFile.exists();
-	}
-	
-	/**
-	 * Serializes list of FileManagers to allow modified files to be restored 
-	 * in case the program is interrupted without having restored these files.
-	 * 
-	 * @throws		IOException If an error occurs during class serialization 
-	 */
-	public void save() throws IOException
-	{
-		try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFile))) {
-			ois.writeObject(files);
-			ois.writeObject(processedFiles);
-			ois.writeObject(compiledFiles);
-		}
 	}
 	
 	/**
@@ -315,24 +378,23 @@ public class FilesManager
 	 * @implNote	If backup file does not exist, {@link #files} will be null
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean load() throws IOException, ClassNotFoundException
-	{
+	public boolean load() throws IOException, ClassNotFoundException {
 		if (!hasBackupStored())
 			return false;
 		
-		boolean error = false;
+		boolean success = true;
 		
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile))) {
-			this.files = (HashSet<FileManager>)ois.readObject();
-			this.processedFiles = (Set<Integer>)ois.readObject();
-			this.compiledFiles = (Set<Integer>)ois.readObject();
+			this.files = (HashSet<FileManager>) ois.readObject();
+			this.processedFiles = (Set<Integer>) ois.readObject();
+			this.compiledFiles = (Set<Integer>) ois.readObject();
 		} 
 		catch (FileNotFoundException e) {
 			this.files = null;
-			error = true;
+			success = false;
 		}
 		
-		return !error;
+		return success;
 	}
 	
 	/**
@@ -345,89 +407,21 @@ public class FilesManager
 	 * 
 	 * @return		If file manager was successfully removed
 	 */
-	public boolean remove(FileManager fm)
-	{
+	public boolean remove(FileManager fm) {
 		processedFiles.remove(fm.hashCode());
 		compiledFiles.remove(fm.hashCode());
 		
 		return files.remove(fm);
 	}
 	
-	/**
-	 * Restores all original files that have been modified.
-	 * 
-	 * @param		files List of modified files
-	 */
-	private void restoreAll(Set<FileManager> files)
-	{
-		if (files == null)
-			return;
-		
-		Iterator<FileManager> it = files.iterator();
-		
-		while (it.hasNext()) {
-			FileManager fm = it.next(); 
-			
-			revertProcessingUsingFileManager(fm);
-			revertCompilationUsingFileManager(fm);
-			removeFileManager(it);
-		}
-	}
-
-	private void removeFileManager(Iterator<FileManager> it) {
-		try {
-			it.remove();
-		}
-		catch (ConcurrentModificationException e)
-		{}
-	}
-
-	private boolean revertCompilationUsingFileManager(FileManager fm) {
-		boolean success = true;
-		
-		try {
-			fm.revertCompilation();
-		} 
-		catch (IOException e) {
-			success = false;
-		}
-		return success;
-	}
-
-	private boolean revertProcessingUsingFileManager(FileManager fm) {
-		boolean success = true;
-		
-		try {
-			fm.revertProcessing();
-		} 
-		catch (IOException e) {
-			success = false;
-		}
-		
-		return success;
-	}
-	
-	/**
-	 * Restores list of files modified in the last execution.
-	 * 
-	 * @throws		IOException If an error occurs during class deserialization 
-	 * @throws		ClassNotFoundException If class {@link FileManager} is not
-	 * found 
-	 */
-	private void restoreFromBackup() throws IOException, ClassNotFoundException
-	{
-		// Deserialization
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(backupFile));
-		
-		@SuppressWarnings("unchecked")
-		HashSet<FileManager> restoredFiles = (HashSet<FileManager>)ois.readObject();
-		
-		ois.close();
-		
-		// Restores original files
-		restoreAll(restoredFiles);
-		
-		if (autoDelete)
-			deleteBackup();
+	@Override
+	public String toString() {
+		return "FilesManager ["
+				+ "backupFile=" + backupFile 
+				+ ", files=" + files 
+				+ ", processedFiles=" + processedFiles
+				+ ", compiledFiles=" + compiledFiles 
+				+ ", autoDelete=" + autoDelete 
+			+ "]";
 	}
 }

@@ -22,6 +22,7 @@ import executionFlow.io.manager.FilesManager;
 import executionFlow.io.manager.ProcessingManager;
 import executionFlow.io.preprocessor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.ProcessorType;
+import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionFlow.user.Session;
 import executionFlow.util.Checkpoint;
@@ -364,15 +365,16 @@ public aspect TestMethodCollector extends RuntimeCollector
 		}
 	}
 	
-	private void initializeFileManager(JoinPoint jp) {
-		testMethodFileManager = new FileManager(
-			getClassSignature(jp),
-			srcPath,
-			InvokedInfo.getCompiledFileDirectory(classPath),
-			InvokedInfo.extractPackage(getClassSignature(jp)),
-			new PreTestMethodFileProcessorFactory(testMethodSignature, getParameterValues(jp)),
-			"pretestmethod.bkp"
-		);
+	private void initializeFileManager(JoinPoint jp) {	
+		testMethodFileManager = new FileManager.Builder()
+				.srcPath(srcPath)
+				.binDirectory(InvokedInfo.getCompiledFileDirectory(classPath))
+				.classPackage(InvokedInfo.extractPackage(getClassSignature(jp)))
+				.backupExtensionName("pretestmethod.bkp")
+				.fileParserFactory(new PreTestMethodFileProcessorFactory(
+						testMethodSignature, getParameterValues(jp)
+				))
+				.build();
 	}
 	
 	private Object[] getParameterValues(JoinPoint jp) {
