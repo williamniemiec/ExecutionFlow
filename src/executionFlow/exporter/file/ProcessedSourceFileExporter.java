@@ -6,13 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.util.DataUtil;
 import executionFlow.util.FileUtil;
 import executionFlow.util.formatter.JavaIndenter;
-
 
 /**
  * Exports the processed file that will be used as the basis for processing the
@@ -22,8 +20,8 @@ import executionFlow.util.formatter.JavaIndenter;
  * @version		5.2.3
  * @since		5.2.0
  */
-public class ProcessedSourceFileExporter 
-{
+public class ProcessedSourceFileExporter {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -40,8 +38,7 @@ public class ProcessedSourceFileExporter
 	 * 
 	 * @param		dirName Directory name
 	 */
-	public ProcessedSourceFileExporter(String dirName, boolean isConstructor)
-	{
+	public ProcessedSourceFileExporter(String dirName, boolean isConstructor) {
 		this.dirName = dirName;
 		this.isConstructor = isConstructor;
 	}
@@ -50,43 +47,28 @@ public class ProcessedSourceFileExporter
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	/**
+	 * Exports processed file to the following path: <br />
+	 * 	<code>dirName/package1/package2/.../className.invokedName(parameterTypes)/SRC.txt</code>
+	 * 
+	 * @param		processedSourceFiles Processed source files
+	 * 
+	 * @throws		IOException If it is not possible to export source files
+	 */
 	public void export(Map<String, Path> processedSourceFiles) throws IOException {
 		for (Map.Entry<String, Path> srcFiles : processedSourceFiles.entrySet()) {
 			exportRegistry(srcFiles.getKey(), srcFiles.getValue());
 		}
 	}
 	
-	
-	/**
-	 * Exports processed file to the following path: <br />
-	 * 	<code>dirName/package1/package2/.../className.invokedName(parameterTypes)/SRC.txt</code>
-	 * 
-	 * @param		processedFile Processed file
-	 * @param		invokedSignature Method or constructor signature
-	 * @param		isConstructor Indicates whether the invoked signature 
-	 * belongs to a constructor
-	 * 
-	 * @throws		IOException If it is not possible to store file
-	 */
-	private void exportRegistry(String invokedSignature, Path processedFile) throws IOException
-	{
+	private void exportRegistry(String invokedSignature, Path processedFile) 
+			throws IOException	{
 		List<String> fileContent = getFileContent(processedFile);
 		Path outputFile = generateOutputPath(invokedSignature);
 		
 		FileUtil.writeLines(fileContent, outputFile, Charset.defaultCharset());
 	}
-
-
-	private Path generateOutputPath(String invokedSignature) {
-		return Paths.get(
-				ExecutionFlow.getCurrentProjectRoot().toString(), 
-				dirName,
-				DataUtil.generateDirectoryPathFromSignature(invokedSignature, isConstructor),
-				"SRC.txt"
-		);
-	}
-
-
+	
 	private List<String> getFileContent(Path processedFile) throws IOException {
 		List<String> fileContent = FileUtil.readLines(
 				processedFile, Charset.defaultCharset()
@@ -97,5 +79,14 @@ public class ProcessedSourceFileExporter
 		fileContent = indenter.format(fileContent);
 		
 		return fileContent;
+	}
+
+	private Path generateOutputPath(String invokedSignature) {
+		return Paths.get(
+				ExecutionFlow.getCurrentProjectRoot().toString(), 
+				dirName,
+				DataUtil.generateDirectoryPathFromSignature(invokedSignature, isConstructor),
+				"SRC.txt"
+		);
 	}
 }

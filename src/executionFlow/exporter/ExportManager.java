@@ -24,21 +24,21 @@ public class ExportManager {
 	//		Attributes
 	//-------------------------------------------------------------------------
 	protected static final TestPathExportType TEST_PATH_EXPORTER;
-	
 	private TestPathExporter testPathExporter;
-	protected MethodsCalledByTestedInvokedExporter mcti;
-	protected ProcessedSourceFileExporter processedSourceFileExporter;
+	private MethodsCalledByTestedInvokedExporter mcti;
+	private ProcessedSourceFileExporter processedSourceFileExporter;
 	private TestedInvokedExporter testersExporter;
-	
 	private boolean exportTestPaths = true;
 	private boolean exportCalledMethods = true;
 	private boolean exportProcessedSourceFile = true;
 	private boolean exportTesters = true;
-
 	private boolean isConstructor;
 	private String outputDir;
 	
 	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
 	/**
 	 * Sets test path export type.
 	 */
@@ -46,6 +46,7 @@ public class ExportManager {
 		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
 //		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
@@ -59,6 +60,7 @@ public class ExportManager {
 		initializeProcessedSourceFileExporter();
 		initializeMethodsCalledByTestedInvokedExporter();
 	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -117,17 +119,17 @@ public class ExportManager {
 		}
 	}
 	
-	public void exportMethodsCalledByTestedInvoked(Map<String, Set<String>> methodsCalledByTestedInvoked) {
-		// Exports methods called by tested invoked to a CSV
+	public void exportMethodsCalledByTestedInvoked(
+			Map<String, Set<String>> methodsCalledByTestedInvoked) {
 		if (!exportCalledMethods)
 			return;
 		
 		try {
 			mcti.export(methodsCalledByTestedInvoked);
 		} 
-		catch (IOException e) {}
+		catch (IOException e) {
+		}
 	}
-	
 	
 	public void enableTestPathExport() {
 		exportTestPaths = true;

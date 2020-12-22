@@ -14,7 +14,6 @@ import executionFlow.util.CSV;
 import executionFlow.util.DataUtil;
 import executionFlow.util.logger.Logger;
 
-
 /**
  * Exports signature of methods called by a tested invoked in a CSV file with
  * the following format: <br /> <br /> 
@@ -63,8 +62,7 @@ public class MethodsCalledByTestedInvokedExporter
 	 * @param		dirName Directory name
 	 */
 	public MethodsCalledByTestedInvokedExporter(String filename, String dirName, 
-			boolean isConstructor)
-	{
+												boolean isConstructor) {
 		this.filename = filename;
 		this.dirName = dirName;
 		this.isConstructor = isConstructor;
@@ -74,6 +72,14 @@ public class MethodsCalledByTestedInvokedExporter
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	/**
+	 * Exports signature of methods called by all tested invoked in a CSV file.
+	 * 
+	 * @param		methodsCalledByAllTestedInvoked Methods called by all tested
+	 * invoked
+	 * 
+	 * @throws		IOException If it is not possible to generate CSV file
+	 */
 	public void export(Map<String, Set<String>> methodsCalledByAllTestedInvoked) 
 			throws IOException {
 		for (Map.Entry<String, Set<String>> mcti : methodsCalledByAllTestedInvoked.entrySet()) {
@@ -81,18 +87,8 @@ public class MethodsCalledByTestedInvokedExporter
 		}
 	}
 	
-	/**
-	 * Exports signature of methods called by a tested invoked in a CSV file.
-	 * 
-	 * @param		invokedSignature Invoked signature
-	 * @param		methodsCalledByTestedInvoked List of signature of methods 
-	 * called by a tested invoked (parameters should be separated by semicolons)
-	 * @param		isConstructor If the invoked is a constructor
-	 * @throws IOException 
-	 */
 	private void exportRegistry(String invokedSignature, Set<String> methodsCalledByTestedInvoked) 
-			throws IOException
-	{
+			throws IOException {
 		if (methodsCalledByTestedInvoked == null || methodsCalledByTestedInvoked.isEmpty()) {
 			Logger.debug("There are no methods called by tested invoked");
 			return;
@@ -113,7 +109,6 @@ public class MethodsCalledByTestedInvokedExporter
 		return new File(directory.toFile(), filename + ".csv");
 	}
 
-
 	private Path generateDirectoryFromSignature(String invokedSignature) {
 		String signaturePath = DataUtil.generateDirectoryPathFromSignature(
 				invokedSignature, isConstructor
@@ -124,21 +119,6 @@ public class MethodsCalledByTestedInvokedExporter
 				dirName,
 				signaturePath
 		);
-	}
-
-	private void storeExportFile(String invokedSignature) {
-		Logger.debug("Exporting methods called by tested invoked...");
-		
-		try {
-			List<String> mcti = methodsCalledByTestedInvoked.stream().collect(Collectors.toList());
-			
-			
-			mcti.add(0, invokedSignature);
-			CSV.write(mcti, exportFile, ";");
-		} 
-		catch (IOException e2) {
-			Logger.debug("Failed to write CSV file - "+e2.getMessage());
-		}
 	}
 
 	private void mergeWithStoredExport() {
@@ -158,6 +138,21 @@ public class MethodsCalledByTestedInvokedExporter
 		} 
 		catch (IOException e2) {
 			Logger.debug("Failed to read CSV file - "+e2.getMessage());
+		}
+	}
+	
+	private void storeExportFile(String invokedSignature) {
+		Logger.debug("Exporting methods called by tested invoked...");
+		
+		try {
+			List<String> mcti = methodsCalledByTestedInvoked.stream()
+					.collect(Collectors.toList());
+			
+			mcti.add(0, invokedSignature);
+			CSV.write(mcti, exportFile, ";");
+		} 
+		catch (IOException e2) {
+			Logger.debug("Failed to write CSV file - "+e2.getMessage());
 		}
 	}
 }

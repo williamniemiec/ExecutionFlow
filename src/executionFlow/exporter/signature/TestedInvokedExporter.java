@@ -13,7 +13,6 @@ import executionFlow.util.CSV;
 import executionFlow.util.DataUtil;
 import executionFlow.util.logger.Logger;
 
-
 /**
  * Responsible for exporting invoked along with the test method that tests it
  * in CSV file with the following format: 
@@ -33,8 +32,8 @@ import executionFlow.util.logger.Logger;
  * @version		5.2.3
  * @since		2.0.0
  */
-public class TestedInvokedExporter
-{
+public class TestedInvokedExporter {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -62,8 +61,7 @@ public class TestedInvokedExporter
 	 * @param		filename Filename without extension
 	 * @param		output Path where the file will be saved
 	 */
-	public TestedInvokedExporter(String filename, File output)
-	{
+	public TestedInvokedExporter(String filename, File output) {
 		if (!output.exists()) {
 			output.mkdir();
 		}
@@ -75,8 +73,7 @@ public class TestedInvokedExporter
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public void export(Set<InvokedContainer> invokedContainer) 
-	{
+	public void export(Set<InvokedContainer> invokedContainer) {
 		if (invokedContainer == null || invokedContainer.isEmpty())
 			return;
 		
@@ -85,32 +82,6 @@ public class TestedInvokedExporter
 		mergeWithStoredExport(invokedContainer);
 		storeExportFile();
 	}
-
-
-	private void storeExportFile() {
-		Logger.debug("Exporting invokers along with test methods that test them to CSV...");
-		
-		// Writes collected invoked along with a list of test methods that 
-		// call them to a CSV file
-		output.delete();
-		
-		try {
-			for (Map.Entry<String, List<String>> e : invokedMethodSignatures.entrySet()) {
-				List<String> content = e.getValue();
-				
-				
-				content.add(0, e.getKey());
-				CSV.write(content, output, ";");
-			}
-		} 
-		catch (IOException e1) {
-			Logger.debug("CSV - " + e1.getMessage());
-		}
-		
-		Logger.debug("The export was successful");
-		Logger.debug("Location: " + output.getAbsolutePath());
-	}
-
 
 	private void mergeWithStoredExport(Set<InvokedContainer> invokedContainer) {
 		try {
@@ -132,7 +103,6 @@ public class TestedInvokedExporter
 		catch (IOException e) {}
 	}
 	
-	
 	/**
 	 * Converts a set of {@link SignaturesInfo} in the following Map:
 	 * <ul>
@@ -144,15 +114,13 @@ public class TestedInvokedExporter
 	 * 
 	 * @return		Map with the above structure
 	 */
-	private Map<String, List<String>> extractInvokedWithTesters(Set<InvokedContainer> invokedContainer)
-	{
+	private Map<String, List<String>> extractInvokedWithTesters(
+			Set<InvokedContainer> invokedContainer) {
 		Map<String, List<String>> invokedWithTesters = new HashMap<>();
 		
-		// Converts Set<SignaturesInfo> -> Map<String, List<String>>, where:
-		// 		Key:	Invoked signature
-		//		Value:	List of test methods that tests an invoked
 		for (InvokedContainer container : invokedContainer) {
-			if (invokedWithTesters.containsKey(container.getInvokedInfo().getConcreteInvokedSignature())) {
+			if (invokedWithTesters.containsKey(
+					container.getInvokedInfo().getConcreteInvokedSignature())) {
 				storeExistingInvoked(invokedWithTesters, container);
 			}
 			else {
@@ -164,17 +132,42 @@ public class TestedInvokedExporter
 	}
 
 	private void storeNewInvoked(Map<String, List<String>> invokedWithTesters, 
-			InvokedContainer container) {
+								 InvokedContainer container) {
 		List<String> testMethodSignatures = new ArrayList<>();
 		testMethodSignatures.add(container.getTestMethodInfo().getInvokedSignature());
 		
-		invokedWithTesters.put(container.getInvokedInfo().getConcreteInvokedSignature(), testMethodSignatures);
+		invokedWithTesters.put(
+				container.getInvokedInfo().getConcreteInvokedSignature(), 
+				testMethodSignatures
+		);
 	}
 
-
 	private void storeExistingInvoked(Map<String, List<String>> invokedWithTesters,
-			InvokedContainer container) {
-		List<String> testMethodSignatures = invokedWithTesters.get(container.getInvokedInfo().getConcreteInvokedSignature());
+									  InvokedContainer container) {
+		List<String> testMethodSignatures = invokedWithTesters.get(
+				container.getInvokedInfo().getConcreteInvokedSignature()
+		);
 		testMethodSignatures.add(container.getTestMethodInfo().getInvokedSignature());
+	}
+
+	private void storeExportFile() {
+		Logger.debug("Exporting invokers along with test methods that test them to CSV...");
+		
+		output.delete();
+		
+		try {
+			for (Map.Entry<String, List<String>> e : invokedMethodSignatures.entrySet()) {
+				List<String> content = e.getValue();
+				content.add(0, e.getKey());
+				
+				CSV.write(content, output, ";");
+			}
+		} 
+		catch (IOException e1) {
+			Logger.debug("CSV - " + e1.getMessage());
+		}
+		
+		Logger.debug("The export was successful");
+		Logger.debug("Location: " + output.getAbsolutePath());
 	}
 }
