@@ -31,6 +31,7 @@ public abstract class Analyzer {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private final File mcti;
 	protected static volatile boolean timeout;
 	protected volatile List<List<Integer>> testPaths;
 	protected String analyzedInvokedSignature;
@@ -56,6 +57,7 @@ public abstract class Analyzer {
 		this.testMethod = testMethodInfo;
 		this.methodsCalledByTestedInvoked = new HashMap<>();
 		this.analyzedInvokedSignature = "";
+		this.mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
 
 		initializeJDB(testMethodInfo, invokedInfo);
 	}
@@ -189,8 +191,6 @@ public abstract class Analyzer {
 		timeout = false;
 		
 		Clock.setTimeout(() -> {
-			File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-
 			mcti.delete();
 			jdb.quit();
 			testPaths.clear();
@@ -225,7 +225,7 @@ public abstract class Analyzer {
 	 * @return		If file has been successfully removed
 	 */
 	public boolean deleteMethodsCalledByTestedInvoked()	{
-		return new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef").delete();
+		return mcti.delete();
 	}
 	
 	/**
@@ -334,17 +334,16 @@ public abstract class Analyzer {
 	@SuppressWarnings("unchecked")
 	private Map<String, Set<String>> loadMethodsCalledByTestedInvoked() {
 		Map<String, Set<String>> invokedMethods = new HashMap<>();
-		File file = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-		
-		if (file.exists()) {
-			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+
+		if (mcti.exists()) {
+			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(mcti))) {
 				invokedMethods = (Map<String, Set<String>>) ois.readObject();
 			} 
 			catch (IOException | ClassNotFoundException e) {
 				Logger.error("Methods called by tested invoked - " + e.getMessage());
 			}
 		
-			file.delete();
+			mcti.delete();
 		}
 		
 		return invokedMethods;

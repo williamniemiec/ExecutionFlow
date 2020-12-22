@@ -34,11 +34,11 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	private int invokedDeclarationLine;
 	private int lineOverloadedCall;
 	private int lastLineAdded = -1;
+	private int currentLine;
 	private String lastSrcLine = "";
-	private RoundBracketBalance rbb;
 	private String line;
 	private String srcLine;
-	private int currentLine;
+	private RoundBracketBalance rbb;
 	
 	
 	//-------------------------------------------------------------------------
