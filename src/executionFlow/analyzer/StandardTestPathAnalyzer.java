@@ -134,23 +134,11 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private boolean checkAnonymousConstructor(String classSignature) {
-		boolean hasDollarSign = classSignature.contains("$");
-
-		return hasDollarSign ? invoked.getInvokedSignature().matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS)
-				: false;
+		if (!classSignature.contains("$"))
+			return false;
+		
+		return invoked.getInvokedSignature().matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
 	}
-	
-	/**
-	 * Reads JDB output and returns true if JDB is ready to receive commands.
-	 * 
-	 * @return		If JDB is ready to receive commands.
-	 * 
-	 * @throws		IllegalStateException If invocation line is incorrect
-	 * @throws		IOException If an internal error occurs while running JDB
-	 * 
-	 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
-	 * output on the console
-	 */
 	
 	private boolean isJDBReady() {
 		if (jdb.isReady())
@@ -169,10 +157,9 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		if (!isJDBReady())
 			return false;
 
-    	line = jdb.read();
-    	Logger.debug(this.getClass(), "LINE: " + line);
+    	initializeLine();
     	
-    	if (isEmptyLine(line))
+    	if (isEmptyLine())
     		return false;
     	
     	if (appExited(line)) {
@@ -180,73 +167,85 @@ public class StandardTestPathAnalyzer extends Analyzer {
     		return true;
     	}
     	
-    	checkIncorrectInvocationLine(line);
-    	checkInternalError(line);
+    	checkIncorrectInvocationLine();
+    	checkInternalError();
     	
-    	isInternalCommand = isInternalMethod(line);
+    	isInternalCommand = isInternalMethod();
     	
-    	// Checks if JDB has started and is ready to receive debug commands
-		if (!stopJDB && hasStarted(line)) {
-			srcLine = jdb.read();
-			newIteration = isNewIteration();
-    		insideConstructor = line.contains(".<init>") 
-    				&& !returnedFromTestedInvoked();
+		if (!stopJDB && initializationFinished())
+			parseSrcLine();
+		
+		return stopJDB || finishedTestedInvoked || initializationFinished();
+	}
 
-    		currentLine = getLineNumber();
-    		
-    		checkBalanceOfParentheses();
-    		
-    		isInternalCommand = isNativeCall();
-    		inMethod = !isInternalCommand && isInsideMethod();
-    		
-    		initializeInvokedDeclarationLineNumber();
-        	storeAnalyzedInvokedSignature();
-    		
-    		if (!isInternalCommand && !returnedFromTestedInvoked() && !shouldIgnore()) {
-    			if (inMethod || insideConstructor)
-    				analyzeLinesExecutedByInvoked();
-    			else if (willEnterInMethod(line))
-    				inMethod = true;
-    		}
-    		
-    		checkOverloadedConstructor();
-    		resetBalanceOfParenthesisIfEmpty();
+	private void initializeLine() {
+		line = jdb.read();
+    	
+    	Logger.debug(this.getClass(), "LINE: " + line);
+	}
+
+	private void parseSrcLine() {
+		initializeSrcLine();
+		
+		newIteration = isNewIteration();
+		insideConstructor = inConstructor() && !returnedFromTestedInvoked();
+		currentLine = getLineNumber();
+		isInternalCommand = isNativeCall();
+		inMethod = !isInternalCommand && isInsideMethod();		
+		
+		checkBalanceOfParentheses();
+		initializeInvokedDeclarationLineNumber();
+		storeAnalyzedInvokedSignature();
+		
+		if (!isInternalCommand && !returnedFromTestedInvoked() && !shouldIgnore()) {
+			if (inMethod || insideConstructor)
+				analyzeLinesExecutedByInvoked();
+			else if (willEnterInMethod(line))
+				inMethod = true;
 		}
+		
+		checkOverloadedConstructor();
+		resetBalanceOfParenthesisIfEmpty();
 		
 		if (srcLine != null && !srcLine.isEmpty()) {
 			checkOverloadedCall();
 			
 			if (!insideOverloadCall) {
-    			lastSrcLine = srcLine;
-    			
-    			if (finishedTestedInvoked) {
-    				inMethod = false;
-    				lastAddWasReturn = false;
-    				invokedDeclarationLine = 0;
-    			}
+				lastSrcLine = srcLine;
+				
+				if (finishedTestedInvoked) {
+					inMethod = false;
+					lastAddWasReturn = false;
+					invokedDeclarationLine = 0;
+				}
 			}
 
 			finishedTestedInvoked = hasFinishedTestedInvoked();
 			stopJDB = checkFailure() || checkRepetition();
-			
-			Logger.debug(this.getClass(), "SRC: " + srcLine);
 		}
-		
-		return stopJDB || finishedTestedInvoked || hasStarted(line);
 	}
 
+	private boolean inConstructor() {
+		return line.contains(".<init>");
+	}
+
+	private void initializeSrcLine() {
+		srcLine = jdb.read();
+		
+		Logger.debug(this.getClass(), "SRC: " + srcLine);
+	}
 
 	private boolean checkFailure() {
 		return srcLine.contains("FAILURES!!!");
 	}
 
-
 	private void checkOverloadedCall() {
-		if (insideOverloadCall && ((currentLine == lineOverloadedCall + 1) || isMethodWithEmptyBody())) {
+		if (!insideOverloadCall)
+			return;
+		
+		if ((currentLine == lineOverloadedCall + 1) || isMethodWithEmptyBody())
 			insideOverloadCall = false;
-		}
 	}
-
 
 	private void resetBalanceOfParenthesisIfEmpty() {
 		if (rbb != null && rbb.isBalanceEmpty())
@@ -261,7 +260,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 				|| (
 					!insideOverloadCall
 					&& invokedDeclarationLine > 0
-					&& !line.contains("<init>")
+					&& !inConstructor()
 					&& srcLine.contains("return ") 
 					&& !srcLine.contains("if ")
 					&& hasInvokedName(line) 
@@ -315,19 +314,30 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		return getLine(line);
 	}
 
-
 	private boolean appExited(String line) {
 		return line.contains("The application exited"); 
 	}
 
-
 	private void initializeInvokedDeclarationLineNumber() {
-		boolean wasInvokedDeclarationLineNumberInitialized = invokedDeclarationLine > 0;
-		if (!wasInvokedDeclarationLineNumberInitialized && currentLine > 1) {
-			if (isInvokedDeclarationLine(line, srcLine) || inMethod) {
-				invokedDeclarationLine = currentLine;        		
-			}
-		}
+		if (!isInvokedDeclarationLine(line, srcLine) && !inMethod)
+			return;
+
+		if (wasInvokedDeclarationLineNumberInitialized() || (currentLine <= 1))
+			invokedDeclarationLine = currentLine;        		
+	}
+	
+	private boolean wasInvokedDeclarationLineNumberInitialized() {
+		return invokedDeclarationLine > 0;
+	}
+	
+	private boolean isInvokedDeclarationLine(String line, String srcLine) {
+		final String regexConstructorWithDollarSignPlusNumbers = "^.+\\$[0-9]+\\.\\<init\\>.*$";
+		boolean isInsideAnonymousConstructor = (anonymousConstructor && insideConstructor);
+		
+		return	srcLine.contains("@executionFlow.runtime.CollectCalls")
+				&& !line.contains(testMethod.getName())
+				&& (isInsideAnonymousConstructor || hasLineInvokedName())
+				&& !line.split(",")[1].matches(regexConstructorWithDollarSignPlusNumbers);
 	}
 
 	private void checkOverloadedConstructor() {
@@ -353,7 +363,6 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		
 		if (returnedToTestMethod) {
 			finishedTestedInvoked = true;
-//			newIteration = false;
 			inMethod = false;
 		} 
 		else if (insideTestedInvoked) {
@@ -373,7 +382,12 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		if (!line.contains(testMethod.getName()))
 			return false;
 		
-		boolean wasInsideMethodWithEmptyBody = (inMethod && insideConstructor && !insideOverloadCall && (isMethodWithEmptyBody() || line.contains(testMethod.getName())));
+		boolean wasInsideMethodWithEmptyBody = (
+				inMethod 
+				&& insideConstructor 
+				&& !insideOverloadCall 
+				&& (isMethodWithEmptyBody() || line.contains(testMethod.getName()
+		)));
 		
 		return (line.contains(testMethod.getName()) && !testPath.isEmpty()) || wasInsideMethodWithEmptyBody;
 	}
@@ -408,46 +422,36 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		}
 	}
 	
-	private boolean isInvokedDeclarationLine(String line, String srcLine)
-	{
-		final String regexConstructorWithDollarSignPlusNumbers = "^.+\\$[0-9]+\\.\\<init\\>.*$";
-		boolean hasInvokedName = line.contains(invoked.getInvokedName()+".") || 
-								 line.contains(invoked.getInvokedName()+"(");
-		boolean isInsideAnonymousConstructor = (anonymousConstructor && insideConstructor);
-		
-		return	srcLine.contains("@executionFlow.runtime.CollectCalls") &&
-				!line.contains(testMethod.getName()) &&
-				(isInsideAnonymousConstructor || hasInvokedName) && 
-				!line.split(",")[1].matches(regexConstructorWithDollarSignPlusNumbers);
+	private boolean hasLineInvokedName() {
+		return	line.contains(invoked.getInvokedName() + ".") 
+				|| line.contains(invoked.getInvokedName() + "(");
 	}
 
 	private boolean isInnerClassOrAnonymousClass() {
-		boolean isInnerClassOrAnonymousClass;
-		isInnerClassOrAnonymousClass = 
-				line.contains("$") && 
-				invokedNameContainsDollarSign && 
-				!line.contains("line=1 ") &&
-				!line.contains("jdk.") &&
-				!line.contains("aspectj.") && 
-				!line.contains("executionFlow.runtime") && 
-				!srcLine.contains("package ") &&
-				!line.contains(invoked.getInvokedName());
-		return isInnerClassOrAnonymousClass;
+		return 	line.contains("$")
+				&& invokedNameContainsDollarSign
+				&& !line.contains("line=1 ")
+				&& !line.contains("jdk.")
+				&& !line.contains("aspectj.")
+				&& !line.contains("executionFlow.runtime")
+				&& !srcLine.contains("package ")
+				&& !line.contains(invoked.getInvokedName());
 	}
 
-	private void checkIncorrectInvocationLine(String line) {
-		if (line.contains("Stopping due to deferred breakpoint errors")) {
-    		jdb.quit();
-    		
-    		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 
-					+ invoked.getInvocationLine() + ", test method signature: "
-    				+ testMethod.getName() + ")" + ", invokedSignature: " 
-					+ invoked.getInvokedSignature() + "}"
-			);
-    	}
+	private void checkIncorrectInvocationLine() {
+		if (!line.contains("Stopping due to deferred breakpoint errors"))
+			return;
+		
+		jdb.quit();
+		
+		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 
+				+ invoked.getInvocationLine() + ", test method signature: "
+				+ testMethod.getName() + ")" + ", invokedSignature: " 
+				+ invoked.getInvokedSignature() + "}"
+		);
 	}
 	
-	private void checkInternalError(String line) throws IOException {
+	private void checkInternalError() throws IOException {
 		if (isErrorMessage(line)) 
 			throw new IOException("Error while running JDB");}
 
@@ -455,36 +459,23 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		return	line.contains("[INFO]")
 				|| line.contains("Exception occurred") 
 				|| line.contains("Input stream closed.")
-//				|| line.contains("The application exited") 
 				|| line.contains("FAILURES!!!") 
 				|| line.contains("Caused by: ");
 	}
 	
-	
-	/**
-	 * Gets executed line from source line.
-	 *  
-	 * @param		srcLine JDB output - source line
-	 * 
-	 * @return		Executed line or -1 if srcLine is empty or null
-	 */
-	private int getSrcLine(String srcLine) 
-	{
+	private int getSrcLine(String srcLine) {
 		if (srcLine == null || srcLine.isEmpty())
 			return -1;
 		
-		return Integer.valueOf(srcLine.replace(".", "").substring(0, srcLine.indexOf(" ")).trim());
+		return	Integer.valueOf(extractSrcLineNumber(srcLine));
+	}
+
+	private String extractSrcLineNumber(String srcLine) {
+		return srcLine.replace(".", "")
+				.substring(0, srcLine.indexOf(" ")).trim();
 	}
 	
-	/**
-	 * Gets executed line from debugger line.
-	 *  
-	 * @param		srcLine JDB output - line
-	 * 
-	 * @return		Executed line or -1 if line is empty or null
-	 */
-	private int getLine(String line) 
-	{
+	private int getLine(String line) {
 		if (line == null || line.isEmpty() || !line.contains(","))
 			return -1;
 		
@@ -494,22 +485,13 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		return Integer.valueOf(lineNumber);
 	}
 	
-	/**
-	 * Checks if current line of JDB is an internal method.
-	 * 
-	 * @param		line JDB output
-	 * 
-	 * @return		If current line of JDB is an internal method
-	 */
-	private boolean isInternalMethod(String line)
-	{
-		return 	!line.contains(invoked.getInvokedName()+".") && 
-				!line.contains(invoked.getInvokedName()+"(") && 
-				!line.contains("<init>") &&
-				!line.contains(testMethod.getClassSignature());
+	private boolean isInternalMethod() {
+		return 	!hasLineInvokedName()
+				&& !inConstructor()
+				&& !line.contains(testMethod.getClassSignature());
 	}
 	
-	private boolean isEmptyLine(String line) {
+	private boolean isEmptyLine() {
 		final String regexEmptyOutput = "^(>(\\ |\\t)*)*main\\[[0-9]\\](\\ |\\t|>)*$";
 		
 		return 	line.matches(regexEmptyOutput)
@@ -536,14 +518,14 @@ public class StandardTestPathAnalyzer extends Analyzer {
 				&& line.contains(testMethod.getClassSignature());
 	}
 	
-
-	private boolean willEnterInMethod(String line)
-	{
-		return 	newIteration || 
-				( !inMethod && 
-				  line.contains("Step completed") && 
-				  line.contains(testMethod.getClassSignature()) && 
-				  line.contains("line="+invoked.getInvocationLine()) ); 
+	private boolean willEnterInMethod(String line) {
+		if (newIteration)
+			return newIteration;
+		
+		return 	!inMethod 
+				&& line.contains("Step completed")
+				&& line.contains(testMethod.getClassSignature()) 
+				&& line.contains("line=" + invoked.getInvocationLine()); 
 	}
 
 	private boolean isMethodWithEmptyBody() {
@@ -557,36 +539,24 @@ public class StandardTestPathAnalyzer extends Analyzer {
 				|| srcLine.matches(regexOnlyOpenCurlyBracket);
 	}
 	
-	/**
-	 * Checks if current line of JDB is a native call.
-	 * 
-	 * @param		line JDB output
-	 * @param		srcLine JDB output - source line
-	 * 
-	 * @return		If current line of JDB is a native call.
-	 */
-	private boolean isNativeCall()
-	{
-		final String REGEX_ANONYMOUS_CLASS = ".+\\$[0-9]+.+";
-
-		
-		return	(line.contains("line=1 ") || 
-				line.contains("jdk.") || 
-				line.contains("aspectj.") || 
-				line.contains("executionFlow.runtime") || 
-				srcLine.contains("package ") || (
-					(
-							!line.matches(REGEX_ANONYMOUS_CLASS) || 
-							(line.matches(REGEX_ANONYMOUS_CLASS) && !srcLine.matches(".+\\{(\\ |\\t)*$"))
-					)) &&
-					!line.contains("<init>") &&
-					!line.contains(invoked.getInvokedName()+".") && 
-					!line.contains(invoked.getInvokedName()+"(") && 
-					!line.contains(testMethod.getName())
-				);
+	private boolean isNativeCall() {
+		return	line.contains("line=1 ") 
+				|| line.contains("jdk.") 
+				|| line.contains("aspectj.")
+				|| line.contains("executionFlow.runtime")
+				|| srcLine.contains("package ") 
+				|| isNativeAnonymousClass()
+				&& !inConstructor()
+				&& !hasLineInvokedName()
+				&& !line.contains(testMethod.getName());
 	}
 	
-	
+	private boolean isNativeAnonymousClass() {
+		final String regexNativeAnonymousClass = ".+\\$[0-9]+.+";
+		
+		return	line.matches(regexNativeAnonymousClass) 
+				&& !srcLine.matches(".+\\{(\\ |\\t)*$");
+	}
 	
 	private boolean isMethodDeclaration(String line) {
 		final String regexMethodDeclaration = "[\\ \\t0-9]*((public|proteted|private)"
@@ -595,32 +565,20 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		return line.matches(regexMethodDeclaration);
 	}
 	
-	
-	
-	/**
-	 * Checks if current line of JDB is within a method.
-	 * 
-	 * @param		line JDB output
-	 * 
-	 * @return		If current line of JDB is within a method
-	 */
-	private boolean isInsideMethod()
-	{
-		if (anonymousConstructor) {
-			return	!line.contains(testMethod.getName()) &&
-					!line.contains("$") && 
-					line.contains("<init>") && 
-					!finishedTestedInvoked;
-		}
-		else {
-			return	!line.contains(testMethod.getName()) &&
-					(line.contains(invoked.getInvokedName() + "(") || line.contains(invoked.getInvokedName() + ".<init>")) && 
-					!finishedTestedInvoked;
-		}
+	private boolean isInsideMethod() {
+		if (finishedTestedInvoked || line.contains(testMethod.getName()))
+			return false;
+			
+		if (anonymousConstructor)
+			return !line.contains("$") && inConstructor();
+
+		return 	line.contains(invoked.getInvokedName() + "(") 
+				|| line.contains(invoked.getInvokedName() + ".<init>");
+
 	}
 
-	private boolean hasStarted(String line)	{
-		return	line.contains("thread=")
-				&& (line.contains("Breakpoint hit") || line.contains("Step completed"));
+	private boolean initializationFinished() {
+		return	(line.contains("Breakpoint hit") || line.contains("Step completed"))
+				&& line.contains("thread=");
 	}
 }
