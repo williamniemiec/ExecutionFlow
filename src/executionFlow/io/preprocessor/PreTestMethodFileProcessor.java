@@ -5,14 +5,13 @@ import java.nio.file.Path;
 import java.util.List;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.io.preprocessor.testmethod.AnnotationProcessor;
+import executionFlow.io.preprocessor.testmethod.JUnit5ToJUnit4Processor;
 import executionFlow.io.preprocessor.testmethod.AssertProcessor;
 import executionFlow.io.preprocessor.testmethod.TestMethodHighlighter;
 import executionFlow.io.processor.FileProcessor;
 import executionFlow.util.FileUtil;
 import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.Logger;
-
 
 /**
  * Responsible for pre-processing test method file. Handles exceptions
@@ -22,16 +21,16 @@ import executionFlow.util.logger.Logger;
  * @version		5.2.3
  * @since		2.0.0
  */
-public class PreTestMethodFileProcessor extends FileProcessor
-{
+public class PreTestMethodFileProcessor extends FileProcessor {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 400L;
-
-	private String testMethodSignature;
-	private Object[] testMethodArgs;
 	private static int totalTests;
+	private String testMethodSignature;
+	private transient Object[] testMethodArgs;
+	private List<String> processedLines;
 		
 	
 	//-------------------------------------------------------------------------
@@ -50,11 +49,14 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 * @param		encode File encoding
+	 * 
+	 * @throws		IllegalArgumentException If any required field is null
 	 */ 
 	private PreTestMethodFileProcessor(Path file, Path outputDir, 
 			String outputFilename, String testMethodSignature, 
-			Object[] testMethodArgs, String fileExtension, FileEncoding encode)
-	{
+			Object[] testMethodArgs, String fileExtension, FileEncoding encode) {
+		checkRequiredFields(file, outputDir, outputFilename, testMethodSignature);
+		
 		this.file = file;
 		this.outputFilename = outputFilename;
 		this.testMethodArgs = testMethodArgs;
@@ -68,7 +70,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		if (encode != null)
 			this.encode = encode;
 	}
-	
+
 	
 	//-------------------------------------------------------------------------
 	//		Builder
@@ -101,8 +103,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If file is null
 		 */
-		public Builder file(Path file)
-		{
+		public Builder file(Path file) {
 			if (file == null)
 				throw new IllegalArgumentException("File cannot be null");
 			
@@ -118,10 +119,11 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If Output directory is null
 		 */
-		public Builder outputDir(Path outputDir)
-		{
-			if (outputDir == null)
-				throw new IllegalArgumentException("Output directory cannot be null");
+		public Builder outputDir(Path outputDir) {
+			if (outputDir == null) {
+				throw new IllegalArgumentException("Output directory cannot "
+						+ "be null");
+			}
 			
 			this.outputDir = outputDir;
 			
@@ -135,10 +137,11 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If output filename is null
 		 */
-		public Builder outputFilename(String outputFilename)
-		{
-			if (outputFilename == null)
-				throw new IllegalArgumentException("Output filename cannot be null");
+		public Builder outputFilename(String outputFilename) {
+			if (outputFilename == null) {
+				throw new IllegalArgumentException("Output filename cannot "
+						+ "be null");
+			}
 			
 			this.outputFilename = outputFilename;
 			
@@ -150,8 +153,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder encode(FileEncoding encode)
-		{
+		public Builder encode(FileEncoding encode) {
 			if (encode != null)
 				this.encode = encode;
 			
@@ -163,14 +165,17 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 * 
-		 * @throws		IllegalArgumentException If test method signature is null
+		 * @throws		IllegalArgumentException If test method signature is 
+		 * null
 		 */
-		public Builder testMethodSignature(String testMethodSignature)
-		{
-			if (testMethodSignature == null)
-				throw new IllegalArgumentException("Test method signature cannot be null");
+		public Builder testMethodSignature(String testMethodSignature) {
+			if (testMethodSignature == null) {
+				throw new IllegalArgumentException("Test method signature "
+						+ "cannot be null");
+			}
 			
 			this.testMethodSignature = testMethodSignature;
+			
 			return this;
 		}
 		
@@ -180,8 +185,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder testMethodArgs(Object... testMethodArgs)
-		{
+		public Builder testMethodArgs(Object... testMethodArgs) {
 			this.testMethodArgs = testMethodArgs;
 			
 			return this;
@@ -193,8 +197,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder fileExtension(String fileExtension)
-		{
+		public Builder fileExtension(String fileExtension) {
 			if (fileExtension != null)
 				this.fileExtension = fileExtension;
 			
@@ -216,23 +219,7 @@ public class PreTestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public PreTestMethodFileProcessor build()
-		{
-			StringBuilder nullFields = new StringBuilder();
-			
-			if (file == null)
-				nullFields.append("file").append(", ");
-			if (outputDir == null)
-				nullFields.append("outputDir").append(", ");
-			if (outputFilename == null)
-				nullFields.append("outputFilename").append(", ");
-			if (testMethodSignature == null)
-				nullFields.append("testMethodSignature").append(", ");
-			
-			if (nullFields.length() > 0)
-				throw new IllegalArgumentException("Required fields cannot be null: "
-						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
-			
+		public PreTestMethodFileProcessor build() {
 			return new PreTestMethodFileProcessor(
 					file, outputDir, outputFilename, testMethodSignature, 
 					testMethodArgs, fileExtension, encode
@@ -243,7 +230,27 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------	
+	//-------------------------------------------------------------------------
+	private void checkRequiredFields(Path file, Path outputDir, 
+									 String outputFilename, 
+									 String testMethodSignature) {
+		StringBuilder nullFields = new StringBuilder();
+		
+		if (file == null)
+			nullFields.append("file").append(", ");
+		if (outputDir == null)
+			nullFields.append("outputDir").append(", ");
+		if (outputFilename == null)
+			nullFields.append("outputFilename").append(", ");
+		if (testMethodSignature == null)
+			nullFields.append("testMethodSignature").append(", ");
+		
+		if (nullFields.length() > 0) {
+			throw new IllegalArgumentException("Required fields cannot be null: "
+			+ nullFields.substring(0, nullFields.length()-2)); // Removes last comma
+		}
+	}
+	
 	/**
 	 * Adds a try-catch structure for each assert, so that execution does not 
 	 * stop even if an assert fails.
@@ -273,19 +280,34 @@ public class PreTestMethodFileProcessor extends FileProcessor
 	}
 
 	private List<String> doProcessing(List<String> lines) {
-		List<String> processedLines;
+		processedLines = lines;
 		
-		TestMethodHighlighter testMethodHighlighter = new TestMethodHighlighter(testMethodSignature);
-		processedLines = testMethodHighlighter.processLines(lines);
-		
-		AssertProcessor assertProcessor = new AssertProcessor();
-		processedLines = assertProcessor.processLines(processedLines);
-		
-		AnnotationProcessor annotationProcessor = new AnnotationProcessor(testMethodArgs);
-		processedLines = annotationProcessor.processLines(processedLines);
-		totalTests = annotationProcessor.getTotalTests();
+		commentAllTestMethodsExcept(testMethodSignature);
+		surroundAssertsWithTryCatch();
+		convertJUnit5ToJUnit4();
 		
 		return processedLines;
+	}
+
+	private void commentAllTestMethodsExcept(String signature) {
+		TestMethodHighlighter testMethodHighlighter = 
+				new TestMethodHighlighter(signature);
+		
+		processedLines = testMethodHighlighter.processLines(processedLines);
+	}
+	
+	private void surroundAssertsWithTryCatch() {
+		AssertProcessor assertProcessor = new AssertProcessor();
+		
+		processedLines = assertProcessor.processLines(processedLines);
+	}
+	
+	private void convertJUnit5ToJUnit4() {
+		JUnit5ToJUnit4Processor annotationProcessor = 
+				new JUnit5ToJUnit4Processor(testMethodArgs);
+		
+		processedLines = annotationProcessor.processLines(processedLines);
+		totalTests = annotationProcessor.getTotalTests();
 	}
 
 	private void dump(List<String> lines) {

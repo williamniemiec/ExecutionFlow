@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.info.InvokedContainer;
-import executionFlow.io.manager.ProcessingManager;
+import executionFlow.io.manager.InvokedManager;
 
 /**
  * For each collected method, obtain the following information:
@@ -30,7 +30,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public MethodExecutionFlow(ProcessingManager processingManager, 
+	public MethodExecutionFlow(InvokedManager processingManager, 
 			Map<Integer, List<InvokedContainer>> collectedMethods) {
 		super(processingManager);
 		

@@ -19,7 +19,7 @@ import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.manager.FileManager;
 import executionFlow.io.manager.FilesManager;
-import executionFlow.io.manager.ProcessingManager;
+import executionFlow.io.manager.InvokedManager;
 import executionFlow.io.preprocessor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.ProcessorType;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
@@ -69,7 +69,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	private boolean isRepeatedTest;
 	private static boolean errorProcessingTestMethod;
 	private volatile static boolean success;
-	private static ProcessingManager processingManager;
+	private static InvokedManager processingManager;
 	private Path classPath;
 	private Path srcPath;
 	
@@ -355,7 +355,7 @@ public aspect TestMethodCollector extends RuntimeCollector
 	
 	private void initializeManagers(JoinPoint thisJoinPoint) {
 		try {
-			processingManager = new ProcessingManager(!checkpoint_initial.isEnabled());
+			processingManager = new InvokedManager(!checkpoint_initial.isEnabled());
 			initializeFileManager(thisJoinPoint);
 		}
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {

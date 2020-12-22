@@ -16,7 +16,7 @@ import executionFlow.exporter.ExportManager;
 import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.io.manager.FileManager;
-import executionFlow.io.manager.ProcessingManager;
+import executionFlow.io.manager.InvokedManager;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
@@ -54,7 +54,7 @@ public abstract class ExecutionFlow {
 	private static final boolean DEVELOPMENT;	
 	private static Path appRoot;
 	private static Path currentProjectRoot;
-	private ProcessingManager processingManager;
+	private InvokedManager processingManager;
 	private Analyzer analyzer;
 	private Map<String, Path> processedSourceFiles;
 	private ExportManager exportManager;
@@ -77,7 +77,7 @@ public abstract class ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------	
-	protected ExecutionFlow(ProcessingManager processingManager) {		
+	protected ExecutionFlow(InvokedManager processingManager) {		
 		this.processingManager = processingManager;
 		this.exportManager = new ExportManager(isDevelopment(), isConstructor());
 		this.computedTestPaths = new HashMap<>();

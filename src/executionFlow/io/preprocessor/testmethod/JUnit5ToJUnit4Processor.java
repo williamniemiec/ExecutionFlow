@@ -15,7 +15,7 @@ import executionFlow.util.balance.CurlyBracketBalance;
  * @version		5.2.3
  * @since 		5.2.3
  */
-public class AnnotationProcessor {
+public class JUnit5ToJUnit4Processor {
 	
 	//---------------------------------------------------------------------
 	//		Attributes
@@ -37,7 +37,7 @@ public class AnnotationProcessor {
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	public AnnotationProcessor(Object[] testMethodArgs) {
+	public JUnit5ToJUnit4Processor(Object[] testMethodArgs) {
 		this.testMethodArgs = testMethodArgs;
 		testAnnotationProcessor = new TestAnnotationProcessor();
 		repeatedAnnotationProcessor = new RepeatedTestAnnotationProcessor();

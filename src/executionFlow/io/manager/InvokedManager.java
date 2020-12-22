@@ -5,8 +5,15 @@ import java.io.IOException;
 import executionFlow.io.processor.ProcessorType;
 import executionFlow.util.logger.Logger;
 
-
-public class ProcessingManager {
+/**
+ * Responsible for managing the processing and compilation of methods, 
+ * constructors and test methods.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since		5.2.3
+ */
+public class InvokedManager {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -29,7 +36,8 @@ public class ProcessingManager {
 	 * found
 	 * @throws		IOException If backup files could not be restored
 	 */
-	public ProcessingManager(boolean restoreOriginalFiles) throws ClassNotFoundException, IOException {
+	public InvokedManager(boolean restoreOriginalFiles) 
+			throws ClassNotFoundException, IOException {
 		try {
 			initializeInvokedManagers(restoreOriginalFiles);
 		}
@@ -38,7 +46,7 @@ public class ProcessingManager {
 		} 
 		catch (IOException e) {
 			throw new IOException(
-					"Could not recover all backup files for methods\n"
+					"Could not recover all backup files\n"
 					+ "See more: https://github.com/williamniemiec/"
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
 					+ "#could-not-recover-all-backup-files"
@@ -83,16 +91,14 @@ public class ProcessingManager {
 	/**
 	 * Sets {@link #testMethodManager} to null.
 	 */
-	public void destroyTestMethodManager()
-	{
+	public void destroyTestMethodManager() {
 		testMethodManager = null;
 	}
 	
 	/**
 	 * Sets {@link #invokedManager} to null.
 	 */
-	public void destroyInvokedManager()
-	{
+	public void destroyInvokedManager() {
 		invokedManager = null;
 	}
 	
@@ -101,8 +107,7 @@ public class ProcessingManager {
 	 * 
 	 * @param		fm File manager
 	 */
-	public void restoreOriginalFile(FileManager fm) 
-	{
+	public void restoreOriginalFile(FileManager fm) {
 		restoreBinaryFile(fm);
 		restoreSourceFile(fm);
 	}
@@ -141,8 +146,7 @@ public class ProcessingManager {
 	 * compilation
 	 */
 	public void processTestMethod(FileManager testMethodFileManager) 
-			throws IOException 
-	{
+			throws IOException {
 		if (testMethodManager.wasProcessed(testMethodFileManager))
 			return;
 		
@@ -170,8 +174,7 @@ public class ProcessingManager {
 	 * compilation
 	 */
 	public void processInvoked(FileManager testMethodFileManager, 
-			FileManager invokedFileManager) throws IOException 
-	{
+			FileManager invokedFileManager) throws IOException {
 		if (invokedManager.wasProcessed(invokedFileManager))
 			return;
 		
@@ -183,26 +186,22 @@ public class ProcessingManager {
 		invokedManager.compile(invokedFileManager);
 	}
 	
-	public boolean isTestMethodManagerInitialized()
-	{
+	public boolean isTestMethodManagerInitialized() {
 		return (testMethodManager != null);
 	}
 	
-	public boolean isInvokedManagerInitialized()
-	{
+	public boolean isInvokedManagerInitialized() {
 		return (invokedManager != null);
 	}
 	
-	public void deleteTestMethodFileManagerBackup()
-	{
+	public void deleteTestMethodFileManagerBackup() {
 		if (!isTestMethodManagerInitialized())
 			return;
 		
 		testMethodManager.deleteBackup();
 	}
 	
-	public void deleteInvokedFileManagerBackup()
-	{
+	public void deleteInvokedFileManagerBackup() {
 		if (!isInvokedManagerInitialized())
 			return;
 		
@@ -210,8 +209,7 @@ public class ProcessingManager {
 	}
 	
 	public void restoreTestMethodOriginalFiles() 
-			throws ClassNotFoundException, IOException
-	{
+			throws ClassNotFoundException, IOException {
 		if (!isTestMethodManagerInitialized())
 			return;
 		
@@ -220,8 +218,7 @@ public class ProcessingManager {
 	}
 	
 	public void restoreInvokedOriginalFiles() 
-			throws ClassNotFoundException, IOException
-	{
+			throws ClassNotFoundException, IOException {
 		if (!isInvokedManagerInitialized())
 			return;
 		

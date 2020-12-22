@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import executionFlow.info.InvokedContainer;
-import executionFlow.io.manager.ProcessingManager;
+import executionFlow.io.manager.InvokedManager;
 
 /**
  * For each collected constructor, obtain the following information:
@@ -37,7 +37,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	 * @param		constructorCollector Collected constructors from 
 	 * {@link executionFlow.runtime.ConstructorCollector}
 	 */
-	public ConstructorExecutionFlow(ProcessingManager processingManager, 
+	public ConstructorExecutionFlow(InvokedManager processingManager, 
 			Collection<InvokedContainer> constructorCollector) {
 		super(processingManager);
 		
