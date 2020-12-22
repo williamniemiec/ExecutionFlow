@@ -4,236 +4,143 @@ import java.util.ArrayList;
 import java.util.List;
 
 import executionFlow.info.InvokedInfo;
+import executionFlow.io.SourceCodeProcessor;
 import executionFlow.util.DataUtil;
 import executionFlow.util.balance.CurlyBracketBalance;
 
-public class TestMethodHighlighter {
+/**
+ * Comments on all test methods except the one with the signature provided.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
+ */
+public class TestMethodHighlighter extends SourceCodeProcessor {
 
 	//---------------------------------------------------------------------
 	//		Attributes
 	//---------------------------------------------------------------------
-	private static final String REGEX_REPEATED_TEST = 
-			".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
-	private static final String REGEX_JUNIT4_TEST = 
-			".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
-	private static final String REGEX_PARAMETERIZED_TEST = 
-			".*@(.*\\.)?(org\\.junit\\.jupiter\\.params\\.)?ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
-	private CurlyBracketBalance curlyBracketBalance_currentTestMethod;
-	private CurlyBracketBalance curlyBracketBalance_ignore;
+	private CurlyBracketBalance curlyBracketBalanceTestMethod;
+	private CurlyBracketBalance curlyBracketBalanceIgnoredMethod;
 	private boolean ignoreMethod;
 	private boolean inTestAnnotationScope;
-	private boolean isSelectedTestMethod;
-	private boolean inComment;
+	private boolean isTestMethodToBeHighlighted;
 	private int currentLine;
 	private String testMethodSignature;
-	private static int totalIgnored;
 	private List<Integer> ignoredMethods;
-	private boolean inTestMethodSignature;
 	
 	
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	public TestMethodHighlighter(String testMethodSignature) {
-		this.testMethodSignature = InvokedInfo.extractMethodName(testMethodSignature) + 
-		testMethodSignature.substring(testMethodSignature.indexOf("(")).replace(" ", "");
+	public TestMethodHighlighter(List<String> sourceCode, String testMethodSignature) {
+		super(sourceCode, true);
 		
-//		this.testMethodSignature = testMethodSignature;
+		this.testMethodSignature = 
+				InvokedInfo.extractMethodName(testMethodSignature)
+				+ testMethodSignature.substring(testMethodSignature.indexOf("(")).replace(" ", "");
 		this.ignoredMethods = new ArrayList<>();
+		this.currentLine = 1;
 	}
 
 	
 	//---------------------------------------------------------------------
 	//		Methods
 	//---------------------------------------------------------------------
-	public List<String> processLines(List<String> lines) {
-		List<String> processedLines = lines;
+	@Override
+	protected String processLine(String line) {
+		if (isAnnotation(line) && !inTestAnnotationScope)
+			inTestAnnotationScope =	isTestAnnotation(line);
 		
-		currentLine = 1;
+		if (!inTestAnnotationScope)
+			return line;
 		
-		for (int i = 0; i < lines.size(); i++) {
-			checkComments(lines.get(i));
-			
-			if (!inComment) {
-				String processedLine = processLine(lines.get(i));
-			
-				processedLines.set(i, processedLine);
-			}
-			
-			currentLine++;
+		if (isInsideTestMethod()) {
+			updateCurlyBracketBalance(line);
+		}
+		else if (isTestMethodDeclaration(line)) {
+			initializeCurlyBracketBalance(line);
+			isTestMethodToBeHighlighted = isTheMethodToBeHighlighted(line);
 		}
 		
-		commentIgnoredMethods(lines);
+		if (isInsideTestMethod() && !isTestMethodToBeHighlighted)
+			parseIgnore(line);
 		
-		return processedLines;
-	}
-	
-	private void checkComments(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
+		if (isLastLineOfMethod())
+			endOfMethod();
 		
-		if (line.matches(regexCommentFullLine))
-			inComment = true;
-		
-		if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
-		}
-		else if (inComment && line.contains("*/")) {
-			inComment = false;
-		}
-	}
-	
-	private String processLine(String line) {
-		if (line.contains("@") && !inTestAnnotationScope) {
-			inTestAnnotationScope =	line.matches(REGEX_JUNIT4_TEST) || 
-									line.matches(REGEX_REPEATED_TEST) || 
-									line.matches(REGEX_PARAMETERIZED_TEST) || 
-									line.contains("@org.junit.jupiter.api.Test");
-		}
-
-		if (inTestAnnotationScope) {
-			if (curlyBracketBalance_currentTestMethod != null) {
-				curlyBracketBalance_currentTestMethod.parse(line);
-			}
-			else if (isMethodDeclaration(line)) {
-				curlyBracketBalance_currentTestMethod = new CurlyBracketBalance();
-				curlyBracketBalance_currentTestMethod.parse(line);
-				isSelectedTestMethod = extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature);
-			}
-		
-			if (curlyBracketBalance_currentTestMethod != null) {
-				if (!isSelectedTestMethod) { 
-					line = parseIgnore(line);
-				}
-				
-				if (curlyBracketBalance_currentTestMethod.isBalanceEmpty()) {
-					curlyBracketBalance_currentTestMethod = null;
-					inTestAnnotationScope = false;
-					isSelectedTestMethod = false;
-				}
-			}
-		}
+		currentLine++;
 		
 		return line;
 	}
 	
-	/**
-	 * Checks whether current source file line should be ignored. If yes,
-	 * comments the entire line. It will be ignored methods other than the 
-	 * provided test method ({@link #testMethodSignature}).
-	 * 
-	 * @param		line Current source file line
-	 * 
-	 * @return		Processed line (it will be commented if it should be 
-	 * ignored)
-	 * 
-	 * @implNote	Only the body of the methods will be commented, 
-	 * requiring a second scan of the file to comment on the 
-	 * declaration of the methods as well as their annotations.
-	 */
-	private String parseIgnore(String line)
-	{			
-		if (ignoreMethod) {
-			if (curlyBracketBalance_ignore == null)
-				curlyBracketBalance_ignore = new CurlyBracketBalance();
-			
-			if (curlyBracketBalance_ignore.isBalanceEmpty())
-				ignoredMethods.add(currentLine);
-			
-			curlyBracketBalance_ignore.parse(line);
-			
-			ignoreMethod = !curlyBracketBalance_ignore.isBalanceEmpty();
-		}
-		
-		// If current method it is not the given test method, ignores it		
-		else if (isMethodDeclaration(line) && !line.contains("private ") && 
-				!extractMethodSignatureFromLine(line).replace(" ", "").equals(testMethodSignature)) {
-			if (curlyBracketBalance_ignore == null)
-				curlyBracketBalance_ignore = new CurlyBracketBalance();
-
-			curlyBracketBalance_ignore.parse(line);
-			inTestMethodSignature = false;
-			ignoreMethod = true;
-			ignoredMethods.add(currentLine);
-		}
-		
-		return line;
+	private boolean isAnnotation(String line) {
+		return line.contains("@");
 	}
 	
-	private void commentIgnoredMethods(List<String> lines) {
-		totalIgnored = ignoredMethods.size();
-		
-		// Comments test annotations and method declaration from all tests
-		// except the test method provided
-		if (!ignoredMethods.isEmpty()) {
-			boolean insideMethod = false;
-			
-			
-			currentLine--;
-			// Comments annotations of ignored methods
-			for (int i=lines.size()-1; i>=0; i--) {
-				String line = lines.get(i);
-				
-				if (insideMethod) {
-					if (!line.contains("@"))
-						insideMethod = false;
-					else
-						line = "//" + line;		
-				}
-				else if (ignoredMethods.contains(currentLine)) {
-					line = "//" + line;
-					insideMethod = true;
-				}
-				
-				lines.set(i, line);
-				currentLine--;
-			}
-			
-			// Comments body of ignored methods			
-			for (int idx : ignoredMethods) {
-				CurlyBracketBalance cbb = new CurlyBracketBalance();
-				
-				String line = lines.get(idx-1);
-				
-				while (!line.contains("{")) {
-					lines.set(idx-1, "//" + line);
-					idx++;
-					line = lines.get(idx-1);
-				}
-				
-				do {
-					line = lines.get(idx-1);
-					cbb.parse(line);
-					lines.set(idx-1, "//" + line);
-					idx++;
-
-				}
-				while (!cbb.isBalanceEmpty());
-				
-			}
-		}
+	private boolean isTestAnnotation(String line) {
+		return	isJUnit4Annotation(line)
+				|| isJUnit5Annotation(line)
+				|| isJUnit5RepeatedTestAnnotation(line)
+				|| isJUnit5ParameterizedTest(line);
 	}
 	
-	private boolean isMethodDeclaration(String line) {
+	private boolean isJUnit5Annotation(String line) {
+		return line.contains("@org.junit.jupiter.api.Test");
+	}
+	
+	private boolean isJUnit4Annotation(String line) {
+		final String regexJUnit4Test = ".*@(.*\\.)?"
+				+ "(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
+		
+		return line.matches(regexJUnit4Test);
+	}
+
+	private boolean isJUnit5RepeatedTestAnnotation(String line) {
+		final String regexRepeatedTest = ".*@(.*\\.)?"
+				+ "RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
+		
+		return line.matches(regexRepeatedTest);
+	}
+	
+	private boolean isJUnit5ParameterizedTest(String line) {
+		final String regexParameterizedTest = ".*@(.*\\.)?"
+				+ "(org\\.junit\\.jupiter\\.params\\.)?"
+				+ "ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
+		
+		return line.matches(regexParameterizedTest);
+	}
+	
+	private boolean isInsideTestMethod() {
+		return	(curlyBracketBalanceTestMethod != null);
+	}
+	
+	private void updateCurlyBracketBalance(String line) {
+		curlyBracketBalanceTestMethod.parse(line);
+	}
+	
+	private boolean isTestMethodDeclaration(String line) {
 		final String regexMethodDeclaration = 
 				"^.*[\\s\\t]+((?!new)[A-z0-9\\_\\<\\>\\,\\[\\]\\.\\$])+"
 				+ "[\\s\\t]+([A-z0-9\\_\\$]+)[\\s\\t]*\\(.*\\).*$";
 		
-		return line.matches(regexMethodDeclaration);
+		return	line.matches(regexMethodDeclaration)
+				&& !line.contains("private ");
 	}
 	
+	private void initializeCurlyBracketBalance(String line) {
+		curlyBracketBalanceTestMethod = new CurlyBracketBalance();
+		curlyBracketBalanceTestMethod.parse(line);
+	}
 	
+	private boolean isTheMethodToBeHighlighted(String line) {
+		String methodSignature = extractMethodSignatureFromLine(line);
+		methodSignature = methodSignature.replace(" ", "");
+		
+		return methodSignature.equals(testMethodSignature);
+	}
 	
-	
-	/**
-	 * Gets method signature from a source file line;
-	 * 
-	 * @param		line Source file line
-	 * 
-	 * @return		Method signature
-	 */
-	private String extractMethodSignatureFromLine(String line)
-	{
+	private String extractMethodSignatureFromLine(String line) {
 		StringBuilder signature = new StringBuilder();
 		String methodParams = extractParametersFromMethodDeclaration(line);			
 		
@@ -250,7 +157,6 @@ public class TestMethodHighlighter {
 		
 		return signature.toString();
 	}
-
 
 	private String extractParametersFromMethodDeclaration(String line) {
 		StringBuilder methodParams = new StringBuilder();
@@ -273,10 +179,139 @@ public class TestMethodHighlighter {
 	}
 	
 	private String extractMethodNameFromMethodDeclaration(String line) {
-		String methodName = line.substring(
-				line.substring(0, line.indexOf("(")).lastIndexOf(" "), 
+		
+		return line.substring(
+				extractMethodSignatureWithoutParameters(line).lastIndexOf(" "), 
 				line.lastIndexOf("(")
 		);
-		return methodName;
+	}
+	
+	private String extractMethodSignatureWithoutParameters(String signature) {
+		return signature.substring(0, signature.indexOf("("));
+	}
+	
+	private boolean isLastLineOfMethod() {
+		return	(curlyBracketBalanceTestMethod != null)
+				&& curlyBracketBalanceTestMethod.isBalanceEmpty();
+	}
+	
+	private void endOfMethod() {
+		resetCurlyBracketBalance();
+		
+		inTestAnnotationScope = false;
+		isTestMethodToBeHighlighted = false;
+	}
+	
+	private void resetCurlyBracketBalance() {
+		curlyBracketBalanceTestMethod = null;
+	}
+	
+	/**
+	 * Checks whether current source file line should be ignored. If yes,
+	 * comments the entire line. It will be ignored methods other than the 
+	 * provided test method ({@link #testMethodSignature}).
+	 * 
+	 * @param		line Current source file line
+	 * 
+	 * @return		Processed line (it will be commented if it should be 
+	 * ignored)
+	 * 
+	 * @implNote	Only the body of the methods will be commented, 
+	 * requiring a second scan of the file to comment on the 
+	 * declaration of the methods as well as their annotations.
+	 */
+	private void parseIgnore(String line)
+	{			
+		if (ignoreMethod) {
+			checkIfCurlyBracketBalanceOfIgnoredMethodIsInitialized();
+			
+			if (isLastLineOfMethodToBeIgnored())
+				ignoredMethods.add(currentLine);
+			
+			updateCurlyBracketBalanceOfIgnoredMethod(line);
+			
+			ignoreMethod = !isLastLineOfMethodToBeIgnored();
+		}
+		else if (isTestMethodDeclaration(line) && !isTheMethodToBeHighlighted(line)) {
+			checkIfCurlyBracketBalanceOfIgnoredMethodIsInitialized();
+			updateCurlyBracketBalanceOfIgnoredMethod(line);
+			
+			ignoreMethod = true;
+			ignoredMethods.add(currentLine);
+		}
+	}
+	
+	private void checkIfCurlyBracketBalanceOfIgnoredMethodIsInitialized() {
+		if (curlyBracketBalanceIgnoredMethod == null)
+			curlyBracketBalanceIgnoredMethod = new CurlyBracketBalance();
+	}
+	
+	private void updateCurlyBracketBalanceOfIgnoredMethod(String line) {
+		curlyBracketBalanceIgnoredMethod.parse(line);
+	}
+	
+	private boolean isLastLineOfMethodToBeIgnored() {
+		return	(curlyBracketBalanceIgnoredMethod != null)
+				&& curlyBracketBalanceIgnoredMethod.isBalanceEmpty();
+	}
+	
+	@Override
+	protected void whenFinished(List<String> processedLines) {
+		commentIgnoredMethods(processedLines);
+	}
+	
+	private void commentIgnoredMethods(List<String> lines) {
+		if (ignoredMethods.isEmpty())
+			return;
+		
+		commentHeaderOfIgnoredMethods(lines);		
+		commentBodyOfIgnoredMethods(lines);
+	}
+
+	private void commentHeaderOfIgnoredMethods(List<String> lines) {
+		boolean insideMethod = false;
+		
+		currentLine--;
+		
+		for (int i=lines.size()-1; i>=0; i--) {
+			String line = lines.get(i);
+			
+			if (insideMethod) {
+				if (!isAnnotation(line))
+					insideMethod = false;
+				else
+					line = "//" + line;		
+			}
+			else if (ignoredMethods.contains(currentLine)) {
+				line = "//" + line;
+				insideMethod = true;
+			}
+			
+			lines.set(i, line);
+			
+			currentLine--;
+		}
+	}
+	
+	private void commentBodyOfIgnoredMethods(List<String> lines) {
+		for (int idx : ignoredMethods) {
+			CurlyBracketBalance cbb = new CurlyBracketBalance();
+			String line = lines.get(idx-1);			
+			
+			while (!line.contains("{")) {
+				lines.set(idx-1, "//" + line);
+				idx++;
+				line = lines.get(idx-1);
+			}
+			
+			do {
+				line = lines.get(idx-1);
+				cbb.parse(line);
+				lines.set(idx-1, "//" + line);
+				idx++;
+
+			}
+			while (!cbb.isBalanceEmpty());
+		}
 	}
 }

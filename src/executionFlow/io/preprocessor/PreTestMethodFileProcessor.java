@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import executionFlow.io.FileEncoding;
+import executionFlow.io.SourceCodeProcessor;
 import executionFlow.io.preprocessor.testmethod.JUnit5ToJUnit4Processor;
 import executionFlow.io.preprocessor.testmethod.AssertProcessor;
 import executionFlow.io.preprocessor.testmethod.TestMethodHighlighter;
@@ -290,23 +291,23 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	}
 
 	private void commentAllTestMethodsExcept(String signature) {
-		TestMethodHighlighter testMethodHighlighter = 
-				new TestMethodHighlighter(signature);
+		SourceCodeProcessor testMethodHighlighter = 
+				new TestMethodHighlighter(processedLines, signature);
 		
-		processedLines = testMethodHighlighter.processLines(processedLines);
+		processedLines = testMethodHighlighter.processLines();
 	}
 	
 	private void surroundAssertsWithTryCatch() {
-		AssertProcessor assertProcessor = new AssertProcessor();
+		SourceCodeProcessor assertProcessor = new AssertProcessor(processedLines);
 		
-		processedLines = assertProcessor.processLines(processedLines);
+		processedLines = assertProcessor.processLines();
 	}
 	
 	private void convertJUnit5ToJUnit4() {
-		JUnit5ToJUnit4Processor annotationProcessor = 
-				new JUnit5ToJUnit4Processor(testMethodArgs);
+		SourceCodeProcessor annotationProcessor = 
+				new JUnit5ToJUnit4Processor(processedLines, testMethodArgs);
 		
-		processedLines = annotationProcessor.processLines(processedLines);
+		processedLines = annotationProcessor.processLines();
 		totalTests = annotationProcessor.getTotalTests();
 	}
 

@@ -37,6 +37,8 @@ public abstract class SourceCodeProcessor {
 			}
 		}
 		
+		whenFinished(sourceCode);
+		
 		return sourceCode;
 	}
 	
@@ -56,6 +58,10 @@ public abstract class SourceCodeProcessor {
 	}
 	
 	protected abstract String processLine(String line);
+	
+	protected void whenFinished(List<String> processedLines) {
+		return;
+	}
 	
 	
 	//---------------------------------------------------------------------

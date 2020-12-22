@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import executionFlow.io.SourceCodeProcessor;
 import executionFlow.util.DataUtil;
 import executionFlow.util.balance.CurlyBracketBalance;
 
@@ -15,105 +16,93 @@ import executionFlow.util.balance.CurlyBracketBalance;
  * @version		5.2.3
  * @since 		5.2.3
  */
-public class JUnit5ToJUnit4Processor {
+public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 	
 	//---------------------------------------------------------------------
 	//		Attributes
 	//---------------------------------------------------------------------
-	private boolean inComment;
-	private TestAnnotationProcessor testAnnotationProcessor;
-	private RepeatedTestAnnotationProcessor repeatedAnnotationProcessor;
-	private ParameterizedTestAnnotationProcessor parameterizedAnnotationProcessor;
-	private static final String REGEX_REPEATED_TEST = 
-			".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
-	private static final String REGEX_JUNIT4_TEST = 
-			".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
-	private static final String REGEX_PARAMETERIZED_TEST = 
-			".*@(.*\\.)?(org\\.junit\\.jupiter\\.params\\.)?ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
+	private TestProcessor testProcessor;
+	private RepeatedTestProcessor repeatedTestProcessor;
+	private ParameterizedTestProcessor parameterizedTestProcessor;
 	private Object[] testMethodArgs;
 	private int totalTests;
+	private String processedLine;
 	
 	
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	public JUnit5ToJUnit4Processor(Object[] testMethodArgs) {
+	public JUnit5ToJUnit4Processor(List<String> sourceCode, Object[] testMethodArgs) {
+		super(sourceCode, true);
+		
 		this.testMethodArgs = testMethodArgs;
-		testAnnotationProcessor = new TestAnnotationProcessor();
-		repeatedAnnotationProcessor = new RepeatedTestAnnotationProcessor();
-		parameterizedAnnotationProcessor = new ParameterizedTestAnnotationProcessor(testMethodArgs);
+		testProcessor = new TestProcessor();
+		repeatedTestProcessor = new RepeatedTestProcessor();
+		parameterizedTestProcessor = new ParameterizedTestProcessor(testMethodArgs);
 	}
 	
 	
 	//---------------------------------------------------------------------
 	//		Methods
-	//---------------------------------------------------------------------
-	/**
-	 * Processes a line disabling collectors in a test method and converting
-	 * JUnit 5 test annotation to JUnit 4 test annotation.
-	 * 
-	 * @param		line Line to be parsed
-	 * 
-	 * @return		Processed line
-	 */
-	public List<String> processLines(List<String> lines) {
-		List<String> processedLines = lines;
+	//---------------------------------------------------------------------	
+	@Override
+	protected String processLine(String line) {
+		processedLine = line;
 		
-		for (int i = 0; i < lines.size(); i++) {
-			checkComments(lines.get(i));
-			countTest(lines.get(i));
-			
-			if (!inComment) {
-				String processedLine = processLine(lines.get(i));
-			
-				processedLines.set(i, processedLine);
-			}
-		}
+		countTest(line);
 		
-		return processedLines;
-	}
-	
-	private void countTest(String line) {
-		if (line.contains("@org.junit.jupiter.api.Test") ||
-				line.matches(REGEX_JUNIT4_TEST) ||
-				line.matches(REGEX_REPEATED_TEST) ||
-				line.matches(REGEX_PARAMETERIZED_TEST))
-			totalTests++;
-	}
-
-
-	private void checkComments(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
+		repeatedTestProcessor.parseInsideRepeatedTest();
 		
-		if (line.matches(regexCommentFullLine))
-			inComment = true;
-		
-		if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
-		}
-		else if (inComment && line.contains("*/")) {
-			inComment = false;
-		}
-	}
-	
-	private String processLine(String line) {
-		String processedLine = line;
-		
-		processedLine = repeatedAnnotationProcessor.parseInsideRepeatedTest(line);
-		
-		// Converts test annotation from JUnit 5 to JUnit 4
-		if (line.matches(REGEX_JUNIT4_TEST))
-			processedLine = testAnnotationProcessor.parseJUnit4TestAnnotation(line);
-		else if (line.contains("@org.junit.jupiter.api.Test"))
-			processedLine = testAnnotationProcessor.parseJUnit5TestAnnotation(line);
-		else if (line.matches(REGEX_REPEATED_TEST))
-			processedLine = repeatedAnnotationProcessor.parseRepeatedTest(line);
-		else if (line.matches(REGEX_PARAMETERIZED_TEST) || testMethodArgs != null)
-			processedLine = parameterizedAnnotationProcessor.parseParameterizedTest(line);
+		if (isJUnit4Annotation(processedLine))
+			testProcessor.parseJUnit4TestAnnotation();
+		else if (isJUnit5Annotation(processedLine))
+			testProcessor.parseJUnit5TestAnnotation();
+		else if (isJUnit5RepeatedTestAnnotation(processedLine))
+			repeatedTestProcessor.replaceRepeatedTestAnnotation();
+		else if (isJUnit5ParameterizedTest(processedLine) || testMethodArgs != null)
+			parameterizedTestProcessor.parseParameterizedTest();
 		
 		return processedLine;
 	}
+	
+	private void countTest(String line) {		
+		if (isTestAnnotation(line))
+			totalTests++;
+	}
+	
+	private boolean isTestAnnotation(String line) {
+		return	isJUnit4Annotation(line)
+				|| isJUnit5Annotation(line)
+				|| isJUnit5RepeatedTestAnnotation(line)
+				|| isJUnit5ParameterizedTest(line);
+	}
+	
+	private boolean isJUnit5Annotation(String line) {
+		return line.contains("@org.junit.jupiter.api.Test");
+	}
+	
+	private boolean isJUnit4Annotation(String line) {
+		final String regexJUnit4Test = ".*@(.*\\.)?"
+				+ "(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
+		
+		return line.matches(regexJUnit4Test);
+	}
+
+	private boolean isJUnit5RepeatedTestAnnotation(String line) {
+		final String regexRepeatedTest = ".*@(.*\\.)?"
+				+ "RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
+		
+		return line.matches(regexRepeatedTest);
+	}
+	
+	private boolean isJUnit5ParameterizedTest(String line) {
+		final String regexParameterizedTest = ".*@(.*\\.)?"
+				+ "(org\\.junit\\.jupiter\\.params\\.)?"
+				+ "ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
+		
+		return line.matches(regexParameterizedTest);
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Getters
@@ -126,152 +115,64 @@ public class JUnit5ToJUnit4Processor {
 	//-------------------------------------------------------------------------
 	//		Inner classes
 	//-------------------------------------------------------------------------
-	private class TestAnnotationProcessor {
-		private static final String REGEX_JUNIT4_TEST = 
-				".*@(.*\\.)?(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
-		
-		public boolean isTestAnnotation(String line) {
-			return line.matches(REGEX_JUNIT4_TEST);
-		}
-		
-		/**
-		 * Converts JUnit 5 test to JUnit 4 test (converts 
-		 * {@link org.junit.jupiter.api.Test} to {@link org.junit.Test}. Also,
-		 * converts '@Test' to '@org.junit.Test'.
-		 * 
-		 * @param		line Current source file line
-		 * @param		isJunit5 Indicates if current source file line belongs
-		 * to a JUnit 5 test.
-		 * 
-		 * @return		Processed line		
-		 */
-		private String parseJUnit4TestAnnotation(String line)
-		{
-			return line.replace("@Test", "@org.junit.Test");
+	/**
+	 * Converts {@link org.junit.jupiter.api.Test} to {@link org.junit.Test}. 
+	 * Also, converts '@Test' to '@org.junit.Test'.
+	 */
+	private class TestProcessor {
+				
+		//---------------------------------------------------------------------
+		//		Methods
+		//---------------------------------------------------------------------
+		public void parseJUnit4TestAnnotation() {
+			processedLine = processedLine.replace("@Test", "@org.junit.Test");
 		}	
 		
-		private String parseJUnit5TestAnnotation(String line) {
-			return line.replace("@org.junit.jupiter.api.Test", "@org.junit.Test");
+		public void parseJUnit5TestAnnotation() {
+			processedLine = processedLine.replace(
+					"@org.junit.jupiter.api.Test", 
+					"@org.junit.Test"
+			);
 		}
 	}
 	
-	private class RepeatedTestAnnotationProcessor {
+	/**
+	 * Converts {@link org.junit.jupiter.api.RepeatedTest} to 
+	 * {@link org.junit.Test} using while control flow instead.
+	 */
+	private class RepeatedTestProcessor {
+
+		//---------------------------------------------------------------------
+		//		Attributes
+		//---------------------------------------------------------------------
 		private static final String REGEX_REPEATED_TEST = 
 				".*@(.*\\.)?RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
-		private String numRepetitions;
-		private CurlyBracketBalance curlyBracketBalance_repeatedTest;
-		private boolean repeatedTest_putLoop;
+		private String totalRepetitions;
+		private CurlyBracketBalance curlyBracketBalance;
+		private boolean replacedRepeatedTestAnnotation;
 		private boolean insideRepeatedTest;
+			
 		
-		
-		/**
-		 * Checks whether it is inside a method with 
-		 * {@link org.junit.jupiter.api.RepeatedTest}. If it is, converts it to
-		 * {@link org.junit.Test} using while control flow instead.
-		 * 
-		 * @param		line Current source file line
-		 * 
-		 * @return		If is is inside a repeated test, while control flow 
-		 * resulting from the conversion of 
-		 * {@link org.junit.jupiter.api.RepeatedTest} to {@link org.junit.Test};
-		 * otherwise, returns the same line
-		 */
-		private String parseInsideRepeatedTest(String line)
-		{
-			// Converts repeated test to while test
-			if (repeatedTest_putLoop && line.contains("{")) {
-				line = putWhileStatement(line);
+		//---------------------------------------------------------------------
+		//		Methods
+		//---------------------------------------------------------------------
+		public void parseInsideRepeatedTest()	{
+			if (replacedRepeatedTestAnnotation && processedLine.contains("{")) {
+				processedLine = openWhileStatement(processedLine);
 				
-				repeatedTest_putLoop = false;
+				replacedRepeatedTestAnnotation = false;
 				
-				curlyBracketBalance_repeatedTest = new CurlyBracketBalance();
-				curlyBracketBalance_repeatedTest.parse(line);
-				curlyBracketBalance_repeatedTest.decreaseBalance();
+				createCurlyBracketBalance(processedLine);
 			}
-			// Checks if it is the end of repeated test
-			else if (insideRepeatedTest && curlyBracketBalance_repeatedTest != null && line.contains("}")) {
-				curlyBracketBalance_repeatedTest.parse(line);
+			else if (insideRepeatedTest) {
+				updateCurlyBracketBalance(processedLine);
 				
-				if (curlyBracketBalance_repeatedTest.isBalanceEmpty()) {
-					line = closeWhileStatement(line);
-				}
+				if (isLastLineOfRepeatedMethod(processedLine))
+					processedLine = closeWhileStatement(processedLine);
 			}
-			
-			return line;
-		}
-
-		private String closeWhileStatement(String line) {
-			int idx = line.lastIndexOf("}");
-			
-			
-			insideRepeatedTest = false;
-			curlyBracketBalance_repeatedTest = null;
-			
-			line = line.substring(0, idx+1) + "}" + line.substring(idx+1);
-			return line;
 		}
 		
-		/**
-		 * Converts {@link org.junit.jupiter.api.RepeatedTest} to 
-		 * {@link org.junit.Test}.
-		 * 
-		 * @param		line Current source file line
-		 * 
-		 * @return		Processed line
-		 */
-		private String parseRepeatedTest(String line)
-		{
-			insideRepeatedTest = true;
-			
-			Pattern patternRepeatedTest = Pattern.compile(REGEX_REPEATED_TEST);
-			Matcher matcherRepeatedTest = patternRepeatedTest.matcher(line);
-			if (matcherRepeatedTest.find()) {
-				String repeatedTestAnnotation = matcherRepeatedTest.group();
-				
-				
-				line = line.replace(repeatedTestAnnotation, "@org.junit.Test");
-			}
-			
-			numRepetitions = extractNumberOfRepetitions(line);
-			
-			repeatedTest_putLoop = true;
-			
-			return line;
-		}
-
-		private String extractNumberOfRepetitions(String line) {
-			String numRepetitions = "0";
-			
-			Pattern patternRepeatedTest = Pattern.compile(REGEX_REPEATED_TEST);
-			Matcher matcherRepeatedTest = patternRepeatedTest.matcher(line);
-			
-			if (matcherRepeatedTest.find()) {
-				String annotationParams = DataUtil.extractContentBetweenParenthesis(matcherRepeatedTest.group());
-				
-				if (annotationParams.contains("value")) {
-					Matcher matcherNumbers = Pattern.compile("[0-9]+").matcher(annotationParams);
-					
-					if (matcherNumbers.find())
-						numRepetitions = matcherNumbers.group();
-				}
-				else {
-					numRepetitions = annotationParams.isBlank() ? "0" : annotationParams;						
-				}
-				
-			}
-			
-			return numRepetitions;
-		}
-
-		/**
-		 * Converts repeated test to a while loop.
-		 * 
-		 * @param		line Line to be placed the while clause
-		 * 
-		 * @return		Line with while clause along with the function arguments
-		 */
-		private String putWhileStatement(String line)
-		{
+		private String openWhileStatement(String line) {
 			StringBuilder statement = new StringBuilder();
 			String stepVariable = DataUtil.generateVarName();
 			int idxLastOpenCurlyBracket = line.lastIndexOf("{");
@@ -283,104 +184,160 @@ public class JUnit5ToJUnit4Processor {
 			statement.append("while(");
 			statement.append(stepVariable);
 			statement.append("++ < ");
-			statement.append(numRepetitions);
+			statement.append(totalRepetitions);
 			statement.append("){");
 			statement.append(line.substring(idxLastOpenCurlyBracket + 1));
 			
 			return statement.toString();
 		}
+
+		private void createCurlyBracketBalance(String line) {
+			curlyBracketBalance = new CurlyBracketBalance();
+			curlyBracketBalance.parse(line);
+			curlyBracketBalance.decreaseBalance();
+		}
+		
+		private void updateCurlyBracketBalance(String line) {
+			if (curlyBracketBalance == null)
+				return;
+			
+			if (line.contains("}")) {
+				curlyBracketBalance.parse(line);
+			}
+		}
+		
+		private boolean isLastLineOfRepeatedMethod(String line) {
+			if (curlyBracketBalance == null)
+				return false;
+			
+			return	curlyBracketBalance.isBalanceEmpty()
+					&& line.contains("}");
+		}
+
+		private String closeWhileStatement(String line) {
+			int idxLastClosedCurlyBracket = line.lastIndexOf("}");
+			
+			insideRepeatedTest = false;
+			curlyBracketBalance = null;
+			
+			return	line.substring(0, idxLastClosedCurlyBracket+1) 
+					+ "}" 
+					+ line.substring(idxLastClosedCurlyBracket+1);
+		}
+		
+		/**
+		 * Converts {@link org.junit.jupiter.api.RepeatedTest} to 
+		 * {@link org.junit.Test}.
+		 * 
+		 * @param		processedLine Current source file line
+		 * 
+		 * @return		Line with {@link org.junit.Test}
+		 */
+		public void replaceRepeatedTestAnnotation() {			
+			processedLine = processedLine.replace(
+					extractRepeatedTestAnnotation(processedLine), 
+					"@org.junit.Test"
+			);
+			
+			replacedRepeatedTestAnnotation = true;
+			insideRepeatedTest = true;
+			totalRepetitions = extractNumberOfRepetitions(processedLine);
+		}
+		
+		private String extractRepeatedTestAnnotation(String line) {
+			Pattern patternRepeatedTest = Pattern.compile(REGEX_REPEATED_TEST);
+			Matcher matcherRepeatedTest = patternRepeatedTest.matcher(line);
+			
+			if (!matcherRepeatedTest.find())
+				return "";
+			
+			return matcherRepeatedTest.group();
+		}
+		
+		private String extractNumberOfRepetitions(String line) {
+			String numRepetitions = "0";
+			
+			Pattern patternRepeatedTest = Pattern.compile(REGEX_REPEATED_TEST);
+			Matcher matcherRepeatedTest = patternRepeatedTest.matcher(line);
+			
+			if (matcherRepeatedTest.find()) {
+				String annotationParams = DataUtil.extractContentBetweenParenthesis(
+						matcherRepeatedTest.group()
+				);
+				
+				if (annotationParams.contains("value")) {
+					Matcher matcherNumbers = Pattern.compile("[0-9]+").matcher(annotationParams);
+					
+					if (matcherNumbers.find())
+						numRepetitions = matcherNumbers.group();
+				}
+				else {
+					numRepetitions = annotationParams.isBlank() ? "0" : annotationParams;						
+				}
+			}
+			
+			return numRepetitions;
+		}
 	}
 	
-	private class ParameterizedTestAnnotationProcessor {
+	/**
+	 * Converts {@link org.junit.jupiter.params.ParameterizedTest} to 
+	 * {@link org.junit.Test}.
+	 */
+	private class ParameterizedTestProcessor {
+		
+		//---------------------------------------------------------------------
+		//		Attributes
+		//---------------------------------------------------------------------
 		private Object[] testMethodArgs;
 		private String[] testMethodParams;
-//		private CurlyBracketBalance curlyBracketBalance_parameterizedTest;
 		private boolean inParameterizedTestMethod;
 		private String paramEnumType;
 		
-		public ParameterizedTestAnnotationProcessor(Object[] testMethodArgs) {
+		
+		//---------------------------------------------------------------------
+		//		Constructor
+		//---------------------------------------------------------------------
+		public ParameterizedTestProcessor(Object[] testMethodArgs) {
 			this.testMethodArgs = testMethodArgs;
 		}
 		
-		private static final String REGEX_PARAMETERIZED_TEST = 
-				".*@(.*\\.)?(org\\.junit\\.jupiter\\.params\\.)?ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
 		
+		//---------------------------------------------------------------------
+		//		Methods
+		//---------------------------------------------------------------------
 		/**
 		 * Converts {@link org.junit.jupiter.params.ParameterizedTest} to 
 		 * {@link org.junit.Test}.
 		 * 
-		 * @param		line Current source file line
+		 * @param		processedLine Current source file line
 		 * 
-		 * @return		Processed line
+		 * @return		Line with {@link org.junit.Test}
 		 */
-		@SuppressWarnings("rawtypes")
-		private String parseParameterizedTest(String line)
-		{
-			if (line.contains("@ParameterizedTest")) {
-				line = convertParameterizedTestAnnotationToTestAnnotation(line);
+		public void parseParameterizedTest() {
+			if (processedLine.contains("@ParameterizedTest")) {
+				processedLine = convertParameterizedTestAnnotationToTestAnnotation(processedLine);
 				inParameterizedTestMethod = true;
 			}
-			else if (line.contains("@EnumSource")) {				
-				paramEnumType = extractEnumParameter(line);
+			else if (processedLine.contains("@EnumSource")) {				
+				paramEnumType = extractEnumParameter(processedLine);
 			}
 			else if (inParameterizedTestMethod) {
-				if (isMethodDeclaration(line)) {
-					line = extractParameters(line);
+				if (isMethodDeclaration(processedLine)) {
+					processedLine = extractParameters(processedLine);
 				}
-				// Converts parameters to local variables
-				else if (testMethodParams != null && !line.contains("@")) {
-					line = putParametersAsLocalVariables(line);
+				else if ((testMethodParams != null) && !isAnnotation(processedLine)) {
+					processedLine = putParametersAsLocalVariables(processedLine);
 
 					inParameterizedTestMethod = false;
 				}
 			}
-			
-			return line;
 		}
-
-
-		private String extractParameters(String line) {
-			// Extracts parameters
-			String params = DataUtil.extractContentBetweenParenthesis(line);
-			
-			if (!params.isBlank()) {
-				testMethodParams = params.split(",");
-				line = line.replace(params, "");
-			}
-			return line;
-		}
-
-
-		private String putParametersAsLocalVariables(String line) {
-			String localVars = convertParametersToLocalVariables();
-			
-			// Puts converted parameters on the source file line
-			if (line.contains("{")) {
-				int index = line.indexOf("{");
-				
-				line = line.substring(0, index+1) + localVars + line.substring(index+1);
-			}
-			else {
-				line = localVars + line;
-			}
-			return line;
-		}
-
-
-		private boolean isMethodDeclaration(String line) {
-			final String regexMethodDeclaration = 
-					"^.*[\\s\\t]+((?!new)[A-z0-9\\_\\<\\>\\,\\[\\]\\.\\$])+"
-					+ "[\\s\\t]+([A-z0-9\\_\\$]+)[\\s\\t]*\\(.*\\).*$";
-			
-			return line.matches(regexMethodDeclaration);
-		}
-
-
+		
 		private String convertParameterizedTestAnnotationToTestAnnotation(String line) {
 			return line.replace("@ParameterizedTest", "@org.junit.Test");
 		}
-
-
+		
 		private String extractEnumParameter(String line) {
 			String parameter = "";
 			Matcher m = Pattern.compile("(\\ |\\t)*value(\\ |\\t)*=").matcher(line);
@@ -391,12 +348,54 @@ public class JUnit5ToJUnit4Processor {
 			}
 			// EnumSource without value attribute but with class specified
 			else if (line.contains("(")) {
-				parameter = DataUtil.extractContentBetweenParenthesis(line).split("\\.")[0].trim();
+				parameter = DataUtil.extractContentBetweenParenthesis(line)
+						.split("\\.")[0]
+						.trim();
 			}
 			
 			return parameter;
 		}
 		
+		private boolean isMethodDeclaration(String line) {
+			final String regexMethodDeclaration = 
+					"^.*[\\s\\t]+((?!new)[A-z0-9\\_\\<\\>\\,\\[\\]\\.\\$])+"
+					+ "[\\s\\t]+([A-z0-9\\_\\$]+)[\\s\\t]*\\(.*\\).*$";
+			
+			return line.matches(regexMethodDeclaration);
+		}
+		
+		private String extractParameters(String line) {
+			String params = DataUtil.extractContentBetweenParenthesis(line);
+			
+			if (!params.isBlank()) {
+				testMethodParams = params.split(",");
+				line = line.replace(params, "");
+			}
+			return line;
+		}
+		
+		private boolean isAnnotation(String line) {
+			return line.contains("@");
+		}
+
+		private String putParametersAsLocalVariables(String line) {
+			String processedLine = line;
+			String localVars = convertParametersToLocalVariables();
+
+			if (line.contains("{")) {
+				int idxOpenCurlyBracket = line.indexOf("{");
+				
+				processedLine = line.substring(0, idxOpenCurlyBracket+1) 
+						+ localVars 
+						+ line.substring(idxOpenCurlyBracket+1);
+			}
+			else {
+				processedLine = localVars + line;
+			}
+			
+			return processedLine;
+		}
+
 		private String convertParametersToLocalVariables() {
 			StringBuilder localVars = new StringBuilder();
 
@@ -411,8 +410,7 @@ public class JUnit5ToJUnit4Processor {
 			
 			return localVars.toString();
 		}
-
-		@SuppressWarnings("rawtypes")
+		
 		private String getArgument(int i) {
 			if (testMethodArgs[i] == null)
 				return "null";
@@ -420,13 +418,8 @@ public class JUnit5ToJUnit4Processor {
 			String argument;
 			
 			// Checks if parameterized test contains 'EnumSource' annotation
-			if (paramEnumType != null) {
-				// Checks if parameterized test contains 'EnumType' annotation without arguments
-				if (paramEnumType.isEmpty())
-					testMethodArgs[i] = testMethodParams[i] + "." + ((Enum)testMethodArgs[i]).name();
-				else
-					testMethodArgs[i] = paramEnumType + "." + ((Enum)testMethodArgs[i]).name();
-			}
+			if (paramEnumType != null)
+				testMethodArgs[i] = extractEnumTypeArgs(i);
 			
 			if (testMethodParams[i].contains("String "))
 				argument = "\"" + ((String)testMethodArgs[i])
@@ -437,6 +430,21 @@ public class JUnit5ToJUnit4Processor {
 				argument = ((String)testMethodArgs[i]);
 			
 			return argument;
+		}
+		
+		@SuppressWarnings("rawtypes")
+		private String extractEnumTypeArgs(int i) {
+			StringBuilder args = new StringBuilder();
+			
+			if (paramEnumType.isEmpty())
+				args.append(testMethodParams[i]);
+			else
+				args.append(paramEnumType);
+			
+			args.append(".");
+			args.append(((Enum)testMethodArgs[i]).name());
+			
+			return args.toString();
 		}
 	}
 }
