@@ -3,6 +3,7 @@ package executionFlow.exporter.testpath;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -56,44 +57,68 @@ public class FileExporter implements TestPathExporter {
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<InvokedContainer, List<List<Integer>>> classTestPaths) {
-		if (classTestPaths == null || classTestPaths.isEmpty())
+	public void export(Map<InvokedContainer, List<List<Integer>>> testPaths) {
+		if ((testPaths == null) || testPaths.isEmpty())
 			return;
 		
 		try {
-			removeConflictingExportFiles(classTestPaths.keySet());
-		
-			for (Map.Entry<InvokedContainer, List<List<Integer>>> e : classTestPaths.entrySet()) {
-				InvokedContainer invokedContainer = e.getKey();
-				List<List<Integer>> testPaths = e.getValue();
-	
-
-				this.exportFile = generateDirectoryFromSignature(
-						invokedContainer.getInvokedInfo().getConcreteInvokedSignature()
-				);
-				
-				testPaths = removeEmptyTestPaths(testPaths);
-				storeExportFile(
-						testPaths, 
-						invokedContainer.getTestMethodInfo().getInvokedSignature()
-				);
-			}
-
-			Logger.info("Test paths have been successfully exported!");
-			Logger.info(
-					"Location: " 
-					+ new File(
-							ExecutionFlow.getAppRootPath().toFile(), 
-							dirName
-					).getAbsolutePath()
-			);
-		} catch (IOException e) {
+			exportTestPaths(testPaths);
+		} 
+		catch (IOException e) {
 			Logger.error("Error while exporting test paths: " + e.getMessage());
 		}
 	}
 
+	private void exportTestPaths(Map<InvokedContainer, List<List<Integer>>> testPaths) 
+			throws IOException {
+		removeConflictingExportFiles(testPaths.keySet());
 
+		for (Map.Entry<InvokedContainer, List<List<Integer>>> e : testPaths.entrySet()) {
+			InvokedContainer invokedContainer = e.getKey();
+			List<List<Integer>> tps = e.getValue();
 
+			prepareExportFile(invokedContainer);
+			
+			tps = removeEmptyTestPaths(tps);
+			
+			storeExportFile(
+					tps, 
+					invokedContainer.getTestMethodInfo().getInvokedSignature()
+			);
+		}
+
+		Logger.info("Test paths have been successfully exported!");
+		Logger.info(
+				"Location: " 
+				+ new File(
+						ExecutionFlow.getAppRootPath().toFile(), 
+						dirName
+				).getAbsolutePath()
+		);
+	}
+	
+	/**
+	 * Removes test path export files that will be overwritten (avoids 
+	 * creating duplicate files).
+	 * 
+	 * @param		classTestPaths Collected test paths
+	 * 
+	 * @throws		IOException If any test path file to be removed is in use
+	 */
+	private void removeConflictingExportFiles(Set<InvokedContainer> invokedContainer) 
+			throws IOException {
+		for (InvokedContainer container : invokedContainer) {		
+			Path testPathExportDirectory = generateDirectoryFromSignature(
+					container.getInvokedInfo().getConcreteInvokedSignature()
+			);
+			
+			removeTestPathExportFileWithTestMethodSignature(
+					testPathExportDirectory.toFile(), 
+					container.getTestMethodInfo().getInvokedSignature()
+			);
+		}
+	}
+	
 	private Path generateDirectoryFromSignature(String invokedSignature) {
 		return Paths.get(
 				ExecutionFlow.getCurrentProjectRoot().toString(), 
@@ -102,9 +127,52 @@ public class FileExporter implements TestPathExporter {
 		);
 	}
 	
-	private void storeExportFile(List<List<Integer>> testPaths, String testMethodSignature) 
-			throws IOException
+	private void removeTestPathExportFileWithTestMethodSignature(File testPathExportDirectory,
+																 String testMethodSignature) 
+			throws IOException {
+		if (!testPathExportDirectory.exists())
+			return;
+
+		for (String filename : testPathExportDirectory.list()) {
+			File testPathFile = new File(testPathExportDirectory, filename);
+			
+			if (extractTestMethodSignatureFromExportFile(testPathFile)
+					.equals(testMethodSignature)) {
+				testPathFile.getAbsoluteFile().delete();
+			}
+		}
+	}
+
+	private String extractTestMethodSignatureFromExportFile(File file) throws IOException
 	{
+		String testMethodSignature = "";
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+			testMethodSignature = br.readLine();
+		}
+
+		return testMethodSignature;
+	}
+	
+	private void prepareExportFile(InvokedContainer invokedContainer) {
+		this.exportFile = generateDirectoryFromSignature(
+				invokedContainer.getInvokedInfo().getConcreteInvokedSignature()
+		);
+	}
+
+	private List<List<Integer>> removeEmptyTestPaths(List<List<Integer>> testPaths) {
+		List<List<Integer>> tps = new ArrayList<>();
+		
+		for (List<Integer> tp : testPaths) {
+			if (!tp.isEmpty())
+				tps.add(tp);
+		}
+		
+		return tps;
+	}
+	
+	private void storeExportFile(List<List<Integer>> testPaths, String testMethodSignature) 
+			throws IOException {
 		if (testPaths.isEmpty())
 			return;				
 		
@@ -127,83 +195,6 @@ public class FileExporter implements TestPathExporter {
 				+ " in " + testPathExportFile.getAbsolutePath()
 		);
 	}
-
-
-	private void writeTestPaths(List<List<Integer>> testPaths, BufferedWriter bfw) throws IOException {
-		for (List<Integer> testPath : testPaths) {
-			bfw.write(testPath.toString());		// Writes test path in the file	
-			bfw.newLine();
-		}
-	}
-
-
-	private void writeTestMethodSignature(String testMethodSignature, File testPathExportFile, BufferedWriter bfw)
-			throws IOException {
-		// If the file does not exist, writes test method signature on it
-		if (!testPathExportFile.exists()) {
-			bfw.write(testMethodSignature);
-			bfw.newLine();
-		}
-	}
-	
-	private List<List<Integer>> removeEmptyTestPaths(List<List<Integer>> testPaths) 
-	{
-		List<List<Integer>> tps = new ArrayList<>();
-		
-		for (List<Integer> tp : testPaths) {
-			if (!tp.isEmpty())
-				tps.add(tp);
-		}
-		
-		return tps;
-	}
-
-	/**
-	 * Removes test path export files that will be overwritten (avoids 
-	 * creating duplicate files).
-	 * 
-	 * @param		classTestPaths Collected test paths
-	 * 
-	 * @throws		IOException If any test path file to be removed is in use
-	 */
-	private void removeConflictingExportFiles(Set<InvokedContainer> invokedContainer) 
-			throws IOException
-	{
-		for (InvokedContainer container : invokedContainer) {		
-			File testPathExportDirectory = generateDirectoryFromSignature(container.getInvokedInfo().getConcreteInvokedSignature()).toFile();
-			
-			removeTestPathExportFileWithTestMethodSignature(
-					testPathExportDirectory, 
-					container.getTestMethodInfo().getInvokedSignature()
-			);
-		}
-	}
-	
-	private void removeTestPathExportFileWithTestMethodSignature(File testPathExportDirectory,
-			String testMethodSignature) throws IOException {
-		if (!testPathExportDirectory.exists())
-			return;
-
-		for (String filename : testPathExportDirectory.list()) {
-			File testPathFile = new File(testPathExportDirectory, filename);
-			
-			if (extractTestMethodSignatureFromExportFile(testPathFile).equals(testMethodSignature)) {
-				testPathFile.getAbsoluteFile().delete();
-			}
-		}
-	}
-
-
-	private String extractTestMethodSignatureFromExportFile(File file) throws IOException
-	{
-		String testMethodSignature = "";
-		
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			testMethodSignature = br.readLine();
-		}
-
-		return testMethodSignature;
-	}
 	
 	/**
 	 * Returns the file name that the test path file should have.
@@ -214,34 +205,51 @@ public class FileExporter implements TestPathExporter {
 	 * 
 	 * @throws		IOException If it cannot find file in the provided path
 	 */
-	private String getTestPathName(Path path, String testMethodSignature) throws IOException
-	{		
+	private String getTestPathName(Path path, String testMethodSignature) 
+			throws IOException {		
 		int id = 1;
 		
 		// Starts trying with TP_1.txt
-		File f = new File(path.toFile(), "TP_" + id + ".txt");
-		
-		
-		// It the name is already in use, if the file has the same test method 
-		// signature
-		while (f.exists()) {
-			BufferedReader br = new BufferedReader(new FileReader(f));
-			String testMethodSignature_file = br.readLine();
-			
-			
-			br.close();
-				
-			// If the file has the same test method signature, test path will 
-			// belong to it
-			if (testMethodSignature_file.equals(testMethodSignature)) {
-				return "TP_" + id + ".txt";
-			}			
+		File exportFile = new File(path.toFile(), "TP_" + id + ".txt");
+	
+		while (exportFile.exists()) {
+			if (getTestMethodSignatureFromExportFile(exportFile).equals(testMethodSignature))
+				return "TP_" + id + ".txt";			
 
-			// Else try to generate another file name 
 			id++;
-			f = new File(path.toFile(), "TP_" + id + ".txt");
+			exportFile = new File(path.toFile(), "TP_" + id + ".txt");
 		}
 		
-		return "TP_"+id+".txt";
+		return "TP_" + id + ".txt";
+	}
+
+	private String getTestMethodSignatureFromExportFile(File exportFile) 
+			throws IOException, FileNotFoundException {
+		String testMethodSignature = "";
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(exportFile))) {
+			testMethodSignature = br.readLine();
+		}
+		
+		return testMethodSignature;
+	}
+	
+	private void writeTestMethodSignature(String testMethodSignature, 
+										  File testPathExportFile, 
+										  BufferedWriter bfw)
+			throws IOException {
+		if (testPathExportFile.exists())
+			return;
+		
+		bfw.write(testMethodSignature);
+		bfw.newLine();
+	}
+
+	private void writeTestPaths(List<List<Integer>> testPaths, BufferedWriter bfw) 
+			throws IOException {
+		for (List<Integer> testPath : testPaths) {
+			bfw.write(testPath.toString());	
+			bfw.newLine();
+		}
 	}
 }

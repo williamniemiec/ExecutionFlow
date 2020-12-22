@@ -27,16 +27,15 @@ public class ConsoleExporter implements TestPathExporter {
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<InvokedContainer, List<List<Integer>>> classTestPaths) 
-	{
-		if (classTestPaths == null || classTestPaths.isEmpty())
+	public void export(Map<InvokedContainer, List<List<Integer>>> testPaths) {
+		if ((testPaths == null) || testPaths.isEmpty())
 			return;
 		
 		currentInvoked = "";
 		currentTestMethodSignature = null;
 		
 		printHeader();
-		printBody(classTestPaths);
+		printBody(testPaths);
 		printFooter();
 	}
 
