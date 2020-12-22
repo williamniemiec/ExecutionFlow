@@ -238,13 +238,13 @@ public aspect MethodCollector extends RuntimeCollector {
 	private void collectMethod(JoinPoint jp, String key) {
 		InvokedInfo methodInfo = new InvokedInfo.Builder()
 				.binPath(classPath)
+				.srcPath(srcPath)
 				.invokedSignature(signature)
 				.invokedName(InvokedInfo.extractMethodName(signature))
 				.parameterTypes(getParameterTypes(jp))
 				.args(getParameterValues(jp))
 				.returnType(extractReturnType(jp))
 				.invocationLine(getInvocationLine(jp))
-				.srcPath(srcPath)
 				.build();
 		methodInfo.setConcreteMethodSignature(getConcreteMethodSignature(jp));
 		

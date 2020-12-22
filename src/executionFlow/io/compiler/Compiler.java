@@ -6,5 +6,6 @@ import java.nio.file.Path;
 import executionFlow.io.FileEncoding;
 
 public interface Compiler {
-	public void compile(Path target, Path outputDir, FileEncoding encode) throws IOException;
+	public void compile(Path target, Path outputDir, FileEncoding encode) 
+			throws IOException;
 }

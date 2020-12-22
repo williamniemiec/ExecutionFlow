@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-
 /**
  * Contains all supported file encodings.
  * 
@@ -12,8 +11,8 @@ import java.nio.charset.StandardCharsets;
  * @version		2.0.0
  * @since		1.4
  */
-public enum FileEncoding implements Serializable
-{
+public enum FileEncoding implements Serializable {
+	
 	//-------------------------------------------------------------------------
 	//		Enumerations
 	//-------------------------------------------------------------------------
@@ -31,8 +30,7 @@ public enum FileEncoding implements Serializable
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private FileEncoding(String name, Charset charset)
-	{
+	private FileEncoding(String name, Charset charset) {
 		this.name = name;
 		this.charset = charset;
 	}
@@ -41,13 +39,11 @@ public enum FileEncoding implements Serializable
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 	
-	public Charset getStandardCharset()
-	{
+	public Charset getStandardCharset() {
 		return charset;
 	}
 }

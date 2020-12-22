@@ -200,7 +200,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		
 		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 
 				+ invoked.getInvocationLine() + ", test method signature: "
-				+ testMethod.getName() + ")" + ", invokedSignature: " 
+				+ testMethod.getSignatureWithoutParameters() + ")" + ", invokedSignature: " 
 				+ invoked.getInvokedSignature() + "}"
 		);
 	}
@@ -312,10 +312,10 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private boolean returnedFromTestedInvoked() {
-		if (!line.contains(testMethod.getName()))
+		if (!line.contains(testMethod.getSignatureWithoutParameters()))
 			return false;
 		
-		return	(line.contains(testMethod.getName()) && !testPath.isEmpty()) 
+		return	(line.contains(testMethod.getSignatureWithoutParameters()) && !testPath.isEmpty()) 
 				|| wasInsideMethodWithEmptyBody();
 	}
 
@@ -323,7 +323,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		return 	inMethod 
 				&& insideConstructor 
 				&& !insideOverloadCall 
-				&& (isMethodWithEmptyBody() || line.contains(testMethod.getName()));
+				&& (isMethodWithEmptyBody() || line.contains(testMethod.getSignatureWithoutParameters()));
 	}
 	
 	private int getLineNumber() {
@@ -357,7 +357,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 				|| isNativeAnonymousClass()
 				&& !inConstructor()
 				&& !hasLineInvokedName()
-				&& !line.contains(testMethod.getName());
+				&& !line.contains(testMethod.getSignatureWithoutParameters());
 	}
 	
 	private boolean isNativeAnonymousClass() {
@@ -368,7 +368,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private boolean isInsideMethod() {
-		if (finishedTestedInvoked || line.contains(testMethod.getName()))
+		if (finishedTestedInvoked || line.contains(testMethod.getSignatureWithoutParameters()))
 			return false;
 			
 		if (anonymousConstructor)
@@ -401,7 +401,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		boolean isInsideAnonymousConstructor = (anonymousConstructor && insideConstructor);
 		
 		return	srcLine.contains("@executionFlow.runtime.CollectCalls")
-				&& !line.contains(testMethod.getName())
+				&& !line.contains(testMethod.getSignatureWithoutParameters())
 				&& (isInsideAnonymousConstructor || hasLineInvokedName())
 				&& !line.split(",")[1].matches(regexConstructorWithDollarSignPlusNumbers);
 	}
@@ -467,7 +467,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		if (finishedTestedInvoked)
 			return;
 		
-		if (line.contains(testMethod.getName())) {
+		if (line.contains(testMethod.getSignatureWithoutParameters())) {
 			finishedTestedInvoked = true;
 			inMethod = false;
 		} 
@@ -587,7 +587,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 					&& hasInvokedName(line) 
 					|| (
 							shouldIgnore()
-							&& line.contains(testMethod.getName()) 
+							&& line.contains(testMethod.getSignatureWithoutParameters()) 
 							&& getSrcLine(srcLine) > invoked.getInvocationLine()
 		));
 	}

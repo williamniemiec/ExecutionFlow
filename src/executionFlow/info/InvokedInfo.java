@@ -21,31 +21,35 @@ public class InvokedInfo {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected Path binPath;
-	protected Path srcPath;
-	protected String invokedSignature;
-	protected String classSignature;
-	protected String classPackage;
-	protected int invocationLine;
-	protected Class<?>[] parameterTypes;
-	protected Object[] args;
-	private String invokedName;
-	private String name;
+	private Path binPath;
+	private Path srcPath;
+	private String invokedSignature;
+	private String classSignature;
+	private String classPackage;
+	private int invocationLine;
+	private Class<?>[] parameterTypes;
+	private Object[] args;
 	private String concreteMethodSignature;
-	private String methodName;
+	private String invokedName;
 	private Class<?> returnType;
 	
 	
-	protected InvokedInfo(Path binPath, Path srcPath, int invocationLine,
-			String methodSignature, String methodName,
-			Class<?> returnType, Class<?>[] parameterTypes, Object[] args,
-			boolean isConstructor) 
-	{
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private InvokedInfo(Path binPath, Path srcPath, int invocationLine,	
+						String invokedSignature, String invokedName, 
+						Class<?> returnType, Class<?>[] parameterTypes, 
+						Object[] args, boolean isConstructor) {
+		checkBinPath(binPath);
+		checkSrcPath(srcPath);
+		checkInvokedSignature(invokedSignature);
+		
 		this.binPath = binPath;
 		this.srcPath = srcPath;
 		this.invocationLine = invocationLine;
-		this.invokedSignature = methodSignature;
-		this.methodName = methodName;
+		this.invokedSignature = invokedSignature;
+		this.invokedName = invokedName;
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
@@ -67,8 +71,8 @@ public class InvokedInfo {
 	 * 	<li>invokedSignature</li>
 	 * </ul>
 	 */
-	public static class Builder
-	{
+	public static class Builder	{
+		
 		private String invokedName;
 		private Path binPath;
 		private Path srcPath;
@@ -87,8 +91,7 @@ public class InvokedInfo {
 		 * 
 		 * @throws		IllegalArgumentException If methodName is null
 		 */
-		public Builder invokedName(String name)
-		{
+		public Builder invokedName(String name)	{
 			if (name == null)
 				throw new IllegalArgumentException("Invoked name cannot be null");
 			
@@ -104,10 +107,8 @@ public class InvokedInfo {
 		 * 
 		 * @throws		IllegalArgumentException If binPath is null
 		 */
-		public Builder binPath(Path binPath)
-		{
-			if (binPath == null)
-				throw new IllegalArgumentException("Invoked's compiled file path cannot be null");
+		public Builder binPath(Path binPath) {
+			checkBinPath(binPath);
 			
 			this.binPath = binPath.isAbsolute() ? binPath : binPath.toAbsolutePath();
 			
@@ -121,10 +122,8 @@ public class InvokedInfo {
 		 * 
 		 * @throws		IllegalArgumentException If srcPath is null
 		 */
-		public Builder srcPath(Path srcPath)
-		{
-			if (srcPath == null)
-				throw new IllegalArgumentException("Invoked's source file cannot be null");
+		public Builder srcPath(Path srcPath) {
+			checkSrcPath(srcPath);
 			
 			this.srcPath = srcPath.isAbsolute() ? srcPath : srcPath.toAbsolutePath();
 			
@@ -141,17 +140,16 @@ public class InvokedInfo {
 		 * 	<li><b>Class name:</b> Person</li>
 		 * 	<li><b>Inner class name:</b> PersonBuilder</li>
 		 * 	<li><b>Class package:</b> examples.builderPattern</li>
-		 * 	<li><b>Inner class method signature:</b> examples.builderPattern.Person$PersonBuilder.firstName(String)</li>
+		 * 	<li><b>Inner class method signature:</b> examples.builderPattern
+		 * 	.Person$PersonBuilder.firstName(String)</li>
 		 * </ul>
 		 * 
 		 * @return		Builder to allow chained calls
 		 * 
 		 * @throws		IllegalArgumentException If methodSignature is null
 		 */
-		public Builder invokedSignature(String signature)
-		{
-			if (signature == null)
-				throw new IllegalArgumentException("Invoked signature cannot be null");
+		public Builder invokedSignature(String signature) {
+			checkInvokedSignature(signature);
 			
 			this.invokedSignature = signature.trim();
 			
@@ -167,18 +165,18 @@ public class InvokedInfo {
 		 * @throws		IllegalArgumentException If invocationLine is less than
 		 * or equal to zero
 		 */
-		public Builder invocationLine(int invocationLine)
-		{
-			if (invocationLine <= 0)
-				throw new IllegalArgumentException("Invocation line must be a number greater than zero");
+		public Builder invocationLine(int invocationLine) {
+			if (invocationLine <= 0) {
+				throw new IllegalArgumentException("Invocation line must be a "
+						+ "number greater than zero");
+			}
 			
 			this.invocationLine = invocationLine;
 			
 			return this;
 		}
 		
-		public Builder isConstructor(boolean isConstructor)
-		{
+		public Builder isConstructor(boolean isConstructor) {
 			this.isConstructor = isConstructor;
 			
 			return this;
@@ -191,10 +189,11 @@ public class InvokedInfo {
 		 * 
 		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
-		public Builder parameterTypes(Class<?>[] parameterTypes)
-		{
-			if (parameterTypes == null)
-				throw new IllegalArgumentException("Types of invoked's parameters cannot be null");
+		public Builder parameterTypes(Class<?>[] parameterTypes) {
+			if (parameterTypes == null) {
+				throw new IllegalArgumentException("Types of invoked's "
+						+ "parameters cannot be null");
+			}
 			
 			this.parameterTypes = parameterTypes;
 			
@@ -208,10 +207,11 @@ public class InvokedInfo {
 		 * 
 		 * @throws		IllegalArgumentException If args is null
 		 */
-		public Builder args(Object... args)
-		{
-			if (args == null)
-				throw new IllegalArgumentException("Invoked's arguments cannot be null");
+		public Builder args(Object... args) {
+			if (args == null) {
+				throw new IllegalArgumentException("Invoked's arguments cannot "
+						+ "be null");
+			}
 			
 			this.args = args;
 			
@@ -227,8 +227,10 @@ public class InvokedInfo {
 		 */
 		public Builder returnType(Class<?> returnType)
 		{
-			if (returnType == null)
-				throw new IllegalArgumentException("Invoked return type cannot be null");
+			if (returnType == null) {
+				throw new IllegalArgumentException("Invoked return type cannot "
+						+ "be null");
+			}
 			
 			this.returnType = returnType;
 			
@@ -249,8 +251,7 @@ public class InvokedInfo {
 		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public InvokedInfo build()
-		{
+		public InvokedInfo build() {
 			return new InvokedInfo(
 				binPath, srcPath, invocationLine, invokedSignature, 
 				invokedName, returnType, parameterTypes, args, isConstructor
@@ -262,6 +263,26 @@ public class InvokedInfo {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	private static void checkBinPath(Path binPath) {
+		if (binPath == null) {
+			throw new IllegalArgumentException("Invoked's compiled file path "
+					+ "cannot be null");
+		}
+	}
+	
+	private static void checkSrcPath(Path srcPath) {
+		if (srcPath == null) {
+			throw new IllegalArgumentException("Invoked's source file path"
+					+ "cannot be null");
+		}
+	}
+	
+	private static void checkInvokedSignature(String signature) {
+		if (signature == null) {
+			throw new IllegalArgumentException("Invoked signature cannot be null");
+		}
+	}
+	
 	/**
 	 * Extracts class name from a signature.
 	 * 
@@ -269,8 +290,7 @@ public class InvokedInfo {
 	 * 
 	 * @return	Name of this class or method
 	 */
-	public static String extractMethodName(String signature) 
-	{
+	public static String extractMethodName(String signature) {
 		String methodName = "";
 		
 		Pattern p = Pattern.compile("\\.[A-z0-9-_$]+\\(");
@@ -278,7 +298,7 @@ public class InvokedInfo {
 		
 		if (m.find()) {
 			methodName = m.group();					// ".<methodName>("
-			p = Pattern.compile("[A-z0-9-_$]+");
+			p = Pattern.compile("[A-z0-9\\-\\_\\$]+");
 			m = p.matcher(methodName);
 			
 			if (m.find())
@@ -292,10 +312,10 @@ public class InvokedInfo {
 	 * Extracts package from a class signature.
 	 * 
 	 * @param		classSignature Signature of the class
+	 * 
 	 * @return		Class package
 	 */
-	public static String extractPackage(String classSignature)
-	{
+	public static String extractPackage(String classSignature) {
 		if (classSignature == null || classSignature.isEmpty())
 			return "";
 		
@@ -319,53 +339,24 @@ public class InvokedInfo {
 	 * 
 	 * @return		If the invoked belongs to an anonymous class
 	 */
-	public boolean belongsToAnonymousClass()
-	{
+	public boolean belongsToAnonymousClass() {
 		String[] terms = getClassSignature().split("\\$");
 
 		if (terms.length <= 1)
 			return false;
 		
 		return terms[terms.length-1].matches("[0-9]+");
-	}
-	
-	/**
-	 * Extracts class signature from an invoked signature.
-	 * 
-	 * @param		invokedSignature Invoked signature
-	 * 
-	 * @return		Class signature
-	 */
-	private String extractClassSignature()
-	{
-		if ((invokedSignature == null) || invokedSignature.isBlank())
-			return "";
-		
-		StringBuilder classSignature = new StringBuilder();
-		String[] terms = invokedSignature.split("\\.");
-
-		for (int i=0; i<terms.length-1; i++) {
-			classSignature.append(terms[i]);
-			classSignature.append(".");
-		}
-		
-		// Removes last dot
-		if (classSignature.length() > 0)
-			classSignature.deleteCharAt(classSignature.length()-1);
-		
-		return classSignature.toString();
-	}
+	}	
 	
 	@Override
-	public String toString() 
-	{
+	public String toString() {
 		return "InvokedInfo ["
-				+ "methodName=" + methodName 
+				+ "invokedName=" + invokedName 
 				+ ", binPath=" + binPath 
 				+ ", srcPath=" + srcPath
 				+ ", classSignature=" + getClassSignature()
 				+ ", classPackage=" + getPackage()
-				+ ", methodSignature=" + invokedSignature 
+				+ ", invokedSignature=" + invokedSignature 
 				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
 				+ ", args="	+ Arrays.toString(args) 
@@ -375,7 +366,7 @@ public class InvokedInfo {
 	
 	
 	//-------------------------------------------------------------------------
-	//		Getters
+	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	/**
 	 * Gets directory where a compiled file is.
@@ -384,38 +375,19 @@ public class InvokedInfo {
 	 * 
 	 * @return		Directory where the compiled test method file is
 	 */
-	public static Path getCompiledFileDirectory(Path compiledFilePath)
-	{
+	public static Path getCompiledFileDirectory(Path compiledFilePath) {
 		return compiledFilePath.getParent();
 	}
-	
-	/**
-	 * Gets compiled file path.
-	 * 
-	 * @return		Compiled file path
-	 */
-	public Path getBinPath()
-	{
+
+	public Path getBinPath() {
 		return this.binPath;
 	}
 	
-	/**
-	 * Gets the the source file path.
-	 * 
-	 * @return		Source file path
-	 */
-	public Path getSrcPath()
-	{
+	public Path getSrcPath() {
 		return this.srcPath;
 	}
-	
-	/**
-	 * Gets invoked's signature.
-	 * 
-	 * @return		Invoked signature
-	 */
-	public String getInvokedSignature()
-	{
+
+	public String getInvokedSignature() {
 		return this.invokedSignature;
 	}
 	
@@ -423,14 +395,33 @@ public class InvokedInfo {
 	 * Gets class signature. 
 	 * 
 	 * @return		Class signature
+	 * 
 	 * @implNote	Lazy initialization
 	 */
-	public String getClassSignature()
-	{
+	public String getClassSignature() {
 		if (classSignature == null)
-			classSignature = extractClassSignature();
+			classSignature = extractClassSignatureFromInvokedSignature();
 		
 		return classSignature; 
+	}
+	
+	private String extractClassSignatureFromInvokedSignature() {
+		if ((invokedSignature == null) || invokedSignature.isBlank())
+			return "";
+		
+		StringBuilder signature = new StringBuilder();
+		String[] terms = invokedSignature.split("\\.");
+
+		for (int i=0; i<terms.length-1; i++) {
+			signature.append(terms[i]);
+			signature.append(".");
+		}
+		
+		// Removes last dot
+		if (signature.length() > 0)
+			signature.deleteCharAt(signature.length()-1);
+		
+		return signature.toString();
 	}
 	
 	/**
@@ -438,8 +429,7 @@ public class InvokedInfo {
 	 * 
 	 * @return		Line where the invoked is called in the test method
 	 */
-	public int getInvocationLine()
-	{
+	public int getInvocationLine() {
 		return invocationLine;
 	}
 	
@@ -447,15 +437,10 @@ public class InvokedInfo {
 	 * Sets invocation line.
 	 * 
 	 * @param		line Invocation line (must be greater than zero)
-	 * 
-	 * @return		Itself to allow chained calls
 	 */
-	public InvokedInfo setInvocationLine(int line) {
-		if (line > 0) {
+	public void setInvocationLine(int line) {
+		if (line > 0)
 			this.invocationLine = line;
-		}
-		
-		return this;
 	}
 	
 	/**
@@ -465,8 +450,7 @@ public class InvokedInfo {
 	 * 
 	 * @implNote	Lazy initialization
 	 */
-	public String getPackage()
-	{
+	public String getPackage() {
 		if (classPackage == null)
 			classPackage = extractPackage(getClassSignature());
 
@@ -478,8 +462,7 @@ public class InvokedInfo {
 	 * 
 	 * @return		Directory where the invoked's source file is.
 	 */
-	public Path getClassDirectory()
-	{
+	public Path getClassDirectory() {
 		return binPath.getParent();
 	}
 	
@@ -488,29 +471,25 @@ public class InvokedInfo {
 	 * 
 	 * @return		Directory where the invoked's source file is.
 	 */
-	public Path getSrcDirectory()
-	{
+	public Path getSrcDirectory() {
 		return srcPath.getParent();
 	}
 	
-	/**
-	 * Gets values from the invoked's arguments.
-	 * 
-	 * @return		Values from the invoked's arguments
-	 */
-	public Object[] getArgs() 
-	{
+	public Object[] getArgs() {
 		return args;
 	}
 	
-	public String getName()
-	{
-		if (name == null)
-			name = invokedSignature.substring(0, invokedSignature.indexOf("(")+1);
-		
-		return name;
+	public String getSignatureWithoutParameters() {
+		return invokedSignature.substring(0, invokedSignature.indexOf("(")+1);
 	}
 
+	/**
+	 * Gets invoked name. The name is the last term before the parameters.
+	 * 
+	 * @return		Invoked name
+	 * 
+	 * @implNote	Lazy initialization
+	 */
 	public String getInvokedName() {
 		if (invokedName == null)
 			extractInvokedName();
@@ -524,42 +503,20 @@ public class InvokedInfo {
 		invokedName = invokedSignature.substring(0, idxParamStart);
 		invokedName = invokedName.substring(invokedName.lastIndexOf("."), idxParamStart);
 	}
-	
-	//-------------------------------------------------------------------------
-	//		Getters
-	//-------------------------------------------------------------------------
-	public String getMethodSignature()
-	{
+
+	public String getMethodSignature() {
 		return getInvokedSignature();
 	}
-	
-	/**
-	 * Gets method name.
-	 * 
-	 * @return		Method name
-	 */
-	public String getMethodName() 
-	{
-		return methodName;
+
+	public String getMethodName() {
+		return invokedName;
 	}
 
-	/**
-	 * Gets types from the method's parameters.
-	 * 
-	 * @return		Method parameters
-	 */
-	public Class<?>[] getParameterTypes() 
-	{
+	public Class<?>[] getParameterTypes() {
 		return parameterTypes;
 	}
 	
-	/**
-	 * Gets return type of the method.
-	 * 
-	 * @return		Method return type
-	 */
-	public Class<?> getReturnType()
-	{
+	public Class<?> getReturnType() {
 		return this.returnType;
 	}
 	
@@ -568,38 +525,25 @@ public class InvokedInfo {
 	 * 
 	 * @return		Return type and parameter types of the method
 	 */
-	public MethodType getMethodTypes() 
-	{
+	public MethodType getMethodTypes() {
 		if (args == null || args.length == 0)
 			return methodType(returnType);
 		
 		return methodType(returnType, parameterTypes);
 	}
 	
-	public String getConcreteInvokedSignature()
-	{
+	public String getConcreteInvokedSignature() {
 		if ((concreteMethodSignature == null) || concreteMethodSignature.isBlank())
 			concreteMethodSignature = invokedSignature.replaceAll("\\$", ".");
 		
 		return concreteMethodSignature;
 	}
 	
-	public void setConcreteMethodSignature(String concreteMethodSignature) 
-	{
+	public void setConcreteMethodSignature(String concreteMethodSignature) {
 		this.concreteMethodSignature = concreteMethodSignature;
 	}
-	
-	/**
-	 * Sets invoked signature.
-	 * 
-	 * @param		signature New signature
-	 * 
-	 * @return		Itself to allow chained calls
-	 */
-	public InvokedInfo setInvokedSignature(String signature)
-	{
+
+	public void setInvokedSignature(String signature) {
 		this.invokedSignature = signature;
-		
-		return this;
 	}
 }
