@@ -8,65 +8,37 @@ import java.util.Map;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.testmethod.ClassDeclarationProcessor;
-import executionFlow.io.processor.testmethod.InlineCommentProcessor;
-import executionFlow.io.processor.testmethod.MultilineArgsProcessor;
+import executionFlow.io.processor.testmethod.InlineCommentRemover;
+import executionFlow.io.processor.testmethod.MultilineToInlineCallsConverter;
 import executionFlow.io.processor.testmethod.PrintCallProcessor;
 import executionFlow.util.FileUtil;
 import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.Logger;
 
-
 /**
- * Processes test java file adding {@link executionFlow.runtime._SkipInvoked}
- * annotation in all tests to disable collectors while running 
- * {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
+ * Processes test java file adding annotations to disable collectors while 
+ * running {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		5.2.3
  * @since		2.0.0
  */
-public class TestMethodFileProcessor extends FileProcessor
-{
+public class TestMethodFileProcessor extends FileProcessor {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 400L;
-		
 	private static Map<Integer, Integer> mapping = new HashMap<>();
+	private List<String> processedLines;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------		
 	/**
-	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
-	 * in test methods to disable collectors during 
-	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
-	 * functions. Using this constructor, file encoding will be UTF-8.
-	 * 
-	 * @param		file Path of the file to be parsed
-	 * @param		outputDir Directory where parsed file will be saved
-	 * @param		outputFilename Name of the parsed file
-	 * @param		fileExtension Output file extension (without dot)
-	 * (default is java)
-	 */ 
-	private TestMethodFileProcessor(Path file, Path outputDir, 
-			String outputFilename, String fileExtension)
-	{
-		this.file = file;
-		this.outputFilename = outputFilename;
-		
-		if (outputDir != null)
-			outputFile = outputDir.resolve(outputFilename + "." + fileExtension);
-		else	
-			outputFile = Path.of(outputFilename + "." + fileExtension);
-	}
-	
-	/**
-	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
-	 * in test methods to disable collectors during 
-	 * {@link executionFlow.util.core.JDB JDB} execution. Also, removes print
-	 * functions.
+	 * Processes test java file adding annotations to disable collectors while 
+	 * running {@link executionFlow.util.core.JDB JDB}. Also, removes print calls.
 	 * 
 	 * @param		file Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
@@ -74,13 +46,24 @@ public class TestMethodFileProcessor extends FileProcessor
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
 	 * @param		encode File encoding
+	 * 
+	 * @throws		IllegalArgumentException If any required field is null
 	 */ 
-	private TestMethodFileProcessor(Path file, Path outputDir, String outputFilename,
-			String fileExtension, FileEncoding encode)
-	{
-		this(file, outputDir, outputFilename, fileExtension);
-		this.encode = encode;
-	}	
+	private TestMethodFileProcessor(Path file, Path outputDir, String outputFilename, 
+									String fileExtension, FileEncoding encode) {
+		checkRequiredFields(file, outputDir, outputFilename);
+		
+		this.file = file;
+		this.outputFilename = outputFilename;
+		
+		if (outputDir != null)
+			outputFile = outputDir.resolve(outputFilename + "." + fileExtension);
+		else	
+			outputFile = Path.of(outputFilename + "." + fileExtension);
+		
+		if (encode != null)
+			this.encode = encode;
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -95,8 +78,8 @@ public class TestMethodFileProcessor extends FileProcessor
 	 * 	<li>outputFilename</li>
 	 * </ul>
 	 */
-	public static class Builder
-	{
+	public static class Builder	{
+		
 		private FileEncoding encode;
 		private String fileExtension = "java";
 		private Path file;
@@ -111,8 +94,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If file is null
 		 */
-		public Builder file(Path file)
-		{
+		public Builder file(Path file) {
 			if (file == null)
 				throw new IllegalArgumentException("File cannot be null");
 			
@@ -128,8 +110,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If Output directory is null
 		 */
-		public Builder outputDir(Path outputDir)
-		{
+		public Builder outputDir(Path outputDir) {
 			if (file == null)
 				throw new IllegalArgumentException("Output directory cannot be null");
 			
@@ -145,8 +126,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If output filename is null
 		 */
-		public Builder outputFilename(String outputFilename)
-		{
+		public Builder outputFilename(String outputFilename) {
 			if (outputFilename == null)
 				throw new IllegalArgumentException("Output filename cannot be null");
 			
@@ -160,8 +140,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder encode(FileEncoding encode)
-		{
+		public Builder encode(FileEncoding encode) {
 			if (encode != null)
 				this.encode = encode;
 			
@@ -174,8 +153,7 @@ public class TestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder fileExtension(String fileExtension)
-		{
+		public Builder fileExtension(String fileExtension) {
 			if (fileExtension != null)
 				this.fileExtension = fileExtension;
 			
@@ -196,25 +174,10 @@ public class TestMethodFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public TestMethodFileProcessor build()
-		{
-			StringBuilder nullFields = new StringBuilder();
-			
-			
-			if (file == null)
-				nullFields.append("file").append(", ");
-			if (outputDir == null)
-				nullFields.append("outputDir").append(", ");
-			if (outputFilename == null)
-				nullFields.append("outputFilename").append(", ");
-			
-			if (nullFields.length() > 0)
-				throw new IllegalArgumentException("Required fields cannot be null: "
-						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
-			
-			return	encode == null ? 
-					new TestMethodFileProcessor(file, outputDir, outputFilename,fileExtension) : 
-					new TestMethodFileProcessor(file, outputDir, outputFilename, fileExtension, encode);
+		public TestMethodFileProcessor build() {
+			return new TestMethodFileProcessor(
+					file, outputDir, outputFilename, fileExtension, encode
+			);
 		}
 	}
 	
@@ -222,59 +185,62 @@ public class TestMethodFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	/**
-	 * Adds {@link executionFlow.runtime._SkipInvoked _SkipInvoked} annotation
-	 * in test methods and deletes print functions.
-	 * 
-	 * @return		Path to processed file
-	 * 
-	 * @throws		IOException If file encoding is incorrect or if file cannot
-	 * be read / written
-	 */
-	@Override
-	public String processFile() throws IOException
-	{
+	private void checkRequiredFields(Path file, Path outputDir, String outputFilename) {
+		StringBuilder nullFields = new StringBuilder();
+		
 		if (file == null)
-			return "";
+			nullFields.append("file").append(", ");
+		if (outputDir == null)
+			nullFields.append("outputDir").append(", ");
+		if (outputFilename == null)
+			nullFields.append("outputFilename").append(", ");
 		
-		List<String> lines = FileUtil.readLines(file, encode.getStandardCharset());
-		
-		lines = doProcessing(lines);
-		
-		dump(lines);
-		
-		FileUtil.writeLines(lines, outputFile, encode.getStandardCharset());
-		
-		return outputFile.toString();
+		if (nullFields.length() > 0) {
+			throw new IllegalArgumentException("Required fields cannot be null: "
+					+ nullFields.substring(0, nullFields.length()-2));	
+		}
 	}
-	
-	public List<String> doProcessing(List<String> lines)
-	{
-		List<String> processedLines = lines;
+
+	@Override
+	protected List<String> doProcessing(List<String> sourceCode) {
+		processedLines = sourceCode;
 		
-		InlineCommentProcessor inlineCommentProcessor = new InlineCommentProcessor(processedLines);
-		processedLines = inlineCommentProcessor.processLines();
-		
-		ClassDeclarationProcessor classDeclarationProcessor = new ClassDeclarationProcessor(processedLines);
-		processedLines = classDeclarationProcessor.processLines();
-		
-		PrintCallProcessor printCallProcessor = new PrintCallProcessor(processedLines);
-		processedLines = printCallProcessor.processLines();
-		
-		MultilineArgsProcessor multilineArgsProcessor = new MultilineArgsProcessor();
-		processedLines = multilineArgsProcessor.processLines(processedLines);
-		mapping = multilineArgsProcessor.getMapping();
+		removeInlineComments();
+		putSkipCollectionAnnotation();
+		disablePrintCalls();
+		convertMultiLineCallsToInlineCalls();
 		
 		return processedLines;
 	}
-
-	private void dump(List<String> lines) {
-		if (Logger.getLevel() != LogLevel.DEBUG)
-			return;
+	
+	private void removeInlineComments() {
+		InlineCommentRemover inlineCommentProcessor = 
+				new InlineCommentRemover(processedLines);
 		
-		Logger.debug(this.getClass(), "Processed file");
-		FileUtil.printFileWithLines(lines);
-	}	
+		processedLines = inlineCommentProcessor.processLines();
+	}
+
+	private void putSkipCollectionAnnotation() {
+		ClassDeclarationProcessor classDeclarationProcessor = 
+				new ClassDeclarationProcessor(processedLines);
+		
+		processedLines = classDeclarationProcessor.processLines();
+	}
+
+	private void disablePrintCalls() {
+		PrintCallProcessor printCallProcessor = 
+				new PrintCallProcessor(processedLines);
+		
+		processedLines = printCallProcessor.processLines();
+	}
+	
+	private void convertMultiLineCallsToInlineCalls() {
+		MultilineToInlineCallsConverter multilineArgsProcessor = 
+				new MultilineToInlineCallsConverter(processedLines);
+		
+		processedLines = multilineArgsProcessor.processLines();
+		mapping = multilineArgsProcessor.getMapping();
+	}
 	
 	
 	//-------------------------------------------------------------------------

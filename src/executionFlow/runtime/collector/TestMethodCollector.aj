@@ -20,7 +20,7 @@ import executionFlow.info.InvokedInfo;
 import executionFlow.io.manager.FileManager;
 import executionFlow.io.manager.FilesManager;
 import executionFlow.io.manager.InvokedManager;
-import executionFlow.io.preprocessor.PreTestMethodFileProcessor;
+import executionFlow.io.processor.PreTestMethodFileProcessor;
 import executionFlow.io.processor.ProcessorType;
 import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;

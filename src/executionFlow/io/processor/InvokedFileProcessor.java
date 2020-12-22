@@ -1,6 +1,5 @@
 package executionFlow.io.processor;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +8,6 @@ import java.util.Map;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.invoked.holeplug.HolePlug;
 import executionFlow.io.processor.invoked.trgeneration.CodeCleanerAdapter;
-import executionFlow.util.FileUtil;
-import executionFlow.util.formatter.JavaIndenter;
-import executionFlow.util.logger.LogLevel;
-import executionFlow.util.logger.Logger;
-
 
 /**
  * Processes java file adding instructions in parts of the code that does not 
@@ -24,8 +18,8 @@ import executionFlow.util.logger.Logger;
  * @version		5.2.3
  * @since 		2.0.0
  */
-public class InvokedFileProcessor extends FileProcessor
-{
+public class InvokedFileProcessor extends FileProcessor {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -40,6 +34,7 @@ public class InvokedFileProcessor extends FileProcessor
 	 * </ul>
 	 */
 	private static Map<Integer, Integer> mapping = new HashMap<>();
+	private List<String> processedLines;
 	
 	
 	//-------------------------------------------------------------------------
@@ -55,10 +50,13 @@ public class InvokedFileProcessor extends FileProcessor
 	 * @param		encode File encoding
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
+	 * 
+	 * @throws		IllegalArgumentException If any required field is null
 	 */ 
 	private InvokedFileProcessor(Path file, Path outputDir, String outputFilename,
-			String fileExtension, FileEncoding encode)
-	{
+								 String fileExtension, FileEncoding encode) {
+		checkRequiredFields(file, outputDir, outputFilename);
+		
 		this.file = file;
 		this.outputFilename = outputFilename;
 		
@@ -85,8 +83,8 @@ public class InvokedFileProcessor extends FileProcessor
 	 * 	<li>isTestMethod</li>
 	 * </ul>
 	 */
-	public static class Builder
-	{
+	public static class Builder	{
+		
 		private FileEncoding encode;
 		private String fileExtension = "java";
 		private Path file;
@@ -101,8 +99,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If file is null
 		 */
-		public Builder file(Path file)
-		{
+		public Builder file(Path file) {
 			if (file == null)
 				throw new IllegalArgumentException("File cannot be null");
 			
@@ -118,8 +115,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If Output directory is null
 		 */
-		public Builder outputDir(Path outputDir)
-		{
+		public Builder outputDir(Path outputDir) {
 			if (file == null)
 				throw new IllegalArgumentException("Output directory cannot be null");
 			
@@ -135,8 +131,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If output filename is null
 		 */
-		public Builder outputFilename(String outputFilename)
-		{
+		public Builder outputFilename(String outputFilename) {
 			if (outputFilename == null)
 				throw new IllegalArgumentException("Output filename cannot be null");
 			
@@ -150,8 +145,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder encode(FileEncoding encode)
-		{
+		public Builder encode(FileEncoding encode) {
 			if (encode != null)
 				this.encode = encode;
 			
@@ -164,8 +158,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder fileExtension(String fileExtension)
-		{
+		public Builder fileExtension(String fileExtension) {
 			if (fileExtension != null)
 				this.fileExtension = fileExtension;
 			
@@ -187,22 +180,7 @@ public class InvokedFileProcessor extends FileProcessor
 		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public InvokedFileProcessor build()
-		{
-			StringBuilder nullFields = new StringBuilder();
-			
-			
-			if (file == null)
-				nullFields.append("file").append(", ");
-			if (outputDir == null)
-				nullFields.append("outputDir").append(", ");
-			if (outputFilename == null)
-				nullFields.append("outputFilename").append(", ");
-			
-			if (nullFields.length() > 0)
-				throw new IllegalArgumentException("Required fields cannot be null: "
-						+ nullFields.substring(0, nullFields.length()-2));	// Removes last comma
-			
+		public InvokedFileProcessor build() {
 			return new InvokedFileProcessor(
 					file, outputDir, outputFilename, fileExtension, encode
 			);
@@ -213,70 +191,47 @@ public class InvokedFileProcessor extends FileProcessor
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	/**
-	 * Processes the file adding instructions in parts of the code that does not
-	 * exist when converting it to bytecode. Besides, modifies the code so that
-	 * {@link executionFlow.util.core.JDB} computes the test path correctly.
-	 * 
-	 * @param		collectors Information about all invoked collected
-	 * 
-	 * @throws		IOException If file encoding is incorrect or if file cannot
-	 * be read / written
-	 */
-	@Override
-	public String processFile() throws IOException
-	{
+	private void checkRequiredFields(Path file, Path outputDir, String outputFilename) {
+		StringBuilder nullFields = new StringBuilder();
+		
 		if (file == null)
-			return "";
+			nullFields.append("file").append(", ");
+		if (outputDir == null)
+			nullFields.append("outputDir").append(", ");
+		if (outputFilename == null)
+			nullFields.append("outputFilename").append(", ");
 		
-		List<String> lines = FileUtil.readLines(file, encode.getStandardCharset());
+		if (nullFields.length() > 0) {
+			throw new IllegalArgumentException("Required fields cannot be null: "
+					+ nullFields.substring(0, nullFields.length()-2));	
+		}
+	}
+	
+	@Override
+	protected List<String> doProcessing(List<String> sourceCode) {
+		processedLines = sourceCode;
 		
-		lines = doProcessing(lines);
+		doTRGenerationProcesing();
+		doHolePlugProcessing();
 		
-		FileUtil.writeLines(lines, outputFile, encode.getStandardCharset());
-
-		dump(lines);
-		
-		return outputFile.toString();
+		return processedLines;
 	}
 
-	private List<String> doProcessing(List<String> lines) {
-		lines = doTRGenerationProcesing(lines);
-		lines = doHolePlugProcessing(lines);
-		
-		return lines;
-	}
-
-	private List<String> doTRGenerationProcesing(List<String> lines) {
-		CodeCleanerAdapter codeCleaner = new CodeCleanerAdapter(lines);
-		lines = codeCleaner.parse();
+	private void doTRGenerationProcesing() {
+		CodeCleanerAdapter codeCleaner = new CodeCleanerAdapter(processedLines);
+		processedLines = codeCleaner.processLines();
 		
 		Map<Integer, Integer> cleanupMapping = codeCleaner.getMapping();
 		
 		if (cleanupMapping != null)
 			mapping = cleanupMapping;
-		
-		return lines;
 	}
 
-	private List<String> doHolePlugProcessing(List<String> lines) {
-		HolePlug holePlug;
-		holePlug = new HolePlug(lines);
-		lines = holePlug.processLines();
-		return lines;
+	private void doHolePlugProcessing() {
+		HolePlug holePlug = new HolePlug(processedLines);
+		processedLines = holePlug.processLines();
 	}
-
-	private void dump(List<String> lines) {
-		if (Logger.getLevel() != LogLevel.DEBUG)
-			return;
-		
-		JavaIndenter indenter = new JavaIndenter();
-		List<String> formatedFile = indenter.format(lines);
-
-		Logger.debug(this.getClass(), "Processed file");
-		FileUtil.printFileWithLines(formatedFile);
-		
-	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Getters
@@ -290,13 +245,11 @@ public class InvokedFileProcessor extends FileProcessor
 	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	public static Map<Integer, Integer> getMapping()
-	{
+	public static Map<Integer, Integer> getMapping() {
 		return mapping;
 	}
 	
-	public static void clearMapping()
-	{
+	public static void clearMapping() {
 		mapping.clear();
 	}
 }

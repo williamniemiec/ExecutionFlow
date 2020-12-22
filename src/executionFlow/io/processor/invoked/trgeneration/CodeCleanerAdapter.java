@@ -30,7 +30,7 @@ public class CodeCleanerAdapter extends CodeCleaner
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public List<String> parse() 
+	public List<String> processLines() 
 	{
 		cleanupCode(sourceCode);	
 		deleteContentBetweenPercentages(processedCode);

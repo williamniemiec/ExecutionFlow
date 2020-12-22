@@ -1,18 +1,13 @@
-package executionFlow.io.preprocessor;
+package executionFlow.io.processor;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.io.SourceCodeProcessor;
-import executionFlow.io.preprocessor.testmethod.JUnit5ToJUnit4Processor;
 import executionFlow.io.preprocessor.testmethod.AssertProcessor;
+import executionFlow.io.preprocessor.testmethod.JUnit5ToJUnit4Processor;
 import executionFlow.io.preprocessor.testmethod.TestMethodHighlighter;
-import executionFlow.io.processor.FileProcessor;
-import executionFlow.util.FileUtil;
-import executionFlow.util.logger.LogLevel;
-import executionFlow.util.logger.Logger;
 
 /**
  * Responsible for pre-processing test method file. Handles exceptions
@@ -251,37 +246,10 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 			+ nullFields.substring(0, nullFields.length()-2)); // Removes last comma
 		}
 	}
-	
-	/**
-	 * Adds a try-catch structure for each assert, so that execution does not 
-	 * stop even if an assert fails.
-	 * 
-	 * @return		Path to parsed file
-	 * 
-	 * @throws		IOException If file encoding is incorrect or if file cannot
-	 * be read / written
-	 * 
-	 * @implNote	Catch will be {@link Throwable}
-	 */
-	@Override
-	public String processFile() throws IOException
-	{
-		if (file == null)
-			return "";
-		
-		List<String> lines = FileUtil.readLines(file, encode.getStandardCharset());
-		
-		lines = doProcessing(lines);
-		
-		dump(lines);
-		
-		FileUtil.writeLines(lines, outputFile, encode.getStandardCharset());
-		
-		return outputFile.toString();
-	}
 
-	private List<String> doProcessing(List<String> lines) {
-		processedLines = lines;
+	@Override
+	protected List<String> doProcessing(List<String> sourceCode) {
+		processedLines = sourceCode;
 		
 		commentAllTestMethodsExcept(testMethodSignature);
 		surroundAssertsWithTryCatch();
@@ -304,19 +272,11 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	}
 	
 	private void convertJUnit5ToJUnit4() {
-		SourceCodeProcessor annotationProcessor = 
+		JUnit5ToJUnit4Processor annotationProcessor = 
 				new JUnit5ToJUnit4Processor(processedLines, testMethodArgs);
 		
 		processedLines = annotationProcessor.processLines();
 		totalTests = annotationProcessor.getTotalTests();
-	}
-
-	private void dump(List<String> lines) {
-		if (Logger.getLevel() != LogLevel.DEBUG)
-			return;
-		
-		Logger.debug(this.getClass(), "Processed file");
-		FileUtil.printFileWithLines(lines);
 	}
 	
 	public static int getTotalTests() {

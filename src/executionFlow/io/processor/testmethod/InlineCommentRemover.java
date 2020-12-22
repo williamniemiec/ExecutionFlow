@@ -6,12 +6,12 @@ import java.util.regex.Pattern;
 
 import executionFlow.io.SourceCodeProcessor;
 
-public class InlineCommentProcessor extends SourceCodeProcessor {
+public class InlineCommentRemover extends SourceCodeProcessor {
 
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	public InlineCommentProcessor(List<String> sourceCode) {
+	public InlineCommentRemover(List<String> sourceCode) {
 		super(sourceCode, true);
 	}
 	

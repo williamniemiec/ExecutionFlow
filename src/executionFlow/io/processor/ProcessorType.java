@@ -1,6 +1,5 @@
 package executionFlow.io.processor;
 
-
 /**
  * Contains all types of supported processors.
  * 
@@ -8,8 +7,8 @@ package executionFlow.io.processor;
  * @version		2.0.0
  * @since		2.0.0
  */
-public enum ProcessorType 
-{
+public enum ProcessorType {
+	
 	//-------------------------------------------------------------------------
 	//		Enumerations
 	//-------------------------------------------------------------------------
@@ -19,7 +18,7 @@ public enum ProcessorType
 	
 	
 	//-------------------------------------------------------------------------
-	//		Attributes'
+	//		Attributes
 	//-------------------------------------------------------------------------
 	private String name;
 	
@@ -27,8 +26,7 @@ public enum ProcessorType
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private ProcessorType(String name)
-	{
+	private ProcessorType(String name) {
 		this.name = name;
 	}
 	
@@ -36,8 +34,7 @@ public enum ProcessorType
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
-	public String getName()
-	{
+	public String getName()	{
 		return name;
 	}
 }
