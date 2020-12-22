@@ -12,6 +12,7 @@ import java.util.List;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.LibraryManager;
+import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.compiler.Compiler;
 import executionFlow.io.compiler.CompilerFactory;
@@ -20,7 +21,6 @@ import executionFlow.io.processor.factory.FileProcessorFactory;
 import executionFlow.util.FileUtil;
 import executionFlow.util.logger.Logger;
 
-
 /**
  * Responsible for managing file processing and compilation for a file.
  * 
@@ -28,20 +28,19 @@ import executionFlow.util.logger.Logger;
  * @version		5.2.3
  * @since		1.3
  */
-public class FileManager implements Serializable
-{
+public class FileManager implements Serializable {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 200L;
-	
 	private transient Path srcFile;
 	private transient Path srcFileBackup; 
 	private transient Path binFile;
 	private transient Path binFileBackup;
 	private transient Path binDirectory;
 	private FileProcessor fileProcessor;
-	private boolean charsetError;
+	private boolean encodingError;
 	private boolean lastWasError;
 	
 	
@@ -51,48 +50,160 @@ public class FileManager implements Serializable
 	/**
 	 * Manages file analyzer and compiler.
 	 * 
-	 * @param		classSignature Signature of the public class of the file
 	 * @param		srcFilePath Path of java file
 	 * @param		binDirectory Path of directory where .class of java file is
 	 * @param		classPackage Package of the class of the java file
+	 * @param		backupExtensionName Backup file extension name
 	 * @param		fileParserFactory Factory that will produce 
 	 * {@link FileProcessor} that will be used for parsing file
-	 * @param		backupExtensionName Backup file extension name
 	 * 
 	 * @throws		IllegalArgumentException If srcFilePath does not exist
 	 */
-	public FileManager(String classSignature, Path srcFilePath, Path binDirectory, 
-			String classPackage, FileProcessorFactory fileParserFactory, String backupExtensionName)
-	{
-		if (!Files.exists(srcFilePath))
-			throw new IllegalArgumentException("srcFilePath does not exist: " + srcFilePath);
+	private FileManager(Path srcFilePath, Path binDirectory,
+						String classPackage, String backupExtensionName, 
+						FileProcessorFactory fileParserFactory) {
+		checkSrcPath(srcFilePath);
 		
 		String filename = FileUtil.extractFilenameWithoutExtension(srcFilePath);
 		
 		this.binDirectory = extractRootBinDirectory(binDirectory, classPackage);
-		this.binFile = binDirectory.resolve(Path.of(filename + ".class"));
-		this.binFileBackup = binDirectory.resolve(
-				Path.of(filename + ".class." + backupExtensionName)
-		);
 		
-		this.srcFile = srcFilePath;
-		this.srcFileBackup = Path.of(
-				srcFilePath.toAbsolutePath().toString() 
-				+ "." + backupExtensionName
-		);
-		
-		this.fileProcessor = fileParserFactory.newFileProcessor(
-				srcFile, 
-				binDirectory, 
-				filename+"_parsed", 
-				FileEncoding.UTF_8
-		);
+		initializeBinFile(binDirectory, backupExtensionName, filename);
+		initializeSrcFile(srcFilePath, backupExtensionName);
+		initializeFileProcessor(binDirectory, fileParserFactory, filename);
 	}
+		
+	
+	//-------------------------------------------------------------------------
+	//		Builder
+	//-------------------------------------------------------------------------
+	/**
+	 * Builder for {@link InvokedInfo}. It is necessary to provide all required
+	 * fields. The required fields are: <br />
+	 * <ul>
+	 * 	<li>srcPath</li>
+	 * 	<li>binDirectory</li>
+	 * 	<li>classPackage</li>
+	 * 	<li>backupExtensionName</li>
+	 * 	<li>fileParserFactory</li>
+	 * </ul>
+	 */
+	public static class Builder {
+		
+		private Path srcPath;
+		private Path binDirectory;
+		private String classPackage;
+		private String backupExtensionName;
+		private FileProcessorFactory fileParserFactory;
+		
 
+		/**
+		 * @param		srcPath Path where invoked's source file is
+		 * 
+		 * @return		Builder to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If srcPath is null
+		 */
+		public Builder srcPath(Path srcPath) {
+			checkSrcPath(srcPath);
+			
+			this.srcPath = srcPath.isAbsolute() ? srcPath : srcPath.toAbsolutePath();
+			
+			return this;
+		}
+		
+		/**
+		 * @param		binDirectory Path of directory where .class of java
+		 * file is
+		 * 
+		 * @return		Builder to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If srcPath is null
+		 */
+		public Builder binDirectory(Path binDirectory) {
+			this.binDirectory = binDirectory;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		classPackage Package of the class of the java file
+		 * 
+		 * @return		Builder to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If srcPath is null
+		 */
+		public Builder classPackage(String classPackage) {
+			this.classPackage = classPackage;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		backupExtensionName Backup file extension name
+		 * 
+		 * @return		Builder to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If srcPath is null
+		 */
+		public Builder backupExtensionName(String backupExtensionName) {
+			this.backupExtensionName = backupExtensionName;
+			
+			return this;
+		}
+		
+		/**
+		 * @param		fileParserFactory Factory that will produce 
+		 * {@link FileProcessor} that will be used for parsing file
+		 * 
+		 * @return		Builder to allow chained calls
+		 * 
+		 * @throws		IllegalArgumentException If srcPath is null
+		 */
+		public Builder fileParserFactory(FileProcessorFactory fileParserFactory) {
+			this.fileParserFactory = fileParserFactory;
+			
+			return this;
+		}
+		
+		/**
+		 * Creates {@link FileManager} with provided information. It is 
+		 * necessary to provide all required fields.. The required fields 
+		 * are: <br />
+		 * <ul>
+		 * 	<li>srcPath</li>
+		 * 	<li>binDirectory</li>
+		 * 	<li>classPackage</li>
+		 * 	<li>backupExtensionName</li>
+		 * 	<li>fileParserFactory</li>
+		 * </ul>
+		 * 
+		 * @return		File manager with provided information
+		 * 
+		 * @throws		IllegalArgumentException If any required field is null
+		 */
+		public FileManager build() {
+			return new FileManager(
+					srcPath,
+					binDirectory,
+					classPackage,
+					backupExtensionName,
+					fileParserFactory
+			);
+		}
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	private static void checkSrcPath(Path srcPath) {
+		if (srcPath == null) {
+			throw new IllegalArgumentException("Invoked's source file path"
+					+ "cannot be null");
+		}
+	}
+	
 	private Path extractRootBinDirectory(Path binDirectory, String classPackage) {
 		Path rootBinDirectory = binDirectory;
 		
@@ -105,61 +216,63 @@ public class FileManager implements Serializable
 			rootBinDirectory = rootBinDirectory.getParent();
 		}
 		
-		if (rootBinDirectory.toAbsolutePath().toString().matches(".+(\\/|\\\\)org$")) {
-			rootBinDirectory = rootBinDirectory.getParent();
-		}
+		rootBinDirectory = fixOrgPackage(rootBinDirectory);
 		
 		return rootBinDirectory;
 	}
-	
-	@Override
-	public String toString() 
-	{
-		return "FileManager ["
-				+ "srcFile=" + srcFile
-				+ ", originalSrcFile=" + srcFileBackup 
-				+ ", compiledFile="	+ binFile 
-				+ ", originalClassPath=" + binFileBackup
-				+ ", classOutput=" + binDirectory
-				+ ", fileProcessor=" + fileProcessor 
-				+ ", charsetError="	+ charsetError 
-				+ ", lastWasError=" + lastWasError 
-			+ "]";
+
+	private Path fixOrgPackage(Path rootBinDirectory) {
+		final String regexOrgPkg = ".+(\\/|\\\\)org$";
+		
+		if (!rootBinDirectory.toAbsolutePath().toString().matches(regexOrgPkg))
+			return rootBinDirectory;
+		
+		return rootBinDirectory.getParent();
 	}
 	
-	@Override
-	public int hashCode()
-	{
-		return srcFile.hashCode();
+	private void initializeBinFile(Path binDirectory, String backupExtensionName, 
+								   String filename) {
+		this.binFile = binDirectory.resolve(Path.of(filename + ".class"));
+		this.binFileBackup = binDirectory.resolve(
+				Path.of(filename + ".class." + backupExtensionName)
+		);
 	}
 
-	@Override
-	public boolean equals(Object obj) 
-	{
-		if (obj == null)						{ return false;	}
-		if (obj == this)						{ return true;	}
-		if (this.getClass() != obj.getClass())	{ return false;	}
-		
-		return this.srcFile.equals(((FileManager)obj).getSrcFile());
-	}	
+	private void initializeSrcFile(Path srcFilePath, String backupExtensionName) {
+		this.srcFile = srcFilePath;
+		this.srcFileBackup = Path.of(
+				srcFilePath.toAbsolutePath().toString() 
+				+ "." 
+				+ backupExtensionName
+		);
+	}
+
+	private void initializeFileProcessor(Path binDirectory, 
+										 FileProcessorFactory fileParserFactory, 
+										 String filename) {
+		this.fileProcessor = fileParserFactory.newFileProcessor(
+				srcFile, 
+				binDirectory, 
+				filename + "_parsed", 
+				FileEncoding.UTF_8
+		);
+	}
 	
 	/**
 	 * Parses and process file, saving modified file in the same file passed 
 	 * to constructor.
 	 * 
-	 * @param		collectors Information about all invoked collected
 	 * @param		autoRestore Checks if processed files exist against the 
 	 * current file. If so, restore them before processing. Default is true.
 	 * 
-	 * @return		This object to allow chained calls
+	 * @return		Itself to allow chained calls
 	 * 
 	 * @throws		IOException If file encoding cannot be defined
 	 * 
 	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertProcessing()} function.
 	 */
-	public FileManager processFile(boolean autoRestore) throws IOException
-	{
+	public FileManager processFile(boolean autoRestore) throws IOException {
 		if (autoRestore)
 			createSrcBackupFile();
 		
@@ -169,56 +282,122 @@ public class FileManager implements Serializable
 		
 		return this;
 	}
+	
+	/**
+	 * Creates a copy of source file passed to the constructor to allow to 
+	 * restore it after.
+	 * 
+	 * @return		Itself to allow chained calls
+	 * 
+	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
+	 * It will be saved in the same directory of the original file
+	 */
+	public FileManager createSrcBackupFile() {
+		createBackupFile(srcFile, srcFileBackup);
+		
+		return this;
+	}
+	
+	private void createBackupFile(Path file, Path bkpFile) {
+		try {
+			Files.copy(file, bkpFile, StandardCopyOption.COPY_ATTRIBUTES);
+		} 
+		catch (IOException e) {				// If already exists a backup file, this means
+			try {							// that last parsed file was not restored
+				revertProcessing();			// So, restore this file and starts again
+				
+				if (!lastWasError) {		
+					lastWasError = true;
+					createBackupFile(file, bkpFile);	
+					lastWasError = false;
+				}
+			} 
+			catch (IOException e1) {
+				Logger.error(e1.getMessage());
+			}				
+		}
+	}
+	
+	/**
+	 * Deletes modified file and restores original file. This function does not
+	 * delete .class file of modified file, only .java file.
+	 * 
+	 * @return		Itself to allow chained calls
+	 * 
+	 * @throws		IOException If file has not a backup file
+	 */
+	public FileManager revertProcessing() throws IOException {
+		if (!hasSrcBackupStored())
+			return this;
+		
+		try {
+			Files.move(srcFileBackup, srcFile, StandardCopyOption.REPLACE_EXISTING);
+		} 
+		catch (IOException e) {
+			throw new IOException("Revert processing without backup");
+		}
+		
+		return this;
+	}
+	
+	/**
+	 * Checks whether file has source backup file.
+	 * 
+	 * @return		True if file has source backup file; false otherwise
+	 */
+	public boolean hasSrcBackupStored() {
+		return Files.exists(srcFileBackup);
+	}
 
 	private Path processFile() throws IOException {
 		Path processedFile;
 		
 		try {	
-			processedFile = processFileUsing(FileEncoding.UTF_8);
+			processedFile = processFileUsingEncode(FileEncoding.UTF_8);
 		} 
 		catch(IOException e) {	
-			charsetError = true;
+			encodingError = true;
 			
 			try {
-				processedFile = processFileUsing(FileEncoding.ISO_8859_1);
+				processedFile = processFileUsingEncode(FileEncoding.ISO_8859_1);
 			} 
 			catch (IOException e1) {
-				throw new IOException("Parsing failed");
+				throw new IOException("Processing failed");
 			}
 		}
 		
 		return processedFile;
 	}
 
-	private Path processFileUsing(FileEncoding encoding) throws IOException {
+	private Path processFileUsingEncode(FileEncoding encoding) throws IOException {
 		fileProcessor.setEncoding(encoding);
 
 		return Path.of(fileProcessor.processFile());
 	}
-
+	
 	private void storeProcessedFile(Path processedFile) throws IOException {
-		// Changes parsed file name to the same as received filename
-		if (Files.exists(processedFile)) {
-			Files.move(processedFile, srcFile, StandardCopyOption.REPLACE_EXISTING);
-		}
+		if (!Files.exists(processedFile))
+			return;
+		
+		Files.move(processedFile, srcFile, StandardCopyOption.REPLACE_EXISTING);
 	}
 	
 	/**
 	 * Compiles processed file.
 	 *  
-	 * @return		This object to allow chained calls
+	 * @return		Itself to allow chained calls
 	 * 
 	 * @throws		IOException If an error occurs during compilation
+	 * @throws		NoClassDefFoundError If aspectjtools.jar is not found
 	 */
-	public FileManager compileFile() throws IOException 
-	{
+	public FileManager compileFile() throws IOException {
 		Compiler compiler = CompilerFactory.createStandardAspectJCompiler()
 				.inpath(generateAspectsRootDirectory())
 				.classpath(generateClasspath())
 				.build();
 
 		try {
-			if (charsetError)	
+			if (encodingError)	
 				compiler.compile(srcFile, binDirectory, FileEncoding.ISO_8859_1);
 			else
 				compiler.compile(srcFile, binDirectory, FileEncoding.UTF_8);
@@ -251,37 +430,13 @@ public class FileManager implements Serializable
 	}
 	
 	/**
-	 * Deletes modified file and restores original file. This function does not
-	 * delete .class file of modified file, only .java file.
-	 * 
-	 * @return		This object to allow chained calls
-	 * 
-	 * @throws		IOException If file has not a backup file
-	 */
-	public FileManager revertProcessing() throws IOException
-	{
-		if (!hasSrcBackupStored())
-			return this;
-		
-		try {
-			Files.move(srcFileBackup, srcFile, StandardCopyOption.REPLACE_EXISTING);
-		} 
-		catch (IOException e) {
-			throw new IOException("Revert parse without backup");
-		}
-		
-		return this;
-	}
-	
-	/**
 	 * Deletes modified .class file and restores original .class file.
 	 * 
-	 * @return		This object to allow chained calls
+	 * @return		Itself to allow chained calls
 	 * 
 	 * @throws		IOException If file has not a backup file
 	 */
-	public FileManager revertCompilation() throws IOException
-	{
+	public FileManager revertCompilation() throws IOException {
 		if (!hasBinBackupStored())
 			return this;
 		
@@ -298,21 +453,10 @@ public class FileManager implements Serializable
 	/**
 	 * Checks whether file has binary backup files (compiled files).
 	 * 
-	 * @return		If file has class backup file
+	 * @return		True if file has class backup file; false otherwise
 	 */
-	public boolean hasBinBackupStored()
-	{
+	public boolean hasBinBackupStored() {
 		return Files.exists(binFileBackup);
-	}
-	
-	/**
-	 * Checks whether file has source backup file.
-	 * 
-	 * @return		If file has source backup file
-	 */
-	public boolean hasSrcBackupStored()
-	{
-		return Files.exists(srcFileBackup);
 	}
 	
 	/**
@@ -321,83 +465,50 @@ public class FileManager implements Serializable
 	 * 
 	 * @return		Itself to allow chained calls
 	 * 
-	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.class&gt;.
+	 * @implNote		Backup name will be &lt; name_of_file.original.class &gt;.
 	 * It will be saved in the same directory of the original file
 	 */
-	public FileManager createBackupBinFile()
-	{
-		try {
-			Files.copy(
-				binFile,
-				binFileBackup, 
-				StandardCopyOption.COPY_ATTRIBUTES
-			);
-		} 
-		catch (IOException e) {			// If already exists a backup file, this means
-			try {						// that last compiled file was not restored
-				revertCompilation();	
-				
-				if (!lastWasError) {
-					lastWasError = true;
-					createBackupBinFile();	// So, restore this file and starts again
-					lastWasError = false;
-				}
-			} 
-			catch (IOException e1) {
-				e1.printStackTrace();
-			}			
-		}
+	public FileManager createBackupBinFile() {
+		createBackupFile(binFile, binFileBackup);
 		
 		return this;
 	}
 	
-	/**
-	 * Creates a copy of source file passed to the constructor to allow to 
-	 * restore it after.
-	 * 
-	 * @return		Itself to allow chained calls
-	 * 
-	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
-	 * It will be saved in the same directory of the original file
-	 */
-	public FileManager createSrcBackupFile()
-	{
-		try {
-			Files.copy(
-				srcFile, 
-				srcFileBackup, 
-				StandardCopyOption.COPY_ATTRIBUTES
-			);
-		} 
-		catch (IOException e) {		// If already exists a backup file, this means
-			try {					// that last parsed file was not restored
-				revertProcessing();
-				
-				if (!lastWasError) {
-					lastWasError = true;
-					createSrcBackupFile();	// So, restore this file and starts again
-					lastWasError = false;
-				}
-			} 
-			catch (IOException e1) {
-				e1.printStackTrace();
-			}				
-		}
-		
-		return this;
+	@Override
+	public String toString() {
+		return "FileManager ["
+				+ "srcFile=" + srcFile
+				+ ", originalSrcFile=" + srcFileBackup 
+				+ ", compiledFile="	+ binFile 
+				+ ", binFileBackup=" + binFileBackup
+				+ ", binDirectory=" + binDirectory
+				+ ", fileProcessor=" + fileProcessor 
+			+ "]";
 	}
+	
+	@Override
+	public int hashCode() {
+		return srcFile.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)						{ return false;	}
+		if (obj == this)						{ return true;	}
+		if (this.getClass() != obj.getClass())	{ return false;	}
+		
+		return this.srcFile.equals(((FileManager)obj).getSrcFile());
+	}	
 	
 	
 	//-------------------------------------------------------------------------
 	//		Getters
 	//-------------------------------------------------------------------------
-	public Path getSrcFile()
-	{
+	public Path getSrcFile() {
 		return srcFile;
 	}
 	
-	public Path getCompiledFile()
-	{
+	public Path getCompiledFile() {
 		return binFile;
 	}
 	
@@ -405,8 +516,7 @@ public class FileManager implements Serializable
 	//-------------------------------------------------------------------------
 	//		Serialization and deserialization methods
 	//-------------------------------------------------------------------------
-	private void writeObject(ObjectOutputStream oos)
-	{
+	private void writeObject(ObjectOutputStream oos) {
 		try {
 			oos.defaultWriteObject();
 			oos.writeUTF(srcFile.toAbsolutePath().toString());
@@ -420,8 +530,7 @@ public class FileManager implements Serializable
 		}
 	}
 	
-	private void readObject(ObjectInputStream ois)
-	{
+	private void readObject(ObjectInputStream ois) {
 		try {
 			ois.defaultReadObject();
 			this.srcFile = Path.of(ois.readUTF());
