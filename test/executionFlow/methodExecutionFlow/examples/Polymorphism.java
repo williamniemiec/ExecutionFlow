@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -21,16 +22,18 @@ public class Polymorphism extends ExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests {@link examples.polymorphism.ClassInterface.testClassParam(ClassInterface)}
-	 * method.
+	 * Tests {@link examples.polymorphism.ClassInterface
+	 * .testClassParam(ClassInterface)} method.
 	 */
 	@Test
-	public void testClassParam() throws Throwable {
-		withTestMethodSignature("examples.polymorphism.PolymorphismTest.testParam()");
+	public void testClassParam() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.polymorphism.PolymorphismTest" + 
+								".testParam()");
 		invokedOnLine(20);
 		initializeTest();
 		
-		computeTestPathOf("examples.polymorphism.ClassInterface.testClassParam(ClassInterface)");
+		computeTestPathOf("examples.polymorphism.ClassInterface" + 
+						  ".testClassParam(ClassInterface)");
 		
 		assertTestPathIs(12);
 	}
@@ -40,12 +43,14 @@ public class Polymorphism extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void interfaceMethod() throws Throwable {
-		withTestMethodSignature("examples.polymorphism.PolymorphismTest.testInterface()");
+	public void interfaceMethod() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.polymorphism.PolymorphismTest" + 
+								".testInterface()");
 		invokedOnLine(33);
 		initializeTest();
 		
-		computeTestPathOf("examples.polymorphism.ClassInterface.interfaceMethod()");
+		computeTestPathOf("examples.polymorphism.ClassInterface" + 
+						  ".interfaceMethod()");
 		
 		assertTestPathIs(8,9);
 	}
@@ -69,7 +74,8 @@ public class Polymorphism extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "polymorphism", "PolymorphismTest.java")
+				Path.of("examples", "examples", "polymorphism", 
+						"PolymorphismTest.java")
 		);
 	}
 	

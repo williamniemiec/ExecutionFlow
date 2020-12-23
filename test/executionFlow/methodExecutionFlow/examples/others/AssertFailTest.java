@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples.others;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -21,12 +22,14 @@ public class AssertFailTest extends ExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests first tested method of 
-	 * {@link examples.others.AssertFailTest#assertFailAtTheEndTest()} test method.
+	 * Tests first tested method of {@link examples.others.AssertFailTest
+	 * #assertFailAtTheEndTest()} test method.
 	 */
 	@Test
-	public void assertFailAtTheEndTest_m1() throws Throwable {
-		withTestMethodSignature("examples.others.AssertFailTest.assertFailAtTheEndTest()");
+	public void assertFailAtTheEndTest_m1() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.AssertFailTest" + 
+								".assertFailAtTheEndTest()");
 		invokedOnLine(21);
 		initializeTest();
 		
@@ -36,12 +39,14 @@ public class AssertFailTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests second tested method of 
-	 * {@link examples.others.AssertFailTest#assertFailAtTheEndTest()} test method.
+	 * Tests second tested method of {@link examples.others.AssertFailTest
+	 * #assertFailAtTheEndTest()} test method.
 	 */
 	@Test
-	public void assertFailAtTheEndTest_m2() throws Throwable {
-		withTestMethodSignature("examples.others.AssertFailTest.assertFailAtTheEndTest()");
+	public void assertFailAtTheEndTest_m2() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.AssertFailTest" + 
+								".assertFailAtTheEndTest()");
 		invokedOnLine(22);
 		initializeTest();
 		
@@ -51,12 +56,14 @@ public class AssertFailTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests third tested method of 
-	 * {@link examples.others.AssertFailTest#assertFailAtTheEndTest()} test method.
+	 * Tests third tested method of {@link examples.others.AssertFailTest
+	 * #assertFailAtTheEndTest()} test method.
 	 */
 	@Test
-	public void assertFailAtTheEndTest_m3() throws Throwable {
-		withTestMethodSignature("examples.others.AssertFailTest.assertFailAtTheEndTest()");
+	public void assertFailAtTheEndTest_m3() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.AssertFailTest" + 
+								".assertFailAtTheEndTest()");
 		invokedOnLine(23);
 		initializeTest();
 		
@@ -66,12 +73,14 @@ public class AssertFailTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests first tested method of 
-	 * {@link examples.others.AssertFailTest#assertFailInTheMiddleTest()} test method.
+	 * Tests first tested method of {@link examples.others.AssertFailTest
+	 * #assertFailInTheMiddleTest()} test method.
 	 */
 	@Test
-	public void assertFailInTheMiddleTest_m1() throws Throwable {
-		withTestMethodSignature("examples.others.AssertFailTest.assertFailInTheMiddleTest()");
+	public void assertFailInTheMiddleTest_m1() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.AssertFailTest" + 
+								".assertFailInTheMiddleTest()");
 		invokedOnLine(32);
 		initializeTest();
 		
@@ -81,12 +90,14 @@ public class AssertFailTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests first tested method of 
-	 * {@link examples.others.AssertFailTest#assertFailInTheMiddleTest()} test method.
+	 * Tests first tested method of {@link examples.others.AssertFailTest
+	 * #assertFailInTheMiddleTest()} test method.
 	 */
 	@Test
-	public void assertFailInTheMiddleTest_m2() throws Throwable {
-		withTestMethodSignature("examples.others.AssertFailTest.assertFailInTheMiddleTest()");
+	public void assertFailInTheMiddleTest_m2() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.AssertFailTest" + 
+								".assertFailInTheMiddleTest()");
 		invokedOnLine(33);
 		initializeTest();
 		
@@ -96,12 +107,14 @@ public class AssertFailTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests first tested method of 
-	 * {@link examples.others.AssertFailTest#assertFailInTheMiddleTest()} test method.
+	 * Tests first tested method of {@link examples.others.AssertFailTest
+	 * #assertFailInTheMiddleTest()} test method.
 	 */
 	@Test
-	public void assertFailInTheMiddleTest_m3() throws Throwable {
-		withTestMethodSignature("examples.others.AssertFailTest.assertFailInTheMiddleTest()");
+	public void assertFailInTheMiddleTest_m3() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.AssertFailTest" + 
+								".assertFailInTheMiddleTest()");
 		invokedOnLine(34);
 		initializeTest();
 		
@@ -135,11 +148,13 @@ public class AssertFailTest extends ExecutionFlowTest {
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "others", "auxClasses", "AuxClass.class");
+		return Path.of("bin", "examples", "others", "auxClasses", 
+					   "AuxClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "others", "auxClasses", "AuxClass.java");
+		return Path.of("examples", "examples", "others", "auxClasses", 
+					   "AuxClass.java");
 	}
 }

@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -21,16 +22,18 @@ public class InvokedMethodsByTestedInvoked extends ExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests {@link examples.methodCalledByTestedInvoked.InvokedMethodsByTestedInvoker_Class#A()}
-	 * method.
+	 * Tests {@link examples.methodCalledByTestedInvoked
+	 * .InvokedMethodsByTestedInvoker_Class#A()} method.
 	 */
 	@Test
-	public void A() throws Throwable {
-		withTestMethodSignature("examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test.T()");
+	public void A() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.methodCalledByTestedInvoked" + 
+								".MethodCalledByTestedInvoked_Test.T()");
 		invokedOnLine(20);
 		initializeTest();
 		
-		computeTestPathOf("examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Class.A()");
+		computeTestPathOf("examples.methodCalledByTestedInvoked" + 
+						  ".MethodCalledByTestedInvoked_Class.A()");
 		
 		assertTestPathIs(10,11,12);
 	}
@@ -47,24 +50,28 @@ public class InvokedMethodsByTestedInvoked extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "methodCalledByTestedInvoked", "MethodCalledByTestedInvoked_Test.class")
+				Path.of("bin", "examples", "methodCalledByTestedInvoked", 
+						"MethodCalledByTestedInvoked_Test.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "methodCalledByTestedInvoked", "MethodCalledByTestedInvoked_Test.java")
+				Path.of("examples", "examples", "methodCalledByTestedInvoked", 
+						"MethodCalledByTestedInvoked_Test.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "methodCalledByTestedInvoked", "MethodCalledByTestedInvoked_Class.class");
+		return Path.of("bin", "examples", "methodCalledByTestedInvoked", 
+					   "MethodCalledByTestedInvoked_Class.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "methodCalledByTestedInvoked", "MethodCalledByTestedInvoked_Class.java");
+		return Path.of("examples", "examples", "methodCalledByTestedInvoked", 
+					   "MethodCalledByTestedInvoked_Class.java");
 	}
 }

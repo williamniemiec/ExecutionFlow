@@ -22,8 +22,8 @@ public class InnerClassTest extends ConstructorExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests first constructor used by {@link examples.innerClass.InnerClassTest#test1()}
-	 * test.
+	 * Tests first constructor used by {@link examples.innerClass
+	 * .InnerClassTest#test1()} test.
 	 */
 	@Test
 	public void test1() throws ClassNotFoundException, IOException {
@@ -37,8 +37,8 @@ public class InnerClassTest extends ConstructorExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests second constructor used by {@link examples.innerClass.InnerClassTest#test1()}
-	 * test.
+	 * Tests second constructor used by {@link examples.innerClass
+	 * .InnerClassTest#test1()} test.
 	 */
 	@Test
 	public void test2() throws ClassNotFoundException, IOException {
@@ -63,24 +63,28 @@ public class InnerClassTest extends ConstructorExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "innerClass", "InnerClassTest.class")
+				Path.of("bin", "examples", "innerClass", 
+						"InnerClassTest.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "innerClass", "InnerClassTest.java")
+				Path.of("examples", "examples", "innerClass", 
+						"InnerClassTest.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "innerClass", "OuterClass.class");
+		return Path.of("bin", "examples", "innerClass", 
+					   "OuterClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "innerClass", "OuterClass.java");
+		return Path.of("examples", "examples", "innerClass", 
+					   "OuterClass.java");
 	}
 }

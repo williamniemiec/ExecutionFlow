@@ -27,7 +27,8 @@ public class ChainedCalls extends ConstructorExecutionFlowTest {
 	 */
 	@Test
 	public void testChainedMethods() throws ClassNotFoundException, IOException	{
-		withTestMethodSignature("examples.chainedCalls.ChainedCalls.testChainedMethods()");
+		withTestMethodSignature("examples.chainedCalls.ChainedCalls" + 
+								".testChainedMethods()");
 		invokedOnLine(12);
 		initializeTest();
 		

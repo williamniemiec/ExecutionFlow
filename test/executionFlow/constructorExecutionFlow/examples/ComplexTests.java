@@ -22,12 +22,14 @@ public class ComplexTests extends ConstructorExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests constructor used by {@link examples.complexTests.ComplexTests#testForConstructor()}
-	 * test.
+	 * Tests constructor used by {@link examples.complexTests.ComplexTests
+	 * #testForConstructor()} test.
 	 */
 	@Test
-	public void testForConstructorAndMethod() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.complexTests.ComplexTests.testForConstructorAndMethod()");
+	public void testForConstructorAndMethod() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.complexTests.ComplexTests" + 
+								".testForConstructorAndMethod()");
 		invokedOnLine(18);
 		initializeTest();
 		
@@ -38,12 +40,14 @@ public class ComplexTests extends ConstructorExecutionFlowTest {
 
 
 	/**
-	 * Tests first constructor used by 
-	 * {@link examples.complexTests.ComplexTests#moreOneConstructor()} test.
+	 * Tests first constructor used by {@link examples.complexTests.ComplexTests
+	 * #moreOneConstructor()} test.
 	 */
 	@Test
-	public void moreOneConstructorWithoutParams() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
+	public void moreOneConstructorWithoutParams() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.complexTests.ComplexTests" + 
+								".moreOneConstructor()");
 		invokedOnLine(31);
 		initializeTest();
 		
@@ -53,12 +57,14 @@ public class ComplexTests extends ConstructorExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests second constructor used by 
-	 * {@link examples.complexTests.ComplexTests#moreOneConstructor()} test.
+	 * Tests second constructor used by {@link examples.complexTests.ComplexTests
+	 * #moreOneConstructor()} test.
 	 */
 	@Test
-	public void moreOneConstructorWithBooleanParam() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
+	public void moreOneConstructorWithBooleanParam() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.complexTests.ComplexTests" + 
+								".moreOneConstructor()");
 		invokedOnLine(32);
 		initializeTest();
 		
@@ -79,24 +85,28 @@ public class ComplexTests extends ConstructorExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "complexTests", "ComplexTests.class")
+				Path.of("bin", "examples", "complexTests", 
+						"ComplexTests.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "complexTests", "ComplexTests.java")
+				Path.of("examples", "examples", "complexTests", 
+						"ComplexTests.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "complexTests", "TestClass_ComplexTests.class");
+		return Path.of("bin", "examples", "complexTests", 
+					   "TestClass_ComplexTests.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "complexTests", "TestClass_ComplexTests.java");
+		return Path.of("examples", "examples", "complexTests", 
+					   "TestClass_ComplexTests.java");
 	}
 }

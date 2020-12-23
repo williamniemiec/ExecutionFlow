@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -25,12 +26,14 @@ public class OverloadedMethod extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testOverloadedMethod() throws Throwable {
-		withTestMethodSignature("examples.overloadedMethod.OverloadTest.testOverloadedMethod()");
+	public void testOverloadedMethod() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.overloadedMethod.OverloadTest" + 
+								".testOverloadedMethod()");
 		invokedOnLine(11);
 		initializeTest();
 		
-		computeTestPathOf("examples.overloadedMethod.OverloadClass.overloadedMethod()");
+		computeTestPathOf("examples.overloadedMethod.OverloadClass" + 
+						  ".overloadedMethod()");
 		
 		assertTestPathIs(15,16,17,18);
 	}
@@ -40,12 +43,14 @@ public class OverloadedMethod extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testOverloadedMethod2() throws Throwable {
-		withTestMethodSignature("examples.overloadedMethod.OverloadTest.testOverloadedMethod2()");
+	public void testOverloadedMethod2() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.overloadedMethod.OverloadTest" + 
+								".testOverloadedMethod2()");
 		invokedOnLine(18);
 		initializeTest();
 		
-		computeTestPathOf("examples.overloadedMethod.OverloadClass.overloadedMethod(int)");
+		computeTestPathOf("examples.overloadedMethod.OverloadClass" + 
+						  ".overloadedMethod(int)");
 		
 		assertTestPathIs(11,12);
 	}
@@ -62,24 +67,28 @@ public class OverloadedMethod extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "overloadedMethod", "OverloadTest.class")
+				Path.of("bin", "examples", "overloadedMethod", 
+						"OverloadTest.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "overloadedMethod", "OverloadTest.java")
+				Path.of("examples", "examples", "overloadedMethod", 
+						"OverloadTest.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "overloadedMethod", "OverloadClass.class");
+		return Path.of("bin", "examples", "overloadedMethod", 
+					   "OverloadClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "overloadedMethod", "OverloadClass.java");
+		return Path.of("examples", "examples", "overloadedMethod", 
+					   "OverloadClass.java");
 	}
 }

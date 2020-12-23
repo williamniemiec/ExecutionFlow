@@ -31,7 +31,8 @@ public class ControlFlowTest extends ConstructorExecutionFlowTest {
 	 */
 	@Test
 	public void controlFlowTest() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()");
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" + 
+								".ifElseTest_earlyReturn()");
 		invokedOnLine(18);
 		initializeTest();
 		
@@ -52,25 +53,29 @@ public class ControlFlowTest extends ConstructorExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "controlFlow", "ControlFlowTest.class")
+				Path.of("bin", "examples", "controlFlow", 
+						"ControlFlowTest.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "controlFlow", "ControlFlowTest.java")
+				Path.of("examples", "examples", "controlFlow", 
+						"ControlFlowTest.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "controlFlow", "TestClass_ControlFlow.class");
+		return Path.of("bin", "examples", "controlFlow", 
+					   "TestClass_ControlFlow.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "controlFlow", "TestClass_ControlFlow.java");
+		return Path.of("examples", "examples", "controlFlow", 
+					  "TestClass_ControlFlow.java");
 	}
 
 }

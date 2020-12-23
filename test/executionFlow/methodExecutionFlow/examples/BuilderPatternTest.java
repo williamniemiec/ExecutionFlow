@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -26,12 +27,14 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void firstName() throws Throwable {
-		withTestMethodSignature("examples.builderPattern.BuilderPatternTest.testBuilderPattern()");
+	public void firstName() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" +
+								".testBuilderPattern()");
 		invokedOnLine(15);
 		initializeTest();
 		
-		computeTestPathOf("examples.builderPattern.Person$PersonBuilder.firstName(String)");
+		computeTestPathOf("examples.builderPattern.Person$PersonBuilder" +
+						  ".firstName(String)");
 		
 		assertTestPathIs(19,20);
 	}
@@ -41,12 +44,14 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void lastName() throws Throwable {
-		withTestMethodSignature("examples.builderPattern.BuilderPatternTest.testBuilderPattern()");
+	public void lastName() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" +
+								".testBuilderPattern()");
 		invokedOnLine(16);
 		initializeTest();
 		
-		computeTestPathOf("examples.builderPattern.Person$PersonBuilder.lastName(String)");
+		computeTestPathOf("examples.builderPattern.Person$PersonBuilder" +
+						  ".lastName(String)");
 		
 		assertTestPathIs(23, 24);
 	}
@@ -56,8 +61,9 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void age() throws Throwable {
-		withTestMethodSignature("examples.builderPattern.BuilderPatternTest.testBuilderPattern()");
+	public void age() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" +
+								".testBuilderPattern()");
 		invokedOnLine(17);
 		initializeTest();
 		
@@ -71,12 +77,14 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void email() throws Throwable {
-		withTestMethodSignature("examples.builderPattern.BuilderPatternTest.testBuilderPattern()");
+	public void email() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" +
+								".testBuilderPattern()");
 		invokedOnLine(18);
 		initializeTest();
 		
-		computeTestPathOf("examples.builderPattern.Person$PersonBuilder.email(String)");
+		computeTestPathOf("examples.builderPattern.Person$PersonBuilder" +
+					 	  ".email(String)");
 		
 		assertTestPathIs(27, 28);
 	}
@@ -86,8 +94,9 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void build() throws Throwable {
-		withTestMethodSignature("examples.builderPattern.BuilderPatternTest.testBuilderPattern()");
+	public void build() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" +
+								".testBuilderPattern()");
 		invokedOnLine(19);
 		initializeTest();
 		
@@ -100,8 +109,9 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	 * Tests {@link examples.builderPattern.Person#print()} method.
 	 */
 	@Test
-	public void print() throws Throwable {
-		withTestMethodSignature("examples.builderPattern.BuilderPatternTest.testBuilderPattern()");
+	public void print() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" +
+								".testBuilderPattern()");
 		invokedOnLine(21);
 		initializeTest();
 		
@@ -121,14 +131,16 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "builderPattern", "BuilderPatternTest.class")
+				Path.of("bin", "examples", "builderPattern", 
+						"BuilderPatternTest.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "builderPattern", "BuilderPatternTest.java")
+				Path.of("examples", "examples", "builderPattern", 
+						"BuilderPatternTest.java")
 		);
 	}
 	
@@ -139,6 +151,7 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "builderPattern", "ClassInterface.java");
+		return Path.of("examples", "examples", "builderPattern", 
+				"ClassInterface.java");
 	}
 }

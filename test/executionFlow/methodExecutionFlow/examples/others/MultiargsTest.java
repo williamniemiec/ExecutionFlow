@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples.others;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -25,27 +26,33 @@ public class MultiargsTest extends ExecutionFlowTest {
 	 * test method.
 	 */
 	@Test
-	public void methodCallMultiLineArgsTest() throws Throwable {
-		withTestMethodSignature("examples.others.MultiargsTest.methodCallMultiLineArgsTest()");
+	public void methodCallMultiLineArgsTest() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.MultiargsTest" + 
+								".methodCallMultiLineArgsTest()");
 		invokedOnLine(18);
 		initializeTest();
 		
-		computeTestPathOf("examples.others.auxClasses.AuxClass.identity(int, int, int, int, int)");
+		computeTestPathOf("examples.others.auxClasses.AuxClass" + 
+						  ".identity(int, int, int, int, int)");
 		
 		assertTestPathIs(102,103);
 	}
 	
 	/**
-	 * Tests {@link examples.others.MultiargsTest#simethodCallMultLineArgsWithBrokenLinesmpleTestPath()} 
-	 * test method.
+	 * Tests {@link examples.others.MultiargsTest
+	 * #simethodCallMultLineArgsWithBrokenLinesmpleTestPath()} test method.
 	 */
 	@Test
-	public void methodCallMultLineArgsWithBrokenLines() throws Throwable {
-		withTestMethodSignature("examples.others.MultiargsTest.methodCallMultLineArgsWithBrokenLines()");
+	public void methodCallMultLineArgsWithBrokenLines() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.MultiargsTest" + 
+								".methodCallMultLineArgsWithBrokenLines()");
 		invokedOnLine(26);
 		initializeTest();
 		
-		computeTestPathOf("examples.others.auxClasses.AuxClass.identity(int, int, int, int, int)");
+		computeTestPathOf("examples.others.auxClasses.AuxClass" + 
+						  ".identity(int, int, int, int, int)");
 		
 		assertTestPathIs(102,103);
 	}
@@ -75,11 +82,13 @@ public class MultiargsTest extends ExecutionFlowTest {
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "others", "auxClasses", "AuxClass.class");
+		return Path.of("bin", "examples", "others", "auxClasses", 
+					   "AuxClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "others", "auxClasses", "AuxClass.java");
+		return Path.of("examples", "examples", "others", "auxClasses", 
+					   "AuxClass.java");
 	}
 }

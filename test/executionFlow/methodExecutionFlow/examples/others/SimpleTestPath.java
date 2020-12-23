@@ -25,7 +25,7 @@ public class SimpleTestPath extends ExecutionFlowTest {
 	 * test method.
 	 */
 	@Test
-	public void simpleTestPath() throws Throwable {
+	public void simpleTestPath() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.others.SimpleTestPath.simpleTestPath()");
 		invokedOnLine(19);
 		initializeTest();
@@ -60,11 +60,13 @@ public class SimpleTestPath extends ExecutionFlowTest {
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "others", "auxClasses", "AuxClass.class");
+		return Path.of("bin", "examples", "others", "auxClasses", 
+					   "AuxClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "others", "auxClasses", "AuxClass.java");
+		return Path.of("examples", "examples", "others", "auxClasses",
+					   "AuxClass.java");
 	}
 }

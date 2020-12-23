@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples.others;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -21,12 +22,14 @@ public class MultipleTestPaths extends ExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests first method of {@link examples.others.MultipleTestPaths.ThreeTestPathsTest()} 
-	 * test method.
+	 * Tests first method of {@link examples.others.MultipleTestPaths
+	 * .ThreeTestPathsTest()} test method.
 	 */
 	@Test
-	public void ThreeTestPathsTest_m1() throws Throwable {
-		withTestMethodSignature("examples.others.MultipleTestPaths.ThreeTestPathsTest()");
+	public void ThreeTestPathsTest_m1() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.MultipleTestPaths" + 
+								".ThreeTestPathsTest()");
 		invokedOnLine(21);
 		initializeTest();
 		
@@ -36,12 +39,14 @@ public class MultipleTestPaths extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests second method of {@link examples.others.MultipleTestPaths.ThreeTestPathsTest()} 
-	 * test method.
+	 * Tests second method of {@link examples.others.MultipleTestPaths
+	 * .ThreeTestPathsTest()} test method.
 	 */
 	@Test
-	public void ThreeTestPathsTest_m2() throws Throwable {
-		withTestMethodSignature("examples.others.MultipleTestPaths.ThreeTestPathsTest()");
+	public void ThreeTestPathsTest_m2() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.MultipleTestPaths" + 
+								".ThreeTestPathsTest()");
 		invokedOnLine(22);
 		initializeTest();
 		
@@ -51,12 +56,14 @@ public class MultipleTestPaths extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests third method of {@link examples.others.MultipleTestPaths.ThreeTestPathsTest()} 
-	 * test method.
+	 * Tests third method of {@link examples.others.MultipleTestPaths
+	 * .ThreeTestPathsTest()} test method.
 	 */
 	@Test
-	public void ThreeTestPathsTest_m3() throws Throwable {
-		withTestMethodSignature("examples.others.MultipleTestPaths.ThreeTestPathsTest()");
+	public void ThreeTestPathsTest_m3() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.MultipleTestPaths" + 
+								".ThreeTestPathsTest()");
 		invokedOnLine(23);
 		initializeTest();
 		
@@ -90,11 +97,13 @@ public class MultipleTestPaths extends ExecutionFlowTest {
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "others", "auxClasses", "AuxClass.class");
+		return Path.of("bin", "examples", "others", "auxClasses", 
+					   "AuxClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "others", "auxClasses", "AuxClass.java");
+		return Path.of("examples", "examples", "others", "auxClasses", 
+					   "AuxClass.java");
 	}
 }

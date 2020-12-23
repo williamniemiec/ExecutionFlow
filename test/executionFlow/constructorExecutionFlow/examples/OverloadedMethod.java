@@ -27,7 +27,8 @@ public class OverloadedMethod extends ConstructorExecutionFlowTest {
 	 */
 	@Test
 	public void testChainedMethods() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.overloadedMethod.OverloadTest.testOverloadedMethod()");
+		withTestMethodSignature("examples.overloadedMethod.OverloadTest" + 
+								".testOverloadedMethod()");
 		invokedOnLine(10);
 		initializeTest();
 		
@@ -48,24 +49,28 @@ public class OverloadedMethod extends ConstructorExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "overloadedMethod", "OverloadTest.class")
+				Path.of("bin", "examples", "overloadedMethod", 
+						"OverloadTest.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "overloadedMethod", "OverloadTest.java")
+				Path.of("examples", "examples", "overloadedMethod", 
+						"OverloadTest.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "overloadedMethod", "OverloadClass.class");
+		return Path.of("bin", "examples", "overloadedMethod", 
+					   "OverloadClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "overloadedMethod", "OverloadClass.java");
+		return Path.of("examples", "examples", "overloadedMethod", 
+					   "OverloadClass.java");
 	}
 }

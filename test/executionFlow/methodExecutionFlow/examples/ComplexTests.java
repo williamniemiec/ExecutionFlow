@@ -23,11 +23,13 @@ public class ComplexTests extends ExecutionFlowTest {
 	//-------------------------------------------------------------------------
 	@Test
 	public void factorial_constructor() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.complexTests.ComplexTests.testForConstructorAndMethod()");
+		withTestMethodSignature("examples.complexTests.ComplexTests" +
+								".testForConstructorAndMethod()");
 		invokedOnLine(19);
 		initializeTest();
 		
-		computeTestPathOf("examples.complexTests.TestClass_ComplexTests.factorial_constructor()");
+		computeTestPathOf("examples.complexTests.TestClass_ComplexTests" +
+						  ".factorial_constructor()");
 		
 		assertTestPathIs(
 				new int[] {41,42,43,44,45,43,47},
@@ -38,46 +40,54 @@ public class ComplexTests extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests first method used by 
-	 * {@link  examples.complexTests.ComplexTests.moreOneConstructor()} test.
+	 * Tests first method used by {@link  examples.complexTests.ComplexTests
+	 * .moreOneConstructor()} test.
 	 */
 	@Test
-	public void moreOneConstructor_first() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
+	public void moreOneConstructor_first() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.complexTests.ComplexTests" +
+								".moreOneConstructor()");
 		invokedOnLine(34);
 		initializeTest();
 		
-		computeTestPathOf("examples.complexTests.TestClass_ComplexTests.factorial(long)");
+		computeTestPathOf("examples.complexTests.TestClass_ComplexTests" +
+						  ".factorial(long)");
 		
 		assertTestPathIs(20,23,24,25,26,27,25,26,27,25,26,27,25,26,27,25,29);
 	}
 	
 	/**
-	 * Tests second method used by 
-	 * {@link  examples.complexTests.ComplexTests.moreOneConstructor()} test.
+	 * Tests second method used by {@link  examples.complexTests.ComplexTests
+	 * .moreOneConstructor()} test.
 	 */
 	@Test
 	public void moreOneConstructor_two() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
+		withTestMethodSignature("examples.complexTests.ComplexTests" +
+								".moreOneConstructor()");
 		invokedOnLine(35);
 		initializeTest();
 		
-		computeTestPathOf("examples.complexTests.TestClass_ComplexTests.factorial(long)");
+		computeTestPathOf("examples.complexTests.TestClass_ComplexTests" +
+						  ".factorial(long)");
 		
 		assertTestPathIs(20,21);
 	}
 	
 	/**
-	 * Tests second method used by 
-	 * {@link  examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()} test.
+	 * Tests second method used by {@link  examples.complexTests.ComplexTests
+	 * .moreOneConstructorAndStaticMethod()} test.
 	 */
 	@Test
-	public void moreOneConstructorAndStaticMethod() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()");
+	public void moreOneConstructorAndStaticMethod() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.complexTests.ComplexTests" +
+								".moreOneConstructorAndStaticMethod()");
 		invokedOnLine(50);
 		initializeTest();
 		
-		computeTestPathOf("examples.complexTests.TestClass_ComplexTests.staticFactorial(int)");
+		computeTestPathOf("examples.complexTests.TestClass_ComplexTests" +
+						  ".staticFactorial(int)");
 		
 		assertTestPathIs(32,33,34,35,36,34,35,36,34,35,36,34,35,36,34,38);
 	}
@@ -101,21 +111,24 @@ public class ComplexTests extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "complexTests", "ComplexTests.class")
+				Path.of("examples", "examples", "complexTests", 
+						"ComplexTests.class")
 		);
 	}
 
 	@Override
 	protected Path getBinTestedInvoked() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "complexTests", "TestClass_ComplexTests.class")
+				Path.of("bin", "examples", "complexTests", 
+						"TestClass_ComplexTests.class")
 		);
 	}
 
 	@Override
 	protected Path getSrcTestedInvoked() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "complexTests", "TestClass_ComplexTests.java")
+				Path.of("examples", "examples", "complexTests", 
+						"TestClass_ComplexTests.java")
 		);
 	}	
 }

@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples.junit5;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -25,7 +26,8 @@ public class RepeatedTestAnnotation extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void repeatedTestAnnotation_test1() throws Throwable {
+	public void repeatedTestAnnotation_test1() 
+			throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.junit5.RepeatedTestAnnotation.test1()");
 		invokedOnLine(25);
 		initializeTest();
@@ -50,24 +52,28 @@ public class RepeatedTestAnnotation extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "junit5", "RepeatedTestAnnotation.class")
+				Path.of("bin", "examples", "junit5", 
+						"RepeatedTestAnnotation.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "junit5", "RepeatedTestAnnotation.java")
+				Path.of("examples", "examples", "junit5", 
+						"RepeatedTestAnnotation.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "others", "auxClasses", "AuxClass.class");
+		return Path.of("bin", "examples", "others", "auxClasses", 
+					   "AuxClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "others", "auxClasses", "AuxClass.java");
+		return Path.of("examples", "examples", "others", "auxClasses", 
+					   "AuxClass.java");
 	}
 }

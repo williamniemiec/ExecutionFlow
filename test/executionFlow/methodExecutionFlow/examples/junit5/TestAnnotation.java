@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples.junit5;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class TestAnnotation extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testAnnotation_test1() throws Throwable {
+	public void testAnnotation_test1() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.junit5.TestAnnotation.test1()");
 		invokedOnLine(28);
 		initializeTest();
@@ -60,11 +61,13 @@ public class TestAnnotation extends ExecutionFlowTest {
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "others", "auxClasses", "AuxClass.class");
+		return Path.of("bin", "examples", "others", "auxClasses", 
+					   "AuxClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "others", "auxClasses", "AuxClass.java");
+		return Path.of("examples", "examples", "others", "auxClasses", 
+					   "AuxClass.java");
 	}
 }

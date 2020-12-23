@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -21,12 +22,13 @@ public class InnerClassTest extends ExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests first method used by {@link examples.innerClass.InnerClassTest#test1()}
-	 * test.
+	 * Tests first method used by {@link examples.innerClass
+	 * .InnerClassTest#test1()} test.
 	 */
 	@Test
-	public void test1() throws Throwable {
-		withTestMethodSignature("examples.innerClass.InnerClassTest.test1()");
+	public void test1() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.innerClass.InnerClassTest" +
+								".test1()");
 		invokedOnLine(22);
 		initializeTest();
 		
@@ -36,11 +38,11 @@ public class InnerClassTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests second method used by {@link examples.innerClass.InnerClassTest#test1()}
-	 * test.
+	 * Tests second method used by {@link examples.innerClass
+	 * .InnerClassTest#test1()} test.
 	 */
 	@Test
-	public void test2() throws Throwable {
+	public void test2() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.innerClass.InnerClassTest.test1()");
 		invokedOnLine(23);
 		initializeTest();
@@ -69,13 +71,15 @@ public class InnerClassTest extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "innerClass", "InnerClassTest.java")
+				Path.of("examples", "examples", "innerClass", 
+						"InnerClassTest.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "innerClass", "OuterClass.class");
+		return Path.of("bin", "examples", "innerClass", 
+					   "OuterClass.class");
 	}
 	
 	@Override

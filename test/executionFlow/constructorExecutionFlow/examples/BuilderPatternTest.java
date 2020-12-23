@@ -27,7 +27,8 @@ public class BuilderPatternTest extends ConstructorExecutionFlowTest {
 	 */
 	@Test
 	public void testBuilderPattern() throws ClassNotFoundException, IOException {
-		withTestMethodSignature("examples.builderPattern.BuilderPatternTest.testBuilderPattern()");
+		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" + 
+								".testBuilderPattern()");
 		invokedOnLine(14);
 		initializeTest();
 		
@@ -48,24 +49,28 @@ public class BuilderPatternTest extends ConstructorExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "builderPattern", "BuilderPatternTest.class")
+				Path.of("bin", "examples", "builderPattern", 
+						"BuilderPatternTest.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "builderPattern", "BuilderPatternTest.java")
+				Path.of("examples", "examples", "builderPattern", 
+						"BuilderPatternTest.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "builderPattern", "Person$PersonBuilder.class");
+		return Path.of("bin", "examples", "builderPattern", 
+					   "Person$PersonBuilder.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "builderPattern", "Person.java");
+		return Path.of("examples", "examples", "builderPattern", 
+					   "Person.java");
 	}
 }

@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples.others;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class OthersTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testEmptyTest() throws Throwable {
+	public void testEmptyTest() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.others.OthersTest.testEmptyTest()");
 		invokedOnLine(24);
 		initializeTest();
@@ -40,7 +41,7 @@ public class OthersTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testFactorial() throws Throwable {
+	public void testFactorial() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.others.OthersTest.testFactorial()");
 		invokedOnLine(34);
 		initializeTest();
@@ -55,8 +56,9 @@ public class OthersTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testFactorial_zero() throws Throwable {
-		withTestMethodSignature("examples.others.OthersTest.testFactorial_zero()");
+	public void testFactorial_zero() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.OthersTest" + 
+								".testFactorial_zero()");
 		invokedOnLine(46);
 		initializeTest();
 		
@@ -70,14 +72,15 @@ public class OthersTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testFibonacci() throws Throwable {
+	public void testFibonacci() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.others.OthersTest.testFibonacci()");
 		invokedOnLine(58);
 		initializeTest();
 		
 		computeTestPathOf("examples.others.auxClasses.AuxClass.fibonacci(int)");
 		
-		assertTestPathIs(44,45,46,47,48,49,50,51,52,48,49,50,51,52,48,49,50,51,52,48,54);
+		assertTestPathIs(44,45,46,47,48,49,50,51,52,48,49,50,51,52,48,49,
+						 50,51,52,48,54);
 	}
 	
 	/**
@@ -85,27 +88,32 @@ public class OthersTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testInternalCall() throws Throwable {
+	public void testInternalCall() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.others.OthersTest.testInternalCall()");
 		invokedOnLine(67);
 		initializeTest();
 		
-		computeTestPathOf("examples.others.auxClasses.AuxClass.parseLetters_withInternalCall(char[])");
+		computeTestPathOf("examples.others.auxClasses.AuxClass" + 
+						  ".parseLetters_withInternalCall(char[])");
 		
-		assertTestPathIs(72,73,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,78);
+		assertTestPathIs(72,73,74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,
+						 74,75,76,74,75,76,74,75,76,74,75,76,74,75,76,74,78);
 	}
 	
 	/**
-	 * Tests {@link examples.others.OthersTest.testStaticMethod_charSequence()} test
-	 * method.
+	 * Tests {@link examples.others.OthersTest.testStaticMethod_charSequence()}
+	 * test method.
 	 */
 	@Test
-	public void testStaticMethod_charSequence() throws Throwable {
-		withTestMethodSignature("examples.others.OthersTest.testStaticMethod_charSequence()");
+	public void testStaticMethod_charSequence() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.OthersTest" + 
+								".testStaticMethod_charSequence()");
 		invokedOnLine(76);
 		initializeTest();
 		
-		computeTestPathOf("examples.others.auxClasses.AuxClass.parseLetters_noInternalCall(CharSequence)");
+		computeTestPathOf("examples.others.auxClasses.AuxClass." + 
+						  "parseLetters_noInternalCall(CharSequence)");
 		
 		assertTestPathIs(
 				57,58,59,60,61,62,67,60,61,62,67,60,61,62,67,60,61,
@@ -119,23 +127,28 @@ public class OthersTest extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void testParamSignature_object() throws Throwable {
-		withTestMethodSignature("examples.others.OthersTest.testParamSignature_object()");
+	public void testParamSignature_object() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.OthersTest" + 
+								".testParamSignature_object()");
 		invokedOnLine(86);
 		initializeTest();
 		
-		computeTestPathOf("examples.others.auxClasses.AuxClass.testObjParam(String)");
+		computeTestPathOf("examples.others.auxClasses.AuxClass" + 
+						  ".testObjParam(String)");
 		
 		assertTestPathIs(96);
 	}
 	
 	/**
-	 * Tests first tested method of
-	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
+	 * Tests first tested method of {@link examples.others.OthersTest
+	 * .testMethodWithAuxMethods()} test method.
 	 */
 	@Test
-	public void testMethodWithAuxMethods_m1() throws Throwable {
-		withTestMethodSignature("examples.others.OthersTest.testMethodWithAuxMethods()");
+	public void testMethodWithAuxMethods_m1() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.OthersTest" + 
+								".testMethodWithAuxMethods()");
 		invokedOnLine(104);
 		initializeTest();
 		
@@ -145,12 +158,14 @@ public class OthersTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests second tested method of
-	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
+	 * Tests second tested method of {@link examples.others.OthersTest
+	 * .testMethodWithAuxMethods()} test method.
 	 */
 	@Test
-	public void testMethodWithAuxMethods_m2() throws Throwable {
-		withTestMethodSignature("examples.others.OthersTest.testMethodWithAuxMethods()");
+	public void testMethodWithAuxMethods_m2() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.OthersTest" + 
+								".testMethodWithAuxMethods()");
 		invokedOnLine(105);
 		initializeTest();
 		
@@ -164,8 +179,10 @@ public class OthersTest extends ExecutionFlowTest {
 	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
 	 */
 	@Test
-	public void testingMultipleMethods_m1() throws Throwable {
-		withTestMethodSignature("examples.others.OthersTest.testingMultipleMethods()");
+	public void testingMultipleMethods_m1() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.OthersTest" + 
+								".testingMultipleMethods()");
 		invokedOnLine(118);
 		initializeTest();
 		
@@ -175,12 +192,14 @@ public class OthersTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests second tested method of
-	 * {@link examples.others.OthersTest.testMethodWithAuxMethods()} test method.
+	 * Tests second tested method of {@link examples.others.OthersTest
+	 * .testMethodWithAuxMethods()} test method.
 	 */
 	@Test
-	public void testingMultipleMethods_m2() throws Throwable {
-		withTestMethodSignature("examples.others.OthersTest.testingMultipleMethods()");
+	public void testingMultipleMethods_m2() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.OthersTest" + 
+								".testingMultipleMethods()");
 		invokedOnLine(119);
 		initializeTest();
 		
@@ -193,7 +212,7 @@ public class OthersTest extends ExecutionFlowTest {
 	 * Tests {@link examples.others.OthersTest.onlyOneMethod()} test method.
 	 */
 	@Test
-	public void onlyOneMethod() throws Throwable {
+	public void onlyOneMethod() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.others.OthersTest.onlyOneMethod()");
 		invokedOnLine(127);
 		initializeTest();
@@ -204,15 +223,19 @@ public class OthersTest extends ExecutionFlowTest {
 	}
 	
 	/**
-	 * Tests {@link examples.others.OthersTest.methodCallMultiLineArgs()} test method.
+	 * Tests {@link examples.others.OthersTest.methodCallMultiLineArgs()} test 
+	 * method.
 	 */
 	@Test
-	public void methodCallMultiLineArgs_1() throws Throwable {
-		withTestMethodSignature("examples.others.OthersTest.anonymousObjectReturn()");
+	public void methodCallMultiLineArgs_1() 
+			throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.others.OthersTest" + 
+								".anonymousObjectReturn()");
 		invokedOnLine(137);
 		initializeTest();
 		
-		computeTestPathOf("examples.others.auxClasses.ClassInterface.interfaceMethod()");
+		computeTestPathOf("examples.others.auxClasses.ClassInterface" + 
+						  ".interfaceMethod()");
 		
 		assertTestPathIs(108,109);
 	}
@@ -242,11 +265,13 @@ public class OthersTest extends ExecutionFlowTest {
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "others", "auxClasses", "AuxClass.class");
+		return Path.of("bin", "examples", "others", "auxClasses", 
+					   "AuxClass.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "others", "auxClasses", "AuxClass.java");
+		return Path.of("examples", "examples", "others", "auxClasses", 
+					   "AuxClass.java");
 	}
 }

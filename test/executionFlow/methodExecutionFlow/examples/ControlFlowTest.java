@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -21,152 +22,179 @@ public class ControlFlowTest extends ExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	@Test
-	public void ifElseTest_earlyReturn() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()");
+	public void ifElseTest_earlyReturn() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".ifElseTest_earlyReturn()");
 		invokedOnLine(19);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseMethod(int)");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".ifElseMethod(int)");
 		
 		assertTestPathIs(7, 8);
 	}
 	
 	@Test
-	public void ifElseTest() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest()");
+	public void ifElseTest() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".ifElseTest()");
 		invokedOnLine(29);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseMethod()");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".ifElseMethod()");
 		
 		assertTestPathIs(7,10,11,12,20);
 	}
 	
 	@Test
-	public void ifElseTest2() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest2()");
+	public void ifElseTest2() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".ifElseTest2()");
 		invokedOnLine(39);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseMethod()");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".ifElseMethod()");
 		
 		assertTestPathIs(7,10,11,14,15,20);
 	}
 	
 	@Test
-	public void ifElseTest3() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest3()");
+	public void ifElseTest3() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".ifElseTest3()");
 		invokedOnLine(49);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseMethod()");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".ifElseMethod()");
 		
 		assertTestPathIs(7,10,11,14,17,18,20);
 	}
 	
 	@Test
-	public void tryCatchTest1() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.tryCatchTest1()");
+	public void tryCatchTest1() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".tryCatchTest1()");
 		invokedOnLine(59);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_try()");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".tryCatchMethod_try()");
 		
 		assertTestPathIs(23,24,25,26,27,28,29,34);
 	}
 	
 	@Test
-	public void tryCatchTest2() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.tryCatchTest2()");
+	public void tryCatchTest2() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".tryCatchTest2()");
 		invokedOnLine(66);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".tryCatchMethod_catch()");
 		
 		assertTestPathIs(37,38,39,40,42,43);
 	}
 	
 	@Test
-	public void switchCaseTest() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.switchCaseTest()");
+	public void switchCaseTest() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".switchCaseTest()");
 		invokedOnLine(74);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.switchCaseMethod(char)");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".switchCaseMethod(char)");
 		
 		assertTestPathIs(47,48,55,56,57,58,59,77);
 	}
 	
 	@Test
-	public void doWhileTest() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.doWhileTest()");
+	public void doWhileTest() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".doWhileTest()");
 		invokedOnLine(82);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".doWhileMethod(int,int)");
 		
-		assertTestPathIs(80,83,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,91);
+		assertTestPathIs(80,83,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,
+						 90,86,87,88,90,91);
 	}
 	
 	@Test
-	public void inlineWhile() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.inlineWhile()");
+	public void inlineWhile() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".inlineWhile()");
 		invokedOnLine(92);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.inlineWhile(int)");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".inlineWhile(int)");
 		
 		assertTestPathIs(95,96,95,96,95,98);
 	}
 	
 	@Test
-	public void inlineDoWhile() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.inlineDoWhile()");
+	public void inlineDoWhile() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".inlineDoWhile()");
 		invokedOnLine(100);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.inlineDoWhile(int)");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".inlineDoWhile(int)");
 		
 		assertTestPathIs(109,112,113,115,112,113,115,112,116);
 	}
 	
 	@Test
-	public void inlineIfElse() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.inlineIfElse()");
+	public void inlineIfElse() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".inlineIfElse()");
 		invokedOnLine(108);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.inlineIfElse(int)");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".inlineIfElse(int)");
 		
 		assertTestPathIs(101,102);
 	}
 	
 	/**
-	 * Tests first method used by 
-	 * {@link  examples.complexTests.ComplexTests.ifElseSameLine()} test.
+	 * Tests first method used by {@link  examples.complexTests.ComplexTests
+	 * .ifElseSameLine()} test.
 	 */
 	@Test
-	public void ifElseSameLine() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseSameLine()");
+	public void ifElseSameLine() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".ifElseSameLine()");
 		invokedOnLine(116);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseSameLine(int)");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".ifElseSameLine(int)");
 		
 		assertTestPathIs(119,120,125);
 	}
 	
 	/**
-	 * Tests second method used by 
-	 * {@link  examples.complexTests.ComplexTests.ifElseSameLine()} test.
+	 * Tests second method used by {@link  examples.complexTests.ComplexTests
+	 * .ifElseSameLine()} test.
 	 */
 	@Test
-	public void ifElseSameLine2() throws Throwable {
-		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseSameLine()");
+	public void ifElseSameLine2() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest" +
+								".ifElseSameLine()");
 		invokedOnLine(117);
 		initializeTest();
 		
-		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseSameLine(int)");
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
+						  ".ifElseSameLine(int)");
 		
 		assertTestPathIs(119,122,123,125);
 	}
@@ -190,17 +218,20 @@ public class ControlFlowTest extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "controlFlow", "ControlFlowTest.java")
+				Path.of("examples", "examples", "controlFlow", 
+						"ControlFlowTest.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "controlFlow", "TestClass_ControlFlow.class");
+		return Path.of("bin", "examples", "controlFlow", 
+					   "TestClass_ControlFlow.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "controlFlow", "TestClass_ControlFlow.java");
+		return Path.of("examples", "examples", "controlFlow", 
+					   "TestClass_ControlFlow.java");
 	}
 }

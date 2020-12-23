@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -23,10 +24,13 @@ public class ChainedCalls extends ExecutionFlowTest {
 	/**
 	 * Tests {@link examples.chainedCalls.Calculator#setNumber(float)}
 	 * method.
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
 	 */
 	@Test
-	public void setNumber() throws Throwable {
-		withTestMethodSignature("examples.chainedCalls.ChainedCalls.testChainedMethods()");
+	public void setNumber() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.chainedCalls.ChainedCalls" +
+								".testChainedMethods()");
 		invokedOnLine(15);
 		initializeTest();
 		
@@ -40,8 +44,9 @@ public class ChainedCalls extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void sum() throws Throwable {
-		withTestMethodSignature("examples.chainedCalls.ChainedCalls.testChainedMethods()");
+	public void sum() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.chainedCalls.ChainedCalls" +
+								".testChainedMethods()");
 		invokedOnLine(15);
 		initializeTest();
 		
@@ -55,8 +60,9 @@ public class ChainedCalls extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void sub() throws Throwable {
-		withTestMethodSignature("examples.chainedCalls.ChainedCalls.testChainedMethods()");
+	public void sub() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.chainedCalls.ChainedCalls" +
+								".testChainedMethods()");
 		invokedOnLine(15);
 		initializeTest();
 		
@@ -70,8 +76,9 @@ public class ChainedCalls extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void mult() throws Throwable {
-		withTestMethodSignature("examples.chainedCalls.ChainedCalls.testChainedMethods()");
+	public void mult() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.chainedCalls.ChainedCalls" +
+								".testChainedMethods()");
 		invokedOnLine(15);
 		initializeTest();
 		
@@ -85,8 +92,9 @@ public class ChainedCalls extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void div() throws Throwable {
-		withTestMethodSignature("examples.chainedCalls.ChainedCalls.testChainedMethods()");
+	public void div() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.chainedCalls.ChainedCalls" +
+								".testChainedMethods()");
 		invokedOnLine(15);
 		initializeTest();
 		
@@ -100,8 +108,9 @@ public class ChainedCalls extends ExecutionFlowTest {
 	 * method.
 	 */
 	@Test
-	public void ans() throws Throwable {
-		withTestMethodSignature("examples.chainedCalls.ChainedCalls.testChainedMethods()");
+	public void ans() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.chainedCalls.ChainedCalls" +
+								".testChainedMethods()");
 		invokedOnLine(15);
 		initializeTest();
 		
@@ -122,24 +131,28 @@ public class ChainedCalls extends ExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "chainedCalls", "ChainedCalls.class")
+				Path.of("bin", "examples", "chainedCalls", 
+						"ChainedCalls.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "chainedCalls", "ChainedCalls.java")
+				Path.of("examples", "examples", "chainedCalls", 
+						"ChainedCalls.java")
 		);
 	}
 	
 	@Override
 	protected Path getBinTestedInvoked() {
-		return Path.of("bin", "examples", "chainedCalls", "Calculator.class");
+		return Path.of("bin", "examples", "chainedCalls", 
+					   "Calculator.class");
 	}
 	
 	@Override
 	protected Path getSrcTestedInvoked() {
-		return Path.of("examples", "examples", "chainedCalls", "Calculator.java");
+		return Path.of("examples", "examples", "chainedCalls", 
+					   "Calculator.java");
 	}
 }
