@@ -14,9 +14,9 @@ import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
+import executionFlow.io.manager.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
@@ -75,13 +75,13 @@ public class ComplexTests extends MethodExecutionFlowTest
 		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 		 * </ul>
 		 */
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 19;
 		
 		
@@ -105,7 +105,7 @@ public class ComplexTests extends MethodExecutionFlowTest
 				.invokedName("factorial_constructor")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -131,11 +131,11 @@ public class ComplexTests extends MethodExecutionFlowTest
 	public void moreOneConstructor_first() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 34;
 		
 		
@@ -159,7 +159,7 @@ public class ComplexTests extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -177,11 +177,11 @@ public class ComplexTests extends MethodExecutionFlowTest
 	public void moreOneConstructor_two() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 35;
 		
 		
@@ -205,7 +205,7 @@ public class ComplexTests extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -223,11 +223,11 @@ public class ComplexTests extends MethodExecutionFlowTest
 	public void moreOneConstructorAndStaticMethod() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 50;
 		
 		
@@ -251,7 +251,7 @@ public class ComplexTests extends MethodExecutionFlowTest
 				.invokedName("staticFactorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);

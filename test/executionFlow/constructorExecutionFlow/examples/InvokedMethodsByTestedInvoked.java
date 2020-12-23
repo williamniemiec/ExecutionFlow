@@ -14,11 +14,11 @@ import org.junit.Test;
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
+import executionFlow.io.manager.FileManager;
 import executionFlow.runtime.SkipCollection;
-import executionFlow.util.Logger;
+import executionFlow.util.logger.Logger;
 
 
 /**
@@ -71,7 +71,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 	public void T() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
-		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
+		Map<String, InvokedContainer> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {false};
 		Class<?>[] paramTypes = {boolean.class};
 		String signature = "examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Class(boolean)";
@@ -100,7 +100,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo(cii, testMethodInfo);
+		InvokedContainer ci = new InvokedContainer(cii, testMethodInfo);
 		
 		constructorCollector.put(key, ci);
 		
@@ -117,7 +117,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 	public void T2() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
-		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
+		Map<String, InvokedContainer> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {true};
 		Class<?>[] paramTypes = {boolean.class};
 		String signature = "examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Class(boolean)";
@@ -147,7 +147,7 @@ public class InvokedMethodsByTestedInvoked extends ConstructorExecutionFlowTest
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo(cii, testMethodInfo);
+		InvokedContainer ci = new InvokedContainer(cii, testMethodInfo);
 		
 		constructorCollector.put(key, ci);
 		

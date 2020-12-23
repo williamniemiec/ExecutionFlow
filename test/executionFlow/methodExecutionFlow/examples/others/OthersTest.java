@@ -14,9 +14,9 @@ import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
+import executionFlow.io.manager.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
@@ -79,13 +79,13 @@ public class OthersTest extends MethodExecutionFlowTest
 		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 		 * </ul>
 		 */
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 24;
 		
 		
@@ -109,7 +109,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -131,12 +131,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testFactorial() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 34;
 		
 		
@@ -160,7 +160,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -182,12 +182,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testFactorial_zero() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 46;
 		
 		
@@ -211,7 +211,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -233,12 +233,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testFibonacci() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 58;
 		
 		
@@ -262,7 +262,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("fibonacci")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -284,13 +284,13 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testInternalCall() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 67;
 		
 		
@@ -314,7 +314,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("parseLetters_withInternalCall")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -336,12 +336,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testStaticMethod_charSequence() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 76;
 		
 		
@@ -365,7 +365,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("parseLetters_noInternalCall")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -391,12 +391,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testParamSignature_object() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 86;
 		
 		
@@ -420,7 +420,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("parseLetters_noInternalCall")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -442,12 +442,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testMethodWithAuxMethods_m1() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 104;
 		
 		
@@ -471,7 +471,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("fibonacci")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -493,12 +493,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testMethodWithAuxMethods_m2() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 105;
 		
 		
@@ -522,7 +522,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -544,12 +544,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testingMultipleMethods_m1() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 118;
 		
 		
@@ -573,7 +573,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -595,12 +595,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void testingMultipleMethods_m2() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 119;
 		
 		
@@ -624,7 +624,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("fibonacci")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -645,12 +645,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void onlyOneMethod() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 127;
 		
 		
@@ -674,7 +674,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("getNumber")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -695,12 +695,12 @@ public class OthersTest extends MethodExecutionFlowTest
 	@Test
 	public void methodCallMultiLineArgs_1() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 137;
 		
 		
@@ -724,7 +724,7 @@ public class OthersTest extends MethodExecutionFlowTest
 				.invokedName("interfaceMethod")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);

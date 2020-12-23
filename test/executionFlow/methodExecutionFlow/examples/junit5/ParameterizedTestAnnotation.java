@@ -15,9 +15,9 @@ import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
+import executionFlow.io.manager.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
@@ -79,13 +79,13 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 		 * </ul>
 		 */
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 38;
 		
 		
@@ -116,7 +116,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -138,12 +138,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void test1_int_arg2() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 38;
 		
 		
@@ -174,7 +174,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -196,12 +196,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void test1_int_arg3() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 38;
 		
 		
@@ -232,7 +232,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("factorial")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -254,12 +254,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void nullEmptyAndBlankStrings_arg1() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 45;
 		
 		
@@ -290,7 +290,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -312,12 +312,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void nullEmptyAndBlankStrings_arg2() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 45;
 		
 		
@@ -348,7 +348,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -370,12 +370,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void nullEmptyAndBlankStrings_arg3() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 45;
 		
 		
@@ -406,7 +406,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -428,12 +428,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void nullEmptyAndBlankStrings_arg4() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 45;
 		
 		
@@ -464,7 +464,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -473,7 +473,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = ef.run().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(
 			Arrays.asList(
@@ -490,12 +490,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void nullTest() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 52;
 		
 		
@@ -526,7 +526,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("trim")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -555,13 +555,13 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 		 * </ul>
 		 */
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 59;
 		
 		
@@ -592,7 +592,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -614,12 +614,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void test1_String_int_arg2() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 59;
 		
 		
@@ -650,7 +650,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -672,12 +672,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void test1_String_int_arg3() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 59;
 		
 		
@@ -708,7 +708,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -730,12 +730,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void withMethodSource_arg1() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 66;
 		
 		
@@ -766,7 +766,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("concatStrNum")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -788,12 +788,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void withMethodSource_arg2() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 66;
 		
 		
@@ -824,7 +824,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("concatStrNum")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -846,12 +846,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void testWithEnumSourceInclude_arg1() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 80;
 		
 		
@@ -882,7 +882,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -904,12 +904,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void testWithEnumSourceInclude_arg2() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 80;
 		
 		
@@ -940,7 +940,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -962,12 +962,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void testWithEnumSourceIncludeUsingInterface_arg1() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 87;
 		
 		
@@ -998,7 +998,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -1020,12 +1020,12 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 	@Test
 	public void testWithEnumSourceIncludeUsingInterface_arg2() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 87;
 		
 		
@@ -1056,7 +1056,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest
 				.invokedName("countTotalArguments")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);

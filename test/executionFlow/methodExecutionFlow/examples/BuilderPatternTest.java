@@ -14,9 +14,9 @@ import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
+import executionFlow.io.manager.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
@@ -80,13 +80,13 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 		 * </ul>
 		 */
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 15;
 		
 		
@@ -110,12 +110,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 				.invokedName("firstName")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature.replaceAll("\\$", "."));
+		testPaths = computeTestPath(methodCollector, ci);
 		
 		assertEquals(
 			Arrays.asList(
@@ -132,12 +132,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 	@Test
 	public void lastName() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 16;
 		
 		
@@ -161,12 +161,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 				.invokedName("lastName")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature.replaceAll("\\$", "."));
+		testPaths = computeTestPath(methodCollector, ci);
 		
 		assertEquals(
 			Arrays.asList(
@@ -183,12 +183,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 	@Test
 	public void age() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 17;
 		
 		
@@ -212,12 +212,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 				.invokedName("age")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature.replaceAll("\\$", "."));
+		testPaths = computeTestPath(methodCollector, ci);
 		
 		assertEquals(
 			Arrays.asList(
@@ -234,12 +234,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 	@Test
 	public void email() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 18;
 		
 		
@@ -263,12 +263,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 				.invokedName("email")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature.replaceAll("\\$", "."));
+		testPaths = computeTestPath(methodCollector, ci);
 		
 		assertEquals(
 			Arrays.asList(
@@ -285,12 +285,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 	@Test
 	public void build() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 19;
 		
 		
@@ -314,12 +314,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 				.invokedName("build")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature.replaceAll("\\$", "."));
+		testPaths = computeTestPath(methodCollector, ci);
 		
 		assertEquals(
 			Arrays.asList(
@@ -335,12 +335,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 	@Test
 	public void print() throws Throwable 
 	{
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 21;
 		
 		
@@ -364,12 +364,12 @@ public class BuilderPatternTest extends MethodExecutionFlowTest
 				.invokedName("print")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
 		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature.replaceAll("\\$", "."));
+		testPaths = computeTestPath(methodCollector, ci);
 		
 		assertEquals(
 			Arrays.asList(

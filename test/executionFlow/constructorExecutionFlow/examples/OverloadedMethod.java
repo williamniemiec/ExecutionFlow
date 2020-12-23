@@ -14,10 +14,10 @@ import org.junit.Test;
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
+import executionFlow.io.manager.FileManager;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
 import executionFlow.runtime.SkipCollection;
 
 
@@ -69,7 +69,7 @@ public class OverloadedMethod extends ConstructorExecutionFlowTest
 	public void testChainedMethods() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
-		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
+		Map<String, InvokedContainer> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {};
 		Class<?>[] paramTypes = {};
 		String signature = "examples.overloadedMethod.OverloadClass()";
@@ -98,7 +98,7 @@ public class OverloadedMethod extends ConstructorExecutionFlowTest
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo(cii, testMethodInfo);
+		InvokedContainer ci = new InvokedContainer(cii, testMethodInfo);
 		
 		constructorCollector.put(key, ci);
 		

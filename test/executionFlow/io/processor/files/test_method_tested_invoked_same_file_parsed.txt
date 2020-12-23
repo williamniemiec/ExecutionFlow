@@ -19,7 +19,7 @@ public class AgainstRequirements
     public void methodInSameFileOfTestMethod() {
 		int a = 2, b = 3;
 		
-try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _4461a25896aa63bc8fbfed5af3314e3f){}
+try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _ee9170569b5de76ada2fc800201cec0){}
     }
     
 	/**

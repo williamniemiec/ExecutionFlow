@@ -21,7 +21,7 @@ public class OverrideTest
 			}
 		};
 		
-try {		assertEquals(10000, oc.foo(10));} catch(Throwable _f0d6161990e9352666d36d9baaab89d7){}
+try {		assertEquals(10000, oc.foo(10));} catch(Throwable _3fc20c5189a144bddea7a353d642d48b){}
 	}
 }
  

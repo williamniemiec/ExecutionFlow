@@ -14,9 +14,9 @@ import org.junit.Test;
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
+import executionFlow.io.manager.FileManager;
 import executionFlow.runtime.SkipCollection;
 
 
@@ -68,7 +68,7 @@ public class Polymorphism extends ConstructorExecutionFlowTest
 	public void testChainedMethods() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
-		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
+		Map<String, InvokedContainer> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {"Hello world"};
 		Class<?>[] paramTypes = {String.class};
 		String signature = "examples.polymorphism.ClassInterface(String)";
@@ -97,7 +97,7 @@ public class Polymorphism extends ConstructorExecutionFlowTest
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo(cii, testMethodInfo);
+		InvokedContainer ci = new InvokedContainer(cii, testMethodInfo);
 		
 		constructorCollector.put(key, ci);
 		

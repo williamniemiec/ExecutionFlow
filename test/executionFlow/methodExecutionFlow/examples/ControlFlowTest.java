@@ -14,9 +14,9 @@ import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
+import executionFlow.io.manager.FileManager;
 import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
@@ -75,13 +75,13 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 		 * </ul>
 		 */
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
 
 		List<List<Integer>> testPaths;
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 19;
 		
 		
@@ -105,7 +105,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("ifElseTest_earlyReturn")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -119,11 +119,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void ifElseTest() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 29;
 		
 		
@@ -147,7 +147,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("ifElseMethod")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -161,11 +161,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void ifElseTest2() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 39;
 		
 		
@@ -189,7 +189,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("ifElseMethod2")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -203,11 +203,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void ifElseTest3() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 49;
 		
 		
@@ -231,7 +231,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("ifElseMethod3")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -245,11 +245,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void tryCatchTest1() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 59;
 		
 		
@@ -273,7 +273,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("tryCatchMethod_try")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -287,11 +287,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void tryCatchTest2() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 66;
 		
 		
@@ -315,7 +315,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("tryCatchMethod_catch")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -329,11 +329,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void switchCaseTest() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 74;
 		
 		
@@ -357,7 +357,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("switchCaseMethod")
 				.build();
 		
-		ci =new CollectorInfo(methodInfo, testMethodInfo);
+		ci =new InvokedContainer(methodInfo, testMethodInfo);
 
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -371,11 +371,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void doWhileTest() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 82;
 		
 		
@@ -399,7 +399,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("doWhileMethod")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -408,7 +408,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
 		
 		// Gets test path
-		testPaths = ef.execute().getTestPaths(testMethodSignature, methodSignature);
+		testPaths = ef.run().getTestPaths(testMethodSignature, methodSignature);
 		
 		assertEquals(Arrays.asList(80,83,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,91), testPaths.get(0));
 	}
@@ -417,11 +417,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void inlineWhile() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 92;
 		
 		
@@ -445,7 +445,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("inlineWhile")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -459,11 +459,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void inlineDoWhile() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 100;
 		
 		
@@ -487,7 +487,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("inlineDoWhile")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -501,11 +501,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void inlineIfElse() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 108;
 		
 		
@@ -529,7 +529,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("inlineIfElse")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -547,11 +547,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void ifElseSameLine() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 116;
 		
 		
@@ -575,7 +575,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("ifElseSameLine")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);
@@ -593,11 +593,11 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	public void ifElseSameLine2() throws Throwable 
 	{
 		List<List<Integer>> testPaths;
-		Map<Integer, List<CollectorInfo>> methodCollector = new LinkedHashMap<>();
-		List<CollectorInfo> methodsInvoked = new ArrayList<>();
+		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+		List<InvokedContainer> methodsInvoked = new ArrayList<>();
 		String testMethodSignature, methodSignature;
 		InvokedInfo testMethodInfo, methodInfo;
-		CollectorInfo ci;
+		InvokedContainer ci;
 		int invocationLine = 117;
 		
 		
@@ -621,7 +621,7 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 				.invokedName("ifElseSameLine")
 				.build();
 		
-		ci = new CollectorInfo(methodInfo, testMethodInfo);
+		ci = new InvokedContainer(methodInfo, testMethodInfo);
 		
 		methodsInvoked.add(ci);
 		methodCollector.put(invocationLine, methodsInvoked);

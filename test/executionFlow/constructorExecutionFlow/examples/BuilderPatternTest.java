@@ -14,12 +14,11 @@ import org.junit.Test;
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
 import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
-import executionFlow.info.CollectorInfo;
+import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
+import executionFlow.io.manager.FileManager;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileManager;
 import executionFlow.runtime.SkipCollection;
-
 
 /**
  * Tests test path computation for the constructors of 
@@ -27,8 +26,8 @@ import executionFlow.runtime.SkipCollection;
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
-public class BuilderPatternTest extends ConstructorExecutionFlowTest
-{
+public class BuilderPatternTest extends ConstructorExecutionFlowTest {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -62,14 +61,14 @@ public class BuilderPatternTest extends ConstructorExecutionFlowTest
 	//		Tests
 	//-------------------------------------------------------------------------
 	/**
-	 * Tests constructor used by {@link examples.builderPattern.BuilderPatternTest#testBuilderPattern()}
-	 * test.
+	 * Tests constructor used by {@link examples.builderPattern
+	 * .BuilderPatternTest#testBuilderPattern()} test.
 	 */
 	@Test
 	public void testBuilderPattern() throws ClassNotFoundException, IOException
 	{
 		List<List<Integer>> testPaths;
-		Map<String, CollectorInfo> constructorCollector = new LinkedHashMap<>();
+		Map<String, InvokedContainer> constructorCollector = new LinkedHashMap<>();
 		Object[] paramValues = {};
 		Class<?>[] paramTypes = {};
 		String signature = "examples.builderPattern.Person$PersonBuilder()";
@@ -98,11 +97,11 @@ public class BuilderPatternTest extends ConstructorExecutionFlowTest
 			.build();
 		
 		// Saves extracted data
-		CollectorInfo ci = new CollectorInfo(cii, testMethodInfo);
+		InvokedContainer ci = new InvokedContainer(cii, testMethodInfo);
 		
 		constructorCollector.put(key, ci);
 		
-		testPaths = computeTestPath(constructorCollector.values(), testMethodSignature, signature);
+		testPaths = computeTestPath(constructorCollector.values(), ci);
 		
 		assertEquals(null, testPaths);
 	}

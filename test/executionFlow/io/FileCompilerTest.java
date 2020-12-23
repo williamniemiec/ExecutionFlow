@@ -6,8 +6,9 @@ import java.nio.file.Path;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.io.compiler.aspectj.StandardAspectJCompiler;
 import executionFlow.runtime.SkipCollection;
-import executionFlow.util.Logger;
+import executionFlow.util.logger.Logger;
 
 
 @SkipCollection
@@ -21,6 +22,6 @@ public class FileCompilerTest
 		
 //		Logger.setLevel(Logger.Level.DEBUG);
 		
-		FileCompiler.compile(target, outputDir, FileEncoding.UTF_8);
+		StandardAspectJCompiler.compile(target, outputDir, FileEncoding.UTF_8);
 	}
 }

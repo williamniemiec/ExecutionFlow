@@ -11,18 +11,18 @@ import examples.testClasses.TestClass;
 	@Test
 	public void testFoo()
 	{
-		assertEquals(" ", " ");
-		assertEquals(" ", " ");	
+		assertEquals("1", "1");
+		assertEquals("1", "2");	
 	}
 	
 	@Test
 	public void assertFailInTheMiddleTest() 
 	{
 		TestClass tc = new TestClass(99);
-		assertEquals("   ", tc.threePaths(1));
-		assertEquals("    ", 				tc.threePaths(3));		
+		assertEquals("one", tc.threePaths(1));
+		assertEquals("nine", 				tc.threePaths(3));		
 
-		assertEquals("   ", tc.threePaths(2));
+		assertEquals("two", tc.threePaths(2));
 	}
 	
 	@Test
