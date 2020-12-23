@@ -40,6 +40,7 @@ import executionFlow.util.logger.Logger;
  */
 @SuppressWarnings("unused")
 public aspect MethodCollector extends RuntimeCollector {	
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -51,10 +52,7 @@ public aspect MethodCollector extends RuntimeCollector {
 	//-----------------------------------------------------------------------
 	//		Pointcuts
 	//-----------------------------------------------------------------------
-	/**
-	 * Intercepts methods within a test method.
-	 */
-	pointcut insideTestedMethod(): 
+	private pointcut insideTestedMethod(): 
 		!skipAnnotation() 
 		&& insideJUnitTest()
 		&& !get(* *.*) 

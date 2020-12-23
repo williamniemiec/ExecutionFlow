@@ -5,15 +5,14 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 /**
  * Responsible for calling routines after a certain time or whenever the the 
  * timer expires.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class Clock 
-{
+public class Clock {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -48,8 +47,7 @@ public class Clock
 	 * @return		False if an timeout has has already been set with the 
 	 * given id or true otherwise
 	 */
-	public static boolean setTimeout(Runnable routine, int id, int delay)
-	{
+	public static boolean setTimeout(Runnable routine, int id, int delay) {
 		if (timeoutRoutines.containsKey(id))
 			return false;
 		
@@ -62,8 +60,7 @@ public class Clock
 		return true;
 	}
 	
-	private static TimerTask createTaskFromRoutine(Runnable routine) 
-	{
+	private static TimerTask createTaskFromRoutine(Runnable routine) {
 		return new TimerTask() {
 		    @Override
 		    public void run()
@@ -84,8 +81,7 @@ public class Clock
 	 * @return		False if an interval has has already been set with the 
 	 * given id or true otherwise
 	 */
-	public static boolean setInterval(Runnable routine, int id, int interval)
-	{
+	public static boolean setInterval(Runnable routine, int id, int interval) {
 		if (intervalRoutines.containsKey(id))
 			return false;
 		
@@ -104,8 +100,7 @@ public class Clock
 	 * 
 	 * @param		id Routine id
 	 */
-	public static void clearInterval(int id)
-	{
+	public static void clearInterval(int id) {
 		if (!intervalRoutines.containsKey(id))
 			return;
 		
@@ -119,13 +114,11 @@ public class Clock
 	 * 
 	 * @param		id Routine id
 	 */
-	public static void clearTimeout(int id)
-	{
+	public static void clearTimeout(int id) {
 		if (!timeoutRoutines.containsKey(id))
 			return;
 		
 		timeoutRoutines.get(id).cancel();
 		timeoutRoutines.remove(id);
-		
 	}
 }

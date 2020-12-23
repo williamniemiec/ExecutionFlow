@@ -1,6 +1,5 @@
 package executionFlow.util;
 
-
 /**
  * Represents pairs of two elements. This implementation was based on std::pair
  * (from C++). You can see more here: 
@@ -11,8 +10,8 @@ package executionFlow.util;
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class Pair<T1, T2> 
-{
+public class Pair<T1, T2> {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -29,8 +28,7 @@ public class Pair<T1, T2>
 	 * @param		first First element
 	 * @param		second Second element
 	 */
-	public Pair(T1 first, T2 second)
-	{
+	public Pair(T1 first, T2 second) {
 		this.first = first;
 		this.second = second;
 	}
@@ -40,14 +38,12 @@ public class Pair<T1, T2>
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "Pair[" + first + "," + second + "]";
 	}
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		if (first == null) 
 			return (second == null) ? 0 : second.hashCode() + 1;
         else if (second == null) 
@@ -58,8 +54,7 @@ public class Pair<T1, T2>
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean equals(Object o)
-	{
+	public boolean equals(Object o) {
 		if (o == null)							{	return false;	}
 		if (o.getClass() != this.getClass())	{	return false;	} 
 		if (o == this)							{	return true;	}
@@ -79,8 +74,7 @@ public class Pair<T1, T2>
 	 * 
 	 * @return		Pair instance		
 	 */
-	public static <T1, T2> Pair<T1, T2> of(T1 first, T2 second) 
-	{
+	public static <T1, T2> Pair<T1, T2> of(T1 first, T2 second) {
         return new Pair<T1, T2>(first, second);
     }
 	
@@ -88,23 +82,19 @@ public class Pair<T1, T2>
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
-	public T1 getFirst()
-	{
+	public T1 getFirst() {
 		return first;
 	}
 	
-	public void setFirst(T1 first)
-	{
+	public void setFirst(T1 first) {
 		this.first = first;
 	}
 	
-	public T2 getSecond()
-	{
+	public T2 getSecond() {
 		return second;
 	}
 	
-	public void setSecond(T2 second)
-	{
+	public void setSecond(T2 second) {
 		this.second = second;
 	}
 }

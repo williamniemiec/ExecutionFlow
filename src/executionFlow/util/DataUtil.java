@@ -10,14 +10,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Contains methods that perform data manipulation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class DataUtil 
-{
+public class DataUtil {
+	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
@@ -36,8 +35,7 @@ public class DataUtil
 	 * 
 	 * @return		List elements separated by the given delimiter
 	 */
-	public static <T> String implode(List<T> list, String delimiter)
-	{
+	public static <T> String implode(List<T> list, String delimiter) {
 		StringBuilder response = new StringBuilder();
 		
 		for (T p : list) {
@@ -59,8 +57,8 @@ public class DataUtil
 	 * @param		map1 Some map
 	 * @param		map2 Map that will be merge with map1 
 	 */
-	public static void mergesMaps(Map<String, List<String>> map1, Map<String, List<String>> map2)
-	{
+	public static void mergesMaps(Map<String, List<String>> map1, 
+								  Map<String, List<String>> map2) {
 		for (Map.Entry<String, List<String>> e : map1.entrySet()) {
 			String keyMap1 = e.getKey();
 
@@ -103,14 +101,13 @@ public class DataUtil
 	 * 
 	 * @return		Generated path
 	 */
-	public static String generateDirectoryPathFromSignature(String invokedSignature, boolean isConstructor)
-	{
+	public static String generateDirectoryPathFromSignature(String invokedSignature, 
+															boolean isConstructor) {
 		String[] signatureFields = invokedSignature.split("\\.");
 		String folderPath = getFolderPath(signatureFields, isConstructor);
 		String folderName = getFolderName(signatureFields, isConstructor);
 		
-		
-		return folderPath+"/"+folderName;
+		return folderPath + "/" + folderName;
 	}
 	
 	/**
@@ -119,7 +116,8 @@ public class DataUtil
 	 * 
 	 * <h1>Format</h1>
 	 * <ul>
-	 * 	<li><b>Invoked signature (method):</b> package1.package2.package3.className.methodName(parameter types)</li>
+	 * 	<li><b>Invoked signature (method):</b> 
+	 * 	package1.package2.package3.className.methodName(parameter types)</li>
 	 * 	<li><b>Folder path:</b> package1/packag2/package3</li>
 	 * </ul>
 	 * 
@@ -128,8 +126,7 @@ public class DataUtil
 	 * 
 	 * @return		Folder's path
 	 */
-	private static String getFolderPath(String[] signatureFields, boolean isConstructor)
-	{
+	private static String getFolderPath(String[] signatureFields, boolean isConstructor) {
 		StringBuilder folderPath = new StringBuilder();
 		int size = isConstructor ? signatureFields.length-1 : signatureFields.length-2;
 		
@@ -155,8 +152,7 @@ public class DataUtil
 	 * 
 	 * @return		Folder's name
 	 */
-	private static String getFolderName(String[] signatureFields, boolean isConstructor)
-	{
+	private static String getFolderName(String[] signatureFields, boolean isConstructor) {
 		String folderName = "";
 		
 		if (isConstructor) {
@@ -184,8 +180,7 @@ public class DataUtil
 	 * 
 	 * @return		Encrypted text or the text if an error occurs
 	 */
-	public static String md5(String text)
-	{
+	public static String md5(String text) {
 		String md5Text;
 		
 		try {
@@ -207,13 +202,11 @@ public class DataUtil
 	 * 
 	 * @return		Variable name
 	 */
-	public static String generateVarName()
-	{
+	public static String generateVarName() {
 		return ("_" + md5(String.valueOf(generateRandomNumber())));
 	}
 	
-	private static double generateRandomNumber() 
-	{
+	private static double generateRandomNumber() {
 		return (new Date().getTime() + (Math.random() * 9999 + 1));
 	}
 	
@@ -224,8 +217,7 @@ public class DataUtil
 	 * 
 	 * @return		Indentation or empty string if there is no indentation
 	 */
-	public static String getIndentation(String line)
-	{
+	public static String getIndentation(String line) {
 		final String regexIndent = "^(\\ |\\t)+";
 		Matcher m = Pattern.compile(regexIndent).matcher(line);
 		

@@ -92,7 +92,7 @@ public abstract aspect RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-	pointcut skipAnnotation():
+	protected pointcut skipAnnotation():
 		within(@executionFlow.runtime.SkipCollection *)
 		|| withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
 		|| withincode(@executionFlow.runtime._SkipInvoked * *.*(..))

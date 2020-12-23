@@ -5,19 +5,18 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+/**
+ * Responsible for displaying log levels.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ */
 public class LogView {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final Map<Integer, LogLevel> options;
 	private static final int DEFAULT_OPTION = 3;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	private LogView() {
-	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -35,6 +34,13 @@ public class LogView {
 	
 	
 	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private LogView() {
+	}
+	
+	
+	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
@@ -42,8 +48,7 @@ public class LogView {
 	 * 
 	 * @return		Selected log level
 	 */
-	public static LogLevel askLogLevel()
-	{
+	public static LogLevel askLogLevel() {
 		int option = ask();
 		
 		return getLogLevel(option);

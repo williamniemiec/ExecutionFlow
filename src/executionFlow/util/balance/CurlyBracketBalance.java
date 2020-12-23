@@ -3,27 +3,17 @@ package executionFlow.util.balance;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Curly bracket balance, to which its balance is calculated as follows:
  * <code>Current balance - Amount of open curly brackets - Amount of closed curly brackets</code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class CurlyBracketBalance extends Balance
-{
+public class CurlyBracketBalance extends Balance {
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	@Override
-	public String toString() 
-	{
-		return "CurlyBracketBalance ["
-				+ "curlyBracketsBalance=" + balance 
-				+ ", alreadyIncreased="	+ alreadyIncreased 
-			+ "]";
-	}
-	
 	/**
 	 * Parses line by counting the number of curly brackets and performing the
 	 * following calculation: 
@@ -33,14 +23,13 @@ public class CurlyBracketBalance extends Balance
 	 * 
 	 * @return		This object to allows chained calls
 	 */
-	public CurlyBracketBalance parse(String text)
-	{
+	public CurlyBracketBalance parse(String text) {
 		String textWithoutString = removeStrings(text);
 		
 		int amountOpenCurlyBrackets = countOpenCurlyBrackets(textWithoutString);
 		int amountClosedCurlyBrackets = countClosedCurlyBrackets(textWithoutString);
 		
-		balance = balance + amountOpenCurlyBrackets - amountClosedCurlyBrackets;
+		currentBalance += amountOpenCurlyBrackets - amountClosedCurlyBrackets;
 		alreadyIncreased = alreadyIncreased ? alreadyIncreased : amountOpenCurlyBrackets > 0;
 		
 		return this;
@@ -53,10 +42,9 @@ public class CurlyBracketBalance extends Balance
 	 * 
 	 * @return		Amount of open curly brackets in the text
 	 */
-	private int countOpenCurlyBrackets(String text)
-	{
-		final Pattern pattern_openCurlyBrackets = Pattern.compile("\\{");
-		Matcher openCBMatcher = pattern_openCurlyBrackets.matcher(text);
+	private int countOpenCurlyBrackets(String text) {
+		final Pattern patternOpenCurlyBrackets = Pattern.compile("\\{");
+		Matcher openCBMatcher = patternOpenCurlyBrackets.matcher(text);
 		
 		int size;
 		for (size = 0; openCBMatcher.find(); size++)
@@ -72,15 +60,22 @@ public class CurlyBracketBalance extends Balance
 	 * 
 	 * @return		Amount of closed curly brackets in the text
 	 */
-	private int countClosedCurlyBrackets(String text)
-	{
-		final Pattern pattern_closedCurlyBrackets = Pattern.compile("\\}");
-		Matcher openCBMatcher = pattern_closedCurlyBrackets.matcher(text);
+	private int countClosedCurlyBrackets(String text) {
+		final Pattern patternClosedCurlyBrackets = Pattern.compile("\\}");
+		Matcher openCBMatcher = patternClosedCurlyBrackets.matcher(text);
 		
 		int size;
 		for (size = 0; openCBMatcher.find(); size++)
 			;
 		
 		return size;
+	}
+	
+	@Override
+	public String toString() {
+		return "CurlyBracketBalance ["
+				+ "currentBalance=" + currentBalance
+				+ ", alreadyIncreased="	+ alreadyIncreased 
+			+ "]";
 	}
 }

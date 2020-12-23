@@ -25,11 +25,6 @@ public class JavaIndenter {
 	private static boolean commentFlag = false;
 	private static boolean blockComment = false;
 
-	/**
-	 * @param args Arguments passed to program (ignored)
-	 */
-
-	// Should be public static when initiated from itself
 	public List<String> format(List<String> lines) {
 		process(lines);
 		return getProcessedLines();
@@ -51,8 +46,6 @@ public class JavaIndenter {
 	 */
 	private void process(List<String> lines) {
 		readProgram(lines);
-//    int max = findMaxJavaLineLength();
-//    printIndentedProgram( max+1 );
 	}
 
 	/*
@@ -60,20 +53,9 @@ public class JavaIndenter {
 	 * program
 	 */
 	private void readProgram(List<String> lines) {
-
-		// BIO.getString == userInput.nextLine();
-		// String strLine = BIO.getString();
-		// !BIO.eof
-		// OR .hasNext();
-		// while (userInput.hasNextLine())
-
 		int bracketCount = 0;
 
 		for (String strLine : lines) {
-//	while (userInput.hasNextLine()){
-//		String strLine = userInput.nextLine();
-			// Boolean flag to signify the fact that it hasn't yet
-			// reached a single bracket. Maybe
 			if (strLine.equals("") && bracketCount == 0) {
 				break;
 			}

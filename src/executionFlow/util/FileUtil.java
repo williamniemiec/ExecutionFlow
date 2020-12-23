@@ -12,14 +12,13 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Contains methods that perform data manipulation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class FileUtil 
-{
+public class FileUtil {
+	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
@@ -40,8 +39,7 @@ public class FileUtil
 	 * 
 	 * @throws		IOException If an I/O error occurs opening the file
 	 */
-	public static List<String> readLines(Path file, Charset encode) throws IOException
-	{
+	public static List<String> readLines(Path file, Charset encode) throws IOException {
 		List<String> lines = new ArrayList<>();
 		String currentLine;
 		
@@ -63,8 +61,8 @@ public class FileUtil
 	 * 
 	 * @throws		IOException If an I/O error occurs while writing the file
 	 */
-	public static void writeLines(List<String> lines, Path file, Charset encode) throws IOException
-	{
+	public static void writeLines(List<String> lines, Path file, Charset encode) 
+			throws IOException {
 		OpenOption[] options = {
 				StandardOpenOption.CREATE
 		};
@@ -80,15 +78,13 @@ public class FileUtil
 		}
 	}
 	
-	public static void printFileWithLines(List<String> fileContent)
-	{
+	public static void printFileWithLines(List<String> fileContent) {
 		for (int i=0; i<fileContent.size(); i++) {
 			System.out.printf("%-5d\t%s\n", i+1, fileContent.get(i));
 		}
 	}
 	
-	public static File searchDirectory(String directoryName, File workingDirectory)
-	{
+	public static File searchDirectory(String directoryName, File workingDirectory) {
 		File currentDirectory = workingDirectory;
 		boolean hasDirectoryWithProvidedName = false;
 		

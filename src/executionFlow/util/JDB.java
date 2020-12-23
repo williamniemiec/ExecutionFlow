@@ -10,14 +10,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Simple API for JBD (Java debugger).
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class JDB
-{
+public class JDB {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -41,8 +40,7 @@ public class JDB
 	 * @param		args Arguments passed to the main() method of classSignature
 	 */
 	private JDB(Path workingDirectory, String classPath, String srcPath, 
-			String classSignature, String classArgs)
-	{
+				String classSignature, String classArgs) {
 		if (classPath == null)
 			throw new IllegalStateException("Class path cannot be empty");
 		
@@ -68,8 +66,8 @@ public class JDB
 	//-------------------------------------------------------------------------
 	//		Builder
 	//-------------------------------------------------------------------------
-	public static class Builder
-	{
+	public static class Builder	{
+		
 		private Path argumentFile; 
 		private Path workingDirectory;
 		private List<Path> classPath;
@@ -77,44 +75,43 @@ public class JDB
 		private String classSignature;
 		private String classArgs;
 		
-		public Builder argumentFile(Path argumentFile)
-		{
+		public Builder argumentFile(Path argumentFile) {
 			this.argumentFile = argumentFile;
+			
 			return this;
 		}
 		
-		public Builder workingDirectory(Path workingDirectory)
-		{
+		public Builder workingDirectory(Path workingDirectory) {
 			this.workingDirectory = workingDirectory;
+			
 			return this;
 		}
 		
-		public Builder classPath(List<Path> classPath)
-		{
+		public Builder classPath(List<Path> classPath) {
 			this.classPath = classPath;
+			
 			return this;
 		}
 		
-		public Builder srcPath(List<Path> srcPath)
-		{
+		public Builder srcPath(List<Path> srcPath) {
 			this.srcPath = srcPath;
+			
 			return this;
 		}
 		
-		public Builder classSignature(String classSignature)
-		{
+		public Builder classSignature(String classSignature) {
 			this.classSignature = classSignature;
+			
 			return this;
 		}
 		
-		public Builder classArgs(String classArgs)
-		{
+		public Builder classArgs(String classArgs) {
 			this.classArgs = classArgs;
+			
 			return this;
 		}
 		
-		public JDB build()
-		{
+		public JDB build() {
 			if (classPath == null)
 				classPath = new ArrayList<>();
 			
@@ -153,8 +150,7 @@ public class JDB
 	 * 
 	 * @throws		IOException If JDB cannot be initialized 
 	 */
-	public JDB start() throws IOException
-	{
+	public JDB start() throws IOException {
 		initializeJDB();
 		onShutdown();
 		
@@ -186,11 +182,7 @@ public class JDB
 		{}
 	}
 
-	/**
-	 * Terminates JDB.
-	 */
-	public void quit()
-	{
+	public void quit() {
 		in.close();
 		out.close();
 		process.destroy();
@@ -212,8 +204,7 @@ public class JDB
 	 * @apiNote		If {@link #DEBUG} is activated, it will display the 
 	 * command executed on the console
 	 */
-	public JDB send(String command)
-	{
+	public JDB send(String command) {
 		in.send(command);
 		
 		return this;
@@ -228,8 +219,7 @@ public class JDB
 	 * @apiNote		If {@link #DEBUG} is activated, it will display the 
 	 * command executed on the console
 	 */
-	public JDB send(String... commands)
-	{
+	public JDB send(String... commands) {
 		in.send(commands);
 		
 		return this;
@@ -246,8 +236,7 @@ public class JDB
 	 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
 	 * output on the console
 	 */
-	public String read()
-	{
+	public String read() {
 		try {
 			return out.read();
 		} 
@@ -264,8 +253,7 @@ public class JDB
 	 * 
 	 * @throws		IOException If it cannot read JDB output
 	 */
-	public List<String> readAll() throws IOException
-	{
+	public List<String> readAll() throws IOException {
 		return out.readAll();
 	}
 	
@@ -275,8 +263,7 @@ public class JDB
 	 * @return		True if {@link #read()} is guaranteed not to block if
 	 * called; otherwise, returns false
 	 */
-	public boolean isReady()
-	{
+	public boolean isReady() {
 		return out.isReady();
 	}
 	
@@ -293,8 +280,8 @@ public class JDB
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 */
-	private class JDBInput
-	{
+	private class JDBInput {
+		
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
@@ -308,8 +295,7 @@ public class JDB
 		 * JDB input manager. It should be used in conjunction with 
 		 * {@link JDBOutput}.
 		 */
-		public JDBInput()
-		{
+		public JDBInput() {
 			this.input = new PrintWriter(
 					new BufferedWriter(
 							new OutputStreamWriter(
@@ -331,8 +317,7 @@ public class JDB
 		 * @apiNote		If {@link #DEBUG} is activated, it will display the 
 		 * command executed on the console
 		 */
-		public void send(String command)
-		{
+		public void send(String command) {
 			input.println(command);
 		}
 		
@@ -345,8 +330,7 @@ public class JDB
 		 * @apiNote		If {@link #DEBUG} is activated, it will display the 
 		 * command executed on the console
 		 */
-		public void send(String... commands)
-		{
+		public void send(String... commands) {
 			for (String command : commands) {
 			    input.println(command);
 			}
@@ -355,8 +339,7 @@ public class JDB
 		/**
 		 * Closes JDB input.
 		 */
-		public void close()
-		{
+		public void close() {
 			input.close();
 		}
 	}
@@ -366,8 +349,8 @@ public class JDB
 	 * 
 	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
 	 */
-	private class JDBOutput
-	{
+	private class JDBOutput {
+		
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
@@ -381,8 +364,7 @@ public class JDB
          * JDB output manager. It should be used in conjunction with 
 		 * {@link JDBInputt} to be able to send commands. 
          */
-		public JDBOutput()
-		{
+		public JDBOutput() {
 			output = new BufferedReader(
 					new InputStreamReader(
 							process.getInputStream()
@@ -404,8 +386,7 @@ public class JDB
 		 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
 		 * output on the console
 		 */
-		public String read() throws IOException
-		{
+		public String read() throws IOException {
 			return output.readLine();
 		}
 		
@@ -415,8 +396,7 @@ public class JDB
 		 * @return		True if {@link #read()} is guaranteed not to block if
 		 * called; otherwise, returns false
 		 */
-		public boolean isReady()
-		{
+		public boolean isReady() {
 			try {
 				return output.ready();
 			} 
@@ -433,8 +413,7 @@ public class JDB
 		 * 
 		 * @throws		IOException If it cannot read JDB output
 		 */
-		public List<String> readAll() throws IOException
-		{
+		public List<String> readAll() throws IOException {
 			List<String> response = new ArrayList<>();
 			
 			while (output.ready()) {
@@ -447,12 +426,12 @@ public class JDB
 		/**
 		 * Closes JDB input.
 		 */
-		public void close()
-		{
+		public void close() {
 			try {
 				output.close();
 			} 
-			catch (IOException e) {}
+			catch (IOException e) {
+			}
 		}
 	}
 }

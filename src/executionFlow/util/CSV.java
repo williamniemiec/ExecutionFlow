@@ -10,14 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * Responsible for reading and writing CSV files.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class CSV
-{
+public class CSV {
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -31,8 +30,8 @@ public class CSV
 	 * 
 	 * @throws		IOException If CSV file cannot be read 
 	 */
-	public static List<List<String>> read(File filepath, String separator) throws IOException
-	{
+	public static List<List<String>> read(File filepath, String separator) 
+			throws IOException {
 		List<List<String>> content = new ArrayList<>();
 		String line;
 		
@@ -45,8 +44,7 @@ public class CSV
 		return content;
 	}
 	
-	private static List<String> stringToList(String str, String separator)
-	{
+	private static List<String> stringToList(String str, String separator) {
 		return Arrays.asList(str.split(separator));
 	}
 	
@@ -60,8 +58,7 @@ public class CSV
 	 * 
 	 * @throws		IOException If CSV file cannot be read 
 	 */
-	public static List<List<String>> read(File filepath) throws IOException
-	{
+	public static List<List<String>> read(File filepath) throws IOException {
 		return read(filepath, ",");
 	}
 	
@@ -74,8 +71,8 @@ public class CSV
 	 * 
 	 * @throws		IOException If an error occurs while writing the file 
 	 */
-	public static void write(List<String> content, File output) throws IOException
-	{
+	public static void write(List<String> content, File output) 
+			throws IOException {
 		write(content, output, ",");
 	}
 	
@@ -88,16 +85,15 @@ public class CSV
 	 * 
 	 * @throws		IOException If an error occurs while writing the file 
 	 */
-	public static void write(List<String> content, File output, String separator) throws IOException
-	{
+	public static void write(List<String> content, File output, String separator) 
+			throws IOException {
 		try (BufferedWriter csv = new BufferedWriter(new FileWriter(output, true))) {
 			csv.write(listToString(content, separator));
 			csv.newLine();
 		}
 	}
 	
-	private static String listToString(List<String> list, String separator) 
-	{
+	private static String listToString(List<String> list, String separator) {
 		StringBuilder str = new StringBuilder();
 
 		for (String element : list) {

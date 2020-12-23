@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Responsible for executing JUnit 4 tests.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class JUnit4Runner
-{
+public class JUnit4Runner {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -32,64 +31,63 @@ public class JUnit4Runner
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private JUnit4Runner(Path workingDirectory, String classPath, String classSignature, 
-			boolean displayVersion)
-	{
+	private JUnit4Runner(Path workingDirectory, String classPath, 
+						 String classSignature, boolean displayVersion) {
 		this.displayVersion = displayVersion;
 
-		processBuilder =  new ProcessBuilder(
+		this.processBuilder =  new ProcessBuilder(
 			"java", 
 				"-cp", classPath, 
 				"org.junit.runner.JUnitCore", classSignature
 		);
 			
-		processBuilder.directory(workingDirectory.toFile());
+		this.processBuilder.directory(workingDirectory.toFile());
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Builder
 	//-------------------------------------------------------------------------
-	public static class Builder
-	{
+	public static class Builder	{
+		
 		private Path argumentFile; 
 		private Path workingDirectory;
 		private List<Path> classPath;
 		private String classSignature;
 		private boolean displayVersion = false;
 		
-		public Builder argumentFile(Path argumentFile)
-		{
+		
+		public Builder argumentFile(Path argumentFile) {
 			this.argumentFile = argumentFile;
+			
 			return this;
 		}
 		
-		public Builder workingDirectory(Path workingDirectory)
-		{
+		public Builder workingDirectory(Path workingDirectory) {
 			this.workingDirectory = workingDirectory;
+			
 			return this;
 		}
 		
-		public Builder classPath(List<Path> classPath)
-		{
+		public Builder classPath(List<Path> classPath) {
 			this.classPath = classPath;
+			
 			return this;
 		}
 		
-		public Builder classSignature(String classSignature)
-		{
+		public Builder classSignature(String classSignature) {
 			this.classSignature = classSignature;
+			
 			return this;
 		}
 		
-		public Builder displayVersion(boolean displayVersion)
-		{
+		public Builder displayVersion(boolean displayVersion) {
 			this.displayVersion = displayVersion;
+			
 			return this;
 		}
 		
-		public JUnit4Runner build()
-		{
+		public JUnit4Runner build() {
 			if (classPath == null)
 				classPath = new ArrayList<>();
 
@@ -116,8 +114,7 @@ public class JUnit4Runner
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------	
-	public void run() throws IOException, InterruptedException
-	{	
+	public void run() throws IOException, InterruptedException {	
 		initializeCLI();	
 		checkErrors();
 		parseCLI();
@@ -186,25 +183,27 @@ public class JUnit4Runner
 		stopped = false;			
 		totalTests = 0;
 		
-		output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		outputError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+		output = new BufferedReader(
+				new InputStreamReader(process.getInputStream())
+		);
+		outputError = new BufferedReader(new InputStreamReader(
+				process.getErrorStream())
+		);
 	}
 
-	public void quit() throws IOException
-	{
+	public void quit() throws IOException {
 		stopped = true;
 		process.destroyForcibly();
 		output.close();
 		outputError.close();
 	}
 	
-	public boolean isRunning()
-	{
-		return process != null && process.isAlive();
+	public boolean isRunning() {
+		return	(process != null) 
+				&& process.isAlive();
 	}
 	
-	public int getTotalTests()
-	{
+	public int getTotalTests() {
 		return totalTests;
 	}
 }

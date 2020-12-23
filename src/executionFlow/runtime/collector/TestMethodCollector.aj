@@ -49,38 +49,61 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static boolean inTestMethod = true;
+	private static boolean inTestMethod;
 	private static boolean finished;
-	
-	private static Checkpoint currentTestMethodCheckpoint =
-			new Checkpoint(ExecutionFlow.getAppRootPath(), "Test_Method");
-	private static Checkpoint checkpoint_initial = 
-			new Checkpoint(Path.of(System.getProperty("user.home")), "initial");
-	private static Checkpoint firstRunCheckpoint =
-			new Checkpoint(ExecutionFlow.getAppRootPath(), "app_running");
-	private static Session session = 
-			new Session("session.ef", new File(System.getProperty("user.home")));
-	
-	private static int remainingTests = -1;
-	private String lastRepeatedTestSignature;
-	private FilesManager testMethodManager;
-	private FileManager testMethodFileManager;
-	private boolean isRepeatedTest;
+	private static Checkpoint currentTestMethodCheckpoint;
+	private static Checkpoint insideJUnitRunnerCheckpoint;
+	private static Checkpoint firstRunCheckpoint;
+	private static Session session;
+	private static int remainingTests;
 	private static boolean errorProcessingTestMethod;
-	private volatile static boolean success;
+	private static volatile boolean success;
 	private static InvokedManager processingManager;
+	private boolean isRepeatedTest;
+	private String lastRepeatedTestSignature;
 	private Path classPath;
 	private Path srcPath;
+	private FileManager testMethodFileManager;
+	private FilesManager testMethodManager;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
+	static {
+		inTestMethod = true;
+		remainingTests = -1;
+		
+		currentTestMethodCheckpoint = new Checkpoint(
+				ExecutionFlow.getAppRootPath(), 
+				"Test_Method"
+		);
+		
+		insideJUnitRunnerCheckpoint = new Checkpoint(
+				Path.of(System.getProperty("user.home")),
+				"initial"
+		);
+		
+		firstRunCheckpoint = new Checkpoint(
+				ExecutionFlow.getAppRootPath(), 
+				"app_running"
+		);
+		
+		session = new Session(
+				"session.ef", 
+				new File(System.getProperty("user.home")
+		));
+	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-	pointcut insideJUnit5RepeatedTest():
+	private pointcut insideJUnit5RepeatedTest():
 		!skipAnnotation() 
 		&& execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
 	
-	pointcut insideTestMethod():
+	private pointcut insideTestMethod():
 		!skipAnnotation() 
 		&& insideJUnitTest()
 		&& !withincode(@org.junit.Test * *.*());
@@ -123,10 +146,8 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			return;
 
 		initializeManagers(thisJoinPoint);
-		
 		onFirstRun();
 		onEachTestMethod();
-		
 		initializeLogger();
 		
 		dump();
@@ -199,7 +220,8 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		 
 		    	if (Session.hasKeyShared("JUNIT4_RUNNER")) {
 					try {
-						JUnit4Runner runner = (JUnit4Runner)Session.readShared("JUNIT4_RUNNER");
+						JUnit4Runner runner = 
+								(JUnit4Runner) Session.readShared("JUNIT4_RUNNER");
 						runner.quit();
 					} 
 					catch (IOException e) {
@@ -214,8 +236,8 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		    	processingManager.deleteInvokedFileManagerBackup();
 		    	deleteTestMethodBackupFiles();
 				disableCheckpoint(currentTestMethodCheckpoint);
-				disableCheckpoint(checkpoint_initial);
-				disableCheckpoint(firstRunCheckpoint);;
+				disableCheckpoint(insideJUnitRunnerCheckpoint);
+				disableCheckpoint(firstRunCheckpoint);
 				
 				finished = true;
 		    }
@@ -241,10 +263,12 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		} 
 		catch (ClassNotFoundException e) {
 			success = false;
+			
 			Logger.error("Class FileManager not found");
 		} 
 		catch (IOException e) {
 			success = false;
+			
 			Logger.error(e.getMessage());
 			Logger.error("Could not recover the backup file of the test method");
 			Logger.error("See more: https://github.com/williamniemiec/"
@@ -354,7 +378,10 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	
 	private void initializeManagers(JoinPoint thisJoinPoint) {
 		try {
-			processingManager = new InvokedManager(!checkpoint_initial.isEnabled());
+			processingManager = new InvokedManager(
+					!insideJUnitRunnerCheckpoint.isEnabled()
+			);
+			
 			initializeFileManager(thisJoinPoint);
 		}
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
@@ -478,7 +505,8 @@ public aspect TestMethodCollector extends RuntimeCollector {
 				&& !currentTestMethodCheckpoint.isEnabled();
 	}
 	
-	private void initializeTestMethodManager() throws ClassNotFoundException, IOException {
+	private void initializeTestMethodManager() 
+			throws ClassNotFoundException, IOException {
 		testMethodManager = new FilesManager(
 				ProcessorType.PRE_TEST_METHOD, 
 				false, 
@@ -569,14 +597,11 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	 */
 	private void restart(JoinPoint jp) {
 		try {
-			if (!checkpoint_initial.isEnabled()) {
-				checkpoint_initial.enable();
+			if (!insideJUnitRunnerCheckpoint.isEnabled()) {
+				insideJUnitRunnerCheckpoint.enable();
 			}
 			
-			// Resets methods called by tested invoked
-			File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
-			mcti.delete();
-
+			resetMethodsCalledByTestedInvoked();
 			runJUnitRunner(jp);
 			waitForJUnit4Runner();
 		}
@@ -586,7 +611,13 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		}
 	}
 	
-	private void runJUnitRunner(JoinPoint jp) throws IOException, InterruptedException {
+	private void resetMethodsCalledByTestedInvoked() {
+		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		mcti.delete();
+	}
+	
+	private void runJUnitRunner(JoinPoint jp) 
+			throws IOException, InterruptedException {
 		JUnit4Runner junit4Runner = new JUnit4Runner.Builder()
 				.workingDirectory(generateClassRootDirectory())
 				.classPath(generateClasspaths())
@@ -659,7 +690,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		while (junit4Runner.isRunning()) {
 			Thread.sleep(2000);
 			
-			if (!checkpoint_initial.isEnabled())
+			if (!insideJUnitRunnerCheckpoint.isEnabled())
 				junit4Runner.quit();
 		}
 		
@@ -715,13 +746,13 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	 * @param		testMethodSrcFile Test method source file
 	 */
 	public static void updateCollectorInvocationLines(Map<Integer, Integer> mapping, 
-			Path testMethodSrcFile)	{
+													  Path testMethodSrcFile)	{
 		updateConstructorInvocationLines(mapping, testMethodSrcFile);
 		updateMethodInvocationLines(mapping, testMethodSrcFile);
 	}
 	
 	private static void updateConstructorInvocationLines(Map<Integer, Integer> mapping, 
-			Path testMethodSrcFile) {
+														 Path testMethodSrcFile) {
 		updateInvokedInvocationLines(
 				mapping, 
 				testMethodSrcFile, 
@@ -730,9 +761,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	}
 	
 	private static void updateMethodInvocationLines(Map<Integer, Integer> mapping, 
-			Path testMethodSrcFile) {
-		// Updates method invocation lines If it is declared in the 
-		// same file as the processed test method file
+													Path testMethodSrcFile) {
 		for (List<InvokedContainer> methodCollectorList : methodCollector.values()) {
 			updateInvokedInvocationLines(
 					mapping, 
@@ -743,12 +772,13 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	}
 	
 	private static void updateInvokedInvocationLines(Map<Integer, Integer> mapping, 
-			Path testMethodSrcFile, Collection<InvokedContainer> collector) {
+													 Path testMethodSrcFile, 
+													 Collection<InvokedContainer> collector) {
 		for (InvokedContainer cc : collector) {
 			int invocationLine = cc.getInvokedInfo().getInvocationLine();
 			
-			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile) || 
-					!mapping.containsKey(invocationLine))
+			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile)  
+					|| !mapping.containsKey(invocationLine))
 				continue;
 			
 			cc.getInvokedInfo().setInvocationLine(mapping.get(invocationLine));

@@ -3,27 +3,17 @@ package executionFlow.util.balance;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Round bracket balance, to which its balance is calculated as follows:
  * <code>Current balance - Amount of open round brackets - Amount of closed round brackets</code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class RoundBracketBalance extends Balance
-{
+public class RoundBracketBalance extends Balance {
+	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------
-	@Override
-	public String toString() 
-	{
-		return "RoundBracketBalance ["
-				+ "roundBracketsBalance=" + balance 
-				+ ", alreadyIncreased="	+ alreadyIncreased 
-			+ "]";
-	}
-	
+	//-------------------------------------------------------------------------	
 	/**
 	 * Parses line by counting the number of curly brackets and performing the
 	 * following calculation: 
@@ -40,7 +30,7 @@ public class RoundBracketBalance extends Balance
 		int amountOpenRoundBrackets = countOpenRoundBrackets(textWithoutString);
 		int amountClosedRoundBrackets = countClosedRoundBrackets(textWithoutString);
 	
-		balance = balance + amountOpenRoundBrackets - amountClosedRoundBrackets;
+		currentBalance += amountOpenRoundBrackets - amountClosedRoundBrackets;
 		alreadyIncreased = alreadyIncreased ? alreadyIncreased : amountOpenRoundBrackets > 0;
 		
 		return this;
@@ -55,11 +45,12 @@ public class RoundBracketBalance extends Balance
 	 */
 	private int countOpenRoundBrackets(String text)
 	{
-		final Pattern pattern_openRoundBrackets = Pattern.compile("\\(");
-		Matcher openCBMatcher = pattern_openRoundBrackets.matcher(text);
+		final Pattern patternOpenRoundBrackets = Pattern.compile("\\(");
+		Matcher openCBMatcher = patternOpenRoundBrackets.matcher(text);
 		
 		int size;
-		for (size = 0; openCBMatcher.find(); size++);
+		for (size = 0; openCBMatcher.find(); size++)
+			;
 		
 		return size;
 	}
@@ -73,12 +64,21 @@ public class RoundBracketBalance extends Balance
 	 */
 	private int countClosedRoundBrackets(String text)
 	{
-		final Pattern pattern_closedRoundBrackets = Pattern.compile("\\)");
-		Matcher openCBMatcher = pattern_closedRoundBrackets.matcher(text);
+		final Pattern patternClosedRoundBrackets = Pattern.compile("\\)");
+		Matcher openCBMatcher = patternClosedRoundBrackets.matcher(text);
 		
 		int size;
 		for (size = 0; openCBMatcher.find(); size++);
 		
 		return size;
+	}
+	
+	@Override
+	public String toString() 
+	{
+		return "RoundBracketBalance ["
+				+ "currentBalance=" + currentBalance 
+				+ ", alreadyIncreased="	+ alreadyIncreased 
+			+ "]";
 	}
 }

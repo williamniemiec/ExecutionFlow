@@ -1,17 +1,16 @@
 package executionFlow.util.balance;
 
-
 /**
  * Responsible for managing balances. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public abstract class Balance 
-{
+public abstract class Balance {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected int balance;
+	protected int currentBalance;
 	
 	/**
 	 * Flag indicating whether the balance has already been increased at any 
@@ -19,53 +18,25 @@ public abstract class Balance
 	 */
 	protected boolean alreadyIncreased;
 	
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	@Override
-	public String toString() 
-	{
-		return "Balance ["
-				+ "balance=" + balance 
-				+ ", alreadyIncreased="	+ alreadyIncreased 
-			+ "]";
-	}
-	
-	/**
-	 * Increments balance.
-	 */
-	public void increaseBalance()
-	{
+	public void increaseBalance() {
 		alreadyIncreased = true;
-		balance += 1;
+		currentBalance += 1;
 	}
 	
-	/**
-	 * Decrements balance.
-	 */
-	public void decreaseBalance()
-	{
-		balance -= 1;
+	public void decreaseBalance() {
+		currentBalance -= 1;
 	}
 	
-	/**
-	 * Returns balance.
-	 * 
-	 * @return		Current balance
-	 */
-	public int getBalance()
-	{
-		return balance;
+	public int getBalance() {
+		return currentBalance;
 	}
 	
-	/**
-	 * Checks if the balance is empty.
-	 * 
-	 * @return		If balance is zero
-	 */
-	public boolean isBalanceEmpty()
-	{
-		return balance == 0;
+	public boolean isBalanceEmpty() {
+		return currentBalance == 0;
 	}
 	
 	/**
@@ -73,13 +44,19 @@ public abstract class Balance
 	 * 
 	 * @return		If the balance has already been increased at any time
 	 */
-	public boolean alreadyIncreased()
-	{
+	public boolean alreadyIncreased() {
 		return alreadyIncreased;
 	}
 	
-	protected String removeStrings(String text) 
-	{
+	@Override
+	public String toString() {
+		return "Balance ["
+				+ "currentBalance=" + currentBalance 
+				+ ", alreadyIncreased="	+ alreadyIncreased 
+			+ "]";
+	}
+	
+	protected String removeStrings(String text) {
 		return text.replaceAll("\\\\\"", "").replaceAll("\"[^\"]*\"", "");
 	}
 }
