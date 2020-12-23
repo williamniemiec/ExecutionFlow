@@ -9,8 +9,8 @@ import java.util.Map;
  * @version		5.2.3
  * @since 		5.2.0
  */
-public class CodeCleanerAdapter extends CodeCleaner
-{
+public class CodeCleanerAdapter extends CodeCleaner {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -20,8 +20,7 @@ public class CodeCleanerAdapter extends CodeCleaner
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public CodeCleanerAdapter(List<String> sourceCode)
-	{
+	public CodeCleanerAdapter(List<String> sourceCode) {
 		super(false);
 		this.sourceCode = sourceCode;
 	}
@@ -30,22 +29,18 @@ public class CodeCleanerAdapter extends CodeCleaner
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public List<String> processLines() 
-	{
+	public List<String> processLines() {
 		cleanupCode(sourceCode);	
 		deleteContentBetweenPercentages(processedCode);
 		
 		return processedCode;
 	}
 	
-	private void deleteContentBetweenPercentages(List<String> processedCode)	
-	{
-		String line;
-		
-		
+	private void deleteContentBetweenPercentages(List<String> processedCode) {
 		for (int i=0; i<processedCode.size(); i++) {
-			line = processedCode.get(i);
+			String line = processedCode.get(i);
 			line = line.replaceAll("%[^\\s\\t]+%", "");
+			
 			processedCode.set(i, line);
 		}
 	}
@@ -63,8 +58,7 @@ public class CodeCleanerAdapter extends CodeCleaner
 	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	public Map<Integer, Integer> getMapping()
-	{
+	public Map<Integer, Integer> getMapping() {
 		if (lineMappings.isEmpty())
 			return new HashMap<>();
 		

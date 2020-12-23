@@ -11,8 +11,12 @@ import executionFlow.util.balance.RoundBracketBalance;
 /**
  * Converts method calls with arguments on multiple lines to a call with 
  * arguments on a single line.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
  */
-public class MultilineToInlineCallsConverter {
+public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 
 	//---------------------------------------------------------------------
 	//		Attributes

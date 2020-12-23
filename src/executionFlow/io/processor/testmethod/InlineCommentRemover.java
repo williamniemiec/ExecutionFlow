@@ -6,6 +6,14 @@ import java.util.regex.Pattern;
 
 import executionFlow.io.SourceCodeProcessor;
 
+/**
+ * Adds {@link executionFlow.runtime.SkipCollection} annotation next to 
+ * class declarations.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since 		5.2.3
+ */
 public class InlineCommentRemover extends SourceCodeProcessor {
 
 	//---------------------------------------------------------------------
@@ -25,17 +33,13 @@ public class InlineCommentRemover extends SourceCodeProcessor {
 			return line;
 		
 		String processedLine = replaceStringWithBlankSpaces(line);
-
-		if (processedLine.contains("//")) {
-			processedLine = processedLine.substring(0, processedLine.indexOf("//"));
-		}
+		processedLine = processedLine.substring(0, processedLine.indexOf("//"));
 		
 		return processedLine;
 	}
 
 	private String replaceStringWithBlankSpaces(String line) {
 		String lineWithBlankStrings = line;
-		
 		StringBuilder strWithBlankSpaces = new StringBuilder();
 		
 		Matcher matcherContentBetweenQuotes = Pattern.compile("\"[^\"]*\"").matcher(line);
@@ -46,13 +50,15 @@ public class InlineCommentRemover extends SourceCodeProcessor {
 			int idxEnd = matcherContentBetweenQuotes.end();
 			
 			strWithBlankSpaces.append("\"");
+			
 			for (int i=0; i<strLen; i++) {
 				strWithBlankSpaces.append(" ");
 			}
+			
 			strWithBlankSpaces.append("\"");
 			
 			lineWithBlankStrings = lineWithBlankStrings.substring(0, idxStart) 
-					+ strWithBlankSpaces 
+					+ strWithBlankSpaces.toString()
 					+ lineWithBlankStrings.substring(idxEnd);
 			
 			strWithBlankSpaces = new StringBuilder();

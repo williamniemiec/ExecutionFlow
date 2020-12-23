@@ -10,7 +10,7 @@ import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.testmethod.ClassDeclarationProcessor;
 import executionFlow.io.processor.testmethod.InlineCommentRemover;
 import executionFlow.io.processor.testmethod.MultilineToInlineCallsConverter;
-import executionFlow.io.processor.testmethod.PrintCallProcessor;
+import executionFlow.io.processor.testmethod.PrintCallRemover;
 import executionFlow.util.FileUtil;
 import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.Logger;
@@ -230,8 +230,8 @@ public class TestMethodFileProcessor extends FileProcessor {
 	}
 
 	private void disablePrintCalls() {
-		PrintCallProcessor printCallProcessor = 
-				new PrintCallProcessor(processedLines);
+		PrintCallRemover printCallProcessor = 
+				new PrintCallRemover(processedLines);
 		
 		processedLines = printCallProcessor.processLines();
 	}
