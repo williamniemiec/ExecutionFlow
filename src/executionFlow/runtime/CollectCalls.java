@@ -5,7 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  * When a method or a constructor has this annotation, the signature of all
  * methods called within it will be collected.
@@ -15,6 +14,6 @@ import java.lang.annotation.Target;
  * @since		2.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.METHOD, ElementType.CONSTRUCTOR} )
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface CollectCalls 
-{ }
+{}

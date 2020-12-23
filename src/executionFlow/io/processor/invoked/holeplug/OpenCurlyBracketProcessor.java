@@ -30,7 +30,7 @@ public class OpenCurlyBracketProcessor extends SourceCodeProcessor {
 		
 		if (hasOnlyOpeningCurlyBracket(line)) {
 			processedLine = line + " {";
-			modifySourceCode(getCurrentIdx() + 1, "");
+			setLine(getCurrentIndex()+1, "");
 		}
 		
 		return processedLine;

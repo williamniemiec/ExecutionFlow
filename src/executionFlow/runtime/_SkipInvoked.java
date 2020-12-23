@@ -5,7 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  * Internal use annotation. When a method or a constructor has this annotation,
  * the following collectors will ignore it:
@@ -23,6 +22,6 @@ import java.lang.annotation.Target;
  * @since		2.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.METHOD, ElementType.CONSTRUCTOR} )
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface _SkipInvoked 
-{ }
+{}

@@ -16,7 +16,6 @@ import org.aspectj.lang.JoinPoint;
 import executionFlow.ExecutionFlow;
 import executionFlow.util.logger.Logger;
 
-
 /**
  * Captures all methods called within the tested invoked, where an invoked can
  * be a method or a constructor.
@@ -44,7 +43,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	 * Gets tested method signatures by a JUnit test that has 
 	 * {@link @executionFlow.runtime._SkipInvoked} annotation.
 	 */
-	pointcut invokedSignature(): 
+	private pointcut invokedSignature(): 
 		!skipAnnotation()
 		&& !withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
 		&& cflow(execution(@executionFlow.runtime._SkipInvoked * *.*(..)))
@@ -53,26 +52,26 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 		&& !set(* *.*)
 		&& !execution(public int hashCode());
 	
-	pointcut insideConstructor():
-		withincode(@executionFlow.runtime.CollectCalls *.new(..))  
-		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..)));
-	
-	pointcut insideMethod():
-		withincode(@executionFlow.runtime.CollectCalls * *(..))
-		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls *.new(..)))  
-		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..)));
-	
 	/**
 	 * Intercepts methods called within an invoked with 
 	 * {@link @executionFlow.runtime.CollectCalls} annotation.
 	 */
-	pointcut invokedMethodByTestedInvoker():
+	private pointcut invokedMethodByTestedInvoker():
 		!skipAnnotation()
 		&& !withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
 		&& !get(* *.*) 
 		&& !set(* *.*) 
 		&& insideConstructor()
 		|| insideMethod();
+	
+	private pointcut insideConstructor():
+		withincode(@executionFlow.runtime.CollectCalls *.new(..))  
+		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..)));
+	
+	private pointcut insideMethod():
+		withincode(@executionFlow.runtime.CollectCalls * *(..))
+		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls *.new(..)))  
+		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..)));
 	
 	
 	//-------------------------------------------------------------------------
@@ -190,7 +189,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 			file.delete();
 		}
 	}
-	//Merges methods called by tested invoked with saved collection
+	
 	private void combineCollectedMethodWithStoredCollection(Map<String, Set<String>> storedCollection) {
 		for (Map.Entry<String, Set<String>> e : storedCollection.entrySet()) {
 			String storedInvocationSignature = e.getKey();
@@ -212,7 +211,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	}
 	
 	private void mergeCollectedMethodWithStoredCollection(String storedInvocationSignature, 
-			Set<String> storedMethodsCalled) {
+														  Set<String> storedMethodsCalled) {
 		Set<String> currentMethodsCalled = 
 				methodsCalledByTestedInvoked.get(storedInvocationSignature);
 

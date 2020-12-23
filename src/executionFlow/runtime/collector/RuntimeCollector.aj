@@ -14,7 +14,6 @@ import executionFlow.info.InvokedInfo;
 import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.TestMethodFileProcessor;
 
-
 /**
  * Responsible for data collection of methods and class constructors used in 
  * tests.
@@ -28,8 +27,8 @@ import executionFlow.io.processor.TestMethodFileProcessor;
  * @version		5.2.3
  * @since		1.0
  */
-public abstract aspect RuntimeCollector 
-{
+public abstract aspect RuntimeCollector {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -38,7 +37,7 @@ public abstract aspect RuntimeCollector
 	 * <b>Format: </b><code>method_name + method_arguments + 
 	 * constructor@hashCode (if it has one)</code>
 	 */
-	protected static List<String> collectedMethods = new ArrayList<>();
+	protected static List<String> collectedMethods;
 	
 	/**
 	 * Stores information about collected methods.<hr/>
@@ -47,17 +46,19 @@ public abstract aspect RuntimeCollector
 	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 	 * </ul>
 	 */
-	protected static Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
+	protected static Map<Integer, List<InvokedContainer>> methodCollector;
 	
 	/**
 	 * Stores information about collected constructor.<hr/>
 	 * <ul>
-	 * 	<li><b>Key(with arguments):</b>		<code>invocationLine + classSignature[arg1,arg2,...]</code></li>
-	 * 	<li><b>Key(without arguments):</b>	<code>invocationLine + classSignature[]</code></li>
+	 * 	<li><b>Key(with arguments):</b>		
+	 * 	<code>invocationLine + classSignature[arg1,arg2,...]</code></li>
+	 * 	<li><b>Key(without arguments):</b>	
+	 * 	<code>invocationLine + classSignature[]</code></li>
 	 * 	<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
-	protected static Map<String, InvokedContainer> constructorCollector = new LinkedHashMap<>();
+	protected static Map<String, InvokedContainer> constructorCollector;
 
 	/**
 	 * Stores anonymous class signature where it is created and where it is 
@@ -67,13 +68,25 @@ public abstract aspect RuntimeCollector
 	 * 	<li><b>Value:</b> Class signature where anonymous class is declared</li>
 	 * </ul> 
 	 */
-	protected static Map<String, String> anonymousClassSignatures = new HashMap<>();
-
+	protected static Map<String, String> anonymousClassSignatures;
+	
+	protected static Map<String, Set<String>> methodsCalledByTestedInvoked;
 	protected static String testMethodSignature;
 	protected static InvokedInfo testMethodInfo;
 	protected static boolean skipCollection;
 	protected static int lastInvocationLine;
-	protected static Map<String, Set<String>> methodsCalledByTestedInvoked = new HashMap<>();
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
+	static {
+		collectedMethods = new ArrayList<>();
+		methodCollector = new LinkedHashMap<>();
+		constructorCollector = new LinkedHashMap<>();
+		methodsCalledByTestedInvoked = new HashMap<>();
+		anonymousClassSignatures = new HashMap<>();
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -126,8 +139,7 @@ public abstract aspect RuntimeCollector
 	 * 
 	 * @return		If the method is a native method or JUnit method
 	 */
-	protected boolean isNativeMethod(JoinPoint jp)
-	{
+	protected boolean isNativeMethod(JoinPoint jp) {
 		String signature = jp.getSignature().toString();
 		
 		return	(signature == null)
@@ -136,8 +148,7 @@ public abstract aspect RuntimeCollector
 				|| signature.contains("org.junit.");
 	}
 	
-	protected boolean isMethodSignature(JoinPoint jp)
-	{
+	protected boolean isMethodSignature(JoinPoint jp) {
 		final String regexMethodSignature = "[A-z\\.]+(\\s|\\t)+([A-z0-9-_$]+\\.)+"
 				+ "[A-z0-9-_$]+\\([A-z0-9-\\._$,\\s]*\\)";
 		String signature = jp.getSignature().toString();
@@ -146,8 +157,7 @@ public abstract aspect RuntimeCollector
 				&& !signature.matches(".*\\.(access\\$[0-9]+\\().*");
 	}
 
-	protected void reset()
-	{
+	protected void reset() {
 		collectedMethods.clear();
 		methodCollector.clear();
 		constructorCollector.clear();
@@ -159,8 +169,7 @@ public abstract aspect RuntimeCollector
 		InvokedFileProcessor.clearMapping();
 	}
 	
-	protected String removeParametersFromSignature(String signature) 
-	{
+	protected String removeParametersFromSignature(String signature) {
 		return signature.substring(signature.indexOf("("));
 	}
 }

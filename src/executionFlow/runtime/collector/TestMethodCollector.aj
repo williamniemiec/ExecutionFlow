@@ -31,7 +31,6 @@ import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.LogView;
 import executionFlow.util.logger.Logger;
 
-
 /**
  * Run in each test method
  * 
@@ -45,8 +44,8 @@ import executionFlow.util.logger.Logger;
  * @since		1.0
  */
 @SuppressWarnings("unused")
-public aspect TestMethodCollector extends RuntimeCollector
-{
+public aspect TestMethodCollector extends RuntimeCollector {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------

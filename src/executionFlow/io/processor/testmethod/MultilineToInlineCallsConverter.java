@@ -21,7 +21,6 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	//		Attributes
 	//---------------------------------------------------------------------
-	private boolean inComment;
 	private static Map<Integer, Integer> mapping = new HashMap<>();
 	private boolean insideMultilineArgs = false;
 	private int idxMethodInvocation = -1;
@@ -30,163 +29,130 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-//	protected MultilineArgsProcessor(List<String> sourceCode) {
-//		super(sourceCode, true);
-//	}
+	public MultilineToInlineCallsConverter(List<String> sourceCode) {
+		super(sourceCode, true);
+	}
 	
 	
 	//---------------------------------------------------------------------
 	//		Methods
 	//---------------------------------------------------------------------
-	public List<String> processLines(List<String> lines) {
-		List<String> processedLines = lines;
+	@Override
+	protected String processLine(String line) {
+		String processedLine = line;
 		
-		for (int i = 0; i < lines.size(); i++) {
-			checkComments(lines.get(i));
-			
-			if (!inComment) {
-//				String processedLine = processLine(lines.get(i));
-				String processedLine = parseMultilineArgs(lines, i);
-			
-				processedLines.set(i, processedLine);
-			}
-		}
-		
-		return processedLines;
-	}
-
-	private void checkComments(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		
-		if (line.matches(regexCommentFullLine))
-			inComment = true;
-		
-		if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
-		}
-		else if (inComment && line.contains("*/")) {
-			inComment = false;
-		}
-	}
-
-
-//	private String processLine(String line) {
-//		String processedLine = line;
-//		
-//		return processedLine;
-//	}
-	
-	private String parseMultilineArgs(List<String> lines, int currentIndex) 
-	{
-		String processedLine = lines.get(currentIndex);
-
-		processedLine = combineMultilineArgs(lines, currentIndex, processedLine);
+		processedLine = combineMultilineArgs(line);
 		
 		if (!insideMultilineArgs)
 			idxMethodInvocation = -1;
-
+		
 		return processedLine;
 	}
 
-	private String combineMultilineArgs(List<String> lines, int currentIndex, String processedLine) {
-		if (isMethodCallWithMultipleLines(lines, currentIndex)) {
-			int oldLine;
-			int newLine;
-			
-			if (insideMultilineArgs) {	
-				putOnMethodInvocationLine(lines, currentIndex);
-				
-				processedLine = "";
-				
-				oldLine = currentIndex+1;			// +1 to disregarding zero
-				newLine = idxMethodInvocation+1;
-			}
-			else {
-				if (hasOnlyClosedCurlyBracket(lines.get(currentIndex+1))) {
-					insideMultilineArgs = false;					
-				}
-				else {
-					idxMethodInvocation = currentIndex;
-					insideMultilineArgs = true;
-				}
-				
-				eraseLine(lines, currentIndex+1);
-				processedLine = combineLines(lines, currentIndex, currentIndex+1);
-				
-				oldLine = currentIndex+1+1;
-				newLine = currentIndex+1;
-				
-			}
-			
-			mapping.put(oldLine, newLine);
+	private String combineMultilineArgs(String line) {
+		String processedLine = line;
+		
+		if (isMethodCallWithMultipleLines(line)) {
+			processedLine = parseMethodCallWithMultipleLines(line);
 		}
 		else if (insideMultilineArgs) {
 			insideMultilineArgs = false;
 			
-			putOnMethodInvocationLine(lines, currentIndex);
+			putOnMethodInvocationLine(line);
 			
 			processedLine = "";
 			
-			mapping.put(currentIndex+1, idxMethodInvocation+1); 
+			mapping.put(getCurrentIndex()+1, idxMethodInvocation+1); 
 		}
-		else if (hasOnlyClosedCurlyBracket(lines.get(currentIndex)) && idxMethodInvocation > 0) {
-			putOnMethodInvocationLine(lines, currentIndex);
+		else if (hasOnlyClosedCurlyBracket(processedLine) && (idxMethodInvocation > 0)) {
+			putOnMethodInvocationLine(line);
 			
 			processedLine = "";
 		}
+		
+		return processedLine;
+	}
+	
+	private boolean isMethodCallWithMultipleLines(String line) {
+		return	isMethodCallWithMultiArgs(line) 
+				&& !isParenthesesBalanced(line)
+				&& !hasClassKeywords(line) 
+				&& !isLastLine();
+	}
+
+	private boolean isMethodCallWithMultiArgs(String line) {
+		final String regexMultilineArgs = ".+,([^;{(\\[]+|[\\s\\t]*)$";
+		
+		return line.matches(regexMultilineArgs);
+	}
+	
+	private boolean isParenthesesBalanced(String line) {
+		RoundBracketBalance rbb = new RoundBracketBalance();
+		rbb.parse(line);
+		
+		return rbb.isBalanceEmpty();
+	}
+	
+	private boolean hasClassKeywords(String line) {
+		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
+		
+		return classKeywords.matcher(line).find();
+	}
+
+	private boolean isLastLine() {
+		return (getCurrentIndex()+1 >= getTotalLines());
+	}
+
+	private String parseMethodCallWithMultipleLines(String line) {
+		String processedLine = line;
+		int oldLine;
+		int newLine;
+		
+		if (insideMultilineArgs) {	
+			putOnMethodInvocationLine(line);
+			
+			processedLine = "";
+			
+			// +1 to disregarding zero
+			oldLine = getCurrentIndex()+1;	
+			newLine = idxMethodInvocation+1;
+		}
+		else {
+			if (hasOnlyClosedCurlyBracket(getNextLine())) {
+				insideMultilineArgs = false;					
+			}
+			else {
+				idxMethodInvocation = getCurrentIndex();
+				insideMultilineArgs = true;
+			}
+			
+			eraseLine(getCurrentIndex()+1);
+			processedLine = processedLine + getNextLine();
+			
+			oldLine = getCurrentIndex()+1+1;
+			newLine = getCurrentIndex()+1;
+		}
+		
+		mapping.put(oldLine, newLine);
+		
 		return processedLine;
 	}
 
-	private void putOnMethodInvocationLine(List<String> lines, int idxLine) {
-		lines.set(
-				idxMethodInvocation, 
-				combineLines(lines, idxMethodInvocation, idxLine)
+	private void putOnMethodInvocationLine(String line) {
+		setLine(
+			idxMethodInvocation, 
+			getLine(idxMethodInvocation) + line
 		);
 	}
 
-	private String combineLines(List<String> lines, int lineIdx1, int lineIdx2) {
-		return lines.get(lineIdx1) + lines.get(lineIdx2);
-	}
-
-	private void eraseLine(List<String> lines, int idxLine) {
-		lines.set(idxLine, "");
-	}
-
 	private boolean hasOnlyClosedCurlyBracket(String line) {
-		final String REGEX_MULTILINE_ARGS_CLOSE = "^.*[\\s\\t)}]+;[\\s\\t]*$";
+		final String regexOnlyClosedCurlyBracket = "^.*[\\s\\t)}]+;[\\s\\t]*$";
 		
-		return line.matches(REGEX_MULTILINE_ARGS_CLOSE);
+		return line.matches(regexOnlyClosedCurlyBracket);
 	}
 	
-	private boolean isMethodCallWithMultipleLines(List<String> lines, int currentIndex) {
-		return	isMethodCallWithMultiArgs(lines, currentIndex) 
-				&& !isParenthesesBalanced(lines, currentIndex)
-				&& !hasClassKeywords(lines, currentIndex) 
-				&& !isLastLine(lines, currentIndex);
-	}
-
-	private boolean isLastLine(List<String> lines, int currentIndex) {
-		return (currentIndex+1 >= lines.size());
-	}
-
-	private boolean isMethodCallWithMultiArgs(List<String> lines, int currentIndex) {
-		final String REGEX_MULTILINE_ARGS = ".+,([^;{(\\[]+|[\\s\\t]*)$";
-		
-		return lines.get(currentIndex).matches(REGEX_MULTILINE_ARGS);
-	}
-
-	private boolean hasClassKeywords(List<String> lines, int currentIndex) {
-		Pattern classKeywords = Pattern.compile("(@|class|implements|throws)");
-		
-		return classKeywords.matcher(lines.get(currentIndex)).find();
-	}
-
-	private boolean isParenthesesBalanced(List<String> lines, int currentIndex) {
-		RoundBracketBalance rbb = new RoundBracketBalance();
-		rbb.parse(lines.get(currentIndex));
-		
-		return rbb.isBalanceEmpty();
+	private void eraseLine(int idxLine) {
+		setLine(idxLine, "");
 	}
 	
 	

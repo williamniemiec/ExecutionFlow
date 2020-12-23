@@ -9,9 +9,15 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import executionFlow.ExecutionFlow;
 
-
-public class ClassPathSearcher 
-{
+/**
+ * Searches for source or compiled files of a class.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		5.2.3
+ * @since		1.0
+ */
+public class ClassPathSearcher {
+	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -39,88 +45,35 @@ public class ClassPathSearcher
 	 * 
 	 * @throws		IOException If an error occurs while searching for the file
 	 */
-	public static Path findBinPath(String classSignature) throws IOException 
-	{
-		String className = extractClassNameFromClassSignature(classSignature);
-		
-		// Gets folder where .class is
-		String path = extractPathFromSignature(classSignature);
-		String prefix = ExecutionFlow.isDevelopment() ? "bin\\" : "";
-		String filename = prefix + path + className + ".class";
+	public static Path findBinPath(String classSignature) throws IOException {
+		String filename = generateCompiledFilename(classSignature);
 
-		
 		binPath = null;
 		
-		// Finds absolute path where the class file is
 		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
 			@Override
 		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		        if (file.toString().endsWith(filename)) {
-		        	file = Path.of(file.toAbsolutePath().toString().replaceAll("(\\/|\\\\)org(\\/|\\\\)org(\\/|\\\\)", "/org/"));
+		        	file = fixOrg(file);
 		        	binPath = file;
 		        }
 		        
 		        return FileVisitResult.CONTINUE;
-		    }
+			}
 		});
 		
 		return binPath;
 	}
 	
-	/**
-	 * When executed it will determine the absolute path of a source file.
-	 * 
-	 * @param		className Name of the class
-	 * @param		classSignature Signature of the class
-	 * 
-	 * @return		Compiled file path or null if it cannot find the file
-	 * 
-	 * @throws		IOException If an error occurs while searching for the file
-	 */
-	public static Path findSrcPath(String classSignature) throws IOException 
-	{
-		String className = extractClassNameFromClassSignature(classSignature);
+	private static String generateCompiledFilename(String classSignature) {
+		StringBuilder filename = new StringBuilder();
+
+		filename.append(ExecutionFlow.isDevelopment() ? "bin\\" : "");
+		filename.append(extractPathFromSignature(classSignature));
+		filename.append(extractClassNameFromClassSignature(classSignature));
+		filename.append(".class");
 		
-		// Extracts parent class name from inner class (if it is one)
-		final String effectiveClassName = className.split("\\$")[0];
-		
-		// Gets path where .java is
-		String path = extractPathFromSignature(classSignature);
-		
-		String filename = path + effectiveClassName + ".java";
-		
-		
-		srcPath = null;
-		
-		// Finds absolute path where the source file is
-		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
-			@Override
-		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith(filename)) {
-		        	file = Path.of(file.toAbsolutePath().toString().replaceAll("(\\/|\\\\)org(\\/|\\\\)org(\\/|\\\\)", "/org/"));
-		        	srcPath = file;
-		        	return FileVisitResult.TERMINATE;
-		        }
-		        
-		        return FileVisitResult.CONTINUE;
-		    }
-		});
-		
-		return srcPath;
-	}
-	
-	/**
-	 * Gets class name from a class signature.
-	 * 
-	 * @param		classSignature Class signature
-	 * 
-	 * @return		Class name
-	 */
-	public static String extractClassNameFromClassSignature(String classSignature) 
-	{
-		String terms[] = classSignature.split("\\.");
-		
-		return terms[terms.length-1];
+		return filename.toString();
 	}
 	
 	/**
@@ -133,20 +86,85 @@ public class ClassPathSearcher
 	 * 
 	 * @return	File path obtained from class signature
 	 */
-	private static String extractPathFromSignature(String classSignature)
-	{
+	private static String extractPathFromSignature(String classSignature) {
 		String terms[] = classSignature.split("\\.");
 		
-		if (terms.length == 1) { return "\\"; }
+		if (terms.length == 1)
+			return "\\";
 		
 		StringBuilder response = new StringBuilder();
 		
-		// Finds path where the file is from class signature
 		for (int i=0; i<terms.length-1; i++) {
 			response.append(terms[i]);
 			response.append("\\");
 		}
 		
 		return response.toString();
+	}
+	
+	/**
+	 * Gets class name from a class signature.
+	 * 
+	 * @param		classSignature Class signature
+	 * 
+	 * @return		Class name
+	 */
+	private static String extractClassNameFromClassSignature(String classSignature) {
+		String terms[] = classSignature.split("\\.");
+		
+		return terms[terms.length-1];
+	}
+	
+	private static Path fixOrg(Path file) {
+		return Path.of(file.toAbsolutePath().toString().replaceAll(
+				"(\\/|\\\\)org(\\/|\\\\)org(\\/|\\\\)", 
+				"/org/"
+		));
+	}
+	
+	/**
+	 * When executed it will determine the absolute path of a source file.
+	 * 
+	 * @param		className Name of the class
+	 * @param		classSignature Signature of the class
+	 * 
+	 * @return		Compiled file path or null if it cannot find the file
+	 * 
+	 * @throws		IOException If an error occurs while searching for the file
+	 */
+	public static Path findSrcPath(String classSignature) throws IOException {
+		String filename = generateSrcFilename(classSignature);	
+		
+		srcPath = null;
+		
+		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
+			@Override
+		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+		        if (file.toString().endsWith(filename)) {
+		        	file = fixOrg(file);
+		        	srcPath = file;
+		        	return FileVisitResult.TERMINATE;
+		        }
+		        
+		        return FileVisitResult.CONTINUE;
+		    }
+		});
+		
+		return srcPath;
+	}
+	
+	private static String generateSrcFilename(String classSignature) {
+		StringBuilder filename = new StringBuilder();
+		String className = extractClassNameFromClassSignature(classSignature);
+		
+		filename.append(extractPathFromSignature(classSignature));
+		filename.append(extractEffectiveClassName(className));
+		filename.append(".java");
+		
+		return filename.toString();
+	}
+	
+	private static String extractEffectiveClassName(String className) {
+		return className.split("\\$")[0];
 	}
 }

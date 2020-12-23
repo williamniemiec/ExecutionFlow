@@ -11,7 +11,6 @@ import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
 import executionFlow.util.logger.Logger;
 
-
 /**
  * Captures class instantiation within test methods.
  * 
@@ -53,18 +52,12 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-	/**
-	 * Intercepts object instantiation and gets its invocation line.
-	 */
-	pointcut constructorInvocationLineCollector(): 
+	private pointcut onClassInstantiation(): 
 		!skipAnnotation()
 		&& (insideJUnit4Test() || insideJUnit5Test())
 		&& call(*.new(..));
-	
-	/**
-	 * Intercepts object instantiation within test methods.
-	 */
-	pointcut classInstantiation(): 
+
+	private pointcut insideConstructor(): 
 		!skipAnnotation()
 		&& !(JUnit4InternalCall() || JUnit5InternalCall())
 		&& call(*.new(..))
@@ -76,25 +69,24 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Join points
 	//-------------------------------------------------------------------------
-	before(): constructorInvocationLineCollector() {
+	before(): onClassInstantiation() {
 		invocationLine = thisJoinPoint.getSourceLocation().getLine();
 	}
 	
-	before(): classInstantiation() {
+	before(): insideConstructor() {
 		if (!hasValidState())
 			return;
 
 		signature = getSignature(thisJoinPoint);
 		
-		if (!isValidConstructorSignature() || isAnonymousClassSignature() 
-				|| alreadyCollected())
+		if (!isValidConstructorSignature() || alreadyCollected())
 			return;
 		
 		collectedConstructors.add(signature);
-	
+		
 		collectSourceAndBinaryPaths();
 		
-		if (srcPath == null || classPath == null)
+		if ((srcPath == null) || (classPath == null))
 			return;
 		
 		collectConstructor(thisJoinPoint);
@@ -118,6 +110,7 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	
 	private boolean isValidConstructorSignature() {
 		return	!signature.contains("java.")
+				&& !signature.matches(".+\\$[0-9]+.+")
 				&& isConstructorSignature();
 	}
 	
@@ -126,12 +119,6 @@ public aspect ConstructorCollector extends RuntimeCollector {
 				"[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		
 		return signature.matches(regexConstructor);
-	}
-	
-	private boolean isAnonymousClassSignature() {
-		final String regexAnonymousConstructor = ".+\\$[0-9]+.+";
-		
-		return signature.matches(regexAnonymousConstructor);
 	}
 	
 	private boolean alreadyCollected() {
