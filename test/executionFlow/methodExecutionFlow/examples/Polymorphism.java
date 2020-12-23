@@ -1,25 +1,13 @@
 package executionFlow.methodExecutionFlow.examples;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.ExecutionFlowTest;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.manager.FileManager;
-import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
-
 
 /**
  * Tests test path computation for the tested methods of 
@@ -27,40 +15,7 @@ import executionFlow.runtime.SkipCollection;
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class Polymorphism extends MethodExecutionFlowTest
-{
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/polymorphism/PolymorphismTest.class");
-	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/polymorphism/PolymorphismTest.java");
-	private static final String PACKAGE_TEST_METHOD = "examples.polymorphism";
-	private static final Path PATH_BIN_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/polymorphism/ClassInterface.class");
-	private static final Path PATH_SRC_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/polymorphism/ClassInterface.java");
-	
-	
-	//-------------------------------------------------------------------------
-	//		Test preparers
-	//-------------------------------------------------------------------------
-	/**
-	 * @param		classSignature Test class signature
-	 * @param		testMethodSignature Test method signature
-	 * 
-	 * @throws		IOException If an error occurs during file parsing
-	 * @throws		ClassNotFoundException If class {@link FileManager} was not
-	 * found
-	 */
-	public void init(String classSignature, String testMethodSignature) 
-			throws IOException, ClassNotFoundException
-	{
-		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
-				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
-	}
-	
+public class Polymorphism extends ExecutionFlowTest {
 	
 	//-------------------------------------------------------------------------
 	//		Tests
@@ -70,58 +25,14 @@ public class Polymorphism extends MethodExecutionFlowTest
 	 * method.
 	 */
 	@Test
-	public void testClassParam() throws Throwable 
-	{
-		/**
-		 * Stores information about collected methods.
-		 * <ul>
-		 * 	<li><b>Key:</b> Method invocation line</li>
-		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-		 * </ul>
-		 */
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-
-		List<List<Integer>> testPaths;
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 20;
+	public void testClassParam() throws Throwable {
+		withTestMethodSignature("examples.polymorphism.PolymorphismTest.testParam()");
+		invokedOnLine(20);
+		initializeTest();
 		
+		computeTestPathOf("examples.polymorphism.ClassInterface.testClassParam(ClassInterface)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.polymorphism.PolymorphismTest.testParam()";
-		methodSignature = "examples.polymorphism.ClassInterface.testClassParam(ClassInterface)";
-		
-		init("examples.polymorphism.ClassInterface", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("testClassParam")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(
-			Arrays.asList(
-				Arrays.asList(12)
-			),
-			testPaths
-		);
+		assertTestPathIs(12);
 	}
 	
 	/**
@@ -129,49 +40,46 @@ public class Polymorphism extends MethodExecutionFlowTest
 	 * method.
 	 */
 	@Test
-	public void interfaceMethod() throws Throwable 
-	{
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<List<Integer>> testPaths;
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 33;
+	public void interfaceMethod() throws Throwable {
+		withTestMethodSignature("examples.polymorphism.PolymorphismTest.testInterface()");
+		invokedOnLine(33);
+		initializeTest();
 		
+		computeTestPathOf("examples.polymorphism.ClassInterface.interfaceMethod()");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.polymorphism.PolymorphismTest.testInterface()";
-		methodSignature = "examples.polymorphism.ClassInterface.interfaceMethod()";
-		
-		init("examples.polymorphism.ClassInterface", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("interfaceMethod")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(
-			Arrays.asList(
-				Arrays.asList(8,9)
-			),
-			testPaths
+		assertTestPathIs(8,9);
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	@Override
+	protected String getTestMethodPackage() {
+		return "examples.polymorphism";
+	}
+	
+	@Override
+	protected Path getTestMethodBinFile() {
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("bin", "examples", "polymorphism", "PolymorphismTest.class")
 		);
+	}
+	
+	@Override
+	protected Path getTestMethodSrcFile() {
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("examples", "examples", "polymorphism", "PolymorphismTest.java")
+		);
+	}
+	
+	@Override
+	protected Path getBinTestedInvoked() {
+		return Path.of("bin", "examples", "polymorphism", "ClassInterface.class");
+	}
+	
+	@Override
+	protected Path getSrcTestedInvoked() {
+		return Path.of("examples", "examples", "polymorphism", "ClassInterface.java");
 	}
 }

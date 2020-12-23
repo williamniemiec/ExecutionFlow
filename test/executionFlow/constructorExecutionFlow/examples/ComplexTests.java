@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
-import executionFlow.ExecutionFlowTest;
+import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
 /**
@@ -16,7 +16,7 @@ import executionFlow.runtime.SkipCollection;
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
-public class ComplexTests extends ExecutionFlowTest {	
+public class ComplexTests extends ConstructorExecutionFlowTest {	
 	
 	//-------------------------------------------------------------------------
 	//		Tests
@@ -28,8 +28,6 @@ public class ComplexTests extends ExecutionFlowTest {
 	@Test
 	public void testForConstructorAndMethod() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.complexTests.ComplexTests.testForConstructorAndMethod()");
-		withParameterTypes(int.class, int.class, int.class, int.class);
-		withParameterValues(1, 2, 3, 4);
 		invokedOnLine(18);
 		initializeTest();
 		
@@ -61,8 +59,6 @@ public class ComplexTests extends ExecutionFlowTest {
 	@Test
 	public void moreOneConstructorWithBooleanParam() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
-		withParameterTypes(boolean.class);
-		withParameterValues(true);
 		invokedOnLine(32);
 		initializeTest();
 		

@@ -1,5 +1,6 @@
 package executionFlow.methodExecutionFlow.examples;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class ComplexTests extends ExecutionFlowTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	@Test
-	public void factorial_constructor() throws Throwable {
+	public void factorial_constructor() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.complexTests.ComplexTests.testForConstructorAndMethod()");
 		invokedOnLine(19);
 		initializeTest();
@@ -41,7 +42,7 @@ public class ComplexTests extends ExecutionFlowTest {
 	 * {@link  examples.complexTests.ComplexTests.moreOneConstructor()} test.
 	 */
 	@Test
-	public void moreOneConstructor_first() throws Throwable {
+	public void moreOneConstructor_first() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
 		invokedOnLine(34);
 		initializeTest();
@@ -56,7 +57,7 @@ public class ComplexTests extends ExecutionFlowTest {
 	 * {@link  examples.complexTests.ComplexTests.moreOneConstructor()} test.
 	 */
 	@Test
-	public void moreOneConstructor_two() throws Throwable {
+	public void moreOneConstructor_two() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
 		invokedOnLine(35);
 		initializeTest();
@@ -71,7 +72,7 @@ public class ComplexTests extends ExecutionFlowTest {
 	 * {@link  examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()} test.
 	 */
 	@Test
-	public void moreOneConstructorAndStaticMethod() throws Throwable {
+	public void moreOneConstructorAndStaticMethod() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()");
 		invokedOnLine(50);
 		initializeTest();

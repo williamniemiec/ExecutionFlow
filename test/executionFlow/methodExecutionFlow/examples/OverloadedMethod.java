@@ -1,25 +1,13 @@
 package executionFlow.methodExecutionFlow.examples;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.ExecutionFlowTest;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.manager.FileManager;
-import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
-
 
 /**
  * Tests test path computation for the tested methods of 
@@ -27,40 +15,7 @@ import executionFlow.runtime.SkipCollection;
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class OverloadedMethod extends MethodExecutionFlowTest
-{
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/overloadedMethod/OverloadTest.class");
-	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/overloadedMethod/OverloadTest.java");
-	private static final String PACKAGE_TEST_METHOD = "examples.builderPattern";
-	private static final Path PATH_BIN_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/overloadedMethod/OverloadClass.class");
-	private static final Path PATH_SRC_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/overloadedMethod/OverloadClass.java");
-	
-	
-	//-------------------------------------------------------------------------
-	//		Test preparers
-	//-------------------------------------------------------------------------
-	/**
-	 * @param		classSignature Test class signature
-	 * @param		testMethodSignature Test method signature
-	 * 
-	 * @throws		IOException If an error occurs during file parsing
-	 * @throws		ClassNotFoundException If class {@link FileManager} was not
-	 * found
-	 */
-	public void init(String classSignature, String testMethodSignature) 
-			throws IOException, ClassNotFoundException
-	{
-		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
-				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
-	}
-	
+public class OverloadedMethod extends ExecutionFlowTest {
 	
 	//-------------------------------------------------------------------------
 	//		Tests
@@ -70,58 +25,14 @@ public class OverloadedMethod extends MethodExecutionFlowTest
 	 * method.
 	 */
 	@Test
-	public void testOverloadedMethod() throws Throwable 
-	{
-		/**
-		 * Stores information about collected methods.
-		 * <ul>
-		 * 	<li><b>Key:</b> Method invocation line</li>
-		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-		 * </ul>
-		 */
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-
-		List<List<Integer>> testPaths;
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 11;
+	public void testOverloadedMethod() throws Throwable {
+		withTestMethodSignature("examples.overloadedMethod.OverloadTest.testOverloadedMethod()");
+		invokedOnLine(11);
+		initializeTest();
 		
+		computeTestPathOf("examples.overloadedMethod.OverloadClass.overloadedMethod()");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.overloadedMethod.OverloadTest.testOverloadedMethod()";
-		methodSignature = "examples.overloadedMethod.OverloadClass.overloadedMethod()";
-		
-		init("examples.overloadedMethod.OverloadClass", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("overloadedMethod")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(
-			Arrays.asList(
-				Arrays.asList(15,16,17,18)
-			),
-			testPaths
-		);
+		assertTestPathIs(15,16,17,18);
 	}
 	
 	/**
@@ -129,49 +40,46 @@ public class OverloadedMethod extends MethodExecutionFlowTest
 	 * method.
 	 */
 	@Test
-	public void testOverloadedMethod2() throws Throwable 
-	{
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<List<Integer>> testPaths;
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 18;
+	public void testOverloadedMethod2() throws Throwable {
+		withTestMethodSignature("examples.overloadedMethod.OverloadTest.testOverloadedMethod2()");
+		invokedOnLine(18);
+		initializeTest();
 		
+		computeTestPathOf("examples.overloadedMethod.OverloadClass.overloadedMethod(int)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.overloadedMethod.OverloadTest.testOverloadedMethod2()";
-		methodSignature = "examples.overloadedMethod.OverloadClass.overloadedMethod(int)";
-		
-		init("examples.overloadedMethod.OverloadClass", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("overloadedMethod")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(
-			Arrays.asList(
-				Arrays.asList(11,12)
-			),
-			testPaths
+		assertTestPathIs(11,12);
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	@Override
+	protected String getTestMethodPackage() {
+		return "examples.overloadedMethod";
+	}
+	
+	@Override
+	protected Path getTestMethodBinFile() {
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("bin", "examples", "overloadedMethod", "OverloadTest.class")
 		);
+	}
+	
+	@Override
+	protected Path getTestMethodSrcFile() {
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("examples", "examples", "overloadedMethod", "OverloadTest.java")
+		);
+	}
+	
+	@Override
+	protected Path getBinTestedInvoked() {
+		return Path.of("bin", "examples", "overloadedMethod", "OverloadClass.class");
+	}
+	
+	@Override
+	protected Path getSrcTestedInvoked() {
+		return Path.of("examples", "examples", "overloadedMethod", "OverloadClass.java");
 	}
 }

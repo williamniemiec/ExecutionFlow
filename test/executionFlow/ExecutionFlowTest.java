@@ -105,20 +105,20 @@ public abstract class ExecutionFlowTest {
 		this.testMethodSignature = testMethodSignature;
 	}
 
-	@SuppressWarnings("rawtypes")
-	protected void withParameterTypes(Class... types) {
-		if (types.length == 0)
-			paramTypes = new Class[] {};
-		else
-			paramTypes = types;
-	}
-
-	protected void withParameterValues(Object... values) {
-		if (values.length == 0)
-			paramValues = new Object[] {};
-		else
-			paramValues = values;
-	}
+//	@SuppressWarnings("rawtypes")
+//	protected void withParameterTypes(Class... types) {
+//		if (types.length == 0)
+//			paramTypes = new Class[] {};
+//		else
+//			paramTypes = types;
+//	}
+//
+//	protected void withParameterValues(Object... values) {
+//		if (values.length == 0)
+//			paramValues = new Object[] {};
+//		else
+//			paramValues = values;
+//	}
 
 	protected void invokedOnLine(int lineNumber) {
 		if (lineNumber <= 0)
@@ -127,7 +127,7 @@ public abstract class ExecutionFlowTest {
 		this.invocationLine = lineNumber;
 	}
 	
-	protected void withTestMethodParameterValues(Object[] args) {
+	protected void withTestMethodParameterValues(Object... args) {
 		this.testMethodArgs = args;
 	}
 	
@@ -146,6 +146,10 @@ public abstract class ExecutionFlowTest {
 	
 	protected void assertTestPathIs(int... testPath) {
 		assertEquals(Arrays.asList(testPath), testPaths);
+	}
+	
+	protected void assertTestPathIsEmpty() {
+		assertEquals(Arrays.asList(), testPaths);
 	}
 	
 	protected void assertTestPathIs(int[]... testPath) {

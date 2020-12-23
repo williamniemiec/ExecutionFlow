@@ -1,25 +1,13 @@
 package executionFlow.methodExecutionFlow.examples;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
+import executionFlow.ExecutionFlowTest;
 import executionFlow.MethodExecutionFlow;
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.manager.FileManager;
-import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
-
 
 /**
  * Tests test path computation for the tested methods of 
@@ -27,516 +15,130 @@ import executionFlow.runtime.SkipCollection;
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class ControlFlowTest extends MethodExecutionFlowTest
-{
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private static final Path PATH_BIN_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/controlFlow/ControlFlowTest.class");
-	private static final Path PATH_SRC_TEST_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/controlFlow/ControlFlowTest.java");
-	private static final String PACKAGE_TEST_METHOD = "examples.controlFlow";
-	private static final Path PATH_BIN_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "bin/examples/controlFlow/TestClass_ControlFlow.class");
-	private static final Path PATH_SRC_METHOD = 
-			Path.of(ExecutionFlow.getAppRootPath().toString(), "examples/examples/controlFlow/TestClass_ControlFlow.java");
-	
-	
-	//-------------------------------------------------------------------------
-	//		Test preparers
-	//-------------------------------------------------------------------------
-	/**
-	 * @param		classSignature Test class signature
-	 * @param		testMethodSignature Test method signature
-	 * 
-	 * @throws		IOException If an error occurs during file parsing
-	 * @throws		ClassNotFoundException If class {@link FileManager} was not
-	 * found
-	 */
-	public void init(String classSignature, String testMethodSignature) 
-			throws IOException, ClassNotFoundException
-	{
-		init(classSignature, testMethodSignature, PATH_SRC_TEST_METHOD, 
-				PATH_BIN_TEST_METHOD, PACKAGE_TEST_METHOD);
-	}
-	
+public class ControlFlowTest extends ExecutionFlowTest {
 	
 	//-------------------------------------------------------------------------
 	//		Tests
 	//-------------------------------------------------------------------------
 	@Test
-	public void ifElseTest_earlyReturn() throws Throwable 
-	{
-		/**
-		 * Stores information about collected methods.
-		 * <ul>
-		 * 	<li><b>Key:</b> Method invocation line</li>
-		 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-		 * </ul>
-		 */
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-
-		List<List<Integer>> testPaths;
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 19;
+	public void ifElseTest_earlyReturn() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()");
+		invokedOnLine(19);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseMethod(int)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest_earlyReturn()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod(int)";
-		
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("ifElseTest_earlyReturn")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(7,8), testPaths.get(0));
+		assertTestPathIs(7, 8);
 	}
 	
 	@Test
-	public void ifElseTest() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 29;
+	public void ifElseTest() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest()");
+		invokedOnLine(29);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseMethod()");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
-		
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("ifElseMethod")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(7,10,11,12,20), testPaths.get(0));
+		assertTestPathIs(7,10,11,12,20);
 	}
 	
 	@Test
-	public void ifElseTest2() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 39;
+	public void ifElseTest2() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest2()");
+		invokedOnLine(39);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseMethod()");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest2()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
-		
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("ifElseMethod2")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(7,10,11,14,15,20), testPaths.get(0));
+		assertTestPathIs(7,10,11,14,15,20);
 	}
 	
 	@Test
-	public void ifElseTest3() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 49;
+	public void ifElseTest3() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseTest3()");
+		invokedOnLine(49);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseMethod()");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseTest3()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseMethod()";
-		
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("ifElseMethod3")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(7,10,11,14,17,18,20), testPaths.get(0));
+		assertTestPathIs(7,10,11,14,17,18,20);
 	}
 	
 	@Test
-	public void tryCatchTest1() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 59;
+	public void tryCatchTest1() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.tryCatchTest1()");
+		invokedOnLine(59);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_try()");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.tryCatchTest1()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_try()";
-		
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("tryCatchMethod_try")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(23,24,25,26,27,28,29,34), testPaths.get(0));
+		assertTestPathIs(23,24,25,26,27,28,29,34);
 	}
 	
 	@Test
-	public void tryCatchTest2() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 66;
+	public void tryCatchTest2() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.tryCatchTest2()");
+		invokedOnLine(66);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.tryCatchTest2()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.tryCatchMethod_catch()";
-
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);		
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("tryCatchMethod_catch")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(37,38,39,40,42,43), testPaths.get(0));
+		assertTestPathIs(37,38,39,40,42,43);
 	}
 	
 	@Test
-	public void switchCaseTest() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 74;
+	public void switchCaseTest() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.switchCaseTest()");
+		invokedOnLine(74);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.switchCaseMethod(char)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.switchCaseTest()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.switchCaseMethod(char)";
-
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("switchCaseMethod")
-				.build();
-		
-		ci =new InvokedContainer(methodInfo, testMethodInfo);
-
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(47,48,55,56,57,58,59,77), testPaths.get(0));
+		assertTestPathIs(47,48,55,56,57,58,59,77);
 	}
 	
 	@Test
-	public void doWhileTest() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 82;
+	public void doWhileTest() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.doWhileTest()");
+		invokedOnLine(82);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.doWhileTest()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.doWhileMethod(int,int)";
-
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("doWhileMethod")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		// Computes test path
-		ExecutionFlow ef = new MethodExecutionFlow(processingManager, methodCollector);
-		
-		// Gets test path
-		testPaths = ef.run().getTestPaths(testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(80,83,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,91), testPaths.get(0));
+		assertTestPathIs(80,83,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,86,87,88,90,91);
 	}
 	
 	@Test
-	public void inlineWhile() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 92;
+	public void inlineWhile() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.inlineWhile()");
+		invokedOnLine(92);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.inlineWhile(int)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineWhile()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineWhile(int)";
-
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("inlineWhile")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(95,96,95,96,95,98), testPaths.get(0));
+		assertTestPathIs(95,96,95,96,95,98);
 	}
 	
 	@Test
-	public void inlineDoWhile() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 100;
+	public void inlineDoWhile() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.inlineDoWhile()");
+		invokedOnLine(100);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.inlineDoWhile(int)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineDoWhile()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineDoWhile(int)";
-
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("inlineDoWhile")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(109,112,113,115,112,113,115,112,116), testPaths.get(0));
+		assertTestPathIs(109,112,113,115,112,113,115,112,116);
 	}
 	
 	@Test
-	public void inlineIfElse() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 108;
+	public void inlineIfElse() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.inlineIfElse()");
+		invokedOnLine(108);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.inlineIfElse(int)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.inlineIfElse()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.inlineIfElse(int)";
-
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("inlineIfElse")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(101,102), testPaths.get(0));
+		assertTestPathIs(101,102);
 	}
 	
 	/**
@@ -544,45 +146,14 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	 * {@link  examples.complexTests.ComplexTests.ifElseSameLine()} test.
 	 */
 	@Test
-	public void ifElseSameLine() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 116;
+	public void ifElseSameLine() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseSameLine()");
+		invokedOnLine(116);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseSameLine(int)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseSameLine()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseSameLine(int)";
-		
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("ifElseSameLine")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(119,120,125), testPaths.get(0));
+		assertTestPathIs(119,120,125);
 	}
 	
 	/**
@@ -590,44 +161,46 @@ public class ControlFlowTest extends MethodExecutionFlowTest
 	 * {@link  examples.complexTests.ComplexTests.ifElseSameLine()} test.
 	 */
 	@Test
-	public void ifElseSameLine2() throws Throwable 
-	{
-		List<List<Integer>> testPaths;
-		Map<Integer, List<InvokedContainer>> methodCollector = new LinkedHashMap<>();
-		List<InvokedContainer> methodsInvoked = new ArrayList<>();
-		String testMethodSignature, methodSignature;
-		InvokedInfo testMethodInfo, methodInfo;
-		InvokedContainer ci;
-		int invocationLine = 117;
+	public void ifElseSameLine2() throws Throwable {
+		withTestMethodSignature("examples.controlFlow.ControlFlowTest.ifElseSameLine()");
+		invokedOnLine(117);
+		initializeTest();
 		
+		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow.ifElseSameLine(int)");
 		
-		// Defines which methods will be collected
-		testMethodSignature = "examples.controlFlow.ControlFlowTest.ifElseSameLine()";
-		methodSignature = "examples.controlFlow.TestClass_ControlFlow.ifElseSameLine(int)";
-		
-		init("examples.controlFlow.TestClass_ControlFlow", testMethodSignature);
-		
-		testMethodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_TEST_METHOD)
-				.invokedSignature(testMethodSignature)
-				.srcPath(PATH_SRC_TEST_METHOD)
-				.build();
-		
-		methodInfo = new InvokedInfo.Builder()
-				.binPath(PATH_BIN_METHOD)
-				.srcPath(PATH_SRC_METHOD)
-				.invocationLine(invocationLine)
-				.invokedSignature(methodSignature)
-				.invokedName("ifElseSameLine")
-				.build();
-		
-		ci = new InvokedContainer(methodInfo, testMethodInfo);
-		
-		methodsInvoked.add(ci);
-		methodCollector.put(invocationLine, methodsInvoked);
-		
-		testPaths = computeTestPath(methodCollector, testMethodSignature, methodSignature);
-		
-		assertEquals(Arrays.asList(119,122,123,125), testPaths.get(0));
+		assertTestPathIs(119,122,123,125);
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	@Override
+	protected String getTestMethodPackage() {
+		return "examples.controlFlow";
+	}
+	
+	@Override
+	protected Path getTestMethodBinFile() {
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("bin", "examples", "controlFlow", "ControlFlowTest.class")
+		);
+	}
+	
+	@Override
+	protected Path getTestMethodSrcFile() {
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("examples", "examples", "controlFlow", "ControlFlowTest.java")
+		);
+	}
+	
+	@Override
+	protected Path getBinTestedInvoked() {
+		return Path.of("bin", "examples", "controlFlow", "TestClass_ControlFlow.class");
+	}
+	
+	@Override
+	protected Path getSrcTestedInvoked() {
+		return Path.of("examples", "examples", "controlFlow", "TestClass_ControlFlow.java");
 	}
 }
