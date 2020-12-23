@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import executionFlow.ConstructorExecutionFlow;
 import executionFlow.ExecutionFlow;
-import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
+import executionFlow.ExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
 /**
@@ -16,44 +16,7 @@ import executionFlow.runtime.SkipCollection;
  * {@link ConstructorExecutionFlow} class.
  */
 @SkipCollection
-public class ComplexTests extends ConstructorExecutionFlowTest {	
-	
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	protected static final Path PATH_SRC_TEST_METHOD;
-	protected static final Path PATH_BIN_TEST_METHOD;
-	protected static final String PACKAGE_TEST_METHOD;
-	protected static final String CLASS_SIGNATURE;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	static {
-		PATH_SRC_TEST_METHOD = ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "complexTests", "ComplexTests.java")
-		);
-		PATH_BIN_TEST_METHOD = ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "complexTests", "ComplexTests.class")
-		);
-		PACKAGE_TEST_METHOD = "examples.complexTests";
-		CLASS_SIGNATURE = "examples.complexTests.ComplexTests";
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	public ComplexTests() {
-		super(
-				CLASS_SIGNATURE, 
-				PACKAGE_TEST_METHOD, 
-				PATH_SRC_TEST_METHOD, 
-				PATH_BIN_TEST_METHOD
-		);
-	}
-	
+public class ComplexTests extends ExecutionFlowTest {	
 	
 	//-------------------------------------------------------------------------
 	//		Tests
@@ -63,36 +26,31 @@ public class ComplexTests extends ConstructorExecutionFlowTest {
 	 * test.
 	 */
 	@Test
-	public void testForConstructorAndMethod() 
-			throws ClassNotFoundException, IOException {
-		testMethodSignature = "examples.complexTests.ComplexTests.testForConstructorAndMethod()"; 
-		paramValues = new Object[] {1, 2, 3, 4};
-		paramTypes = new Class[] {int.class, int.class, int.class, int.class};
-		invocationLine = 18;
-		withSignature("examples.complexTests.ComplexTests.testForConstructorAndMethod()");
+	public void testForConstructorAndMethod() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.complexTests.ComplexTests.testForConstructorAndMethod()");
 		withParameterTypes(int.class, int.class, int.class, int.class);
 		withParameterValues(1, 2, 3, 4);
-		invokedOnLine(18)
-		
+		invokedOnLine(18);
 		initializeTest();
+		
 		computeTestPathOf("examples.complexTests.TestClass_ComplexTests(int)");
+		
 		assertTestPathIs(14, 14, 14, 14);
 	}
-	
+
+
 	/**
 	 * Tests first constructor used by 
 	 * {@link examples.complexTests.ComplexTests#moreOneConstructor()} test.
 	 */
 	@Test
-	public void moreOneConstructorWithoutParams() 
-			throws ClassNotFoundException, IOException {
-		testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructor()";
-		paramValues = new Object[] {};
-		paramTypes = new Class[] {};
-		invocationLine = 31;
+	public void moreOneConstructorWithoutParams() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
+		invokedOnLine(31);
+		initializeTest();
 		
-		initializeTest(testMethodSignature);
 		computeTestPathOf("examples.complexTests.TestClass_ComplexTests()");
+		
 		assertTestPathIs(17);
 	}
 	
@@ -101,15 +59,48 @@ public class ComplexTests extends ConstructorExecutionFlowTest {
 	 * {@link examples.complexTests.ComplexTests#moreOneConstructor()} test.
 	 */
 	@Test
-	public void moreOneConstructorWithBooleanParam() 
-			throws ClassNotFoundException, IOException {
-		testMethodSignature = "examples.complexTests.ComplexTests.moreOneConstructor()";
-		paramValues = new Object[] {true};
-		paramTypes = new Class[] {boolean.class};
-		invocationLine = 32;
+	public void moreOneConstructorWithBooleanParam() throws ClassNotFoundException, IOException {
+		withTestMethodSignature("examples.complexTests.ComplexTests.moreOneConstructor()");
+		withParameterTypes(boolean.class);
+		withParameterValues(true);
+		invokedOnLine(32);
+		initializeTest();
 		
-		initializeTest(testMethodSignature);
 		computeTestPathOf("examples.complexTests.TestClass_ComplexTests(boolean)");
+		
 		assertTestPathIs(10, 11);
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	@Override
+	protected String getTestMethodPackage() {
+		return "examples.complexTests";
+	}
+	
+	@Override
+	protected Path getTestMethodBinFile() {
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("bin", "examples", "complexTests", "ComplexTests.class")
+		);
+	}
+	
+	@Override
+	protected Path getTestMethodSrcFile() {
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("examples", "examples", "complexTests", "ComplexTests.java")
+		);
+	}
+	
+	@Override
+	protected Path getBinTestedInvoked() {
+		return Path.of("bin", "examples", "complexTests", "TestClass_ComplexTests.class");
+	}
+	
+	@Override
+	protected Path getSrcTestedInvoked() {
+		return Path.of("examples", "examples", "complexTests", "TestClass_ComplexTests.java");
 	}
 }

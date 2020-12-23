@@ -36,25 +36,27 @@ public abstract class ExecutionFlowTest {
 	protected static InvokedManager processingManager;
 	private Path srcTestMethod;
 	private Path binTestMethod;
-	private String classSignature;
 	private String pkgTestMethod;
 	
-	protected String testMethodSignature;
-	protected Object[] paramValues;
-	protected List<List<Integer>> testPaths;
-	protected Class<?>[] paramTypes;
-	protected int invocationLine;
+	private String testMethodSignature;
+	private Object[] paramValues;
+	private List<List<Integer>> testPaths;
+	private Class<?>[] paramTypes;
+	private int invocationLine;
+	private Object[] testMethodArgs;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	protected ExecutionFlowTest(String classSignature, String pkgTestMethod, Path srcTestMethod, 
-								Path binTestMethod) {
-		this.classSignature = classSignature;
-		this.pkgTestMethod = pkgTestMethod;
-		this.srcTestMethod = srcTestMethod;
-		this.binTestMethod = binTestMethod;
+	protected ExecutionFlowTest(/*String pkgTestMethod, Path srcTestMethod, 
+								Path binTestMethod*/) {
+//		this.pkgTestMethod = pkgTestMethod;
+//		this.srcTestMethod = srcTestMethod;
+//		this.binTestMethod = binTestMethod;
+		this.testMethodArgs = (Object[]) null;
+		this.paramTypes = new Class[] {};
+		this.paramValues = new Object[] {};
 	}
 	
 		
@@ -99,6 +101,36 @@ public abstract class ExecutionFlowTest {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	protected void withTestMethodSignature(String testMethodSignature) {
+		this.testMethodSignature = testMethodSignature;
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected void withParameterTypes(Class... types) {
+		if (types.length == 0)
+			paramTypes = new Class[] {};
+		else
+			paramTypes = types;
+	}
+
+	protected void withParameterValues(Object... values) {
+		if (values.length == 0)
+			paramValues = new Object[] {};
+		else
+			paramValues = values;
+	}
+
+	protected void invokedOnLine(int lineNumber) {
+		if (lineNumber <= 0)
+			throw new IllegalArgumentException("Invocation line must be greater than zero");
+		
+		this.invocationLine = lineNumber;
+	}
+	
+	protected void withTestMethodParameterValues(Object[] args) {
+		this.testMethodArgs = args;
+	}
+	
 	protected List<List<Integer>> computeTestPath(Collection<InvokedContainer> collection, 
 												  InvokedContainer container) {
 		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, collection);
@@ -115,31 +147,41 @@ public abstract class ExecutionFlowTest {
 	protected void assertTestPathIs(int... testPath) {
 		assertEquals(Arrays.asList(testPath), testPaths);
 	}
+	
+	protected void assertTestPathIs(int[]... testPath) {
+		assertEquals(Arrays.asList(testPath), testPaths);
+	}
 
-	protected void computeTestPathOf(String constructorSignature) {
+	protected void computeTestPathOf(String invokedSignature) {
 		InvokedContainer container = new InvokedContainer(
-				getConstructorInfo(paramValues, constructorSignature),
+				getInvokedInfo(invokedSignature),
 				getTestMethodInfo(testMethodSignature)
 		);
 		
-		String key = constructorSignature + Arrays.toString(paramValues);
+		String key = invokedSignature + Arrays.toString(paramValues);
 		
-		Map<String, InvokedContainer> constructorCollector = new LinkedHashMap<>();
-		constructorCollector.put(key, container);
+		Map<String, InvokedContainer> collector = new LinkedHashMap<>();
+		collector.put(key, container);
 		
-		testPaths = computeTestPath(constructorCollector.values(), container);
+		testPaths = computeTestPath(collector.values(), container);
 	}
 
-	protected InvokedInfo getConstructorInfo(Object[] paramValues, String signature) {		
+	protected InvokedInfo getInvokedInfo(String signature) {		
 		return new InvokedInfo.Builder()
-			.binPath(Path.of("bin/examples/complexTests/TestClass_ComplexTests.class"))
-			.srcPath(Path.of("examples/examples/complexTests/TestClass_ComplexTests.java"))
+			.binPath(getBinTestedInvoked())
+			.srcPath(getSrcTestedInvoked())
 			.invokedSignature(signature)
-			.isConstructor(true)
+			.isConstructor(isConstructor())
 			.parameterTypes(paramTypes)
 			.args(paramValues)
 			.invocationLine(invocationLine)
 			.build();
+	}
+	
+	
+	
+	protected boolean isConstructor() {
+		return false;
 	}
 
 	protected InvokedInfo getTestMethodInfo(String testMethodSignature) {
@@ -150,23 +192,48 @@ public abstract class ExecutionFlowTest {
 			.build();
 	}
 	
-	protected void initializeTest(String testMethodSignature) 
-			throws ClassNotFoundException, IOException {
-		init(testMethodSignature, (Object[]) null);
-	}
-	
 	/**
 	 * @throws		IOException If an error occurs during file parsing
 	 * @throws		ClassNotFoundException If class {@link FileManager} was not
 	 * found
 	 */
-	protected void init(String testMethodSignature, Object... testMethodArgs) 
-			throws IOException, ClassNotFoundException {
+	protected void initializeTest() throws IOException, ClassNotFoundException {
+		initializeFields();
+		checkRequiredFields();
+		
 		initializeProcessingManager();		
 		onShutdown();
 		initializeTestMethodManager(testMethodSignature, srcTestMethod, binTestMethod, 
-									pkgTestMethod, testMethodArgs);
+									pkgTestMethod);
 		doPreprocessing();
+	}
+
+	private void initializeFields() {
+		this.pkgTestMethod = getTestMethodPackage();
+		this.binTestMethod = getTestMethodBinFile();
+		this.srcTestMethod = getTestMethodSrcFile();
+	}
+	
+	protected abstract String getTestMethodPackage();
+	protected abstract Path getTestMethodBinFile();
+	protected abstract Path getTestMethodSrcFile();
+	protected abstract Path getBinTestedInvoked();
+	protected abstract Path getSrcTestedInvoked();
+
+
+	private void checkRequiredFields() {
+		checkTestMethodSignature();
+		checkInvocationLine();
+	}
+
+	private void checkTestMethodSignature() {
+		if ((testMethodSignature == null) || testMethodSignature.isBlank())
+			throw new IllegalStateException("Test method signature cannot be empty");
+	}
+
+	private void checkInvocationLine() {
+		if (invocationLine <= 0)
+			throw new IllegalStateException("Invocation line must be greater than zero");
 	}
 
 	private void initializeProcessingManager() 
@@ -178,8 +245,7 @@ public abstract class ExecutionFlowTest {
 
 	private void initializeTestMethodManager(String testMethodSignature, 
 											 Path srcTestMethod, Path binTestMethod,
-											 String packageTestMethod, 
-											 Object... testMethodArgs) 
+											 String packageTestMethod) 
 			 throws ClassNotFoundException, IOException {
 		testMethodManager = new FilesManager(ProcessorType.PRE_TEST_METHOD, false);
 		
@@ -234,22 +300,24 @@ public abstract class ExecutionFlowTest {
 		});
 	}
 	
-	/**
-	 * @param		classSignature Test class signature
-	 * @param		testMethodSignature Test method signature
-	 * @param		srcTestMethod Test method compiled file path
-	 * @param		binTestMethod Test method source file path
-	 * @param		packageTestMethod Test method package
-	 * @param		testMethodArgs Test method arguments (when it is a parameterized test)
-	 * 
-	 * @throws		IOException If an error occurs during file parsing
-	 * @throws		ClassNotFoundException If class {@link FileManager} was not
-	 * found
-	 */
-	protected void init(String classSignature, String testMethodSignature, 
-			Path srcTestMethod, Path binTestMethod, String packageTestMethod) 
-			throws IOException, ClassNotFoundException {
-		init(classSignature, testMethodSignature, srcTestMethod, binTestMethod, 
-				packageTestMethod, (Object[])null);
-	}
+	
+	
+//	/**
+//	 * @param		classSignature Test class signature
+//	 * @param		testMethodSignature Test method signature
+//	 * @param		srcTestMethod Test method compiled file path
+//	 * @param		binTestMethod Test method source file path
+//	 * @param		packageTestMethod Test method package
+//	 * @param		testMethodArgs Test method arguments (when it is a parameterized test)
+//	 * 
+//	 * @throws		IOException If an error occurs during file parsing
+//	 * @throws		ClassNotFoundException If class {@link FileManager} was not
+//	 * found
+//	 */
+//	protected void init(String classSignature, String testMethodSignature, 
+//			Path srcTestMethod, Path binTestMethod, String packageTestMethod) 
+//			throws IOException, ClassNotFoundException {
+//		init(classSignature, testMethodSignature, srcTestMethod, binTestMethod, 
+//				packageTestMethod, (Object[])null);
+//	}
 }
