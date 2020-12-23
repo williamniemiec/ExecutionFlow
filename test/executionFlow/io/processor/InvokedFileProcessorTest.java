@@ -1,355 +1,246 @@
 package executionFlow.io.processor;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.junit.Test;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.runtime.SkipCollection;
 
-
 @SkipCollection
-public class InvokedFileProcessorTest
-{
-	@Test
-	public void testAuxClass() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "AuxClass";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
+public class InvokedFileProcessorTest extends FileProcessorTest {
 	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
-	public void forEachToFor() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "forEachToFor.txt";
-		File f = new File(currentDir, filename);
+	public void testAuxClass() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+							  "files", "InvokedFileProcessorTest"));
+		withFilename("AuxClass");
+		initializeTest();
 		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testEmptyClass() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_empty";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 
 	@Test
-	public void testParseElse() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_else";
-		File f = new File(currentDir, filename+".java.txt");
+	public void forEachToFor() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("forEachToFor");
+		initializeTest();
 		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 
 	@Test
-	public void testParseTry() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_try";
-		File f = new File(currentDir, filename+".java.txt");
+	public void testEmptyClass() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_empty");
+		initializeTest();
 		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testParseCatch() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_catch";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testParseSwitch() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_switch";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.encode(FileEncoding.ISO_8859_1)
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testDoWhile() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_doWhile";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testParseElse2() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessortest/complex");
-		String filename = "test_else";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testParseTry2() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessortest/complex");
-		String filename = "test_try";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testParseCatch2() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessortest/complex");
-		String filename = "test_catch";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testParseSwitch2() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessortest/complex");
-		String filename = "test_switch";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.encode(FileEncoding.ISO_8859_1)
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testDoWhile2() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessortest/complex");
-		String filename = "test_doWhile";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testElseNoCurlyBrackets() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_else_noCurlyBraces";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testForeighCode1() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessortest/foreign");
-		String filename = "HelpFormatter";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 
 	@Test
-	public void testForeighCode2() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessortest/foreign");
-		String filename = "MathArrays";
-		File f = new File(currentDir, filename+".java.txt");
+	public void testParseElse() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_else.txt");
+		initializeTest();
 		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
+		processFile();
+	}
+
+	@Test
+	public void testParseTry() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_try");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testParseCatch() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_catch");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testParseSwitch() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_switch");
+		usingEncoding(FileEncoding.ISO_8859_1);
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testDoWhile() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_doWhile");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testParseElse2() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest", "complex"));
+		withFilename("test_else");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testParseTry2() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			 "files", "InvokedFileProcessorTest", "complex"));
+		withFilename("test_try.txt");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testParseCatch2() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  	  		  "files", "InvokedFileProcessorTest", "complex"));
+		withFilename("test_catch");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testParseSwitch2() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  	  		  "files", "InvokedFileProcessorTest", "complex"));
+		withFilename("test_switch");
+		usingEncoding(FileEncoding.ISO_8859_1);
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testDoWhile2() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+							  "files", "InvokedFileProcessorTest", "complex"));
+		withFilename("test_doWhile");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testElseNoCurlyBrackets() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_else_noCurlyBraces");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testForeighCode1() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest", "foreign"));
+		withFilename("HelpFormatter");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testForeighCode2() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest", "foreign"));
+		withFilename("MathArrays");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testConstructor() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_constructor");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testClauseAndBodySameLine() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_clauseAndBodySameLine");
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testControlFlow() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "InvokedFileProcessorTest"));
+		withFilename("test_controlFlow");
+		usingEncoding(FileEncoding.ISO_8859_1);
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testMethodInvokedSameLine() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files"));
+		withFilename("test_method_tested_invoked_same_file");
+		usingEncoding(FileEncoding.ISO_8859_1);
+		initializeTest();
+		
+		processFile();
+	}
+
+	@Test
+	public void testAnonymousClass() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+							  "files", "InvokedFileProcessorTest"));
+		withFilename("test_anonymous_class");
+		usingEncoding(FileEncoding.ISO_8859_1);
+		initializeTest();
+		
+		processFile();
 	}
 	
-	@Test
-	public void testConstructor() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_constructor";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
-	}
 	
-	@Test
-	public void testClauseAndBodySameLine() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_clauseAndBodySameLine";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	@Override
+	protected FileProcessor createFileProcessor() {
+		return new InvokedFileProcessor.Builder()
+				.file(getFile())
+				.outputDir(getDirectory())
+				.outputFilename(getOutputFilename())
+				.encoding(getEncoding())
 				.fileExtension("txt")
 				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testControlFlow() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/InvokedFileProcessorTest");
-		String filename = "test_controlFlow";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.encode(FileEncoding.ISO_8859_1)
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testMethodInvokedSameLine() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/");
-		String filename = "test_method_tested_invoked_same_file";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.encode(FileEncoding.ISO_8859_1)
-				.build();
-		fp.processFile();
-	}
-	
-	@Test
-	public void testAnonymousClass() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/");
-		String filename = "test_anonymous_class";
-		File f = new File(currentDir, filename+".java.txt");
-		
-		FileProcessor fp = new InvokedFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.encode(FileEncoding.ISO_8859_1)
-				.build();
-		fp.processFile();
 	}
 }

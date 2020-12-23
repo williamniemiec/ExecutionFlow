@@ -1,102 +1,96 @@
 package executionFlow.io.processor;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.junit.Test;
 
 import executionFlow.runtime.SkipCollection;
 
-
 /**
  * Tests for class {@link PreTestMethodFileProcessor}.
  */
 @SkipCollection
-public class PreTestMethodFileProcessorTest 
-{
+public class PreTestMethodFileProcessorTest extends FileProcessorTest {
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
-	public void testMethodWithInnerClass() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
-		String filename = "TestMethodWithInnerClass";
-		File f = new File(currentDir, filename+".java.txt");
+	public void testMethodWithInnerClass() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "PreTestMethodFileProcessorTest"));
+		withFilename("TestMethodWithInnerClass");
+		withTestMethodSignature("org.jfree.chart.AreaChartTest" + 
+								".testDrawWithNullInfo()");
+		initializeTest();
 		
-		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.testMethodSignature("org.jfree.chart.AreaChartTest.testDrawWithNullInfo()")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 	
 	@Test
-	public void testClassTest_firstMethod() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
-		String filename = "TestClass";
-		File f = new File(currentDir, filename+".java.txt");
+	public void testClassTest_firstMethod() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+			  			  	  "files", "PreTestMethodFileProcessorTest"));
+		withFilename("TestClass");
+		withTestMethodSignature("executionFlow.core.file.parser.tests" + 
+								".TestClass.testLastCurlyBracketInSameLine()");
+		initializeTest();
 		
-		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.testMethodSignature("executionFlow.core.file.parser.tests.TestClass.testLastCurlyBracketInSameLine()")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 	
 	@Test
-	public void parameterizedTestMethodTest_firstMethod() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/PreTestMethodFileProcessorTest");
-		String filename = "ParameterizedTestMethod";
-		File f = new File(currentDir, filename+".java.txt");
+	public void parameterizedTestMethodTest_firstMethod() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+			  	  			  "files", "PreTestMethodFileProcessorTest"));
+		withFilename("ParameterizedTestMethod");
+		withTestMethodSignature("examples.junit5.ParameterizedTestAnnotation" + 
+								".test1(int)");
+		withTestMethodParameterValues(-1);
+		initializeTest();
 		
-		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.testMethodSignature("examples.junit5.ParameterizedTestAnnotation.test1(int)")
-				.testMethodArgs(-1)
-				.build();
-		fp.processFile();
+		processFile();
 	}
 	
 	@Test
-	public void testMethodInvokedSameLine() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/");
-		String filename = "test_method_tested_invoked_same_file";
-		File f = new File(currentDir, filename+".java.txt");
+	public void testMethodInvokedSameLine() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+							  "files"));
+		withFilename("test_method_tested_invoked_same_file");
+		withTestMethodSignature("examples.againstRequirements" + 
+								".methodInSameFileOfTestMethod()");
+		initializeTest();
 		
-		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.testMethodSignature("examples.againstRequirements.methodInSameFileOfTestMethod()")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 	
 	@Test
-	public void testAnonymousClass() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/");
-		String filename = "test_anonymous_class";
-		File f = new File(currentDir, filename+".java.txt");
+	public void testAnonymousClass() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+							  "files"));
+		withFilename("test_anonymous_class");
+		withTestMethodSignature("examples.override.OverrideTest" + 
+								".testOverloadedMethod3()");
+		initializeTest();
 		
-		FileProcessor fp = new PreTestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
+		processFile();
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	@Override
+	protected FileProcessor createFileProcessor() {
+		return new PreTestMethodFileProcessor.Builder()
+				.file(getFile())
+				.outputDir(getDirectory())
+				.outputFilename(getOutputFilename())
+				.encoding(getEncoding())
 				.fileExtension("txt")
-				.testMethodSignature("examples.override.OverrideTest.testOverloadedMethod3()")
+				.testMethodSignature(getTestMethodSignature())
+				.testMethodArgs(getTestMethodArgs())
 				.build();
-		fp.processFile();
 	}
 }

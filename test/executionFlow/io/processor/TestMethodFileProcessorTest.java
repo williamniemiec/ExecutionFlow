@@ -1,80 +1,73 @@
 package executionFlow.io.processor;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.junit.Test;
 
 import executionFlow.runtime.SkipCollection;
 
-
 /**
  * Tests for class {@link TestMethodFileProcessor}.
  */
 @SkipCollection
-public class TestMethodFileProcessorTest 
-{
+public class TestMethodFileProcessorTest extends FileProcessorTest {
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
-	public void testClassTest() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/TestMethodFileProcessorTest");
-		String filename = "TestClass";
-		File f = new File(currentDir, filename+".java.txt");
+	public void testClassTest() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+	  			  			  "files", "TestMethodFileProcessorTest"));
+		withFilename("TestClass");
+		initializeTest();
 		
-		FileProcessor fp = new TestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 	
 	@Test
-	public void testMethodInvokedSameLine() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/");
-		String filename = "test_method_tested_invoked_same_file";
-		File f = new File(currentDir, filename+"_parsed.txt");
+	public void testMethodInvokedSameLine() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+			  			  	  "files"));
+		withFilename("test_method_tested_invoked_same_file");
+		initializeTest();
 		
-		FileProcessor fp = new TestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 	
 	@Test
-	public void testAnonymousClass() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/");
-		String filename = "test_anonymous_class";
-		File f = new File(currentDir, filename+"_parsed.txt");
+	public void testAnonymousClass() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+					  	  	  "files"));
+		withFilename("test_anonymous_class");
+		initializeTest();
 		
-		FileProcessor fp = new TestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
-				.fileExtension("txt")
-				.build();
-		fp.processFile();
+		processFile();
 	}
 	
 	@Test
-	public void testMultiargsTest() throws IOException
-	{
-		File currentDir = new File("test/executionFlow/io/processor/files/TestMethodFileProcessorTest");
-		String filename = "Multiargs";
-		File f = new File(currentDir, filename+".java.txt");
+	public void testMultiargsTest() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  	  	  	  "files", "TestMethodFileProcessorTest"));
+		withFilename("Multiargs");
+		initializeTest();
 		
-		FileProcessor fp = new TestMethodFileProcessor.Builder()
-				.file(f.toPath())
-				.outputDir(currentDir.toPath())
-				.outputFilename(filename+"_parsed")
+		processFile();
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	@Override
+	protected FileProcessor createFileProcessor() {
+		return new TestMethodFileProcessor.Builder()
+				.file(getFile())
+				.outputDir(getDirectory())
+				.outputFilename(getOutputFilename())
+				.encoding(getEncoding())
 				.fileExtension("txt")
 				.build();
-		fp.processFile();
 	}
 }
