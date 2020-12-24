@@ -66,6 +66,7 @@ public class FileExporter implements TestPathExporter {
 		} 
 		catch (IOException e) {
 			Logger.error("Error while exporting test paths: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -78,7 +79,7 @@ public class FileExporter implements TestPathExporter {
 			List<List<Integer>> tps = e.getValue();
 
 			prepareExportFile(invokedContainer);
-			
+						
 			tps = removeEmptyTestPaths(tps);
 			
 			storeExportFile(
@@ -181,8 +182,9 @@ public class FileExporter implements TestPathExporter {
 				getTestPathName(exportFile, testMethodSignature)
 		);
 		
+		Files.createDirectories(exportFile);
+		
 		try (BufferedWriter bfw = new BufferedWriter(new FileWriter(testPathExportFile, true))) {
-			Files.createDirectories(exportFile);
 			
 			writeTestMethodSignature(testMethodSignature, testPathExportFile, bfw);
 			writeTestPaths(testPaths, bfw);
