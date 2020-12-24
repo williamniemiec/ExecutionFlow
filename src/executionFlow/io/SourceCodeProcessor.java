@@ -76,14 +76,14 @@ public abstract class SourceCodeProcessor {
 	}
 	
 	protected void setLine(int idx, String content) {
-		if (idx <= sourceCode.size())
+		if (idx >= sourceCode.size())
 			throw new IllegalArgumentException("Index out of bounds");
 		
 		sourceCode.set(idx, content);
 	}
 	
 	protected String getLine(int idx) {
-		if (idx <= sourceCode.size())
+		if (idx >= sourceCode.size())
 			throw new IllegalArgumentException("Index out of bounds");
 		
 		return sourceCode.get(idx);

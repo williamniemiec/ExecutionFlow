@@ -24,6 +24,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	private static Map<Integer, Integer> mapping = new HashMap<>();
 	private boolean insideMultilineArgs = false;
 	private int idxMethodInvocation = -1;
+	private RoundBracketBalance rbb;
 	
 	
 	//---------------------------------------------------------------------
@@ -39,6 +40,9 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	@Override
 	protected String processLine(String line) {
+		if (line.isBlank())
+			return line;
+		
 		String processedLine = line;
 		
 		processedLine = combineMultilineArgs(line);
@@ -54,15 +58,18 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		
 		if (isMethodCallWithMultipleLines(line)) {
 			processedLine = parseMethodCallWithMultipleLines(line);
+			
+			checkBalanceOfParentheses(line);
 		}
 		else if (insideMultilineArgs) {
-			insideMultilineArgs = false;
-			
+			insideMultilineArgs = !isParenthesesBalanced();
+		
+			checkBalanceOfParentheses(line);
 			putOnMethodInvocationLine(line);
 			
 			processedLine = "";
 			
-			mapping.put(getCurrentIndex()+1, idxMethodInvocation+1); 
+			mapping.put(getCurrentIndex()+1, idxMethodInvocation+1);
 		}
 		else if (hasOnlyClosedCurlyBracket(processedLine) && (idxMethodInvocation > 0)) {
 			putOnMethodInvocationLine(line);
@@ -72,10 +79,9 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		
 		return processedLine;
 	}
-	
+
 	private boolean isMethodCallWithMultipleLines(String line) {
-		return	isMethodCallWithMultiArgs(line) 
-				&& !isParenthesesBalanced(line)
+		return	isMethodCallWithMultiArgs(line)
 				&& !hasClassKeywords(line) 
 				&& !isLastLine();
 	}
@@ -84,13 +90,6 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		final String regexMultilineArgs = ".+,([^;{(\\[]+|[\\s\\t]*)$";
 		
 		return line.matches(regexMultilineArgs);
-	}
-	
-	private boolean isParenthesesBalanced(String line) {
-		RoundBracketBalance rbb = new RoundBracketBalance();
-		rbb.parse(line);
-		
-		return rbb.isBalanceEmpty();
 	}
 	
 	private boolean hasClassKeywords(String line) {
@@ -126,8 +125,8 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 				insideMultilineArgs = true;
 			}
 			
-			eraseLine(getCurrentIndex()+1);
 			processedLine = processedLine + getNextLine();
+			eraseLine(getCurrentIndex()+1);
 			
 			oldLine = getCurrentIndex()+1+1;
 			newLine = getCurrentIndex()+1;
@@ -138,6 +137,18 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		return processedLine;
 	}
 
+	private void checkBalanceOfParentheses(String line) {
+		if (rbb == null) {
+			rbb = new RoundBracketBalance();
+		}
+		
+		rbb.parse(line);
+	}
+	
+	private boolean isParenthesesBalanced() {
+		return rbb.isBalanceEmpty();
+	}
+	
 	private void putOnMethodInvocationLine(String line) {
 		setLine(
 			idxMethodInvocation, 
