@@ -63,7 +63,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 				.outputFilename(outputFilename)
 				.testMethodSignature(testMethodSignature)
 				.testMethodArgs(testMethodArgs)
-				.encode(encode)
+				.encoding(encode)
 				.build();
 	}
 }

@@ -1,6 +1,5 @@
 package executionFlow.io.processor;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +10,6 @@ import executionFlow.io.processor.testmethod.ClassDeclarationProcessor;
 import executionFlow.io.processor.testmethod.InlineCommentRemover;
 import executionFlow.io.processor.testmethod.MultilineToInlineCallsConverter;
 import executionFlow.io.processor.testmethod.PrintCallRemover;
-import executionFlow.util.FileUtil;
-import executionFlow.util.logger.LogLevel;
-import executionFlow.util.logger.Logger;
 
 /**
  * Processes test java file adding annotations to disable collectors while 
@@ -47,12 +43,12 @@ public class TestMethodFileProcessor extends FileProcessor {
 	 * @param		outputFilename Name of the parsed file
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
-	 * @param		encode File encoding
+	 * @param		encoding File encoding
 	 * 
 	 * @throws		IllegalArgumentException If any required field is null
 	 */ 
 	private TestMethodFileProcessor(Path file, Path outputDir, String outputFilename, 
-									String fileExtension, FileEncoding encode) {
+									String fileExtension, FileEncoding encoding) {
 		checkRequiredFields(file, outputDir, outputFilename);
 		
 		this.file = file;
@@ -63,8 +59,8 @@ public class TestMethodFileProcessor extends FileProcessor {
 		else	
 			outputFile = Path.of(outputFilename + "." + fileExtension);
 		
-		if (encode != null)
-			this.encode = encode;
+		if (encoding != null)
+			this.encoding = encoding;
 	}
 	
 	
@@ -82,7 +78,7 @@ public class TestMethodFileProcessor extends FileProcessor {
 	 */
 	public static class Builder	{
 		
-		private FileEncoding encode;
+		private FileEncoding encoding;
 		private String fileExtension = "java";
 		private Path file;
 		private Path outputDir;
@@ -138,13 +134,13 @@ public class TestMethodFileProcessor extends FileProcessor {
 		}
 		
 		/**
-		 * @param		encode File encoding (default is UTF-8)
+		 * @param		encoding File encoding (default is UTF-8)
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder encode(FileEncoding encode) {
-			if (encode != null)
-				this.encode = encode;
+		public Builder encoding(FileEncoding encoding) {
+			if (encoding != null)
+				this.encoding = encoding;
 			
 			return this;
 		}
@@ -178,7 +174,7 @@ public class TestMethodFileProcessor extends FileProcessor {
 		 */
 		public TestMethodFileProcessor build() {
 			return new TestMethodFileProcessor(
-					file, outputDir, outputFilename, fileExtension, encode
+					file, outputDir, outputFilename, fileExtension, encoding
 			);
 		}
 	}

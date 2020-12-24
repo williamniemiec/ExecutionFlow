@@ -26,7 +26,7 @@ public class InvokedFileProcessorFactory extends FileProcessorFactory {
 				.file(filepath)
 				.outputDir(outputDir)
 				.outputFilename(outputFilename)
-				.encode(encode)
+				.encoding(encode)
 				.build();
 	}
 }

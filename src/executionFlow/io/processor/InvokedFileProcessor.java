@@ -66,7 +66,7 @@ public class InvokedFileProcessor extends FileProcessor {
 			outputFile = outputDir.resolve(outputFilename + "." + fileExtension);
 		
 		if (encode != null)
-			this.encode = encode;
+			this.encoding = encode;
 	}
 	
 	
@@ -141,13 +141,13 @@ public class InvokedFileProcessor extends FileProcessor {
 		}
 		
 		/**
-		 * @param		encode File encoding (default is UTF-8)
+		 * @param		encoding File encoding (default is UTF-8)
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder encode(FileEncoding encode) {
-			if (encode != null)
-				this.encode = encode;
+		public Builder encoding(FileEncoding encoding) {
+			if (encoding != null)
+				this.encode = encoding;
 			
 			return this;
 		}

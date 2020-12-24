@@ -28,7 +28,7 @@ public abstract class FileProcessor implements Serializable {
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 400L;
-	protected FileEncoding encode = FileEncoding.UTF_8;
+	protected FileEncoding encoding = FileEncoding.UTF_8;
 	protected transient Path file;
 	protected transient Path outputFile;
 	protected String outputFilename;
@@ -49,11 +49,11 @@ public abstract class FileProcessor implements Serializable {
 		if (file == null)
 			return "";
 		
-		List<String> sourceCode = FileUtil.readLines(file, encode.getStandardCharset());
+		List<String> sourceCode = FileUtil.readLines(file, encoding.getStandardCharset());
 		
 		sourceCode = doProcessing(sourceCode);
 		
-		FileUtil.writeLines(sourceCode, outputFile, encode.getStandardCharset());
+		FileUtil.writeLines(sourceCode, outputFile, encoding.getStandardCharset());
 
 		dump(sourceCode);
 		
@@ -79,11 +79,11 @@ public abstract class FileProcessor implements Serializable {
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	public FileEncoding getEncoding() {
-		return encode;
+		return encoding;
 	}
 
 	public void setEncoding(FileEncoding encode) {
-		this.encode = encode;
+		this.encoding = encode;
 	}
 	
 	

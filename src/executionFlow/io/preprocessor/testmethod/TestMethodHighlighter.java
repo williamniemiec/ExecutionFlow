@@ -25,7 +25,6 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	private boolean ignoreMethod;
 	private boolean inTestAnnotationScope;
 	private boolean isTestMethodToBeHighlighted;
-	private int currentLine;
 	private String testMethodSignature;
 	private List<Integer> ignoredMethods;
 	
@@ -33,14 +32,15 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	public TestMethodHighlighter(List<String> sourceCode, String testMethodSignature) {
+	public TestMethodHighlighter(List<String> sourceCode, 
+								 String testMethodSignature) {
 		super(sourceCode, true);
 		
 		this.testMethodSignature = 
 				InvokedInfo.extractMethodName(testMethodSignature)
-				+ testMethodSignature.substring(testMethodSignature.indexOf("(")).replace(" ", "");
+				+ testMethodSignature.substring(testMethodSignature.indexOf("("))
+									 .replace(" ", "");
 		this.ignoredMethods = new ArrayList<>();
-		this.currentLine = 1;
 	}
 
 	
@@ -68,8 +68,6 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 		
 		if (isLastLineOfMethod())
 			endOfMethod();
-		
-		currentLine++;
 		
 		return line;
 	}
@@ -136,7 +134,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	private boolean isTheMethodToBeHighlighted(String line) {
 		String methodSignature = extractMethodSignatureFromLine(line);
 		methodSignature = methodSignature.replace(" ", "");
-		
+
 		return methodSignature.equals(testMethodSignature);
 	}
 	
@@ -226,7 +224,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 			checkIfCurlyBracketBalanceOfIgnoredMethodIsInitialized();
 			
 			if (isLastLineOfMethodToBeIgnored())
-				ignoredMethods.add(currentLine);
+				ignoredMethods.add(getCurrentIndex());
 			
 			updateCurlyBracketBalanceOfIgnoredMethod(line);
 			
@@ -237,7 +235,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 			updateCurlyBracketBalanceOfIgnoredMethod(line);
 			
 			ignoreMethod = true;
-			ignoredMethods.add(currentLine);
+			ignoredMethods.add(getCurrentIndex());
 		}
 	}
 	
@@ -271,8 +269,6 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	private void commentHeaderOfIgnoredMethods(List<String> lines) {
 		boolean insideMethod = false;
 		
-		currentLine--;
-		
 		for (int i=lines.size()-1; i>=0; i--) {
 			String line = lines.get(i);
 			
@@ -282,14 +278,12 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 				else
 					line = "//" + line;		
 			}
-			else if (ignoredMethods.contains(currentLine)) {
+			else if (ignoredMethods.contains(i)) {
 				line = "//" + line;
 				insideMethod = true;
 			}
 			
 			lines.set(i, line);
-			
-			currentLine--;
 		}
 	}
 	

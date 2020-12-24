@@ -411,9 +411,15 @@ public class FileManager implements Serializable {
 	}
 
 	private Path generateAspectsRootDirectory() {
-		return ExecutionFlow.isDevelopment() ? 
-				ExecutionFlow.getAppRootPath().resolve(Path.of("bin", "executionFlow", "runtime")) 
-				: ExecutionFlow.getAppRootPath().resolve(Path.of("executionFlow", "runtime"));
+		if (ExecutionFlow.isDevelopment()) {
+			return ExecutionFlow.getAppRootPath().resolve(
+					Path.of("bin", "executionFlow", "runtime")
+			);
+		}
+		
+		return ExecutionFlow.getAppRootPath().resolve(
+				Path.of("executionFlow", "runtime")
+		);
 	}
 
 	private List<Path> generateClasspath() {
