@@ -1,20 +1,20 @@
-package executionFlow.io.processor.testmethod;
+package executionflow.io.processor.testmethod;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import executionFlow.io.SourceCodeProcessor;
-import executionFlow.util.balance.RoundBracketBalance;
+import executionflow.io.SourceCodeProcessor;
+import executionflow.util.balance.RoundBracketBalance;
 
 /**
  * Converts method calls with arguments on multiple lines to a call with 
  * arguments on a single line.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since 		5.2.3
+ * @version		6.0.0
+ * @since 		6.0.0
  */
 public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 

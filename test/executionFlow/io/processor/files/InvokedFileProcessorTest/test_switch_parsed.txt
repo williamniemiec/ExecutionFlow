@@ -1,35 +1,35 @@
-package executionFlow.core.file.parser.files;
+package executionflow.core.file.parser.files;
 public class test_switch{
-@executionFlow.runtime.CollectCalls public char switchCaseMethod(char letter){
+@executionflow.runtime.CollectCalls public char switchCaseMethod(char letter){
 letter = Character.toUpperCase(letter);
 switch (letter) {
-case '÷':int _e9d72cd24c2aeab1f70e4c3d30971d90=0;
+case '÷':int _242524fc17c9fe6b3355be817b6a3d93=0;
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'Á':int _bce8c2f20ecb5ed74e353f38c3999d37=0;
-case 'À':int _d8c001e9b604f928031af91a10faa2ee=0;
-case 'Ã':int _e936b15c169588e5bb3a624be8d84b2a=0;
-case 'Â':int _f9cb327fb9b080d4bbb300bcede0dd22=0;
+case 'Á':int _4e1729e51e8f2705a962f3abbb28a26c=0;
+case 'À':int _b9da83c0c1effb34a2b12f08ec9b1542=0;
+case 'Ã':int _37705e0f54675df491950dba99308763=0;
+case 'Â':int _dab194420374ebab79a30f4c0994dde9=0;
 letter = 'A';
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'É':int _eea5e8e83cdea690feefec67aad58dd6=0;
-case 'È':int _f46e24925295a26491420a1910d06852=0;
-case 'Ê':int _9fa38d204b5d8ab9aa28f702511dbccb=0;
+case 'É':int _b524a82d552c7e4e08a8d0d536381d0a=0;
+case 'È':int _d2cc24843a8419efcf612fa92f906aeb=0;
+case 'Ê':int _cd4762ab6d5a668072513e67cc1167b9=0;
 letter = 'E';
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'Ì':int _c3a7fd3f207d388b3555aec089e4bad6=0;
-case 'Í':int _aa869c8ff2e92c01d8126600660ea757=0;
-case 'Î':int _432fbcaec0fcefc8093640e7755ff51e=0;
+case 'Ì':int _34743a53ccd07858b9b18f4b26affbd5=0;
+case 'Í':int _42b00b9f69b2eb034f626623506ee3c1=0;
+case 'Î':int _219f4b46f33e6b07911efb71053339d3=0;
 letter = 'I';
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'Ò':int _950cfec2e4481e882d98d4cb1153678d=0;
-case 'Ó':int _6b2a3c8521d8b22b1738d385ce911b64=0;
-case 'Ô':int _997f19b2df07f353eb9346cd82fc5075=0;
-case 'Õ':int _7515ef8bdf26d5ccf7175ded2f823e7e=0;
+case 'Ò':int _66783de97b3464707a15e08c9c8edc1d=0;
+case 'Ó':int _67a1b11aaf9a1c2a0e67e184d7b067fb=0;
+case 'Ô':int _9b45110c4c70987471bf978a34910265=0;
+case 'Õ':int _6b89202fd6088e8d41791706bd505d90=0;
 letter = 'O';
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'Ú':int _294d4b0ad9a8783ae732b7fdf07be94a=0;
-case 'Ù':int _3020e1dd0f47ac02922d1246dd95f317=0;
-case 'Û':int _3c143050df87708ca0d7bb18dceb8539=0;
+case 'Ú':int _704a85f7f60d05192bab617a7d023020=0;
+case 'Ù':int _3f70ddf0c9b6304f91a57bef762b3bf1=0;
+case 'Û':int _45f92b545116fcaa83ced4b7f74a663d=0;
 letter = 'U';
 if (Boolean.parseBoolean("True")) {break;}break;
 }

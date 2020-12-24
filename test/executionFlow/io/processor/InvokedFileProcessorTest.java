@@ -1,14 +1,14 @@
-package executionFlow.io.processor;
+package executionflow.io.processor;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
 
-import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.fileprocessor.FileProcessor;
-import executionFlow.io.processor.fileprocessor.InvokedFileProcessor;
-import executionFlow.runtime.SkipCollection;
+import executionflow.io.FileEncoding;
+import executionflow.io.processor.fileprocessor.FileProcessor;
+import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
+import executionflow.runtime.SkipCollection;
 
 @SkipCollection
 public class InvokedFileProcessorTest extends FileProcessorTest {
@@ -18,7 +18,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 	//-------------------------------------------------------------------------
 	@Test
 	public void testAuxClass() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 							  "files", "InvokedFileProcessorTest"));
 		withFilename("AuxClass");
 		initializeTest();
@@ -28,7 +28,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void forEachToFor() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("forEachToFor");
 		initializeTest();
@@ -38,7 +38,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testEmptyClass() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_empty");
 		initializeTest();
@@ -48,7 +48,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testParseElse() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_else");
 		initializeTest();
@@ -58,7 +58,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testParseTry() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_try");
 		initializeTest();
@@ -68,7 +68,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testParseCatch() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_catch");
 		initializeTest();
@@ -78,7 +78,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testParseSwitch() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_switch");
 		usingEncoding(FileEncoding.ISO_8859_1);
@@ -89,7 +89,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testDoWhile() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_doWhile");
 		initializeTest();
@@ -99,7 +99,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testParseElse2() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest", "complex"));
 		withFilename("test_else");
 		initializeTest();
@@ -109,7 +109,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testParseTry2() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			 "files", "InvokedFileProcessorTest", "complex"));
 		withFilename("test_try");
 		initializeTest();
@@ -119,7 +119,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testParseCatch2() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  	  		  "files", "InvokedFileProcessorTest", "complex"));
 		withFilename("test_catch");
 		initializeTest();
@@ -129,7 +129,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testParseSwitch2() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  	  		  "files", "InvokedFileProcessorTest", "complex"));
 		withFilename("test_switch");
 		usingEncoding(FileEncoding.ISO_8859_1);
@@ -140,7 +140,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testDoWhile2() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 							  "files", "InvokedFileProcessorTest", "complex"));
 		withFilename("test_doWhile");
 		initializeTest();
@@ -150,7 +150,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testElseNoCurlyBrackets() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_else_noCurlyBraces");
 		initializeTest();
@@ -160,7 +160,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testForeighCode1() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest", "foreign"));
 		withFilename("HelpFormatter");
 		initializeTest();
@@ -170,7 +170,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testForeighCode2() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest", "foreign"));
 		withFilename("MathArrays");
 		initializeTest();
@@ -180,7 +180,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testConstructor() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_constructor");
 		initializeTest();
@@ -190,7 +190,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testClauseAndBodySameLine() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_clauseAndBodySameLine");
 		initializeTest();
@@ -200,7 +200,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testControlFlow() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
 		withFilename("test_controlFlow");
 		usingEncoding(FileEncoding.ISO_8859_1);
@@ -211,7 +211,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testMethodInvokedSameLine() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files"));
 		withFilename("test_method_tested_invoked_same_file");
 		usingEncoding(FileEncoding.ISO_8859_1);
@@ -222,7 +222,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 
 	@Test
 	public void testAnonymousClass() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 							  "files"));
 		withFilename("test_anonymous_class");
 		usingEncoding(FileEncoding.ISO_8859_1);

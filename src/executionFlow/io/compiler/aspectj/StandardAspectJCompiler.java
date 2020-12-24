@@ -1,4 +1,4 @@
-package executionFlow.io.compiler.aspectj;
+package executionflow.io.compiler.aspectj;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,9 +9,9 @@ import org.aspectj.bridge.IMessage;
 import org.aspectj.bridge.MessageHandler;
 import org.aspectj.tools.ajc.Main;
 
-import executionFlow.io.FileEncoding;
-import executionFlow.io.compiler.Compiler;
-import executionFlow.util.logger.Logger;
+import executionflow.io.FileEncoding;
+import executionflow.io.compiler.Compiler;
+import executionflow.util.logger.Logger;
 
 /**
  * Responsible for compiling Java files.
@@ -19,7 +19,7 @@ import executionFlow.util.logger.Logger;
  * @apiNote		Compatible with AspectJ
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.3
  */
 public class StandardAspectJCompiler implements Compiler {

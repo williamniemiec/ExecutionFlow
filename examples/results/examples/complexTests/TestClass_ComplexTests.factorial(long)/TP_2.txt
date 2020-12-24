@@ -1,4 +1,0 @@
-examples.complexTests.ComplexTests.moreOneConstructorAndStaticMethod()
-[20, 21]
-[20, 23, 24, 25, 26, 27, 25, 26, 27, 25, 26, 27, 25, 26, 27, 25, 29]
-

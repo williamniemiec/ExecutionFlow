@@ -1,16 +1,16 @@
-package executionFlow.io.processor.testmethod;
+package executionflow.io.processor.testmethod;
 
 import java.util.List;
 
-import executionFlow.io.SourceCodeProcessor;
+import executionflow.io.SourceCodeProcessor;
 
 /**
- * Adds {@link executionFlow.runtime.SkipCollection} annotation next to 
+ * Adds {@link executionflow.runtime.SkipCollection} annotation next to 
  * class declarations.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since 		5.2.3
+ * @version		6.0.0
+ * @since 		6.0.0
  */
 public class ClassDeclarationProcessor extends SourceCodeProcessor {
 	
@@ -30,7 +30,7 @@ public class ClassDeclarationProcessor extends SourceCodeProcessor {
 		if (!isClassDeclaration(line) || hasSkipCollection(line))
 			return line;
 		
-		return "@executionFlow.runtime.SkipCollection" + " " + line;
+		return "@executionflow.runtime.SkipCollection" + " " + line;
 	}
 	
 	private boolean isClassDeclaration(String line) {

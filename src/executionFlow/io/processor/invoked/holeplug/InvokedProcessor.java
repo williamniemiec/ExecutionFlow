@@ -1,16 +1,16 @@
-package executionFlow.io.processor.invoked.holeplug;
+package executionflow.io.processor.invoked.holeplug;
 
 import java.util.List;
 
-import executionFlow.io.SourceCodeProcessor;
+import executionflow.io.SourceCodeProcessor;
 
 /**
- * Adds {@link executionFlow.runtime.CollectCalls} annotation in method and
+ * Adds {@link executionflow.runtime.CollectCalls} annotation in method and
  * constructor declarations.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since 		5.2.3
+ * @version		6.0.0
+ * @since 		6.0.0
  */
 public class InvokedProcessor extends SourceCodeProcessor {
 	
@@ -41,7 +41,7 @@ public class InvokedProcessor extends SourceCodeProcessor {
 			}
 		}
 		else if (isInvokedDeclaration(line)) {
-			processedLine = "@executionFlow.runtime.CollectCalls " + line;
+			processedLine = "@executionflow.runtime.CollectCalls " + line;
 			insideInvoked = !line.contains("{");
 		}
 		

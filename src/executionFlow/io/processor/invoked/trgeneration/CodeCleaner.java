@@ -1,4 +1,4 @@
-package executionFlow.io.processor.invoked.trgeneration;
+package executionflow.io.processor.invoked.trgeneration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,9 +12,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionFlow.util.DataUtil;
-import executionFlow.util.Pair;
-import executionFlow.util.balance.CurlyBracketBalance;
+import executionflow.util.DataUtil;
+import executionflow.util.Pair;
+import executionflow.util.balance.CurlyBracketBalance;
 
 
 /**
@@ -211,7 +211,7 @@ public class CodeCleaner {
 	
 	private void eliminateAnnotations() {
 		for (int i=0; i<processedCode.size(); i++) {
-			boolean executionFlowAnnotation = processedCode.get(i).contains("executionFlow.");
+			boolean executionFlowAnnotation = processedCode.get(i).contains("executionflow.");
 			boolean testAnnotation = processedCode.get(i).contains("Test");
 			boolean supressAnnotation = processedCode.get(i).contains("@SuppressWarnings");
 			
@@ -742,7 +742,7 @@ public class CodeCleaner {
 				}
 
 				processedCode.set(i, "for (java.util.Iterator<" + typeIterator + "> " + itName + 
-						" = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(" + setName + "); " + 
+						" = executionflow.io.processor.invoked.trgeneration.IteratorExtractor.extractIterator(" + setName + "); " + 
 						itName + ".hasNext(); ) {");
 				
 				if (isMapEntry || isGenericType) {

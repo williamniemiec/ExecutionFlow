@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileWriter;                                                          
 import java.io.IOException;                                                         
 public class TestClass_ControlFlow{                                                 
-     @executionFlow.runtime.CollectCalls public String ifElseMethod(int num){       
+     @executionflow.runtime.CollectCalls public String ifElseMethod(int num){       
           if (num < 0) {                                                            
                return "Negative value";                                             
           }                                                                         
@@ -14,15 +14,15 @@ public class TestClass_ControlFlow{
           else if (num == 1) {                                                      
                response = "Number one";                                             
           }                                                                         
-          else {int _7a08999a02b002ebbc977a35be4cda75=0;                            
+          else {int _b0a0d27e74ce8934fb8237b8f5c3c9e1=0;                            
                response = "Number "+num;                                            
           }                                                                         
           return response;                                                          
      }                                                                              
-     @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_try(){       
+     @executionflow.runtime.CollectCalls public boolean tryCatchMethod_try(){       
           File f = new File("tmp");                                                 
-          FileWriter fw;int _28ee453cd28b07c931bfff0917a35765=0;                    
-          try {int _58bd1baef14de8b7bb6f34a51d51485c=0;                             
+          FileWriter fw;int _92bae101ee80b39af2e3827638c394b7=0;                    
+          try {int _2c4a37d0a525d1988f252d545a7872=0;                               
                fw = new FileWriter(f);                                              
                fw.write('x');                                                       
                fw.close();                                                          
@@ -33,102 +33,101 @@ public class TestClass_ControlFlow{
           }                                                                         
           return true;                                                              
      }                                                                              
-     @executionFlow.runtime.CollectCalls public boolean tryCatchMethod_catch(){     
+     @executionflow.runtime.CollectCalls public boolean tryCatchMethod_catch(){     
           File f = new File("tmp");                                                 
-          FileWriter fw;int _32fc27fa2e09dd5325563a8c31d67f4b=0;                    
-          try {int _b4b82697612da086468c60a9f17bb7ad=0;                             
+          FileWriter fw;int _8b0bcfe2722630e74731cdf5a1059f1d=0;                    
+          try {int _e7bf1d14c4a9557cdd2f99b5b66deaf8=0;                             
                throw new IOException();                                             
           }                                                                         
           catch (IOException e) {                                                   
                return false;                                                        
           }                                                                         
      }                                                                              
-     @executionFlow.runtime.CollectCalls public char switchCaseMethod(char letter){ 
+     @executionflow.runtime.CollectCalls public char switchCaseMethod(char letter){ 
           letter = Character.toUpperCase(letter);                                   
           switch (letter) {                                                         
-          case 'Á':int _7114b9de92f486e13dbc468d1a828527=0;                         
-          case 'À':int _e6e0dc94388488b1401a5407587f4aff=0;                         
-          case 'Ã':int _49b6d01a8b03891636468f9383fa5565=0;                         
-          case 'Â':int _42248ec66bc45036cf808c931a331beb=0;                         
+          case 'Á':int _6d0e7461fb23803f642e66fa30bef29d=0;                         
+          case 'À':int _da5efa2e30bfc6df7a83fc4ac2fd58c0=0;                         
+          case 'Ã':int _e4cb8a6ccc0f61c25dc2749fd3632e2e=0;                         
+          case 'Â':int _b383837502abbfa90482061d0649b6e=0;                          
                letter = 'A';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
-          case 'É':int _8e87bfcd987376e5a7b5cbe32a4c27f3=0;                         
-          case 'È':int _4ba6ddc2c88f55b4b677cf1133357a0a=0;                         
-          case 'Ê':int _13673574ee4a97c7a9c2a736f1155f21=0;                         
+          case 'É':int _9d5531d062ccb83e82907f40093f9bf4=0;                         
+          case 'È':int _21b8e794f568c15abb6cd935d0b1285e=0;                         
+          case 'Ê':int _9a80f9746722833073e181a5948b4438=0;                         
                letter = 'E';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
-          case 'Ì':int _e26027980ccb25897ae4509056d3b8f5=0;                         
-          case 'Í':int _b72f153a6e848476d4332fbf3222f59=0;                          
-          case 'Î':int _e0d2a1f681f582191a869c451ca5bc9c=0;                         
+          case 'Ì':int _7c73f3877ca5e65885dee4462c759179=0;                         
+          case 'Í':int _c7f850a8fc27a3418d21f7fea5943a3=0;                          
+          case 'Î':int _2f53d5e041c324e32d8c43464e66e2c8=0;                         
                letter = 'I';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
-          case 'Ò':int _ddfa3725ebd348c71ccac50c99aa2c88=0;                         
-          case 'Ó':int _e4bbac031fb942c179ba9512fa6f6885=0;                         
-          case 'Ô':int _e721c126b53a946e3b2a4fb193e86927=0;                         
-          case 'Õ':int _f0b5f88e64d453b98030ffb3dafe722d=0;                         
+          case 'Ò':int _f864584df3e5c310ec2e574af0f00110=0;                         
+          case 'Ó':int _3945e9eb898078bb2376ffc5abad89da=0;                         
+          case 'Ô':int _1cc91d60ce6158fbd3b788ded6ee9f9d=0;                         
+          case 'Õ':int _d4b4558bc1d935b43f93e401943a967f=0;                         
                letter = 'O';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
-          case 'Ú':int _c04152a58a3556525b0c8fb661f4a414=0;                         
-          case 'Ù':int _e123a0877293cef4b6c6b3a884255d92=0;                         
-          case 'Û':int _cc962736437235c0b84adb7a06178357=0;                         
+          case 'Ú':int _5992d6bf227629b9e8eb902e588dd65b=0;                         
+          case 'Ù':int _32671a352f568567760d9ca712a4fb7e=0;                         
+          case 'Û':int _4b64d5b0d290150d5ac33f13db0d78eb=0;                         
                letter = 'U';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
           }                                                                         
           return letter;                                                            
      }                                                                              
-     @executionFlow.runtime.CollectCalls public int doWhileMethod(int a, int b){    
+     @executionflow.runtime.CollectCalls public int doWhileMethod(int a, int b){    
           if (a == 0) {                                                             
                return b;                                                            
           }                                                                         
           if (b == 0) {                                                             
                return a;                                                            
           }                                                                         
-          do {int _9b4004ffc095212874ccee7be377bc0b=0;                              
+          do {int _dd0013553746f0f93d2d085bc3589169=0;                              
                a++;                                                                 
                b--;                                                                 
           }                                                                         
                while (b != 0);                                                      
                return a;                                                            
-                                                                                    // a = a + b;
      }                                                                              
-     @executionFlow.runtime.CollectCalls public int inlineWhile(int a){             
+     @executionflow.runtime.CollectCalls public int inlineWhile(int a){             
           while (a > 0) {                                                           
                a--;                                                                 
           }                                                                         
           return a;                                                                 
      }                                                                              
-     @executionFlow.runtime.CollectCalls public boolean inlineIfElse(int n){        
+     @executionflow.runtime.CollectCalls public boolean inlineIfElse(int n){        
           if (n > 0) {                                                              
                return true;                                                         
           }                                                                         
-          else {int _16de1dc96717a1e74b723be6101cf297=0;                            
+          else {int _21115bf9fc349246864e64e7523092dd=0;                            
                return false;                                                        
           }                                                                         
      }                                                                              
-     @executionFlow.runtime.CollectCalls public int inlineDoWhile(int n){           
+     @executionflow.runtime.CollectCalls public int inlineDoWhile(int n){           
           if (n <= 0) {                                                             
                n = 1;                                                               
           }                                                                         
-          do {int _65722c9f237d129950b8cd0498e1d717=0;                              
+          do {int _36024e5e5e67a9f532ef2987b840f096=0;                              
                n--;                                                                 
           }                                                                         
                while (n > 0);                                                       
                return n;                                                            
      }                                                                              
-     @executionFlow.runtime.CollectCalls public int ifElseSameLine(int num){        
+     @executionflow.runtime.CollectCalls public int ifElseSameLine(int num){        
           if (num > 0) {                                                            
                num *= 0;                                                            
           }                                                                         
-          else {int _bc903046a40c7d35fbe8e58841692963=0;                            
+          else {int _41ddd0d4fbddd46b402e32ce950032d1=0;                            
                num = 10;                                                            
           }                                                                         
           return num;                                                               
      }                                                                              
-     @executionFlow.runtime.CollectCalls public int ifElseSameLine2(int num){       
+     @executionflow.runtime.CollectCalls public int ifElseSameLine2(int num){       
           if (num > 0) {                                                            
                num *= 0;                                                            
           }                                                                         
-          else {int _5cad31e8ad29b7469d8ba8fe08b085ef=0;                            
+          else {int _97bada81fe35e1e1c2d7771e1dbe078b=0;                            
                num = 10;                                                            
           }                                                                         
           return num;                                                               

@@ -1,24 +1,24 @@
-package executionFlow.core.file.parser.files;
+package executionflow.core.file.parser.files;
 public class test_constructor{
-@executionFlow.runtime.CollectCalls public test_constructor(boolean callMethods){
+@executionflow.runtime.CollectCalls public test_constructor(boolean callMethods){
 if (callMethods) {
 C();
 D();
 }
 }
-@executionFlow.runtime.CollectCalls public void A(){
+@executionflow.runtime.CollectCalls public void A(){
 Boolean.parseBoolean("True");
 B();
 C();
 }
-@executionFlow.runtime.CollectCalls public void B(){
+@executionflow.runtime.CollectCalls public void B(){
 Boolean.parseBoolean("True");
 }
-@executionFlow.runtime.CollectCalls public void C(){
+@executionflow.runtime.CollectCalls public void C(){
 Boolean.parseBoolean("True");
 D();
 }
-@executionFlow.runtime.CollectCalls public void D(){
+@executionflow.runtime.CollectCalls public void D(){
 Boolean.parseBoolean("True");
 }
 }

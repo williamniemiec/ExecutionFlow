@@ -1,4 +1,4 @@
-package executionFlow.io;
+package executionflow.io;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -7,11 +7,12 @@ import java.util.List;
 
 import org.junit.Test;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.LibraryManager;
-import executionFlow.io.compiler.Compiler;
-import executionFlow.io.compiler.CompilerFactory;
-import executionFlow.runtime.SkipCollection;
+import executionflow.ExecutionFlow;
+import executionflow.io.FileEncoding;
+import executionflow.io.compiler.Compiler;
+import executionflow.io.compiler.CompilerFactory;
+import executionflow.lib.LibraryManager;
+import executionflow.runtime.SkipCollection;
 
 @SkipCollection
 public class FileCompilerTest {
@@ -31,12 +32,12 @@ public class FileCompilerTest {
 	private Path generateAspectsRootDirectory() {
 		if (ExecutionFlow.isDevelopment()) {
 			return ExecutionFlow.getAppRootPath().resolve(
-					Path.of("bin", "executionFlow", "runtime")
+					Path.of("bin", "executionflow", "runtime")
 			);
 		}
 		
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("executionFlow", "runtime")
+				Path.of("executionflow", "runtime")
 		);
 	}
 

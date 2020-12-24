@@ -1,12 +1,12 @@
-package executionFlow;
+package executionflow;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.info.InvokedContainer;
-import executionFlow.io.manager.InvokedManager;
+import executionflow.info.InvokedContainer;
+import executionflow.io.manager.InvokedManager;
 
 /**
  * For each collected method, obtain the following information:
@@ -17,7 +17,7 @@ import executionFlow.io.manager.InvokedManager;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow {

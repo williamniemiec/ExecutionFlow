@@ -1,17 +1,17 @@
-package executionFlow.io.manager;
+package executionflow.io.manager;
 
 import java.io.IOException;
 
-import executionFlow.io.processor.ProcessorType;
-import executionFlow.util.logger.Logger;
+import executionflow.io.processor.ProcessorType;
+import executionflow.util.logger.Logger;
 
 /**
  * Responsible for managing the processing and compilation of methods, 
  * constructors and test methods.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since		5.2.3
+ * @version		6.0.0
+ * @since		6.0.0
  */
 public class InvokedManager {
 	

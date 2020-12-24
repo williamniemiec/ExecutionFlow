@@ -1,4 +1,4 @@
-package executionFlow.runtime.collector;
+package executionflow.runtime.collector;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -7,13 +7,13 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import executionFlow.ExecutionFlow;
+import executionflow.ExecutionFlow;
 
 /**
  * Searches for source or compiled files of a class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.0
  */
 public class ClassPathSearcher {

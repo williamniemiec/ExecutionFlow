@@ -1,4 +1,4 @@
-package executionFlow.io.processor.invoked.trgeneration;
+package executionflow.io.processor.invoked.trgeneration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since 		5.2.0
  */
 public class CodeCleanerAdapter extends CodeCleaner {

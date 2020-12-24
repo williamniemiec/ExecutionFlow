@@ -1,16 +1,16 @@
-package executionFlow.io.compiler.aspectj;
+package executionflow.io.compiler.aspectj;
 
 import java.nio.file.Path;
 import java.util.List;
 
-import executionFlow.io.compiler.Compiler;
+import executionflow.io.compiler.Compiler;
 
 /**
  * Compiler builder with support for AspectJ framework.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since		5.2.3
+ * @version		6.0.0
+ * @since		6.0.0
  */
 public interface AspectJCompilerBuilder {
 	

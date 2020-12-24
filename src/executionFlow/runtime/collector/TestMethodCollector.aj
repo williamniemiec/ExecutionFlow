@@ -1,4 +1,4 @@
-package executionFlow.runtime.collector;
+package executionflow.runtime.collector;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,37 +10,37 @@ import java.util.Map;
 
 import org.aspectj.lang.JoinPoint;
 
-import executionFlow.ConstructorExecutionFlow;
-import executionFlow.ExecutionFlow;
-import executionFlow.LibraryManager;
-import executionFlow.MethodExecutionFlow;
-import executionFlow.RemoteControl;
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.manager.FileManager;
-import executionFlow.io.manager.FilesManager;
-import executionFlow.io.manager.InvokedManager;
-import executionFlow.io.processor.ProcessorType;
-import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
-import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
-import executionFlow.io.processor.fileprocessor.PreTestMethodFileProcessor;
-import executionFlow.user.Session;
-import executionFlow.util.Checkpoint;
-import executionFlow.util.JUnit4Runner;
-import executionFlow.util.logger.LogLevel;
-import executionFlow.util.logger.LogView;
-import executionFlow.util.logger.Logger;
+import executionflow.ConstructorExecutionFlow;
+import executionflow.ExecutionFlow;
+import executionflow.MethodExecutionFlow;
+import executionflow.info.InvokedContainer;
+import executionflow.info.InvokedInfo;
+import executionflow.io.manager.FileManager;
+import executionflow.io.manager.FilesManager;
+import executionflow.io.manager.InvokedManager;
+import executionflow.io.processor.ProcessorType;
+import executionflow.io.processor.factory.InvokedFileProcessorFactory;
+import executionflow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
+import executionflow.lib.LibraryManager;
+import executionflow.user.RemoteControl;
+import executionflow.user.Session;
+import executionflow.util.Checkpoint;
+import executionflow.util.JUnit4Runner;
+import executionflow.util.logger.LogLevel;
+import executionflow.util.logger.LogView;
+import executionflow.util.logger.Logger;
 
 /**
  * Run in each test method
  * 
- * @apiNote		Ignores methods with {@link executionFlow.runtime.SkipInvoked}
- * annotation, methods with {@link executionFlow.runtime._SkipInvoked} and all
- * methods from classes with {@link executionFlow.runtime.SkipCollection} 
+ * @apiNote		Ignores methods with {@link executionflow.runtime.SkipInvoked}
+ * annotation, methods with {@link executionflow.runtime._SkipInvoked} and all
+ * methods from classes with {@link executionflow.runtime.SkipCollection} 
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -228,8 +228,11 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			private void cleanup() {
 				restoreOriginalFiles();
 		    	
-		    	processingManager.deleteInvokedFileManagerBackup();
-		    	deleteTestMethodBackupFiles();
+				if ((processingManager != null) && processingManager.isInvokedManagerInitialized()) {
+					processingManager.deleteInvokedFileManagerBackup();
+					deleteTestMethodBackupFiles();					
+				}
+				
 				disableCheckpoint(currentTestMethodCheckpoint);
 				disableCheckpoint(insideJUnitRunnerCheckpoint);
 				disableCheckpoint(firstRunCheckpoint);

@@ -1,23 +1,23 @@
-package executionFlow.io.processor.fileprocessor;
+package executionflow.io.processor.fileprocessor;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.InlineCommentRemover;
-import executionFlow.io.processor.PrintCallDeactivator;
-import executionFlow.io.processor.testmethod.ClassDeclarationProcessor;
-import executionFlow.io.processor.testmethod.MultilineToInlineCallsConverter;
+import executionflow.io.FileEncoding;
+import executionflow.io.processor.InlineCommentRemover;
+import executionflow.io.processor.PrintCallDeactivator;
+import executionflow.io.processor.testmethod.ClassDeclarationProcessor;
+import executionflow.io.processor.testmethod.MultilineToInlineCallsConverter;
 
 /**
  * Processes test java file adding annotations to disable collectors while 
- * running {@link executionFlow.util.core.JDB JDB}. Also, disables print calls,
+ * running {@link executionflow.util.core.JDB JDB}. Also, disables print calls,
  * removes inline comments and converts multiline calls to inline calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor {
@@ -35,7 +35,7 @@ public class TestMethodFileProcessor extends FileProcessor {
 	//-------------------------------------------------------------------------		
 	/**
 	 * Processes test java file adding annotations to disable collectors while 
-	 * running {@link executionFlow.util.core.JDB JDB}. Also, disables print calls,
+	 * running {@link executionflow.util.core.JDB JDB}. Also, disables print calls,
 	 * removes inline comments and converts multiline calls to inline calls.
 	 * 
 	 * @param		file Path of the file to be parsed

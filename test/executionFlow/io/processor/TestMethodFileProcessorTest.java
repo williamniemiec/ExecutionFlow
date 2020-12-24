@@ -1,13 +1,13 @@
-package executionFlow.io.processor;
+package executionflow.io.processor;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
 
-import executionFlow.io.processor.fileprocessor.FileProcessor;
-import executionFlow.io.processor.fileprocessor.TestMethodFileProcessor;
-import executionFlow.runtime.SkipCollection;
+import executionflow.io.processor.fileprocessor.FileProcessor;
+import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
+import executionflow.runtime.SkipCollection;
 
 /**
  * Tests for class {@link TestMethodFileProcessor}.
@@ -20,7 +20,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	//-------------------------------------------------------------------------
 	@Test
 	public void testClassTest() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 	  			  			  "files", "TestMethodFileProcessorTest"));
 		withFilename("TestClass");
 		initializeTest();
@@ -30,7 +30,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testMethodInvokedSameLine() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 			  			  	  "files"));
 		withFilename("test_method_tested_invoked_same_file");
 		initializeTest();
@@ -40,7 +40,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testAnonymousClass() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 					  	  	  "files"));
 		withFilename("test_anonymous_class");
 		initializeTest();
@@ -50,7 +50,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testMultiargsTest() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  	  	  	  "files", "TestMethodFileProcessorTest"));
 		withFilename("Multiargs");
 		initializeTest();

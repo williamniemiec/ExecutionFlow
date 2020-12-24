@@ -1,4 +1,4 @@
-package executionFlow.exporter.testpath;
+package executionflow.exporter.testpath;
 
 /**
  * Contains all types of test path exports.

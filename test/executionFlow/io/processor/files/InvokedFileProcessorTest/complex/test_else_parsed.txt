@@ -1,12 +1,12 @@
-package executionFlow.core.file.parser.files.complex;
+package executionflow.core.file.parser.files.complex;
 public class test_else{
-@executionFlow.runtime.CollectCalls public String ifElseMethod(int num){
+@executionflow.runtime.CollectCalls public String ifElseMethod(int num){
 if (num < 0){
 return "";
 }
 String response = "";
-int w;int _80bff19aa6496463147101d6a60543f1=0;
-int k;int _2e8764305ffa7b404f29586635edb02b=0;
+int w;int _9de9efa668ed5640e1eb903bb0bea1ef=0;
+int k;int _369a71efac9c016720a89fa9a6909cdb=0;
 if (num == 0){
 response = "Number zero";
 }
@@ -18,13 +18,13 @@ response = "Number "+num;
 }
 return response;
 }
-@executionFlow.runtime.CollectCalls public String ifElseMethod2(int num){
+@executionflow.runtime.CollectCalls public String ifElseMethod2(int num){
 if (num < 0){
 return "";
 }
 String response = "";
-int w;int _230747ef8f846342a03b6f978610ae05=0;
-int k;int _870d544dc276d8b4a7b22f8e19b21084=0;
+int w;int _df487c1f0452aba311fe8c1c5111fce3=0;
+int k;int _a5f6947efd9fda1b4f03d2cb87868ed4=0;
 if (num == 0){
 response = "Number zero";
 }

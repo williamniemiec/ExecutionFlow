@@ -1,4 +1,4 @@
-package executionFlow.exporter.signature;
+package executionflow.exporter.signature;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.util.CSV;
-import executionFlow.util.DataUtil;
-import executionFlow.util.logger.Logger;
+import executionflow.ExecutionFlow;
+import executionflow.util.CSV;
+import executionflow.util.DataUtil;
+import executionflow.util.logger.Logger;
 
 /**
  * Exports signature of methods called by a tested invoked in a CSV file with
@@ -25,7 +25,7 @@ import executionFlow.util.logger.Logger;
  * </code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 public class MethodsCalledByTestedInvokedExporter 

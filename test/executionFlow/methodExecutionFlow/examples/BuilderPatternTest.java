@@ -1,14 +1,14 @@
-package executionFlow.methodExecutionFlow.examples;
+package executionflow.methodExecutionFlow.examples;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.MethodExecutionFlow;
-import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
-import executionFlow.runtime.SkipCollection;
+import executionflow.ExecutionFlow;
+import executionflow.MethodExecutionFlow;
+import executionflow.methodExecutionFlow.MethodExecutionFlowTest;
+import executionflow.runtime.SkipCollection;
 
 
 /**

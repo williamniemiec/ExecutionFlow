@@ -1,4 +1,4 @@
-package executionFlow.runtime.collector;
+package executionflow.runtime.collector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,22 +9,22 @@ import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
 
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.processor.fileprocessor.InvokedFileProcessor;
-import executionFlow.io.processor.fileprocessor.TestMethodFileProcessor;
+import executionflow.info.InvokedContainer;
+import executionflow.info.InvokedInfo;
+import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
+import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
 
 /**
  * Responsible for data collection of methods and class constructors used in 
  * tests.
  * 
  * @apiNote		It will ignore all methods of a class if it has 
- * {@link executionFlow.runtime.SkipCollection} annotation
+ * {@link executionflow.runtime.SkipCollection} annotation
  * @apiNote		It will ignore methods with 
- * {@link executionFlow.runtime.SkipInvoked} annotation
+ * {@link executionflow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.0
  */
 public abstract aspect RuntimeCollector {
@@ -93,11 +93,11 @@ public abstract aspect RuntimeCollector {
 	//		Pointcuts
 	//-------------------------------------------------------------------------
 	protected pointcut skipAnnotation():
-		within(@executionFlow.runtime.SkipCollection *)
-		|| withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
-		|| withincode(@executionFlow.runtime._SkipInvoked * *.*(..))
-		|| execution(@executionFlow.runtime.SkipInvoked * *.*(..))
-		|| execution(@executionFlow.runtime._SkipInvoked * *.*(..)); 
+		within(@executionflow.runtime.SkipCollection *)
+		|| withincode(@executionflow.runtime.SkipInvoked * *.*(..))
+		|| withincode(@executionflow.runtime._SkipInvoked * *.*(..))
+		|| execution(@executionflow.runtime.SkipInvoked * *.*(..))
+		|| execution(@executionflow.runtime._SkipInvoked * *.*(..)); 
 	
 	protected pointcut insideJUnitTest():
 		insideJUnit4Test() 

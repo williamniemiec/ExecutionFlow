@@ -1,15 +1,15 @@
-package executionFlow.io.processor.fileprocessor;
+package executionflow.io.processor.fileprocessor;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.InlineCommentRemover;
-import executionFlow.io.processor.PrintCallDeactivator;
-import executionFlow.io.processor.invoked.holeplug.HolePlug;
-import executionFlow.io.processor.invoked.trgeneration.CodeCleanerAdapter;
+import executionflow.io.FileEncoding;
+import executionflow.io.processor.InlineCommentRemover;
+import executionflow.io.processor.PrintCallDeactivator;
+import executionflow.io.processor.invoked.holeplug.HolePlug;
+import executionflow.io.processor.invoked.trgeneration.CodeCleanerAdapter;
 
 /**
  * Processes java file adding instructions in parts of the code that does not 
@@ -17,7 +17,7 @@ import executionFlow.io.processor.invoked.trgeneration.CodeCleanerAdapter;
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor {

@@ -1,4 +1,4 @@
-package executionFlow.exporter.signature;
+package executionflow.exporter.signature;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.info.InvokedContainer;
-import executionFlow.util.CSV;
-import executionFlow.util.DataUtil;
-import executionFlow.util.logger.Logger;
+import executionflow.info.InvokedContainer;
+import executionflow.util.CSV;
+import executionflow.util.DataUtil;
+import executionflow.util.logger.Logger;
 
 /**
  * Responsible for exporting invoked along with the test method that tests it
@@ -29,7 +29,7 @@ import executionFlow.util.logger.Logger;
  * <b>Note:</b> An invoked can be a method or a constructor
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 public class TestedInvokedExporter {

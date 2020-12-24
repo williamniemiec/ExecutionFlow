@@ -1,18 +1,18 @@
-package executionFlow.io.processor.invoked.holeplug;
+package executionflow.io.processor.invoked.holeplug;
 
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
-import executionFlow.io.SourceCodeProcessor;
-import executionFlow.util.balance.CurlyBracketBalance;
+import executionflow.io.SourceCodeProcessor;
+import executionflow.util.balance.CurlyBracketBalance;
 
 /**
  * Adds curly brackets in else blocks that does not have curly brackets.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since 		5.2.3
+ * @version		6.0.0
+ * @since 		6.0.0
  */
 public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 

@@ -1,9 +1,9 @@
-package executionFlow.io.processor.factory;
+package executionflow.io.processor.factory;
 
 import java.nio.file.Path;
 
-import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.fileprocessor.FileProcessor;
+import executionflow.io.FileEncoding;
+import executionflow.io.processor.fileprocessor.FileProcessor;
 
 /**
  * Responsible for generating {@link FileProcessor} classes.

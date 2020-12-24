@@ -1,19 +1,19 @@
-package executionFlow.io.preprocessor.testmethod;
+package executionflow.io.preprocessor.testmethod;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
-import executionFlow.io.SourceCodeProcessor;
-import executionFlow.util.DataUtil;
-import executionFlow.util.balance.RoundBracketBalance;
+import executionflow.io.SourceCodeProcessor;
+import executionflow.util.DataUtil;
+import executionflow.util.balance.RoundBracketBalance;
 
 /**
  * Surround asserts with try-catch so that test method execution does not
  * stop if an assert fails.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since 		5.2.3
+ * @version		6.0.0
+ * @since 		6.0.0
  */
 public class AssertProcessor extends SourceCodeProcessor {
 

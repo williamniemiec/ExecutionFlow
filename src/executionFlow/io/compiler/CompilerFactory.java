@@ -1,14 +1,14 @@
-package executionFlow.io.compiler;
+package executionflow.io.compiler;
 
-import executionFlow.io.compiler.aspectj.AspectJCompilerBuilder;
-import executionFlow.io.compiler.aspectj.StandardAspectJCompiler;
+import executionflow.io.compiler.aspectj.AspectJCompilerBuilder;
+import executionflow.io.compiler.aspectj.StandardAspectJCompiler;
 
 /**
  * Responsible for generating compilers.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since		5.2.3
+ * @version		6.0.0
+ * @since		6.0.0
  */
 public class CompilerFactory {
 	

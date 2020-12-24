@@ -1,16 +1,16 @@
-package executionFlow.io.compiler;
+package executionflow.io.compiler;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-import executionFlow.io.FileEncoding;
+import executionflow.io.FileEncoding;
 
 /**
  * File compiler.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since		5.2.3
+ * @version		6.0.0
+ * @since		6.0.0
  */
 public interface Compiler {
 

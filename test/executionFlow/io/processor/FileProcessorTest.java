@@ -1,11 +1,11 @@
-package executionFlow.io.processor;
+package executionflow.io.processor;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.fileprocessor.FileProcessor;
+import executionflow.io.FileEncoding;
+import executionflow.io.processor.fileprocessor.FileProcessor;
 
 public abstract class FileProcessorTest {
 	

@@ -1,4 +1,4 @@
-package executionFlow.io.manager;
+package executionflow.io.manager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,22 +10,22 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.LibraryManager;
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.FileEncoding;
-import executionFlow.io.compiler.Compiler;
-import executionFlow.io.compiler.CompilerFactory;
-import executionFlow.io.processor.factory.FileProcessorFactory;
-import executionFlow.io.processor.fileprocessor.FileProcessor;
-import executionFlow.util.FileUtil;
-import executionFlow.util.logger.Logger;
+import executionflow.ExecutionFlow;
+import executionflow.info.InvokedInfo;
+import executionflow.io.FileEncoding;
+import executionflow.io.compiler.Compiler;
+import executionflow.io.compiler.CompilerFactory;
+import executionflow.io.processor.factory.FileProcessorFactory;
+import executionflow.io.processor.fileprocessor.FileProcessor;
+import executionflow.lib.LibraryManager;
+import executionflow.util.FileUtil;
+import executionflow.util.logger.Logger;
 
 /**
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.3
  */
 public class FileManager implements Serializable {
@@ -413,12 +413,12 @@ public class FileManager implements Serializable {
 	private Path generateAspectsRootDirectory() {
 		if (ExecutionFlow.isDevelopment()) {
 			return ExecutionFlow.getAppRootPath().resolve(
-					Path.of("bin", "executionFlow", "runtime")
+					Path.of("bin", "executionflow", "runtime")
 			);
 		}
 		
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("executionFlow", "runtime")
+				Path.of("executionflow", "runtime")
 		);
 	}
 

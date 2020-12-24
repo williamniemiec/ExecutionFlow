@@ -1,12 +1,12 @@
-package executionFlow.core.file.parser.files;
+package executionflow.core.file.parser.files;
 public class test_else{
-@executionFlow.runtime.CollectCalls public String ifElseMethod(int num){
+@executionflow.runtime.CollectCalls public String ifElseMethod(int num){
 if (num < 0) {
 return "";
 }
 String response = "";
-int w;int _efda02fcf09844f7cf0d75cfd8801b1=0;
-int k;int _16e04d371441f37a39fdd5bb6fb38096=0;
+int w;int _e2e09266f5f880829467b0c39f856b82=0;
+int k;int _bfa481da58720019a2a3e8be683c7162=0;
 if (num == 0) {
 response = "Number zero";
 w = 2;
@@ -14,7 +14,7 @@ w = 2;
 else if (num == 1) {
 response = "Number one";
 }
-else {int _3a772b38bec192bb6b4b59976dc5a468=0;
+else {int _480825991878a27109facbd3eb47c5ee=0;
 response = "Number "+num;
 }
 return response;

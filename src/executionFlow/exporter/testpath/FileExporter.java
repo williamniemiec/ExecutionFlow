@@ -1,4 +1,4 @@
-package executionFlow.exporter.testpath;
+package executionflow.exporter.testpath;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,16 +15,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.info.InvokedContainer;
-import executionFlow.util.DataUtil;
-import executionFlow.util.logger.Logger;
+import executionflow.ExecutionFlow;
+import executionflow.info.InvokedContainer;
+import executionflow.util.DataUtil;
+import executionflow.util.logger.Logger;
 
 /**
  * Exports computed test path to a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.0
  */
 public class FileExporter implements TestPathExporter {

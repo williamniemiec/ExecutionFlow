@@ -19,7 +19,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import examples.others.auxClasses.AuxClass;
-import executionFlow.io.FileEncoding;
+import executionflow.io.FileEncoding;
 
 
 /**

@@ -1,11 +1,11 @@
-package executionFlow.info;
+package executionflow.info;
 
 /**
  * Stores information about a method or constructor along with a test method.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since		5.2.3
+ * @version		6.0.0
+ * @since		6.0.0
  */
 public class InvokedContainer {
 	

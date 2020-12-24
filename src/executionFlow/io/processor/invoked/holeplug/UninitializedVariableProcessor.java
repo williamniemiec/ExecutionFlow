@@ -1,17 +1,17 @@
-package executionFlow.io.processor.invoked.holeplug;
+package executionflow.io.processor.invoked.holeplug;
 
 import java.util.List;
 
-import executionFlow.io.SourceCodeProcessor;
-import executionFlow.util.DataUtil;
+import executionflow.io.SourceCodeProcessor;
+import executionflow.util.DataUtil;
 
 /**
  * Add an instruction in variable declarations without 
  * initialization.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since 		5.2.3
+ * @version		6.0.0
+ * @since 		6.0.0
  */
 public class UninitializedVariableProcessor extends SourceCodeProcessor {
 	

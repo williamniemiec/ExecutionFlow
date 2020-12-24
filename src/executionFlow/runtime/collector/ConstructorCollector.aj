@@ -1,4 +1,4 @@
-package executionFlow.runtime.collector;
+package executionflow.runtime.collector;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -7,9 +7,9 @@ import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
 
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.util.logger.Logger;
+import executionflow.info.InvokedContainer;
+import executionflow.info.InvokedInfo;
+import executionflow.util.logger.Logger;
 
 /**
  * Captures class instantiation within test methods.
@@ -28,12 +28,12 @@ import executionFlow.util.logger.Logger;
  * 
  * 
  * @apiNote		Excludes calls to native java methods, methods with 
- * {@link executionFlow.runtime.SkipInvoked]} annotation and all 
- * methods from classes with {@link executionFlow.runtime.SkipCollection} 
+ * {@link executionflow.runtime.SkipInvoked]} annotation and all 
+ * methods from classes with {@link executionflow.runtime.SkipCollection} 
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -62,7 +62,7 @@ public aspect ConstructorCollector extends RuntimeCollector {
 		&& !(JUnit4InternalCall() || JUnit5InternalCall())
 		&& call(*.new(..))
 		&& !cflowbelow(withincode(* *(..)))
-		&& !within(executionFlow..*)
+		&& !within(executionflow..*)
 		&& !within(ConstructorCollector);
 	
 	

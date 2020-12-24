@@ -1,4 +1,4 @@
-package executionFlow.runtime.collector;
+package executionflow.runtime.collector;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -10,9 +10,9 @@ import java.util.List;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.util.logger.Logger;
+import executionflow.info.InvokedContainer;
+import executionflow.info.InvokedInfo;
+import executionflow.util.logger.Logger;
 
 /**
  * Collects various information about methods called by a JUnit test.
@@ -30,12 +30,12 @@ import executionFlow.util.logger.Logger;
  * </ul>
  * 
  * @apiNote		Excludes calls to native java methods, methods with 
- * {@link executionFlow.runtime.SkipInvoked} annotation, methods
- * with {@link executionFlow.runtime._SkipInvoked} and all methods from classes
- * with {@link executionFlow.runtime.SkipCollection} annotation.
+ * {@link executionflow.runtime.SkipInvoked} annotation, methods
+ * with {@link executionflow.runtime._SkipInvoked} and all methods from classes
+ * with {@link executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.0 
  */
 @SuppressWarnings("unused")

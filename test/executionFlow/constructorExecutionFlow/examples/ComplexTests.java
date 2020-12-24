@@ -1,14 +1,14 @@
-package executionFlow.constructorExecutionFlow.examples;
+package executionflow.constructorExecutionFlow.examples;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
 
-import executionFlow.ConstructorExecutionFlow;
-import executionFlow.ExecutionFlow;
-import executionFlow.constructorExecutionFlow.ConstructorExecutionFlowTest;
-import executionFlow.runtime.SkipCollection;
+import executionflow.ConstructorExecutionFlow;
+import executionflow.ExecutionFlow;
+import executionflow.constructorExecutionFlow.ConstructorExecutionFlowTest;
+import executionflow.runtime.SkipCollection;
 
 /**
  * Tests test path computation for the constructors of 

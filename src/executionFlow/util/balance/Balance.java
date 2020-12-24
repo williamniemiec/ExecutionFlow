@@ -1,4 +1,4 @@
-package executionFlow.util.balance;
+package executionflow.util.balance;
 
 /**
  * Responsible for managing balances. 

@@ -1,3 +1,0 @@
-examples.others.MultiargsTest.methodCallMultLineArgsWithBrokenLines()
-[12]
-

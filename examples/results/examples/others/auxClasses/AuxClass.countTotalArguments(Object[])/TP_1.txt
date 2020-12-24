@@ -1,3 +1,0 @@
-examples.junit5.ParameterizedTestAnnotation.testWithEnumSourceInclude()
-[124, 125, 126, 127, 128, 129, 127, 132]
-

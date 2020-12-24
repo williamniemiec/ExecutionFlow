@@ -1,4 +1,0 @@
-examples.junit5.MixedJUnit5Annotations.repeatedTestAnnotation()
-[35, 36, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 41]
-[35, 36, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 41]
-

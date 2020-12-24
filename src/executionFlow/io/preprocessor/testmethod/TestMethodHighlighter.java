@@ -1,19 +1,19 @@
-package executionFlow.io.preprocessor.testmethod;
+package executionflow.io.preprocessor.testmethod;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.SourceCodeProcessor;
-import executionFlow.util.DataUtil;
-import executionFlow.util.balance.CurlyBracketBalance;
+import executionflow.info.InvokedInfo;
+import executionflow.io.SourceCodeProcessor;
+import executionflow.util.DataUtil;
+import executionflow.util.balance.CurlyBracketBalance;
 
 /**
  * Comments on all test methods except the one with the signature provided.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since 		5.2.3
+ * @version		6.0.0
+ * @since 		6.0.0
  */
 public class TestMethodHighlighter extends SourceCodeProcessor {
 

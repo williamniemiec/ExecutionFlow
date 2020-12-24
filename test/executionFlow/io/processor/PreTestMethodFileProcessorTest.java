@@ -1,13 +1,13 @@
-package executionFlow.io.processor;
+package executionflow.io.processor;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.Test;
 
-import executionFlow.io.processor.fileprocessor.FileProcessor;
-import executionFlow.io.processor.fileprocessor.PreTestMethodFileProcessor;
-import executionFlow.runtime.SkipCollection;
+import executionflow.io.processor.fileprocessor.FileProcessor;
+import executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
+import executionflow.runtime.SkipCollection;
 
 /**
  * Tests for class {@link PreTestMethodFileProcessor}.
@@ -20,7 +20,7 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	//-------------------------------------------------------------------------
 	@Test
 	public void testClassTest_firstMethod() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 			  			  	  "files", "PreTestMethodFileProcessorTest"));
 		withFilename("TestClass");
 		withTestMethodSignature("executionFlow.core.file.parser.tests" + 
@@ -32,7 +32,7 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testMethodWithInnerClass() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "PreTestMethodFileProcessorTest"));
 		withFilename("TestMethodWithInnerClass");
 		withTestMethodSignature("org.jfree.chart.AreaChartTest" + 
@@ -44,7 +44,7 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void parameterizedTestMethodTest_firstMethod() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 			  	  			  "files", "PreTestMethodFileProcessorTest"));
 		withFilename("ParameterizedTestMethod");
 		withTestMethodSignature("examples.junit5.ParameterizedTestAnnotation" + 
@@ -57,7 +57,7 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testMethodInvokedSameLine() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 							  "files"));
 		withFilename("test_method_tested_invoked_same_file");
 		withTestMethodSignature("examples.againstRequirements" + 
@@ -69,7 +69,7 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testAnonymousClass() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 							  "files"));
 		withFilename("test_anonymous_class");
 		withTestMethodSignature("examples.override.OverrideTest" + 

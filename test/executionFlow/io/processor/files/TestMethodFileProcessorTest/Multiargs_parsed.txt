@@ -9,7 +9,7 @@ import org.junit.Test;
 import examples.others.auxClasses.AuxClass;
 
 
-@executionFlow.runtime.SkipCollection public class MultiargsTest 
+@executionflow.runtime.SkipCollection public class MultiargsTest 
 {
 	@Test
 	public void methodCallMultiLineArgsTest()

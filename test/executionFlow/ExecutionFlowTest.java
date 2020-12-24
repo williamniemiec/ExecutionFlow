@@ -1,4 +1,4 @@
-package executionFlow;
+package executionflow;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,18 +16,19 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import executionFlow.exporter.ExportManager;
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.manager.FileManager;
-import executionFlow.io.manager.FilesManager;
-import executionFlow.io.manager.InvokedManager;
-import executionFlow.io.processor.ProcessorType;
-import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
-import executionFlow.io.processor.fileprocessor.InvokedFileProcessor;
-import executionFlow.io.processor.fileprocessor.TestMethodFileProcessor;
-import executionFlow.util.logger.LogLevel;
-import executionFlow.util.logger.Logger;
+import executionflow.exporter.ExportManager;
+import executionflow.info.InvokedContainer;
+import executionflow.info.InvokedInfo;
+import executionflow.io.manager.FileManager;
+import executionflow.io.manager.FilesManager;
+import executionflow.io.manager.InvokedManager;
+import executionflow.io.processor.ProcessorType;
+import executionflow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
+import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
+import executionflow.user.RemoteControl;
+import executionflow.util.logger.LogLevel;
+import executionflow.util.logger.Logger;
 
 public abstract class ExecutionFlowTest {
 	
@@ -56,6 +57,8 @@ public abstract class ExecutionFlowTest {
 		this.testMethodArgs = (Object[]) null;
 		this.paramTypes = new Class[] {};
 		this.paramValues = new Object[] {};
+		
+		onShutdown();
 	}
 	
 		
@@ -69,12 +72,11 @@ public abstract class ExecutionFlowTest {
 	
 	@AfterClass
 	public static void restoreInvoked() throws ClassNotFoundException, IOException {
-		if (!processingManager.isInvokedManagerInitialized())
-			return;
-		
-		processingManager.restoreInvokedOriginalFiles();
-		processingManager.deleteInvokedFileManagerBackup();
-		processingManager.destroyInvokedManager();
+		if ((processingManager != null) && processingManager.isInvokedManagerInitialized()) {
+			processingManager.restoreInvokedOriginalFiles();
+			processingManager.deleteInvokedFileManagerBackup();
+			processingManager.destroyInvokedManager();
+		}
 		
 		RemoteControl.close();
 	}
@@ -87,6 +89,9 @@ public abstract class ExecutionFlowTest {
 	@After
 	public void restoreTestMethod() throws ClassNotFoundException, IOException {
 		if (!processingManager.isTestMethodManagerInitialized())
+			return;
+		
+		if (testMethodManager == null)
 			return;
 		
 		processingManager.restoreTestMethodOriginalFiles();
@@ -140,10 +145,10 @@ public abstract class ExecutionFlowTest {
 		ExecutionFlow ef = getExecutionFlow(processingManager, collection);
 		ExportManager exporter = ef.getExportManager();
 		
-		exporter.disableCalledMethodsByTestedInvokedExport();
-		exporter.disableProcesedSourceFileExport();
-		exporter.disableTestPathExport();
-		exporter.disableTestersExport();
+//		exporter.disableCalledMethodsByTestedInvokedExport();
+//		exporter.disableProcesedSourceFileExport();
+//		exporter.disableTestPathExport();
+//		exporter.disableTestersExport();
 		
 		return ef.run().getTestPaths(container);
 	}
@@ -221,8 +226,7 @@ public abstract class ExecutionFlowTest {
 		initializeFields();
 		checkRequiredFields();
 		
-		initializeProcessingManager();		
-		onShutdown();
+		initializeProcessingManager();
 		initializeTestMethodManager(testMethodSignature, srcTestMethod, binTestMethod, 
 									pkgTestMethod);
 		doPreprocessing();

@@ -1,12 +1,12 @@
-package executionFlow.core.file.parser.files.foreign;
+package executionflow.core.file.parser.files.foreign;
 public class MathArrays {
-@executionFlow.runtime.CollectCalls private MathArrays() {
+@executionflow.runtime.CollectCalls private MathArrays() {
 }
 public interface Function {
 double evaluate(double[] array);
 double evaluate(double[] array, int startIndex, int numElements);
 }
-@executionFlow.runtime.CollectCalls public static double[] scale(double val, final double[] arr) {
+@executionflow.runtime.CollectCalls public static double[] scale(double val, final double[] arr) {
 double[] newArr = new double[arr.length];
 int i = 0;
 while (i < arr.length) {
@@ -15,7 +15,7 @@ i++;
 }
 return newArr;
 }
-@executionFlow.runtime.CollectCalls public static void scaleInPlace(double val, final double[] arr) {
+@executionflow.runtime.CollectCalls public static void scaleInPlace(double val, final double[] arr) {
 int i = 0;
 while (i < arr.length) {
 arr[i] *= val;
@@ -126,34 +126,34 @@ return max;
 }
 public enum OrderDirection {
 INCREASING, DECREASING }
-@executionFlow.runtime.CollectCalls public static  <T extends Comparable<? super T>> boolean isMonotonic(T[] val, OrderDirection dir, boolean strict) {
+@executionflow.runtime.CollectCalls public static  <T extends Comparable<? super T>> boolean isMonotonic(T[] val, OrderDirection dir, boolean strict) {
 T previous = val[0];
 final int max = val.length;
 int i = 1;
 while (i < max) {
-final int comp;int _f7a965064f97109ac23445ee6f637890=0;
+final int comp;int _2054442660dcc9eb21448605461d1c3b=0;
 switch (dir) {
-case INCREASING:int _f1b4d14bff36eb76b9a34e7b36f600a0=0;
+case INCREASING:int _1be589127b6a30704e9f1acd7ba82652=0;
 comp = previous.compareTo(val[i]);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _2b4f9b35cc387ae674247e530c8d6e2e=0;
+else {int _5502f5af78b1d834ea3631d76ccfd546=0;
 if (comp > 0) {
 return false;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}break;
-case DECREASING:int _1529281bf1a7905608b3614b30013b07=0;
+case DECREASING:int _81f7e5774e4666bded86b943b402283c=0;
 comp = val[i].compareTo(previous);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _930b6620c2631c6d06d90b9e8f94f01e=0;
+else {int _f310b2c868a50fe1249e21a857037fe0=0;
 if (comp > 0) {
 return false;
 }
@@ -167,64 +167,64 @@ i++;
 }
 return true;
 }
-@executionFlow.runtime.CollectCalls public static boolean isMonotonic(double[] val, OrderDirection dir, boolean strict) {
+@executionflow.runtime.CollectCalls public static boolean isMonotonic(double[] val, OrderDirection dir, boolean strict) {
 return checkOrder(val, dir, strict, false);
 }
-@executionFlow.runtime.CollectCalls public static boolean checkEqualLength(double[] a, double[] b, boolean abort) {
+@executionflow.runtime.CollectCalls public static boolean checkEqualLength(double[] a, double[] b, boolean abort) {
 if (a.length == b.length) {
 return true;
 }
-else {int _6addf37ba51472195349c805220e2cb0=0;
+else {int _6b3a10b2f1706596a1bae459199ce375=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
 return false;
 }
 }
-@executionFlow.runtime.CollectCalls public static void checkEqualLength(double[] a, double[] b) {
+@executionflow.runtime.CollectCalls public static void checkEqualLength(double[] a, double[] b) {
 checkEqualLength(a, b, true);
 }
-@executionFlow.runtime.CollectCalls public static boolean checkEqualLength(int[] a, int[] b, boolean abort) {
+@executionflow.runtime.CollectCalls public static boolean checkEqualLength(int[] a, int[] b, boolean abort) {
 if (a.length == b.length) {
 return true;
 }
-else {int _8e11094f438a738997c1270915cd4bef=0;
+else {int _5a414661e3f5cb4e0dead1ac357f1b08=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
 return false;
 }
 }
-@executionFlow.runtime.CollectCalls public static void checkEqualLength(int[] a, int[] b) {
+@executionflow.runtime.CollectCalls public static void checkEqualLength(int[] a, int[] b) {
 checkEqualLength(a, b, true);
 }
 public static boolean checkOrder(double[] val, OrderDirection dir, boolean strict, boolean abort) throws NonMonotonicSequenceException {
 double previous = val[0];
 final int max = val.length;
-int index;int _80c7180d3087206e2ced4e80d870bdc0=0;
+int index;int _114419423752c09f4849626cf7178c0f=0;
 ITEM: for (index = 1;
 index < max;
 index++) {
 switch (dir) {
-case INCREASING:int _dbaa2da3fc1d902ede0f9dc061df78f3=0;
+case INCREASING:int _14d6ce3caf8f90a9896987a56fc95b28=0;
 if (strict) {
 if (val[index] <= previous) {
 if (Boolean.parseBoolean("True")) {break ITEM;}
 }
 }
-else {int _65b39e434fe714d91b6a9673bad16c8=0;
+else {int _9660d015b7664628db63ec815861ac46=0;
 if (val[index] < previous) {
 if (Boolean.parseBoolean("True")) {break ITEM;}
 }
 }
 if (Boolean.parseBoolean("True")) {break;}break;
-case DECREASING:int _9a47917db92a7d9ea554917f65b03a03=0;
+case DECREASING:int _2897ca2c11940665398fb4e7a402dcbe=0;
 if (strict) {
 if (val[index] >= previous) {
 if (Boolean.parseBoolean("True")) {break ITEM;}
 }
 }
-else {int _d5d675b3d9248082cb906862518dba77=0;
+else {int _3c2772ac63ae678af4f33589184c70fc=0;
 if (val[index] > previous) {
 if (Boolean.parseBoolean("True")) {break ITEM;}
 }
@@ -241,7 +241,7 @@ return true;
 if (abort) {
 throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);
 }
-else {int _fa6a296f71a81ed5ef7e1c293566df88=0;
+else {int _ee381a8e1cb38679009e2b0c4f0061d6=0;
 return false;
 }
 }
@@ -311,10 +311,10 @@ PairDoubleInteger(double key, int value) {
 this.key = key;
 this.value = value;
 }
-@executionFlow.runtime.CollectCalls public double getKey() {
+@executionflow.runtime.CollectCalls public double getKey() {
 return key;
 }
-@executionFlow.runtime.CollectCalls public int getValue() {
+@executionflow.runtime.CollectCalls public int getValue() {
 return value;
 }
 }
@@ -373,7 +373,7 @@ i++;
 j++;
 }
 }
-@executionFlow.runtime.CollectCalls public static boolean equals(float[] x, float[] y) {
+@executionflow.runtime.CollectCalls public static boolean equals(float[] x, float[] y) {
 if ((x == null) || (y == null)) {
 return !((x == null) ^ (y == null));
 }
@@ -389,7 +389,7 @@ return false;
 }
 return true;
 }
-@executionFlow.runtime.CollectCalls public static boolean equalsIncludingNaN(float[] x, float[] y) {
+@executionflow.runtime.CollectCalls public static boolean equalsIncludingNaN(float[] x, float[] y) {
 if ((x == null) || (y == null)) {
 return !((x == null) ^ (y == null));
 }
@@ -405,7 +405,7 @@ return false;
 }
 return true;
 }
-@executionFlow.runtime.CollectCalls public static boolean equals(double[] x, double[] y) {
+@executionflow.runtime.CollectCalls public static boolean equals(double[] x, double[] y) {
 if ((x == null) || (y == null)) {
 return !((x == null) ^ (y == null));
 }
@@ -421,7 +421,7 @@ return false;
 }
 return true;
 }
-@executionFlow.runtime.CollectCalls public static boolean equalsIncludingNaN(double[] x, double[] y) {
+@executionflow.runtime.CollectCalls public static boolean equalsIncludingNaN(double[] x, double[] y) {
 if ((x == null) || (y == null)) {
 return !((x == null) ^ (y == null));
 }
@@ -465,25 +465,25 @@ while (i < len) {
 if (Double.isNaN(values[i])) {
 out[i] = Double.NaN;
 }
-else {int _8ceef2dbdc1a8f271c1a8d3d63362be3=0;
+else {int _6196e1b8ff54e7f934f4df281e14c9bb=0;
 out[i] = values[i] * normalizedSum / sum;
 }
 i++;
 }
 return out;
 }
-@executionFlow.runtime.CollectCalls public static <T> T[] buildArray(final Field<T> field, final int length) {
+@executionflow.runtime.CollectCalls public static <T> T[] buildArray(final Field<T> field, final int length) {
 @SuppressWarnings("         ") T[] array = (T[]) Array.newInstance(field.getRuntimeClass(), length);
 Arrays.fill(array, field.getZero());
 return array;
 }
 @SuppressWarnings("unchecked") public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-final T[][] array;int _ebd7ba466d909485fef9dd469b2de034=0;
+final T[][] array;int _27964274ac20d8ffbcc046f2434f58a8=0;
 if (columns < 0) {
 T[] dummyRow = buildArray(field, 0);
 array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
 }
-else {int _701423d5865933a8643c5830e9aea82c=0;
+else {int _c03fad2baf829a1bff5aaae4c967c471=0;
 array = (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] {
 rows, columns }
 );
@@ -518,10 +518,10 @@ n++;
 }
 return y;
 }
-@executionFlow.runtime.CollectCalls public static int[] natural(int n) {
+@executionflow.runtime.CollectCalls public static int[] natural(int n) {
 return sequence(n, 0, 1);
 }
-@executionFlow.runtime.CollectCalls public static int[] sequence(int size, int start, int stride) {
+@executionflow.runtime.CollectCalls public static int[] sequence(int size, int start, int stride) {
 final int[] a = new int[size];
 int i = 0;
 while (i < size) {
@@ -582,11 +582,11 @@ throw new MathIllegalArgumentException(LocalizedFormats.WEIGHT_AT_LEAST_ONE_NON_
 }
 return verifyValues(values, begin, length, allowEmpty);
 }
-@executionFlow.runtime.CollectCalls public static double[] concatenate(double[] ...x) {
+@executionflow.runtime.CollectCalls public static double[] concatenate(double[] ...x) {
 int combinedLength = 0;
-java.util.Iterator<double[]> _4451e3461dec3345c0e3a26817e3159e = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(x);
-while (_4451e3461dec3345c0e3a26817e3159e.hasNext()) {
-double[] a = _4451e3461dec3345c0e3a26817e3159e.next();
+java.util.Iterator<double[]> _be4fcee021862b1b51ca5c6b24ff816b = executionflow.io.processor.invoked.trgeneration.IteratorExtractor.extractIterator(x);
+while (_be4fcee021862b1b51ca5c6b24ff816b.hasNext()) {
+double[] a = _be4fcee021862b1b51ca5c6b24ff816b.next();
 combinedLength += a.length;
 ;
 }
@@ -602,7 +602,7 @@ i++;
 }
 return combined;
 }
-@executionFlow.runtime.CollectCalls public static double[] unique(double[] data) {
+@executionflow.runtime.CollectCalls public static double[] unique(double[] data) {
 TreeSet<Double> values = new TreeSet<>();
 int i = 0;
 while (i < data.length) {

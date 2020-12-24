@@ -1,23 +1,23 @@
-package executionFlow.core.file.parser.files;
+package executionflow.core.file.parser.files;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 public class test_clauseAndBodySameLine{
-@executionFlow.runtime.CollectCalls public int inlineDoWhile(int n){
+@executionflow.runtime.CollectCalls public int inlineDoWhile(int n){
 if (n <= 0) {
 n = 1;
 }
-do {int _71d6eddbd1914aa4ac7e9823ea496352=0;
+do {int _afaef53b2a67efd659f45ddc6f012d48=0;
 n--;
 }
 while (n > 0);
 return n;
 }
-@executionFlow.runtime.CollectCalls public int ifElseSameLine(int num){
+@executionflow.runtime.CollectCalls public int ifElseSameLine(int num){
 if (num > 0) {
 num *= 0;
 }
-else {int _b267c716c1d5bb27fdacbd7a18f38fcf=0;
+else {int _5e829ca77d6709cc9fb9185ad53866c4=0;
 num = 10;
 }
 return num;

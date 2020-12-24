@@ -1,4 +1,4 @@
-package executionFlow.io.manager;
+package executionflow.io.manager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.io.processor.ProcessorType;
+import executionflow.ExecutionFlow;
+import executionflow.io.processor.ProcessorType;
 
 /**
  * Responsible for managing the processing and compilation from files. Its main 
@@ -21,7 +21,7 @@ import executionFlow.io.processor.ProcessorType;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 public class FilesManager {

@@ -1,12 +1,12 @@
-package executionFlow.methodExecutionFlow;
+package executionflow.methodExecutionFlow;
 
 import java.util.Collection;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.ExecutionFlowTest;
-import executionFlow.MethodExecutionFlow;
-import executionFlow.info.InvokedContainer;
-import executionFlow.io.manager.InvokedManager;
+import executionflow.ExecutionFlow;
+import executionflow.ExecutionFlowTest;
+import executionflow.MethodExecutionFlow;
+import executionflow.info.InvokedContainer;
+import executionflow.io.manager.InvokedManager;
 
 public abstract class MethodExecutionFlowTest extends ExecutionFlowTest {
 

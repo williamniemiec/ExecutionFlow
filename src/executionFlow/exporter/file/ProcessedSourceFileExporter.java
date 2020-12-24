@@ -1,4 +1,4 @@
-package executionFlow.exporter.file;
+package executionflow.exporter.file;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -7,17 +7,17 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.util.DataUtil;
-import executionFlow.util.FileUtil;
-import executionFlow.util.formatter.JavaIndenter;
+import executionflow.ExecutionFlow;
+import executionflow.util.DataUtil;
+import executionflow.util.FileUtil;
+import executionflow.util.formatter.JavaIndenter;
 
 /**
  * Exports the processed file that will be used as the basis for processing the
  * test path.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		5.2.0
  */
 public class ProcessedSourceFileExporter {

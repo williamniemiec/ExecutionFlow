@@ -1,4 +1,4 @@
-package executionFlow.methodExecutionFlow.examples.junit5;
+package executionflow.methodExecutionFlow.examples.junit5;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -7,10 +7,10 @@ import java.time.temporal.TemporalUnit;
 
 import org.junit.Test;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.MethodExecutionFlow;
-import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
-import executionFlow.runtime.SkipCollection;
+import executionflow.ExecutionFlow;
+import executionflow.MethodExecutionFlow;
+import executionflow.methodExecutionFlow.MethodExecutionFlowTest;
+import executionflow.runtime.SkipCollection;
 
 /**
  * Tests test path computation for the tested methods of 

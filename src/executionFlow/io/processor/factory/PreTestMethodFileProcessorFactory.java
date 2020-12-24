@@ -1,10 +1,10 @@
-package executionFlow.io.processor.factory;
+package executionflow.io.processor.factory;
 
 import java.nio.file.Path;
 
-import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.fileprocessor.FileProcessor;
-import executionFlow.io.processor.fileprocessor.PreTestMethodFileProcessor;
+import executionflow.io.FileEncoding;
+import executionflow.io.processor.fileprocessor.FileProcessor;
+import executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
 
 /**
  * Responsible for generating {@link PreTestMethodFileProcessor} classes.

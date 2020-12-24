@@ -1,4 +1,4 @@
-package executionFlow.core.file.parser.tests;
+package executionflow.core.file.parser.tests;
 
 import static org.junit.Assert.assertEquals;
 

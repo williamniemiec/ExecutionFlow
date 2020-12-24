@@ -1,4 +1,4 @@
-package executionFlow.core.file.parser.tests;
+package executionflow.core.file.parser.tests;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +16,7 @@ public class TestClass
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
-try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _93be5f313dbb2f8f3d5adb7397353c74){}}
+try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _144844e4e7877095bdd9cefe34be40a0){}}
 
 //	@Test
 //	public void testFoo()

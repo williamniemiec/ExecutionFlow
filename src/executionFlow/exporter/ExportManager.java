@@ -1,4 +1,4 @@
-package executionFlow.exporter;
+package executionflow.exporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.exporter.file.ProcessedSourceFileExporter;
-import executionFlow.exporter.signature.MethodsCalledByTestedInvokedExporter;
-import executionFlow.exporter.signature.TestedInvokedExporter;
-import executionFlow.exporter.testpath.ConsoleExporter;
-import executionFlow.exporter.testpath.FileExporter;
-import executionFlow.exporter.testpath.TestPathExportType;
-import executionFlow.exporter.testpath.TestPathExporter;
-import executionFlow.info.InvokedContainer;
-import executionFlow.util.logger.Logger;
+import executionflow.ExecutionFlow;
+import executionflow.exporter.file.ProcessedSourceFileExporter;
+import executionflow.exporter.signature.MethodsCalledByTestedInvokedExporter;
+import executionflow.exporter.signature.TestedInvokedExporter;
+import executionflow.exporter.testpath.ConsoleExporter;
+import executionflow.exporter.testpath.FileExporter;
+import executionflow.exporter.testpath.TestPathExportType;
+import executionflow.exporter.testpath.TestPathExporter;
+import executionflow.info.InvokedContainer;
+import executionflow.util.logger.Logger;
 
 public class ExportManager {
 
@@ -43,8 +43,8 @@ public class ExportManager {
 	 * Sets test path export type.
 	 */
 	static {
-		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
+//		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
+		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
 	
 	

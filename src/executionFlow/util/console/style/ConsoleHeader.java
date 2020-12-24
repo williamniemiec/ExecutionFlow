@@ -1,4 +1,4 @@
-package executionFlow.util.console.style;
+package executionflow.util.console.style;
 
 /**
  * Responsible for displaying console headers.

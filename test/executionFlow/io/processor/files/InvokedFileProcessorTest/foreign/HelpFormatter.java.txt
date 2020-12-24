@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package executionFlow.core.file.parser.files.foreign;
+package executionflow.core.file.parser.files.foreign;
 /*
 import java.io.BufferedReader;
 import java.io.IOException;

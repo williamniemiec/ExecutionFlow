@@ -1,13 +1,13 @@
-package executionFlow.core.file.parser.files;
+package executionflow.core.file.parser.files;
 public class test_empty {
-@executionFlow.runtime.CollectCalls public void foo() {
+@executionflow.runtime.CollectCalls public void foo() {
 }
-@executionFlow.runtime.CollectCalls public void foo2() {
+@executionflow.runtime.CollectCalls public void foo2() {
 }
-@executionFlow.runtime.CollectCalls public void foo3() {
+@executionflow.runtime.CollectCalls public void foo3() {
 }
-@executionFlow.runtime.CollectCalls public void foo4(){
+@executionflow.runtime.CollectCalls public void foo4(){
 }
-@executionFlow.runtime.CollectCalls public void foo5() {
+@executionflow.runtime.CollectCalls public void foo5() {
 }
 }

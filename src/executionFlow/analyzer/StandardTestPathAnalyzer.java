@@ -1,20 +1,20 @@
-package executionFlow.analyzer;
+package executionflow.analyzer;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import executionFlow.info.InvokedInfo;
-import executionFlow.util.balance.RoundBracketBalance;
-import executionFlow.util.logger.Logger;
+import executionflow.info.InvokedInfo;
+import executionflow.util.balance.RoundBracketBalance;
+import executionflow.util.logger.Logger;
 
 /**
  * Standard strategy for computing test path of a method and records the 
  * methods called by it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
- * @since		5.2.3
+ * @version		6.0.0
+ * @since		6.0.0
  */
 public class StandardTestPathAnalyzer extends Analyzer {
 	
@@ -353,7 +353,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		return	line.contains("line=1 ") 
 				|| line.contains("jdk.") 
 				|| line.contains("aspectj.")
-				|| line.contains("executionFlow.runtime")
+				|| line.contains("executionflow.runtime")
 				|| srcLine.contains("package ") 
 				|| isNativeAnonymousClass()
 				&& !inConstructor()
@@ -401,7 +401,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		final String regexConstructorWithDollarSignPlusNumbers = "^.+\\$[0-9]+\\.\\<init\\>.*$";
 		boolean isInsideAnonymousConstructor = (anonymousConstructor && insideConstructor);
 		
-		return	srcLine.contains("@executionFlow.runtime.CollectCalls")
+		return	srcLine.contains("@executionflow.runtime.CollectCalls")
 				&& !line.contains(testMethod.getSignatureWithoutParameters())
 				&& (isInsideAnonymousConstructor || hasLineInvokedName())
 				&& !line.split(",")[1].matches(regexConstructorWithDollarSignPlusNumbers);
@@ -418,7 +418,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		if (insideOverloadCall)
 			return !isMethodWithEmptyBody();
 		
-		return	srcLine.contains("@executionFlow.runtime.CollectCalls") 
+		return	srcLine.contains("@executionflow.runtime.CollectCalls") 
 				|| insideOverloadCall 
 				|| isInternalCommand
 				|| (currentLine > 1 && currentLine < invokedDeclarationLine)
@@ -434,7 +434,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 				&& !line.contains("line=1 ")
 				&& !line.contains("jdk.")
 				&& !line.contains("aspectj.")
-				&& !line.contains("executionFlow.runtime")
+				&& !line.contains("executionflow.runtime")
 				&& !srcLine.contains("package ")
 				&& !line.contains(invoked.getInvokedName());
 	}

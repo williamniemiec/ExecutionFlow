@@ -1,4 +1,4 @@
-package executionFlow.runtime.collector;
+package executionflow.runtime.collector;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,18 +13,18 @@ import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.util.logger.Logger;
+import executionflow.ExecutionFlow;
+import executionflow.util.logger.Logger;
 
 /**
  * Captures all methods called within the tested invoked, where an invoked can
  * be a method or a constructor.
  * 
  * @apiNote		Test method, that is, the method that calls the tested method
- * must have {@link executionFlow.runtime._SkipInvoked} annotation
+ * must have {@link executionflow.runtime._SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 @SuppressWarnings("unused")
@@ -41,12 +41,12 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	//-----------------------------------------------------------------------
 	/**
 	 * Gets tested method signatures by a JUnit test that has 
-	 * {@link @executionFlow.runtime._SkipInvoked} annotation.
+	 * {@link @executionflow.runtime._SkipInvoked} annotation.
 	 */
 	private pointcut invokedSignature(): 
 		!skipAnnotation()
-		&& !withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
-		&& cflow(execution(@executionFlow.runtime._SkipInvoked * *.*(..)))
+		&& !withincode(@executionflow.runtime.SkipInvoked * *.*(..))
+		&& cflow(execution(@executionflow.runtime._SkipInvoked * *.*(..)))
 		&& insideJUnitTest()
 		&& !get(* *.*) 
 		&& !set(* *.*)
@@ -54,23 +54,23 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	
 	/**
 	 * Intercepts methods called within an invoked with 
-	 * {@link @executionFlow.runtime.CollectCalls} annotation.
+	 * {@link @executionflow.runtime.CollectCalls} annotation.
 	 */
 	private pointcut invokedMethodByTestedInvoker():
 		!skipAnnotation()
-		&& !withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
+		&& !withincode(@executionflow.runtime.SkipInvoked * *.*(..))
 		&& !get(* *.*) 
 		&& !set(* *.*) 
 		&& (insideConstructor()	|| insideMethod());
 	
 	private pointcut insideConstructor():
-		withincode(@executionFlow.runtime.CollectCalls *.new(..))  
-		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..)));
+		withincode(@executionflow.runtime.CollectCalls *.new(..))  
+		&& !cflowbelow(withincode(@executionflow.runtime.CollectCalls * *(..)));
 	
 	private pointcut insideMethod():
-		withincode(@executionFlow.runtime.CollectCalls * *(..))
-		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls *.new(..)))  
-		&& !cflowbelow(withincode(@executionFlow.runtime.CollectCalls * *(..)));
+		withincode(@executionflow.runtime.CollectCalls * *(..))
+		&& !cflowbelow(withincode(@executionflow.runtime.CollectCalls *.new(..)))  
+		&& !cflowbelow(withincode(@executionflow.runtime.CollectCalls * *(..)));
 	
 	
 	//-------------------------------------------------------------------------

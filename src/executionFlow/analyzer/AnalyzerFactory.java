@@ -1,8 +1,8 @@
-package executionFlow.analyzer;
+package executionflow.analyzer;
 
 import java.io.IOException;
 
-import executionFlow.info.InvokedInfo;
+import executionflow.info.InvokedInfo;
 
 public class AnalyzerFactory {
 	

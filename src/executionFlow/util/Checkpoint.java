@@ -1,4 +1,4 @@
-package executionFlow.util;
+package executionflow.util;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

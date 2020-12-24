@@ -1,11 +1,11 @@
-package executionFlow;
+package executionflow;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import executionFlow.info.InvokedContainer;
-import executionFlow.io.manager.InvokedManager;
+import executionflow.info.InvokedContainer;
+import executionflow.io.manager.InvokedManager;
 
 /**
  * For each collected constructor, obtain the following information:
@@ -16,7 +16,7 @@ import executionFlow.io.manager.InvokedManager;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow {
@@ -35,7 +35,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	 * methods called by tested constructor will be exported to a CSV file.
 	 * 
 	 * @param		constructorCollector Collected constructors from 
-	 * {@link executionFlow.runtime.ConstructorCollector}
+	 * {@link executionflow.runtime.ConstructorCollector}
 	 */
 	public ConstructorExecutionFlow(InvokedManager processingManager, 
 									Collection<InvokedContainer> constructorCollector) {

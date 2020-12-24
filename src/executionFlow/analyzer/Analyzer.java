@@ -1,4 +1,4 @@
-package executionFlow.analyzer;
+package executionflow.analyzer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,19 +11,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import executionFlow.ExecutionFlow;
-import executionFlow.LibraryManager;
-import executionFlow.info.InvokedInfo;
-import executionFlow.util.Clock;
-import executionFlow.util.JDB;
-import executionFlow.util.logger.Logger;
+import executionflow.ExecutionFlow;
+import executionflow.info.InvokedInfo;
+import executionflow.lib.LibraryManager;
+import executionflow.util.Clock;
+import executionflow.util.JDB;
+import executionflow.util.logger.Logger;
 
 
 /**
  * Computes the test path for a method or constructor using a debugger.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 public abstract class Analyzer {

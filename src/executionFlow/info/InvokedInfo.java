@@ -1,4 +1,4 @@
-package executionFlow.info;
+package executionflow.info;
 
 import static java.lang.invoke.MethodType.methodType;
 
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * method or a constructor. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		2.0.0
  */
 public class InvokedInfo {

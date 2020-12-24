@@ -1,4 +1,4 @@
-package executionFlow;
+package executionflow;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,20 +10,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import executionFlow.analyzer.Analyzer;
-import executionFlow.analyzer.AnalyzerFactory;
-import executionFlow.exporter.ExportManager;
-import executionFlow.info.InvokedContainer;
-import executionFlow.info.InvokedInfo;
-import executionFlow.io.manager.FileManager;
-import executionFlow.io.manager.InvokedManager;
-import executionFlow.io.processor.factory.InvokedFileProcessorFactory;
-import executionFlow.io.processor.factory.TestMethodFileProcessorFactory;
-import executionFlow.io.processor.fileprocessor.InvokedFileProcessor;
-import executionFlow.io.processor.fileprocessor.TestMethodFileProcessor;
-import executionFlow.runtime.collector.TestMethodCollector;
-import executionFlow.util.FileUtil;
-import executionFlow.util.logger.Logger;
+import executionflow.analyzer.Analyzer;
+import executionflow.analyzer.AnalyzerFactory;
+import executionflow.exporter.ExportManager;
+import executionflow.info.InvokedContainer;
+import executionflow.info.InvokedInfo;
+import executionflow.io.manager.FileManager;
+import executionflow.io.manager.InvokedManager;
+import executionflow.io.processor.factory.InvokedFileProcessorFactory;
+import executionflow.io.processor.factory.TestMethodFileProcessorFactory;
+import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
+import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
+import executionflow.runtime.collector.TestMethodCollector;
+import executionflow.util.FileUtil;
+import executionflow.util.logger.Logger;
 
 /**
  * For each collected method or constructor, obtain the following information:
@@ -34,7 +34,7 @@ import executionFlow.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.3
+ * @version		6.0.0
  * @since		1.0
  */
 public abstract class ExecutionFlow {
@@ -67,7 +67,7 @@ public abstract class ExecutionFlow {
 	 * Sets environment. If the code is executed outside project, that is,
 	 * through a jar file, it must be false. It will affect
 	 * {@link #getAppRootPath()} and 
-	 * {@link executionFlow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
+	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
 	 */
 	static {
 		DEVELOPMENT = true;
