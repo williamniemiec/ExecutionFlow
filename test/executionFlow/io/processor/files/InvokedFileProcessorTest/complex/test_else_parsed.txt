@@ -5,8 +5,8 @@ if (num < 0){
 return "";
 }
 String response = "";
-int w;int _6660d55873b3c4ffc4745fd3b1813e2a=0;
-int k;int _b6acc108ceb66fd03e06679d36d078e6=0;
+int w;int _f4e6246cca69c0b416275e273562dd30=0;
+int k;int _ce3c00b31264cb979dd5545c0278c4cc=0;
 if (num == 0){
 response = "Number zero";
 }
@@ -23,8 +23,8 @@ if (num < 0){
 return "";
 }
 String response = "";
-int w;int _856145dae0e05f0cbd76fd1d31e8d844=0;
-int k;int _c58e6341d75215b413ab971a721566e0=0;
+int w;int _7f88c0fd820a623f118271857f7db492=0;
+int k;int _3ed1602c427523fd7fffc6d9ce293dcd=0;
 if (num == 0){
 response = "Number zero";
 }

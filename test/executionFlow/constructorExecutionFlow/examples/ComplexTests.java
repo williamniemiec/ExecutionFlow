@@ -33,9 +33,15 @@ public class ComplexTests extends ConstructorExecutionFlowTest {
 		invokedOnLine(18);
 		initializeTest();
 		
+		enableDebug();
 		computeTestPathOf("examples.complexTests.TestClass_ComplexTests(int)");
 		
-		assertTestPathIs(14, 14, 14, 14);
+		assertTestPathIs(
+				new Integer[] {14}, 
+				new Integer[] {14}, 
+				new Integer[] {14},
+				new Integer[] {14}
+		);
 	}
 
 

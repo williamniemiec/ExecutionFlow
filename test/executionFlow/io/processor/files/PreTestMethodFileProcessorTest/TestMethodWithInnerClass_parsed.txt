@@ -85,7 +85,7 @@ public class AreaChartTest {
      * Check that setting a tool tip generator for a series does override the
      * default generator.
      */
-//    @org.junit.Test
+////    @org.junit.Test
 ////    public void testSetSeriesToolTipGenerator() {
 //        CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 //        CategoryItemRenderer renderer = plot.getRenderer();
@@ -93,14 +93,14 @@ public class AreaChartTest {
 //                = new StandardCategoryToolTipGenerator();
 //        renderer.setSeriesToolTipGenerator(0, tt);
 //        CategoryToolTipGenerator tt2 = renderer.getToolTipGenerator(0, 0);
-//try {        assertSame(tt2, tt);} catch(Throwable _c5a507c00d99bab4900ed3565e76cb85){}
+//        assertSame(tt2, tt);
 //    }
 
     /**
      * Check that setting a URL generator for a series does override the
      * default generator.
      */
-//    @org.junit.Test
+////    @org.junit.Test
 ////    public void testSetSeriesURLGenerator() {
 //        CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 //        CategoryItemRenderer renderer = plot.getRenderer();
@@ -108,7 +108,7 @@ public class AreaChartTest {
 //                = new StandardCategoryURLGenerator();
 //        renderer.setSeriesItemURLGenerator(0, url1);
 //        CategoryURLGenerator url2 = renderer.getItemURLGenerator(0, 0);
-//try {        assertSame(url2, url1);} catch(Throwable _b59e67b1a40e597243c751edcaeb08a0){}
+//        assertSame(url2, url1);
 //    }
 
     /**
@@ -133,7 +133,7 @@ public class AreaChartTest {
     /**
      * Replaces the chart's dataset and then checks that the new dataset is OK.
      */
-//    @org.junit.Test
+////    @org.junit.Test
 ////    public void testReplaceDataset() {
 //        Number[][] data = new Integer[][]
 //            {{new Integer(-30), new Integer(-20)},
@@ -146,13 +146,13 @@ public class AreaChartTest {
 //        this.chart.addChangeListener(l);
 //        CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 //        plot.setDataset(newData);
-//try {        assertEquals(true, l.flag);} catch(Throwable _bf34982cd85b9e08f0509757643af83d){}
+//        assertEquals(true, l.flag);
 //        ValueAxis axis = plot.getRangeAxis();
 //        Range range = axis.getRange();
-//try {        assertTrue("Expecting the lower bound of the range to be around -30: "
-//                   + range.getLowerBound(), range.getLowerBound() <= -30);} catch(Throwable _9e5ec573fbb7181b13d49786678a0a61){}
-//try {        assertTrue("Expecting the upper bound of the range to be around 30: "
-//                   + range.getUpperBound(), range.getUpperBound() >= 30);} catch(Throwable _afff327ddf079dc0b6af8e1866348220){}
+//        assertTrue("Expecting the lower bound of the range to be around -30: "
+//                   + range.getLowerBound(), range.getLowerBound() <= -30);
+//        assertTrue("Expecting the upper bound of the range to be around 30: "
+//                   + range.getUpperBound(), range.getUpperBound() >= 30);
 //
 //    }
 

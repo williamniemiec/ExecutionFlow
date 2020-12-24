@@ -264,6 +264,8 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		
 		if (srcLine != null && !srcLine.isEmpty()) {
 			checkOverloadedCall();
+
+			stopJDB = checkFailure() || checkRepetition();
 			
 			if (!insideOverloadCall) {
 				lastSrcLine = srcLine;
@@ -276,7 +278,6 @@ public class StandardTestPathAnalyzer extends Analyzer {
 			}
 
 			finishedTestedInvoked = hasFinishedTestedInvoked();
-			stopJDB = checkFailure() || checkRepetition();
 		}
 	}
 	
@@ -594,8 +595,12 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	
 	private boolean checkRepetition() {
 		return	!newIteration 
-				&& srcLine.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*") 
+				&& hasOnlyClosedCurlyBracket(srcLine) 
 				&& srcLine.equals(lastSrcLine);
+	}
+	
+	private boolean hasOnlyClosedCurlyBracket(String str) {
+		return str.matches("[0-9]+(\\ |\\t)*\\}(\\ |\\t)*");
 	}
 	
 	private boolean checkFailure() {

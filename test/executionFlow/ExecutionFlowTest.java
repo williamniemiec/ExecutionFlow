@@ -25,6 +25,7 @@ import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.ProcessorType;
 import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.Logger;
 
 public abstract class ExecutionFlowTest {
@@ -150,7 +151,7 @@ public abstract class ExecutionFlowTest {
 	}
 	
 	protected void assertTestPathIsEmpty() {
-		assertEquals(Arrays.asList(), testPaths);
+		assertEquals(List.of(Arrays.asList()), testPaths);
 	}
 	
 	protected void assertTestPathIs(Integer[]... testPath) {
@@ -314,24 +315,7 @@ public abstract class ExecutionFlowTest {
 		});
 	}
 	
-	
-	
-//	/**
-//	 * @param		classSignature Test class signature
-//	 * @param		testMethodSignature Test method signature
-//	 * @param		srcTestMethod Test method compiled file path
-//	 * @param		binTestMethod Test method source file path
-//	 * @param		packageTestMethod Test method package
-//	 * @param		testMethodArgs Test method arguments (when it is a parameterized test)
-//	 * 
-//	 * @throws		IOException If an error occurs during file parsing
-//	 * @throws		ClassNotFoundException If class {@link FileManager} was not
-//	 * found
-//	 */
-//	protected void init(String classSignature, String testMethodSignature, 
-//			Path srcTestMethod, Path binTestMethod, String packageTestMethod) 
-//			throws IOException, ClassNotFoundException {
-//		init(classSignature, testMethodSignature, srcTestMethod, binTestMethod, 
-//				packageTestMethod, (Object[])null);
-//	}
+	protected void enableDebug() {
+		Logger.setLevel(LogLevel.DEBUG);
+	}
 }

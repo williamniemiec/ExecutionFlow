@@ -28,20 +28,20 @@ public class ParameterizedTestAnnotation
 		AuxClass tc = new AuxClass(4);
 
 
-try {		assertEquals(1, tc.factorial(num));} catch(Throwable _4c0d40eb2a18539f2573895a5cfee07){}
+try {		assertEquals(1, tc.factorial(num));} catch(Throwable _cebff4054ac5df786fffcfa0f1f53aac){}
 	}
 	
 //	@executionFlow.runtime.SkipInvoked
-//	@org.junit.Test
+//	@ParameterizedTest
 //	@ValueSource(strings = {" ", "   ", "\t", "\n"})
-////	void nullEmptyAndBlankStrings(String text) 
+//	void nullEmptyAndBlankStrings(String text) 
 //	{
 //	    assertTrue(text == null || text.trim().isEmpty());
 //	}
 	
-//	@org.junit.Test
+//	@ParameterizedTest
 //	@EnumSource(names = {"DAYS", "HOURS"}, value = ChronoUnit.class)
-////	void testWithEnumSourceInclude(ChronoUnit unit) 
+//	void testWithEnumSourceInclude(ChronoUnit unit) 
 //	{
 //	    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));
 //	}

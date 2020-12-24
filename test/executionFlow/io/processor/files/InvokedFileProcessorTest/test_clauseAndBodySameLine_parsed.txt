@@ -7,7 +7,7 @@ public class test_clauseAndBodySameLine{
 if (n <= 0) {
 n = 1;
 }
-do {int _7cc4a558be63527b3a5f9d990e2e7e14=0;
+do {int _161d20eb17d2133279c4e9b579456eb7=0;
 n--;
 }
 while (n > 0);
@@ -17,7 +17,7 @@ return n;
 if (num > 0) {
 num *= 0;
 }
-else {int _8b1b4cf2fe786fe2d9a23fe081420731=0;
+else {int _9a6d2a7c72ad0ceabe6b97a8646f089d=0;
 num = 10;
 }
 return num;

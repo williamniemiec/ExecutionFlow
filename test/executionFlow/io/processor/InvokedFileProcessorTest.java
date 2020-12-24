@@ -48,7 +48,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 	public void testParseElse() throws IOException {
 		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
 				  			  "files", "InvokedFileProcessorTest"));
-		withFilename("test_else.txt");
+		withFilename("test_else");
 		initializeTest();
 		
 		processFile();
@@ -109,7 +109,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 	public void testParseTry2() throws IOException {
 		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
 				  			 "files", "InvokedFileProcessorTest", "complex"));
-		withFilename("test_try.txt");
+		withFilename("test_try");
 		initializeTest();
 		
 		processFile();
@@ -221,7 +221,7 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 	@Test
 	public void testAnonymousClass() throws IOException {
 		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
-							  "files", "InvokedFileProcessorTest"));
+							  "files"));
 		withFilename("test_anonymous_class");
 		usingEncoding(FileEncoding.ISO_8859_1);
 		initializeTest();
