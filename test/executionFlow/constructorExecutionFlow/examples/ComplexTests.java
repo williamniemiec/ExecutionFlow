@@ -32,8 +32,7 @@ public class ComplexTests extends ConstructorExecutionFlowTest {
 								".testForConstructorAndMethod()");
 		invokedOnLine(18);
 		initializeTest();
-		
-		enableDebug();
+
 		computeTestPathOf("examples.complexTests.TestClass_ComplexTests(int)");
 		
 		assertTestPathIs(

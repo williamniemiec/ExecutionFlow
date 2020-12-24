@@ -333,18 +333,19 @@ public abstract class Analyzer {
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, Set<String>> loadMethodsCalledByTestedInvoked() {
+		if (!mcti.exists())
+			return new HashMap<>();
+		
 		Map<String, Set<String>> invokedMethods = new HashMap<>();
 
-		if (mcti.exists()) {
-			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(mcti))) {
-				invokedMethods = (Map<String, Set<String>>) ois.readObject();
-			} 
-			catch (IOException | ClassNotFoundException e) {
-				Logger.error("Methods called by tested invoked - " + e.getMessage());
-			}
-		
-			mcti.delete();
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(mcti))) {
+			invokedMethods = (Map<String, Set<String>>) ois.readObject();
+		} 
+		catch (IOException | ClassNotFoundException e) {
+			Logger.error("Methods called by tested invoked - " + e.getMessage());
 		}
+	
+		mcti.delete();
 		
 		return invokedMethods;
 	}

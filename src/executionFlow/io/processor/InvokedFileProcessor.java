@@ -211,10 +211,18 @@ public class InvokedFileProcessor extends FileProcessor {
 	protected List<String> doProcessing(List<String> sourceCode) {
 		processedLines = sourceCode;
 		
+		removeInlineComments();
 		doTRGenerationProcesing();
 		doHolePlugProcessing();
 		
 		return processedLines;
+	}
+	
+	private void removeInlineComments() {
+		InlineCommentRemover inlineCommentProcessor = 
+				new InlineCommentRemover(processedLines);
+		
+		processedLines = inlineCommentProcessor.processLines();
 	}
 
 	private void doTRGenerationProcesing() {

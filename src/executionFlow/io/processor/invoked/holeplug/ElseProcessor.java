@@ -31,7 +31,7 @@ public class ElseProcessor extends SourceCodeProcessor {
 	//		Methods
 	//---------------------------------------------------------------------
 	@Override
-	protected String processLine(String line) {		
+	protected String processLine(String line) {	
 		if (!isElseKeyword(line))
 			return line;
 		
@@ -59,7 +59,7 @@ public class ElseProcessor extends SourceCodeProcessor {
 		statement.append(line.substring(0, idxCurlyBrackets+1));
 		statement.append("int " + DataUtil.generateVarName() + "=0;"); 
 		statement.append(line.substring(idxCurlyBrackets+1));
-		
+
 		return statement.toString();
 	}
 }

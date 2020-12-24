@@ -7,7 +7,6 @@ import java.util.Map;
 
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.testmethod.ClassDeclarationProcessor;
-import executionFlow.io.processor.testmethod.InlineCommentRemover;
 import executionFlow.io.processor.testmethod.MultilineToInlineCallsConverter;
 import executionFlow.io.processor.testmethod.PrintCallRemover;
 

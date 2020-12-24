@@ -35,7 +35,7 @@ public class InvokedMethodsByTestedInvoked extends ExecutionFlowTest {
 		computeTestPathOf("examples.methodCalledByTestedInvoked" + 
 						  ".MethodCalledByTestedInvoked_Class.A()");
 		
-		assertTestPathIs(10,11,12);
+		assertTestPathIs(10,11);
 	}
 	
 	

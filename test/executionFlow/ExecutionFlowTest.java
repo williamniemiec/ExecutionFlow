@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 
 import executionFlow.exporter.ExportManager;
@@ -51,11 +52,7 @@ public abstract class ExecutionFlowTest {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	protected ExecutionFlowTest(/*String pkgTestMethod, Path srcTestMethod, 
-								Path binTestMethod*/) {
-//		this.pkgTestMethod = pkgTestMethod;
-//		this.srcTestMethod = srcTestMethod;
-//		this.binTestMethod = binTestMethod;
+	protected ExecutionFlowTest() {
 		this.testMethodArgs = (Object[]) null;
 		this.paramTypes = new Class[] {};
 		this.paramValues = new Object[] {};
@@ -80,6 +77,11 @@ public abstract class ExecutionFlowTest {
 		processingManager.destroyInvokedManager();
 		
 		RemoteControl.close();
+	}
+	
+	@Before 
+	public void beforeEachTest() {
+		disableInfo();
 	}
 	
 	@After
@@ -317,5 +319,13 @@ public abstract class ExecutionFlowTest {
 	
 	protected void enableDebug() {
 		Logger.setLevel(LogLevel.DEBUG);
+	}
+	
+	protected void disableDebug() {
+		Logger.setLevel(LogLevel.INFO);
+	}
+	
+	protected void disableInfo() {
+		Logger.setLevel(LogLevel.WARNING);
 	}
 }

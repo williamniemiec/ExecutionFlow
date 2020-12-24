@@ -52,7 +52,7 @@ public class ChainedCalls extends ExecutionFlowTest {
 		
 		computeTestPathOf("examples.chainedCalls.Calculator.sum(float)");
 		
-		assertTestPathIs(14, 14, 14, 14);
+		assertTestPathIs(15, 16);
 	}
 	
 	/**

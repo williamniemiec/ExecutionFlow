@@ -152,6 +152,6 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 	@Override
 	protected Path getSrcTestedInvoked() {
 		return Path.of("examples", "examples", "builderPattern", 
-				"ClassInterface.java");
+				"Person.java");
 	}
 }

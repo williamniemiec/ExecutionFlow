@@ -196,7 +196,7 @@ public class ControlFlowTest extends ExecutionFlowTest {
 		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
 						  ".ifElseSameLine(int)");
 		
-		assertTestPathIs(119,122,123,125);
+		assertTestPathIs(118,121,122,124);
 	}
 	
 	
