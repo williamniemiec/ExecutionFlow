@@ -30,7 +30,7 @@ public abstract class SourceCodeProcessor {
 			if (ignoreComments)
 				checkComments(sourceCode.get(currentIdx));
 			
-			if (!inComment) {
+			if (!inComment()) {
 				String processedLine = processLine(sourceCode.get(currentIdx));
 			
 				sourceCode.set(currentIdx, processedLine);
@@ -45,16 +45,21 @@ public abstract class SourceCodeProcessor {
 	private void checkComments(String line) {
 		final String regexCommentFullLine = 
 				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-		
+
 		if (line.matches(regexCommentFullLine))
 			inComment = true;
 		
 		if (line.contains("/*") && !line.contains("*/")) {
 			inComment = true;
 		}
-		else if (inComment && line.contains("*/")) {
-			inComment = false;
+		else if (inComment) {
+			inComment =  !line.contains("*/") || line.matches(regexCommentFullLine);
 		}
+	}
+	
+	private boolean inComment() {
+		return	inComment 
+				|| sourceCode.get(currentIdx).contains("*/");
 	}
 	
 	protected abstract String processLine(String line);

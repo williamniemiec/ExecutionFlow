@@ -59,19 +59,19 @@ public class AssertProcessor extends SourceCodeProcessor {
 		if (line.contains("}") && (line.lastIndexOf(';')) <= line.lastIndexOf("}")) {
 			int lastCurlyBracketInSameLine = line.lastIndexOf("}");
 			
-			line = buildTryCatchStatement(line.substring(0, lastCurlyBracketInSameLine) , "") 
+			line = closeTryCatchStatement(line.substring(0, lastCurlyBracketInSameLine) , "") 
 					+ line.substring(lastCurlyBracketInSameLine);
 		}
 		else {
 			int endOfAssert = line.lastIndexOf(';') + 1;
 			
-			line = buildTryCatchStatement(line.substring(0, endOfAssert), "") 
+			line = closeTryCatchStatement(line.substring(0, endOfAssert), "") 
 					+ line.substring(endOfAssert);
 		}
 		
 		return line;
 	}
-
+	
 	private boolean isAssertInstruction(String line) {
 		final Pattern assertPattern = 
 				Pattern.compile("^(\\ |\\t)+(Assert\\.)?assert[A-z]+(\\ |\\t)*\\((.+\\);)?");
@@ -83,7 +83,7 @@ public class AssertProcessor extends SourceCodeProcessor {
 		if (!roundBracketsBalance.parse(line).isBalanceEmpty()) {
 			inAssert = true;
 			
-			return "try {" + line;
+			return openTryCatchStatement(line);
 		}
 		
 		if (hasInlineComment(line))
@@ -102,11 +102,13 @@ public class AssertProcessor extends SourceCodeProcessor {
 		String tryContent;
 		
 		if (line.contains("}"))
-			tryContent = line.substring(0, line.lastIndexOf("}") + 1);
+			tryContent = line.substring(0, line.lastIndexOf("}"));
 		else
 			tryContent = line.substring(0, getStartIndexOfInlineComment(line));
 		
-		return buildTryCatchStatement(tryContent, "");
+		return line.contains("}") ? 
+				buildTryCatchStatement(tryContent, "") + "}"
+				: buildTryCatchStatement(tryContent, "");
 	}
 
 	private int getStartIndexOfInlineComment(String line) {
@@ -119,12 +121,25 @@ public class AssertProcessor extends SourceCodeProcessor {
 	}
 	
 	private String buildTryCatchStatement(String tryContent, String catchContent) {
+		return	openTryCatchStatement(tryContent) 
+				+ closeTryCatchStatement("", catchContent);
+	}
+	
+	private String openTryCatchStatement(String tryContent) {
+		StringBuilder statement = new StringBuilder();
+		
+		statement.append("try {");
+		statement.append(tryContent);
+		
+		return statement.toString();
+	}
+	
+	private String closeTryCatchStatement(String tryContent, String catchContent) {
 		StringBuilder statement = new StringBuilder();
 		
 		String catchVariable = DataUtil.generateVarName();
 		String catchType = "Throwable";
 		
-		statement.append("try {");
 		statement.append(tryContent);
 		statement.append("} catch(");
 		statement.append(catchType);
@@ -139,17 +154,24 @@ public class AssertProcessor extends SourceCodeProcessor {
 
 	private String processLineWithoutComment(String line) {
 		String tryContent;
+		boolean closedCurlyBracketNextToAssert = false;
 		
 		if (line.contains("}")) {
-			if (line.lastIndexOf(';') > line.lastIndexOf("}"))
+			if (line.lastIndexOf(';') > line.lastIndexOf("}")) {
 				tryContent = line.substring(0, line.lastIndexOf(';') + 1);
-			else
-				tryContent = line.substring(0, line.lastIndexOf("}") + 1);
+			}
+			else {
+				tryContent = line.substring(0, line.lastIndexOf("}"));
+				
+				closedCurlyBracketNextToAssert = true;
+			}
 		}
 		else {
 			tryContent = line;
 		}
 		
-		return buildTryCatchStatement(tryContent, "");
+		return closedCurlyBracketNextToAssert ? 
+				buildTryCatchStatement(tryContent, "") + "}" 
+				: buildTryCatchStatement(tryContent, "");
 	}
 }

@@ -40,7 +40,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	@Override
 	protected String processLine(String line) {
-		if (line.isBlank()) 
+		if (line.isBlank())
 			return line;
 		
 		String processedLine = line;
@@ -49,7 +49,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		
 		if (!insideMultilineArgs)
 			idxMethodInvocation = -1;
-		
+
 		return processedLine;
 	}
 
