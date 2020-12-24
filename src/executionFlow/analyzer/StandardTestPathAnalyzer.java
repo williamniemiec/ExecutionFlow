@@ -577,7 +577,6 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	private boolean hasFinishedTestedInvoked() {
 		return	finishedTestedInvoked 
 				|| returnedFromTestedInvoked()
-				|| checkRepetition() 
 				|| checkFailure() 
 				|| (
 					!insideOverloadCall
