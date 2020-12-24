@@ -9,17 +9,17 @@ import org.junit.Test;
 /**
  * Tests what happens if the requirements are not met.
  */
-@executionFlow.runtime.SkipCollection public class AgainstRequirements 
+public class AgainstRequirements 
 {
 	/**
 	 * Test a method defined within the test class. An error will be generated.
 	 * Execution will continue if there are more test methods to be executed.
 	 */
-	@Test
+	@org.junit.Test
     public void methodInSameFileOfTestMethod() {
 		int a = 2, b = 3;
 		
-        Assert.assertEquals(5, sum(a, b));
+try {        Assert.assertEquals(5, sum(a, b));} catch(Throwable _f7b76ed7d64bec7a2689af4ef4baef02){}
     }
     
 	/**
@@ -29,8 +29,8 @@ import org.junit.Test;
 	 * @param b Another number
 	 * @return a + b
 	 */
-    private int sum(int a, int b)     {        return a + b;
-
-
+    private int sum(int a, int b) 
+    {
+        return a + b;
     }
 }

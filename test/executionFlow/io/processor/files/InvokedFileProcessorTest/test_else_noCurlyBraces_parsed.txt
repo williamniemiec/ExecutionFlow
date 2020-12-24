@@ -1,22 +1,22 @@
 package executionFlow.core.file.parser.files.noCurlyBraces;
 public class test_else_noCurlyBraces{
 @executionFlow.runtime.CollectCalls public String ifElseMethod(int num){
-int w;int _f03e94501ddcb651dcad2a8d00796870=0;
+int w;int _2f91414a8bc1e91c540cede96206c74a=0;
 if (false)	{
 w++;
 }
-else while(true) {int _4f3e3eaf29ccef91473dbaca2e880619=0;
+else while(true) {int _d6cc21db8d9fb3264fbb0bfa198dfdd0=0;
 }
 if (false) {
 w++;
 }
-else {int _74c3f5a0055596ebac485bc26abd9bc3=0;
+else {int _16e5715abe45715789833ab719484c56=0;
 }
 w++;
 if (false) {
 w++;
 }
-else {int _8e066ceb9a985b07df6c32f21be2b39d=0;
+else {int _d2b7b40be48b55e8feeedfd4e72726bc=0;
 w--;
 }
 }
@@ -30,22 +30,22 @@ w++;
 return w;
 }
 @executionFlow.runtime.CollectCalls public String ifElseMethod_complex(int num){
-int w;int _a3fd572cb738b995fcebc5d03333f50d=0;
+int w;int _506d31e86fb0f8b308c1b472cf0f82dc=0;
 if (false)	{
 w++;
 }
-else while(true) {int _a68f49661268bb98bbd3f8fdad08e5fc=0;
+else while(true) {int _a417388658ac333397e38597f1cac257=0;
 }
 if (false) {
 w++;
 }
-else {int _9b2ded3a03cdf0fee8b2baea802c29b7=0;
+else {int _56505fc61646dc9b65827a75d76d1a2b=0;
 }
 w++;
 if (false) {
 w++;
 }
-else {int _585e8111c6e09d88dc92816df8dfb946=0;
+else {int _76311fc974667dbaf0b51abcc619bdd4=0;
 w--;
 }
 }

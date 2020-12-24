@@ -85,8 +85,8 @@ public class AreaChartTest {
      * Check that setting a tool tip generator for a series does override the
      * default generator.
      */
-////    @org.junit.Test
-////    public void testSetSeriesToolTipGenerator() {
+//    @Test
+//    public void testSetSeriesToolTipGenerator() {
 //        CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 //        CategoryItemRenderer renderer = plot.getRenderer();
 //        StandardCategoryToolTipGenerator tt
@@ -100,8 +100,8 @@ public class AreaChartTest {
      * Check that setting a URL generator for a series does override the
      * default generator.
      */
-////    @org.junit.Test
-////    public void testSetSeriesURLGenerator() {
+//    @Test
+//    public void testSetSeriesURLGenerator() {
 //        CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 //        CategoryItemRenderer renderer = plot.getRenderer();
 //        StandardCategoryURLGenerator url1
@@ -133,8 +133,8 @@ public class AreaChartTest {
     /**
      * Replaces the chart's dataset and then checks that the new dataset is OK.
      */
-////    @org.junit.Test
-////    public void testReplaceDataset() {
+//    @Test
+//    public void testReplaceDataset() {
 //        Number[][] data = new Integer[][]
 //            {{new Integer(-30), new Integer(-20)},
 //             {new Integer(-10), new Integer(10)},

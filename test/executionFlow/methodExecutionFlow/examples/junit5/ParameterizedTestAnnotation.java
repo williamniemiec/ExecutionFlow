@@ -34,7 +34,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest {
 		withTestMethodParameterValues(-1);
 		invokedOnLine(38);
 		initializeTest();
-		
+
 		computeTestPathOf("examples.others.auxClasses.AuxClass.factorial(int)");
 		
 		assertTestPathIs(35,36,37,41);
@@ -154,7 +154,7 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest {
 	public void nullTest() throws ClassNotFoundException, IOException {
 		withTestMethodSignature("examples.junit5.ParameterizedTestAnnotation" + 
 								".nullTest(String)");
-		withTestMethodParameterValues((Object[]) null);
+		withTestMethodParameterValues(new Object[] {null});
 		invokedOnLine(52);
 		initializeTest();
 		
@@ -345,14 +345,14 @@ public class ParameterizedTestAnnotation extends MethodExecutionFlowTest {
 	@Override
 	protected Path getTestMethodBinFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("bin", "examples", "junit5", "PolymorphismTest.class")
+				Path.of("bin", "examples", "junit5", "ParameterizedTestAnnotation.class")
 		);
 	}
 	
 	@Override
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
-				Path.of("examples", "examples", "junit5", "PolymorphismTest.java")
+				Path.of("examples", "examples", "junit5", "ParameterizedTestAnnotation.java")
 		);
 	}
 	

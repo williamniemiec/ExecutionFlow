@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import executionFlow.io.FileEncoding;
+import executionFlow.io.processor.fileprocessor.FileProcessor;
 
 public abstract class FileProcessorTest {
 	

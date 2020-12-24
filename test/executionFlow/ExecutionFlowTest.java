@@ -22,10 +22,10 @@ import executionFlow.info.InvokedInfo;
 import executionFlow.io.manager.FileManager;
 import executionFlow.io.manager.FilesManager;
 import executionFlow.io.manager.InvokedManager;
-import executionFlow.io.processor.InvokedFileProcessor;
 import executionFlow.io.processor.ProcessorType;
-import executionFlow.io.processor.TestMethodFileProcessor;
 import executionFlow.io.processor.factory.PreTestMethodFileProcessorFactory;
+import executionFlow.io.processor.fileprocessor.InvokedFileProcessor;
+import executionFlow.io.processor.fileprocessor.TestMethodFileProcessor;
 import executionFlow.util.logger.LogLevel;
 import executionFlow.util.logger.Logger;
 

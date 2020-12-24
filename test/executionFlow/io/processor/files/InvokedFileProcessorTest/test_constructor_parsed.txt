@@ -7,18 +7,18 @@ D();
 }
 }
 @executionFlow.runtime.CollectCalls public void A(){
-
+Boolean.parseBoolean("True");
 B();
 C();
 }
 @executionFlow.runtime.CollectCalls public void B(){
-
+Boolean.parseBoolean("True");
 }
 @executionFlow.runtime.CollectCalls public void C(){
-
+Boolean.parseBoolean("True");
 D();
 }
 @executionFlow.runtime.CollectCalls public void D(){
-
+Boolean.parseBoolean("True");
 }
 }

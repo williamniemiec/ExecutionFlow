@@ -115,11 +115,9 @@ public class OthersTest extends MethodExecutionFlowTest {
 		computeTestPathOf("examples.others.auxClasses.AuxClass." + 
 						  "parseLetters_noInternalCall(CharSequence)");
 		
-		assertTestPathIs(
-				57,58,59,60,61,62,67,60,61,62,67,60,61,62,67,60,61,
-				62,67,60,61,62,67,60,61,62,67,60,61,62,67,60,61,62,
-				67,60,61,62,67,60,61,62,67,60,69
-		);
+		assertTestPathIs(57,58,59,60,61,62,67,60,61,62,67,60,61,62,67,60,61,62,
+						 67,60,61,62,67,60,61,64,65,67,60,61,64,65,67,60,61,64,
+						 65,67,60,61,64,65,67,60,61,64,65,67,60,69);
 	}
 	
 	/**

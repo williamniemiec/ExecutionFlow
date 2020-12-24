@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import org.junit.Test;
 
 import executionFlow.io.FileEncoding;
+import executionFlow.io.processor.fileprocessor.FileProcessor;
+import executionFlow.io.processor.fileprocessor.InvokedFileProcessor;
 import executionFlow.runtime.SkipCollection;
 
 @SkipCollection

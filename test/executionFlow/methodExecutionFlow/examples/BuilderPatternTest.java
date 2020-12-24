@@ -31,7 +31,6 @@ public class BuilderPatternTest extends MethodExecutionFlowTest {
 		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" +
 								".testBuilderPattern()");
 		invokedOnLine(15);
-		enableDebug();
 		initializeTest();
 		
 		computeTestPathOf("examples.builderPattern.Person$PersonBuilder" +
