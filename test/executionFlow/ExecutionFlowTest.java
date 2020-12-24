@@ -144,15 +144,15 @@ public abstract class ExecutionFlowTest {
 		return ef.run().getTestPaths(container);
 	}
 	
-	protected void assertTestPathIs(int... testPath) {
-		assertEquals(Arrays.asList(testPath), testPaths);
+	protected void assertTestPathIs(Integer... testPath) {
+		assertEquals(List.of(Arrays.asList(testPath)), testPaths);
 	}
 	
 	protected void assertTestPathIsEmpty() {
 		assertEquals(Arrays.asList(), testPaths);
 	}
 	
-	protected void assertTestPathIs(int[]... testPath) {
+	protected void assertTestPathIs(Integer[]... testPath) {
 		assertEquals(Arrays.asList(testPath), testPaths);
 	}
 
