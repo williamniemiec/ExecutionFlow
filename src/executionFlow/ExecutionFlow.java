@@ -450,6 +450,9 @@ public abstract class ExecutionFlow {
 	 * been executed
 	 */
 	public List<List<Integer>> getTestPaths(InvokedContainer container) {
+		if (computedTestPaths.isEmpty())
+			return List.of(new ArrayList<Integer>(0));
+		
 		return computedTestPaths.get(container);
 	}
 	
