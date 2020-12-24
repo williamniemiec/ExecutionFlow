@@ -81,8 +81,8 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	 * 	<li>testMethodSignature</li>
 	 * </ul>
 	 */
-	public static class Builder
-	{
+	public static class Builder {
+		
 		private FileEncoding encoding;
 		private String fileExtension = "java";
 		private Path file;

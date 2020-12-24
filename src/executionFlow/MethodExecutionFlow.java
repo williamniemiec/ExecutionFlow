@@ -1,6 +1,7 @@
 package executionFlow;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +32,19 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	public MethodExecutionFlow(InvokedManager processingManager, 
-			Map<Integer, List<InvokedContainer>> collectedMethods) {
+							   Map<Integer, List<InvokedContainer>> collectedMethods) {
 		super(processingManager);
 		
 		this.collectors = new ArrayList<>();
 		
 		storeCollectedMethods(collectedMethods);
+	}
+	
+	public MethodExecutionFlow(InvokedManager processingManager, 
+							   Collection<InvokedContainer> collectedMethods) {
+		super(processingManager);
+		
+		this.collectors = new ArrayList<>(collectedMethods);
 	}
 
 

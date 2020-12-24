@@ -59,13 +59,13 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		if (isMethodCallWithMultipleLines(line)) {
 			processedLine = parseMethodCallWithMultipleLines(line);
 			
-			checkBalanceOfParentheses(line);
+			checkBalanceOfParentheses(processedLine);
 		}
 		else if (insideMultilineArgs) {
-			insideMultilineArgs = !isParenthesesBalanced();
-		
 			checkBalanceOfParentheses(line);
 			putOnMethodInvocationLine(line);
+		
+			insideMultilineArgs = !isParenthesesBalanced();
 			
 			processedLine = "";
 			

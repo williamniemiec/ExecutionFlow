@@ -38,7 +38,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	 * {@link executionFlow.runtime.ConstructorCollector}
 	 */
 	public ConstructorExecutionFlow(InvokedManager processingManager, 
-			Collection<InvokedContainer> constructorCollector) {
+									Collection<InvokedContainer> constructorCollector) {
 		super(processingManager);
 		
 		this.collectors = new ArrayList<>(constructorCollector);
