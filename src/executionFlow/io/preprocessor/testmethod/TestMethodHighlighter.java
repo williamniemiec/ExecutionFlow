@@ -218,8 +218,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	 * requiring a second scan of the file to comment on the 
 	 * declaration of the methods as well as their annotations.
 	 */
-	private void parseIgnore(String line)
-	{			
+	private void parseIgnore(String line) {			
 		if (ignoreMethod) {
 			checkIfCurlyBracketBalanceOfIgnoredMethodIsInitialized();
 			

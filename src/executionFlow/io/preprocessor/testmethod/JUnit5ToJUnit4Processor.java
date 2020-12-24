@@ -416,7 +416,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 				return "null";
 			
 			String argument;
-			
+
 			// Checks if parameterized test contains 'EnumSource' annotation
 			if (paramEnumType != null)
 				testMethodArgs[i] = extractEnumTypeArgs(i);
@@ -427,7 +427,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 						.replace("\t", "\\t")
 						.replace("\r", "\\r") + "\"";
 			else
-				argument = ((String)testMethodArgs[i]);
+				argument = "" + testMethodArgs[i];
 			
 			return argument;
 		}

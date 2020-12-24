@@ -27,7 +27,7 @@ public abstract class SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	public final List<String> processLines() {
 		for (currentIdx = 0; currentIdx < sourceCode.size(); currentIdx++) {
-			if (!ignoreComments)
+			if (ignoreComments)
 				checkComments(sourceCode.get(currentIdx));
 			
 			if (!inComment) {

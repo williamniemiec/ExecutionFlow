@@ -362,7 +362,7 @@ public class FileManager implements Serializable {
 				processedFile = processFileUsingEncode(FileEncoding.ISO_8859_1);
 			} 
 			catch (IOException e1) {
-				throw new IOException("Processing failed");
+				throw new IOException("Processing failed - " + e1.getMessage());
 			}
 		}
 		
