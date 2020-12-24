@@ -35,8 +35,8 @@ public class RepeatedTestAnnotation extends ExecutionFlowTest {
 		computeTestPathOf("examples.others.auxClasses.AuxClass.factorial(int)");
 		
 		assertTestPathIs(
-				new int[] {35,36,37,38,39,37,38,39,37,38,39,37,38,39,37,41},
-				new int[] {35,36,37,38,39,37,38,39,37,38,39,37,38,39,37,41}
+				new Integer[] {35,36,37,38,39,37,38,39,37,38,39,37,38,39,37,41},
+				new Integer[] {35,36,37,38,39,37,38,39,37,38,39,37,38,39,37,41}
 		);
 	}
 	

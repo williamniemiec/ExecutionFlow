@@ -32,10 +32,10 @@ public class ComplexTests extends ExecutionFlowTest {
 						  ".factorial_constructor()");
 		
 		assertTestPathIs(
-				new int[] {41,42,43,44,45,43,47},
-				new int[] {41,42,43,44,45,43,44,45,43,47},
-				new int[] {41,42,43,44,45,43,44,45,43,44,45,43,47},
-				new int[] {41,42,43,44,45,43,44,45,43,44,45,43,44,45,43,47}
+				new Integer[] {41,42,43,44,45,43,47},
+				new Integer[] {41,42,43,44,45,43,44,45,43,47},
+				new Integer[] {41,42,43,44,45,43,44,45,43,44,45,43,47},
+				new Integer[] {41,42,43,44,45,43,44,45,43,44,45,43,44,45,43,47}
 		);
 	}
 	
@@ -112,7 +112,7 @@ public class ComplexTests extends ExecutionFlowTest {
 	protected Path getTestMethodSrcFile() {
 		return ExecutionFlow.getAppRootPath().resolve(
 				Path.of("examples", "examples", "complexTests", 
-						"ComplexTests.class")
+						"ComplexTests.java")
 		);
 	}
 

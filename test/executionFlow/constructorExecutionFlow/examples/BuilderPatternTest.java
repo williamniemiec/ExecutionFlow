@@ -34,7 +34,7 @@ public class BuilderPatternTest extends ConstructorExecutionFlowTest {
 		
 		computeTestPathOf("examples.builderPattern.Person$PersonBuilder()");
 		
-		assertTestPathIs((int[]) null);
+		assertTestPathIs((Integer[]) null);
 	}
 	
 	

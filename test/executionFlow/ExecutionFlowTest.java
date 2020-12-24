@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -153,7 +154,16 @@ public abstract class ExecutionFlowTest {
 	}
 	
 	protected void assertTestPathIs(Integer[]... testPath) {
-		assertEquals(Arrays.asList(testPath), testPaths);
+		assertEquals(fixIntegerVarArgs(testPath), testPaths);
+	}
+	
+	private List<List<Integer>> fixIntegerVarArgs(Integer[]... varArgs) {
+		List<List<Integer>> args = new ArrayList<>(varArgs.length);
+		
+		for (Integer[] tp : varArgs)
+			args.add(Arrays.asList(tp));
+		
+		return args;
 	}
 
 	protected void computeTestPathOf(String invokedSignature) {
