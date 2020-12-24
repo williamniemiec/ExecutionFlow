@@ -39,7 +39,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//		Methods
 	//---------------------------------------------------------------------
 	@Override
-	protected String processLine(String line) {System.out.println(line);
+	protected String processLine(String line) {
 		if (line.isBlank())
 			return line;
 		
@@ -58,13 +58,12 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		
 		if (isMethodCallWithMultipleLines(line)) {
 			processedLine = parseMethodCallWithMultipleLines(line);
-			
 			checkBalanceOfParentheses(processedLine);
 		}
 		else if (insideMultilineArgs) {
 			checkBalanceOfParentheses(line);
 			putOnMethodInvocationLine(line);
-		
+			
 			insideMultilineArgs = !isParenthesesBalanced();
 			
 			processedLine = "";

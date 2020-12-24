@@ -109,12 +109,14 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		&& !withincode(@org.junit.Test * *.*());
 	
 	protected pointcut JUnit4Annotation():
-		execution(@org.junit.Test * *.*());
+		!skipAnnotation()
+		&& execution(@org.junit.Test * *.*());
 	
 	protected pointcut JUnit5Annotation():
+		!skipAnnotation() && (
 		execution(@org.junit.jupiter.api.Test * *.*())
 		|| execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..))
-		|| execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
+		|| execution(@org.junit.jupiter.api.RepeatedTest * *.*(..)));
 	
 	
 	//-------------------------------------------------------------------------
