@@ -17,24 +17,24 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	@Test
-	public void testMethodWithInnerClass() throws IOException {
-		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
-				  			  "files", "PreTestMethodFileProcessorTest"));
-		withFilename("TestMethodWithInnerClass");
-		withTestMethodSignature("org.jfree.chart.AreaChartTest" + 
-								".testDrawWithNullInfo()");
-		initializeTest();
-		
-		processFile();
-	}
-	
-	@Test
 	public void testClassTest_firstMethod() throws IOException {
 		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
 			  			  	  "files", "PreTestMethodFileProcessorTest"));
 		withFilename("TestClass");
 		withTestMethodSignature("executionFlow.core.file.parser.tests" + 
 								".TestClass.testLastCurlyBracketInSameLine()");
+		initializeTest();
+		
+		processFile();
+	}
+	
+	@Test
+	public void testMethodWithInnerClass() throws IOException {
+		withDirectory(Path.of("test", "executionFlow", "io", "processor", 
+				  			  "files", "PreTestMethodFileProcessorTest"));
+		withFilename("TestMethodWithInnerClass");
+		withTestMethodSignature("org.jfree.chart.AreaChartTest" + 
+								".testDrawWithNullInfo()");
 		initializeTest();
 		
 		processFile();
