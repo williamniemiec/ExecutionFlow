@@ -14,15 +14,15 @@ public class TestClass_ControlFlow{
           else if (num == 1) {                                                      
                response = "Number one";                                             
           }                                                                         
-          else {int _b0a0d27e74ce8934fb8237b8f5c3c9e1=0;                            
+          else {int _28f8d6a84240a6d8c07c1a2822c020a6=0;                            
                response = "Number "+num;                                            
           }                                                                         
           return response;                                                          
      }                                                                              
      @executionflow.runtime.CollectCalls public boolean tryCatchMethod_try(){       
           File f = new File("tmp");                                                 
-          FileWriter fw;int _92bae101ee80b39af2e3827638c394b7=0;                    
-          try {int _2c4a37d0a525d1988f252d545a7872=0;                               
+          FileWriter fw;int _d101fa71c9ebe448baf6f4e84d8832ed=0;                    
+          try {int _1c74c0d262a63161588a700f33d0872d=0;                             
                fw = new FileWriter(f);                                              
                fw.write('x');                                                       
                fw.close();                                                          
@@ -35,8 +35,8 @@ public class TestClass_ControlFlow{
      }                                                                              
      @executionflow.runtime.CollectCalls public boolean tryCatchMethod_catch(){     
           File f = new File("tmp");                                                 
-          FileWriter fw;int _8b0bcfe2722630e74731cdf5a1059f1d=0;                    
-          try {int _e7bf1d14c4a9557cdd2f99b5b66deaf8=0;                             
+          FileWriter fw;int _1c0447e561acee271929959e7b695e34=0;                    
+          try {int _f2c83ec4741805424f4a9aca23adda5b=0;                             
                throw new IOException();                                             
           }                                                                         
           catch (IOException e) {                                                   
@@ -46,31 +46,31 @@ public class TestClass_ControlFlow{
      @executionflow.runtime.CollectCalls public char switchCaseMethod(char letter){ 
           letter = Character.toUpperCase(letter);                                   
           switch (letter) {                                                         
-          case 'Á':int _6d0e7461fb23803f642e66fa30bef29d=0;                         
-          case 'À':int _da5efa2e30bfc6df7a83fc4ac2fd58c0=0;                         
-          case 'Ã':int _e4cb8a6ccc0f61c25dc2749fd3632e2e=0;                         
-          case 'Â':int _b383837502abbfa90482061d0649b6e=0;                          
+          case 'Á':int _1e760d89054a8d7bf3d147e5ce0bb491=0;                         
+          case 'À':int _2b3a33c25e4f4917307dc3408733cede=0;                         
+          case 'Ã':int _b5d3924796371cb8136f51f38815e566=0;                         
+          case 'Â':int _84bac746230032c6341263b713dcfdad=0;                         
                letter = 'A';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
-          case 'É':int _9d5531d062ccb83e82907f40093f9bf4=0;                         
-          case 'È':int _21b8e794f568c15abb6cd935d0b1285e=0;                         
-          case 'Ê':int _9a80f9746722833073e181a5948b4438=0;                         
+          case 'É':int _71a8b9a3b81cdec79ea0aab6d59b1075=0;                         
+          case 'È':int _44fdb2e68a9b7a0a3163c719597fe062=0;                         
+          case 'Ê':int _b7b0acd543dd5a67ca0ab2c6185a1b13=0;                         
                letter = 'E';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
-          case 'Ì':int _7c73f3877ca5e65885dee4462c759179=0;                         
-          case 'Í':int _c7f850a8fc27a3418d21f7fea5943a3=0;                          
-          case 'Î':int _2f53d5e041c324e32d8c43464e66e2c8=0;                         
+          case 'Ì':int _bff57d7c602813f875d77c1a34cdd85c=0;                         
+          case 'Í':int _45ecf0dd0c5ba60406ed3de71bfbee9a=0;                         
+          case 'Î':int _4a26c1f5ea4b38f3875ad2006e53943a=0;                         
                letter = 'I';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
-          case 'Ò':int _f864584df3e5c310ec2e574af0f00110=0;                         
-          case 'Ó':int _3945e9eb898078bb2376ffc5abad89da=0;                         
-          case 'Ô':int _1cc91d60ce6158fbd3b788ded6ee9f9d=0;                         
-          case 'Õ':int _d4b4558bc1d935b43f93e401943a967f=0;                         
+          case 'Ò':int _7e2ab00d2e12091ef7942d8eb5c38a5f=0;                         
+          case 'Ó':int _ac296983e19949c18ea7bf8427366212=0;                         
+          case 'Ô':int _cd75ad57efdcade82faa23b704183d6a=0;                         
+          case 'Õ':int _5fb9019965b6980534b45cd709704d51=0;                         
                letter = 'O';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
-          case 'Ú':int _5992d6bf227629b9e8eb902e588dd65b=0;                         
-          case 'Ù':int _32671a352f568567760d9ca712a4fb7e=0;                         
-          case 'Û':int _4b64d5b0d290150d5ac33f13db0d78eb=0;                         
+          case 'Ú':int _130a484b516bfd6aa480cc157919450a=0;                         
+          case 'Ù':int _5e2b2dacb29b3b7f7844d8808359810a=0;                         
+          case 'Û':int _1ca1d5aa5cbfbbf67bfaf2237b820c6d=0;                         
                letter = 'U';                                                        
                if (Boolean.parseBoolean("True")) {break;}break;                     
           }                                                                         
@@ -83,7 +83,7 @@ public class TestClass_ControlFlow{
           if (b == 0) {                                                             
                return a;                                                            
           }                                                                         
-          do {int _dd0013553746f0f93d2d085bc3589169=0;                              
+          do {int _14947119611e1217d5352ce30300af45=0;                              
                a++;                                                                 
                b--;                                                                 
           }                                                                         
@@ -100,7 +100,7 @@ public class TestClass_ControlFlow{
           if (n > 0) {                                                              
                return true;                                                         
           }                                                                         
-          else {int _21115bf9fc349246864e64e7523092dd=0;                            
+          else {int _aa155fa14fe78058eaab566e688d17bb=0;                            
                return false;                                                        
           }                                                                         
      }                                                                              
@@ -108,7 +108,7 @@ public class TestClass_ControlFlow{
           if (n <= 0) {                                                             
                n = 1;                                                               
           }                                                                         
-          do {int _36024e5e5e67a9f532ef2987b840f096=0;                              
+          do {int _9e3e515776b1912d169bab7e7cd4ab68=0;                              
                n--;                                                                 
           }                                                                         
                while (n > 0);                                                       
@@ -118,7 +118,7 @@ public class TestClass_ControlFlow{
           if (num > 0) {                                                            
                num *= 0;                                                            
           }                                                                         
-          else {int _41ddd0d4fbddd46b402e32ce950032d1=0;                            
+          else {int _ca4d8968a7e474244a5e692100059335=0;                            
                num = 10;                                                            
           }                                                                         
           return num;                                                               
@@ -127,7 +127,7 @@ public class TestClass_ControlFlow{
           if (num > 0) {                                                            
                num *= 0;                                                            
           }                                                                         
-          else {int _97bada81fe35e1e1c2d7771e1dbe078b=0;                            
+          else {int _8a2e7529eaeb4ef9938493a6096af7d9=0;                            
                num = 10;                                                            
           }                                                                         
           return num;                                                               

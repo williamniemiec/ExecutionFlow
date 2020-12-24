@@ -145,10 +145,10 @@ public abstract class ExecutionFlowTest {
 		ExecutionFlow ef = getExecutionFlow(processingManager, collection);
 		ExportManager exporter = ef.getExportManager();
 		
-//		exporter.disableCalledMethodsByTestedInvokedExport();
-//		exporter.disableProcesedSourceFileExport();
-//		exporter.disableTestPathExport();
-//		exporter.disableTestersExport();
+		exporter.disableCalledMethodsByTestedInvokedExport();
+		exporter.disableProcesedSourceFileExport();
+		exporter.disableTestPathExport();
+		exporter.disableTestersExport();
 		
 		return ef.run().getTestPaths(container);
 	}
