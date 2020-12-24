@@ -40,7 +40,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	@Override
 	protected String processLine(String line) {
-		if (line.isBlank())
+		if (line.isBlank()) 
 			return line;
 		
 		String processedLine = line;
@@ -137,12 +137,10 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		return processedLine;
 	}
 
-	private void checkBalanceOfParentheses(String line) {
+	private void checkBalanceOfParentheses(String line) {		
 		if (rbb == null) {
 			rbb = new RoundBracketBalance();
 		}
-		
-		rbb.parse(line);
 	}
 	
 	private boolean isParenthesesBalanced() {

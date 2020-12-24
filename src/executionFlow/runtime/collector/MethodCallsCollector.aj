@@ -61,8 +61,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 		&& !withincode(@executionFlow.runtime.SkipInvoked * *.*(..))
 		&& !get(* *.*) 
 		&& !set(* *.*) 
-		&& insideConstructor()
-		|| insideMethod();
+		&& (insideConstructor()	|| insideMethod());
 	
 	private pointcut insideConstructor():
 		withincode(@executionFlow.runtime.CollectCalls *.new(..))  

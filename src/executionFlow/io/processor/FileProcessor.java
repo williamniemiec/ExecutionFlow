@@ -70,7 +70,11 @@ public abstract class FileProcessor implements Serializable {
 		List<String> formatedFile = indenter.format(sourceCode);
 
 		Logger.debug(this.getClass(), "Processed file");
-		FileUtil.printFileWithLines(formatedFile);
+		
+		if (formatedFile.size() <= 2)
+			FileUtil.printFileWithLines(sourceCode);
+		else
+			FileUtil.printFileWithLines(formatedFile);
 		
 	}
 	
