@@ -40,8 +40,6 @@ public class HolePlug {
 	public List<String> processLines() {
 		moveAloneOpenCurlyBracketsToThePreviousLine();
 		
-		removePrintCalls();
-		
 		putCollectAnnotationNextToInvokedDeclarations();
 		
 		addCurlyBracketsInElseStatementsWithoutCurlyBrackets();
@@ -113,12 +111,6 @@ public class HolePlug {
 		InvokedProcessor invokedProcessor = new InvokedProcessor(sourceCode);
 		
 		sourceCode = invokedProcessor.processLines();
-	}
-
-	private void removePrintCalls() {
-		PrintCallProcessor printCallProcessor = new PrintCallProcessor(sourceCode);
-		
-		sourceCode = printCallProcessor.processLines();
 	}
 
 	private void moveAloneOpenCurlyBracketsToThePreviousLine() {

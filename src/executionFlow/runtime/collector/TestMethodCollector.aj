@@ -486,8 +486,8 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			return;
 		
 		try {
-			cleanLastRun();
 			initializeTestMethodManager();
+			cleanLastRun();
 			RemoteControl.open();
 		}
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {

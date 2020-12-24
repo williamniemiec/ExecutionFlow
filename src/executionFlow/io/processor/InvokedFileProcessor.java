@@ -214,6 +214,7 @@ public class InvokedFileProcessor extends FileProcessor {
 		removeInlineComments();
 		doTRGenerationProcesing();
 		doHolePlugProcessing();
+		disablePrintCalls();
 		
 		return processedLines;
 	}
@@ -238,6 +239,13 @@ public class InvokedFileProcessor extends FileProcessor {
 	private void doHolePlugProcessing() {
 		HolePlug holePlug = new HolePlug(processedLines);
 		processedLines = holePlug.processLines();
+	}
+	
+	private void disablePrintCalls() {
+		PrintCallDeactivator printCallProcessor = 
+				new PrintCallDeactivator(processedLines);
+		
+		processedLines = printCallProcessor.processLines();
 	}
 	
 	

@@ -8,7 +8,6 @@ import java.util.Map;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.processor.testmethod.ClassDeclarationProcessor;
 import executionFlow.io.processor.testmethod.MultilineToInlineCallsConverter;
-import executionFlow.io.processor.testmethod.PrintCallRemover;
 
 /**
  * Processes test java file adding annotations to disable collectors while 
@@ -225,8 +224,8 @@ public class TestMethodFileProcessor extends FileProcessor {
 	}
 
 	private void disablePrintCalls() {
-		PrintCallRemover printCallProcessor = 
-				new PrintCallRemover(processedLines);
+		PrintCallDeactivator printCallProcessor = 
+				new PrintCallDeactivator(processedLines);
 		
 		processedLines = printCallProcessor.processLines();
 	}

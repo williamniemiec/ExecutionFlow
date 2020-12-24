@@ -1,22 +1,23 @@
-package executionFlow.io.processor.testmethod;
+package executionFlow.io.processor;
 
 import java.util.List;
 
 import executionFlow.io.SourceCodeProcessor;
 
 /**
- * Removes all print calls.
+ * Deactivates all print calls, replacing them for an instruction that does
+ * nothing.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		5.2.3
  * @since 		5.2.3
  */
-public class PrintCallRemover extends SourceCodeProcessor {
+public class PrintCallDeactivator extends SourceCodeProcessor {
 
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	public PrintCallRemover(List<String> sourceCode) {
+	public PrintCallDeactivator(List<String> sourceCode) {
 		super(sourceCode, true);
 	}
 	
@@ -28,6 +29,21 @@ public class PrintCallRemover extends SourceCodeProcessor {
 		if (!line.contains("System.out.print"))
 			return line;
 		
-		return line.replaceAll(".*System\\.out\\.print(ln)?\\(.+\\);", "");
+		return disablePrintCalls(line);
+	}
+
+	private String disablePrintCalls(String line) {
+		StringBuilder processedLine = new StringBuilder();
+
+		for (String term : line.split(";")) {
+			if (term.contains("System.out.print"))
+				processedLine.append("Boolean.parseBoolean(\"True\")");
+			else
+				processedLine.append(term);	
+			
+			processedLine.append(";");
+		}
+		
+		return processedLine.toString();
 	}
 }
