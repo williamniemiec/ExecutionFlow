@@ -215,32 +215,39 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	private void onShutdown() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
-		    	if (success)
-		    		return;
-		 
-		    	if (Session.hasKeyShared("JUNIT4_RUNNER")) {
-					try {
-						JUnit4Runner runner = 
-								(JUnit4Runner) Session.readShared("JUNIT4_RUNNER");
-						runner.quit();
-					} 
-					catch (IOException e) {
-					}
-					finally {
-						Session.removeShared("JUNIT4_RUNNER");						
-					}
+		    	if (!success) {
+		    		stopRunner();
+			    	finished = true;
 		    	}
-		    	    				    	
-	    		restoreOriginalFiles();
+		    	
+		    	cleanup();
+		    }
+
+			private void cleanup() {
+				restoreOriginalFiles();
 		    	
 		    	processingManager.deleteInvokedFileManagerBackup();
 		    	deleteTestMethodBackupFiles();
 				disableCheckpoint(currentTestMethodCheckpoint);
 				disableCheckpoint(insideJUnitRunnerCheckpoint);
 				disableCheckpoint(firstRunCheckpoint);
+			}
+			
+			private void stopRunner() {
+				if (!Session.hasKeyShared("JUNIT4_RUNNER"))
+					return;
 				
-				finished = true;
-		    }
+				try {
+					JUnit4Runner runner = 
+							(JUnit4Runner) Session.readShared("JUNIT4_RUNNER");
+					runner.quit();
+				} 
+				catch (IOException e) {
+				}
+				finally {
+					Session.removeShared("JUNIT4_RUNNER");						
+				}
+			}
 		});
 	}
 	
@@ -695,6 +702,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		}
 		
 		Session.removeShared("JUNIT4_RUNNER");
+		disableCheckpoint(insideJUnitRunnerCheckpoint);
 	}
 	
 	private void afterEachTestMethod(JoinPoint jp) {
