@@ -39,7 +39,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//		Methods
 	//---------------------------------------------------------------------
 	@Override
-	protected String processLine(String line) {
+	protected String processLine(String line) {System.out.println(line);
 		if (line.isBlank())
 			return line;
 		

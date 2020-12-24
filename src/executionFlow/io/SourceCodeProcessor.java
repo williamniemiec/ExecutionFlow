@@ -7,7 +7,8 @@ public abstract class SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	//		Attributes
 	//---------------------------------------------------------------------
-	private boolean inComment;
+	private boolean inMultiLineComment;
+	private boolean inInlineComment;
 	private int currentIdx;
 	private List<String> sourceCode;
 	private boolean ignoreComments;
@@ -43,22 +44,28 @@ public abstract class SourceCodeProcessor {
 	}
 	
 	private void checkComments(String line) {
-		final String regexCommentFullLine = 
-				"^(\\t|\\ )*(\\/\\/|\\/\\*|\\*\\/|\\*).*";
-
-		if (line.matches(regexCommentFullLine))
-			inComment = true;
+		checkInlineComment(line);
+		checkMultiLineComment(line);
+	}
+	
+	private void checkInlineComment(String str) {
+		final String regexCommentFullLine = "^[\\t\\s]*(\\/\\/).*";
 		
+		inInlineComment = str.matches(regexCommentFullLine);
+	}
+	
+	private void checkMultiLineComment(String line) {
 		if (line.contains("/*") && !line.contains("*/")) {
-			inComment = true;
+			inMultiLineComment = true;
 		}
-		else if (inComment) {
-			inComment =  !line.contains("*/") || line.matches(regexCommentFullLine);
+		else if (inMultiLineComment && line.contains("*/")) {
+			inMultiLineComment = false;
 		}
 	}
 	
 	private boolean inComment() {
-		return	inComment 
+		return	inMultiLineComment
+				|| inInlineComment
 				|| sourceCode.get(currentIdx).contains("*/");
 	}
 	

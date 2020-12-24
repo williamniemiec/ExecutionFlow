@@ -580,7 +580,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		}
 	}
 	
-	public static void processCollectedInvoked() {
+	private void processCollectedInvoked() {
 		ExecutionFlow methodExecutionFlow = new MethodExecutionFlow(
 				processingManager, 
 				methodCollector
