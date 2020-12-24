@@ -16,8 +16,8 @@ import executionFlow.info.InvokedInfo;
 import executionFlow.io.FileEncoding;
 import executionFlow.io.compiler.Compiler;
 import executionFlow.io.compiler.CompilerFactory;
-import executionFlow.io.processor.FileProcessor;
 import executionFlow.io.processor.factory.FileProcessorFactory;
+import executionFlow.io.processor.fileprocessor.FileProcessor;
 import executionFlow.util.FileUtil;
 import executionFlow.util.logger.Logger;
 

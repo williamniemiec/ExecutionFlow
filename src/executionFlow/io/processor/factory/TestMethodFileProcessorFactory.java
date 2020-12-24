@@ -3,8 +3,8 @@ package executionFlow.io.processor.factory;
 import java.nio.file.Path;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.FileProcessor;
-import executionFlow.io.processor.TestMethodFileProcessor;
+import executionFlow.io.processor.fileprocessor.FileProcessor;
+import executionFlow.io.processor.fileprocessor.TestMethodFileProcessor;
 
 /**
  * Responsible for generating {@link TestMethodFileProcessor} classes.

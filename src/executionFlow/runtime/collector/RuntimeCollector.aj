@@ -11,8 +11,8 @@ import org.aspectj.lang.JoinPoint;
 
 import executionFlow.info.InvokedContainer;
 import executionFlow.info.InvokedInfo;
-import executionFlow.io.processor.InvokedFileProcessor;
-import executionFlow.io.processor.TestMethodFileProcessor;
+import executionFlow.io.processor.fileprocessor.InvokedFileProcessor;
+import executionFlow.io.processor.fileprocessor.TestMethodFileProcessor;
 
 /**
  * Responsible for data collection of methods and class constructors used in 

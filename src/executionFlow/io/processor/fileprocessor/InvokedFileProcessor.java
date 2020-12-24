@@ -1,4 +1,4 @@
-package executionFlow.io.processor;
+package executionFlow.io.processor.fileprocessor;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -6,59 +6,69 @@ import java.util.List;
 import java.util.Map;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.testmethod.ClassDeclarationProcessor;
-import executionFlow.io.processor.testmethod.MultilineToInlineCallsConverter;
+import executionFlow.io.processor.InlineCommentRemover;
+import executionFlow.io.processor.PrintCallDeactivator;
+import executionFlow.io.processor.invoked.holeplug.HolePlug;
+import executionFlow.io.processor.invoked.trgeneration.CodeCleanerAdapter;
 
 /**
- * Processes test java file adding annotations to disable collectors while 
- * running {@link executionFlow.util.core.JDB JDB}. Also, disables print calls,
- * removes inline comments and converts multiline calls to inline calls.
+ * Processes java file adding instructions in parts of the code that does not 
+ * exist when converting it to bytecode. Also, replaces print calls with 
+ * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		5.2.3
- * @since		2.0.0
+ * @since 		2.0.0
  */
-public class TestMethodFileProcessor extends FileProcessor {
+public class InvokedFileProcessor extends FileProcessor {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 400L;
+	private static final long serialVersionUID = 510L;
+	
+	/**
+	 * Stores the mapping of the original file with the modified file.
+	 * 
+	 * <ul>
+	 * 	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Value:</b> Modified source file line</li>
+	 * </ul>
+	 */
 	private static Map<Integer, Integer> mapping = new HashMap<>();
 	private List<String> processedLines;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
-	//-------------------------------------------------------------------------		
+	//-------------------------------------------------------------------------
 	/**
-	 * Processes test java file adding annotations to disable collectors while 
-	 * running {@link executionFlow.util.core.JDB JDB}. Also, disables print calls,
-	 * removes inline comments and converts multiline calls to inline calls.
+	 * Adds instructions in parts of the code that does not exist when 
+	 * converting it to bytecode.
 	 * 
 	 * @param		file Path of the file to be parsed
 	 * @param		outputDir Directory where parsed file will be saved
 	 * @param		outputFilename Name of the parsed file
+	 * @param		encode File encoding
 	 * @param		fileExtension Output file extension (without dot)
 	 * (default is java)
-	 * @param		encoding File encoding
 	 * 
 	 * @throws		IllegalArgumentException If any required field is null
 	 */ 
-	private TestMethodFileProcessor(Path file, Path outputDir, String outputFilename, 
-									String fileExtension, FileEncoding encoding) {
+	private InvokedFileProcessor(Path file, Path outputDir, String outputFilename,
+								 String fileExtension, FileEncoding encode) {
 		checkRequiredFields(file, outputDir, outputFilename);
 		
 		this.file = file;
 		this.outputFilename = outputFilename;
 		
-		if (outputDir != null)
-			outputFile = outputDir.resolve(outputFilename + "." + fileExtension);
-		else	
+		if (outputDir == null)
 			outputFile = Path.of(outputFilename + "." + fileExtension);
+		else	
+			outputFile = outputDir.resolve(outputFilename + "." + fileExtension);
 		
-		if (encoding != null)
-			this.encoding = encoding;
+		if (encode != null)
+			this.encoding = encode;
 	}
 	
 	
@@ -66,17 +76,18 @@ public class TestMethodFileProcessor extends FileProcessor {
 	//		Builder
 	//-------------------------------------------------------------------------
 	/**
-	 * Builder for {@link TestMethodFileProcessor}. It is necessary to provide
-	 * all required fields. The required fields are: <br />
+	 * Builder for {@link InvokedFileProcessor}. It is necessary to provide all
+	 * required fields. The required fields are: <br />
 	 * <ul>
 	 * 	<li>file</li>
 	 * 	<li>outputDir</li>
 	 * 	<li>outputFilename</li>
+	 * 	<li>isTestMethod</li>
 	 * </ul>
 	 */
 	public static class Builder	{
 		
-		private FileEncoding encoding;
+		private FileEncoding encode;
 		private String fileExtension = "java";
 		private Path file;
 		private Path outputDir;
@@ -138,7 +149,7 @@ public class TestMethodFileProcessor extends FileProcessor {
 		 */
 		public Builder encoding(FileEncoding encoding) {
 			if (encoding != null)
-				this.encoding = encoding;
+				this.encode = encoding;
 			
 			return this;
 		}
@@ -157,22 +168,23 @@ public class TestMethodFileProcessor extends FileProcessor {
 		}
 		
 		/**
-		 * Creates {@link TestMethodFileProcessor} with provided information.
-		 * It is necessary to provide all required fields. The required fields
-		 * are: <br />
+		 * Creates {@link InvokedFileProcessor} with provided information.
+		 * It is necessary to provide all required fields. The required 
+		 * fields are: <br />
 		 * <ul>
 		 * 	<li>file</li>
 		 * 	<li>outputDir</li>
 		 * 	<li>outputFilename</li>
+		 * 	<li>isTestMethod</li>
 		 * </ul>
 		 * 
-		 * @return		TestMethodFileProcessor with provided information
+		 * @return		InvokedFileProcessor with provided information
 		 * 
 		 * @throws		IllegalArgumentException If any required field is null
 		 */
-		public TestMethodFileProcessor build() {
-			return new TestMethodFileProcessor(
-					file, outputDir, outputFilename, fileExtension, encoding
+		public InvokedFileProcessor build() {
+			return new InvokedFileProcessor(
+					file, outputDir, outputFilename, fileExtension, encode
 			);
 		}
 	}
@@ -196,15 +208,15 @@ public class TestMethodFileProcessor extends FileProcessor {
 					+ nullFields.substring(0, nullFields.length()-2));	
 		}
 	}
-
+	
 	@Override
 	protected List<String> doProcessing(List<String> sourceCode) {
 		processedLines = sourceCode;
 		
 		removeInlineComments();
-		putSkipCollectionAnnotation();
+		doTRGenerationProcesing();
+		doHolePlugProcessing();
 		disablePrintCalls();
-		convertMultiLineCallsToInlineCalls();
 		
 		return processedLines;
 	}
@@ -216,26 +228,26 @@ public class TestMethodFileProcessor extends FileProcessor {
 		processedLines = inlineCommentProcessor.processLines();
 	}
 
-	private void putSkipCollectionAnnotation() {
-		ClassDeclarationProcessor classDeclarationProcessor = 
-				new ClassDeclarationProcessor(processedLines);
+	private void doTRGenerationProcesing() {
+		CodeCleanerAdapter codeCleaner = new CodeCleanerAdapter(processedLines);
+		processedLines = codeCleaner.processLines();
 		
-		processedLines = classDeclarationProcessor.processLines();
+		Map<Integer, Integer> cleanupMapping = codeCleaner.getMapping();
+		
+		if (cleanupMapping != null)
+			mapping = cleanupMapping;
 	}
 
+	private void doHolePlugProcessing() {
+		HolePlug holePlug = new HolePlug(processedLines);
+		processedLines = holePlug.processLines();
+	}
+	
 	private void disablePrintCalls() {
 		PrintCallDeactivator printCallProcessor = 
 				new PrintCallDeactivator(processedLines);
 		
 		processedLines = printCallProcessor.processLines();
-	}
-	
-	private void convertMultiLineCallsToInlineCalls() {
-		MultilineToInlineCallsConverter multilineArgsProcessor = 
-				new MultilineToInlineCallsConverter(processedLines);
-		
-		processedLines = multilineArgsProcessor.processLines();
-		mapping = multilineArgsProcessor.getMapping();
 	}
 	
 	
@@ -247,7 +259,7 @@ public class TestMethodFileProcessor extends FileProcessor {
 	 * 
 	 * @return		Mapping with the following format:
 	 * <ul>
-	 *	<li><b>Key:</b> Original source file line</li>
+	 * 	<li><b>Key:</b> Original source file line</li>
 	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */

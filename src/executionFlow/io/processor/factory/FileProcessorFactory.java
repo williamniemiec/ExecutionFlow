@@ -3,7 +3,7 @@ package executionFlow.io.processor.factory;
 import java.nio.file.Path;
 
 import executionFlow.io.FileEncoding;
-import executionFlow.io.processor.FileProcessor;
+import executionFlow.io.processor.fileprocessor.FileProcessor;
 
 /**
  * Responsible for generating {@link FileProcessor} classes.

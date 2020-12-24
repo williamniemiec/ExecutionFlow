@@ -234,14 +234,14 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 		 * @return		Line with {@link org.junit.Test}
 		 */
 		public void replaceRepeatedTestAnnotation() {			
+			replacedRepeatedTestAnnotation = true;
+			insideRepeatedTest = true;
+			totalRepetitions = extractNumberOfRepetitions(processedLine);
+			
 			processedLine = processedLine.replace(
 					extractRepeatedTestAnnotation(processedLine), 
 					"@org.junit.Test"
 			);
-			
-			replacedRepeatedTestAnnotation = true;
-			insideRepeatedTest = true;
-			totalRepetitions = extractNumberOfRepetitions(processedLine);
 		}
 		
 		private String extractRepeatedTestAnnotation(String line) {
