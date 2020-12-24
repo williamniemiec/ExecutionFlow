@@ -137,7 +137,7 @@ public abstract class ExecutionFlowTest {
 	
 	protected List<List<Integer>> computeTestPath(Collection<InvokedContainer> collection, 
 												  InvokedContainer container) {
-		ExecutionFlow ef = new ConstructorExecutionFlow(processingManager, collection);
+		ExecutionFlow ef = getExecutionFlow(processingManager, collection);
 		ExportManager exporter = ef.getExportManager();
 		
 		exporter.disableCalledMethodsByTestedInvokedExport();
@@ -147,6 +147,9 @@ public abstract class ExecutionFlowTest {
 		
 		return ef.run().getTestPaths(container);
 	}
+	
+	protected abstract ExecutionFlow getExecutionFlow(InvokedManager processingManager, 
+													  Collection<InvokedContainer> constructorCollector);
 	
 	protected void assertTestPathIs(Integer... testPath) {
 		assertEquals(List.of(Arrays.asList(testPath)), testPaths);
@@ -281,7 +284,9 @@ public abstract class ExecutionFlowTest {
 					.binDirectory(InvokedInfo.getCompiledFileDirectory(binTestMethod))
 					.classPackage(packageTestMethod)
 					.backupExtensionName("pretestMethod.bkp")
-					.fileParserFactory(new PreTestMethodFileProcessorFactory(testMethodSignature, testMethodArgs))
+					.fileParserFactory(new PreTestMethodFileProcessorFactory(
+							testMethodSignature, testMethodArgs
+					))
 					.build();
 		}
 	}

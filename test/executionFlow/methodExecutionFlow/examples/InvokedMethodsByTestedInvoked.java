@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.ExecutionFlowTest;
 import executionFlow.MethodExecutionFlow;
+import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
 /**
@@ -16,7 +16,7 @@ import executionFlow.runtime.SkipCollection;
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class InvokedMethodsByTestedInvoked extends ExecutionFlowTest {
+public class InvokedMethodsByTestedInvoked extends MethodExecutionFlowTest {
 	
 	//-------------------------------------------------------------------------
 	//		Tests

@@ -12,7 +12,7 @@ import examples.testClasses.TestClass;
 	public void testFoo()
 	{
 		assertEquals("1", "1");
-		assertEquals("1", "2");	
+		assertEquals(" ", " ");	
 	}
 	
 	@Test
@@ -37,18 +37,18 @@ import examples.testClasses.TestClass;
 	public void multilineAssert2()
 	{
 		assertEquals (
-				param1, 				
-				param2,					
-				param3);				
+				param1, 								param2,									param3);				
+
+
 	}
 	
 	@Test
 	public void multilineAssert3()
 	{
 		assertEquals (
-				param1, 				
-				param2,					
-				param3					
+				param1, 								param2,									param3					
+
+
 		);								
 	}
 }

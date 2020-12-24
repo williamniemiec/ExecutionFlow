@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.ExecutionFlowTest;
 import executionFlow.MethodExecutionFlow;
+import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
 /**
@@ -16,7 +16,7 @@ import executionFlow.runtime.SkipCollection;
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class ControlFlowTest extends ExecutionFlowTest {
+public class ControlFlowTest extends MethodExecutionFlowTest {
 	
 	//-------------------------------------------------------------------------
 	//		Tests
@@ -118,7 +118,7 @@ public class ControlFlowTest extends ExecutionFlowTest {
 								".doWhileTest()");
 		invokedOnLine(82);
 		initializeTest();
-		
+
 		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
 						  ".doWhileMethod(int,int)");
 		
@@ -136,7 +136,7 @@ public class ControlFlowTest extends ExecutionFlowTest {
 		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
 						  ".inlineWhile(int)");
 		
-		assertTestPathIs(95,96,95,96,95,98);
+		assertTestPathIs(94,95,94,95,94,97);
 	}
 	
 	@Test
@@ -149,7 +149,7 @@ public class ControlFlowTest extends ExecutionFlowTest {
 		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
 						  ".inlineDoWhile(int)");
 		
-		assertTestPathIs(109,112,113,115,112,113,115,112,116);
+		assertTestPathIs(108,111,112,114,111,112,114,111,115);
 	}
 	
 	@Test
@@ -162,7 +162,7 @@ public class ControlFlowTest extends ExecutionFlowTest {
 		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
 						  ".inlineIfElse(int)");
 		
-		assertTestPathIs(101,102);
+		assertTestPathIs(100,101);
 	}
 	
 	/**
@@ -179,7 +179,7 @@ public class ControlFlowTest extends ExecutionFlowTest {
 		computeTestPathOf("examples.controlFlow.TestClass_ControlFlow" +
 						  ".ifElseSameLine(int)");
 		
-		assertTestPathIs(119,120,125);
+		assertTestPathIs(118,119,124);
 	}
 	
 	/**

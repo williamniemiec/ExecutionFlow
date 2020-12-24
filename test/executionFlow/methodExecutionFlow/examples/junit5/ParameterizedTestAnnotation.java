@@ -8,8 +8,8 @@ import java.time.temporal.TemporalUnit;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.ExecutionFlowTest;
 import executionFlow.MethodExecutionFlow;
+import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
 /**
@@ -18,7 +18,7 @@ import executionFlow.runtime.SkipCollection;
  * {@link MethodExecutionFlow}.
  */
 @SkipCollection
-public class ParameterizedTestAnnotation extends ExecutionFlowTest {
+public class ParameterizedTestAnnotation extends MethodExecutionFlowTest {
 
 	//-------------------------------------------------------------------------
 	//		Tests

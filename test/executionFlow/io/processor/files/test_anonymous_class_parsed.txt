@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 
-public class OverrideTest 
+@executionFlow.runtime.SkipCollection public class OverrideTest 
 {
-	@org.junit.Test
+	@Test
 	public void testOverloadedMethod3()
 	{
 		OverrideClass oc = new OverrideClass() {
@@ -21,7 +21,7 @@ public class OverrideTest
 			}
 		};
 		
-try {		assertEquals(10000, oc.foo(10));} catch(Throwable _23d02fbf0925db36dbb1f029f72c3cba){}
+		assertEquals(10000, oc.foo(10));
 	}
 }
  

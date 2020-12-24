@@ -16,17 +16,17 @@ public class TestClass
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
-try {		assertEquals(24, artc.factorial(4)); }} catch(Throwable _217a8dd2a2a43deb630e0ee2b0e4cb62){}
+try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _f92ed6f227c57d466761cf74cab22d0b){}}
 
-////	@org.junit.Test
-////	public void testFoo()
+//	@Test
+//	public void testFoo()
 //	{
 //		assertEquals("1", "1");
 //		assertEquals("1", "2");	// It will fail
 //	}
 	
-////	@org.junit.Test
-////	public void assertFailInTheMiddleTest() 
+//	@Test
+//	public void assertFailInTheMiddleTest() 
 //	{
 //		TestClass tc = new TestClass(99);
 //		assertEquals("one", tc.threePaths(1));
@@ -35,16 +35,16 @@ try {		assertEquals(24, artc.factorial(4)); }} catch(Throwable _217a8dd2a2a43deb
 //		assertEquals("two", tc.threePaths(2));
 //	}
 	
-////	@org.junit.Test
-////	public void multilineAssert1()
+//	@Test
+//	public void multilineAssert1()
 //	{
 //		assertEquals(param1, 			// Comment 1
 //				param2,					// Comment 2
 //				param3);				// Comment 3
 //	}
 	
-////	@org.junit.Test
-////	public void multilineAssert2()
+//	@Test
+//	public void multilineAssert2()
 //	{
 //		assertEquals (
 //				param1, 				// Comment 1
@@ -52,8 +52,8 @@ try {		assertEquals(24, artc.factorial(4)); }} catch(Throwable _217a8dd2a2a43deb
 //				param3);				// Comment 3
 //	}
 	
-////	@org.junit.Test
-////	public void multilineAssert3()
+//	@Test
+//	public void multilineAssert3()
 //	{
 //		assertEquals (
 //				param1, 				// Comment 1

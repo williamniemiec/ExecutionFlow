@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import org.junit.Test;
 
 import executionFlow.ExecutionFlow;
-import executionFlow.ExecutionFlowTest;
 import executionFlow.MethodExecutionFlow;
+import executionFlow.methodExecutionFlow.MethodExecutionFlowTest;
 import executionFlow.runtime.SkipCollection;
 
 
@@ -17,7 +17,7 @@ import executionFlow.runtime.SkipCollection;
  * {@link MethodExecutionFlow} class.
  */
 @SkipCollection
-public class BuilderPatternTest extends ExecutionFlowTest {
+public class BuilderPatternTest extends MethodExecutionFlowTest {
 	
 	//-------------------------------------------------------------------------
 	//		Tests
@@ -31,6 +31,7 @@ public class BuilderPatternTest extends ExecutionFlowTest {
 		withTestMethodSignature("examples.builderPattern.BuilderPatternTest" +
 								".testBuilderPattern()");
 		invokedOnLine(15);
+		enableDebug();
 		initializeTest();
 		
 		computeTestPathOf("examples.builderPattern.Person$PersonBuilder" +
