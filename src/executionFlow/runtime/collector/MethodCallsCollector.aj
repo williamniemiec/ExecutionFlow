@@ -88,7 +88,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	}
 	
 	before(): invokedMethodByTestedInvoker() {
-		if (!isMethod(thisJoinPoint) || isNativeMethod(thisJoinPoint))
+		if (!isMethod(thisJoinPoint) || isNativeMethod(thisJoinPoint) || (invoked == null))
 			return;
 		
 		collectMethod(extractMethodCalledSignature(thisJoinPoint));
