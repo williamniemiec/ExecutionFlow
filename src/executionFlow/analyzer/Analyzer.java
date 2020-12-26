@@ -35,7 +35,7 @@ public abstract class Analyzer {
 	protected static volatile boolean timeout;
 	protected volatile List<List<Integer>> testPaths;
 	protected String analyzedInvokedSignature;
-	protected Map<String, Set<String>> methodsCalledByTestedInvoked;
+	protected Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked;
 	protected InvokedInfo invoked;
 	protected InvokedInfo testMethod;
 	protected JDB jdb;
@@ -327,19 +327,19 @@ public abstract class Analyzer {
 	 * by tested invoked will be deleted. Therefore, this method can only be 
 	 * called once for each {@link #run JDB execution}
 	 */
-	public Map<String, Set<String>> getMethodsCalledByTestedInvoked() {
+	public Map<InvokedInfo, Set<String>> getMethodsCalledByTestedInvoked() {
 		return methodsCalledByTestedInvoked;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, Set<String>> loadMethodsCalledByTestedInvoked() {
+	private Map<InvokedInfo, Set<String>> loadMethodsCalledByTestedInvoked() {
 		if (!mcti.exists())
 			return new HashMap<>();
 		
-		Map<String, Set<String>> invokedMethods = new HashMap<>();
+		Map<InvokedInfo, Set<String>> invokedMethods = new HashMap<>();
 
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(mcti))) {
-			invokedMethods = (Map<String, Set<String>>) ois.readObject();
+			invokedMethods = (Map<InvokedInfo, Set<String>>) ois.readObject();
 		} 
 		catch (IOException | ClassNotFoundException e) {
 			Logger.error("Methods called by tested invoked - " + e.getMessage());
@@ -351,9 +351,9 @@ public abstract class Analyzer {
 	}
 	
 	private void mergeMethodsCalledByTestedInvoked() {
-		Map<String, Set<String>> invokedMethods = loadMethodsCalledByTestedInvoked();
+		Map<InvokedInfo, Set<String>> invokedMethods = loadMethodsCalledByTestedInvoked();
 		
-		for (Map.Entry<String, Set<String>> mcti : invokedMethods.entrySet()) {
+		for (Map.Entry<InvokedInfo, Set<String>> mcti : invokedMethods.entrySet()) {
 			if (methodsCalledByTestedInvoked.containsKey(mcti.getKey())) {
 				methodsCalledByTestedInvoked.get(mcti.getKey()).addAll(mcti.getValue());
 			}

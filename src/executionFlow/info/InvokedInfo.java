@@ -2,9 +2,14 @@ package executionflow.info;
 
 import static java.lang.invoke.MethodType.methodType;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.invoke.MethodType;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,22 +21,24 @@ import java.util.regex.Pattern;
  * @version		6.0.0
  * @since		2.0.0
  */
-public class InvokedInfo {
+public class InvokedInfo implements Serializable {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Path binPath;
-	private Path srcPath;
+	private static final long serialVersionUID = 600L;
+	private transient Path binPath;
+	private transient Path srcPath;
 	private String invokedSignature;
 	private String classSignature;
 	private String classPackage;
 	private int invocationLine;
 	private Class<?>[] parameterTypes;
-	private Object[] args;
+	private transient Object[] args;
 	private String concreteMethodSignature;
 	private String invokedName;
 	private Class<?> returnType;
+	private boolean isConstructor;
 	
 	
 	//-------------------------------------------------------------------------
@@ -41,8 +48,6 @@ public class InvokedInfo {
 						String invokedSignature, String invokedName, 
 						Class<?> returnType, Class<?>[] parameterTypes, 
 						Object[] args, boolean isConstructor) {
-		checkBinPath(binPath);
-		checkSrcPath(srcPath);
 		checkInvokedSignature(invokedSignature);
 		
 		this.binPath = binPath;
@@ -56,6 +61,8 @@ public class InvokedInfo {
 		
 		if (isConstructor)
 			this.classSignature = invokedSignature;
+		
+		this.isConstructor = isConstructor;
 	}
 	
 	
@@ -66,8 +73,6 @@ public class InvokedInfo {
 	 * Builder for {@link InvokedInfo}. It is necessary to provide all required
 	 * fields. The required fields are: <br />
 	 * <ul>
-	 * 	<li>binPath</li>
-	 * 	<li>srcPath</li>
 	 * 	<li>invokedSignature</li>
 	 * </ul>
 	 */
@@ -242,8 +247,6 @@ public class InvokedInfo {
 		 * necessary to provide all required fields.. The required fields 
 		 * are: <br />
 		 * <ul>
-		 * 	<li>classPath</li>
-		 * 	<li>srcPath</li>
 		 * 	<li>invokedSignature</li>
 		 * </ul>
 		 * 
@@ -365,6 +368,52 @@ public class InvokedInfo {
 	}
 	
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		
+		result = prime * result + ((binPath == null) ? 0 : binPath.hashCode());
+		result = prime * result + ((invocationLine <= 0) ? 0 : invocationLine);
+		result = prime * result + ((invokedSignature == null) ? 0 : invokedSignature.hashCode());
+		result = prime * result + ((srcPath == null) ? 0 : srcPath.hashCode());
+		
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		
+		if (obj == null)
+			return false;
+		
+		if (getClass() != obj.getClass())
+			return false;
+		
+		InvokedInfo other = (InvokedInfo) obj;
+		
+		if (binPath == null) {
+			if (other.binPath != null)
+				return false;
+		} 
+		else if (!binPath.equals(other.binPath))
+			return false;
+		
+		if ((invocationLine > 0) && invocationLine != other.invocationLine)
+			return false;
+		
+		if (srcPath == null) {
+			if (other.srcPath != null)
+				return false;
+		} 
+		else if (!srcPath.equals(other.srcPath))
+			return false;
+		
+		return invokedSignature.equals(other.invokedSignature);
+	}
+
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
@@ -545,5 +594,50 @@ public class InvokedInfo {
 
 	public void setInvokedSignature(String signature) {
 		this.invokedSignature = signature;
+	}
+	
+	public boolean isConstructor() {
+		return this.isConstructor;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Serialization and deserialization methods
+	//-------------------------------------------------------------------------
+	private void writeObject(ObjectOutputStream oos) {
+		try {
+			oos.defaultWriteObject();
+			oos.writeUTF((srcPath == null) ? "NULL" : srcPath.toAbsolutePath().toString());
+			oos.writeUTF((binPath == null) ? "NULL" : binPath.toAbsolutePath().toString());
+			oos.writeObject((binPath == null) ? null : Arrays.asList(args));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void readObject(ObjectInputStream ois) {
+		try {
+			ois.defaultReadObject();
+			this.srcPath = readPath(ois);
+			this.binPath = readPath(ois);
+			this.args = readArgs(ois);
+		} 
+		catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private Path readPath(ObjectInputStream ois) throws IOException {
+		String path = ois.readUTF();
+		
+		return path.equals("NULL") ? null : Path.of(path);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Object[] readArgs(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		Object rawList = ois.readObject();
+		
+		return (rawList == null) ? null : ((List<Object>) ois.readObject()).toArray();
 	}
 }

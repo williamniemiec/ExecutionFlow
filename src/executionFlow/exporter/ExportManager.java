@@ -16,6 +16,7 @@ import executionflow.exporter.testpath.FileExporter;
 import executionflow.exporter.testpath.TestPathExportType;
 import executionflow.exporter.testpath.TestPathExporter;
 import executionflow.info.InvokedContainer;
+import executionflow.info.InvokedInfo;
 import executionflow.util.logger.Logger;
 
 public class ExportManager {
@@ -43,8 +44,8 @@ public class ExportManager {
 	 * Sets test path export type.
 	 */
 	static {
-		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
+//		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
+		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
 	
 	
@@ -88,8 +89,7 @@ public class ExportManager {
 	private void initializeMethodsCalledByTestedInvokedExporter() {
 		this.mcti = new MethodsCalledByTestedInvokedExporter(
 				"MCTI", 
-				outputDir,
-				isConstructor
+				outputDir
 		);
 	}
 	
@@ -120,7 +120,7 @@ public class ExportManager {
 	}
 	
 	public void exportMethodsCalledByTestedInvoked(
-			Map<String, Set<String>> methodsCalledByTestedInvoked) {
+			Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked) {
 		if (!exportCalledMethods)
 			return;
 		

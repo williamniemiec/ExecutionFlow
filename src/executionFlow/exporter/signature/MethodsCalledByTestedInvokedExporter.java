@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import executionflow.ExecutionFlow;
+import executionflow.info.InvokedInfo;
 import executionflow.util.CSV;
 import executionflow.util.DataUtil;
 import executionflow.util.logger.Logger;
@@ -35,7 +36,6 @@ public class MethodsCalledByTestedInvokedExporter
 	//-------------------------------------------------------------------------
 	private String dirName;
 	private String filename;
-	private boolean isConstructor;
 	private Set<String> methodsCalledByTestedInvoked;
 	private File exportFile;
 	
@@ -61,11 +61,9 @@ public class MethodsCalledByTestedInvokedExporter
 	 * @param		filename CSV filename (without '.csv')
 	 * @param		dirName Directory name
 	 */
-	public MethodsCalledByTestedInvokedExporter(String filename, String dirName, 
-												boolean isConstructor) {
+	public MethodsCalledByTestedInvokedExporter(String filename, String dirName) {
 		this.filename = filename;
 		this.dirName = dirName;
-		this.isConstructor = isConstructor;
 	}
 	
 	
@@ -80,15 +78,15 @@ public class MethodsCalledByTestedInvokedExporter
 	 * 
 	 * @throws		IOException If it is not possible to generate CSV file
 	 */
-	public void export(Map<String, Set<String>> methodsCalledByAllTestedInvoked) 
+	public void export(Map<InvokedInfo, Set<String>> methodsCalledByAllTestedInvoked) 
 			throws IOException {
 		
-		for (Map.Entry<String, Set<String>> mcti : methodsCalledByAllTestedInvoked.entrySet()) {
+		for (Map.Entry<InvokedInfo, Set<String>> mcti : methodsCalledByAllTestedInvoked.entrySet()) {
 			exportRegistry(mcti.getKey(), mcti.getValue());
 		}
 	}
 	
-	private void exportRegistry(String invokedSignature, Set<String> methodsCalledByTestedInvoked) 
+	private void exportRegistry(InvokedInfo invoked, Set<String> methodsCalledByTestedInvoked) 
 			throws IOException {
 		if (methodsCalledByTestedInvoked == null || methodsCalledByTestedInvoked.isEmpty()) {
 			Logger.debug("There are no methods called by tested invoked");
@@ -96,25 +94,26 @@ public class MethodsCalledByTestedInvokedExporter
 		}
 
 		this.methodsCalledByTestedInvoked = methodsCalledByTestedInvoked;
-		this.exportFile = createExportFile(invokedSignature);
+		this.exportFile = createExportFile(invoked);
 		
 		mergeWithStoredExport();
-		storeExportFile(invokedSignature);
+		storeExportFile(invoked);
 	}
 
-	private File createExportFile(String invokedSignature) throws IOException {
-		Path directory = generateDirectoryFromSignature(invokedSignature);
+	private File createExportFile(InvokedInfo invoked) throws IOException {
+		Path directory = generateDirectoryFromSignature(invoked);
 
 		Files.createDirectories(directory);
 		
 		return new File(directory.toFile(), filename + ".csv");
 	}
 
-	private Path generateDirectoryFromSignature(String invokedSignature) {
-		String signaturePath = DataUtil.generateDirectoryPathFromSignature(
-				invokedSignature, isConstructor
-		);
+	private Path generateDirectoryFromSignature(InvokedInfo invoked) {
 		
+		String signaturePath = DataUtil.generateDirectoryPathFromSignature(
+				invoked.getConcreteInvokedSignature(), invoked.isConstructor()
+		);
+	
 		return Path.of(
 				ExecutionFlow.getCurrentProjectRoot().toString(),
 				dirName,
@@ -142,14 +141,14 @@ public class MethodsCalledByTestedInvokedExporter
 		}
 	}
 	
-	private void storeExportFile(String invokedSignature) {
+	private void storeExportFile(InvokedInfo invoked) {
 		Logger.debug("Exporting methods called by tested invoked...");
 		
 		try {
 			List<String> mcti = methodsCalledByTestedInvoked.stream()
 					.collect(Collectors.toList());
 			
-			mcti.add(0, invokedSignature);
+			mcti.add(0, invoked.getConcreteInvokedSignature());
 			CSV.write(mcti, exportFile, ";");
 		} 
 		catch (IOException e2) {

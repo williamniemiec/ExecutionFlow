@@ -17,6 +17,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 
 import executionflow.ExecutionFlow;
+import executionflow.info.InvokedInfo;
 import executionflow.util.logger.Logger;
 
 /**
@@ -36,7 +37,8 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private String invocationSignature;
+//	private String invocationSignature;
+	private InvokedInfo invoked;
 	
 	
 	//-----------------------------------------------------------------------
@@ -79,17 +81,39 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	//		Join points
 	//-------------------------------------------------------------------------
 	before(): invokedSignature() {
+//		JOptionPane.showMessageDialog(null, "@ " + getSignature(thisJoinPoint));
+//		JOptionPane.showMessageDialog(null, "@ " + thisJoinPoint.getTarget());
+//		JOptionPane.showMessageDialog(null, "@ " + thisJoinPoint.getKind());
+//		JOptionPane.showMessageDialog(null, "@ " + thisJoinPoint.getSourceLocation().getWithinType());
+//		JOptionPane.showMessageDialog(null, "@ " + thisJoinPoint.getSourceLocation().getFileName());
 		if (isNativeMethod(thisJoinPoint) || !isValidSignature(thisJoinPoint)) 
 			return;
 		
-		invocationSignature = getSignature(thisJoinPoint);
-		invocationSignature = removeReturnTypeFromSignature(invocationSignature);
+		invoked = new InvokedInfo.Builder()
+				.invokedSignature(removeReturnTypeFromSignature(getSignature(thisJoinPoint)))
+				.isConstructor(thisJoinPoint.getKind().equals("constructor-call"))
+				.build();
+//		invocationSignature = getSignature(thisJoinPoint);
+//		invocationSignature = removeReturnTypeFromSignature(invocationSignature);
 	}
 	
 	before(): invokedMethodByTestedInvoker() {
-		if ((invocationSignature == null) || !isMethodSignature(thisJoinPoint) 
-				|| isNativeMethod(thisJoinPoint))
+//		JOptionPane.showMessageDialog(null, "#" + getSignature(thisJoinPoint));
+//		JOptionPane.showMessageDialog(null, "#" + thisJoinPoint.getTarget());
+//		JOptionPane.showMessageDialog(null, "# " + thisJoinPoint.getKind().equals("method-call"));
+//		JOptionPane.showMessageDialog(null, "#" + thisJoinPoint.getSourceLocation().getWithinType());
+//		
+//		
+//		
+//		JOptionPane.showMessageDialog(null, isMethodSignature(thisJoinPoint));
+		
+		if (!thisJoinPoint.getKind().equals("method-call") || isNativeMethod(thisJoinPoint))
 			return;
+		 
+		
+//		if ((invocationSignature == null) || !isMethodSignature(thisJoinPoint) 
+//				|| isNativeMethod(thisJoinPoint))
+//			return;
 		
 		collectMethod(extractMethodCalledSignature(thisJoinPoint));
 
@@ -139,15 +163,15 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	}
 	
 	private void collectMethod(String signature) {
-		if (methodsCalledByTestedInvoked.containsKey(invocationSignature)) {
-			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invocationSignature);
+		if (methodsCalledByTestedInvoked.containsKey(invoked)) {
+			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invoked);
 			invokedMethods.add(signature);
 		}
 		else {
 			Set<String> invokedMethods = new HashSet<>();
 			invokedMethods.add(signature);
 			
-			methodsCalledByTestedInvoked.put(invocationSignature, invokedMethods);
+			methodsCalledByTestedInvoked.put(invoked, invokedMethods);
 		}
 	}
 	
@@ -186,8 +210,8 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 			@SuppressWarnings("unchecked")
-			Map<String, Set<String>> storedCollection = 
-					(Map<String, Set<String>>) ois.readObject();
+			Map<InvokedInfo, Set<String>> storedCollection = 
+					(Map<InvokedInfo, Set<String>>) ois.readObject();
 			
 			combineCollectedMethodWithStoredCollection(storedCollection);
 		}
@@ -196,30 +220,31 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 		}
 	}
 	
-	private void combineCollectedMethodWithStoredCollection(Map<String, Set<String>> storedCollection) {
-		for (Map.Entry<String, Set<String>> e : storedCollection.entrySet()) {
-			String storedInvocationSignature = e.getKey();
+	private void combineCollectedMethodWithStoredCollection(Map<InvokedInfo, Set<String>> 
+															storedCollection) {
+		for (Map.Entry<InvokedInfo, Set<String>> e : storedCollection.entrySet()) {
+			InvokedInfo storedInvocation = e.getKey();
 			Set<String> storedMethodsCalled = e.getValue();
 			
-			if (methodsCalledByTestedInvoked.containsKey(storedInvocationSignature)) {
+			if (methodsCalledByTestedInvoked.containsKey(storedInvocation)) {
 				mergeCollectedMethodWithStoredCollection(
-						storedInvocationSignature, 
+						storedInvocation, 
 						storedMethodsCalled
 				);
 			}
 			else {
 				methodsCalledByTestedInvoked.put(
-						storedInvocationSignature, 
+						storedInvocation, 
 						storedMethodsCalled
 				);							
 			}
 		}
 	}
 	
-	private void mergeCollectedMethodWithStoredCollection(String storedInvocationSignature, 
+	private void mergeCollectedMethodWithStoredCollection(InvokedInfo storedInvocation, 
 														  Set<String> storedMethodsCalled) {
 		Set<String> currentMethodsCalled = 
-				methodsCalledByTestedInvoked.get(storedInvocationSignature);
+				methodsCalledByTestedInvoked.get(storedInvocation);
 
 		for (String invokedMethod : storedMethodsCalled)
 			currentMethodsCalled.add(invokedMethod);
@@ -230,7 +255,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 			}
 		}
 		
-		methodsCalledByTestedInvoked.put(storedInvocationSignature, currentMethodsCalled);
+		methodsCalledByTestedInvoked.put(storedInvocation, currentMethodsCalled);
 	}
 	
 	/**

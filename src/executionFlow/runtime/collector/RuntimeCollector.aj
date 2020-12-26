@@ -70,7 +70,7 @@ public abstract aspect RuntimeCollector {
 	 */
 	protected static Map<String, String> anonymousClassSignatures;
 	
-	protected static Map<String, Set<String>> methodsCalledByTestedInvoked;
+	protected static Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked;
 	protected static String testMethodSignature;
 	protected static InvokedInfo testMethodInfo;
 	protected static boolean skipCollection;
