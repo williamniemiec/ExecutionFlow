@@ -151,7 +151,7 @@ public class TestedInvokedExporter {
 	}
 
 	private void storeExportFile() {
-		Logger.debug("Exporting invokers along with test methods that test them to CSV...");
+		Logger.debug("Exporting all invoked along with test methods that test them to CSV...");
 		
 		output.delete();
 		
@@ -167,7 +167,7 @@ public class TestedInvokedExporter {
 			Logger.debug("CSV - " + e1.getMessage());
 		}
 		
-		Logger.debug("The export was successful");
+		Logger.debug("The export has been successful");
 		Logger.debug("Location: " + output.getAbsolutePath());
 	}
 }
