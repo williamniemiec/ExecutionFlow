@@ -560,8 +560,11 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		catch (IOException e) {
 			Logger.error(e.getMessage());
 			
-			testMethodManager.restoreAll();
-			deleteTestMethodBackupFiles();
+			if (testMethodManager != null) {
+				testMethodManager.restoreAll();
+				deleteTestMethodBackupFiles();
+			}
+			
 			disableCheckpoint(currentTestMethodCheckpoint);
 			reset();
 			
