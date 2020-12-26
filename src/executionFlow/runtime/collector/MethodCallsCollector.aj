@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +17,7 @@ import javax.swing.JOptionPane;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
+import org.aspectj.lang.reflect.MethodSignature;
 
 import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
@@ -37,7 +40,6 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-//	private String invocationSignature;
 	private InvokedInfo invoked;
 	
 	
@@ -81,39 +83,18 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	//		Join points
 	//-------------------------------------------------------------------------
 	before(): invokedSignature() {
-//		JOptionPane.showMessageDialog(null, "@ " + getSignature(thisJoinPoint));
-//		JOptionPane.showMessageDialog(null, "@ " + thisJoinPoint.getTarget());
-//		JOptionPane.showMessageDialog(null, "@ " + thisJoinPoint.getKind());
-//		JOptionPane.showMessageDialog(null, "@ " + thisJoinPoint.getSourceLocation().getWithinType());
-//		JOptionPane.showMessageDialog(null, "@ " + thisJoinPoint.getSourceLocation().getFileName());
 		if (isNativeMethod(thisJoinPoint) || !isValidSignature(thisJoinPoint)) 
 			return;
 		
 		invoked = new InvokedInfo.Builder()
-				.invokedSignature(removeReturnTypeFromSignature(getSignature(thisJoinPoint)))
-				.isConstructor(thisJoinPoint.getKind().equals("constructor-call"))
+				.invokedSignature(extractSignatureFromTypedSignature(thisJoinPoint))
+				.isConstructor(isConstructor(thisJoinPoint))
 				.build();
-//		invocationSignature = getSignature(thisJoinPoint);
-//		invocationSignature = removeReturnTypeFromSignature(invocationSignature);
 	}
 	
 	before(): invokedMethodByTestedInvoker() {
-//		JOptionPane.showMessageDialog(null, "#" + getSignature(thisJoinPoint));
-//		JOptionPane.showMessageDialog(null, "#" + thisJoinPoint.getTarget());
-//		JOptionPane.showMessageDialog(null, "# " + thisJoinPoint.getKind().equals("method-call"));
-//		JOptionPane.showMessageDialog(null, "#" + thisJoinPoint.getSourceLocation().getWithinType());
-//		
-//		
-//		
-//		JOptionPane.showMessageDialog(null, isMethodSignature(thisJoinPoint));
-		
-		if (!thisJoinPoint.getKind().equals("method-call") || isNativeMethod(thisJoinPoint))
+		if (!isMethod(thisJoinPoint) || isNativeMethod(thisJoinPoint))
 			return;
-		 
-		
-//		if ((invocationSignature == null) || !isMethodSignature(thisJoinPoint) 
-//				|| isNativeMethod(thisJoinPoint))
-//			return;
 		
 		collectMethod(extractMethodCalledSignature(thisJoinPoint));
 
@@ -130,6 +111,23 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 		return signature.contains("(");
 	}
 
+	private String extractSignatureFromTypedSignature(JoinPoint jp) {
+		String accessAndSignature = jp.getSignature().toLongString();
+		String typeAndSignature = accessAndSignature.substring(accessAndSignature.indexOf(" ") + 1);
+		
+		return isConstructor(jp) ? 
+				typeAndSignature 
+				: typeAndSignature.substring(typeAndSignature.indexOf(" ") + 1);
+	}
+	
+	private boolean isConstructor(JoinPoint jp) {
+		return jp.getKind().equals("constructor-call");
+	}
+	
+	private boolean isMethod(JoinPoint jp) {
+		return jp.getKind().equals("method-call");
+	}
+	
 	private String getSignature(JoinPoint jp) {
 		if (jp.getSignature().getName().contains("<init>"))
 			return jp.getSignature().getDeclaringTypeName();

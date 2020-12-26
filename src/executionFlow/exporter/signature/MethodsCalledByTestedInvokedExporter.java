@@ -109,7 +109,6 @@ public class MethodsCalledByTestedInvokedExporter
 	}
 
 	private Path generateDirectoryFromSignature(InvokedInfo invoked) {
-		
 		String signaturePath = DataUtil.generateDirectoryPathFromSignature(
 				invoked.getConcreteInvokedSignature(), invoked.isConstructor()
 		);
