@@ -1,2 +1,3 @@
+examples.builderPattern.BuilderPatternTest.testBuilderPattern()
 [19, 20]
 

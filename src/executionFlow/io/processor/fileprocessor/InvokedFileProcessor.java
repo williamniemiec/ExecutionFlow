@@ -25,7 +25,7 @@ public class InvokedFileProcessor extends FileProcessor {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 510L;
+	private static final long serialVersionUID = 600L;
 	
 	/**
 	 * Stores the mapping of the original file with the modified file.

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 @executionflow.runtime.SkipCollection public class OverrideTest 
 {
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void testOverloadedMethod3()
 	{
 		OverrideClass oc = new OverrideClass() {

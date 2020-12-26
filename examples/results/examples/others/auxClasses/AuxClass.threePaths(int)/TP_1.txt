@@ -1,2 +1,3 @@
-[87, 88]
+examples.others.MultipleTestPaths.ThreeTestPathsTest()
+[87, 90, 93]
 

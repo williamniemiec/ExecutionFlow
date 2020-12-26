@@ -15,7 +15,7 @@ import org.junit.Test;
 	 * Test a method defined within the test class. An error will be generated.
 	 * Execution will continue if there are more test methods to be executed.
 	 */
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
     public void methodInSameFileOfTestMethod() {
 		int a = 2, b = 3;
 		

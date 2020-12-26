@@ -8,14 +8,14 @@ import examples.testClasses.TestClass;
 
 @executionflow.runtime.SkipCollection public class TestClass 
 {
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void testFoo()
 	{
 		assertEquals("1", "1");
 		assertEquals(" ", " ");	
 	}
 	
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void assertFailInTheMiddleTest() 
 	{
 		TestClass tc = new TestClass(99);
@@ -25,7 +25,7 @@ import examples.testClasses.TestClass;
 		assertEquals("two", tc.threePaths(2));
 	}
 	
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void multilineAssert1()
 	{
 		assertEquals(param1, 							param2,									param3);				
@@ -33,7 +33,7 @@ import examples.testClasses.TestClass;
 
 	}
 	
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void multilineAssert2()
 	{
 		assertEquals (
@@ -42,7 +42,7 @@ import examples.testClasses.TestClass;
 
 	}
 	
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void multilineAssert3()
 	{
 		assertEquals (

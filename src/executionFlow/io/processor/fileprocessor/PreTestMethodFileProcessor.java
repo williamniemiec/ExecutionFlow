@@ -22,7 +22,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 400L;
+	private static final long serialVersionUID = 600L;
 	private static int totalTests;
 	private String testMethodSignature;
 	private transient Object[] testMethodArgs;

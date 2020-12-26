@@ -11,14 +11,14 @@ import examples.others.auxClasses.AuxClass;
 
 @executionflow.runtime.SkipCollection public class MultiargsTest 
 {
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void methodCallMultiLineArgsTest()
 	{
 		AuxClass ac = new AuxClass(1);
 		assertEquals(Arrays.asList(1, 2, 3, 4, 5), ac.identity(1,2,3,4,5));
 	}
 	
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void methodCallMultLineArgsWithBrokenLines()
 	{
 		AuxClass ac = new AuxClass(1);
@@ -32,7 +32,7 @@ import examples.others.auxClasses.AuxClass;
 		);
 	}
 	
-	@Test
+@executionflow.runtime.CollectMethodsCalled 	@Test 
 	public void doWhileTest()
 	{
 		TestClass_ControlFlow tccf = new TestClass_ControlFlow();

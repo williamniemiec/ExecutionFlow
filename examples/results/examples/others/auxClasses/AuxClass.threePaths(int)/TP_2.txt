@@ -1,2 +1,3 @@
+examples.others.AssertFailTest.assertFailInTheMiddleTest()
 [87, 90, 91]
 

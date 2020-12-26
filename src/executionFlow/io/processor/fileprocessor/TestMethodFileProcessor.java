@@ -27,7 +27,7 @@ public class TestMethodFileProcessor extends FileProcessor {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 400L;
+	private static final long serialVersionUID = 600L;
 	private static Map<Integer, Integer> mapping = new HashMap<>();
 	private List<String> processedLines;
 	

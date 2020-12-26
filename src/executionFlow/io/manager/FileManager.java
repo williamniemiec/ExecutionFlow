@@ -33,7 +33,7 @@ public class FileManager implements Serializable {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 200L;
+	private static final long serialVersionUID = 600L;
 	private transient Path srcFile;
 	private transient Path srcFileBackup; 
 	private transient Path binFile;

@@ -27,7 +27,7 @@ public abstract class FileProcessor implements Serializable {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 400L;
+	private static final long serialVersionUID = 600L;
 	protected FileEncoding encoding = FileEncoding.UTF_8;
 	protected transient Path file;
 	protected transient Path outputFile;

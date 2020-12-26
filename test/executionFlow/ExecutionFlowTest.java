@@ -114,21 +114,6 @@ public abstract class ExecutionFlowTest {
 		this.testMethodSignature = testMethodSignature;
 	}
 
-//	@SuppressWarnings("rawtypes")
-//	protected void withParameterTypes(Class... types) {
-//		if (types.length == 0)
-//			paramTypes = new Class[] {};
-//		else
-//			paramTypes = types;
-//	}
-//
-//	protected void withParameterValues(Object... values) {
-//		if (values.length == 0)
-//			paramValues = new Object[] {};
-//		else
-//			paramValues = values;
-//	}
-
 	protected void invokedOnLine(int lineNumber) {
 		if (lineNumber <= 0)
 			throw new IllegalArgumentException("Invocation line must be greater than zero");
@@ -139,22 +124,6 @@ public abstract class ExecutionFlowTest {
 	protected void withTestMethodParameterValues(Object... args) {
 		this.testMethodArgs = args;
 	}
-	
-	protected List<List<Integer>> computeTestPath(Collection<InvokedContainer> collection, 
-												  InvokedContainer container) {
-		ExecutionFlow ef = getExecutionFlow(processingManager, collection);
-		ExportManager exporter = ef.getExportManager();
-		
-		exporter.disableCalledMethodsByTestedInvokedExport();
-		exporter.disableProcesedSourceFileExport();
-		exporter.disableTestPathExport();
-		exporter.disableTestersExport();
-		
-		return ef.run().getTestPaths(container);
-	}
-	
-	protected abstract ExecutionFlow getExecutionFlow(InvokedManager processingManager, 
-													  Collection<InvokedContainer> constructorCollector);
 	
 	protected void assertTestPathIs(Integer... testPath) {
 		assertEquals(List.of(Arrays.asList(testPath)), testPaths);
@@ -176,45 +145,17 @@ public abstract class ExecutionFlowTest {
 		
 		return args;
 	}
-
-	protected void computeTestPathOf(String invokedSignature) {
-		InvokedContainer container = new InvokedContainer(
-				getInvokedInfo(invokedSignature),
-				getTestMethodInfo(testMethodSignature)
-		);
-		
-		String key = invokedSignature + Arrays.toString(paramValues);
-		
-		Map<String, InvokedContainer> collector = new LinkedHashMap<>();
-		collector.put(key, container);
-		
-		testPaths = computeTestPath(collector.values(), container);
-	}
-
-	protected InvokedInfo getInvokedInfo(String signature) {		
-		return new InvokedInfo.Builder()
-			.binPath(getBinTestedInvoked())
-			.srcPath(getSrcTestedInvoked())
-			.invokedSignature(signature)
-			.isConstructor(isConstructor())
-			.parameterTypes(paramTypes)
-			.args(paramValues)
-			.invocationLine(invocationLine)
-			.build();
+	
+	protected void enableDebug() {
+		Logger.setLevel(LogLevel.DEBUG);
 	}
 	
-	
-	
-	protected boolean isConstructor() {
-		return false;
+	protected void disableDebug() {
+		Logger.setLevel(LogLevel.INFO);
 	}
-
-	protected InvokedInfo getTestMethodInfo(String testMethodSignature) {
-		return new InvokedInfo.Builder()
-			.binPath(binTestMethod)
-			.srcPath(srcTestMethod)
-			.invokedSignature(testMethodSignature)
-			.build();
+	
+	protected void disableInfo() {
+		Logger.setLevel(LogLevel.WARNING);
 	}
 	
 	/**
@@ -326,15 +267,63 @@ public abstract class ExecutionFlowTest {
 		});
 	}
 	
-	protected void enableDebug() {
-		Logger.setLevel(LogLevel.DEBUG);
+	protected void computeTestPathOf(String invokedSignature) {
+		InvokedContainer container = new InvokedContainer(
+				getInvokedInfo(invokedSignature),
+				getTestMethodInfo(testMethodSignature)
+		);
+		
+		String key = invokedSignature + Arrays.toString(paramValues);
+		
+		Map<String, InvokedContainer> collector = new LinkedHashMap<>();
+		collector.put(key, container);
+		
+		testPaths = computeTestPath(collector.values(), container);
+	}
+
+	private InvokedInfo getInvokedInfo(String signature) {		
+		return new InvokedInfo.Builder()
+			.binPath(getBinTestedInvoked())
+			.srcPath(getSrcTestedInvoked())
+			.invokedSignature(signature)
+			.isConstructor(isConstructor())
+			.parameterTypes(paramTypes)
+			.args(paramValues)
+			.invocationLine(invocationLine)
+			.build();
 	}
 	
-	protected void disableDebug() {
-		Logger.setLevel(LogLevel.INFO);
+	protected boolean isConstructor() {
+		return false;
+	}
+
+	private InvokedInfo getTestMethodInfo(String testMethodSignature) {
+		return new InvokedInfo.Builder()
+			.binPath(binTestMethod)
+			.srcPath(srcTestMethod)
+			.invokedSignature(testMethodSignature)
+			.build();
 	}
 	
-	protected void disableInfo() {
-		Logger.setLevel(LogLevel.WARNING);
+	private List<List<Integer>> computeTestPath(Collection<InvokedContainer> collection, 
+												InvokedContainer container) {
+		ExecutionFlow ef = getExecutionFlow(processingManager, collection);
+		
+		initializeExport(ef);
+		
+		return ef.run().getTestPaths(container);
 	}
+	
+	private void initializeExport(ExecutionFlow ef) {
+		ExportManager exporter = ef.getExportManager();
+		
+		exporter.disableCalledMethodsByTestedInvokedExport();
+		exporter.disableProcesedSourceFileExport();
+		exporter.disableTestPathExport();
+		exporter.disableTestersExport();
+	}
+	
+	protected abstract ExecutionFlow getExecutionFlow(InvokedManager processingManager, 
+													  Collection<InvokedContainer> constructorCollector);
+	
 }
