@@ -7,17 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
-import org.aspectj.lang.reflect.MethodSignature;
 
 import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
@@ -112,12 +107,11 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	}
 
 	private String extractSignatureFromTypedSignature(JoinPoint jp) {
-		String accessAndSignature = jp.getSignature().toLongString();
-		String typeAndSignature = accessAndSignature.substring(accessAndSignature.indexOf(" ") + 1);
-		
-		return isConstructor(jp) ? 
-				typeAndSignature 
-				: typeAndSignature.substring(typeAndSignature.indexOf(" ") + 1);
+		String accessAndSignature = isConstructor(jp) ? 
+				jp.getSignature().toLongString() 
+				: jp.getSignature().toString();
+
+		return accessAndSignature.substring(accessAndSignature.indexOf(" ") + 1);
 	}
 	
 	private boolean isConstructor(JoinPoint jp) {

@@ -102,7 +102,7 @@ public class MethodsCalledByTestedInvokedExporter
 
 	private File createExportFile(InvokedInfo invoked) throws IOException {
 		Path directory = generateDirectoryFromSignature(invoked);
-
+		
 		Files.createDirectories(directory);
 		
 		return new File(directory.toFile(), filename + ".csv");
