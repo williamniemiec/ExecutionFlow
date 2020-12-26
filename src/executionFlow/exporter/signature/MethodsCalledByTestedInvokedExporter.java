@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import executionflow.ExecutionFlow;
 import executionflow.util.CSV;
 import executionflow.util.DataUtil;
-import executionflow.util.FileUtil;
 import executionflow.util.logger.Logger;
 
 /**

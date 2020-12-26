@@ -185,8 +185,7 @@ public class FileExporter implements TestPathExporter {
 		Files.createDirectories(exportFile);
 		
 		try (BufferedWriter bfw = new BufferedWriter(new FileWriter(testPathExportFile, true))) {
-			
-			writeTestMethodSignature(testMethodSignature, testPathExportFile, bfw);
+			writeTestMethodSignature(testMethodSignature, bfw);
 			writeTestPaths(testPaths, bfw);
 			
 			bfw.newLine();
@@ -236,19 +235,16 @@ public class FileExporter implements TestPathExporter {
 		return testMethodSignature;
 	}
 	
-	private void writeTestMethodSignature(String testMethodSignature, 
-										  File testPathExportFile, 
+	private void writeTestMethodSignature(String testMethodSignature,
 										  BufferedWriter bfw)
-			throws IOException {
-		if (testPathExportFile.exists())
-			return;
-		
+			throws IOException {		
 		bfw.write(testMethodSignature);
 		bfw.newLine();
 	}
 
 	private void writeTestPaths(List<List<Integer>> testPaths, BufferedWriter bfw) 
 			throws IOException {
+		
 		for (List<Integer> testPath : testPaths) {
 			bfw.write(testPath.toString());	
 			bfw.newLine();
