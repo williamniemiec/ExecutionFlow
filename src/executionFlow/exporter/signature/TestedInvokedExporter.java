@@ -76,8 +76,6 @@ public class TestedInvokedExporter {
 	public void export(Set<InvokedContainer> invokedContainer) {
 		if (invokedContainer == null || invokedContainer.isEmpty())
 			return;
-		
-		this.invokedMethodSignatures = new HashMap<>();
 
 		mergeWithStoredExport(invokedContainer);
 		storeExportFile();
@@ -85,22 +83,37 @@ public class TestedInvokedExporter {
 
 	private void mergeWithStoredExport(Set<InvokedContainer> invokedContainer) {
 		try {
-			for (List<String> line : CSV.read(output, ";")) {
-				List<String> invokedMethod = new ArrayList<>();
-				
-				for (int i=1; i<line.size(); i++) {
-					invokedMethod.add(line.get(i));
-				}
-				
-				invokedMethodSignatures.put(line.get(0), invokedMethod);
-				
-				DataUtil.mergesMaps(
-						extractInvokedWithTesters(invokedContainer), 
-						invokedMethodSignatures
-				);
-			}			
+			invokedMethodSignatures = readStoredExportFile();
 		} 
-		catch (IOException e) {}
+		catch (IOException e) {
+			e.printStackTrace();
+			invokedMethodSignatures = new HashMap<>();
+		}
+		
+		DataUtil.mergesMaps(
+				extractInvokedWithTesters(invokedContainer), 
+				invokedMethodSignatures
+		);
+	}
+
+	private Map<String, List<String>>  readStoredExportFile() throws IOException {
+		if (!output.exists())
+			return new HashMap<>();
+		
+		Map<String, List<String>> invokedMethodSignatures = new HashMap<>();
+		
+		for (List<String> line : CSV.read(output, ";")) {
+			List<String> invokedMethod = new ArrayList<>();
+			
+			for (int i=1; i<line.size(); i++) {
+				invokedMethod.add(line.get(i));
+			}
+			
+			invokedMethodSignatures.put(line.get(0), invokedMethod);
+		}			
+		
+		
+		return invokedMethodSignatures;
 	}
 	
 	/**
@@ -151,7 +164,8 @@ public class TestedInvokedExporter {
 	}
 
 	private void storeExportFile() {
-		Logger.debug("Exporting all invoked along with test methods that test them to CSV...");
+		Logger.debug("Exporting all invoked along with test methods that " + 
+					 "test them to CSV...");
 		
 		output.delete();
 		

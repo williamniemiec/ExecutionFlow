@@ -54,12 +54,15 @@ public class DataUtil {
 	/**
 	 * Given two Maps, adds all content from the first Map to the second.
 	 * 
-	 * @param		map1 Some map
-	 * @param		map2 Map that will be merge with map1 
+	 * @param		source Some map
+	 * @param		target Map that will be merge with map1 
 	 */
-	public static void mergesMaps(Map<String, List<String>> map1, 
-								  Map<String, List<String>> map2) {
-		for (Map.Entry<String, List<String>> e : map1.entrySet()) {
+	public static void mergesMaps(Map<String, List<String>> source, 
+								  Map<String, List<String>> target) {
+		if ((source == null) || source.isEmpty())
+			return;
+		
+		for (Map.Entry<String, List<String>> e : source.entrySet()) {
 			String keyMap1 = e.getKey();
 
 			// Adds content from first Map to the second
@@ -67,8 +70,8 @@ public class DataUtil {
 				List<String> contentMap2;
 				// If second Map contains the same key as the first, add all
 				// the content of this key from first Map in the second
-				if (map2.containsKey(keyMap1)) {
-					contentMap2 = map2.get(keyMap1);
+				if (target.containsKey(keyMap1)) {
+					contentMap2 = target.get(keyMap1);
 					
 					if (!contentMap2.contains(contentMap1)) {
 						contentMap2.add(contentMap1);
@@ -77,7 +80,7 @@ public class DataUtil {
 				else {
 					contentMap2 = new ArrayList<>();
 					contentMap2.add(contentMap1);
-					map2.put(keyMap1, contentMap2);
+					target.put(keyMap1, contentMap2);
 				}
 			}
 		}
