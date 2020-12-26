@@ -29,10 +29,9 @@ import executionflow.util.logger.Logger;
  *	<li>Test method line that calls the method</li>
  * </ul>
  * 
- * @apiNote		Excludes calls to native java methods, methods with 
- * {@link executionflow.runtime.SkipInvoked} annotation, methods
- * with {@link executionflow.runtime._SkipInvoked} and all methods from classes
- * with {@link executionflow.runtime.SkipCollection} annotation.
+ * @apiNote		Excludes calls to native java methods, methods or constructors
+ * with {@link executionflow.runtime.SkipInvoked} annotation and all methods
+ * from classes with {@link executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		6.0.0

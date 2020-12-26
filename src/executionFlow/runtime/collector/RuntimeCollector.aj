@@ -95,9 +95,7 @@ public abstract aspect RuntimeCollector {
 	protected pointcut skipAnnotation():
 		within(@executionflow.runtime.SkipCollection *)
 		|| withincode(@executionflow.runtime.SkipInvoked * *.*(..))
-		|| withincode(@executionflow.runtime._SkipInvoked * *.*(..))
-		|| execution(@executionflow.runtime.SkipInvoked * *.*(..))
-		|| execution(@executionflow.runtime._SkipInvoked * *.*(..)); 
+		|| execution(@executionflow.runtime.SkipInvoked * *.*(..));
 	
 	protected pointcut insideJUnitTest():
 		insideJUnit4Test() 

@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import executionflow.io.FileEncoding;
+import executionflow.io.SourceCodeProcessor;
 import executionflow.io.processor.InlineCommentRemover;
 import executionflow.io.processor.PrintCallDeactivator;
 import executionflow.io.processor.testmethod.ClassDeclarationProcessor;
 import executionflow.io.processor.testmethod.MultilineToInlineCallsConverter;
+import executionflow.io.processor.testmethod.TestAnnotationProcessor;
 
 /**
  * Processes test java file adding annotations to disable collectors while 
@@ -207,10 +209,17 @@ public class TestMethodFileProcessor extends FileProcessor {
 		putSkipCollectionAnnotation();
 		disablePrintCalls();
 		convertMultiLineCallsToInlineCalls();
+		addCollectMethodsCalledAnnotation();
 		
 		return processedLines;
 	}
 	
+	private void addCollectMethodsCalledAnnotation() {
+		SourceCodeProcessor processor = new TestAnnotationProcessor(processedLines);
+		
+		processedLines = processor.processLines();
+	}
+
 	private void removeInlineComments() {
 		InlineCommentRemover inlineCommentProcessor = 
 				new InlineCommentRemover(processedLines);

@@ -43,8 +43,8 @@ public class ExportManager {
 	 * Sets test path export type.
 	 */
 	static {
-		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
+//		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
+		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
 	
 	
@@ -128,6 +128,7 @@ public class ExportManager {
 			mcti.export(methodsCalledByTestedInvoked);
 		} 
 		catch (IOException e) {
+			Logger.error(e.getMessage());
 		}
 	}
 	

@@ -357,6 +357,9 @@ public abstract class Analyzer {
 			if (methodsCalledByTestedInvoked.containsKey(mcti.getKey())) {
 				methodsCalledByTestedInvoked.get(mcti.getKey()).addAll(mcti.getValue());
 			}
+			else {
+				methodsCalledByTestedInvoked.put(mcti.getKey(), mcti.getValue());
+			}
 		}
 	}
 	

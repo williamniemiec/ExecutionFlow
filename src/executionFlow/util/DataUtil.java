@@ -170,7 +170,7 @@ public class DataUtil {
 			folderName = className + "." + methodName;
 		}
 		
-		return folderName;
+		return FileUtil.replaceReservedCharacters(folderName);
 	}
 	
 	/**

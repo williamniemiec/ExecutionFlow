@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import executionflow.ExecutionFlow;
 import executionflow.util.CSV;
 import executionflow.util.DataUtil;
+import executionflow.util.FileUtil;
 import executionflow.util.logger.Logger;
 
 /**
@@ -82,6 +83,7 @@ public class MethodsCalledByTestedInvokedExporter
 	 */
 	public void export(Map<String, Set<String>> methodsCalledByAllTestedInvoked) 
 			throws IOException {
+		
 		for (Map.Entry<String, Set<String>> mcti : methodsCalledByAllTestedInvoked.entrySet()) {
 			exportRegistry(mcti.getKey(), mcti.getValue());
 		}

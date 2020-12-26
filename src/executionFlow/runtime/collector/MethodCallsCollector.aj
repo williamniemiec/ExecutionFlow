@@ -11,7 +11,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.Signature;
 
 import executionflow.ExecutionFlow;
 import executionflow.util.logger.Logger;
@@ -21,7 +24,7 @@ import executionflow.util.logger.Logger;
  * be a method or a constructor.
  * 
  * @apiNote		Test method, that is, the method that calls the tested method
- * must have {@link executionflow.runtime._SkipInvoked} annotation
+ * must have {@link executionflow.runtime.CollectMethodsCalled} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		6.0.0
@@ -41,12 +44,12 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	//-----------------------------------------------------------------------
 	/**
 	 * Gets tested method signatures by a JUnit test that has 
-	 * {@link @executionflow.runtime._SkipInvoked} annotation.
+	 * {@link executionflow.runtime.CollectMethodsCalled} annotation.
 	 */
 	private pointcut invokedSignature(): 
-		!skipAnnotation()
+		!within(@executionFlow.runtime.SkipCollection *)
 		&& !withincode(@executionflow.runtime.SkipInvoked * *.*(..))
-		&& cflow(execution(@executionflow.runtime._SkipInvoked * *.*(..)))
+		&& cflow(execution(@executionflow.runtime.CollectMethodsCalled * *.*(..)))
 		&& insideJUnitTest()
 		&& !get(* *.*) 
 		&& !set(* *.*)
@@ -57,11 +60,10 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	 * {@link @executionflow.runtime.CollectCalls} annotation.
 	 */
 	private pointcut invokedMethodByTestedInvoker():
-		!skipAnnotation()
-		&& !withincode(@executionflow.runtime.SkipInvoked * *.*(..))
+		!withincode(@executionflow.runtime.SkipInvoked * *.*(..))
 		&& !get(* *.*) 
 		&& !set(* *.*) 
-		&& (insideConstructor()	|| insideMethod());
+		&& insideConstructor()	|| insideMethod();
 	
 	private pointcut insideConstructor():
 		withincode(@executionflow.runtime.CollectCalls *.new(..))  
@@ -105,13 +107,18 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	}
 
 	private String getSignature(JoinPoint jp) {
+		if (jp.getSignature().getName().contains("<init>"))
+			return jp.getSignature().getDeclaringTypeName();
+		
 		StringBuilder signature = new StringBuilder();
+		Signature jpSignature = jp.getSignature();
 		
 		signature.append(jp.getSignature().getDeclaringTypeName());
 		signature.append(".");
-		signature.append(jp.getSignature().getName());
-		signature.append(signature.substring(signature.indexOf("(")));
-
+		signature.append(jpSignature.getName());
+		signature.append(jpSignature.toString()
+						 .substring(jpSignature.toString().indexOf("(")));
+		
 		return signature.toString();
 	}
 	

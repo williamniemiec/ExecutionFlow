@@ -34,10 +34,9 @@ import executionflow.util.logger.Logger;
 /**
  * Run in each test method
  * 
- * @apiNote		Ignores methods with {@link executionflow.runtime.SkipInvoked}
- * annotation, methods with {@link executionflow.runtime._SkipInvoked} and all
- * methods from classes with {@link executionflow.runtime.SkipCollection} 
- * annotation
+ * @apiNote		Ignores methods and constructors with {@link executionflow
+ * .runtime.SkipInvoked} annotation and all methods from classes with 
+ * {@link executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		6.0.0
