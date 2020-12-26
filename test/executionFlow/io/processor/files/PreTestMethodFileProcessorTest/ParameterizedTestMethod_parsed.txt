@@ -28,7 +28,7 @@ public class ParameterizedTestAnnotation
 		AuxClass tc = new AuxClass(4);
 
 
-try {		assertEquals(1, tc.factorial(num));} catch(Throwable _5c518ede7c8dc7873091010493da5615){}
+try {		assertEquals(1, tc.factorial(num));} catch(Throwable _af1213ec91d82f281761a65264fccbf9){}
 	}
 	
 //	@executionFlow.runtime.SkipInvoked

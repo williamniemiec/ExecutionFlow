@@ -233,7 +233,7 @@ while (i<letters.length) {
 if (letters[i] == Character.toUpperCase(letters[i])) {
 response[i] =  Character.toLowerCase(letters[i]);
 }
-else {int _4a158917be8fe76e45bf0e74356e28e4=0;
+else {int _a0cbc7ba36b53dbfa54e4e8680e66e10=0;
 response[i] =  Character.toUpperCase(letters[i]);
 }
 i++;
@@ -294,7 +294,7 @@ return str + num;
 }
 @executionflow.runtime.CollectCalls public static int countTotalArguments(Object... args){
 int i = 2;
-int k;int _7738285d7f1c164b12f7edc60b139c49=0;
+int k;int _e3a0a6d839251ae9c765b2949ac54e2d=0;
 k=0;
 while (k<args.length) {
 k++;

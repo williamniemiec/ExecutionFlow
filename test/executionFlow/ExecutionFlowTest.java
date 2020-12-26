@@ -38,15 +38,14 @@ public abstract class ExecutionFlowTest {
 	protected static FileManager testMethodFileManager;
 	protected static FilesManager testMethodManager;
 	protected static InvokedManager processingManager;
+	private List<List<Integer>> testPaths;
 	private Path srcTestMethod;
 	private Path binTestMethod;
 	private String pkgTestMethod;
-	
 	private String testMethodSignature;
-	private Object[] paramValues;
-	private List<List<Integer>> testPaths;
-	private Class<?>[] paramTypes;
 	private int invocationLine;
+	private Class<?>[] invokedParamTypes;
+	private Object[] invokedParamValues;
 	private Object[] testMethodArgs;
 	
 	
@@ -55,8 +54,8 @@ public abstract class ExecutionFlowTest {
 	//-------------------------------------------------------------------------
 	protected ExecutionFlowTest() {
 		this.testMethodArgs = (Object[]) null;
-		this.paramTypes = new Class[] {};
-		this.paramValues = new Object[] {};
+		this.invokedParamTypes = new Class[] {};
+		this.invokedParamValues = new Object[] {};
 		
 		onShutdown();
 	}
@@ -273,7 +272,7 @@ public abstract class ExecutionFlowTest {
 				getTestMethodInfo(testMethodSignature)
 		);
 		
-		String key = invokedSignature + Arrays.toString(paramValues);
+		String key = invokedSignature + Arrays.toString(invokedParamValues);
 		
 		Map<String, InvokedContainer> collector = new LinkedHashMap<>();
 		collector.put(key, container);
@@ -287,8 +286,8 @@ public abstract class ExecutionFlowTest {
 			.srcPath(getSrcTestedInvoked())
 			.invokedSignature(signature)
 			.isConstructor(isConstructor())
-			.parameterTypes(paramTypes)
-			.args(paramValues)
+			.parameterTypes(invokedParamTypes)
+			.args(invokedParamValues)
 			.invocationLine(invocationLine)
 			.build();
 	}

@@ -131,29 +131,29 @@ T previous = val[0];
 final int max = val.length;
 int i = 1;
 while (i < max) {
-final int comp;int _bb0c2cda13750fe783c9d421ff28f103=0;
+final int comp;int _90add429bb8f896bfe34dcb591f52c55=0;
 switch (dir) {
-case INCREASING:int _df10f2a54c08a0f4778166a78588f47e=0;
+case INCREASING:int _f9f3a913f8ea0634168994cc963e49e8=0;
 comp = previous.compareTo(val[i]);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _9f5a903f5f40b3bc615bdca5ec3f2ab6=0;
+else {int _8fda3ed2dd45a67b1457e04fb9e57fe7=0;
 if (comp > 0) {
 return false;
 }
 }
 if (Boolean.parseBoolean("True")) {break;}break;
-case DECREASING:int _e0a41a18de635a6058e00e3f1f06b9d8=0;
+case DECREASING:int _72ec0f018b1439f67a774389989fa792=0;
 comp = val[i].compareTo(previous);
 if (strict) {
 if (comp >= 0) {
 return false;
 }
 }
-else {int _45fa447c0f0f1cd0a7741e2ae4dbcfef=0;
+else {int _b9e7226fdb80b9cf7f434642dc18dd9b=0;
 if (comp > 0) {
 return false;
 }
@@ -174,7 +174,7 @@ return checkOrder(val, dir, strict, false);
 if (a.length == b.length) {
 return true;
 }
-else {int _c006373c1ce082f6717f0783a5a7cf94=0;
+else {int _a78ee9f182656e239c97f9fd74e078ba=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
@@ -188,7 +188,7 @@ checkEqualLength(a, b, true);
 if (a.length == b.length) {
 return true;
 }
-else {int _2d02171d665238ab29c381e7e0bca053=0;
+else {int _3ac67e2ff3f314d619a1c77e9190ff15=0;
 if (abort) {
 throw new DimensionMismatchException(a.length, b.length);
 }
@@ -201,30 +201,30 @@ checkEqualLength(a, b, true);
 public static boolean checkOrder(double[] val, OrderDirection dir, boolean strict, boolean abort) throws NonMonotonicSequenceException {
 double previous = val[0];
 final int max = val.length;
-int index;int _af691d2bba453ec17286384022e924c1=0;
+int index;int _973fdb53808e4486e35e1e632cf8b74=0;
 ITEM: for (index = 1;
 index < max;
 index++) {
 switch (dir) {
-case INCREASING:int _32f8004a1893952397e8c38875b3b1ed=0;
+case INCREASING:int _3581e756f697e20af3148c7f8ee6ee0b=0;
 if (strict) {
 if (val[index] <= previous) {
 if (Boolean.parseBoolean("True")) {break ITEM;}
 }
 }
-else {int _d90cb4309a0539c79f022c93d6fad357=0;
+else {int _5edd93af52323aafda31c06682aab630=0;
 if (val[index] < previous) {
 if (Boolean.parseBoolean("True")) {break ITEM;}
 }
 }
 if (Boolean.parseBoolean("True")) {break;}break;
-case DECREASING:int _77b97e343da8c8316d3841fc05913a3e=0;
+case DECREASING:int _561d20ce686ddf3621deaad9cf4f98df=0;
 if (strict) {
 if (val[index] >= previous) {
 if (Boolean.parseBoolean("True")) {break ITEM;}
 }
 }
-else {int _ec31b2959179c5b1302f03044205a14d=0;
+else {int _296b5121ac1ad4d38db54d23f1e3e1bb=0;
 if (val[index] > previous) {
 if (Boolean.parseBoolean("True")) {break ITEM;}
 }
@@ -241,7 +241,7 @@ return true;
 if (abort) {
 throw new NonMonotonicSequenceException(val[index], previous, index, dir, strict);
 }
-else {int _ddef5c905d24aaacf0ddb55c0d11b0bc=0;
+else {int _21a27c4143071ef302f6067e03905802=0;
 return false;
 }
 }
@@ -465,7 +465,7 @@ while (i < len) {
 if (Double.isNaN(values[i])) {
 out[i] = Double.NaN;
 }
-else {int _6ca29c0f84418423cba84d71d1eeeeed=0;
+else {int _f4cad4a43664d777964488a10d5ba233=0;
 out[i] = values[i] * normalizedSum / sum;
 }
 i++;
@@ -478,12 +478,12 @@ Arrays.fill(array, field.getZero());
 return array;
 }
 @SuppressWarnings("unchecked") public static <T> T[][] buildArray(final Field<T> field, final int rows, final int columns) {
-final T[][] array;int _ad4ce23a8a46a62eaf80dfd3edfb00d=0;
+final T[][] array;int _97c92c93692263227946b0f4021afa61=0;
 if (columns < 0) {
 T[] dummyRow = buildArray(field, 0);
 array = (T[][]) Array.newInstance(dummyRow.getClass(), rows);
 }
-else {int _6920490e6f0d954d76816739ce615fb8=0;
+else {int _1ab2adbf21f97c727973c2d0c36f808a=0;
 array = (T[][]) Array.newInstance(field.getRuntimeClass(), new int[] {
 rows, columns }
 );
@@ -584,9 +584,9 @@ return verifyValues(values, begin, length, allowEmpty);
 }
 @executionflow.runtime.CollectCalls public static double[] concatenate(double[] ...x) {
 int combinedLength = 0;
-java.util.Iterator<double[]> _22fc87535bc18ce9e0c3b881811028f2 = executionflow.io.processor.invoked.trgeneration.IteratorExtractor.extractIterator(x);
-while (_22fc87535bc18ce9e0c3b881811028f2.hasNext()) {
-double[] a = _22fc87535bc18ce9e0c3b881811028f2.next();
+java.util.Iterator<double[]> _e542cf763173c7d44527c2c19cd0b58e = executionflow.io.processor.invoked.trgeneration.IteratorExtractor.extractIterator(x);
+while (_e542cf763173c7d44527c2c19cd0b58e.hasNext()) {
+double[] a = _e542cf763173c7d44527c2c19cd0b58e.next();
 combinedLength += a.length;
 ;
 }
