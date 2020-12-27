@@ -141,7 +141,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
     	if (isEmptyLine())
     		return false;
     	
-    	if (appExited(line)) {
+    	if (appExited(line) || isAssertionError(line)) {
     		stopJDB = true;
     		return true;
     	}
@@ -190,6 +190,10 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	
 	private boolean appExited(String line) {
 		return line.contains("The application exited"); 
+	}
+	
+	private boolean isAssertionError(String line) {
+		return line.contains("java.lang.AssertionError: Expected exception:");
 	}
 	
 	private void checkIncorrectInvocationLine() {
@@ -603,11 +607,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private boolean checkFailure() {
-		return srcLine.contains("FAILURES!!!") || assertionError(srcLine);
-	}
-	
-	private boolean assertionError(String srcLine) {
-		return srcLine.contains("java.lang.AssertionError: Expected exception:");
+		return srcLine.contains("FAILURES!!!");
 	}
 
 
