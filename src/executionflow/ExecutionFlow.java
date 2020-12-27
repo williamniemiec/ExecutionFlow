@@ -70,7 +70,7 @@ public abstract class ExecutionFlow {
 	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
 	}
 	
 	

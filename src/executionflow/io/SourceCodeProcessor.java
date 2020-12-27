@@ -107,4 +107,11 @@ public abstract class SourceCodeProcessor {
 		
 		return sourceCode.get(currentIdx+1);
 	}
+	
+	protected String getPreviousLine() {
+		if (currentIdx-1 < 0)
+			return "";
+		
+		return sourceCode.get(currentIdx-1);
+	}
 }

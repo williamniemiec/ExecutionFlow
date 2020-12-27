@@ -456,15 +456,19 @@ public class CodeCleaner {
 	private void combineMultiLineStatements() {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		int removedLines = 0;
-
-		for (int i=0; i < processedCode.size(); i++) {			
+		
+		for (int i=0; i < processedCode.size(); i++) {
 			mapping.put(i+removedLines, Helper.initArray(i));
+			
 			String curLine = processedCode.get(i);
 			
 			while (!Helper.lineContainsReservedChar(curLine, ";")
 					&& !Helper.lineContainsReservedChar(curLine, "{") 
 					&& !Helper.lineContainsReservedChar(curLine, "}")
-					&& !((Helper.lineContainsReservedWord(curLine, "case") || Helper.lineContainsReservedWord(curLine, "default"))
+					&& !(
+							(Helper.lineContainsReservedWord(curLine, "case") 
+							|| Helper.lineContainsReservedWord(curLine, "default")
+							)
 							&& Helper.lineContainsReservedChar(curLine, ":"))
 					) {
 				String separator = (curLine.charAt(curLine.length()-1) != ' '
@@ -477,6 +481,7 @@ public class CodeCleaner {
 				}
 				
 				mapping.put(i+removedLines, Helper.initArray(i));
+
 				curLine = processedCode.get(i);
 			}
 		}

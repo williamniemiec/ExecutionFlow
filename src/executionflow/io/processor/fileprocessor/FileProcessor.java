@@ -71,7 +71,7 @@ public abstract class FileProcessor implements Serializable {
 
 		Logger.debug(this.getClass(), "Processed file");
 		
-		if (formatedFile.size() <= 2)
+		if (formatedFile.size() < 30)
 			FileUtil.printFileWithLines(sourceCode);
 		else
 			FileUtil.printFileWithLines(formatedFile);

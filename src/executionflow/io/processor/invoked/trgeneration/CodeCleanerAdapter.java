@@ -66,11 +66,12 @@ public class CodeCleanerAdapter extends CodeCleaner {
 		int totMap = (lineMappings.size() <= 1) ? 0 : lineMappings.size()-1;
 
 		for (Map.Entry<Integer, List<Integer>> map : lineMappings.get(totMap).entrySet()) {
-			int originalLine = map.getValue().get(0) + 1;
+			List<Integer> originalLines = map.getValue();
 			int newLine = map.getKey()+1;
 			
-			
-			mapping.put(originalLine, newLine);
+			for (Integer originalLine : originalLines) {
+				mapping.put(originalLine+1, newLine);
+			}
 		}
 
 		return mapping;

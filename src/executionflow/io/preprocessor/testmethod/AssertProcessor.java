@@ -40,6 +40,9 @@ public class AssertProcessor extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	@Override
 	protected String processLine(String line) {
+		if (line.contains("try ") || getPreviousLine().contains("try "))
+			return line;
+		
 		String processedLine = line;
 		
 		if (inAssert)
