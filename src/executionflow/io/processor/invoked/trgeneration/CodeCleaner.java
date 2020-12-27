@@ -459,7 +459,6 @@ public class CodeCleaner {
 		
 		for (int i=0; i < processedCode.size(); i++) {
 			mapping.put(i+removedLines, Helper.initArray(i));
-			
 			String curLine = processedCode.get(i);
 			
 			while (!Helper.lineContainsReservedChar(curLine, ";")
@@ -474,11 +473,12 @@ public class CodeCleaner {
 				String separator = (curLine.charAt(curLine.length()-1) != ' '
 									&& processedCode.get(i+1).charAt(0) != ' ' ? " " : "");
 				
-				if (!processedCode.get(i+1).contains("catch(Throwable _")) {
-					processedCode.set(i, curLine + separator + processedCode.get(i+1));
-					processedCode.remove(i+1);
-					removedLines++;
-				}
+				if (processedCode.get(i+1).contains("catch(Throwable _"))
+					break;
+				
+				processedCode.set(i, curLine + separator + processedCode.get(i+1));
+				processedCode.remove(i+1);
+				removedLines++;
 				
 				mapping.put(i+removedLines, Helper.initArray(i));
 
