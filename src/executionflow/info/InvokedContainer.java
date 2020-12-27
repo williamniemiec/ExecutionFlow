@@ -1,5 +1,7 @@
 package executionflow.info;
 
+import java.io.Serializable;
+
 /**
  * Stores information about a method or constructor along with a test method.
  * 
@@ -7,11 +9,12 @@ package executionflow.info;
  * @version		6.0.0
  * @since		6.0.0
  */
-public class InvokedContainer {
+public class InvokedContainer implements Serializable {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private static final long serialVersionUID = 600L;
 	private InvokedInfo invokedInfo;
 	private InvokedInfo testMethodInfo;
 	

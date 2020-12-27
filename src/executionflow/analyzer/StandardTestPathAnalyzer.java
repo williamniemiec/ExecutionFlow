@@ -603,9 +603,14 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private boolean checkFailure() {
-		return srcLine.contains("FAILURES!!!");
+		return srcLine.contains("FAILURES!!!") || assertionError(srcLine);
 	}
 	
+	private boolean assertionError(String srcLine) {
+		return srcLine.contains("java.lang.AssertionError: Expected exception:");
+	}
+
+
 	private boolean hasInvokedName(String line) {
 		return	line.contains(invoked.getInvokedName()+".") 
 				|| line.contains(invoked.getInvokedName()+"(");

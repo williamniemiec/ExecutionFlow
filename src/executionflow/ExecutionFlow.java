@@ -7,8 +7,10 @@ import java.nio.channels.InterruptedByTimeoutException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import executionflow.analyzer.Analyzer;
 import executionflow.analyzer.AnalyzerFactory;
@@ -58,7 +60,8 @@ public abstract class ExecutionFlow {
 	private Analyzer analyzer;
 	private Map<String, Path> processedSourceFiles;
 	private ExportManager exportManager;
-
+	private Set<String> alreadyChanged;
+	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
@@ -82,6 +85,7 @@ public abstract class ExecutionFlow {
 		this.exportManager = new ExportManager(isDevelopment(), isConstructor());
 		this.computedTestPaths = new HashMap<>();
 		this.processedSourceFiles = new HashMap<>();
+		this.alreadyChanged = new HashSet<>();
 	}
 	
 
@@ -158,6 +162,10 @@ public abstract class ExecutionFlow {
 			processingManager.restoreOriginalFile(invokedFileManager);
 			processingManager.restoreOriginalFile(testMethodFileManager);
 		}
+//		finally {
+//			TestMethodCollector.restoreCollectorsBackup();
+//			TestMethodCollector.deleteCollectorsBackup();
+//		}
 	}
 
 	private void storeResults(InvokedContainer collector) {
@@ -198,13 +206,16 @@ public abstract class ExecutionFlow {
 	}
 
 	private void updateCollectors(Path testMethodSrcPath, Path invokedSrcPath) {
-		if (!invokedSrcPath.equals(testMethodSrcPath))
+		if (alreadyChanged.contains(testMethodSrcPath.toString()) || 
+				!invokedSrcPath.equals(testMethodSrcPath))
 			return;
 
 		TestMethodCollector.updateCollectorInvocationLines(
 				InvokedFileProcessor.getMapping(), 
 				testMethodSrcPath
 		);
+		
+		alreadyChanged.add(testMethodSrcPath.toString());
 	}
 
 	private void processTestMethod(InvokedContainer collector, 

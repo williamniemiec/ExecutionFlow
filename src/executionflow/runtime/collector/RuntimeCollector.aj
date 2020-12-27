@@ -143,7 +143,8 @@ public abstract aspect RuntimeCollector {
 		return	(signature == null)
 				|| signature.contains("java.") 
 				|| signature.contains("jdk.")
-				|| signature.contains("org.junit.");
+				|| signature.contains("org.junit.")
+				|| signature.matches(".+(\\$|\\.)[0-9]+.+");
 	}
 	
 	protected boolean isMethodSignature(JoinPoint jp) {
