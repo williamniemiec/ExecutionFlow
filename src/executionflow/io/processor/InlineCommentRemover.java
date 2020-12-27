@@ -11,7 +11,7 @@ import executionflow.io.SourceCodeProcessor;
  * class declarations.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.1
  * @since 		6.0.0
  */
 public class InlineCommentRemover extends SourceCodeProcessor {
@@ -33,7 +33,11 @@ public class InlineCommentRemover extends SourceCodeProcessor {
 			return line;
 		
 		String processedLine = replaceStringWithBlankSpaces(line);
-		processedLine = processedLine.substring(0, processedLine.indexOf("//"));
+		
+		if (processedLine.contains("//"))
+			processedLine = line.substring(0, processedLine.indexOf("//"));
+		else
+			processedLine = line;
 		
 		return processedLine;
 	}
