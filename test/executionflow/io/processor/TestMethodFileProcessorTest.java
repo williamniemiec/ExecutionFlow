@@ -29,6 +29,16 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	}
 	
 	@Test
+	public void innerTry() throws IOException {
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
+	  			  			  "files", "TestMethodFileProcessorTest"));
+		withFilename("InnerTry");
+		initializeTest();
+		
+		processFile();
+	}
+	
+	@Test
 	public void testMethodInvokedSameLine() throws IOException {
 		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 			  			  	  "files"));

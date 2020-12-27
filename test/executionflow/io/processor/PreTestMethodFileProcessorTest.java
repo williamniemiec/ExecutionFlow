@@ -31,6 +31,19 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	}
 	
 	@Test
+	public void innerTry() throws IOException {
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
+			  			  	  "files", "PreTestMethodFileProcessorTest"));
+		withFilename("InnerTry");
+		withTestMethodSignature("org.apache.commons.io.serialization" + 
+								".ValidatingObjectInputStreamTest" + 
+								".exceptionIncludesClassName()");
+		initializeTest();
+		
+		processFile();
+	}
+	
+	@Test
 	public void testMethodWithInnerClass() throws IOException {
 		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 				  			  "files", "PreTestMethodFileProcessorTest"));

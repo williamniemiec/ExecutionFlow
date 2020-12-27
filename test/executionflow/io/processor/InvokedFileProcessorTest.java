@@ -25,6 +25,16 @@ public class InvokedFileProcessorTest extends FileProcessorTest {
 		
 		processFile();
 	}
+	
+	@Test
+	public void innerTry() throws IOException {
+		withDirectory(Path.of("test", "executionflow", "io", "processor", 
+	  			  			  "files", "InvokedFileProcessorTest"));
+		withFilename("InnerTry");
+		initializeTest();
+		
+		processFile();
+	}
 
 	@Test
 	public void forEachToFor() throws IOException {

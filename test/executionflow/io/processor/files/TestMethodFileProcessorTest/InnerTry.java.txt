@@ -1,0 +1,22 @@
+package executionflow.core.file.parser.tests;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+import examples.testClasses.TestClass;
+
+public class TestClass 
+{
+	 @org.junit.Test
+    public void exceptionIncludesClassName() throws Exception {
+        try {
+            assertSerialization(
+                    willClose(new ValidatingObjectInputStream(testStream)));
+            fail("Expected an InvalidClassException");
+        } catch(final InvalidClassException ice) {
+            final String name = MockSerializedClass.class.getName();
+try {            assertTrue("Expecting message to contain " + name, ice.getMessage().contains(name));} catch(Throwable _d89a6bdcdcc126445913aee13333f14f){}
+        }
+    }
+}
