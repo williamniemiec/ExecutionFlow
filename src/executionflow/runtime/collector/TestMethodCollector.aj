@@ -727,8 +727,10 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			processingManager.deleteInvokedFileManagerBackup();
 		}
 		
-		testMethodManager.restoreAll();
-		deleteTestMethodBackupFiles();
+		if (testMethodManager != null) {
+			testMethodManager.restoreAll();
+			deleteTestMethodBackupFiles();
+		}
 		
 		if (remainingTests == 0)				
 			RemoteControl.close();
