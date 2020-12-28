@@ -192,6 +192,9 @@ public class JUnit4Runner {
 	}
 
 	public void quit() throws IOException {
+		if (process == null)
+			return;
+		
 		stopped = true;
 		process.destroyForcibly();
 		output.close();
