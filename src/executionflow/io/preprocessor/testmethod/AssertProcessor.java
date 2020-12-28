@@ -12,7 +12,7 @@ import executionflow.util.balance.RoundBracketBalance;
  * stop if an assert fails.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.2
  * @since 		6.0.0
  */
 public class AssertProcessor extends SourceCodeProcessor {
@@ -40,7 +40,7 @@ public class AssertProcessor extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	@Override
 	protected String processLine(String line) {
-		if (line.contains("try ") || getPreviousLine().contains("try "))
+		if (!inAssert && (line.contains("try ") || getPreviousLine().contains("try ")))
 			return line;
 		
 		String processedLine = line;
