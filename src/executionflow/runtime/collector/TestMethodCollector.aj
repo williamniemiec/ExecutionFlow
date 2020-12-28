@@ -628,7 +628,6 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		}
 		catch (IOException | InterruptedException e) {
 			Logger.error("Restart - " + e.getMessage());
-			System.exit(-1);
 		}
 	}
 	
