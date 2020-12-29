@@ -46,7 +46,7 @@ import executionflow.util.logger.Logger;
  * {@link executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.3
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -629,6 +629,10 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		catch (IOException | InterruptedException e) {
 			Logger.error("Restart - " + e.getMessage());
 		}
+		finally {
+			Session.removeShared("JUNIT4_RUNNER");
+			disableCheckpoint(insideJUnitRunnerCheckpoint);
+		}
 	}
 	
 	private void resetMethodsCalledByTestedInvoked() {
@@ -713,9 +717,6 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			if (!insideJUnitRunnerCheckpoint.isEnabled())
 				junit4Runner.quit();
 		}
-		
-		Session.removeShared("JUNIT4_RUNNER");
-		disableCheckpoint(insideJUnitRunnerCheckpoint);
 	}
 	
 	private void afterEachTestMethod(JoinPoint jp) {

@@ -1,11 +1,12 @@
 package executionflow.util;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A checkpoint is a class and method marker, and it is used when you want  
@@ -21,7 +22,8 @@ public class Checkpoint {
 	//-------------------------------------------------------------------------
 	private Path checkpointFile;
 	private Thread checkpointFileThread;
-	private volatile boolean end;
+	private ReentrantLock lock;
+	private Condition condLock;
 	
 	
 	//-------------------------------------------------------------------------
@@ -59,17 +61,11 @@ public class Checkpoint {
 	private Thread createCheckpoint() {
 		Runnable r = () -> {
 			try (FileReader fr = new FileReader(checkpointFile.toFile())) {
-				while (!end) {
-					try {
-						Thread.sleep(200);
-					} 
-					catch (InterruptedException e) {
-					}
-				}
-			} 
-			catch (FileNotFoundException e) {
-			} 
-			catch (IOException e) {
+				lock.lock();
+				condLock.await();
+				lock.unlock();
+			}
+			catch (IOException | InterruptedException e) {
 			}
 		};
 		
@@ -77,7 +73,8 @@ public class Checkpoint {
 	}
 
 	private void prepareCheckpoint() throws IOException {
-		end = false;
+		lock = new ReentrantLock();
+		condLock = lock.newCondition();
 		
 		try {
 			Files.deleteIfExists(checkpointFile);
@@ -86,7 +83,7 @@ public class Checkpoint {
 		catch(FileAlreadyExistsException e) {
 		}
 	}
-	
+
 	/**
 	 * Disables checkpoint.
 	 * 
@@ -115,7 +112,9 @@ public class Checkpoint {
 	}
 
 	private void disableCheckpoint() {
-		end = true;
+		lock.lock();
+		condLock.signalAll();
+		lock.unlock();
 	}
 	
 	/**

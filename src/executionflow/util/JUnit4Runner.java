@@ -70,7 +70,7 @@ public class JUnit4Runner {
 		}
 		
 		public Builder classPath(List<Path> classPath) {
-			this.classPath = classPath;
+			this.classPath = new ArrayList<>(classPath);
 			
 			return this;
 		}
@@ -87,14 +87,11 @@ public class JUnit4Runner {
 			return this;
 		}
 		
-		public JUnit4Runner build() {
-			if (classPath == null)
-				classPath = new ArrayList<>();
-
+		public JUnit4Runner build() {			
 			if (argumentFile == null) {
 				return new JUnit4Runner(
 						workingDirectory, 
-						DataUtil.implode(classPath, ";"),
+						DataUtil.implode(relativizeClassPaths(), ";"),
 						classSignature,
 						displayVersion
 				);
@@ -107,6 +104,20 @@ public class JUnit4Runner {
 						displayVersion
 				);
 			}
+		}
+		
+		private List<Path> relativizeClassPaths() {
+			if (classPath == null) {
+				classPath = new ArrayList<>();
+			}
+			
+			List<Path> relativizedClassPaths = new ArrayList<>();
+			
+			for (int i = 0; i < classPath.size(); i++) {
+				relativizedClassPaths.add(i, workingDirectory.relativize(classPath.get(i)));
+			}
+			
+			return relativizedClassPaths;
 		}
 	}
 	

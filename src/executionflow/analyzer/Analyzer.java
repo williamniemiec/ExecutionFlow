@@ -18,12 +18,11 @@ import executionflow.util.Clock;
 import executionflow.util.JDB;
 import executionflow.util.logger.Logger;
 
-
 /**
  * Computes the test path for a method or constructor using a debugger.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.3
  * @since		2.0.0
  */
 public abstract class Analyzer {
@@ -204,8 +203,8 @@ public abstract class Analyzer {
 				testMethodInfo.getPackage()
 		);
 		
-		List<Path> srcPath = getSourcePath(invokedInfo, testMethodInfo, testClassRootPath);
-		List<Path> classPath = getClassPath(testClassRootPath);
+		List<Path> srcPath = getSourcePath(invokedInfo, testMethodInfo);
+		List<Path> classPath = getClassPath();
 
 		jdb = new JDB.Builder()
 				.workingDirectory(testClassRootPath)
@@ -261,43 +260,42 @@ public abstract class Analyzer {
 		return classPath;
 	}
 
-	private List<Path> getClassPath(Path testClassRootPath) {
+	private List<Path> getClassPath() {
 		List<Path> classPath = new ArrayList<>();
 		
 		for (String cp : System.getProperty("java.class.path").split(";")) {
-			classPath.add(testClassRootPath.relativize(Path.of(cp)));
+			classPath.add(Path.of(cp));
 		}
 		
-		classPath.add(testClassRootPath.relativize(LibraryManager.getLibrary("JUNIT_4")));
-		classPath.add(testClassRootPath.relativize(LibraryManager.getLibrary("HAMCREST")));
+		classPath.add(LibraryManager.getLibrary("JUNIT_4"));
+		classPath.add(LibraryManager.getLibrary("HAMCREST"));
 		
 		return classPath;
 	}
 
 	private List<Path> getSourcePath(InvokedInfo invokedInfo, 
-									 InvokedInfo testMethodInfo,
-									 Path testClassRootPath) {
+									 InvokedInfo testMethodInfo) {
 		List<Path> srcPath = new ArrayList<>();
 		
 		Path srcRootPath = extractRootPathDirectory(
 				invokedInfo.getSrcPath(), 
 				invokedInfo.getPackage()
 		);
-		srcPath.add(testClassRootPath.relativize(srcRootPath));
+		srcPath.add(srcRootPath);
 		
 		Path testMethodSrcPath = extractRootPathDirectory(
 				testMethodInfo.getSrcPath(), 
 				testMethodInfo.getPackage()
 		);
-		srcPath.add(testClassRootPath.relativize(testMethodSrcPath));
+		srcPath.add(testMethodSrcPath);
 		
 		// Fix source file of anonymous and inner classes
 		Path mavenSrcPath = ExecutionFlow.getCurrentProjectRoot().resolve(Path.of("src", "main", "java"));
-		srcPath.add(testClassRootPath.relativize(mavenSrcPath));
+		srcPath.add(mavenSrcPath);
 		
 		Path mavenTestPath = ExecutionFlow.getCurrentProjectRoot().resolve(Path.of("src", "test", "java"));
 		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
-			srcPath.add(testClassRootPath.relativize(mavenTestPath));
+			srcPath.add(mavenTestPath);
 		}
 		
 		return srcPath;
