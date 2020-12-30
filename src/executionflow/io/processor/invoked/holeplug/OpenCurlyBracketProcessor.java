@@ -8,7 +8,7 @@ import executionflow.io.SourceCodeProcessor;
  * Moves aloonen opening curly bracket to the previous line.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.3
  * @since 		6.0.0
  */
 public class OpenCurlyBracketProcessor extends SourceCodeProcessor {
@@ -28,7 +28,7 @@ public class OpenCurlyBracketProcessor extends SourceCodeProcessor {
 	protected String processLine(String line) {
 		String processedLine = line;
 		
-		if (hasOnlyOpeningCurlyBracket(line)) {
+		if (hasOnlyOpeningCurlyBracket(getNextLine())) {
 			processedLine = line + " {";
 			setLine(getCurrentIndex()+1, "");
 		}
