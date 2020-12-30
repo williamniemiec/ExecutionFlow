@@ -10,7 +10,7 @@ import executionflow.util.logger.Logger;
  * constructors and test methods.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.3
  * @since		6.0.0
  */
 public class InvokedManager {
@@ -102,12 +102,17 @@ public class InvokedManager {
 		invokedManager = null;
 	}
 	
+	public void restoreInvokedOriginalFile(FileManager invokedFileManager) {
+		restoreOriginalFile(invokedFileManager);
+		invokedManager.remove(invokedFileManager);
+	}
+	
 	/**
 	 * Restores original files, displaying an error message if an error occurs.
 	 * 
 	 * @param		fm File manager
 	 */
-	public void restoreOriginalFile(FileManager fm) {
+	private void restoreOriginalFile(FileManager fm) {
 		restoreBinaryFile(fm);
 		restoreSourceFile(fm);
 	}
@@ -134,6 +139,11 @@ public class InvokedManager {
 					+ e.getMessage()
 			);
 		}
+	}
+	
+	public void restoreTestMethodOriginalFile(FileManager testMethodFileManager) {
+		restoreOriginalFile(testMethodFileManager);
+		testMethodManager.remove(testMethodFileManager);
 	}
 	
 	/**

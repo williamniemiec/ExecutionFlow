@@ -149,6 +149,10 @@ public abstract class ExecutionFlow {
 			runDebugger(collector);
 			
 			storeResults(collector);
+			
+			if (isTestedInvokedInTheSameFileAsTestMethod(collector)) {
+				resetProcessing(invokedFileManager, testMethodFileManager);
+			}
 		} 
 		catch (InterruptedByTimeoutException e1) {
 			Logger.error("Time exceeded");
@@ -159,13 +163,9 @@ public abstract class ExecutionFlow {
 		catch (IOException e3) {
 			Logger.error(e3.getMessage());
 			
-			processingManager.restoreOriginalFile(invokedFileManager);
-			processingManager.restoreOriginalFile(testMethodFileManager);
+			processingManager.restoreInvokedOriginalFile(invokedFileManager);
+			processingManager.restoreTestMethodOriginalFile(testMethodFileManager);
 		}
-//		finally {
-//			TestMethodCollector.restoreCollectorsBackup();
-//			TestMethodCollector.deleteCollectorsBackup();
-//		}
 	}
 
 	private void storeResults(InvokedContainer collector) {
@@ -185,6 +185,21 @@ public abstract class ExecutionFlow {
 				collector.getInvokedInfo().getConcreteInvokedSignature(),
 				collector.getInvokedInfo().getSrcPath()
 		);
+	}
+	
+	private boolean isTestedInvokedInTheSameFileAsTestMethod(InvokedContainer collector) {
+		return collector.getInvokedInfo().getSrcPath().equals(
+				collector.getTestMethodInfo().getSrcPath());
+	}
+	
+	private void resetProcessing(FileManager invokedFileManager, 
+			 					 FileManager testMethodFileManager) {
+		processingManager.restoreInvokedOriginalFile(invokedFileManager);
+		processingManager.restoreTestMethodOriginalFile(testMethodFileManager);
+		
+		TestMethodCollector.restoreCollectorInvocationLine();
+		
+		alreadyChanged.clear();
 	}
 
 	private void processInvokedMethod(InvokedContainer collector, 

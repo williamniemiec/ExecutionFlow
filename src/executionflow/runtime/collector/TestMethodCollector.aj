@@ -71,6 +71,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	private Path srcPath;
 	private FileManager testMethodFileManager;
 	private FilesManager testMethodManager;
+	private static Map<InvokedInfo, Integer> modifiedCollectorInvocationLine;
 	
 	
 	//-------------------------------------------------------------------------
@@ -771,6 +772,9 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	 */
 	public static void updateCollectorInvocationLines(Map<Integer, Integer> mapping, 
 													  Path testMethodSrcFile)	{
+		if (modifiedCollectorInvocationLine == null)
+			modifiedCollectorInvocationLine = new HashMap<>();
+		
 		updateConstructorInvocationLines(mapping, testMethodSrcFile);
 		updateMethodInvocationLines(mapping, testMethodSrcFile);
 	}
@@ -806,6 +810,20 @@ public aspect TestMethodCollector extends RuntimeCollector {
 				continue;
 			
 			cc.getInvokedInfo().setInvocationLine(mapping.get(invocationLine));
+			
+			if (!modifiedCollectorInvocationLine.containsKey(cc.getInvokedInfo()))
+				modifiedCollectorInvocationLine.put(cc.getInvokedInfo(), invocationLine);
 		}
+	}
+	
+	public static void restoreCollectorInvocationLine() {
+		if (modifiedCollectorInvocationLine == null)
+			return;
+		
+		for (Map.Entry<InvokedInfo, Integer> e : modifiedCollectorInvocationLine.entrySet()) {
+			e.getKey().setInvocationLine(e.getValue());
+		}
+		
+		modifiedCollectorInvocationLine = null;
 	}
 }
