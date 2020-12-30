@@ -38,7 +38,7 @@ public class HolePlug {
 	//		Methods
 	//-------------------------------------------------------------------------
 	public List<String> processLines() {
-		moveAloneOpenCurlyBracketsToThePreviousLine();
+//		moveAloneOpenCurlyBracketsToThePreviousLine();
 		
 		putCollectAnnotationNextToInvokedDeclarations();
 		

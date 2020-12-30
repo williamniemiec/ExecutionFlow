@@ -233,7 +233,6 @@ public class InvokedFileProcessor extends FileProcessor {
 		processedLines = codeCleaner.processLines();
 		
 		Map<Integer, Integer> cleanupMapping = codeCleaner.getMapping();
-		
 		if (cleanupMapping != null)
 			mapping = cleanupMapping;
 	}

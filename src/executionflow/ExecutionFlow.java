@@ -36,7 +36,7 @@ import executionflow.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.3
  * @since		1.0
  */
 public abstract class ExecutionFlow {
@@ -228,28 +228,12 @@ public abstract class ExecutionFlow {
 		
 		processingManager.processTestMethod(testMethodFileManager);
 		
-		updateInvocationLine(
-				collector.getInvokedInfo(), 
-				TestMethodFileProcessor.getMapping()
+		TestMethodCollector.updateCollectorInvocationLines(
+				TestMethodFileProcessor.getMapping(), 
+				collector.getTestMethodInfo().getSrcPath()
 		);
 		
 		Logger.info("Processing completed");
-	}
-	
-	/**
-	 * Updates the invocation line of an invoked based on a mapping.
-	 * 
-	 * @param		invokedInfo Invoked to be updated
-	 * @param		mapping Mapping that will be used as base for the update
-	 */
-	private void updateInvocationLine(InvokedInfo invokedInfo, 
-									  Map<Integer, Integer> mapping) {
-		if (mapping == null)
-			return;
-
-		if (mapping.containsKey(invokedInfo.getInvocationLine())) {
-			invokedInfo.setInvocationLine(mapping.get(invokedInfo.getInvocationLine()));
-		}
 	}
 
 	private FileManager createTestMethodFileManager(InvokedContainer collector) {
