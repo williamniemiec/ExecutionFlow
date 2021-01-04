@@ -106,11 +106,32 @@ public class DataUtil {
 	 */
 	public static String generateDirectoryPathFromSignature(String invokedSignature, 
 															boolean isConstructor) {
-		String[] signatureFields = invokedSignature.split("\\.");
+		String[] signatureFields = extractSignatureFields(invokedSignature);
+		
 		String folderPath = getFolderPath(signatureFields, isConstructor);
-		String folderName = getFolderName(signatureFields, isConstructor);
+		String folderName = getFolderName(signatureFields, isConstructor) 
+				+ reduceSignature(extractParametersFromSignature(invokedSignature));
 		
 		return folderPath + "/" + folderName;
+	}
+	
+	private static String[] extractSignatureFields(String signature) {
+		String signatureWithoutParameters = signature.contains("(")
+				? signature.substring(0, signature.indexOf("("))
+				: signature;
+				
+		return	signatureWithoutParameters.split("\\.");
+	}	
+	
+	private static String reduceSignature(String parameters) {
+		return parameters.replaceAll("([^.(\\s]+\\.)+", "");
+	}
+	
+	private static String extractParametersFromSignature(String signature) {
+		if (!signature.contains("("))
+			return "()";
+		
+		return signature.substring(signature.indexOf("("));
 	}
 	
 	/**
@@ -160,9 +181,6 @@ public class DataUtil {
 		
 		if (isConstructor) {
 			String className = signatureFields[signatureFields.length-1];
-			
-			if (!className.contains("("))
-				className += "()";
 			
 			folderName = className;
 		}
