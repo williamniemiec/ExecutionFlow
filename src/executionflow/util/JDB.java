@@ -121,8 +121,8 @@ public class JDB {
 			if (argumentFile == null) {
 				return new JDB(
 						workingDirectory, 
-						DataUtil.implode(classPath, ";"), 
-						DataUtil.implode(srcPath, ";"), 
+						DataUtil.implode(relativizePaths(classPath), ";"), 
+						DataUtil.implode(relativizePaths(srcPath), ";"), 
 						classSignature, 
 						classArgs
 				);
@@ -136,6 +136,25 @@ public class JDB {
 						classArgs
 				);
 			}
+		}
+		
+		private List<Path> relativizePaths(List<Path> paths) {
+			if (paths == null) 
+				return new ArrayList<>();
+			
+			List<Path> relativizedClassPaths = new ArrayList<>();
+			Path relativizedPath;
+			
+			for (int i = 0; i < paths.size(); i++) {
+				if (paths.get(i).isAbsolute())
+					relativizedPath = workingDirectory.relativize(paths.get(i));
+				else
+					relativizedPath = paths.get(i);
+					
+				relativizedClassPaths.add(i, relativizedPath);
+			}
+			
+			return relativizedClassPaths;
 		}
 	}
 	
@@ -205,6 +224,14 @@ public class JDB {
 	 * command executed on the console
 	 */
 	public JDB send(String command) {
+		if (in == null) {
+			try {
+				start();
+			} 
+			catch (IOException e) {
+			}
+		}
+		
 		in.send(command);
 		
 		return this;
@@ -220,6 +247,14 @@ public class JDB {
 	 * command executed on the console
 	 */
 	public JDB send(String... commands) {
+		if (in == null) {
+			try {
+				start();
+			} 
+			catch (IOException e) {
+			}
+		}
+		
 		in.send(commands);
 		
 		return this;

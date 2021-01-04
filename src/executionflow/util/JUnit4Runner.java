@@ -107,14 +107,19 @@ public class JUnit4Runner {
 		}
 		
 		private List<Path> relativizeClassPaths() {
-			if (classPath == null) {
-				classPath = new ArrayList<>();
-			}
+			if (classPath == null) 
+				return new ArrayList<>();
 			
 			List<Path> relativizedClassPaths = new ArrayList<>();
+			Path relativizedPath;
 			
 			for (int i = 0; i < classPath.size(); i++) {
-				relativizedClassPaths.add(i, workingDirectory.relativize(classPath.get(i)));
+				if (classPath.get(i).isAbsolute())
+					relativizedPath = workingDirectory.relativize(classPath.get(i));
+				else
+					relativizedPath = classPath.get(i);
+					
+				relativizedClassPaths.add(i, relativizedPath);
 			}
 			
 			return relativizedClassPaths;
