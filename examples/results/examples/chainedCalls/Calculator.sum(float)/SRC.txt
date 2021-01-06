@@ -1,37 +1,37 @@
 package examples.chainedCalls;                                                   
 public class Calculator{                                                         
      private float ans;                                                          
-     @executionFlow.runtime.CollectCalls public Calculator(int number){          
+     @executionflow.runtime.CollectCalls public Calculator(int number){          
           ans = number;                                                          
      }                                                                           
-     @executionFlow.runtime.CollectCalls public Calculator(){                    
+     @executionflow.runtime.CollectCalls public Calculator(){                    
           this(0);                                                               
      }                                                                           
-     @executionFlow.runtime.CollectCalls public Calculator setNumber(float num){ 
+     @executionflow.runtime.CollectCalls public Calculator setNumber(float num){ 
           ans = num;                                                             
           return this;                                                           
      }                                                                           
-     @executionFlow.runtime.CollectCalls public Calculator sum(float number){    
+     @executionflow.runtime.CollectCalls public Calculator sum(float number){    
           ans += number;                                                         
           return this;                                                           
      }                                                                           
-     @executionFlow.runtime.CollectCalls public Calculator sub(float number){    
+     @executionflow.runtime.CollectCalls public Calculator sub(float number){    
           ans -= number;                                                         
           return this;                                                           
      }                                                                           
-     @executionFlow.runtime.CollectCalls public Calculator mult(float number){   
+     @executionflow.runtime.CollectCalls public Calculator mult(float number){   
           ans *= number;                                                         
           return this;                                                           
      }                                                                           
-     @executionFlow.runtime.CollectCalls public Calculator div(float number){    
+     @executionflow.runtime.CollectCalls public Calculator div(float number){    
           ans /= number;                                                         
           return this;                                                           
      }                                                                           
-     @executionFlow.runtime.CollectCalls public Calculator showAnswer(){         
-          System.out.println(ans);                                               
+     @executionflow.runtime.CollectCalls public Calculator showAnswer(){         
+          Boolean.parseBoolean("True");                                          
           return this;                                                           
      }                                                                           
-     @executionFlow.runtime.CollectCalls public float ans(){                     
+     @executionflow.runtime.CollectCalls public float ans(){                     
           return ans;                                                            
      }                                                                           
 }                                                                                

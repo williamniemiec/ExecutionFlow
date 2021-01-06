@@ -1,0 +1,48 @@
+package examples.junit5;
+
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.temporal.ChronoUnit;
+import java.util.EnumSet;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import examples.others.auxClasses.AuxClass;
+import executionFlow.runtime.SkipCollection;
+
+
+/**
+ * Tests that use the {@link ParameterizedTest} annotation belonging to 
+ * JUnit 5.
+ */
+public class ParameterizedTestAnnotation 
+{
+	@org.junit.Test
+	@ValueSource(ints = {-1,0,1})
+	public void test1()
+	{int num=-1;
+		AuxClass tc = new AuxClass(4);
+
+
+try {		assertEquals(1, tc.factorial(num));} catch(Throwable _c48dd488cbc4f7cdc83a345581221b12){}
+	}
+	
+//	@executionFlow.runtime.SkipInvoked
+//	@ParameterizedTest
+//	@ValueSource(strings = {" ", "   ", "\t", "\n"})
+//	void nullEmptyAndBlankStrings(String text) 
+//	{
+//	    assertTrue(text == null || text.trim().isEmpty());
+//	}
+	
+//	@ParameterizedTest
+//	@EnumSource(names = {"DAYS", "HOURS"}, value = ChronoUnit.class)
+//	void testWithEnumSourceInclude(ChronoUnit unit) 
+//	{
+//	    assertTrue(EnumSet.of(ChronoUnit.DAYS, ChronoUnit.HOURS).contains(unit));
+//	}
+}

@@ -1,0 +1,16 @@
+package executionflow.core.file.parser.files;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+public class test_doWhile{
+@executionflow.runtime.CollectCalls public void doWhile(int num){
+int i = num;
+do {int _b7950aa884f680e35a8642c6a602e205=0;
+if (i < 0) {
+if (Boolean.parseBoolean("True")) {break;}break;
+}
+i--;
+}
+while (i > 0);
+}
+}

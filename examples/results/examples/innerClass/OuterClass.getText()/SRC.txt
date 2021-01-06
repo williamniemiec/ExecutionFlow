@@ -1,19 +1,19 @@
 package examples.innerClass;                                                  
 public class OuterClass{                                                      
      private String text ;                                                    
-     @executionFlow.runtime.CollectCalls public OuterClass(String text){      
+     @executionflow.runtime.CollectCalls public OuterClass(String text){      
           this.text = text;                                                   
      }                                                                        
      public class InnerClass{                                                 
           private String text;                                                
-          @executionFlow.runtime.CollectCalls public InnerClass(String text){ 
+          @executionflow.runtime.CollectCalls public InnerClass(String text){ 
                this.text = text;                                              
           }                                                                   
-          @executionFlow.runtime.CollectCalls public String getText(){        
+          @executionflow.runtime.CollectCalls public String getText(){        
                return this.text;                                              
           }                                                                   
      }                                                                        
-     @executionFlow.runtime.CollectCalls public String getText(){             
+     @executionflow.runtime.CollectCalls public String getText(){             
           return this.text;                                                   
      }                                                                        
 }                                                                             

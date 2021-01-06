@@ -1,0 +1,34 @@
+package executionflow.core.file.parser.files.complex;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+public class test_try{
+@executionflow.runtime.CollectCalls public boolean tryCatchMethod_try(int num){
+File f = new File("tmp");
+FileWriter fw;int _53e4179077c5cc6b25968eaab9511935=0;
+try{int _74dec4f241f7db8afef2888e86b0ed6f=0;
+fw = new FileWriter(f);
+fw.write('x');
+fw.close();
+f.delete();
+}
+catch (IOException e){
+return false;
+}
+return true;
+}
+@executionflow.runtime.CollectCalls public boolean tryCatchMethod_try2(int num){
+File f = new File("tmp");
+FileWriter fw;int _29fc230acf0ad6dd88dfd57331491166=0;
+try{int _2f98c5758caa98ee1623cc7ddd2ae0b4=0;
+fw = new FileWriter(f);
+fw.write('x');
+fw.close();
+f.delete();
+}
+catch (IOException e){
+return false;
+}
+return true;
+}
+}

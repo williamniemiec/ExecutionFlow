@@ -1,0 +1,3 @@
+examples.junit5.ParameterizedTestAnnotation.test1(int)
+[35, 36, 37, 38, 39, 37, 41]
+

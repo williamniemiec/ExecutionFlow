@@ -1,0 +1,3 @@
+examples.methodCalledByTestedInvoked.MethodCalledByTestedInvoked_Test.T2()
+[4, 5, 6]
+

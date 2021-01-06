@@ -1,17 +1,17 @@
 package examples.overloadedMethod;                                             
 public class OverloadClass{                                                    
      private int num;                                                          
-     @executionFlow.runtime.CollectCalls public OverloadClass(int num){        
+     @executionflow.runtime.CollectCalls public OverloadClass(int num){        
           this.num = num;                                                      
      }                                                                         
-     @executionFlow.runtime.CollectCalls public OverloadClass(){               
+     @executionflow.runtime.CollectCalls public OverloadClass(){               
           this(0);                                                             
      }                                                                         
-     @executionFlow.runtime.CollectCalls public int overloadedMethod(int num){ 
+     @executionflow.runtime.CollectCalls public int overloadedMethod(int num){ 
           num *= 10;                                                           
           return num;                                                          
      }                                                                         
-     @executionFlow.runtime.CollectCalls public int overloadedMethod(){        
+     @executionflow.runtime.CollectCalls public int overloadedMethod(){        
           int x = 0;                                                           
           x++;                                                                 
           x++;                                                                 

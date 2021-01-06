@@ -1,0 +1,112 @@
+package net.objecthunter.exp4j;
+import net.objecthunter.exp4j.function.Function;
+import net.objecthunter.exp4j.function.Functions;
+import net.objecthunter.exp4j.operator.Operator;
+import net.objecthunter.exp4j.shuntingyard.ShuntingYard;
+import java.util.*;
+public class ExpressionBuilder {
+private final String expression;
+private final Map<String, Function> userFunctions;
+private final Map<String, Operator> userOperators;
+private final Set<String> variableNames;
+private boolean implicitMultiplication = true;
+@executionFlow.runtime.CollectCalls public ExpressionBuilder(String expression) {
+if (expression == null || expression.trim().length() == 0) {
+throw new IllegalArgumentException("Expression can not be empty");
+}
+this.expression = expression;
+this.userOperators = new HashMap<>(4);
+this.userFunctions = new HashMap<>(4);
+this.variableNames = new HashSet<>(4);
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder function(Function function) {
+this.userFunctions.put(function.getName(), function);
+return this;
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder functions(Function... functions) {
+java.util.Iterator<Function> _e93e188abb6139d4dec4b9cdea5a6724 = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(functions);
+while (_e93e188abb6139d4dec4b9cdea5a6724.hasNext()) {
+Function f = _e93e188abb6139d4dec4b9cdea5a6724.next();
+this.userFunctions.put(f.getName(), f);
+;
+}
+return this;
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder functions(List<Function> functions) {
+java.util.Iterator<Function> _9cc402e7bff3288e5518d92bf5bc6c29 = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(functions);
+while (_9cc402e7bff3288e5518d92bf5bc6c29.hasNext()) {
+Function f = _9cc402e7bff3288e5518d92bf5bc6c29.next();
+this.userFunctions.put(f.getName(), f);
+;
+}
+return this;
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder variables(Set<String> variableNames) {
+this.variableNames.addAll(variableNames);
+return this;
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder variables(String... variableNames) {
+Collections.addAll(this.variableNames, variableNames);
+return this;
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder variable(String variableName) {
+this.variableNames.add(variableName);
+return this;
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder implicitMultiplication(boolean enabled) {
+this.implicitMultiplication = enabled;
+return this;
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder operator(Operator operator) {
+this.checkOperatorSymbol(operator);
+this.userOperators.put(operator.getSymbol(), operator);
+return this;
+}
+@executionFlow.runtime.CollectCalls private void checkOperatorSymbol(Operator op) {
+String name = op.getSymbol();
+java.util.Iterator<Character> _4acaaa4d46794f42e008ab8b32da28c2 = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(name.toCharArray());
+while (_4acaaa4d46794f42e008ab8b32da28c2.hasNext()) {
+Character ch = _4acaaa4d46794f42e008ab8b32da28c2.next();
+if (!Operator.isAllowedOperatorChar(ch)) {
+throw new IllegalArgumentException("The operator symbol '" + name + "' is invalid");
+}
+;
+}
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder operator(Operator... operators) {
+java.util.Iterator<Operator> _a05d8d697d8978f4b061aff83e488355 = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(operators);
+while (_a05d8d697d8978f4b061aff83e488355.hasNext()) {
+Operator o = _a05d8d697d8978f4b061aff83e488355.next();
+this.operator(o);
+;
+}
+return this;
+}
+@executionFlow.runtime.CollectCalls public ExpressionBuilder operator(List<Operator> operators) {
+java.util.Iterator<Operator> _7567f7bfaa2b9b58b06c09178b5d46db = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(operators);
+while (_7567f7bfaa2b9b58b06c09178b5d46db.hasNext()) {
+Operator o = _7567f7bfaa2b9b58b06c09178b5d46db.next();
+this.operator(o);
+;
+}
+return this;
+}
+@executionFlow.runtime.CollectCalls public Expression build() {
+if (expression.length() == 0) {
+throw new IllegalArgumentException("The expression can not be empty");
+}
+variableNames.add("pi");
+variableNames.add("π");
+variableNames.add("e");
+variableNames.add("φ");
+java.util.Iterator<String> _7c5e90f010a6d5356693520dceab8a4 = executionFlow.io.processor.parser.trgeneration.IteratorExtractor.extractIterator(variableNames);
+while (_7c5e90f010a6d5356693520dceab8a4.hasNext()) {
+String var = _7c5e90f010a6d5356693520dceab8a4.next();
+if (Functions.getBuiltinFunction(var) != null || userFunctions.containsKey(var)) {
+throw new IllegalArgumentException("A variable can not have the same name as a function [" + var + "]");
+}
+;
+}
+return new Expression(ShuntingYard.convertToRPN(this.expression, this.userFunctions, this.userOperators, this.variableNames, this.implicitMultiplication), this.userFunctions.keySet());
+}
+}

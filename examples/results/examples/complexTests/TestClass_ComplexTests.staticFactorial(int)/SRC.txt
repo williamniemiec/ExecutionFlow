@@ -2,21 +2,21 @@ package examples.complexTests;
 public class TestClass_ComplexTests{                                                           
      private boolean skip;                                                                     
      private int num;                                                                          
-     @executionFlow.runtime.CollectCalls public TestClass_ComplexTests(boolean skip, int num){ 
+     @executionflow.runtime.CollectCalls public TestClass_ComplexTests(boolean skip, int num){ 
           this.skip = skip;                                                                    
           this.num = num;                                                                      
      }                                                                                         
-     @executionFlow.runtime.CollectCalls public TestClass_ComplexTests(boolean skip){          
+     @executionflow.runtime.CollectCalls public TestClass_ComplexTests(boolean skip){          
           this(skip, 0);                                                                       
           factorial(1);                                                                        
      }                                                                                         
-     @executionFlow.runtime.CollectCalls public TestClass_ComplexTests(int num){               
+     @executionflow.runtime.CollectCalls public TestClass_ComplexTests(int num){               
           this(false, num);                                                                    
      }                                                                                         
-     @executionFlow.runtime.CollectCalls public TestClass_ComplexTests(){                      
+     @executionflow.runtime.CollectCalls public TestClass_ComplexTests(){                      
           this(false, 0);                                                                      
      }                                                                                         
-     @executionFlow.runtime.CollectCalls public long factorial(long x){                        
+     @executionflow.runtime.CollectCalls public long factorial(long x){                        
           if (skip) {                                                                          
                return -1;                                                                      
           }                                                                                    
@@ -28,7 +28,7 @@ public class TestClass_ComplexTests{
           }                                                                                    
           return response;                                                                     
      }                                                                                         
-     @executionFlow.runtime.CollectCalls public static long staticFactorial(int x){            
+     @executionflow.runtime.CollectCalls public static long staticFactorial(int x){            
           long response = 1;                                                                   
           int i=1;                                                                             
           while (i<=x) {                                                                       
@@ -37,7 +37,7 @@ public class TestClass_ComplexTests{
           }                                                                                    
           return response;                                                                     
      }                                                                                         
-     @executionFlow.runtime.CollectCalls public long factorial_constructor(){                  
+     @executionflow.runtime.CollectCalls public long factorial_constructor(){                  
           long response = 1;                                                                   
           int i=1;                                                                             
           while (i<=num) {                                                                     
@@ -46,7 +46,7 @@ public class TestClass_ComplexTests{
           }                                                                                    
           return response;                                                                     
      }                                                                                         
-     @executionFlow.runtime.CollectCalls public long fibonacci(int x){                         
+     @executionflow.runtime.CollectCalls public long fibonacci(int x){                         
           if (skip) {                                                                          
                return -1;                                                                      
           }                                                                                    

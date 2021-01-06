@@ -1,0 +1,20 @@
+package executionflow.core.file.parser.files.complex;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+public class test_doWhile{
+@executionflow.runtime.CollectCalls public void doWhile(int num){
+int i = 0, k = 0;
+do{int _fc5ca05e46e3559b86766ef980e21afd=0;
+k++;
+}
+while (i < num);
+}
+@executionflow.runtime.CollectCalls public void doWhile2(int num){
+int i = 0, k = 0;
+do{int _5222f4b9f288fa83520d6bf314bce294=0;
+k++;
+}
+while (i < num);
+}
+}

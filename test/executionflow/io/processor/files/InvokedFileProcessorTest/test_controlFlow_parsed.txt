@@ -1,0 +1,136 @@
+package examples.controlFlow;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+public class TestClass_ControlFlow{
+@executionflow.runtime.CollectCalls public String ifElseMethod(int num){
+if (num < 0) {
+return "Negative value";
+}
+String response = "";
+if (num == 0) {
+response = "Number zero";
+}
+else if (num == 1) {
+response = "Number one";
+}
+else {int _ca97bbefff6d87a50c13ccfdcdeca05d=0;
+response = "Number "+num;
+}
+return response;
+}
+@executionflow.runtime.CollectCalls public boolean tryCatchMethod_try(){
+File f = new File("tmp");
+FileWriter fw;int _5259ae184a63a8d8feed853981aa8b60=0;
+try {int _9ac73011e3afbd8b9f2f0072369466c8=0;
+fw = new FileWriter(f);
+fw.write('x');
+fw.close();
+f.delete();
+}
+catch (IOException e) {
+return false;
+}
+return true;
+}
+@executionflow.runtime.CollectCalls public boolean tryCatchMethod_catch(){
+File f = new File("tmp");
+FileWriter fw;int _c57aa0eb38a2b1a8ea07f2f3de2212be=0;
+try {int _26e5be82dbdc454340453a158ab5c88=0;
+throw new IOException();
+}
+catch (IOException e) {
+return false;
+}
+}
+@executionflow.runtime.CollectCalls public char switchCaseMethod(char letter){
+letter = Character.toUpperCase(letter);
+switch (letter) {
+case '÷':int _c9075409354671f11fc90345bbcd6af6=0;
+case 'Á':int _f539e2b0c9f762dd227bbca54bfa67fc=0;
+case 'À':int _a03d265b019fe1be8725827b4af8a6d8=0;
+case 'Ã':int _7a07fc7d2e59b87f4409bdbdd8876bfa=0;
+case 'Â':int _979044de2c5ae2d3a40553554128c6a=0;
+letter = 'A';
+if (Boolean.parseBoolean("True")) {break;}break;
+case 'É':int _4188d275a6ba8860132c91069d4f342a=0;
+case 'È':int _69a2db1c6d769f0a720f6aefeb2618c1=0;
+case 'Ê':int _42a20c0069db845c48492a9783f82d5=0;
+letter = 'E';
+if (Boolean.parseBoolean("True")) {break;}break;
+case 'Ì':int _c8f00219cd42826001cee5356f7895ca=0;
+case 'Í':int _17d19acdeff6fe033d34da5868f8e1f3=0;
+case 'Î':int _f3301663e411bee59e7f1b037fa42262=0;
+letter = 'I';
+if (Boolean.parseBoolean("True")) {break;}break;
+case 'Ò':int _275988d8d9e709f2fa439531e36d64a9=0;
+case 'Ó':int _8d2abacbc184bebef78e434a798a140c=0;
+case 'Ô':int _f32729b1acbc933f825d7adb9bc73ad3=0;
+case 'Õ':int _8d368bac942847363b7fd92eb1fe4a71=0;
+letter = 'O';
+if (Boolean.parseBoolean("True")) {break;}break;
+case 'Ú':int _18c3d026ef376f785f2498a2c59c7bb7=0;
+case 'Ù':int _4dc6fef9634e374951aaacd673381ca9=0;
+case 'Û':int _ec2d95d1db18585f049167c993f3195=0;
+letter = 'U';
+if (Boolean.parseBoolean("True")) {break;}break;
+}
+return letter;
+}
+@executionflow.runtime.CollectCalls public int doWhileMethod(int a, int b){
+if (a == 0) {
+return b;
+}
+if (b == 0) {
+return a;
+}
+do {int _5169cca370fa1d5d0b978f7933f24843=0;
+a++;
+b--;
+}
+while (b != 0);
+return a;
+}
+@executionflow.runtime.CollectCalls public int inlineWhile(int a){
+while (a > 0) {
+a--;
+}
+return a;
+}
+@executionflow.runtime.CollectCalls public boolean inlineIfElse(int n){
+if (n > 0) {
+return true;
+}
+else {int _28eb3ecf6eadbb30985dd3a663724aa1=0;
+return false;
+}
+}
+@executionflow.runtime.CollectCalls public int inlineDoWhile(int n){
+if (n <= 0) {
+n = 1;
+}
+do {int _e52e66f0c3fb872070dbee3b05d812e=0;
+n--;
+}
+while (n > 0);
+return n;
+}
+@executionflow.runtime.CollectCalls public int ifElseSameLine(int num){
+if (num > 0) {
+num *= 0;
+}
+else {int _426f8378e9401c87a4ebcf40b2f75ae=0;
+num = 10;
+}
+return num;
+}
+@executionflow.runtime.CollectCalls public int ifElseSameLine2(int num){
+if (num > 0) {
+num *= 0;
+}
+else {int _63e19333063f6ad794f108a814dd46cb=0;
+num = 10;
+}
+return num;
+}
+}

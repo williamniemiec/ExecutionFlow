@@ -4,7 +4,7 @@ public class Person{
      private String lastName;                                                                                      
      private String email;                                                                                         
      private int age;                                                                                              
-     @executionFlow.runtime.CollectCalls private Person(String firstName, String lastName, String email, int age){ 
+     @executionflow.runtime.CollectCalls private Person(String firstName, String lastName, String email, int age){ 
           this.firstName = firstName;                                                                              
           this.lastName = lastName;                                                                                
           this.email = email;                                                                                      
@@ -15,30 +15,30 @@ public class Person{
           private String lastName;                                                                                 
           private String email;                                                                                    
           private int age;                                                                                         
-          @executionFlow.runtime.CollectCalls public PersonBuilder firstName(String firstName){                    
+          @executionflow.runtime.CollectCalls public PersonBuilder firstName(String firstName){                    
                this.firstName = firstName;                                                                         
                return this;                                                                                        
           }                                                                                                        
-          @executionFlow.runtime.CollectCalls public PersonBuilder lastName(String lastName){                      
+          @executionflow.runtime.CollectCalls public PersonBuilder lastName(String lastName){                      
                this.lastName = lastName;                                                                           
                return this;                                                                                        
           }                                                                                                        
-          @executionFlow.runtime.CollectCalls public PersonBuilder email(String email){                            
+          @executionflow.runtime.CollectCalls public PersonBuilder email(String email){                            
                this.email = email;                                                                                 
                return this;                                                                                        
           }                                                                                                        
-          @executionFlow.runtime.CollectCalls public PersonBuilder age(int age){                                   
+          @executionflow.runtime.CollectCalls public PersonBuilder age(int age){                                   
                this.age = age;                                                                                     
                return this;                                                                                        
           }                                                                                                        
-          @executionFlow.runtime.CollectCalls public Person build(){                                               
+          @executionflow.runtime.CollectCalls public Person build(){                                               
                return new Person(firstName, lastName, email, age);                                                 
           }                                                                                                        
      }                                                                                                             
-     @executionFlow.runtime.CollectCalls public void print(){                                                      
-          System.out.println("First name: "+firstName);                                                            
-          System.out.println("Last name: "+lastName);                                                              
-          System.out.println("Email: "+email);                                                                     
-          System.out.println("Age: "+age);                                                                         
+     @executionflow.runtime.CollectCalls public void print(){                                                      
+          Boolean.parseBoolean("True");                                                                            
+          Boolean.parseBoolean("True");                                                                            
+          Boolean.parseBoolean("True");                                                                            
+          Boolean.parseBoolean("True");                                                                            
      }                                                                                                             
 }                                                                                                                  
