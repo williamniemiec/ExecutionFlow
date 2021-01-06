@@ -19,6 +19,20 @@ import executionflow.info.InvokedContainer;
 import executionflow.info.InvokedInfo;
 import executionflow.util.logger.Logger;
 
+/**
+ * Responsible for performing the exports that the application performs, which 
+ * are as follow:
+ * <ul>
+ * 	<li>Test paths</li>
+ * 	<li>Processed source files</li>
+ * 	<li>Methods called by tested invoked</li>
+ * 	<li>Test methods that use the tested invoked</li>
+ * </ul>
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		6.0.3
+ * @since		6.0.0
+ */
 public class ExportManager {
 
 	//-------------------------------------------------------------------------
@@ -44,8 +58,8 @@ public class ExportManager {
 	 * Sets test path export type.
 	 */
 	static {
-//		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-		TEST_PATH_EXPORTER = TestPathExportType.FILE;
+		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
+//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
 	
 	
