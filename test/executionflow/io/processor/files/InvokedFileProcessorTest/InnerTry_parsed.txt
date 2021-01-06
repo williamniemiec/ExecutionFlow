@@ -4,7 +4,7 @@ import org.junit.Test;
 import examples.testClasses.TestClass;
 @executionflow.runtime.SkipCollection public class TestClass{
 @executionflow.runtime.CollectMethodsCalled 	 @org.junit.Test public void exceptionIncludesClassName() throws Exception {
-try {int _82212329cfb379c33ee897a0bcd1f449=0;
+try {int _b3a2621a96224c83b1b1da3340b6ba6d=0;
 assertSerialization( willClose(new ValidatingObjectInputStream(testStream)));
 fail("Expected an InvalidClassException");
 }

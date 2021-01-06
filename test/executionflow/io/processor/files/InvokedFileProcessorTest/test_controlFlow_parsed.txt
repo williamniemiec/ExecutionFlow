@@ -14,15 +14,15 @@ response = "Number zero";
 else if (num == 1) {
 response = "Number one";
 }
-else {int _37bab3134d04aaea35bac53db35629ef=0;
+else {int _ca97bbefff6d87a50c13ccfdcdeca05d=0;
 response = "Number "+num;
 }
 return response;
 }
 @executionflow.runtime.CollectCalls public boolean tryCatchMethod_try(){
 File f = new File("tmp");
-FileWriter fw;int _90472064cd0b44787afc75b68d631f8d=0;
-try {int _5874d1f2f8558488ff303150ffeafc8c=0;
+FileWriter fw;int _5259ae184a63a8d8feed853981aa8b60=0;
+try {int _9ac73011e3afbd8b9f2f0072369466c8=0;
 fw = new FileWriter(f);
 fw.write('x');
 fw.close();
@@ -35,8 +35,8 @@ return true;
 }
 @executionflow.runtime.CollectCalls public boolean tryCatchMethod_catch(){
 File f = new File("tmp");
-FileWriter fw;int _98c32d62f29b87bef4483e27bb89f269=0;
-try {int _6f9acaaa4eaf20ad5c1b0875b9e3b6c6=0;
+FileWriter fw;int _c57aa0eb38a2b1a8ea07f2f3de2212be=0;
+try {int _26e5be82dbdc454340453a158ab5c88=0;
 throw new IOException();
 }
 catch (IOException e) {
@@ -46,32 +46,32 @@ return false;
 @executionflow.runtime.CollectCalls public char switchCaseMethod(char letter){
 letter = Character.toUpperCase(letter);
 switch (letter) {
-case '÷':int _b9859d1c00058dd37431f9b87b4e6b9=0;
-case 'Á':int _1e7627a4cc95ae9e56ceeb681b4d3390=0;
-case 'À':int _319b3991a445d58118f9a4ef81d07c47=0;
-case 'Ã':int _2ebe5c27d53823f192090de0a85745c9=0;
-case 'Â':int _da91f76d6fe53fea4792ec00ccb73440=0;
+case '÷':int _c9075409354671f11fc90345bbcd6af6=0;
+case 'Á':int _f539e2b0c9f762dd227bbca54bfa67fc=0;
+case 'À':int _a03d265b019fe1be8725827b4af8a6d8=0;
+case 'Ã':int _7a07fc7d2e59b87f4409bdbdd8876bfa=0;
+case 'Â':int _979044de2c5ae2d3a40553554128c6a=0;
 letter = 'A';
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'É':int _114628944c78cf599f928a0cece10b8d=0;
-case 'È':int _faa23ab04919ff195e7d4d2c68d8fd28=0;
-case 'Ê':int _1c6f82612286c17f63da999b8a3c2bcb=0;
+case 'É':int _4188d275a6ba8860132c91069d4f342a=0;
+case 'È':int _69a2db1c6d769f0a720f6aefeb2618c1=0;
+case 'Ê':int _42a20c0069db845c48492a9783f82d5=0;
 letter = 'E';
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'Ì':int _63108007c7a0e28f6a8251e861d8ce71=0;
-case 'Í':int _9534d1f622185bd31bdfe4a5c7afbe6d=0;
-case 'Î':int _c39ffcb22f06dd38ca1098315c7a26c3=0;
+case 'Ì':int _c8f00219cd42826001cee5356f7895ca=0;
+case 'Í':int _17d19acdeff6fe033d34da5868f8e1f3=0;
+case 'Î':int _f3301663e411bee59e7f1b037fa42262=0;
 letter = 'I';
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'Ò':int _c331e77a99d809e784406b028b561a27=0;
-case 'Ó':int _5ccd376a3f161ef48723c44e418e00de=0;
-case 'Ô':int _931d19f034b16eaf3269850876739e7a=0;
-case 'Õ':int _c215398c167879dff5784036788bd0bb=0;
+case 'Ò':int _275988d8d9e709f2fa439531e36d64a9=0;
+case 'Ó':int _8d2abacbc184bebef78e434a798a140c=0;
+case 'Ô':int _f32729b1acbc933f825d7adb9bc73ad3=0;
+case 'Õ':int _8d368bac942847363b7fd92eb1fe4a71=0;
 letter = 'O';
 if (Boolean.parseBoolean("True")) {break;}break;
-case 'Ú':int _adb58e3a4fe4e3a6e7d92c316e30c8d=0;
-case 'Ù':int _b6aab67d03f31bbab7b4e242a678d37=0;
-case 'Û':int _cc5071695caff7d098fff3edb19e33fa=0;
+case 'Ú':int _18c3d026ef376f785f2498a2c59c7bb7=0;
+case 'Ù':int _4dc6fef9634e374951aaacd673381ca9=0;
+case 'Û':int _ec2d95d1db18585f049167c993f3195=0;
 letter = 'U';
 if (Boolean.parseBoolean("True")) {break;}break;
 }
@@ -84,7 +84,7 @@ return b;
 if (b == 0) {
 return a;
 }
-do {int _787eae3c26cf534ff1780d3c0b7c5c49=0;
+do {int _5169cca370fa1d5d0b978f7933f24843=0;
 a++;
 b--;
 }
@@ -101,7 +101,7 @@ return a;
 if (n > 0) {
 return true;
 }
-else {int _4dc0331fdb7f1f53aa59f932b3ec72cb=0;
+else {int _28eb3ecf6eadbb30985dd3a663724aa1=0;
 return false;
 }
 }
@@ -109,7 +109,7 @@ return false;
 if (n <= 0) {
 n = 1;
 }
-do {int _73a3bd28aeab7d45cc8f05461692da83=0;
+do {int _e52e66f0c3fb872070dbee3b05d812e=0;
 n--;
 }
 while (n > 0);
@@ -119,7 +119,7 @@ return n;
 if (num > 0) {
 num *= 0;
 }
-else {int _170f91fd75a2795f058dbc09e5cf5868=0;
+else {int _426f8378e9401c87a4ebcf40b2f75ae=0;
 num = 10;
 }
 return num;
@@ -128,7 +128,7 @@ return num;
 if (num > 0) {
 num *= 0;
 }
-else {int _52d26d2f67e479d9b98b14d3f25dd808=0;
+else {int _63e19333063f6ad794f108a814dd46cb=0;
 num = 10;
 }
 return num;

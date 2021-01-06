@@ -307,7 +307,7 @@ public abstract class ExecutionFlowTest {
 	private List<List<Integer>> computeTestPath(Collection<InvokedContainer> collection, 
 												InvokedContainer container) {
 		ExecutionFlow ef = getExecutionFlow(processingManager, collection);
-		
+		ef.setTestMode(true);
 		initializeExport(ef);
 		
 		return ef.run().getTestPaths(container);

@@ -23,8 +23,7 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 		withDirectory(Path.of("test", "executionflow", "io", "processor", 
 			  			  	  "files", "PreTestMethodFileProcessorTest"));
 		withFilename("TestClass");
-		withTestMethodSignature("executionFlow.core.file.parser.tests" + 
-								".TestClass.testLastCurlyBracketInSameLine()");
+		withTestMethodSignature("org.apache.commons.io.FileCleaningTrackerTestCase.testFileCleanerDirectory_ForceStrategy()");
 		initializeTest();
 		
 		processFile();

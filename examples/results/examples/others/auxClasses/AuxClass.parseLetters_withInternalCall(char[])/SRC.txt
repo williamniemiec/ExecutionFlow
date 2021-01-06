@@ -61,7 +61,7 @@ public class AuxClass{
                if (letters[i] == Character.toUpperCase(letters[i])) {                                                     
                     response[i] =  Character.toLowerCase(letters[i]);                                                     
                }                                                                                                          
-               else {int _59310876b6336b53076c32b257252a2c=0;                                                             
+               else {int _dab72a27d7a42862c0bdd612d1c2bc16=0;                                                             
                     response[i] =  Character.toUpperCase(letters[i]);                                                     
                }                                                                                                          
                i++;                                                                                                       
@@ -122,7 +122,7 @@ public class AuxClass{
      }                                                                                                                    
      @executionflow.runtime.CollectCalls public static int countTotalArguments(Object... args){                           
           int i = 2;                                                                                                      
-          int k;int _8aeea1f57398b864be47e2d7ad5dc1c6=0;                                                                  
+          int k;int _dd2a74e956467c5ba9486b5b43c9814e=0;                                                                  
           k=0;                                                                                                            
           while (k<args.length) {                                                                                         
                k++;                                                                                                       

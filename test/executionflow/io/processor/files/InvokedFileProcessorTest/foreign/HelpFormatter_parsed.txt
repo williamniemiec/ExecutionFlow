@@ -210,9 +210,9 @@ final List<Option> optList = options.helpOptions();
 if (getOptionComparator() != null){
 Collections.sort(optList, getOptionComparator());
 }
-java.util.Iterator<Option> _82a8b7b1efa1603730cf30c363b78c2a = executionflow.io.processor.invoked.trgeneration.IteratorExtractor.extractIterator(optList);
-while (_82a8b7b1efa1603730cf30c363b78c2a.hasNext()) {
-Option option = _82a8b7b1efa1603730cf30c363b78c2a.next();
+java.util.Iterator<Option> _f2bc7d3583ba6d6636598206d9673afb = (java.util.Iterator<Option>) executionflow.io.processor.invoked.trgeneration.IteratorExtractor.extractIterator(optList);
+while (_f2bc7d3583ba6d6636598206d9673afb.hasNext()) {
+Option option = _f2bc7d3583ba6d6636598206d9673afb.next();
 final StringBuffer optBuf = new StringBuffer();
 if (option.getOpt() == null){
 optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());
@@ -269,7 +269,7 @@ if (nextLineTabStop >= width){
 nextLineTabStop = 1;
 }
 final String padding = createPadding(nextLineTabStop);
-while (true){int _a5e97b1495b8d820632f598f81e391f6=0;
+while (true){int _e8efb0d40ac7af19e754bb01e2705fe1=0;
 text = padding + text.substring(pos).trim();
 pos = findWrapPos(text, width, 0);
 if (pos == -1){
@@ -283,9 +283,9 @@ sb.append(rtrim(text.substring(0, pos))).append(getNewLine());
 }
 }
 @executionflow.runtime.CollectCalls private Appendable renderWrappedTextBlock(final StringBuffer sb, final int width, final int nextLineTabStop, final String text){
-try{int _b8291b2c5b3d3456c21fb29c9f029fe0=0;
+try{int _4d483670171e66522c3e054f088a17a4=0;
 final BufferedReader in = new BufferedReader(new StringReader(text));
-String line;int _439bafa487918a5d1e435270ed31625d=0;
+String line;int _d57da473149da9182780cbdcbe0c8d0f=0;
 boolean firstLine = true;
 while ((line = in.readLine()) != null){
 if (!firstLine){

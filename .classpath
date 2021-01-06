@@ -11,6 +11,7 @@
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="./lib/aspectjtools.jar"/>
+	<classpathentry kind="lib" path="lib/aspectjtools.jar"/>
+	<classpathentry kind="lib" path="C:/Users/william/Documents/workspace/eclipse-2020-09/ExecutionFlow/dist/6.x/ExecutionFlow_FileExporter_v6.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
