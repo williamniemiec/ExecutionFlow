@@ -61,6 +61,7 @@ public abstract class ExecutionFlow {
 	private Map<String, Path> processedSourceFiles;
 	private ExportManager exportManager;
 	private Set<String> alreadyChanged;
+	private boolean testMode;
 	
 	
 	//-------------------------------------------------------------------------
@@ -73,7 +74,7 @@ public abstract class ExecutionFlow {
 	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	
@@ -86,6 +87,7 @@ public abstract class ExecutionFlow {
 		this.computedTestPaths = new HashMap<>();
 		this.processedSourceFiles = new HashMap<>();
 		this.alreadyChanged = new HashSet<>();
+		this.testMode = false;
 	}
 	
 
@@ -212,21 +214,42 @@ public abstract class ExecutionFlow {
 		
 		processingManager.processInvoked(testMethodFileManager, invokedFileManager);
 		
-		updateCollectors(
-				collector.getTestMethodInfo().getSrcPath(), 
-				collector.getInvokedInfo().getSrcPath()
-		);
+		updateInvocationLineAfterInvokedProcessing(collector);
 		
 		Logger.info("Processing completed");
 	}
 
-	private void updateCollectors(Path testMethodSrcPath, Path invokedSrcPath) {
+	private void updateInvocationLineAfterInvokedProcessing(InvokedContainer collector) {
+		if (testMode) {
+			if (collector.getInvokedInfo().getSrcPath().equals(
+					collector.getTestMethodInfo().getSrcPath())) {
+				updateCollector(collector, InvokedFileProcessor.getMapping());
+			}
+		}
+		else {
+			updateCollectors(
+					InvokedFileProcessor.getMapping(),
+					collector.getTestMethodInfo().getSrcPath(), 
+					collector.getInvokedInfo().getSrcPath()
+			);
+		}
+	}
+
+	private void updateCollector(InvokedContainer collector, Map<Integer, Integer> mapping) {
+		int invocationLine = collector.getInvokedInfo().getInvocationLine();
+		
+		if (mapping.containsKey(invocationLine))
+			collector.getInvokedInfo().setInvocationLine(mapping.get(invocationLine));
+	}
+
+	private void updateCollectors(Map<Integer, Integer> mapping, Path testMethodSrcPath,
+								  Path invokedSrcPath) {
 		if (alreadyChanged.contains(testMethodSrcPath.toString()) || 
 				!invokedSrcPath.equals(testMethodSrcPath))
 			return;
 
 		TestMethodCollector.updateCollectorInvocationLines(
-				InvokedFileProcessor.getMapping(), 
+				mapping, 
 				testMethodSrcPath
 		);
 		
@@ -243,12 +266,22 @@ public abstract class ExecutionFlow {
 		
 		processingManager.processTestMethod(testMethodFileManager);
 		
-		TestMethodCollector.updateCollectorInvocationLines(
-				TestMethodFileProcessor.getMapping(), 
-				collector.getTestMethodInfo().getSrcPath()
-		);
+		updateInvocationLineAfterTestMethodProcessing(collector);
 		
 		Logger.info("Processing completed");
+	}
+
+	private void updateInvocationLineAfterTestMethodProcessing(InvokedContainer collector) {
+		if (testMode) {
+			updateCollector(collector, TestMethodFileProcessor.getMapping());
+		}
+		else {
+			updateCollectors(
+					TestMethodFileProcessor.getMapping(),
+					collector.getTestMethodInfo().getSrcPath(), 
+					collector.getInvokedInfo().getSrcPath()
+			);
+		}
 	}
 
 	private FileManager createTestMethodFileManager(InvokedContainer collector) {
@@ -468,5 +501,9 @@ public abstract class ExecutionFlow {
 	
 	public ExportManager getExportManager() {
 		return exportManager;
+	}
+	
+	public void setTestMode(boolean status) {
+		this.testMode = status;
 	}
 }

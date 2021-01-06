@@ -3,11 +3,14 @@ package executionflow.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import executionflow.ExecutionFlow;
 
 /**
  * Responsible for executing JUnit 4 tests.
@@ -87,7 +90,9 @@ public class JUnit4Runner {
 			return this;
 		}
 		
-		public JUnit4Runner build() {			
+		public JUnit4Runner build() {
+			createArgumentFileFromClassPath();
+			
 			if (argumentFile == null) {
 				return new JUnit4Runner(
 						workingDirectory, 
@@ -103,6 +108,19 @@ public class JUnit4Runner {
 						classSignature,
 						displayVersion
 				);
+			}
+		}
+
+		private void createArgumentFileFromClassPath() {
+			try {
+				argumentFile = FileUtil.createArgumentFile(
+						ExecutionFlow.getAppRootPath(), 
+						"argfile.txt", 
+						classPath
+				);
+			} 
+			catch (IOException e) {
+				argumentFile = null;
 			}
 		}
 		
@@ -144,6 +162,14 @@ public class JUnit4Runner {
 		output.close();
 		outputError.close();
 		process.waitFor();
+		
+		removeArgumentFile();
+	}
+
+	private void removeArgumentFile() throws IOException {
+		Path argFile = ExecutionFlow.getAppRootPath().resolve("argfile.txt");
+		
+		Files.deleteIfExists(argFile);
 	}
 
 	private void parseCLI() throws IOException {

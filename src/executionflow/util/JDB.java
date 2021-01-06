@@ -224,13 +224,8 @@ public class JDB {
 	 * command executed on the console
 	 */
 	public JDB send(String command) {
-		if (in == null) {
-			try {
-				start();
-			} 
-			catch (IOException e) {
-			}
-		}
+		if (in == null)
+			return this;
 		
 		in.send(command);
 		
@@ -247,13 +242,8 @@ public class JDB {
 	 * command executed on the console
 	 */
 	public JDB send(String... commands) {
-		if (in == null) {
-			try {
-				start();
-			} 
-			catch (IOException e) {
-			}
-		}
+		if (in == null)
+			return this;
 		
 		in.send(commands);
 		

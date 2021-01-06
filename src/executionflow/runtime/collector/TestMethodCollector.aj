@@ -629,6 +629,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		}
 		catch (IOException | InterruptedException e) {
 			Logger.error("Restart - " + e.getMessage());
+			e.printStackTrace();
 		}
 		finally {
 			Session.removeShared("JUNIT4_RUNNER");
