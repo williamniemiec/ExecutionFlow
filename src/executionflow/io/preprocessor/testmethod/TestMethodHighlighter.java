@@ -12,7 +12,7 @@ import executionflow.util.balance.CurlyBracketBalance;
  * Comments on all test methods except the one with the signature provided.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.4
  * @since 		6.0.0
  */
 public class TestMethodHighlighter extends SourceCodeProcessor {
@@ -260,7 +260,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	private void commentIgnoredMethods(List<String> lines) {
 		if (ignoredMethods.isEmpty())
 			return;
-		
+
 		commentHeaderOfIgnoredMethods(lines);		
 		commentBodyOfIgnoredMethods(lines);
 	}
@@ -272,7 +272,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 			String line = lines.get(i);
 			
 			if (insideMethod) {
-				if (!isAnnotation(line))
+				if (!isAnnotation(line) && !line.contains("//"))
 					insideMethod = false;
 				else
 					line = "//" + line;		
