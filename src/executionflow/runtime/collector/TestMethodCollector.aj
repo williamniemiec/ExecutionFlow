@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 
 import executionflow.ConstructorExecutionFlow;
 import executionflow.ExecutionFlow;
@@ -144,7 +146,6 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			return;
 		
 		reset();
-		onShutdown();
 		
 		testMethodSignature = getSignature(thisJoinPoint);
 		
@@ -191,7 +192,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------	
 	private void checkDevelopmentMode() {
 		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
 			Logger.error("Development mode is off even in a development "
@@ -449,9 +450,10 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			LogLevel level;
 			
 			if (!firstRunCheckpoint.isEnabled()) {
-				level = askUserForLogLevel();
-		
 				firstRunCheckpoint.enable();
+				
+				onShutdown();
+				level = askUserForLogLevel();
 			}
 			else {
 				 level = loadLogLevel();		
@@ -719,6 +721,8 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			if (!insideJUnitRunnerCheckpoint.isEnabled())
 				junit4Runner.quit();
 		}
+		
+		junit4Runner.quit();
 	}
 	
 	private void afterEachTestMethod(JoinPoint jp) {
