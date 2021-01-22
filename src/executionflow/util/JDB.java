@@ -202,6 +202,9 @@ public class JDB {
 	}
 
 	public void quit() {
+		if (!isRunning())
+			return;
+		
 		in.close();
 		out.close();
 		process.destroy();
@@ -212,6 +215,10 @@ public class JDB {
 		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isRunning() {
+		return (process != null) && process.isAlive();
 	}
 	
 	/**
