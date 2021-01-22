@@ -33,7 +33,7 @@ import executionflow.util.logger.Logger;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.4
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -73,11 +73,21 @@ public aspect ConstructorCollector extends RuntimeCollector {
 		invocationLine = thisJoinPoint.getSourceLocation().getLine();
 	}
 	
-	before(): insideConstructor() {
+	Object around() : insideConstructor() {
+		beforeEachTestedConstructor(thisJoinPoint);
+		
+		return new Object();
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void beforeEachTestedConstructor(JoinPoint jp) {
 		if (!hasValidState())
 			return;
 
-		signature = getSignature(thisJoinPoint);
+		signature = getSignature(jp);
 		
 		if (!isValidConstructorSignature() || alreadyCollected())
 			return;
@@ -89,15 +99,11 @@ public aspect ConstructorCollector extends RuntimeCollector {
 		if ((srcPath == null) || (classPath == null))
 			return;
 		
-		collectConstructor(thisJoinPoint);
+		collectConstructor(jp);
 		
 		invocationLine = 0;
 	}
 	
-	
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
 	private boolean hasValidState() {
 		return !(invocationLine <= 0 || (testMethodInfo == null));
 	}
