@@ -101,10 +101,20 @@ public class Helper {
 	public static int findMatchingParenthesis(String text, int openParenthesisIdx) {
 		int depth = 0;
 		boolean insideStringOrChar = false;
+		boolean escapeChar = false;
+		
 		for (int i=openParenthesisIdx+1; i<text.length(); i++) {
+			if (escapeChar) {
+				escapeChar = false;
+				continue;
+			}
+			
 			char ch = text.charAt(i);
 			
-			if (ch == '"' || ch == '\'')
+			if (ch == '\\') {
+				escapeChar = true;
+			}
+			else if (ch == '"' || ch == '\'')
 				insideStringOrChar = !insideStringOrChar;
 			else if (!insideStringOrChar) {
 				if (ch == ')' && depth == 0) return i;
