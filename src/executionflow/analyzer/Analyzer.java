@@ -40,6 +40,7 @@ public abstract class Analyzer {
 	protected JDB jdb;
 	protected boolean stopJDB;
 	private List<String> commands;
+	private Object lock = new Object();
 	
 	
 	//-------------------------------------------------------------------------
@@ -81,7 +82,8 @@ public abstract class Analyzer {
 			throw new IllegalStateException("JDB has not been initialized");
 		
 		final int timeoutID = 1;
-		final int timeoutTime = 10 * 60 * 1000;
+		//final int timeoutTime = 10 * 60 * 1000;
+		final int timeoutTime = 4 * 1000;
 
 		try {
 			startJDB();
@@ -89,12 +91,13 @@ public abstract class Analyzer {
 			run();
 		}
 		finally {
-			disableTimeout(timeoutID);
-			closeJDB();
+			synchronized(lock) {
+				disableTimeout(timeoutID);
+				closeJDB();
+			}
 		}
 		
 		mergeMethodsCalledByTestedInvoked();
-		
 		return this;
 	}
 
@@ -147,6 +150,9 @@ public abstract class Analyzer {
 	}
 
 	private void closeJDB() {
+		if (!jdb.isRunning())
+			return;
+		
 		stopJDB = true;
 		jdb.send(buildExitCommand());
 		jdb.quit();
@@ -190,10 +196,12 @@ public abstract class Analyzer {
 		timeout = false;
 		
 		Clock.setTimeout(() -> {
-			mcti.delete();
-			jdb.quit();
-			testPaths.clear();
-			Analyzer.setTimeout(true);
+			synchronized(lock) {
+				mcti.delete();
+				closeJDB();
+				testPaths.clear();
+				Analyzer.setTimeout(true);
+			}
 		}, TIMEOUT_ID, TIMEOUT_TIME);
 	}
 	
