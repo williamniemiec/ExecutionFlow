@@ -158,7 +158,9 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 
 	private String extractParametersFromMethodDeclaration(String line) {
 		StringBuilder methodParams = new StringBuilder();
+		
 		String methodParamsAndArgs = DataUtil.extractContentBetweenParenthesis(line);
+		methodParamsAndArgs = methodParamsAndArgs.replaceAll("final ", "");
 		
 		if (methodParamsAndArgs.isBlank())
 			return "";
