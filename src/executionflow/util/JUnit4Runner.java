@@ -161,6 +161,7 @@ public class JUnit4Runner {
 		
 		output.close();
 		outputError.close();
+		process.destroy();
 		process.waitFor();
 		
 		removeArgumentFile();
@@ -237,10 +238,11 @@ public class JUnit4Runner {
 		if (process == null)
 			return;
 		
-		stopped = true;
-		process.destroyForcibly();
-		output.close();
-		outputError.close();
+		try {
+			closeCLI();
+		} 
+		catch (InterruptedException e1) {
+		}
 	}
 	
 	public boolean isRunning() {

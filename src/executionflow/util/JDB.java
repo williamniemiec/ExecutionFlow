@@ -112,6 +112,8 @@ public class JDB {
 		}
 		
 		public JDB build() {
+			createArgumentFileFromClassPath();
+			
 			if (classPath == null)
 				classPath = new ArrayList<>();
 			
@@ -135,6 +137,19 @@ public class JDB {
 						classSignature, 
 						classArgs
 				);
+			}
+		}
+		
+		private void createArgumentFileFromClassPath() {
+			try {
+				argumentFile = FileUtil.createArgumentFile(
+						Path.of(System.getProperty("java.io.tmpdir")),
+						"argfile.txt", 
+						classPath
+				);
+			} 
+			catch (IOException e) {
+				argumentFile = null;
 			}
 		}
 		
