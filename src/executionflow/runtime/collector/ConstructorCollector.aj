@@ -63,6 +63,7 @@ public aspect ConstructorCollector extends RuntimeCollector {
 		&& call(*.new(..))
 		&& !cflowbelow(withincode(* *(..)))
 		&& !within(executionflow..*)
+		&& !within(api..*)
 		&& !within(ConstructorCollector);
 	
 	

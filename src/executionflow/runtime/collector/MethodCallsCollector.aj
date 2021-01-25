@@ -52,6 +52,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 		&& insideJUnitTest()
 		&& !get(* *.*) 
 		&& !set(* *.*)
+		&& !within(api..*)
 		&& !execution(public int hashCode());
 	
 	/**

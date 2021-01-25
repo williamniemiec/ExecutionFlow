@@ -200,7 +200,11 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		if (!line.contains("Stopping due to deferred breakpoint errors"))
 			return;
 		
-		jdb.quit();
+		try {
+			jdb.quit();
+		} 
+		catch (InterruptedException e) {
+		}
 		
 		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 
 				+ invoked.getInvocationLine() + ", test method signature: "

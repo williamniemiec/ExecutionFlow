@@ -15,7 +15,7 @@ import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
 import executionflow.lib.LibraryManager;
 import executionflow.util.Clock;
-import executionflow.util.JDB;
+import api.jdb.JDB;
 import executionflow.util.logger.Logger;
 
 /**
@@ -103,7 +103,7 @@ public abstract class Analyzer {
 	protected abstract void run() throws IOException;
 	
 	private void startJDB() throws IOException {
-		jdb.start().send(buildInitCommand());
+		jdb.run().send(buildInitCommand());
 	}
 	
 	private String[] buildInitCommand() {
@@ -154,7 +154,12 @@ public abstract class Analyzer {
 		
 		stopJDB = true;
 		jdb.send(buildExitCommand());
-		jdb.quit();
+		
+		try {
+			jdb.quit();
+		} 
+		catch (InterruptedException e) {
+		}
 	}
 	
 	private String[] buildExitCommand() {

@@ -1,19 +1,18 @@
-package executionflow.util;
+package api.jdb;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import api.util.ArgumentFile;
+import api.util.StringUtils;
 
 /**
  * Simple API for JBD (Java debugger).
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @see			https://github.com/williamniemiec/jdb-api
  */
 public class JDB {
 	
@@ -111,20 +110,33 @@ public class JDB {
 			return this;
 		}
 		
+		/**
+		 * Creates {@link JDB} with provided information. It is 
+		 * necessary to provide all required fields. The required fields 
+		 * are: <br />
+		 * <ul>
+		 * 	<li>Class path</li>
+		 * 	<li>Source path</li>
+		 * </ul>
+		 * 
+		 * @return		JDB with provided information
+		 * 
+		 * @throws		IllegalArgumentException If any required field is null
+		 */
 		public JDB build() {
-			createArgumentFileFromClassPath();
-			
 			if (classPath == null)
 				classPath = new ArrayList<>();
 			
 			if (srcPath == null)
 				srcPath = new ArrayList<>();
 			
+			createArgumentFileFromClassPath();
+			
 			if (argumentFile == null) {
 				return new JDB(
 						workingDirectory, 
-						DataUtil.implode(relativizePaths(classPath), ";"), 
-						DataUtil.implode(relativizePaths(srcPath), ";"), 
+						StringUtils.implode(relativizePaths(classPath), ";"), 
+						StringUtils.implode(relativizePaths(srcPath), ";"), 
 						classSignature, 
 						classArgs
 				);
@@ -133,7 +145,7 @@ public class JDB {
 				return new JDB(
 						workingDirectory, 
 						"@" + argumentFile, 
-						DataUtil.implode(srcPath, ";"), 
+						StringUtils.implode(srcPath, ";"), 
 						classSignature, 
 						classArgs
 				);
@@ -142,8 +154,8 @@ public class JDB {
 		
 		private void createArgumentFileFromClassPath() {
 			try {
-				argumentFile = FileUtil.createArgumentFile(
-						Path.of(System.getProperty("java.io.tmpdir")),
+				argumentFile = ArgumentFile.createArgumentFile(
+						Path.of(System.getProperty("java.io.tmpdir")), 
 						"argfile-jdb.txt", 
 						classPath
 				);
@@ -151,7 +163,7 @@ public class JDB {
 			catch (IOException e) {
 				argumentFile = null;
 			}
-		}
+		}	
 		
 		private List<Path> relativizePaths(List<Path> paths) {
 			if (paths == null) 
@@ -184,7 +196,7 @@ public class JDB {
 	 * 
 	 * @throws		IOException If JDB cannot be initialized 
 	 */
-	public JDB start() throws IOException {
+	public JDB run() throws IOException {
 		initializeJDB();
 		onShutdown();
 		
@@ -193,8 +205,8 @@ public class JDB {
 
 	private void initializeJDB() throws IOException {
 		process = processBuilder.start();
-		out = new JDBOutput();
-		in = new JDBInput();
+		out = new JDBOutput(process);
+		in = new JDBInput(process);
 	}
 
 	private void onShutdown() {
@@ -212,28 +224,15 @@ public class JDB {
 			    }
 			});
 		}
-		catch (IllegalStateException e)
-		{}
+		catch (IllegalStateException e) {
+		}
 	}
 
-	public void quit() {
-		if (!isRunning())
-			return;
-		
+	public void quit() throws InterruptedException {
 		in.close();
 		out.close();
 		process.destroy();
-		
-		try {
-			process.waitFor();
-		} 
-		catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public boolean isRunning() {
-		return (process != null) && process.isAlive();
+		process.waitFor();
 	}
 	
 	/**
@@ -241,9 +240,6 @@ public class JDB {
 	 * {@link #read()} for JDB to process the command.
 	 * 
 	 * @param		command Command that will be sent to JDB
-	 * 
-	 * @apiNote		If {@link #DEBUG} is activated, it will display the 
-	 * command executed on the console
 	 */
 	public JDB send(String command) {
 		if (in == null)
@@ -259,9 +255,6 @@ public class JDB {
 	 * {@link #read()} for JDB to process these commands.
 	 * 
 	 * @param		commands Commands that will be sent to JDB
-	 * 
-	 * @apiNote		If {@link #DEBUG} is activated, it will display the 
-	 * command executed on the console
 	 */
 	public JDB send(String... commands) {
 		if (in == null)
@@ -279,9 +272,6 @@ public class JDB {
 	 * @return		JDB output
 	 * 
 	 * @throws		IOException If it cannot read JDB output
-	 * 
-	 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
-	 * output on the console
 	 */
 	public String read() {
 		try {
@@ -314,171 +304,17 @@ public class JDB {
 		return out.isReady();
 	}
 	
+	/**
+	 * Causes the current thread to block until JDB is finished.
+	 * 
+	 * @throws		InterruptedException If the current thread is interrupted 
+	 * by another thread while it is waiting
+	 */
 	public void waitFor() throws InterruptedException {
 		process.waitFor();
 	}
 	
-	
-	//-------------------------------------------------------------------------
-	//		Inner classes
-	//-------------------------------------------------------------------------
-	/**
-	 * Responsible for handling JDB inputs.
-	 * 
-	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 */
-	private class JDBInput {
-		
-		//---------------------------------------------------------------------
-		//		Attributes
-		//---------------------------------------------------------------------
-		private PrintWriter input;
-		
-		
-		//---------------------------------------------------------------------
-		//		Constructor
-		//---------------------------------------------------------------------
-		/**
-		 * JDB input manager. It should be used in conjunction with 
-		 * {@link JDBOutput}.
-		 */
-		public JDBInput() {
-			this.input = new PrintWriter(
-					new BufferedWriter(
-							new OutputStreamWriter(
-									process.getOutputStream())), 
-					true
-			);
-		}
-		
-		
-		//---------------------------------------------------------------------
-		//		Methods
-		//---------------------------------------------------------------------		
-		/**
-		 * Sends a command to JDB. After calling this method, you must to call
-		 * {@link JDBOutput#read()} for JDB to process the command.
-		 * 
-		 * @param		command Command that will be sent to JDB
-		 * 
-		 * @apiNote		If {@link #DEBUG} is activated, it will display the 
-		 * command executed on the console
-		 */
-		public void send(String command) {
-			input.println(command);
-		}
-		
-		/**
-		 * Sends commands to JDB. After calling this method, you must to call
-		 * {@link JDBOutput#read()} for JDB to process these commands.
-		 * 
-		 * @param		command Commands that will be sent to JDB
-		 * 
-		 * @apiNote		If {@link #DEBUG} is activated, it will display the 
-		 * command executed on the console
-		 */
-		public void send(String... commands) {
-			for (String command : commands) {
-			    input.println(command);
-			}
-		}
-		
-		/**
-		 * Closes JDB input.
-		 */
-		public void close() {
-			input.close();
-		}
-	}
-	
-	/**
-	 * Responsible for handling JDB outputs.
-	 * 
-	 * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
-	 */
-	private class JDBOutput {
-		
-		//---------------------------------------------------------------------
-		//		Attributes
-		//---------------------------------------------------------------------
-		private BufferedReader output;
-		
-        
-        //---------------------------------------------------------------------
-    	//		Constructor
-    	//---------------------------------------------------------------------
-        /**
-         * JDB output manager. It should be used in conjunction with 
-		 * {@link JDBInputt} to be able to send commands. 
-         */
-		public JDBOutput() {
-			output = new BufferedReader(
-					new InputStreamReader(
-							process.getInputStream()
-			));
-		}
-		
-		
-		//---------------------------------------------------------------------
-    	//		Methods
-    	//---------------------------------------------------------------------
-		/**
-		 * Reads JDB output. This method will block until some output is
-		 * available, an I/O error occurs, or the end of the stream is reached.
-		 * 
-		 * @return		JDB output
-		 * 
-		 * @throws		IOException If it cannot read JDB output
-		 * 
-		 * @apiNote		If {@link #DEBUG} is activated, it will display JDB 
-		 * output on the console
-		 */
-		public String read() throws IOException {
-			return output.readLine();
-		}
-		
-		/**
-		 * Checks if there is output available. 
-		 * 
-		 * @return		True if {@link #read()} is guaranteed not to block if
-		 * called; otherwise, returns false
-		 */
-		public boolean isReady() {
-			try {
-				return output.ready();
-			} 
-			catch (IOException e) {
-				return false;
-			}
-		}
-		
-		/**
-		 * Reads all available JDB output. This method will not block if no
-		 * output is available.
-		 * 
-		 * @return		List of read JDB output
-		 * 
-		 * @throws		IOException If it cannot read JDB output
-		 */
-		public List<String> readAll() throws IOException {
-			List<String> response = new ArrayList<>();
-			
-			while (output.ready()) {
-				response.add(read());
-			}
-			
-			return response;
-		}
-		
-		/**
-		 * Closes JDB input.
-		 */
-		public void close() {
-			try {
-				output.close();
-			} 
-			catch (IOException e) {
-			}
-		}
+	public boolean isRunning() {
+		return (process != null) && process.isAlive();
 	}
 }
