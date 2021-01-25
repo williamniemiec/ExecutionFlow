@@ -17,6 +17,7 @@ public class JDBTest {
 	private List<String> commands;
 	private String testMethodClassSignature;
 	private int invocationLine;
+	private boolean displayMessages;
 	
 	
 	//-------------------------------------------------------------------------
@@ -25,6 +26,7 @@ public class JDBTest {
 	public JDBTest() {
 		testMethodClassSignature = "api.jdb.testfiles.Calculator";
 		invocationLine = 8;
+		displayMessages = false;
 	}
 
 	
@@ -69,13 +71,13 @@ public class JDBTest {
 		
 		while (!isBreakpoint(line)) {
 			line = jdb.read();
-			System.out.println(line);
+			displayMessage(line);
 		}
 		
 		jdb.send("cont");
 		
 		line = jdb.read();
-		System.out.println(line);
+		displayMessage(line);
 		
 		return line;
 	}
@@ -118,5 +120,20 @@ public class JDBTest {
 	
 	private boolean isBreakpoint(String line) {
 		return line.contains("Breakpoint");
+	}
+	
+	private void displayMessage(String message) {
+		if (!displayMessages)
+			return;
+		
+		
+	}
+	
+	private void displayMessages() {
+		displayMessages = true;
+	}
+	
+	private void hideMessages() {
+		displayMessages = false;
 	}
 }
