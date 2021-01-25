@@ -89,14 +89,14 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	
 	private boolean isJUnit4Annotation(String line) {
 		final String regexJUnit4Test = ".*@(.*\\.)?"
-				+ "(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
+				+ "(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?.*";
 		
 		return line.matches(regexJUnit4Test);
 	}
 
 	private boolean isJUnit5RepeatedTestAnnotation(String line) {
 		final String regexRepeatedTest = ".*@(.*\\.)?"
-				+ "RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*";
+				+ "RepeatedTest(\\ |\\t)*\\(.+\\)(\\ |\\t)*.*";
 		
 		return line.matches(regexRepeatedTest);
 	}
@@ -104,7 +104,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	private boolean isJUnit5ParameterizedTest(String line) {
 		final String regexParameterizedTest = ".*@(.*\\.)?"
 				+ "(org\\.junit\\.jupiter\\.params\\.)?"
-				+ "ParameterizedTest(\\ |\\t)*(\\ |\\t)*";
+				+ "ParameterizedTest(\\ |\\t)*(\\ |\\t)*.*";
 		
 		return line.matches(regexParameterizedTest);
 	}
