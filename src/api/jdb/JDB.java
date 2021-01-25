@@ -145,7 +145,7 @@ public class JDB {
 				return new JDB(
 						workingDirectory, 
 						"@" + argumentFile, 
-						StringUtils.implode(srcPath, ";"), 
+						StringUtils.implode(relativizePaths(srcPath), ";"), 
 						classSignature, 
 						classArgs
 				);
