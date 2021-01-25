@@ -82,8 +82,7 @@ public abstract class Analyzer {
 			throw new IllegalStateException("JDB has not been initialized");
 		
 		final int timeoutID = 1;
-		//final int timeoutTime = 10 * 60 * 1000;
-		final int timeoutTime = 4 * 1000;
+		final int timeoutTime = 10 * 60 * 1000;
 
 		try {
 			startJDB();

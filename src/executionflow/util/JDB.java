@@ -144,7 +144,7 @@ public class JDB {
 			try {
 				argumentFile = FileUtil.createArgumentFile(
 						Path.of(System.getProperty("java.io.tmpdir")),
-						"argfile.txt", 
+						"argfile-jdb.txt", 
 						classPath
 				);
 			} 

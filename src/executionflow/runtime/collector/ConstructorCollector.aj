@@ -73,21 +73,11 @@ public aspect ConstructorCollector extends RuntimeCollector {
 		invocationLine = thisJoinPoint.getSourceLocation().getLine();
 	}
 	
-	Object around() : insideConstructor() {
-		beforeEachTestedConstructor(thisJoinPoint);
-		
-		return new Object();
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
-	private void beforeEachTestedConstructor(JoinPoint jp) {
+	before(): insideConstructor() {
 		if (!hasValidState())
 			return;
 
-		signature = getSignature(jp);
+		signature = getSignature(thisJoinPoint);
 		
 		if (!isValidConstructorSignature() || alreadyCollected())
 			return;
@@ -99,11 +89,15 @@ public aspect ConstructorCollector extends RuntimeCollector {
 		if ((srcPath == null) || (classPath == null))
 			return;
 		
-		collectConstructor(jp);
+		collectConstructor(thisJoinPoint);
 		
 		invocationLine = 0;
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	private boolean hasValidState() {
 		return !(invocationLine <= 0 || (testMethodInfo == null));
 	}

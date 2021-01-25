@@ -62,35 +62,29 @@ public aspect MethodCollector extends RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Join points
 	//-------------------------------------------------------------------------
-	Object around() : insideTestedMethod() {
-		beforeEachTestedMethod(thisJoinPoint);
+	before(): insideTestedMethod() {
+		initializeSignature(thisJoinPoint);
+
+		if (!isValidState(thisJoinPoint))
+			return;
 		
-		return new Object();
+		String key = generateKey(thisJoinPoint);
+		
+		if (alreadyCollected(key))
+			return;
+		
+		collectSourceAndBinaryPaths(thisJoinPoint);
+		
+		if ((srcPath == null) || (classPath == null))
+			return;
+		
+		collectMethod(thisJoinPoint, key);
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void beforeEachTestedMethod(JoinPoint jp) {
-		initializeSignature(jp);
-
-		if (!isValidState(jp))
-			return;
-		
-		String key = generateKey(jp);
-		
-		if (alreadyCollected(key))
-			return;
-		
-		collectSourceAndBinaryPaths(jp);
-		
-		if ((srcPath == null) || (classPath == null))
-			return;
-		
-		collectMethod(jp, key);
-	}
-	
 	private void initializeSignature(JoinPoint jp) {
 		fixAnonymousSignature(jp);
 		

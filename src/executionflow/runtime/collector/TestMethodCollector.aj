@@ -481,7 +481,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		LogLevel level;
 		
 		try {
-			level = (LogLevel)session.read("LOG_LEVEL");
+			level = (LogLevel) session.read("LOG_LEVEL");
 		} 
 		catch (IOException e) {
 			Logger.error("Corrupted session");
