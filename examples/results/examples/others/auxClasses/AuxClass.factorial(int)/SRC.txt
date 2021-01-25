@@ -61,7 +61,7 @@ public class AuxClass{
                if (letters[i] == Character.toUpperCase(letters[i])) {                                                     
                     response[i] =  Character.toLowerCase(letters[i]);                                                     
                }                                                                                                          
-               else {int _589e753c39692f0f1e7f61ff1b4ec580=0;                                                             
+               else {int _23cd3c8a666fa6591106dbe807e9d93a=0;                                                             
                     response[i] =  Character.toUpperCase(letters[i]);                                                     
                }                                                                                                          
                i++;                                                                                                       
@@ -122,7 +122,7 @@ public class AuxClass{
      }                                                                                                                    
      @executionflow.runtime.CollectCalls public static int countTotalArguments(Object... args){                           
           int i = 2;                                                                                                      
-          int k;int _5b3ce981c0e66da57d58ea263e5450e4=0;                                                                  
+          int k;int _e78a055ce595f52e3970b21dc903ac3f=0;                                                                  
           k=0;                                                                                                            
           while (k<args.length) {                                                                                         
                k++;                                                                                                       
@@ -144,4 +144,7 @@ public class AuxClass{
           }                                                                                                               
           return total;                                                                                                   
      }                                                                                                                    
+     @executionflow.runtime.CollectCalls public static void infinite() {                                                  
+               while(true) ;                                                                                              
+          }                                                                                                               
 }                                                                                                                         
