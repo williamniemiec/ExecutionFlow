@@ -16,7 +16,7 @@ public class TestClass
 
 		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
 
-try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _42e594c59cbc4593ee8b91137aaef1a){}}
+try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _200cd7ecc89c5055c4ae728d1d67e5a9){}}
 
 //	@Test
 //	public void testFoo()

@@ -45,6 +45,7 @@ examples.builderPattern.Person.PersonBuilder.lastName(String);examples.builderPa
 examples.controlFlow.TestClass_ControlFlow.inlineDoWhile(int);examples.controlFlow.ControlFlowTest.inlineDoWhile()
 examples.overloadedMethod.OverloadClass.overloadedMethod();examples.overloadedMethod.OverloadTest.testOverloadedMethod()
 examples.builderPattern.Person.PersonBuilder.build();examples.builderPattern.BuilderPatternTest.testBuilderPattern()
+examples.others.TestMethodAndInvokedInTheSameFile.sum(int, int);examples.others.TestMethodAndInvokedInTheSameFile.methodInSameFileOfTestMethod()
 examples.others.auxClasses.AuxClass.parseLetters_withInternalCall(char[]);examples.others.OthersTest.testInternalCall()
 examples.controlFlow.TestClass_ControlFlow.ifElseMethod();examples.controlFlow.ControlFlowTest.ifElseTest2();examples.controlFlow.ControlFlowTest.ifElseTest3();examples.controlFlow.ControlFlowTest.ifElseTest()
 examples.chainedCalls.Calculator.mult(float);examples.chainedCalls.ChainedCalls.testChainedMethods()
