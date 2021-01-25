@@ -22,7 +22,7 @@ import executionflow.util.logger.Logger;
  * Computes the test path for a method or constructor using a debugger.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.3
+ * @version		6.0.4
  * @since		2.0.0
  */
 public abstract class Analyzer {
@@ -288,6 +288,9 @@ public abstract class Analyzer {
 	private List<Path> getSourcePath(InvokedInfo invokedInfo, 
 									 InvokedInfo testMethodInfo) {
 		List<Path> srcPath = new ArrayList<>();
+		
+		srcPath.add(invokedInfo.getSrcPath());
+		srcPath.add(testMethodInfo.getSrcPath());
 		
 		Path srcRootPath = extractRootPathDirectory(
 				invokedInfo.getSrcPath(), 

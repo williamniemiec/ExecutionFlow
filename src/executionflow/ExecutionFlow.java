@@ -36,7 +36,7 @@ import executionflow.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.3
+ * @version		6.0.4
  * @since		1.0
  */
 public abstract class ExecutionFlow {
@@ -74,7 +74,7 @@ public abstract class ExecutionFlow {
 	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	
@@ -244,7 +244,7 @@ public abstract class ExecutionFlow {
 
 	private void updateCollectors(Map<Integer, Integer> mapping, Path testMethodSrcPath,
 								  Path invokedSrcPath) {
-		if (alreadyChanged.contains(testMethodSrcPath.toString()) || 
+		if (alreadyChanged.contains(testMethodSrcPath.toString()) && 
 				!invokedSrcPath.equals(testMethodSrcPath))
 			return;
 
