@@ -112,7 +112,7 @@ public class DataUtil {
 		String folderName = getFolderName(signatureFields, isConstructor) 
 				+ reduceSignature(extractParametersFromSignature(invokedSignature));
 		
-		return folderPath + "/" + folderName;
+		return folderPath + "/" + FileUtil.replaceReservedCharacters(folderName);
 	}
 	
 	private static String[] extractSignatureFields(String signature) {
