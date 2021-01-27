@@ -3,13 +3,16 @@ package executionflow.io.processor.invoked.trgeneration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
-
+import java.util.Set;
 
 public class IteratorExtractor
 {
+	public static Iterator<?> extractIterator(Iterable<?> iterable)
+	{
+		return iterable.iterator();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T> Iterator<T> extractIterator(T... l)
 	{
