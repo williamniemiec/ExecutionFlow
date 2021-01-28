@@ -229,10 +229,19 @@ public class JDB {
 	}
 
 	public void quit() throws InterruptedException {
-		in.close();
-		out.close();
+		stopStreams();
 		process.destroy();
 		process.waitFor();
+	}
+	
+	private void stopStreams() {
+		in.close();
+		out.close();
+	}
+	
+	public void forceQuit() {
+		stopStreams();
+		process.destroyForcibly();
 	}
 	
 	/**
