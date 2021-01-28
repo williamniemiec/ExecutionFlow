@@ -36,7 +36,7 @@ import executionflow.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.4
+ * @version		6.0.5
  * @since		1.0
  */
 public abstract class ExecutionFlow {
@@ -121,6 +121,7 @@ public abstract class ExecutionFlow {
 			return this;
 		
 		dump();
+		exportMethodsAndConstructorsUsedInTestMethods(false);
 		
 		for (InvokedContainer collector : getCollectors()) {
 			parseCollector(collector);
@@ -131,9 +132,16 @@ public abstract class ExecutionFlow {
 		return this;
 	}
 	
+	private void exportMethodsAndConstructorsUsedInTestMethods(boolean wasTPComputed) {
+		exportManager.exportMethodsAndConstructorsUsedInTestMethods(
+				computedTestPaths.keySet(),
+				wasTPComputed
+		);
+	}
+	
 	private void export() {
 		exportManager.exportTestPaths(computedTestPaths);
-		exportManager.exportTesters(computedTestPaths.keySet());
+		exportMethodsAndConstructorsUsedInTestMethods(true);
 		exportManager.exportProcessedSourceFiles(processedSourceFiles);
 		exportManager.exportMethodsCalledByTestedInvoked(
 				analyzer.getMethodsCalledByTestedInvoked()
