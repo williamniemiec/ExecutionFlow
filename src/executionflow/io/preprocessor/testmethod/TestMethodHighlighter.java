@@ -309,6 +309,13 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	}
 	
 	private boolean endWithOpenCurlyBracket(String str) {
-		return str.matches(".*\\{[\\s\\t]*$");
+		return removeInlineComments(str).matches(".*\\{[\\s\\t]*$");
+	}
+	
+	private String removeInlineComments(String str) {
+		if (!str.contains("//"))
+			return str;
+		
+		return str.substring(0, str.lastIndexOf("//"));
 	}
 }
