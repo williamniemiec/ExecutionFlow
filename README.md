@@ -48,7 +48,7 @@ Veja a documentação sobre como é possível contribuir com o projeto [aqui](ht
 ## 💻 Desenvolvedores
 Veja a documentação específica para programadores que buscam alterar o código fonte [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/DEVELOPERS.md).
 
-## 🗺 Organização do projeto
+## 🗺 Organização do projeto (desatualizado)
 ![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/uml.png?raw=true)
 
 <b>OBS:</b> Não esta representada as classes do pacote [executionFlow.util](https://github.com/williamniemiec/ExecutionFlow/tree/master/src/executionFlow/util) para evitar que o diagrama fique poluído - com pouca legibilidade.
