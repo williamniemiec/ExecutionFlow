@@ -162,6 +162,14 @@ public abstract class Analyzer {
 		}
 	}
 	
+	private void closeJDBImmediately() {
+		if (!jdb.isRunning())
+			return;
+		
+		stopJDB = true;
+		jdb.forceQuit();
+	}
+	
 	private String[] buildExitCommand() {
 		commands = new ArrayList<>();
 		
@@ -202,7 +210,7 @@ public abstract class Analyzer {
 		Clock.setTimeout(() -> {
 			synchronized(lock) {
 				mcti.delete();
-				closeJDB();
+				closeJDBImmediately();
 				testPaths.clear();
 				Analyzer.setTimeout(true);
 			}
