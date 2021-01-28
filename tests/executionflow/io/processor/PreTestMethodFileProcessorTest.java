@@ -23,7 +23,7 @@ public class PreTestMethodFileProcessorTest extends FileProcessorTest {
 		withDirectory(Path.of("tests", "executionflow", "io", "processor", 
 			  			  	  "files", "PreTestMethodFileProcessorTest"));
 		withFilename("TestClass");
-		withTestMethodSignature("executionFlow.core.file.parser.tests.TestClass.testLastCurlyBracketInSameLine()");
+		withTestMethodSignature("executionFlow.core.file.parser.tests.TestClass.testNameFilter()");
 		initializeTest();
 		
 		processFile();

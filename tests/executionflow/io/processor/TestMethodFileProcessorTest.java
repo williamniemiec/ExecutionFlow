@@ -20,7 +20,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	//-------------------------------------------------------------------------
 	@Test
 	public void testClassTest() throws IOException {
-		withDirectory(Path.of("test", "executionflow", "io", "processor", 
+		withDirectory(Path.of("tests", "executionflow", "io", "processor", 
 	  			  			  "files", "TestMethodFileProcessorTest"));
 		withFilename("TestClass");
 		initializeTest();
@@ -30,7 +30,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void innerTry() throws IOException {
-		withDirectory(Path.of("test", "executionflow", "io", "processor", 
+		withDirectory(Path.of("tests", "executionflow", "io", "processor", 
 	  			  			  "files", "TestMethodFileProcessorTest"));
 		withFilename("InnerTry");
 		initializeTest();
@@ -40,7 +40,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testMethodInvokedSameLine() throws IOException {
-		withDirectory(Path.of("test", "executionflow", "io", "processor", 
+		withDirectory(Path.of("tests", "executionflow", "io", "processor", 
 			  			  	  "files"));
 		withFilename("test_method_tested_invoked_same_file");
 		initializeTest();
@@ -50,7 +50,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testAnonymousClass() throws IOException {
-		withDirectory(Path.of("test", "executionflow", "io", "processor", 
+		withDirectory(Path.of("tests", "executionflow", "io", "processor", 
 					  	  	  "files"));
 		withFilename("test_anonymous_class");
 		initializeTest();
@@ -60,7 +60,7 @@ public class TestMethodFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	public void testMultiargsTest() throws IOException {
-		withDirectory(Path.of("test", "executionflow", "io", "processor", 
+		withDirectory(Path.of("tests", "executionflow", "io", "processor", 
 				  	  	  	  "files", "TestMethodFileProcessorTest"));
 		withFilename("Multiargs");
 		initializeTest();

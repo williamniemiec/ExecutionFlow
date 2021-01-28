@@ -8,15 +8,15 @@ import examples.testClasses.TestClass;
 
 public class TestClass 
 {
-	@org.junit.Test
-	public void testLastCurlyBracketInSameLine() {
-		System.out.println("#####################################################################");
-		System.out.println("                    testLastCurlyBracketInSameLine                   ");
-		System.out.println("#####################################################################");
-
-		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
-
-try {		assertEquals(24, artc.factorial(4)); } catch(Throwable _200cd7ecc89c5055c4ae728d1d67e5a9){}}
+//	@Test
+//	public void testLastCurlyBracketInSameLine() {
+//		System.out.println("#####################################################################");
+//		System.out.println("                    testLastCurlyBracketInSameLine                   ");
+//		System.out.println("#####################################################################");
+//
+//		AgainstRequirementsTestClass artc = new AgainstRequirementsTestClass();
+//
+//		assertEquals(24, artc.factorial(4)); }
 
 //	@Test
 //	public void testFoo()
