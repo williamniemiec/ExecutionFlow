@@ -1,14 +1,10 @@
 package executionflow.runtime.collector;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,12 +13,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 
+import api.junit4.JUnit4Runner;
 import executionflow.ConstructorExecutionFlow;
 import executionflow.ExecutionFlow;
 import executionflow.MethodExecutionFlow;
+import executionflow.exporter.ExportManager;
 import executionflow.info.InvokedContainer;
 import executionflow.info.InvokedInfo;
 import executionflow.io.manager.FileManager;
@@ -35,7 +31,6 @@ import executionflow.lib.LibraryManager;
 import executionflow.user.RemoteControl;
 import executionflow.user.Session;
 import executionflow.util.Checkpoint;
-import api.junit4.JUnit4Runner;
 import executionflow.util.logger.LogLevel;
 import executionflow.util.logger.LogView;
 import executionflow.util.logger.Logger;
@@ -48,7 +43,7 @@ import executionflow.util.logger.Logger;
  * {@link executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.3
+ * @version		6.0.5
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -174,6 +169,9 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		
 		if ((classPath == null) || (srcPath == null))
 			return;
+			
+		exportAllMethodsUsedInTestMethods();
+		exportAllConstructorsUsedInTestMethods();
 		
 		if (finished)
 			return;
@@ -189,7 +187,6 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			afterEachTestMethod(thisJoinPoint);
 		}
 	}
-	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -395,6 +392,45 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			classSignature.deleteCharAt(classSignature.length()-1);
 		
 		return removeReturnTypeFromSignature(classSignature.toString());
+	}
+	
+	private void exportAllMethodsUsedInTestMethods() {
+		Set<InvokedContainer> invokedSet = new HashSet<>();
+		List<InvokedContainer> collectors = new ArrayList<>();
+		ExportManager exportManager = new ExportManager(
+				ExecutionFlow.isDevelopment(), 
+				false
+		);
+		
+		for (List<InvokedContainer> collector : methodCollector.values()) {
+			collectors.add(collector.get(0));
+		}
+		
+		for (InvokedContainer collector : collectors) {
+			invokedSet.add(new InvokedContainer(
+					collector.getInvokedInfo(),
+					collector.getTestMethodInfo()
+			));
+		}
+		
+		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(invokedSet);
+	}
+	
+	private void exportAllConstructorsUsedInTestMethods() {
+		Set<InvokedContainer> constructorSet = new HashSet<>();
+		ExportManager exportManager = new ExportManager(
+				ExecutionFlow.isDevelopment(), 
+				true
+		);
+		
+		for (InvokedContainer collector : constructorCollector.values()) {
+			constructorSet.add(new InvokedContainer(
+					collector.getInvokedInfo(),
+					collector.getTestMethodInfo()
+			));
+		}
+		
+		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(constructorSet);
 	}
 	
 	private void initializeManagers(JoinPoint thisJoinPoint) {

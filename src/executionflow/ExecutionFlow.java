@@ -121,8 +121,7 @@ public abstract class ExecutionFlow {
 			return this;
 		
 		dump();
-		exportMethodsAndConstructorsUsedInTestMethods(false);
-		
+
 		for (InvokedContainer collector : getCollectors()) {
 			parseCollector(collector);
 		}
@@ -132,16 +131,11 @@ public abstract class ExecutionFlow {
 		return this;
 	}
 	
-	private void exportMethodsAndConstructorsUsedInTestMethods(boolean wasTPComputed) {
-		exportManager.exportMethodsAndConstructorsUsedInTestMethods(
-				computedTestPaths.keySet(),
-				wasTPComputed
-		);
-	}
-	
 	private void export() {
 		exportManager.exportTestPaths(computedTestPaths);
-		exportMethodsAndConstructorsUsedInTestMethods(true);
+		exportManager.exportEffectiveMethodsAndConstructorsUsedInTestMethods(
+				computedTestPaths.keySet()
+		);
 		exportManager.exportProcessedSourceFiles(processedSourceFiles);
 		exportManager.exportMethodsCalledByTestedInvoked(
 				analyzer.getMethodsCalledByTestedInvoked()
@@ -345,8 +339,8 @@ public abstract class ExecutionFlow {
 		try {
 			Thread.sleep(2000);
 		} 
-		catch (InterruptedException e) 
-		{}
+		catch (InterruptedException e) {
+		}
 		
 		throw new InterruptedByTimeoutException();
 	}
@@ -365,13 +359,9 @@ public abstract class ExecutionFlow {
 	}
 	
 	protected void storeTestPath(InvokedContainer invokedContainer) {
-		if (analyzer.hasTestPaths())
-			storeAllTestPaths(invokedContainer);
-		else
-			storeEmptyTestPath(invokedContainer);
-	}
-	
-	private void storeAllTestPaths(InvokedContainer invokedContainer) {
+		if (!analyzer.hasTestPaths())
+			return;
+			
 		for (List<Integer> testPath : analyzer.getTestPaths()) {	
 			if (testPath.isEmpty())
 				continue;
@@ -395,13 +385,6 @@ public abstract class ExecutionFlow {
 									   List<Integer> testPath) {
 		List<List<Integer>> testPaths = computedTestPaths.get(invokedContainer);
 		testPaths.add(testPath);
-	}
-
-	private void storeEmptyTestPath(InvokedContainer invokedContainer) {
-		List<List<Integer>> classTestPathInfo = new ArrayList<>();
-		classTestPathInfo.add(new ArrayList<>());
-		
-		computedTestPaths.put(invokedContainer, classTestPathInfo);
 	}
 	
 	

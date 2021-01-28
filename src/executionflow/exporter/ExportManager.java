@@ -113,15 +113,18 @@ public class ExportManager {
 		);
 	}
 	
-	public void exportMethodsAndConstructorsUsedInTestMethods(Set<InvokedContainer> testers, 
-															  boolean wasTestPathComputed) {
+	public void exportEffectiveMethodsAndConstructorsUsedInTestMethods(Set<InvokedContainer> invokedSet) {
 		if (!exportTesters)
 			return;
 		
-		if (wasTestPathComputed)
-			mcutmEffective.export(testers);
-		else
-			mcutmAll.export(testers);
+		mcutmEffective.export(invokedSet);
+	}
+	
+	public void exportAllMethodsAndConstructorsUsedInTestMethods(Set<InvokedContainer> invokedSet) {
+		if (!exportTesters)
+			return;
+	
+		mcutmAll.export(invokedSet);
 	}
 	
 	public void exportTestPaths(Map<InvokedContainer, List<List<Integer>>> testPaths) {
