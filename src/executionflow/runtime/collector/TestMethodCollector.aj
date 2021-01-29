@@ -146,11 +146,11 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		testMethodSignature = getSignature(thisJoinPoint);
 		
 		collectSourceAndBinaryPaths(thisJoinPoint);
-		collectTestMethod(thisJoinPoint);
 		
 		if ((classPath == null) || (srcPath == null))
 			return;
-
+		
+		collectTestMethod(thisJoinPoint);
 		initializeManagers(thisJoinPoint);
 		onFirstRun();
 		onEachTestMethod();
@@ -169,9 +169,6 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		
 		if ((classPath == null) || (srcPath == null))
 			return;
-			
-		exportAllMethodsUsedInTestMethods();
-		exportAllConstructorsUsedInTestMethods();
 		
 		if (finished)
 			return;
@@ -183,6 +180,9 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			success = true;			
 		}
 		else {
+			exportAllMethodsUsedInTestMethods();
+			exportAllConstructorsUsedInTestMethods();
+			
 			restart(thisJoinPoint);
 			afterEachTestMethod(thisJoinPoint);
 		}
