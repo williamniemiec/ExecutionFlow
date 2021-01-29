@@ -394,45 +394,6 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		return removeReturnTypeFromSignature(classSignature.toString());
 	}
 	
-	private void exportAllMethodsUsedInTestMethods() {
-		Set<InvokedContainer> invokedSet = new HashSet<>();
-		List<InvokedContainer> collectors = new ArrayList<>();
-		ExportManager exportManager = new ExportManager(
-				ExecutionFlow.isDevelopment(), 
-				false
-		);
-		
-		for (List<InvokedContainer> collector : methodCollector.values()) {
-			collectors.add(collector.get(0));
-		}
-		
-		for (InvokedContainer collector : collectors) {
-			invokedSet.add(new InvokedContainer(
-					collector.getInvokedInfo(),
-					collector.getTestMethodInfo()
-			));
-		}
-		
-		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(invokedSet);
-	}
-	
-	private void exportAllConstructorsUsedInTestMethods() {
-		Set<InvokedContainer> constructorSet = new HashSet<>();
-		ExportManager exportManager = new ExportManager(
-				ExecutionFlow.isDevelopment(), 
-				true
-		);
-		
-		for (InvokedContainer collector : constructorCollector.values()) {
-			constructorSet.add(new InvokedContainer(
-					collector.getInvokedInfo(),
-					collector.getTestMethodInfo()
-			));
-		}
-		
-		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(constructorSet);
-	}
-	
 	private void initializeManagers(JoinPoint thisJoinPoint) {
 		try {
 			processingManager = new InvokedManager(
@@ -646,6 +607,38 @@ public aspect TestMethodCollector extends RuntimeCollector {
 				constructorCollector.values()
 		);
 		constructorExecutionFlow.run();
+	}
+	
+	private void exportAllMethodsUsedInTestMethods() {
+		List<InvokedContainer> collectors = new ArrayList<>();
+		
+		for (List<InvokedContainer> collector : methodCollector.values()) {
+			collectors.add(collector.get(0));
+		}
+		
+		exporMethodsAndConstructorsUsedInTestMethods(false, collectors);
+	}
+	
+	private void exporMethodsAndConstructorsUsedInTestMethods(boolean isConstructor, 
+															  Collection<InvokedContainer> invokedCollector) {
+		Set<InvokedContainer> invokedSet = new HashSet<>();
+		ExportManager exportManager = new ExportManager(
+				ExecutionFlow.isDevelopment(), 
+				isConstructor
+		);
+		
+		for (InvokedContainer collector : invokedCollector) {
+			invokedSet.add(new InvokedContainer(
+					collector.getInvokedInfo(),
+					collector.getTestMethodInfo()
+			));
+		}
+		
+		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(invokedSet);
+	}
+	
+	private void exportAllConstructorsUsedInTestMethods() {
+		exporMethodsAndConstructorsUsedInTestMethods(true, constructorCollector.values());
 	}
 	
 	/**
