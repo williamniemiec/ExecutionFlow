@@ -22,7 +22,7 @@ import executionflow.util.logger.Logger;
  * Computes the test path for a method or constructor using a debugger.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.4
+ * @version		6.0.5
  * @since		2.0.0
  */
 public abstract class Analyzer {
@@ -90,6 +90,12 @@ public abstract class Analyzer {
 			run();
 		}
 		finally {
+			try {
+				Thread.sleep(200);
+			} 
+			catch (InterruptedException e) {
+			}
+			
 			synchronized(lock) {
 				disableTimeout(timeoutID);
 				closeJDB();

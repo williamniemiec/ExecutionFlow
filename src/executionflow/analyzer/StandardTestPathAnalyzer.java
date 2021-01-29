@@ -13,7 +13,7 @@ import executionflow.util.logger.Logger;
  * methods called by it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		6.0.0
  */
 public class StandardTestPathAnalyzer extends Analyzer {
@@ -222,9 +222,15 @@ public class StandardTestPathAnalyzer extends Analyzer {
 				|| line.contains("Exception occurred") 
 				|| line.contains("Input stream closed.")
 				|| line.contains("FAILURES!!!") 
-				|| line.contains("Caused by: ");
+				|| line.contains("Caused by: ")
+				|| isStackTrace(line);
 	}
 	
+	private boolean isStackTrace(String line) {
+		return line.matches("[\\s\\t]*at[\\s\\t]+[^\\/]+\\/[^\\(]+\\([^\\)]+\\).*");
+	}
+
+
 	private boolean isInternalMethod() {
 		return 	!hasLineInvokedName()
 				&& !inConstructor()
