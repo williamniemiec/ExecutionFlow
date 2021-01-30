@@ -90,12 +90,12 @@ public class ExportManager {
 
 	private void initializeTestersExporter() {
 		this.mcutmEffective = new TestedInvokedExporter(
-				"mcutm-effective", 
+				"MCUTM-EFFECTIVE", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)
 		);
 		
 		this.mcutmAll = new TestedInvokedExporter(
-				"mcutm-all", 
+				"MCUTM-ALL", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)
 		);
 	}
