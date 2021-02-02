@@ -15,8 +15,8 @@ import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
 import executionflow.lib.LibraryManager;
 import executionflow.util.Clock;
+import util.logger.Logger;
 import api.jdb.JDB;
-import executionflow.util.logger.Logger;
 
 /**
  * Computes the test path for a method or constructor using a debugger.

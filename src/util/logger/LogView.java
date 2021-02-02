@@ -1,4 +1,4 @@
-package executionflow.util.logger;
+package util.logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 /**
- * Responsible for displaying log levels.
+ * Responsible for asking the user the desired log level. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */

@@ -10,8 +10,8 @@ import java.util.List;
 import executionflow.io.FileEncoding;
 import executionflow.util.FileUtil;
 import executionflow.util.formatter.JavaIndenter;
-import executionflow.util.logger.LogLevel;
-import executionflow.util.logger.Logger;
+import util.logger.LogLevel;
+import util.logger.Logger;
 
 /**
  * A file processor will add or replace some code to an existing code if some

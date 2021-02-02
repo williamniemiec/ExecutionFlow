@@ -31,9 +31,9 @@ import executionflow.lib.LibraryManager;
 import executionflow.user.RemoteControl;
 import executionflow.user.Session;
 import executionflow.util.Checkpoint;
-import executionflow.util.logger.LogLevel;
-import executionflow.util.logger.LogView;
-import executionflow.util.logger.Logger;
+import util.logger.LogLevel;
+import util.logger.LogView;
+import util.logger.Logger;
 
 /**
  * Run in each test method
@@ -111,6 +111,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		!skipAnnotation() 
 		&& insideJUnitTest()
 		&& !within(api..*)
+		&& !within(util..*)
 		&& !withincode(@org.junit.Test * *.*());
 	
 	protected pointcut JUnit4Annotation():

@@ -6,7 +6,7 @@ import java.util.List;
 
 import executionflow.info.InvokedInfo;
 import executionflow.util.balance.RoundBracketBalance;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Standard strategy for computing test path of a method and records the 

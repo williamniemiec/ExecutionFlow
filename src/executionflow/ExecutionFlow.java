@@ -25,7 +25,7 @@ import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
 import executionflow.runtime.collector.TestMethodCollector;
 import executionflow.util.FileUtil;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * For each collected method or constructor, obtain the following information:

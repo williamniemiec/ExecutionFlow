@@ -13,7 +13,7 @@ import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
 import executionflow.util.CSV;
 import executionflow.util.DataUtil;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Exports signature of methods called by a tested invoked in a CSV file with

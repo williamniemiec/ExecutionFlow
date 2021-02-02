@@ -11,7 +11,7 @@ import org.aspectj.tools.ajc.Main;
 
 import executionflow.io.FileEncoding;
 import executionflow.io.compiler.Compiler;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Responsible for compiling Java files.

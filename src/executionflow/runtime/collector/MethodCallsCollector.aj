@@ -16,7 +16,7 @@ import org.aspectj.lang.Signature;
 
 import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Captures all methods called within the tested invoked, where an invoked can
@@ -53,6 +53,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 		&& !get(* *.*) 
 		&& !set(* *.*)
 		&& !within(api..*)
+		&& !within(util..*)
 		&& !execution(public int hashCode());
 	
 	/**

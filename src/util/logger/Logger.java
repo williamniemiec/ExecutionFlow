@@ -1,4 +1,4 @@
-package executionflow.util.logger;
+package util.logger;
 
 /**
  * Responsible for displaying log messages on the console.
@@ -10,7 +10,6 @@ public class Logger {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final int PADDING_LEFT = 8;
 	private static LogLevel level = LogLevel.INFO;
 	
 	
@@ -52,16 +51,10 @@ public class Logger {
 	 * the end of the message
 	 */
 	public static void info(String message, boolean breakLine) {
-		boolean shouldDisplay =	(level == LogLevel.DEBUG) || 
-								(level == LogLevel.INFO);
-		
-		if (!shouldDisplay)
+		if (!level.shouldDisplayInfo())
 			return;
 		
-		if (breakLine)
-			System.out.printf("%-" + PADDING_LEFT + "s%s\n", "[INFO] ", message);
-		else
-			System.out.printf("%-" + PADDING_LEFT + "s%s", "[INFO] ", message);
+		LogMessage.log("INFO", message, breakLine);
 	}
 	
 	/**
@@ -92,15 +85,10 @@ public class Logger {
 	 * the end of the message
 	 */
 	public static void error(String message, boolean breakLine) {
-		boolean shouldDisplay =	(level != LogLevel.OFF);
-		
-		if (!shouldDisplay)
+		if (!level.shouldDisplayInfo())
 			return;
 		
-		if (breakLine)
-			System.err.printf("%-" + PADDING_LEFT + "s%s\n", "[ERROR] ", message);
-		else
-			System.err.printf("%-" + PADDING_LEFT + "s%s", "[ERROR] ", message);
+		LogMessage.log("ERROR", message, breakLine);
 	}
 	
 	/**
@@ -131,17 +119,10 @@ public class Logger {
 	 * the end of the message
 	 */
 	public static void warning(String message, boolean breakLine) {
-		boolean shouldDisplay = (level == LogLevel.DEBUG) ||
-								(level == LogLevel.INFO) ||
-								(level == LogLevel.WARNING);
-		
-		if (!shouldDisplay)
+		if (!level.shouldDisplayWarning())
 			return;
 		
-		if (breakLine)
-			System.out.printf("%-" + PADDING_LEFT + "s%s\n", "[WARN] ", message);
-		else
-			System.out.printf("%-" + PADDING_LEFT + "s%s", "[WARN] ", message);
+		LogMessage.log("WARN", message, breakLine);
 	}
 	
 	/**
@@ -192,15 +173,10 @@ public class Logger {
 	 * the end of the message	
 	 */
 	public static void debug(String message, boolean breakLine) {
-		boolean shouldDisplay = (level == LogLevel.DEBUG);
-		
-		if (!shouldDisplay)
+		if (!level.shouldDisplayDebug())
 			return;
 		
-		if (breakLine)
-			System.out.printf("%-" + PADDING_LEFT + "s%s\n", "[DEBUG] ", message);
-		else
-			System.out.printf("%-" + PADDING_LEFT + "s%s", "[DEBUG] ", message);
+		LogMessage.log("DEBUG", message, breakLine);
 	}
 	
 	

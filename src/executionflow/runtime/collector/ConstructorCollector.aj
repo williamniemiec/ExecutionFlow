@@ -9,7 +9,7 @@ import org.aspectj.lang.JoinPoint;
 
 import executionflow.info.InvokedContainer;
 import executionflow.info.InvokedInfo;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Captures class instantiation within test methods.
@@ -64,6 +64,7 @@ public aspect ConstructorCollector extends RuntimeCollector {
 		&& !cflowbelow(withincode(* *(..)))
 		&& !within(executionflow..*)
 		&& !within(api..*)
+		&& !within(util..*)
 		&& !within(ConstructorCollector);
 	
 	

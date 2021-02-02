@@ -19,7 +19,7 @@ import executionflow.io.processor.factory.FileProcessorFactory;
 import executionflow.io.processor.fileprocessor.FileProcessor;
 import executionflow.lib.LibraryManager;
 import executionflow.util.FileUtil;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Responsible for managing file processing and compilation for a file.

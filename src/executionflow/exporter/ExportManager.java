@@ -17,7 +17,7 @@ import executionflow.exporter.testpath.TestPathExportType;
 import executionflow.exporter.testpath.TestPathExporter;
 import executionflow.info.InvokedContainer;
 import executionflow.info.InvokedInfo;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Responsible for performing the exports that the application performs, which 

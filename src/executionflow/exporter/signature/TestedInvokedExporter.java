@@ -11,7 +11,7 @@ import java.util.Set;
 import executionflow.info.InvokedContainer;
 import executionflow.util.CSV;
 import executionflow.util.DataUtil;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Responsible for exporting invoked along with the test method that tests it
