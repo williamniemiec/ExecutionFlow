@@ -225,7 +225,7 @@ public class JUnit4Runner {
 		String line;
 		boolean fatalError = false;
 		
-		while (!fatalError && !stopped && (line = output.readLine()) != null) {
+		while (/*!fatalError &&*/ !stopped && (line = output.readLine()) != null) {
 			boolean error = checkErrors();
 			
 			if (line.contains("OK (")) {

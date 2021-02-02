@@ -37,7 +37,7 @@ public abstract class Analyzer {
 	protected Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked;
 	protected InvokedInfo invoked;
 	protected InvokedInfo testMethod;
-	protected JDB jdb;
+	protected volatile JDB jdb;
 	protected boolean stopJDB;
 	private List<String> commands;
 	private Object lock = new Object();
@@ -103,6 +103,7 @@ public abstract class Analyzer {
 		}
 		
 		mergeMethodsCalledByTestedInvoked();
+		
 		return this;
 	}
 
@@ -155,7 +156,7 @@ public abstract class Analyzer {
 	}
 
 	private void closeJDB() {
-		if (!jdb.isRunning())
+		if ((jdb == null) || !jdb.isRunning())
 			return;
 		
 		stopJDB = true;
@@ -166,14 +167,25 @@ public abstract class Analyzer {
 		} 
 		catch (InterruptedException e) {
 		}
+		
+		stopJDB = true;
 	}
 	
 	private void closeJDBImmediately() {
+		if (jdb == null)
+			return;
+		
 		if (!jdb.isRunning())
 			return;
 		
 		stopJDB = true;
-		jdb.forceQuit();
+		
+		try {
+			jdb.forceQuit();
+		} 
+		catch (IOException e) {
+			Logger.error(e.getMessage());
+		}
 	}
 	
 	private String[] buildExitCommand() {
@@ -218,7 +230,8 @@ public abstract class Analyzer {
 				mcti.delete();
 				closeJDBImmediately();
 				testPaths.clear();
-				Analyzer.setTimeout(true);
+				
+				timeout = true;
 			}
 		}, TIMEOUT_ID, TIMEOUT_TIME);
 	}

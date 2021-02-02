@@ -65,10 +65,19 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	protected void run() throws IOException {
+		try {
+			runJDB();
+		}
+		catch (IllegalStateException e) {
+			// Debugger was closed before execution ended
+		}
+	}
+	
+	private void runJDB() throws IOException {
 		boolean wasNewIteration = false;
 		
 		while (!stopJDB && !timeout) {
-			while (!wasNewIteration && !timeout && !parseOutput())
+			while (!wasNewIteration && !timeout && !stopJDB && !parseOutput())
 				;
 			
 			wasNewIteration = false;
@@ -121,12 +130,12 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private void readAllOutput() throws IOException	{
-		while (!parseOutput())
+		while (!parseOutput() && !timeout && !stopJDB)
 			;
 	}
 	
 	private void skipInternalCalls() throws IOException {
-		while (isInternalCommand) {					
+		while (isInternalCommand && !timeout && !stopJDB) {					
 			sendJDB("next");
 			readAllOutput();
 		}
@@ -136,7 +145,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		if (!isJDBReady())
 			return false;
 
-    	initializeLine();
+		initializeLine();
     	
     	if (isEmptyLine())
     		return false;
