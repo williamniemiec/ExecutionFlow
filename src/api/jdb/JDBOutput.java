@@ -17,6 +17,9 @@ class JDBOutput {
 	//		Attributes
 	//---------------------------------------------------------------------
 	private BufferedReader output;
+	private static boolean exit;
+	private String buffer;
+	private String lastBuffer;
 	
     
     //---------------------------------------------------------------------
@@ -31,6 +34,8 @@ class JDBOutput {
 				new InputStreamReader(
 						jdbProcess.getInputStream()
 		));
+		exit = false;
+		lastBuffer = "";
 	}
 	
 	
@@ -44,9 +49,46 @@ class JDBOutput {
 	 * @return		JDB output
 	 * 
 	 * @throws		IOException If it cannot read JDB output
+	 * @throws		IllegalStateException If output is closed
 	 */
 	public String read() throws IOException {
-		return output.readLine();
+		if (output == null)
+			throw new IllegalStateException("Output is closed");
+		
+		readOutput();
+		waitForOutput();
+		
+		if (buffer == null)
+			throw new IllegalStateException("Output is closed");
+		
+		return buffer;
+	}
+
+	private void readOutput() {
+		buffer = null;
+		
+		Thread reader = new Thread(() -> {
+			String currentBuffer = "";
+			
+			try {
+				do {
+					currentBuffer = output.readLine();
+				}
+				while (currentBuffer.equals(lastBuffer) && !exit && (output != null));
+				
+				buffer = currentBuffer;
+				lastBuffer = currentBuffer;
+			} 
+			catch (IOException e) {
+			}
+		});
+		
+		reader.start();
+	}
+	
+	private void waitForOutput() {
+		while ((buffer == null) && !exit)
+			;
 	}
 	
 	/**
@@ -56,6 +98,9 @@ class JDBOutput {
 	 * called; otherwise, returns false
 	 */
 	public boolean isReady() {
+		if (output == null)
+			return false;
+		
 		try {
 			return output.ready();
 		} 
@@ -71,6 +116,7 @@ class JDBOutput {
 	 * @return		List of read JDB output
 	 * 
 	 * @throws		IOException If it cannot read JDB output
+	 * @throws		IllegalStateException If output is closed
 	 */
 	public List<String> readAll() throws IOException {
 		List<String> response = new ArrayList<>();
@@ -86,10 +132,17 @@ class JDBOutput {
 	 * Closes JDB input.
 	 */
 	public void close() {
+		if (output == null)
+			return;
+		
+		exit = true;
+
 		try {
 			output.close();
 		} 
 		catch (IOException e) {
 		}
+		
+		output = null;
 	}
 }

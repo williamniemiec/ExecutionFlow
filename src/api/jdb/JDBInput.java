@@ -42,8 +42,13 @@ class JDBInput {
 	 * {@link JDBOutput#read()} for JDB to process the command.
 	 * 
 	 * @param		command Command that will be sent to JDB
+	 * 
+	 * @throws		IllegalStateException If input is closed
 	 */
 	public void send(String command) {
+		if (input == null)
+			throw new IllegalStateException("Input is closed");
+		
 		input.println(command);
 	}
 	
@@ -52,8 +57,13 @@ class JDBInput {
 	 * {@link JDBOutput#read()} for JDB to process these commands.
 	 * 
 	 * @param		command Commands that will be sent to JDB
+	 * 
+	 * @throws		IllegalStateException If input is closed
 	 */
 	public void send(String... commands) {
+		if (input == null)
+			throw new IllegalStateException("Input is closed");
+		
 		for (String command : commands) {
 		    input.println(command);
 		}
@@ -63,6 +73,10 @@ class JDBInput {
 	 * Closes JDB input.
 	 */
 	public void close() {
+		if (input == null)
+			return;
+		
 		input.close();
+		input = null;
 	}
 }
