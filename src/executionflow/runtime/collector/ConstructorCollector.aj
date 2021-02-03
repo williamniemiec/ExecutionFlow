@@ -56,6 +56,8 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	private pointcut onClassInstantiation(): 
 		!skipAnnotation()
 		&& (insideJUnit4Test() || insideJUnit5Test())
+		&& !within(api..*)
+		&& !within(util..*)
 		&& call(*.new(..));
 
 	private pointcut insideConstructor(): 

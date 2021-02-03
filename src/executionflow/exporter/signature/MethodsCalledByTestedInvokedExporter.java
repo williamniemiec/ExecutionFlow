@@ -1,6 +1,5 @@
 package executionflow.exporter.signature;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +25,7 @@ import util.logger.Logger;
  * </code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		2.0.0
  */
 public class MethodsCalledByTestedInvokedExporter 
@@ -37,7 +36,7 @@ public class MethodsCalledByTestedInvokedExporter
 	private String dirName;
 	private String filename;
 	private Set<String> methodsCalledByTestedInvoked;
-	private File exportFile;
+	private CSV csvFile;
 	
 	
 	//-------------------------------------------------------------------------
@@ -94,18 +93,18 @@ public class MethodsCalledByTestedInvokedExporter
 		}
 
 		this.methodsCalledByTestedInvoked = methodsCalledByTestedInvoked;
-		this.exportFile = createExportFile(invoked);
+		createExportFile(invoked);
 		
 		mergeWithStoredExport();
 		storeExportFile(invoked);
 	}
 
-	private File createExportFile(InvokedInfo invoked) throws IOException {
+	private void createExportFile(InvokedInfo invoked) throws IOException {
 		Path directory = generateDirectoryFromSignature(invoked);
 		
 		Files.createDirectories(directory);
 		
-		return new File(directory.toFile(), filename + ".csv");
+		csvFile = new CSV(directory.toFile(), filename);
 	}
 
 	private Path generateDirectoryFromSignature(InvokedInfo invoked) {
@@ -121,11 +120,11 @@ public class MethodsCalledByTestedInvokedExporter
 	}
 
 	private void mergeWithStoredExport() {
-		if (!exportFile.exists())
+		if (!csvFile.exists())
 			return;
 		
 		try {
-			for (List<String> line : CSV.read(exportFile, ";")) {
+			for (List<String> line : csvFile.read(";")) {
 				// Merges CSV content with collected content
 				for (int i=1; i<line.size(); i++) {
 					if (!methodsCalledByTestedInvoked.contains(line.get(i)))
@@ -133,7 +132,7 @@ public class MethodsCalledByTestedInvokedExporter
 				}
 			}
 			
-			exportFile.delete();
+			csvFile.delete();
 		} 
 		catch (IOException e2) {
 			Logger.debug("Failed to read CSV file - "+e2.getMessage());
@@ -148,7 +147,7 @@ public class MethodsCalledByTestedInvokedExporter
 					.collect(Collectors.toList());
 			
 			mcti.add(0, invoked.getConcreteInvokedSignature());
-			CSV.write(mcti, exportFile, ";");
+			csvFile.write(mcti, ";");
 		} 
 		catch (IOException e2) {
 			Logger.debug("Failed to write CSV file - "+e2.getMessage());

@@ -27,8 +27,16 @@ public class Pair<T1, T2> {
 	 * 
 	 * @param		first First element
 	 * @param		second Second element
+	 * 
+	 * @throws		IllegalArgumentException If first or second is null
 	 */
 	public Pair(T1 first, T2 second) {
+		if (first == null)
+			throw new IllegalArgumentException("First cannot be null");
+		
+		if (second == null)
+			throw new IllegalArgumentException("Second cannot be null");
+		
 		this.first = first;
 		this.second = second;
 	}
@@ -72,7 +80,9 @@ public class Pair<T1, T2> {
 	 * @param		first First element
 	 * @param		second Second element
 	 * 
-	 * @return		Pair instance		
+	 * @return		Pair instance
+	 * 
+	 * @throws		IllegalArgumentException If first or second is null
 	 */
 	public static <T1, T2> Pair<T1, T2> of(T1 first, T2 second) {
         return new Pair<T1, T2>(first, second);
@@ -87,6 +97,9 @@ public class Pair<T1, T2> {
 	}
 	
 	public void setFirst(T1 first) {
+		if (first == null)
+			throw new IllegalArgumentException("First cannot be null");
+		
 		this.first = first;
 	}
 	
@@ -95,6 +108,9 @@ public class Pair<T1, T2> {
 	}
 	
 	public void setSecond(T2 second) {
+		if (second == null)
+			throw new IllegalArgumentException("Second cannot be null");
+		
 		this.second = second;
 	}
 }

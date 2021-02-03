@@ -18,24 +18,41 @@ import java.util.List;
 public class CSV {
 	
 	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
+	private File csvFile;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	/**
+	 * @param		directory Directory where CSV will be stored
+	 * @param		filename CSV filename (without '.csv')
+	 */
+	public CSV(File directory, String filename) {
+		csvFile = new File(directory, filename + ".csv");
+	}
+	
+	
+	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
 	 * Reads exported CSV file and returns a Map with its content.
 	 * 
-	 * @param		filepath CSV file location
 	 * @param		separator Symbol that separates items
 	 *
 	 * @return		Matrix with CSV content
 	 * 
-	 * @throws		IOException If CSV file cannot be read 
+	 * @throws		IOException If CSV file cannot be read
 	 */
-	public static List<List<String>> read(File filepath, String separator) 
+	public List<List<String>> read(String separator) 
 			throws IOException {
 		List<List<String>> content = new ArrayList<>();
 		String line;
 		
-		try (BufferedReader csv = new BufferedReader(new FileReader(filepath))) {
+		try (BufferedReader csv = new BufferedReader(new FileReader(csvFile))) {
 			while ((line = csv.readLine()) != null) {
 				content.add(stringToList(line, separator));
 			}
@@ -44,22 +61,20 @@ public class CSV {
 		return content;
 	}
 	
-	private static List<String> stringToList(String str, String separator) {
+	private List<String> stringToList(String str, String separator) {
 		return Arrays.asList(str.split(separator));
 	}
 	
 	/**
 	 * Reads exported CSV file and returns a Map with its content. Using this
 	 * method, separator will be a comma.
-	 * 
-	 * @param		filepath CSV file location
 	 *
 	 * @return		Matrix with CSV content
 	 * 
 	 * @throws		IOException If CSV file cannot be read 
 	 */
-	public static List<List<String>> read(File filepath) throws IOException {
-		return read(filepath, ",");
+	public List<List<String>> read() throws IOException {
+		return read(",");
 	}
 	
 	/**
@@ -67,33 +82,31 @@ public class CSV {
 	 * comma.
 	 * 
 	 * @param		content Content to be written (lines)
-	 * @param		Path where CSV file will be saved
 	 * 
 	 * @throws		IOException If an error occurs while writing the file 
 	 */
-	public static void write(List<String> content, File output) 
+	public void write(List<String> content) 
 			throws IOException {
-		write(content, output, ",");
+		write(content, ",");
 	}
 	
 	/**
 	 * Writes a content to a CSV file.
 	 * 
 	 * @param		content Content to be written (lines)
-	 * @param		Path where CSV file will be saved
 	 * @param		separator Symbol that separates items
 	 * 
 	 * @throws		IOException If an error occurs while writing the file 
 	 */
-	public static void write(List<String> content, File output, String separator) 
+	public void write(List<String> content, String separator) 
 			throws IOException {
-		try (BufferedWriter csv = new BufferedWriter(new FileWriter(output, true))) {
+		try (BufferedWriter csv = new BufferedWriter(new FileWriter(csvFile, csvFile.exists()))) {
 			csv.write(listToString(content, separator));
 			csv.newLine();
 		}
 	}
 	
-	private static String listToString(List<String> list, String separator) {
+	private String listToString(List<String> list, String separator) {
 		StringBuilder str = new StringBuilder();
 
 		for (String element : list) {
@@ -105,5 +118,17 @@ public class CSV {
 		str = str.deleteCharAt(str.length()-1);
 		
 		return str.toString();
+	}
+	
+	public void delete() {
+		csvFile.delete();
+	}
+	
+	public boolean exists() {
+		return csvFile.exists();
+	}
+	
+	public String getAbsolutePath() {
+		return csvFile.getAbsolutePath();
 	}
 }

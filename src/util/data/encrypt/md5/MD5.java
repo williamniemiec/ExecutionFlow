@@ -28,8 +28,16 @@ public class MD5 {
 	 * @param		text Text to be encrypted
 	 * 
 	 * @return		Encrypted text or empty string if an error occurs
+	 * 
+	 * @throws		IllegalArgumentException If text is null
 	 */
 	public static String encrypt(String text) {
+		if (text == null)
+			throw new IllegalArgumentException("Text cannot be null");
+		
+		if (text.isBlank())
+			return "";
+		
 		String encryptedText;
 		
 		try {
