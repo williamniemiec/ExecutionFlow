@@ -43,7 +43,7 @@ public class DirectorySearcher {
 		boolean hasDirectoryWithProvidedName = false;
 		
 		while (!hasDirectoryWithProvidedName) {
-			hasDirectoryWithProvidedName = hasFileWithName(directoryName);
+			hasDirectoryWithProvidedName = hasFileWithName(directoryName, currentDirectory);
 
 			if (!hasDirectoryWithProvidedName)
 				currentDirectory = new File(currentDirectory.getParent());
@@ -52,7 +52,7 @@ public class DirectorySearcher {
 		return currentDirectory;
 	}
 
-	private boolean hasFileWithName(String name) {
+	private boolean hasFileWithName(String name, File workingDirectory) {
 		String[] files = workingDirectory.list();
 		
 		for (int i=0; i<files.length; i++) {
