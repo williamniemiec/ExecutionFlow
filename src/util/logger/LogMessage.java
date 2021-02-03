@@ -5,18 +5,20 @@ package util.logger;
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class LogMessage {
+class LogMessage {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final int PADDING_LEFT = 8;
+	private String lastMessage = "";
+	private String lastMessageType;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private LogMessage() {
+	LogMessage() {
 	}
 	
 	
@@ -31,11 +33,14 @@ public class LogMessage {
 	 * @param		breakline Indicates whether there should be a line break 
 	 * after the log message. Default is true.
 	 */
-	public static void log(String type, String message, boolean breakline) {
+	public void log(String type, String message, boolean breakline) {
 		System.out.printf("%-" + PADDING_LEFT + "s %s", formatType(type), message);
 		
 		if (breakline)
 			System.out.println();
+
+		lastMessage = message;
+		lastMessageType = type;
 	}
 	
 	/**
@@ -44,11 +49,28 @@ public class LogMessage {
 	 * @param		type Message type (error, warn, info...)
 	 * @param		message Message to be displayed
 	 */
-	public static void log(String type, String message) {
+	public void log(String type, String message) {
 		log(type, message, true);
 	}
 	
 	private static String formatType(String type) {
 		return "[" + type + "]";
+	}
+	
+	public void clear() {
+		lastMessage = "";
+		lastMessageType = "";
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	public String getLastMessage() {
+		return lastMessage;
+	}
+	
+	public String getLastMessageType() {
+		return lastMessageType;
 	}
 }

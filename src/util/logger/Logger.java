@@ -10,7 +10,17 @@ public class Logger {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static LogLevel level = LogLevel.INFO;
+	private static LogLevel level;
+	private static LogMessage logMessage;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
+	static {
+		level = LogLevel.INFO;
+		logMessage = new LogMessage();
+	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -24,40 +34,6 @@ public class Logger {
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * Displays an information message. <br />
-	 * <b>Format:</b> <code>[INFO] &lt;message&gt;</code>
-	 * 
-	 * @param		message Message to be displayed
-	 * 
-	 * @implSpec	By default it is added a break line at the end of the 
-	 * message
-	 */
-	public static void info(String message) {
-		info(message, true);
-	}
-	
-	/**
-	 * Displays an information message. <br />
-	 * <b>Format:</b> <code>[INFO] &lt;message&gt;</code>
-	 * 
-	 * @param		message Message to be displayed
-	 * @param		breakLine If a break line is added at the end of the
-	 * message
-	 * 
-	 * @implSpec	By default it is added a break line at the end of the 
-	 * message
-	 * 
-	 * @implNote	If breakLine is false, will not be added a break line at 
-	 * the end of the message
-	 */
-	public static void info(String message, boolean breakLine) {
-		if (!level.shouldDisplayInfo())
-			return;
-		
-		LogMessage.log("INFO", message, breakLine);
-	}
-	
-	/**
 	 * Displays an error message. <br />
 	 * <b>Format:</b> <code>[ERROR] &lt;message&gt;</code>
 	 * 
@@ -65,6 +41,8 @@ public class Logger {
 	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
+	 * 
+	 * @throws		IllegalArgumentException If message is null
 	 */
 	public static void error(String message) {
 		error(message, true);
@@ -83,12 +61,17 @@ public class Logger {
 	 * 
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message
+	 * 
+	 * @throws		IllegalArgumentException If message is null
 	 */
 	public static void error(String message, boolean breakLine) {
-		if (!level.shouldDisplayInfo())
+		if (message == null)
+			throw new IllegalArgumentException("Message cannot be null");
+		
+		if (!level.shouldDisplayError())
 			return;
 		
-		LogMessage.log("ERROR", message, breakLine);
+		logMessage.log("ERROR", message, breakLine);
 	}
 	
 	/**
@@ -99,6 +82,8 @@ public class Logger {
 	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
+	 * 
+	 * @throws		IllegalArgumentException If message is null
 	 */
 	public static void warning(String message) {
 		warning(message, true);
@@ -117,12 +102,58 @@ public class Logger {
 	 * 
 	 * @implNote	If breakLine is false, will not be added a break line at 
 	 * the end of the message
+	 * 
+	 * @throws		IllegalArgumentException If message is null
 	 */
 	public static void warning(String message, boolean breakLine) {
+		if (message == null)
+			throw new IllegalArgumentException("Message cannot be null");
+		
 		if (!level.shouldDisplayWarning())
 			return;
 		
-		LogMessage.log("WARN", message, breakLine);
+		logMessage.log("WARN", message, breakLine);
+	}
+	
+	/**
+	 * Displays an information message. <br />
+	 * <b>Format:</b> <code>[INFO] &lt;message&gt;</code>
+	 * 
+	 * @param		message Message to be displayed
+	 * 
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
+	 * 
+	 * @throws		IllegalArgumentException If message is null
+	 */
+	public static void info(String message) {
+		info(message, true);
+	}
+	
+	/**
+	 * Displays an information message. <br />
+	 * <b>Format:</b> <code>[INFO] &lt;message&gt;</code>
+	 * 
+	 * @param		message Message to be displayed
+	 * @param		breakLine If a break line is added at the end of the
+	 * message
+	 * 
+	 * @implSpec	By default it is added a break line at the end of the 
+	 * message
+	 * 
+	 * @implNote	If breakLine is false, will not be added a break line at 
+	 * the end of the message
+	 * 
+	 * @throws		IllegalArgumentException If message is null
+	 */
+	public static void info(String message, boolean breakLine) {
+		if (message == null)
+			throw new IllegalArgumentException("Message cannot be null");
+		
+		if (!level.shouldDisplayInfo())
+			return;
+		
+		logMessage.log("INFO", message, breakLine);
 	}
 	
 	/**
@@ -134,8 +165,13 @@ public class Logger {
 	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
+	 * 
+	 * @throws		IllegalArgumentException If message or source is null
 	 */
 	public static void debug(Class<?> source, String message) {
+		if (source == null)
+			throw new IllegalArgumentException("Source cannot be null");
+		
 		debug("{ " + getClassName(source) + " } " + message, true);
 	}
 	
@@ -153,6 +189,8 @@ public class Logger {
 	 * 
 	 * @implSpec	By default it is added a break line at the end of the 
 	 * message
+	 * 
+	 * @throws		IllegalArgumentException If message is null
 	 */
 	public static void debug(String message) {
 		debug(message, true);
@@ -170,13 +208,22 @@ public class Logger {
 	 * message
 	 * 
 	 * @implNote	If breakLine is false, will not be added a break line at 
-	 * the end of the message	
+	 * the end of the message
+	 * 
+	 * @throws		IllegalArgumentException If message is null
 	 */
 	public static void debug(String message, boolean breakLine) {
+		if (message == null)
+			throw new IllegalArgumentException("Message cannot be null");
+		
 		if (!level.shouldDisplayDebug())
 			return;
 		
-		LogMessage.log("DEBUG", message, breakLine);
+		logMessage.log("DEBUG", message, breakLine);
+	}
+	
+	public static void clearLastMessage() {
+		logMessage.clear();
 	}
 	
 	
@@ -198,8 +245,21 @@ public class Logger {
 	 * displayed.
 	 * 
 	 * @param		level New level
+	 * 
+	 * @throws		IllegalArgumentException If level is null
 	 */
 	public static void setLevel(LogLevel level) {
+		if (level == null)
+			throw new IllegalArgumentException("Level cannot be null");
+		
 		Logger.level = level;
+	}
+	
+	public static String getLastMessage() {
+		return logMessage.getLastMessage();
+	}
+	
+	public static String getLastMessageType() {
+		return logMessage.getLastMessageType();
 	}
 }

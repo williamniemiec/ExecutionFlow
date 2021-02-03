@@ -27,8 +27,8 @@ import executionflow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
 import executionflow.user.RemoteControl;
-import executionflow.util.logger.LogLevel;
-import executionflow.util.logger.Logger;
+import util.logger.LogLevel;
+import util.logger.Logger;
 
 public abstract class ExecutionFlowTest {
 	
