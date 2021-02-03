@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Responsible for reading and writing CSV files.
+ * Responsible for handling CSV files.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
@@ -27,10 +27,20 @@ public class CSV {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	/**
+	 * Handles CSV files. 
+	 * 
 	 * @param		directory Directory where CSV will be stored
 	 * @param		filename CSV filename (without '.csv')
+	 * 
+	 * @throws		IllegalArgumentException If directory or filename is null
 	 */
 	public CSV(File directory, String filename) {
+		if (directory == null)
+			throw new IllegalArgumentException("Directory cannot be null");
+		
+		if (filename == null)
+			throw new IllegalArgumentException("Filename cannot be null");
+		
 		csvFile = new File(directory, filename + ".csv");
 	}
 	
@@ -46,9 +56,12 @@ public class CSV {
 	 * @return		Matrix with CSV content
 	 * 
 	 * @throws		IOException If CSV file cannot be read
+	 * @throws		IllegalArgumentException If separator is null
 	 */
-	public List<List<String>> read(String separator) 
-			throws IOException {
+	public List<List<String>> read(String separator) throws IOException {
+		if (separator == null)
+			throw new IllegalArgumentException("Separator cannot be null");
+		
 		List<List<String>> content = new ArrayList<>();
 		String line;
 		
@@ -84,10 +97,10 @@ public class CSV {
 	 * @param		content Content to be written (lines)
 	 * 
 	 * @throws		IOException If an error occurs while writing the file 
+	 * @throws		IllegalArgumentException If content is null
 	 */
-	public void write(List<String> content) 
-			throws IOException {
-		write(content, ",");
+	public void writeLine(List<String> content) throws IOException {
+		writeLine(content, ",");
 	}
 	
 	/**
@@ -97,9 +110,15 @@ public class CSV {
 	 * @param		separator Symbol that separates items
 	 * 
 	 * @throws		IOException If an error occurs while writing the file 
+	 * @throws		IllegalArgumentException If content or separator is null
 	 */
-	public void write(List<String> content, String separator) 
-			throws IOException {
+	public void writeLine(List<String> content, String separator) throws IOException {
+		if (content == null)
+			throw new IllegalArgumentException("Content cannot be null");
+		
+		if (separator == null)
+			throw new IllegalArgumentException("Separator cannot be null");
+		
 		try (BufferedWriter csv = new BufferedWriter(new FileWriter(csvFile, csvFile.exists()))) {
 			csv.write(listToString(content, separator));
 			csv.newLine();
@@ -128,6 +147,10 @@ public class CSV {
 		return csvFile.exists();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
 	public String getAbsolutePath() {
 		return csvFile.getAbsolutePath();
 	}
