@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import executionflow.io.SourceCodeProcessor;
 import executionflow.util.DataUtil;
-import executionflow.util.balance.CurlyBracketBalance;
+import util.io.parser.balance.CurlyBracketBalance;
 
 /**
  * Responsible for disabling collectors in a test method and converting

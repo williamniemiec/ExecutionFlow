@@ -1,14 +1,13 @@
 package executionflow.util;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import util.data.encrypt.md5.MD5;
 
 /**
  * Contains methods that perform data manipulation.
@@ -112,7 +111,7 @@ public class DataUtil {
 		String folderName = getFolderName(signatureFields, isConstructor) 
 				+ reduceSignature(extractParametersFromSignature(invokedSignature));
 		
-		return folderPath + "/" + FileUtil.replaceReservedCharacters(folderName);
+		return folderPath + "/" + FileUtils.replaceReservedCharacters(folderName);
 	}
 	
 	private static String[] extractSignatureFields(String signature) {
@@ -191,30 +190,7 @@ public class DataUtil {
 			folderName = className + "." + methodName;
 		}
 		
-		return FileUtil.replaceReservedCharacters(folderName);
-	}
-	
-	/**
-	 * Encrypts a text in MD5.
-	 * 
-	 * @param		text Text to be encrypted
-	 * 
-	 * @return		Encrypted text or the text if an error occurs
-	 */
-	public static String md5(String text) {
-		String md5Text;
-		
-		try {
-			MessageDigest m = MessageDigest.getInstance("MD5");
-			m.update(text.getBytes(), 0, text.length());
-			
-			md5Text = new BigInteger(1, m.digest()).toString(16);
-		} 
-		catch (NoSuchAlgorithmException e) {
-			md5Text = text;
-		}
-		
-		return md5Text;
+		return FileUtils.replaceReservedCharacters(folderName);
 	}
 	
 	/**
@@ -224,28 +200,11 @@ public class DataUtil {
 	 * @return		Variable name
 	 */
 	public static String generateVarName() {
-		return ("_" + md5(String.valueOf(generateRandomNumber())));
+		return ("_" + MD5.encrypt(String.valueOf(generateRandomNumber())));
 	}
 	
 	private static double generateRandomNumber() {
 		return (new Date().getTime() + (Math.random() * 9999 + 1));
-	}
-	
-	/**
-	 * Gets indentation of a line.
-	 * 
-	 * @param		line Line to be taken indentation
-	 * 
-	 * @return		Indentation or empty string if there is no indentation
-	 */
-	public static String getIndentation(String line) {
-		final String regexIndent = "^(\\ |\\t)+";
-		Matcher m = Pattern.compile(regexIndent).matcher(line);
-		
-		if (!m.find())
-			return "";
-		
-		return m.group();
 	}
 	
 	public static String extractContentBetweenParenthesis(String content) {

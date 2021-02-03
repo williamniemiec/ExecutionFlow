@@ -1,4 +1,4 @@
-package executionflow.util;
+package util.task;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.TimerTask;
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class Clock {
+public class Scheduler {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -30,7 +30,7 @@ public class Clock {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private Clock() {
+	private Scheduler() {
 	}
 	
 	//-------------------------------------------------------------------------

@@ -29,11 +29,12 @@ import executionflow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
 import executionflow.lib.LibraryManager;
 import executionflow.user.RemoteControl;
-import executionflow.user.Session;
-import executionflow.util.Checkpoint;
+import util.data.storage.Session;
+import util.io.search.ClassPathSearcher;
 import util.logger.LogLevel;
 import util.logger.LogView;
 import util.logger.Logger;
+import util.task.Checkpoint;
 
 /**
  * Run in each test method

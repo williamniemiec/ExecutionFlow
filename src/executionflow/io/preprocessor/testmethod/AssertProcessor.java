@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 import executionflow.io.SourceCodeProcessor;
 import executionflow.util.DataUtil;
-import executionflow.util.balance.RoundBracketBalance;
+import util.io.parser.balance.RoundBracketBalance;
 
 /**
  * Surround asserts with try-catch so that test method execution does not

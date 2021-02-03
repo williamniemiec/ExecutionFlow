@@ -2,7 +2,6 @@ package executionflow.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -18,12 +17,12 @@ import java.util.List;
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class FileUtil {
+public class FileUtils {
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private FileUtil() {
+	private FileUtils() {
 	}
 	
 	
@@ -83,31 +82,6 @@ public class FileUtil {
 		for (int i=0; i<fileContent.size(); i++) {
 			System.out.printf("%-5d\t%s\n", i+1, fileContent.get(i));
 		}
-	}
-	
-	public static File searchDirectory(String directoryName, File workingDirectory) {
-		File currentDirectory = workingDirectory;
-		boolean hasDirectoryWithProvidedName = false;
-		
-		while (!hasDirectoryWithProvidedName) {
-			hasDirectoryWithProvidedName = hasFileWithName(directoryName, currentDirectory);
-
-			if (!hasDirectoryWithProvidedName)
-				currentDirectory = new File(currentDirectory.getParent());
-		}
-		
-		return currentDirectory;
-	}
-
-	private static boolean hasFileWithName(String name, File workingDirectory) {
-		String[] files = workingDirectory.list();
-		
-		for (int i=0; i<files.length; i++) {
-			if (files[i].equals(name))
-				return true;
-		}
-		
-		return false;
 	}
 	
 	public static String extractFilenameWithoutExtension(Path file) {

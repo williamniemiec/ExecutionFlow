@@ -24,7 +24,7 @@ import executionflow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
 import executionflow.runtime.collector.TestMethodCollector;
-import executionflow.util.FileUtil;
+import util.io.search.DirectorySearcher;
 import util.logger.Logger;
 
 /**
@@ -408,8 +408,9 @@ public abstract class ExecutionFlow {
 	
 	private static void initializeCurrentProjectRoot() {
 		File currentDirectory = new File(System.getProperty("user.dir"));
+		DirectorySearcher searcher = new DirectorySearcher(currentDirectory);
 		
-		currentProjectRoot = FileUtil.searchDirectory("src", currentDirectory).toPath();
+		currentProjectRoot = searcher.search("src").toPath();
 	}
 
 	/**

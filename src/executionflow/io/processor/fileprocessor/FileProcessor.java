@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 import executionflow.io.FileEncoding;
-import executionflow.util.FileUtil;
-import executionflow.util.formatter.JavaIndenter;
+import executionflow.util.FileUtils;
+import util.io.formatter.JavaIndenter;
 import util.logger.LogLevel;
 import util.logger.Logger;
 
@@ -49,11 +49,11 @@ public abstract class FileProcessor implements Serializable {
 		if (file == null)
 			return "";
 		
-		List<String> sourceCode = FileUtil.readLines(file, encoding.getStandardCharset());
+		List<String> sourceCode = FileUtils.readLines(file, encoding.getStandardCharset());
 		
 		sourceCode = doProcessing(sourceCode);
 		
-		FileUtil.writeLines(sourceCode, outputFile, encoding.getStandardCharset());
+		FileUtils.writeLines(sourceCode, outputFile, encoding.getStandardCharset());
 
 		dump(sourceCode);
 		
@@ -72,9 +72,9 @@ public abstract class FileProcessor implements Serializable {
 		Logger.debug(this.getClass(), "Processed file");
 		
 		if (formatedFile.size() < 30)
-			FileUtil.printFileWithLines(sourceCode);
+			FileUtils.printFileWithLines(sourceCode);
 		else
-			FileUtil.printFileWithLines(formatedFile);
+			FileUtils.printFileWithLines(formatedFile);
 		
 	}
 	

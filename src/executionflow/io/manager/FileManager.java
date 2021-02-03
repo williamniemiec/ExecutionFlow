@@ -18,7 +18,7 @@ import executionflow.io.compiler.CompilerFactory;
 import executionflow.io.processor.factory.FileProcessorFactory;
 import executionflow.io.processor.fileprocessor.FileProcessor;
 import executionflow.lib.LibraryManager;
-import executionflow.util.FileUtil;
+import executionflow.util.FileUtils;
 import util.logger.Logger;
 
 /**
@@ -64,7 +64,7 @@ public class FileManager implements Serializable {
 						FileProcessorFactory fileParserFactory) {
 		checkSrcPath(srcFilePath);
 		
-		String filename = FileUtil.extractFilenameWithoutExtension(srcFilePath);
+		String filename = FileUtils.extractFilenameWithoutExtension(srcFilePath);
 		
 		this.binDirectory = extractRootBinDirectory(binDirectory, classPackage);
 		

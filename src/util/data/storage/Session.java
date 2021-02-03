@@ -1,4 +1,4 @@
-package executionflow.user;
+package util.data.storage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +14,6 @@ import java.util.Map;
  * different processes and threads to have access to this information.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
- * @since		5.2.0
  */
 public class Session {
 	

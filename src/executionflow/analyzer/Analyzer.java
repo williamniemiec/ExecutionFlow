@@ -14,8 +14,8 @@ import java.util.Set;
 import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
 import executionflow.lib.LibraryManager;
-import executionflow.util.Clock;
 import util.logger.Logger;
+import util.task.Scheduler;
 import api.jdb.JDB;
 
 /**
@@ -219,13 +219,13 @@ public abstract class Analyzer {
 	}
 	
 	private void disableTimeout(final int TIMEOUT_ID) {
-		Clock.clearTimeout(TIMEOUT_ID);
+		Scheduler.clearTimeout(TIMEOUT_ID);
 	}
 
 	private void enableTimeout(final int TIMEOUT_ID, final int TIMEOUT_TIME) {
 		timeout = false;
 		
-		Clock.setTimeout(() -> {
+		Scheduler.setTimeout(() -> {
 			synchronized(lock) {
 				mcti.delete();
 				closeJDBImmediately();

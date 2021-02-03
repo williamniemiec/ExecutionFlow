@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.balance.RoundBracketBalance;
+import util.io.parser.balance.RoundBracketBalance;
 
 /**
  * Converts method calls with arguments on multiple lines to a call with 

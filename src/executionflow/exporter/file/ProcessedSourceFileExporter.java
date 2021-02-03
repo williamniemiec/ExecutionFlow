@@ -9,8 +9,8 @@ import java.util.Map;
 
 import executionflow.ExecutionFlow;
 import executionflow.util.DataUtil;
-import executionflow.util.FileUtil;
-import executionflow.util.formatter.JavaIndenter;
+import executionflow.util.FileUtils;
+import util.io.formatter.JavaIndenter;
 
 /**
  * Exports the processed file that will be used as the basis for processing the
@@ -66,11 +66,11 @@ public class ProcessedSourceFileExporter {
 		List<String> fileContent = getFileContent(processedFile);
 		Path outputFile = generateOutputPath(invokedSignature);
 		
-		FileUtil.writeLines(fileContent, outputFile, Charset.defaultCharset());
+		FileUtils.writeLines(fileContent, outputFile, Charset.defaultCharset());
 	}
 	
 	private List<String> getFileContent(Path processedFile) throws IOException {
-		List<String> fileContent = FileUtil.readLines(
+		List<String> fileContent = FileUtils.readLines(
 				processedFile, Charset.defaultCharset()
 		);
 		

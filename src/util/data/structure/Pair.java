@@ -1,4 +1,4 @@
-package executionflow.util;
+package util.data.structure;
 
 /**
  * Represents pairs of two elements. This implementation was based on std::pair

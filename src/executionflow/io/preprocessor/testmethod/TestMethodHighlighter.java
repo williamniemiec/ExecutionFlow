@@ -6,7 +6,7 @@ import java.util.List;
 import executionflow.info.InvokedInfo;
 import executionflow.io.SourceCodeProcessor;
 import executionflow.util.DataUtil;
-import executionflow.util.balance.CurlyBracketBalance;
+import util.io.parser.balance.CurlyBracketBalance;
 
 /**
  * Comments on all test methods except the one with the signature provided.

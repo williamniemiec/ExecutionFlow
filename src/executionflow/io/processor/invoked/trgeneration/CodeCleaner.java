@@ -13,8 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import executionflow.util.DataUtil;
-import executionflow.util.Pair;
-import executionflow.util.balance.CurlyBracketBalance;
+import util.data.structure.Pair;
+import util.io.parser.balance.CurlyBracketBalance;
 
 
 /**
