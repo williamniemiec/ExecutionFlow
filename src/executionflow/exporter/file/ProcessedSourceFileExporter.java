@@ -10,7 +10,7 @@ import java.util.Map;
 import executionflow.ExecutionFlow;
 import executionflow.util.DataUtil;
 import executionflow.util.FileUtils;
-import util.io.processor.JavaIndenter;
+import util.io.processor.JavaCodeIndenter;
 
 /**
  * Exports the processed file that will be used as the basis for processing the
@@ -74,9 +74,9 @@ public class ProcessedSourceFileExporter {
 				processedFile, Charset.defaultCharset()
 		);
 		
-		JavaIndenter indenter = new JavaIndenter();
+		JavaCodeIndenter indenter = new JavaCodeIndenter();
 		
-		fileContent = indenter.format(fileContent);
+		fileContent = indenter.indent(fileContent);
 		
 		return fileContent;
 	}

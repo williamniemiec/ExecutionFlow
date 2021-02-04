@@ -1,13 +1,10 @@
-package util.io.search;
+package executionflow.runtime.collector;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
 import executionflow.ExecutionFlow;
+import util.io.search.FileSearcher;
 
 /**
  * Searches for source or compiled files of a class.
@@ -15,14 +12,7 @@ import executionflow.ExecutionFlow;
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
 public class ClassPathSearcher {
-	
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private static Path binPath;
-	private static Path srcPath;
-	
-	
+
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
@@ -44,23 +34,9 @@ public class ClassPathSearcher {
 	 * @throws		IOException If an error occurs while searching for the file
 	 */
 	public static Path findBinPath(String classSignature) throws IOException {
-		String filename = generateCompiledFilename(classSignature);
-
-		binPath = null;
+		FileSearcher searcher = new FileSearcher(ExecutionFlow.getCurrentProjectRoot());
 		
-		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
-			@Override
-		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith(filename)) {
-		        	file = fixOrg(file);
-		        	binPath = file;
-		        }
-		        
-		        return FileVisitResult.CONTINUE;
-			}
-		});
-		
-		return binPath;
+		return searcher.search(generateCompiledFilename(classSignature));
 	}
 	
 	private static String generateCompiledFilename(String classSignature) {
@@ -113,13 +89,6 @@ public class ClassPathSearcher {
 		return terms[terms.length-1];
 	}
 	
-	private static Path fixOrg(Path file) {
-		return Path.of(file.toAbsolutePath().toString().replaceAll(
-				"(\\/|\\\\)org(\\/|\\\\)org(\\/|\\\\)", 
-				"/org/"
-		));
-	}
-	
 	/**
 	 * When executed it will determine the absolute path of a source file.
 	 * 
@@ -131,24 +100,9 @@ public class ClassPathSearcher {
 	 * @throws		IOException If an error occurs while searching for the file
 	 */
 	public static Path findSrcPath(String classSignature) throws IOException {
-		String filename = generateSrcFilename(classSignature);	
+		FileSearcher searcher = new FileSearcher(ExecutionFlow.getCurrentProjectRoot());
 		
-		srcPath = null;
-		
-		Files.walkFileTree(ExecutionFlow.getCurrentProjectRoot(), new SimpleFileVisitor<Path>() {
-			@Override
-		    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		        if (file.toString().endsWith(filename)) {
-		        	file = fixOrg(file);
-		        	srcPath = file;
-		        	return FileVisitResult.TERMINATE;
-		        }
-		        
-		        return FileVisitResult.CONTINUE;
-		    }
-		});
-		
-		return srcPath;
+		return searcher.search(generateSrcFilename(classSignature));
 	}
 	
 	private static String generateSrcFilename(String classSignature) {

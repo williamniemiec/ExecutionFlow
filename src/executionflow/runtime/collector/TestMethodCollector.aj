@@ -30,7 +30,6 @@ import executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
 import executionflow.lib.LibraryManager;
 import executionflow.user.RemoteControl;
 import util.data.storage.Session;
-import util.io.search.ClassPathSearcher;
 import util.logger.LogLevel;
 import util.logger.LogView;
 import util.logger.Logger;

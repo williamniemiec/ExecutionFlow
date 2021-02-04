@@ -33,6 +33,7 @@ public class Scheduler {
 	private Scheduler() {
 	}
 	
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -51,20 +52,22 @@ public class Scheduler {
 		if (timeoutRoutines.containsKey(id))
 			return false;
 		
-		Timer t = new Timer();
-		
-		t.schedule(createTaskFromRoutine(routine), delay);
-		
-		timeoutRoutines.put(id, t);
+		timeoutRoutines.put(id, scheduleTimeout(routine, delay));
 		
 		return true;
 	}
 	
+	private static Timer scheduleTimeout(Runnable routine, int delay) {
+		Timer timer = new Timer();
+		timer.schedule(createTaskFromRoutine(routine), delay);
+		
+		return timer; 
+	}
+
 	private static TimerTask createTaskFromRoutine(Runnable routine) {
 		return new TimerTask() {
 		    @Override
-		    public void run()
-		    {
+		    public void run() {
 		       routine.run();
 		    }
 		};
@@ -85,13 +88,16 @@ public class Scheduler {
 		if (intervalRoutines.containsKey(id))
 			return false;
 		
-		Timer t = new Timer();
-		
-		t.scheduleAtFixedRate(createTaskFromRoutine(routine), 0, interval);
-		
-		intervalRoutines.put(id, t);
+		intervalRoutines.put(id, scheduleInterval(routine, interval));
 		
 		return true;
+	}
+	
+	private static Timer scheduleInterval(Runnable routine, int interval) {
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(createTaskFromRoutine(routine), 0, interval);
+		
+		return timer; 
 	}
 	
 	/**

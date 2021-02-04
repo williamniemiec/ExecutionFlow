@@ -24,7 +24,6 @@ import executionflow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
 import executionflow.runtime.collector.TestMethodCollector;
-import util.io.search.DirectorySearcher;
 import util.logger.Logger;
 
 /**
@@ -406,11 +405,33 @@ public abstract class ExecutionFlow {
 		return currentProjectRoot;
 	}
 	
-	private static void initializeCurrentProjectRoot() {
+	private static void initializeCurrentProjectRoot() {		
+		currentProjectRoot = search("src").toPath();
+	}
+	
+	public static File search(String directoryName) {
 		File currentDirectory = new File(System.getProperty("user.dir"));
-		DirectorySearcher searcher = new DirectorySearcher(currentDirectory);
+		boolean hasDirectoryWithProvidedName = false;
 		
-		currentProjectRoot = searcher.search("src").toPath();
+		while (!hasDirectoryWithProvidedName) {
+			hasDirectoryWithProvidedName = hasFileWithName(directoryName, currentDirectory);
+
+			if (!hasDirectoryWithProvidedName)
+				currentDirectory = new File(currentDirectory.getParent());
+		}
+		
+		return currentDirectory;
+	}
+
+	private static boolean hasFileWithName(String name, File workingDirectory) {
+		String[] files = workingDirectory.list();
+		
+		for (int i=0; i<files.length; i++) {
+			if (files[i].equals(name) && new File(files[i]).isDirectory())
+				return true;
+		}
+		
+		return false;
 	}
 
 	/**

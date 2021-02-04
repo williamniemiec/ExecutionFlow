@@ -9,7 +9,7 @@ import java.util.List;
 
 import executionflow.io.FileEncoding;
 import executionflow.util.FileUtils;
-import util.io.processor.JavaIndenter;
+import util.io.processor.JavaCodeIndenter;
 import util.logger.LogLevel;
 import util.logger.Logger;
 
@@ -66,8 +66,8 @@ public abstract class FileProcessor implements Serializable {
 		if (Logger.getLevel() != LogLevel.DEBUG)
 			return;
 		
-		JavaIndenter indenter = new JavaIndenter();
-		List<String> formatedFile = indenter.format(sourceCode);
+		JavaCodeIndenter indenter = new JavaCodeIndenter();
+		List<String> formatedFile = indenter.indent(sourceCode);
 
 		Logger.debug(this.getClass(), "Processed file");
 		
