@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
 import executionflow.util.DataUtil;
-import util.io.CSV;
+import util.io.manager.CSVFileManager;
 import util.logger.Logger;
 
 /**
@@ -36,7 +36,7 @@ public class MethodsCalledByTestedInvokedExporter
 	private String dirName;
 	private String filename;
 	private Set<String> methodsCalledByTestedInvoked;
-	private CSV csvFile;
+	private CSVFileManager csvFile;
 	
 	
 	//-------------------------------------------------------------------------
@@ -104,7 +104,7 @@ public class MethodsCalledByTestedInvokedExporter
 		
 		Files.createDirectories(directory);
 		
-		csvFile = new CSV(directory.toFile(), filename);
+		csvFile = new CSVFileManager(directory.toFile(), filename);
 	}
 
 	private Path generateDirectoryFromSignature(InvokedInfo invoked) {
@@ -147,7 +147,7 @@ public class MethodsCalledByTestedInvokedExporter
 					.collect(Collectors.toList());
 			
 			mcti.add(0, invoked.getConcreteInvokedSignature());
-			csvFile.write(mcti, ";");
+			csvFile.writeLine(mcti, ";");
 		} 
 		catch (IOException e2) {
 			Logger.debug("Failed to write CSV file - "+e2.getMessage());

@@ -206,13 +206,14 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private void checkIncorrectInvocationLine() {
-		if (!line.contains("Stopping due to deferred breakpoint errors"))
+		if (!line.contains("Unable to set deferred breakpoint "))
 			return;
 		
 		try {
-			jdb.quit();
+			//jdb.quit();
+			jdb.forceQuit();
 		} 
-		catch (InterruptedException e) {
+		catch (IOException e) {
 		}
 		
 		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 

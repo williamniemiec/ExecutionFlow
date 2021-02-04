@@ -1,4 +1,4 @@
-package util.io;
+package util.io.manager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +15,7 @@ import java.util.List;
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  */
-public class CSV {
+public class CSVFileManager {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -34,7 +34,7 @@ public class CSV {
 	 * 
 	 * @throws		IllegalArgumentException If directory or filename is null
 	 */
-	public CSV(File directory, String filename) {
+	public CSVFileManager(File directory, String filename) {
 		if (directory == null)
 			throw new IllegalArgumentException("Directory cannot be null");
 		

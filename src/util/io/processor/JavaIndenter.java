@@ -1,6 +1,8 @@
-package util.io.formatter;
+package util.io.processor;
 
 import java.util.*;
+
+import util.io.parser.balance.CurlyBracketBalance;
 
 /**
  * Java indenter of // comments. Indent a Java program read from the standard
@@ -15,6 +17,7 @@ public class JavaIndenter {
 	 * difficult to correctly indent some Java code constructs etc. For example,
 	 * this comment, parts of a switch statement ...
 	 */
+	
 	// The stored Java program
 	private ArrayList<JavaLine> program = new ArrayList<>();
 
@@ -24,10 +27,39 @@ public class JavaIndenter {
 	// Comment flag for block comments and final pass
 	private static boolean commentFlag = false;
 	private static boolean blockComment = false;
-
+	private CurlyBracketBalance balance;
+	
+	public JavaIndenter() {
+		balance = new CurlyBracketBalance();
+	}
+	
 	public List<String> format(List<String> lines) {
-		process(lines);
-		return getProcessedLines();
+		
+		List<String> processedLines = new ArrayList<>();
+		
+		for (String line : lines) {
+			processedLines.add(indent(line));
+			balance.parse(line);
+		}
+		
+		return processedLines;
+//		process(lines);
+//		
+//		return getProcessedLines();
+	}
+
+	private String indent(String line) {		
+		return generateIndentation() + line;
+	}
+	
+	private String generateIndentation() {
+		StringBuilder indentation = new StringBuilder();
+		
+		for (int i = 0; i < balance.getBalance(); i++) {
+			indentation.append("\t");
+		}
+		
+		return indentation.toString();
 	}
 
 	private List<String> getProcessedLines() {
@@ -54,10 +86,11 @@ public class JavaIndenter {
 	 */
 	private void readProgram(List<String> lines) {
 		int bracketCount = 0;
+		CurlyBracketBalance balance = new CurlyBracketBalance();
 
 		for (String strLine : lines) {
 			if (strLine.equals("") && bracketCount == 0) {
-				break;
+				continue;
 			}
 			if (!strLine.equals("")) {
 
@@ -70,6 +103,7 @@ public class JavaIndenter {
 					bracketCount = checkBrackets(strLine, bracketCount);
 				}
 				// declaring new instance of JavaLine object parsing input strLine at given time
+				
 				program.add(new JavaLine(strLine, bracketCount));
 			}
 

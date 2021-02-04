@@ -11,19 +11,21 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Test;
 
+import util.io.manager.CSVFileManager;
+
 public class CSVTest {
 
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final CSV csv;
+	private static final CSVFileManager csv;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	static {
-		csv = new CSV(
+		csv = new CSVFileManager(
 				new File(System.getProperty("java.io.tmpdir")), 
 				"csv-test"
 		);
@@ -56,17 +58,17 @@ public class CSVTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testConstructorWithDirectoryNull() {
-		new CSV(null, "filename");
+		new CSVFileManager(null, "filename");
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testConstructorWithFilenameNull() {
-		new CSV(new File("."), null);
+		new CSVFileManager(new File("."), null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testConstructorWithDirectoryAndFilenameNull() {
-		new CSV(null, null);
+		new CSVFileManager(null, null);
 	}
 	
 	@Test

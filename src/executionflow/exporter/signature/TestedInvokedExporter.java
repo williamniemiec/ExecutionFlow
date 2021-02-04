@@ -10,7 +10,7 @@ import java.util.Set;
 
 import executionflow.info.InvokedContainer;
 import executionflow.util.DataUtil;
-import util.io.CSV;
+import util.io.manager.CSVFileManager;
 import util.logger.Logger;
 
 /**
@@ -48,7 +48,7 @@ public class TestedInvokedExporter {
 	 */
 	private Map<String, List<String>> invokedMethodSignatures;
 	
-	private CSV csvFile;
+	private CSVFileManager csvFile;
 	
 
 	//-------------------------------------------------------------------------
@@ -66,7 +66,7 @@ public class TestedInvokedExporter {
 			output.mkdir();
 		}
 		
-		this.csvFile = new CSV(output, filename);
+		this.csvFile = new CSVFileManager(output, filename);
 	}
 	
 	
@@ -174,7 +174,7 @@ public class TestedInvokedExporter {
 				List<String> content = e.getValue();
 				content.add(0, e.getKey());
 				
-				csvFile.write(content, ";");
+				csvFile.writeLine(content, ";");
 			}
 		} 
 		catch (IOException e1) {

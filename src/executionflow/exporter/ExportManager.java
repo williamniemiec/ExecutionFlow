@@ -59,8 +59,8 @@ public class ExportManager {
 	 * Sets test path export type.
 	 */
 	static {
-		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
+//		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
+		TEST_PATH_EXPORTER = TestPathExportType.FILE;
 	}
 	
 	

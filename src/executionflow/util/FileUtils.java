@@ -26,58 +26,6 @@ public class FileUtils {
 	}
 	
 	
-	//-------------------------------------------------------------------------
-	//		Methods
-	//-------------------------------------------------------------------------
-	/**
-	 * Gets all lines from a file and puts them in a list.
-	 * 
-	 * @param		file Base file
-	 * @param		encode File encoding
-	 * 
-	 * @return		List containing all lines of the file
-	 * 
-	 * @throws		IOException If an I/O error occurs opening the file
-	 */
-	public static List<String> readLines(Path file, Charset encode) throws IOException {
-		List<String> lines = new ArrayList<>();
-		String currentLine;
-		
-		try (BufferedReader br = Files.newBufferedReader(file, encode)) {
-			while ((currentLine = br.readLine()) != null) {
-				lines.add(currentLine);
-			}
-		}
-		
-		return lines;
-	}
-	
-	/**
-	 * Writes all items in a string list to a file.
-	 * 
-	 * @param		lines Content to be written
-	 * @param		file Output file
-	 * @param		encode File encoding 
-	 * 
-	 * @throws		IOException If an I/O error occurs while writing the file
-	 */
-	public static void writeLines(List<String> lines, Path file, Charset encode) 
-			throws IOException {
-		OpenOption[] options = {
-				StandardOpenOption.CREATE
-		};
-		
-		Files.deleteIfExists(file);
-		Files.createDirectories(file.getParent());
-		
-		try (BufferedWriter bw = Files.newBufferedWriter(file, encode, options)) {
-			for (String line : lines) {
-				bw.write(line.replaceAll("\\n", ""));
-				bw.newLine();
-			}
-		}
-	}
-	
 	public static void printFileWithLines(List<String> fileContent) {
 		for (int i=0; i<fileContent.size(); i++) {
 			System.out.printf("%-5d\t%s\n", i+1, fileContent.get(i));
