@@ -54,11 +54,23 @@ public class Checkpoint {
 	 */
 	public void enable() throws IOException {
 		prepareCheckpoint();
-		checkpointFileThread = createCheckpoint();
-		checkpointFileThread.start();
+		createCheckpoint();
+		startCheckpoint();
+	}
+	
+	private void prepareCheckpoint() throws IOException {
+		lock = new ReentrantLock();
+		condLock = lock.newCondition();
+		
+		try {
+			Files.deleteIfExists(checkpointFile);
+			Files.createFile(checkpointFile);
+		} 
+		catch(FileAlreadyExistsException e) {
+		}
 	}
 
-	private Thread createCheckpoint() {
+	private void createCheckpoint() {
 		Runnable r = () -> {
 			try (FileReader fr = new FileReader(checkpointFile.toFile())) {
 				lock.lock();
@@ -69,18 +81,16 @@ public class Checkpoint {
 			}
 		};
 		
-		return new Thread(r);
+		checkpointFileThread = new Thread(r);
 	}
-
-	private void prepareCheckpoint() throws IOException {
-		lock = new ReentrantLock();
-		condLock = lock.newCondition();
+	
+	private void startCheckpoint() {
+		checkpointFileThread.start();
 		
 		try {
-			Files.deleteIfExists(checkpointFile);
-			Files.createFile(checkpointFile);
+			Thread.sleep(200);
 		} 
-		catch(FileAlreadyExistsException e) {
+		catch (InterruptedException e) {
 		}
 	}
 

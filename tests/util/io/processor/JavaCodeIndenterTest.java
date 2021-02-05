@@ -1,4 +1,4 @@
-package util.io.manager.processor;
+package util.io.processor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

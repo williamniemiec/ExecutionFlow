@@ -47,8 +47,20 @@ public class Scheduler {
 	 * 
 	 * @return		False if an timeout has has already been set with the 
 	 * given id or true otherwise
+	 * 
+	 * @throws		IllegalArgumentException If routine is null or if id or 
+	 * delay is negative
 	 */
 	public static boolean setTimeout(Runnable routine, int id, int delay) {
+		if (routine == null)
+			throw new IllegalArgumentException("Routine cannot be null");
+		
+		if (id < 0)
+			throw new IllegalArgumentException("Id cannot be negative");
+		
+		if (delay < 0)
+			throw new IllegalArgumentException("Delay cannot be negative");
+		
 		if (timeoutRoutines.containsKey(id))
 			return false;
 		
@@ -83,8 +95,20 @@ public class Scheduler {
 	 * 
 	 * @return		False if an interval has has already been set with the 
 	 * given id or true otherwise
+	 * 
+	 * @throws		IllegalArgumentException If routine is null or if id or 
+	 * interval is negative
 	 */
 	public static boolean setInterval(Runnable routine, int id, int interval) {
+		if (routine == null)
+			throw new IllegalArgumentException("Routine cannot be null");
+		
+		if (id < 0)
+			throw new IllegalArgumentException("Id cannot be negative");
+		
+		if (interval < 0)
+			throw new IllegalArgumentException("Interval cannot be negative");
+		
 		if (intervalRoutines.containsKey(id))
 			return false;
 		
@@ -102,7 +126,7 @@ public class Scheduler {
 	
 	/**
 	 * Cancels a timed, repeating action, which was previously established by a
-	 * call to {@link #setInterval(int, Runnable, int)}.
+	 * call to {@link #setInterval(Runnable, int, int)}.
 	 * 
 	 * @param		id Routine id
 	 */
@@ -116,7 +140,7 @@ public class Scheduler {
 	
 	/**
 	 * Cancels a timed action which was previously established by a
-	 * call to {@link #setTimeout(int, Runnable, int)}.
+	 * call to {@link #setTimeout(Runnable, int, int)}.
 	 * 
 	 * @param		id Routine id
 	 */
@@ -126,5 +150,17 @@ public class Scheduler {
 		
 		timeoutRoutines.get(id).cancel();
 		timeoutRoutines.remove(id);
+	}
+	
+	public static void clearAllTimeout() {
+		for (int timeoutId : timeoutRoutines.keySet()) {
+			clearTimeout(timeoutId);
+		}
+	}
+	
+	public static void clearAllInterval() {
+		for (int intervalId : intervalRoutines.keySet()) {
+			clearInterval(intervalId);
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package util.io.manager.search;
+package util.io.search;
 
 import static org.junit.Assert.assertEquals;
 

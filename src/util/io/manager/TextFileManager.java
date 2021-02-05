@@ -77,8 +77,12 @@ public class TextFileManager {
 	 * @param		lines Content to be written
 	 * 
 	 * @throws		IOException If an I/O error occurs while writing the file
+	 * @throws		IllegalArgumentException If lines is null
 	 */
 	public void writeLines(List<String> lines) throws IOException {
+		if (lines == null)
+			throw new IllegalArgumentException("Lines cannot be null");
+		
 		OpenOption[] options = {
 				StandardOpenOption.CREATE
 		};
