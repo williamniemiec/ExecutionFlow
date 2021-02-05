@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionflow.util.DataUtil;
+import executionflow.io.SourceCodeProcessor;
 import util.data.structure.Pair;
 import util.io.parser.balance.CurlyBracketBalance;
 
@@ -736,7 +736,7 @@ public class CodeCleaner {
 				String type = forEachInformation.get(0);
 				String varName = forEachInformation.get(1);
 				String setName = forEachInformation.get(2);
-				String itName = DataUtil.generateVarName();
+				String itName = SourceCodeProcessor.generateVarName();
 				
 				// Fix map generic type
 				if (processedCode.get(i).contains("<")) {

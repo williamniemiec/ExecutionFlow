@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionflow.util.FileUtils;
+import util.io.console.ConsoleFilePrinter;
+import util.io.path.ReservedCharactersReplacer;
 
 
 /**
@@ -202,7 +203,7 @@ public class Helper {
 
 		if (closingLine == -1) {
 			System.out.println("----");
-			FileUtils.printFileWithLines(sourceCode);
+			ConsoleFilePrinter.printFileWithLines(sourceCode);
 			
 			
 			System.err.println("Braces are not balanced");

@@ -33,11 +33,20 @@ public class Checkpoint {
 	 * A checkpoint is used when it is necessary to mark a class or method to 
 	 * see if it is being executed more than once.
 	 * 
-	 * @param		location Path where checkpoint will be created
+	 * @param		directory Directory where checkpoint will be created
 	 * @param		name Checkpoint name
+	 * 
+	 * @throws		IllegalArgumentException If directory is null or if name is
+	 * null or empty
 	 */
-	public Checkpoint(Path location, String name) {
-		checkpointFile = location.resolve(name + ".checkpoint");
+	public Checkpoint(Path directory, String name) {
+		if (directory == null)
+			throw new IllegalArgumentException("Directory cannot be null");
+		
+		if ((name == null) || name.isBlank())
+			throw new IllegalArgumentException("Name cannot be empty");
+		
+		checkpointFile = directory.resolve(name + ".checkpoint");
 	}
 	
 	

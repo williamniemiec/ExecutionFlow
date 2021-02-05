@@ -18,7 +18,6 @@ import executionflow.io.compiler.CompilerFactory;
 import executionflow.io.processor.factory.FileProcessorFactory;
 import executionflow.io.processor.fileprocessor.FileProcessor;
 import executionflow.lib.LibraryManager;
-import executionflow.util.FileUtils;
 import util.logger.Logger;
 
 /**
@@ -64,7 +63,7 @@ public class FileManager implements Serializable {
 						FileProcessorFactory fileParserFactory) {
 		checkSrcPath(srcFilePath);
 		
-		String filename = FileUtils.extractFilenameWithoutExtension(srcFilePath);
+		String filename = extractFilenameWithoutExtension(srcFilePath);
 		
 		this.binDirectory = extractRootBinDirectory(binDirectory, classPackage);
 		
@@ -202,6 +201,12 @@ public class FileManager implements Serializable {
 			throw new IllegalArgumentException("Invoked's source file path"
 					+ "cannot be null");
 		}
+	}
+	
+	public String extractFilenameWithoutExtension(Path file) {
+		String filenameWithExtension = file.getName(file.getNameCount()-1).toString(); 
+		
+		return filenameWithExtension.split("\\.")[0];
 	}
 	
 	private Path extractRootBinDirectory(Path binDirectory, String classPackage) {

@@ -3,14 +3,13 @@ package executionflow.io.processor.invoked.holeplug;
 import java.util.List;
 
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.DataUtil;
 
 /**
  * Add an instruction in variable declarations without 
  * initialization.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since 		6.0.0
  */
 public class UninitializedVariableProcessor extends SourceCodeProcessor {
@@ -48,6 +47,6 @@ public class UninitializedVariableProcessor extends SourceCodeProcessor {
 	}
 	
 	private String putVariableNextTo(String line) {
-		return line + "int " + DataUtil.generateVarName() + "=0;";
+		return line + "int " + generateVarName() + "=0;";
 	}
 }

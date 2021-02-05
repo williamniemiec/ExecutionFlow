@@ -9,8 +9,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import executionflow.ExecutionFlow;
+import executionflow.exporter.SignatureToPath;
 import executionflow.info.InvokedInfo;
-import executionflow.util.DataUtil;
 import util.io.manager.CSVFileManager;
 import util.logger.Logger;
 
@@ -108,7 +108,7 @@ public class MethodsCalledByTestedInvokedExporter
 	}
 
 	private Path generateDirectoryFromSignature(InvokedInfo invoked) {
-		String signaturePath = DataUtil.generateDirectoryPathFromSignature(
+		String signaturePath = SignatureToPath.generateDirectoryPathFromSignature(
 				invoked.getConcreteInvokedSignature(), invoked.isConstructor()
 		);
 	

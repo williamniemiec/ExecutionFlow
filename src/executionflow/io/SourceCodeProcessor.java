@@ -1,6 +1,11 @@
 package executionflow.io;
 
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import util.data.encrypt.md5.MD5;
 
 public abstract class SourceCodeProcessor {
 
@@ -73,6 +78,30 @@ public abstract class SourceCodeProcessor {
 	
 	protected void whenFinished(List<String> processedLines) {
 		return;
+	}
+	
+	protected String extractContentBetweenParenthesis(String content) {
+		Pattern patternContentInParenthesis = Pattern.compile("\\(.*\\)");
+		Matcher contentBetweenParenthesis = patternContentInParenthesis.matcher(content);
+		
+		if (!contentBetweenParenthesis.find())
+			return "";
+		
+		return contentBetweenParenthesis.group().replace("(", "").replace(")", "");
+	}
+	
+	/**
+	 * Generates a unique variable name. It will be:<br />
+	 * <code>MD5(current_time+random_number)</code>
+	 * 
+	 * @return		Variable name
+	 */
+	public static String generateVarName() {
+		return ("_" + MD5.encrypt(String.valueOf(generateRandomNumber())));
+	}
+	
+	private static double generateRandomNumber() {
+		return (new Date().getTime() + (Math.random() * 9999 + 1));
 	}
 	
 	

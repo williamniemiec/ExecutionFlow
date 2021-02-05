@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import executionflow.ExecutionFlow;
-import executionflow.util.DataUtil;
-import executionflow.util.FileUtils;
+import executionflow.exporter.SignatureToPath;
+import util.io.manager.TextFileManager;
+import util.io.processor.Indenter;
 import util.io.processor.JavaCodeIndenter;
 
 /**
@@ -17,7 +18,7 @@ import util.io.processor.JavaCodeIndenter;
  * test path.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		5.2.0
  */
 public class ProcessedSourceFileExporter {
@@ -63,29 +64,35 @@ public class ProcessedSourceFileExporter {
 	
 	private void exportRegistry(String invokedSignature, Path processedFile) 
 			throws IOException	{
-		List<String> fileContent = getFileContent(processedFile);
-		Path outputFile = generateOutputPath(invokedSignature);
+		TextFileManager outputFileManager = new TextFileManager(
+				generateOutputPath(invokedSignature), 
+				Charset.defaultCharset()
+		);
 		
-		FileUtils.writeLines(fileContent, outputFile, Charset.defaultCharset());
+		outputFileManager.writeLines(getFileContent(processedFile));
 	}
 	
 	private List<String> getFileContent(Path processedFile) throws IOException {
-		List<String> fileContent = FileUtils.readLines(
-				processedFile, Charset.defaultCharset()
+		TextFileManager txtFileManager = new TextFileManager(
+				processedFile, 
+				Charset.defaultCharset()
 		);
+
+		return indentFileContent(txtFileManager.readLines());
+	}
+	
+	private List<String> indentFileContent(List<String> fileContent) {
+		Indenter indenter = new JavaCodeIndenter();
 		
-		JavaCodeIndenter indenter = new JavaCodeIndenter();
-		
-		fileContent = indenter.indent(fileContent);
-		
-		return fileContent;
+		return indenter.indent(fileContent);
 	}
 
 	private Path generateOutputPath(String invokedSignature) {
 		return Paths.get(
 				ExecutionFlow.getCurrentProjectRoot().toString(), 
 				dirName,
-				DataUtil.generateDirectoryPathFromSignature(invokedSignature, isConstructor),
+				SignatureToPath.generateDirectoryPathFromSignature(invokedSignature, 
+																   isConstructor),
 				"SRC.txt"
 		);
 	}

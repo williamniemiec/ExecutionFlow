@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.DataUtil;
 
 /**
  * Makes adjustments to lines of code to allow test paths to be
  * computed correctly. It will add an instruction in do statements.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since 		6.0.0
  */
 public class DoWhileProcessor extends SourceCodeProcessor {
@@ -53,7 +52,7 @@ public class DoWhileProcessor extends SourceCodeProcessor {
 		int idxCurlyBrackets = line.indexOf('{');
 		 
 		statement.append(line.substring(0, idxCurlyBrackets+1));
-		statement.append("int " + DataUtil.generateVarName() + "=0;"); 
+		statement.append("int " + generateVarName() + "=0;"); 
 		statement.append(line.substring(idxCurlyBrackets+1));
 		
 		return statement.toString();

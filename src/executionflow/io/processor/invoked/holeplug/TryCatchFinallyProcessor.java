@@ -3,13 +3,12 @@ package executionflow.io.processor.invoked.holeplug;
 import java.util.List;
 
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.DataUtil;
 
 /**
  * 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since 		6.0.0
  */
 public class TryCatchFinallyProcessor extends SourceCodeProcessor {
@@ -51,7 +50,7 @@ public class TryCatchFinallyProcessor extends SourceCodeProcessor {
 		int idxCurlyBrackets = line.indexOf('{');
 		 
 		statement.append(line.substring(0, idxCurlyBrackets+1));
-		statement.append("int " + DataUtil.generateVarName() + "=0;"); 
+		statement.append("int " + generateVarName() + "=0;"); 
 		statement.append(line.substring(idxCurlyBrackets+1));
 		
 		return statement.toString();

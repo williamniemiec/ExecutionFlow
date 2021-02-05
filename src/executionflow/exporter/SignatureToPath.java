@@ -1,90 +1,26 @@
-package executionflow.util;
+package executionflow.exporter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import util.data.encrypt.md5.MD5;
+import util.io.path.ReservedCharactersReplacer;
 
 /**
- * Contains methods that perform data manipulation.
+ * Path generator based on method or constructor signatures .
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		6.0.5
+ * @since		6.0.5
  */
-public class DataUtil {
+public class SignatureToPath {
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private DataUtil() {
+	private SignatureToPath() {
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	/**
-	 * Converts elements of a list into a string by separating each element
-	 * with a delimiter. 
-	 * 
-	 * @param		list List to be converted
-	 * 
-	 * @return		List elements separated by the given delimiter
-	 */
-	public static <T> String implode(List<T> list, String delimiter) {
-		StringBuilder response = new StringBuilder();
-		
-		for (T p : list) {
-			response.append(p);
-			response.append(delimiter);
-		}
-		
-		// Removes last delimiter
-		if (response.length() > 1) {
-			response.deleteCharAt(response.length()-1);
-		}
-		
-		return response.toString();
-	}
-	
-	/**
-	 * Given two Maps, adds all content from the first Map to the second.
-	 * 
-	 * @param		source Some map
-	 * @param		target Map that will be merge with map1 
-	 */
-	public static void mergesMaps(Map<String, List<String>> source, 
-								  Map<String, List<String>> target) {
-		if ((source == null) || source.isEmpty())
-			return;
-		
-		for (Map.Entry<String, List<String>> e : source.entrySet()) {
-			String keyMap1 = e.getKey();
-
-			// Adds content from first Map to the second
-			for (String contentMap1 : e.getValue()) {
-				List<String> contentMap2;
-				// If second Map contains the same key as the first, add all
-				// the content of this key from first Map in the second
-				if (target.containsKey(keyMap1)) {
-					contentMap2 = target.get(keyMap1);
-					
-					if (!contentMap2.contains(contentMap1)) {
-						contentMap2.add(contentMap1);
-					}
-				}
-				else {
-					contentMap2 = new ArrayList<>();
-					contentMap2.add(contentMap1);
-					target.put(keyMap1, contentMap2);
-				}
-			}
-		}
-	}
-	
 	/**
 	 * Generates a path based on an invoked signature with the following format:
 	 * <ul>
@@ -111,7 +47,7 @@ public class DataUtil {
 		String folderName = getFolderName(signatureFields, isConstructor) 
 				+ reduceSignature(extractParametersFromSignature(invokedSignature));
 		
-		return folderPath + "/" + FileUtils.replaceReservedCharacters(folderName);
+		return folderPath + "/" + ReservedCharactersReplacer.replaceReservedCharacters(folderName);
 	}
 	
 	private static String[] extractSignatureFields(String signature) {
@@ -190,30 +126,6 @@ public class DataUtil {
 			folderName = className + "." + methodName;
 		}
 		
-		return FileUtils.replaceReservedCharacters(folderName);
-	}
-	
-	/**
-	 * Generates a unique variable name. It will be:<br />
-	 * <code>MD5(current_time+random_number)</code>
-	 * 
-	 * @return		Variable name
-	 */
-	public static String generateVarName() {
-		return ("_" + MD5.encrypt(String.valueOf(generateRandomNumber())));
-	}
-	
-	private static double generateRandomNumber() {
-		return (new Date().getTime() + (Math.random() * 9999 + 1));
-	}
-	
-	public static String extractContentBetweenParenthesis(String content) {
-		Pattern patternContentInParenthesis = Pattern.compile("\\(.*\\)");
-		Matcher contentBetweenParenthesis = patternContentInParenthesis.matcher(content);
-		
-		if (!contentBetweenParenthesis.find())
-			return "";
-		
-		return contentBetweenParenthesis.group().replace("(", "").replace(")", "");
+		return ReservedCharactersReplacer.replaceReservedCharacters(folderName);
 	}
 }

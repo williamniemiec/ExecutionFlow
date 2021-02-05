@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import executionflow.info.InvokedContainer;
-import executionflow.util.DataUtil;
 import util.io.manager.CSVFileManager;
 import util.logger.Logger;
 
@@ -90,10 +89,45 @@ public class TestedInvokedExporter {
 			invokedMethodSignatures = new HashMap<>();
 		}
 		
-		DataUtil.mergesMaps(
+		mergesMaps(
 				extractInvokedWithTesters(invokedContainer), 
 				invokedMethodSignatures
 		);
+	}
+	
+	/**
+	 * Given two Maps, adds all content from the first Map to the second.
+	 * 
+	 * @param		source Some map
+	 * @param		target Map that will be merge with map1 
+	 */
+	private void mergesMaps(Map<String, List<String>> source, 
+								  Map<String, List<String>> target) {
+		if ((source == null) || source.isEmpty())
+			return;
+		
+		for (Map.Entry<String, List<String>> e : source.entrySet()) {
+			String keyMap1 = e.getKey();
+
+			// Adds content from first Map to the second
+			for (String contentMap1 : e.getValue()) {
+				List<String> contentMap2;
+				// If second Map contains the same key as the first, add all
+				// the content of this key from first Map in the second
+				if (target.containsKey(keyMap1)) {
+					contentMap2 = target.get(keyMap1);
+					
+					if (!contentMap2.contains(contentMap1)) {
+						contentMap2.add(contentMap1);
+					}
+				}
+				else {
+					contentMap2 = new ArrayList<>();
+					contentMap2.add(contentMap1);
+					target.put(keyMap1, contentMap2);
+				}
+			}
+		}
 	}
 
 	private Map<String, List<String>>  readStoredExportFile() throws IOException {

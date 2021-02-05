@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.DataUtil;
 import util.io.parser.balance.RoundBracketBalance;
 
 /**
@@ -12,7 +11,7 @@ import util.io.parser.balance.RoundBracketBalance;
  * stop if an assert fails.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.3
+ * @version		6.0.5
  * @since 		6.0.0
  */
 public class AssertProcessor extends SourceCodeProcessor {
@@ -145,7 +144,7 @@ public class AssertProcessor extends SourceCodeProcessor {
 	private String closeTryCatchStatement(String tryContent, String catchContent) {
 		StringBuilder statement = new StringBuilder();
 		
-		String catchVariable = DataUtil.generateVarName();
+		String catchVariable = generateVarName();
 		String catchType = "Throwable";
 		
 		statement.append(tryContent);

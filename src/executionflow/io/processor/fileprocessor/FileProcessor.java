@@ -8,7 +8,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 import executionflow.io.FileEncoding;
-import executionflow.util.FileUtils;
+import util.io.console.ConsoleFilePrinter;
+import util.io.manager.TextFileManager;
 import util.io.processor.JavaCodeIndenter;
 import util.logger.LogLevel;
 import util.logger.Logger;
@@ -19,7 +20,7 @@ import util.logger.Logger;
  * classes that implement this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		2.0.0
  */
 public abstract class FileProcessor implements Serializable {
@@ -49,32 +50,46 @@ public abstract class FileProcessor implements Serializable {
 		if (file == null)
 			return "";
 		
-		List<String> sourceCode = FileUtils.readLines(file, encoding.getStandardCharset());
+		List<String> sourceCode = readLinesOf(file);
 		
 		sourceCode = doProcessing(sourceCode);
 		
-		FileUtils.writeLines(sourceCode, outputFile, encoding.getStandardCharset());
+		writeLinesInOutputFile(sourceCode);
 
 		dump(sourceCode);
 		
 		return outputFile.toString();
 	}
+
+	private List<String> readLinesOf(Path file) throws IOException {
+		TextFileManager txtFileManager = new TextFileManager(
+				file, 
+				encoding.getStandardCharset()
+		);
+		
+		return txtFileManager.readLines();
+	}
 	
 	protected abstract List<String> doProcessing(List<String> sourceCode);
+	
+	private void writeLinesInOutputFile(List<String> lines) throws IOException {
+		TextFileManager outFileManager = new TextFileManager(
+				outputFile, 
+				encoding.getStandardCharset()
+		);
+		
+		outFileManager.writeLines(lines);
+	}
 	
 	protected void dump(List<String> sourceCode) {
 		if (Logger.getLevel() != LogLevel.DEBUG)
 			return;
 		
 		JavaCodeIndenter indenter = new JavaCodeIndenter();
-		List<String> formatedFile = indenter.indent(sourceCode);
+		List<String> indentedFile = indenter.indent(sourceCode);
 
 		Logger.debug(this.getClass(), "Processed file");
-		
-		if (formatedFile.size() < 30)
-			FileUtils.printFileWithLines(sourceCode);
-		else
-			FileUtils.printFileWithLines(formatedFile);
+		ConsoleFilePrinter.printFileWithLines(indentedFile);
 		
 	}
 	

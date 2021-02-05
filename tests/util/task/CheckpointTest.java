@@ -69,4 +69,19 @@ public class CheckpointTest {
 		
 		assertFalse(checkpoint.exists());
 	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorWithNullDirectory() {
+		new Checkpoint(null, "name");
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorWithNullName() {
+		new Checkpoint(Path.of("."), null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorWithEmptyName() {
+		new Checkpoint(Path.of("."), "");
+	}
 }

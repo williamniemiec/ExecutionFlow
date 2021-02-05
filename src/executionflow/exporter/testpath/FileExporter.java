@@ -16,15 +16,15 @@ import java.util.Map;
 import java.util.Set;
 
 import executionflow.ExecutionFlow;
+import executionflow.exporter.SignatureToPath;
 import executionflow.info.InvokedContainer;
-import executionflow.util.DataUtil;
 import util.logger.Logger;
 
 /**
  * Exports computed test path to a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		1.0
  */
 public class FileExporter implements TestPathExporter {
@@ -124,7 +124,8 @@ public class FileExporter implements TestPathExporter {
 		return Paths.get(
 				ExecutionFlow.getCurrentProjectRoot().toString(), 
 				dirName,
-				DataUtil.generateDirectoryPathFromSignature(invokedSignature, isConstructor)
+				SignatureToPath.generateDirectoryPathFromSignature(invokedSignature, 
+																   isConstructor)
 		);
 	}
 	
