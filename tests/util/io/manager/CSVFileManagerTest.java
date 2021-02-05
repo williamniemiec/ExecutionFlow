@@ -1,4 +1,4 @@
-package util.io;
+package util.io.manager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import util.io.manager.CSVFileManager;
 
-public class CSVTest {
+public class CSVFileManagerTest {
 
 	//-------------------------------------------------------------------------
 	//		Attributes

@@ -22,6 +22,8 @@ public abstract class Balance {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	public abstract Balance parse(String text);
+	
 	public void increaseBalance() {
 		alreadyIncreased = true;
 		currentBalance += 1;

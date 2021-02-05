@@ -24,10 +24,24 @@ public class FileSearcher {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
+	/**
+	 * Searches for files starting from the specified working directory.
+	 * 
+	 * @param		workingDirectory 
+	 * 
+	 * @throws		IllegalArgumentException If working directory is null
+	 */
 	public FileSearcher(Path workingDirectory) {
+		if (workingDirectory == null)
+			throw new IllegalArgumentException("Working directory cannot be null");
+		
+		
 		this.workingDirectory = workingDirectory;
 	}
 	
+	/**
+	 * Searches for files starting from the current directory.
+	 */
 	public FileSearcher() {
 		this(Path.of(".").normalize().toAbsolutePath());
 	}
@@ -37,16 +51,21 @@ public class FileSearcher {
 	//		Methods
 	//-------------------------------------------------------------------------
 	/**
-	 * When executed it will determine the absolute path of a class.
+	 * Searches for a file starting from the specified working directory.
 	 * 
 	 * @param		filename Name of the file to be searched File (including 
 	 * its extension)
 	 * 
-	 * @return		File path or null if it cannot find the file
+	 * @return		File with the specified filename or null if it cannot find
+	 * the file
 	 * 
 	 * @throws		IOException If an error occurs while searching for the file
+	 * @throws		IllegalArgumentException If filename is blank or null
 	 */
 	public Path search(String filename) throws IOException {
+		if ((filename == null) || filename.isBlank())
+			throw new IllegalArgumentException("Filename cannot be empty");
+		
 		searchFile = null;
 		
 		Files.walkFileTree(workingDirectory, new SimpleFileVisitor<Path>() {

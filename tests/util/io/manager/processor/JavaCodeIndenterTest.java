@@ -1,4 +1,4 @@
-package util.io.processor;
+package util.io.manager.processor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -12,6 +12,9 @@ import java.util.List;
 import org.junit.Test;
 
 import util.io.manager.TextFileManager;
+import util.io.processor.IndentationType;
+import util.io.processor.Indenter;
+import util.io.processor.JavaCodeIndenter;
 
 public class JavaCodeIndenterTest {
 	

@@ -2,6 +2,11 @@ package util.io.processor;
 
 import java.util.List;
 
+/**
+ * Indents codes.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ */
 public abstract class Indenter {
 	
 	/**

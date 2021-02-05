@@ -23,6 +23,7 @@ public class CurlyBracketBalance extends Balance {
 	 * 
 	 * @return		This object to allows chained calls
 	 */
+	@Override
 	public CurlyBracketBalance parse(String text) {
 		String textWithoutString = removeStrings(text);
 		
