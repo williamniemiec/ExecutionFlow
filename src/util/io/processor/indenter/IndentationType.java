@@ -1,4 +1,4 @@
-package util.io.processor;
+package util.io.processor.indenter;
 
 public enum IndentationType {
 	TAB('\t'),

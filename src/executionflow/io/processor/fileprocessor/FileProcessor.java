@@ -10,7 +10,7 @@ import java.util.List;
 import executionflow.io.FileEncoding;
 import util.io.console.ConsoleFilePrinter;
 import util.io.manager.TextFileManager;
-import util.io.processor.JavaCodeIndenter;
+import util.io.processor.indenter.JavaCodeIndenter;
 import util.logger.LogLevel;
 import util.logger.Logger;
 

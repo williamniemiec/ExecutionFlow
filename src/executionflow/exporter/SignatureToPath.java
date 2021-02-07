@@ -3,7 +3,7 @@ package executionflow.exporter;
 import util.io.path.ReservedCharactersReplacer;
 
 /**
- * Path generator based on method or constructor signatures .
+ * Path generator based on method or constructor signatures.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		6.0.5

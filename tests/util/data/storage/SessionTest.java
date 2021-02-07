@@ -14,41 +14,50 @@ public class SessionTest {
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	private String filename = "session-test";
-	private File workingDirectory = new File(System.getProperty("java.io.tmpdir"));
+	private static final String FILENAME;
+	private static final File WORKING_DIRECTORY;
 
+	
+	//-----------------------------------------------------------------------
+	//		Initialization blocks
+	//-----------------------------------------------------------------------
+	static {
+		FILENAME = "session-test";
+		WORKING_DIRECTORY = new File(System.getProperty("java.io.tmpdir"));
+	}
+	
 	
 	//-----------------------------------------------------------------------
 	//		Tests
 	//-----------------------------------------------------------------------
 	@Test
 	public void testCreateSession() {
-		Session s = new Session(filename, workingDirectory);
+		new Session(FILENAME, WORKING_DIRECTORY);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateSessionWithEmptyFilename() {
-		Session s = new Session("", workingDirectory);
+		new Session("", WORKING_DIRECTORY);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateSessionWithNullFilename() {
-		Session s = new Session(null, workingDirectory);
+		new Session(null, WORKING_DIRECTORY);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateSessionWithNullWorkingDirectory() {
-		Session s = new Session(filename, null);
+		new Session(FILENAME, null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testCreateSessionWithNullWorkingDirectoryAndFilename() {
-		Session s = new Session(null, null);
+		new Session(null, null);
 	}
 	
 	@Test
 	public void testSaveAndRead() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 		Integer value = Integer.valueOf(0);
 		
 		s.save("key", value);
@@ -60,7 +69,7 @@ public class SessionTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testSaveNullKey() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 		Integer value = Integer.valueOf(0);
 		
 		s.save(null, value);
@@ -68,42 +77,42 @@ public class SessionTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testSaveNullValue() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 	
 		s.save("key", null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testSaveNullKeyAndValue() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 
 		s.save(null, null);
 	}
 	
 	@Test(expected = IllegalStateException.class)
 	public void testReadFromNonexistentSession() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 		
 		s.read("key");
 	}
 	
 	@Test(expected = IllegalStateException.class)
 	public void testRemoveFromNonexistentSession() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 		
 		s.remove("key");
 	}
 	
 	@Test(expected = IllegalStateException.class)
 	public void testHasKeyFromNonexistentSession() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 		
 		s.hasKey("key");
 	}
 	
 	@Test
 	public void testSaveAndRemove() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 		Integer value = Integer.valueOf(0);
 		
 		s.save("key", value);
@@ -116,7 +125,7 @@ public class SessionTest {
 	
 	@Test
 	public void testHasKey() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 		Integer value = Integer.valueOf(0);
 		
 		s.save("key", value);
@@ -128,14 +137,14 @@ public class SessionTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testHasNullKey() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 	
 		s.hasKey(null);
 	}
 	
 	@Test
 	public void testExists() throws IOException {
-		Session s = new Session(filename, workingDirectory);
+		Session s = new Session(FILENAME, WORKING_DIRECTORY);
 		Integer value = Integer.valueOf(0);
 		
 		s.save("key", value);

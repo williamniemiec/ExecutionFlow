@@ -14,14 +14,14 @@ public class FileSearcherTest {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final Path testsFolder;
+	private static final Path TESTS_FOLDER;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//------------------------------------------------------------------------
 	static {
-		testsFolder = Path.of(".", "tests");
+		TESTS_FOLDER = Path.of(".", "tests");
 	}
 	
 	
@@ -30,8 +30,8 @@ public class FileSearcherTest {
 	//------------------------------------------------------------------------
 	@Test
 	public void testSearchFile() throws IOException {
-		FileSearcher searcher = new FileSearcher(testsFolder);
-		Path thisFile = testsFolder.resolve(Path.of("util", "io", "search", 
+		FileSearcher searcher = new FileSearcher(TESTS_FOLDER);
+		Path thisFile = TESTS_FOLDER.resolve(Path.of("util", "io", "search", 
 													"FileSearcherTest.java"));
 		
 		assertEquals(thisFile.toAbsolutePath(), searcher.search("FileSearcherTest.java"));
@@ -44,14 +44,14 @@ public class FileSearcherTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testSearchNullFilename() throws IOException {
-		FileSearcher searcher = new FileSearcher(testsFolder);
+		FileSearcher searcher = new FileSearcher(TESTS_FOLDER);
 		
 		searcher.search(null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testSearchEmptyFilename() throws IOException {
-		FileSearcher searcher = new FileSearcher(testsFolder);
+		FileSearcher searcher = new FileSearcher(TESTS_FOLDER);
 		
 		searcher.search("");
 	}

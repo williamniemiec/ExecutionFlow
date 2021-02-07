@@ -3,6 +3,7 @@ package util.io.path;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -83,8 +84,25 @@ public class ArgumentFile {
 			path = paths.get(paths.size()-1);
 			bw.write(path.toAbsolutePath().toString().replaceAll("\\\\", "\\\\\\\\"));
 			bw.write("\"");
+			bw.newLine();
 		}
 		
+		return argumentFile;
+	}
+	
+	public void delete() throws IOException {
+		Files.deleteIfExists(argumentFile);
+	}
+	
+	public boolean exists() {
+		return Files.exists(argumentFile);
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	public Path getFile() {
 		return argumentFile;
 	}
 }

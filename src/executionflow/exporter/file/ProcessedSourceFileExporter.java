@@ -10,8 +10,8 @@ import java.util.Map;
 import executionflow.ExecutionFlow;
 import executionflow.exporter.SignatureToPath;
 import util.io.manager.TextFileManager;
-import util.io.processor.Indenter;
-import util.io.processor.JavaCodeIndenter;
+import util.io.processor.indenter.Indenter;
+import util.io.processor.indenter.JavaCodeIndenter;
 
 /**
  * Exports the processed file that will be used as the basis for processing the

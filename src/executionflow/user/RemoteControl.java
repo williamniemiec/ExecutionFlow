@@ -1,7 +1,12 @@
 package executionflow.user;
 
+import java.awt.BorderLayout;
+
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.WindowConstants;
 
 /**
@@ -61,6 +66,7 @@ public class RemoteControl {
 	 */
 	private static void createWindow() {		
 		window = new JFrame(TITLE);
+		
 		window.add(createStopButton());
 		window.setBounds(
 				MAIN_FRAME_X, 
