@@ -1,6 +1,6 @@
 package executionflow.exporter;
 
-import util.io.path.ReservedCharactersReplacer;
+import util.io.path.replacer.ReservedCharactersReplacerFactory;
 
 /**
  * Path generator based on method or constructor signatures.
@@ -47,7 +47,7 @@ public class SignatureToPath {
 		String folderName = getFolderName(signatureFields, isConstructor) 
 				+ reduceSignature(extractParametersFromSignature(invokedSignature));
 		
-		return folderPath + "/" + ReservedCharactersReplacer.replaceReservedCharacters(folderName);
+		return folderPath + "/" + replaceAllReservedCharacters(folderName);
 	}
 	
 	private static String[] extractSignatureFields(String signature) {
@@ -67,6 +67,10 @@ public class SignatureToPath {
 			return "()";
 		
 		return signature.substring(signature.indexOf("("));
+	}
+	
+	private static String replaceAllReservedCharacters(String str) {
+		return ReservedCharactersReplacerFactory.getStandardReplacer().replace(str);
 	}
 	
 	/**
@@ -126,6 +130,6 @@ public class SignatureToPath {
 			folderName = className + "." + methodName;
 		}
 		
-		return ReservedCharactersReplacer.replaceReservedCharacters(folderName);
+		return replaceAllReservedCharacters(folderName);
 	}
 }
