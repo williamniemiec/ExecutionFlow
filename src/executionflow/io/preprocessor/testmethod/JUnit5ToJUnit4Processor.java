@@ -5,15 +5,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.DataUtil;
-import executionflow.util.balance.CurlyBracketBalance;
+import util.io.parser.balance.CurlyBracketBalance;
 
 /**
  * Responsible for disabling collectors in a test method and converting
  * JUnit 5 test annotation to JUnit 4 test annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since 		6.0.0
  */
 public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
@@ -174,7 +173,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 		
 		private String openWhileStatement(String line) {
 			StringBuilder statement = new StringBuilder();
-			String stepVariable = DataUtil.generateVarName();
+			String stepVariable = generateVarName();
 			int idxLastOpenCurlyBracket = line.lastIndexOf("{");
 			
 			statement.append(line.substring(0, idxLastOpenCurlyBracket + 1));
@@ -261,7 +260,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 			Matcher matcherRepeatedTest = patternRepeatedTest.matcher(line);
 			
 			if (matcherRepeatedTest.find()) {
-				String annotationParams = DataUtil.extractContentBetweenParenthesis(
+				String annotationParams = extractContentBetweenParenthesis(
 						matcherRepeatedTest.group()
 				);
 				
@@ -348,7 +347,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 			}
 			// EnumSource without value attribute but with class specified
 			else if (line.contains("(")) {
-				parameter = DataUtil.extractContentBetweenParenthesis(line)
+				parameter = extractContentBetweenParenthesis(line)
 						.split("\\.")[0]
 						.trim();
 			}
@@ -365,7 +364,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 		}
 		
 		private String extractParameters(String line) {
-			String params = DataUtil.extractContentBetweenParenthesis(line);
+			String params = extractContentBetweenParenthesis(line);
 
 			if (!params.isBlank()) {
 				testMethodParams = params.split(",");

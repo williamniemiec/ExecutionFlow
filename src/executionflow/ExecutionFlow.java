@@ -24,8 +24,7 @@ import executionflow.io.processor.factory.TestMethodFileProcessorFactory;
 import executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
 import executionflow.runtime.collector.TestMethodCollector;
-import executionflow.util.FileUtil;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * For each collected method or constructor, obtain the following information:
@@ -36,7 +35,7 @@ import executionflow.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.4
+ * @version		6.0.5
  * @since		1.0
  */
 public abstract class ExecutionFlow {
@@ -121,7 +120,7 @@ public abstract class ExecutionFlow {
 			return this;
 		
 		dump();
-		
+
 		for (InvokedContainer collector : getCollectors()) {
 			parseCollector(collector);
 		}
@@ -133,7 +132,9 @@ public abstract class ExecutionFlow {
 	
 	private void export() {
 		exportManager.exportTestPaths(computedTestPaths);
-		exportManager.exportTesters(computedTestPaths.keySet());
+		exportManager.exportEffectiveMethodsAndConstructorsUsedInTestMethods(
+				computedTestPaths.keySet()
+		);
 		exportManager.exportProcessedSourceFiles(processedSourceFiles);
 		exportManager.exportMethodsCalledByTestedInvoked(
 				analyzer.getMethodsCalledByTestedInvoked()
@@ -337,8 +338,8 @@ public abstract class ExecutionFlow {
 		try {
 			Thread.sleep(2000);
 		} 
-		catch (InterruptedException e) 
-		{}
+		catch (InterruptedException e) {
+		}
 		
 		throw new InterruptedByTimeoutException();
 	}
@@ -357,13 +358,9 @@ public abstract class ExecutionFlow {
 	}
 	
 	protected void storeTestPath(InvokedContainer invokedContainer) {
-		if (analyzer.hasTestPaths())
-			storeAllTestPaths(invokedContainer);
-		else
-			storeEmptyTestPath(invokedContainer);
-	}
-	
-	private void storeAllTestPaths(InvokedContainer invokedContainer) {
+		if (!analyzer.hasTestPaths())
+			return;
+			
 		for (List<Integer> testPath : analyzer.getTestPaths()) {	
 			if (testPath.isEmpty())
 				continue;
@@ -388,13 +385,6 @@ public abstract class ExecutionFlow {
 		List<List<Integer>> testPaths = computedTestPaths.get(invokedContainer);
 		testPaths.add(testPath);
 	}
-
-	private void storeEmptyTestPath(InvokedContainer invokedContainer) {
-		List<List<Integer>> classTestPathInfo = new ArrayList<>();
-		classTestPathInfo.add(new ArrayList<>());
-		
-		computedTestPaths.put(invokedContainer, classTestPathInfo);
-	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -415,10 +405,33 @@ public abstract class ExecutionFlow {
 		return currentProjectRoot;
 	}
 	
-	private static void initializeCurrentProjectRoot() {
+	private static void initializeCurrentProjectRoot() {		
+		currentProjectRoot = search("src").toPath();
+	}
+	
+	public static File search(String directoryName) {
 		File currentDirectory = new File(System.getProperty("user.dir"));
+		boolean hasDirectoryWithProvidedName = false;
 		
-		currentProjectRoot = FileUtil.searchDirectory("src", currentDirectory).toPath();
+		while (!hasDirectoryWithProvidedName) {
+			hasDirectoryWithProvidedName = hasFileWithName(directoryName, currentDirectory);
+
+			if (!hasDirectoryWithProvidedName)
+				currentDirectory = new File(currentDirectory.getParent());
+		}
+		
+		return currentDirectory;
+	}
+
+	private static boolean hasFileWithName(String name, File workingDirectory) {
+		String[] files = workingDirectory.list();
+		
+		for (int i=0; i<files.length; i++) {
+			if (files[i].equals(name) && new File(files[i]).isDirectory())
+				return true;
+		}
+		
+		return false;
 	}
 
 	/**

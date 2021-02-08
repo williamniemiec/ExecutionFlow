@@ -5,8 +5,7 @@ import java.util.List;
 
 import executionflow.info.InvokedInfo;
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.DataUtil;
-import executionflow.util.balance.CurlyBracketBalance;
+import util.io.parser.balance.CurlyBracketBalance;
 
 /**
  * Comments on all test methods except the one with the signature provided.
@@ -159,7 +158,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	private String extractParametersFromMethodDeclaration(String line) {
 		StringBuilder methodParams = new StringBuilder();
 		
-		String methodParamsAndArgs = DataUtil.extractContentBetweenParenthesis(line);
+		String methodParamsAndArgs = extractContentBetweenParenthesis(line);
 		methodParamsAndArgs = methodParamsAndArgs.replaceAll("final ", "");
 		
 		if (methodParamsAndArgs.isBlank())

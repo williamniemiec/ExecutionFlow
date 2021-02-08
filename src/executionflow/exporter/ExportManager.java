@@ -17,7 +17,7 @@ import executionflow.exporter.testpath.TestPathExportType;
 import executionflow.exporter.testpath.TestPathExporter;
 import executionflow.info.InvokedContainer;
 import executionflow.info.InvokedInfo;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Responsible for performing the exports that the application performs, which 
@@ -30,7 +30,7 @@ import executionflow.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.3
+ * @version		6.0.5
  * @since		6.0.0
  */
 public class ExportManager {
@@ -42,7 +42,8 @@ public class ExportManager {
 	private TestPathExporter testPathExporter;
 	private MethodsCalledByTestedInvokedExporter mcti;
 	private ProcessedSourceFileExporter processedSourceFileExporter;
-	private TestedInvokedExporter testersExporter;
+	private TestedInvokedExporter mcutmEffective;
+	private TestedInvokedExporter mcutmAll;
 	private boolean exportTestPaths = true;
 	private boolean exportCalledMethods = true;
 	private boolean exportProcessedSourceFile = true;
@@ -87,9 +88,14 @@ public class ExportManager {
 		);
 	}
 
-	private void initializeTestersExporter() {
-		this.testersExporter = new TestedInvokedExporter(
-				"Testers", 
+	private void initializeTestersExporter() {		
+		this.mcutmEffective = new TestedInvokedExporter(
+				"MCUTM-EFFECTIVE", 
+				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)
+		);
+		
+		this.mcutmAll = new TestedInvokedExporter(
+				"MCUTM-ALL", 
 				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)
 		);
 	}
@@ -107,11 +113,18 @@ public class ExportManager {
 		);
 	}
 	
-	public void exportTesters(Set<InvokedContainer> testers) {
+	public void exportEffectiveMethodsAndConstructorsUsedInTestMethods(Set<InvokedContainer> invokedSet) {
 		if (!exportTesters)
 			return;
 		
-		testersExporter.export(testers);
+		mcutmEffective.export(invokedSet);
+	}
+	
+	public void exportAllMethodsAndConstructorsUsedInTestMethods(Set<InvokedContainer> invokedSet) {
+		if (!exportTesters)
+			return;
+	
+		mcutmAll.export(invokedSet);
 	}
 	
 	public void exportTestPaths(Map<InvokedContainer, List<List<Integer>>> testPaths) {

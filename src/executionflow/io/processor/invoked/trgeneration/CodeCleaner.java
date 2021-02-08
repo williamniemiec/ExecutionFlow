@@ -12,9 +12,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import executionflow.util.DataUtil;
-import executionflow.util.Pair;
-import executionflow.util.balance.CurlyBracketBalance;
+import executionflow.io.SourceCodeProcessor;
+import util.data.structure.Pair;
+import util.io.parser.balance.CurlyBracketBalance;
 
 
 /**
@@ -308,6 +308,9 @@ public class CodeCleaner {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
+				continue;
+			
 			int oldLineId = i+numRemovedLines;
 			
 			if (processedCode.get(i).equals("{") && !processedCode.get(i).contains("catch(Throwable _")) {
@@ -332,6 +335,9 @@ public class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
+				continue;
+			
 			int oldLineId = i-numAddedLines;
 
 			// add current line to targets
@@ -360,12 +366,20 @@ public class CodeCleaner {
 		lineMappings.add(mapping);
 	}
 	
+	private boolean isForIterationAndHasNewKeyword(String line) {
+		return	line.matches("[\\s\\t]*for[\\s\\t]*\\(.+") 
+				&& line.contains("new ");
+	}
+	
 	// Move closing brackets NOT starting a line to the next line
 	private void moveClosingBrackets() {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
+				continue;
+			
 			int oldLineId = i-numAddedLines;
 
 			// add current line to targets
@@ -396,6 +410,9 @@ public class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
+				continue;
+			
 			int oldLineId = i-numAddedLines;
 			
 			// add current line to targets
@@ -719,7 +736,7 @@ public class CodeCleaner {
 				String type = forEachInformation.get(0);
 				String varName = forEachInformation.get(1);
 				String setName = forEachInformation.get(2);
-				String itName = DataUtil.generateVarName();
+				String itName = SourceCodeProcessor.generateVarName();
 				
 				// Fix map generic type
 				if (processedCode.get(i).contains("<")) {
@@ -849,6 +866,7 @@ public class CodeCleaner {
 		}
 		
 		while (line.charAt(i) == ':' || line.charAt(i) == ' ' || line.charAt(i) == '\t') i++;
+		
 		int start = i;
 		int end = line.length() - 1;
 		while (line.charAt(end) == '{' || line.charAt(end) == ' ' || line.charAt(end) == '\t') end--;

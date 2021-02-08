@@ -8,16 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 import executionflow.ExecutionFlow;
-import executionflow.util.DataUtil;
-import executionflow.util.FileUtil;
-import executionflow.util.formatter.JavaIndenter;
+import executionflow.exporter.SignatureToPath;
+import util.io.manager.TextFileManager;
+import util.io.processor.indenter.Indenter;
+import util.io.processor.indenter.JavaCodeIndenter;
 
 /**
  * Exports the processed file that will be used as the basis for processing the
  * test path.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		5.2.0
  */
 public class ProcessedSourceFileExporter {
@@ -63,29 +64,35 @@ public class ProcessedSourceFileExporter {
 	
 	private void exportRegistry(String invokedSignature, Path processedFile) 
 			throws IOException	{
-		List<String> fileContent = getFileContent(processedFile);
-		Path outputFile = generateOutputPath(invokedSignature);
+		TextFileManager outputFileManager = new TextFileManager(
+				generateOutputPath(invokedSignature), 
+				Charset.defaultCharset()
+		);
 		
-		FileUtil.writeLines(fileContent, outputFile, Charset.defaultCharset());
+		outputFileManager.writeLines(getFileContent(processedFile));
 	}
 	
 	private List<String> getFileContent(Path processedFile) throws IOException {
-		List<String> fileContent = FileUtil.readLines(
-				processedFile, Charset.defaultCharset()
+		TextFileManager txtFileManager = new TextFileManager(
+				processedFile, 
+				Charset.defaultCharset()
 		);
+
+		return indentFileContent(txtFileManager.readLines());
+	}
+	
+	private List<String> indentFileContent(List<String> fileContent) {
+		Indenter indenter = new JavaCodeIndenter();
 		
-		JavaIndenter indenter = new JavaIndenter();
-		
-		fileContent = indenter.format(fileContent);
-		
-		return fileContent;
+		return indenter.indent(fileContent);
 	}
 
 	private Path generateOutputPath(String invokedSignature) {
 		return Paths.get(
 				ExecutionFlow.getCurrentProjectRoot().toString(), 
 				dirName,
-				DataUtil.generateDirectoryPathFromSignature(invokedSignature, isConstructor),
+				SignatureToPath.generateDirectoryPathFromSignature(invokedSignature, 
+																   isConstructor),
 				"SRC.txt"
 		);
 	}

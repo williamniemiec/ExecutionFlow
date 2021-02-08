@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import executionflow.info.InvokedContainer;
-import executionflow.util.CSV;
-import executionflow.util.DataUtil;
-import executionflow.util.logger.Logger;
+import util.io.manager.CSVFileManager;
+import util.logger.Logger;
 
 /**
  * Responsible for exporting invoked along with the test method that tests it
@@ -29,7 +28,7 @@ import executionflow.util.logger.Logger;
  * <b>Note:</b> An invoked can be a method or a constructor
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		2.0.0
  */
 public class TestedInvokedExporter {
@@ -48,7 +47,7 @@ public class TestedInvokedExporter {
 	 */
 	private Map<String, List<String>> invokedMethodSignatures;
 	
-	private File output;
+	private CSVFileManager csvFile;
 	
 
 	//-------------------------------------------------------------------------
@@ -66,7 +65,7 @@ public class TestedInvokedExporter {
 			output.mkdir();
 		}
 		
-		this.output = new File(output, filename+".csv");
+		this.csvFile = new CSVFileManager(output, filename);
 	}
 	
 	
@@ -90,19 +89,54 @@ public class TestedInvokedExporter {
 			invokedMethodSignatures = new HashMap<>();
 		}
 		
-		DataUtil.mergesMaps(
+		mergesMaps(
 				extractInvokedWithTesters(invokedContainer), 
 				invokedMethodSignatures
 		);
 	}
+	
+	/**
+	 * Given two Maps, adds all content from the first Map to the second.
+	 * 
+	 * @param		source Some map
+	 * @param		target Map that will be merge with map1 
+	 */
+	private void mergesMaps(Map<String, List<String>> source, 
+								  Map<String, List<String>> target) {
+		if ((source == null) || source.isEmpty())
+			return;
+		
+		for (Map.Entry<String, List<String>> e : source.entrySet()) {
+			String keyMap1 = e.getKey();
+
+			// Adds content from first Map to the second
+			for (String contentMap1 : e.getValue()) {
+				List<String> contentMap2;
+				// If second Map contains the same key as the first, add all
+				// the content of this key from first Map in the second
+				if (target.containsKey(keyMap1)) {
+					contentMap2 = target.get(keyMap1);
+					
+					if (!contentMap2.contains(contentMap1)) {
+						contentMap2.add(contentMap1);
+					}
+				}
+				else {
+					contentMap2 = new ArrayList<>();
+					contentMap2.add(contentMap1);
+					target.put(keyMap1, contentMap2);
+				}
+			}
+		}
+	}
 
 	private Map<String, List<String>>  readStoredExportFile() throws IOException {
-		if (!output.exists())
+		if (!csvFile.exists())
 			return new HashMap<>();
 		
 		Map<String, List<String>> invokedMethodSignatures = new HashMap<>();
 		
-		for (List<String> line : CSV.read(output, ";")) {
+		for (List<String> line : csvFile.read(";")) {
 			List<String> invokedMethod = new ArrayList<>();
 			
 			for (int i=1; i<line.size(); i++) {
@@ -167,14 +201,14 @@ public class TestedInvokedExporter {
 		Logger.debug("Exporting all invoked along with test methods that " + 
 					 "test them to CSV...");
 		
-		output.delete();
+		csvFile.delete();
 		
 		try {
 			for (Map.Entry<String, List<String>> e : invokedMethodSignatures.entrySet()) {
 				List<String> content = e.getValue();
 				content.add(0, e.getKey());
 				
-				CSV.write(content, output, ";");
+				csvFile.writeLine(content, ";");
 			}
 		} 
 		catch (IOException e1) {
@@ -182,6 +216,6 @@ public class TestedInvokedExporter {
 		}
 		
 		Logger.debug("The export has been successful");
-		Logger.debug("Location: " + output.getAbsolutePath());
+		Logger.debug("Location: " + csvFile.getAbsolutePath());
 	}
 }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import executionflow.info.InvokedContainer;
-import executionflow.util.console.style.ConsoleHeader;
+import util.io.console.ConsoleHeader;
 
 /**
  * Displays the results on the console.

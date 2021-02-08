@@ -1,14 +1,10 @@
 package executionflow.runtime.collector;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,12 +13,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 
+import api.junit4.JUnit4Runner;
 import executionflow.ConstructorExecutionFlow;
 import executionflow.ExecutionFlow;
 import executionflow.MethodExecutionFlow;
+import executionflow.exporter.ExportManager;
 import executionflow.info.InvokedContainer;
 import executionflow.info.InvokedInfo;
 import executionflow.io.manager.FileManager;
@@ -33,12 +29,11 @@ import executionflow.io.processor.factory.PreTestMethodFileProcessorFactory;
 import executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
 import executionflow.lib.LibraryManager;
 import executionflow.user.RemoteControl;
-import executionflow.user.Session;
-import executionflow.util.Checkpoint;
-import api.junit4.JUnit4Runner;
-import executionflow.util.logger.LogLevel;
-import executionflow.util.logger.LogView;
-import executionflow.util.logger.Logger;
+import util.data.storage.Session;
+import util.logger.LogLevel;
+import util.logger.LogView;
+import util.logger.Logger;
+import util.task.Checkpoint;
 
 /**
  * Run in each test method
@@ -48,7 +43,7 @@ import executionflow.util.logger.Logger;
  * {@link executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.3
+ * @version		6.0.5
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -116,6 +111,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		!skipAnnotation() 
 		&& insideJUnitTest()
 		&& !within(api..*)
+		&& !within(util..*)
 		&& !withincode(@org.junit.Test * *.*());
 	
 	protected pointcut JUnit4Annotation():
@@ -151,11 +147,11 @@ public aspect TestMethodCollector extends RuntimeCollector {
 		testMethodSignature = getSignature(thisJoinPoint);
 		
 		collectSourceAndBinaryPaths(thisJoinPoint);
-		collectTestMethod(thisJoinPoint);
 		
 		if ((classPath == null) || (srcPath == null))
 			return;
-
+		
+		collectTestMethod(thisJoinPoint);
 		initializeManagers(thisJoinPoint);
 		onFirstRun();
 		onEachTestMethod();
@@ -185,11 +181,13 @@ public aspect TestMethodCollector extends RuntimeCollector {
 			success = true;			
 		}
 		else {
+			exportAllMethodsUsedInTestMethods();
+			exportAllConstructorsUsedInTestMethods();
+			
 			restart(thisJoinPoint);
 			afterEachTestMethod(thisJoinPoint);
 		}
 	}
-	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -610,6 +608,38 @@ public aspect TestMethodCollector extends RuntimeCollector {
 				constructorCollector.values()
 		);
 		constructorExecutionFlow.run();
+	}
+	
+	private void exportAllMethodsUsedInTestMethods() {
+		List<InvokedContainer> collectors = new ArrayList<>();
+		
+		for (List<InvokedContainer> collector : methodCollector.values()) {
+			collectors.add(collector.get(0));
+		}
+		
+		exporMethodsAndConstructorsUsedInTestMethods(false, collectors);
+	}
+	
+	private void exporMethodsAndConstructorsUsedInTestMethods(boolean isConstructor, 
+															  Collection<InvokedContainer> invokedCollector) {
+		Set<InvokedContainer> invokedSet = new HashSet<>();
+		ExportManager exportManager = new ExportManager(
+				ExecutionFlow.isDevelopment(), 
+				isConstructor
+		);
+		
+		for (InvokedContainer collector : invokedCollector) {
+			invokedSet.add(new InvokedContainer(
+					collector.getInvokedInfo(),
+					collector.getTestMethodInfo()
+			));
+		}
+		
+		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(invokedSet);
+	}
+	
+	private void exportAllConstructorsUsedInTestMethods() {
+		exporMethodsAndConstructorsUsedInTestMethods(true, constructorCollector.values());
 	}
 	
 	/**

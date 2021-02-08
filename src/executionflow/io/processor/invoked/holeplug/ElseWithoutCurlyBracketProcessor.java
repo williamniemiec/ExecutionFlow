@@ -5,7 +5,7 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.balance.CurlyBracketBalance;
+import util.io.parser.balance.CurlyBracketBalance;
 
 /**
  * Adds curly brackets in else blocks that does not have curly brackets.

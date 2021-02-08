@@ -14,15 +14,15 @@ import java.util.Set;
 import executionflow.ExecutionFlow;
 import executionflow.info.InvokedInfo;
 import executionflow.lib.LibraryManager;
-import executionflow.util.Clock;
+import util.logger.Logger;
+import util.task.Scheduler;
 import api.jdb.JDB;
-import executionflow.util.logger.Logger;
 
 /**
  * Computes the test path for a method or constructor using a debugger.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.4
+ * @version		6.0.5
  * @since		2.0.0
  */
 public abstract class Analyzer {
@@ -37,7 +37,7 @@ public abstract class Analyzer {
 	protected Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked;
 	protected InvokedInfo invoked;
 	protected InvokedInfo testMethod;
-	protected JDB jdb;
+	protected volatile JDB jdb;
 	protected boolean stopJDB;
 	private List<String> commands;
 	private Object lock = new Object();
@@ -90,6 +90,12 @@ public abstract class Analyzer {
 			run();
 		}
 		finally {
+			try {
+				Thread.sleep(200);
+			} 
+			catch (InterruptedException e) {
+			}
+			
 			synchronized(lock) {
 				disableTimeout(timeoutID);
 				closeJDB();
@@ -97,6 +103,7 @@ public abstract class Analyzer {
 		}
 		
 		mergeMethodsCalledByTestedInvoked();
+		
 		return this;
 	}
 
@@ -149,7 +156,7 @@ public abstract class Analyzer {
 	}
 
 	private void closeJDB() {
-		if (!jdb.isRunning())
+		if ((jdb == null) || !jdb.isRunning())
 			return;
 		
 		stopJDB = true;
@@ -160,14 +167,25 @@ public abstract class Analyzer {
 		} 
 		catch (InterruptedException e) {
 		}
+		
+		stopJDB = true;
 	}
 	
 	private void closeJDBImmediately() {
+		if (jdb == null)
+			return;
+		
 		if (!jdb.isRunning())
 			return;
 		
 		stopJDB = true;
-		jdb.forceQuit();
+		
+		try {
+			jdb.forceQuit();
+		} 
+		catch (IOException e) {
+			Logger.error(e.getMessage());
+		}
 	}
 	
 	private String[] buildExitCommand() {
@@ -201,18 +219,19 @@ public abstract class Analyzer {
 	}
 	
 	private void disableTimeout(final int TIMEOUT_ID) {
-		Clock.clearTimeout(TIMEOUT_ID);
+		Scheduler.clearTimeout(TIMEOUT_ID);
 	}
 
 	private void enableTimeout(final int TIMEOUT_ID, final int TIMEOUT_TIME) {
 		timeout = false;
 		
-		Clock.setTimeout(() -> {
+		Scheduler.setTimeout(() -> {
 			synchronized(lock) {
 				mcti.delete();
 				closeJDBImmediately();
 				testPaths.clear();
-				Analyzer.setTimeout(true);
+				
+				timeout = true;
 			}
 		}, TIMEOUT_ID, TIMEOUT_TIME);
 	}

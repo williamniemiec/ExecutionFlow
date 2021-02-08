@@ -8,10 +8,11 @@ import java.nio.file.Path;
 import java.util.List;
 
 import executionflow.io.FileEncoding;
-import executionflow.util.FileUtil;
-import executionflow.util.formatter.JavaIndenter;
-import executionflow.util.logger.LogLevel;
-import executionflow.util.logger.Logger;
+import util.io.console.ConsoleFilePrinter;
+import util.io.manager.TextFileManager;
+import util.io.processor.indenter.JavaCodeIndenter;
+import util.logger.LogLevel;
+import util.logger.Logger;
 
 /**
  * A file processor will add or replace some code to an existing code if some
@@ -19,7 +20,7 @@ import executionflow.util.logger.Logger;
  * classes that implement this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		2.0.0
  */
 public abstract class FileProcessor implements Serializable {
@@ -49,32 +50,46 @@ public abstract class FileProcessor implements Serializable {
 		if (file == null)
 			return "";
 		
-		List<String> sourceCode = FileUtil.readLines(file, encoding.getStandardCharset());
+		List<String> sourceCode = readLinesOf(file);
 		
 		sourceCode = doProcessing(sourceCode);
 		
-		FileUtil.writeLines(sourceCode, outputFile, encoding.getStandardCharset());
+		writeLinesInOutputFile(sourceCode);
 
 		dump(sourceCode);
 		
 		return outputFile.toString();
 	}
+
+	private List<String> readLinesOf(Path file) throws IOException {
+		TextFileManager txtFileManager = new TextFileManager(
+				file, 
+				encoding.getStandardCharset()
+		);
+		
+		return txtFileManager.readLines();
+	}
 	
 	protected abstract List<String> doProcessing(List<String> sourceCode);
+	
+	private void writeLinesInOutputFile(List<String> lines) throws IOException {
+		TextFileManager outFileManager = new TextFileManager(
+				outputFile, 
+				encoding.getStandardCharset()
+		);
+		
+		outFileManager.writeLines(lines);
+	}
 	
 	protected void dump(List<String> sourceCode) {
 		if (Logger.getLevel() != LogLevel.DEBUG)
 			return;
 		
-		JavaIndenter indenter = new JavaIndenter();
-		List<String> formatedFile = indenter.format(sourceCode);
+		JavaCodeIndenter indenter = new JavaCodeIndenter();
+		List<String> indentedFile = indenter.indent(sourceCode);
 
 		Logger.debug(this.getClass(), "Processed file");
-		
-		if (formatedFile.size() < 30)
-			FileUtil.printFileWithLines(sourceCode);
-		else
-			FileUtil.printFileWithLines(formatedFile);
+		ConsoleFilePrinter.printFileWithLines(indentedFile);
 		
 	}
 	

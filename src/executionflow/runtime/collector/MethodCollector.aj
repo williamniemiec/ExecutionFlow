@@ -8,11 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import executionflow.info.InvokedContainer;
 import executionflow.info.InvokedInfo;
-import executionflow.util.logger.Logger;
+import util.logger.Logger;
 
 /**
  * Collects various information about methods called by a JUnit test.
@@ -57,6 +59,7 @@ public aspect MethodCollector extends RuntimeCollector {
 		&& !get(* *.*) 
 		&& !set(* *.*)
 		&& !within(api..*)
+		&& !within(util..*)
 		&& !execution(public int hashCode());
 	
 

@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import executionflow.info.InvokedInfo;
-import executionflow.util.balance.RoundBracketBalance;
-import executionflow.util.logger.Logger;
+import util.io.parser.balance.RoundBracketBalance;
+import util.logger.Logger;
 
 /**
  * Standard strategy for computing test path of a method and records the 
  * methods called by it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since		6.0.0
  */
 public class StandardTestPathAnalyzer extends Analyzer {
@@ -65,10 +65,19 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	protected void run() throws IOException {
+		try {
+			runJDB();
+		}
+		catch (IllegalStateException e) {
+			// Debugger was closed before execution ended
+		}
+	}
+	
+	private void runJDB() throws IOException {
 		boolean wasNewIteration = false;
 		
 		while (!stopJDB && !timeout) {
-			while (!wasNewIteration && !timeout && !parseOutput())
+			while (!wasNewIteration && !timeout && !stopJDB && !parseOutput())
 				;
 			
 			wasNewIteration = false;
@@ -121,12 +130,12 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private void readAllOutput() throws IOException	{
-		while (!parseOutput())
+		while (!parseOutput() && !timeout && !stopJDB)
 			;
 	}
 	
 	private void skipInternalCalls() throws IOException {
-		while (isInternalCommand) {					
+		while (isInternalCommand && !timeout && !stopJDB) {					
 			sendJDB("next");
 			readAllOutput();
 		}
@@ -136,7 +145,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 		if (!isJDBReady())
 			return false;
 
-    	initializeLine();
+		initializeLine();
     	
     	if (isEmptyLine())
     		return false;
@@ -197,13 +206,14 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	}
 	
 	private void checkIncorrectInvocationLine() {
-		if (!line.contains("Stopping due to deferred breakpoint errors"))
+		if (!line.contains("Unable to set deferred breakpoint "))
 			return;
 		
 		try {
-			jdb.quit();
+			//jdb.quit();
+			jdb.forceQuit();
 		} 
-		catch (InterruptedException e) {
+		catch (IOException e) {
 		}
 		
 		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 
@@ -222,9 +232,15 @@ public class StandardTestPathAnalyzer extends Analyzer {
 				|| line.contains("Exception occurred") 
 				|| line.contains("Input stream closed.")
 				|| line.contains("FAILURES!!!") 
-				|| line.contains("Caused by: ");
+				|| line.contains("Caused by: ")
+				|| isStackTrace(line);
 	}
 	
+	private boolean isStackTrace(String line) {
+		return line.matches("[\\s\\t]*at[\\s\\t]+[^\\/]+\\/[^\\(]+\\([^\\)]+\\).*");
+	}
+
+
 	private boolean isInternalMethod() {
 		return 	!hasLineInvokedName()
 				&& !inConstructor()

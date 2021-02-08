@@ -3,14 +3,13 @@ package executionflow.io.processor.invoked.holeplug;
 import java.util.List;
 
 import executionflow.io.SourceCodeProcessor;
-import executionflow.util.DataUtil;
 
 /**
  * Process 'switch' code block (most specifically, line with 'case' or 
  * 'default' keyword).
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.5
  * @since 		6.0.0
  */
 public class SwitchProcessor extends SourceCodeProcessor {
@@ -45,7 +44,7 @@ public class SwitchProcessor extends SourceCodeProcessor {
 		int idxColon = line.indexOf(":");
 		 
 		statement.append(line.substring(0, idxColon+1));
-		statement.append("int " + DataUtil.generateVarName() + "=0;"); 
+		statement.append("int " + generateVarName() + "=0;"); 
 		statement.append(line.substring(idxColon+1));
 		
 		return statement.toString();
