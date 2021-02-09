@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import executionflow.io.SourceCodeProcessor;
 import util.data.structure.Pair;
+import util.io.parser.balance.Balance;
 import util.io.parser.balance.CurlyBracketBalance;
 
 
@@ -339,11 +340,15 @@ public class CodeCleaner {
 				continue;
 			
 			int oldLineId = i-numAddedLines;
-
+			
 			// add current line to targets
 			List<Integer> targetLinesIds = (mapping.containsKey(oldLineId) ? 
 					mapping.get(oldLineId) : new ArrayList<Integer>());
-			targetLinesIds.add(i);
+			
+			if (isPreviousLineIncompleteStatement(i))
+				targetLinesIds.add(i-1);
+			else
+				targetLinesIds.add(i);
 			
 			// find bracket and check if there is code after
 			int idx = Helper.getIndexOfReservedChar(processedCode.get(i), "{");
@@ -356,11 +361,10 @@ public class CodeCleaner {
 				processedCode.add(i+1, trailing); //insert the text right of the { as the next line
 				processedCode.set(i, preceding); //remove the text right of the { on the current line
 				
-				mapping.put(oldLineId, targetLinesIds);
 				numAddedLines++;
-			} else {
-				mapping.put(oldLineId, targetLinesIds);
 			}
+			
+			mapping.put(oldLineId, targetLinesIds);
 		}
 		
 		lineMappings.add(mapping);
@@ -369,6 +373,18 @@ public class CodeCleaner {
 	private boolean isForIterationAndHasNewKeyword(String line) {
 		return	line.matches("[\\s\\t]*for[\\s\\t]*\\(.+") 
 				&& line.contains("new ");
+	}
+	
+	private boolean isPreviousLineIncompleteStatement(int currentLine) {
+		if (currentLine == 0)
+			return false;
+		
+		Balance cbb = new CurlyBracketBalance();
+		String previousLine = processedCode.get(currentLine-1);
+		
+		return	previousLine.contains("new ") 
+				&& previousLine.contains("{") 
+				&& !cbb.parse(previousLine).isBalanceEmpty();
 	}
 	
 	// Move closing brackets NOT starting a line to the next line
