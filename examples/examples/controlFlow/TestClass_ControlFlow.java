@@ -90,31 +90,31 @@ public class TestClass_ControlFlow
 		letter = Character.toUpperCase(letter);
 				
 		switch (letter) {
-			case '¡':
-			case '¿':
-			case '√':
-			case '¬':
+			case '√Å':
+			case '√Ä':
+			case '√É':
+			case '√Ç':
 				letter = 'A';
 				break;
-			case '…':
-			case '»':
-			case ' ':
+			case '√â':
+			case '√à':
+			case '√ä':
 				letter = 'E';
 				break;
-			case 'Ã':
-			case 'Õ':
-			case 'Œ':
+			case '√å':
+			case '√ç':
+			case '√é':
 				letter = 'I';
 				break;
-			case '“':
-			case '”':
-			case '‘':
-			case '’':
+			case '√í':
+			case '√ì':
+			case '√î':
+			case '√ï':
 				letter = 'O';
 				break;
-			case '⁄':
-			case 'Ÿ':
-			case '€':
+			case '√ö':
+			case '√ô':
+			case '√õ':
 				letter = 'U';
 				break;
 		}

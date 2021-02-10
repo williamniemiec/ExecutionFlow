@@ -5,33 +5,33 @@ import examples.polymorphism.ClassInterface;
 public class AuxClass{                                                                                                    
      public String text;                                                                                                  
      private int num;                                                                                                     
-     @executionflow.runtime.CollectCalls public AuxClass(String t, int x){                                                
+     @wniemiec.executionflow.runtime.CollectCalls public AuxClass(String t, int x){                                                
           this.text = t;                                                                                                  
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public AuxClass(int num){                                                        
+     @wniemiec.executionflow.runtime.CollectCalls public AuxClass(int num){                                                        
           this.num = num;                                                                                                 
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public AuxClass(int x, int y){                                                   
+     @wniemiec.executionflow.runtime.CollectCalls public AuxClass(int x, int y){                                                   
           x = 2;                                                                                                          
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public AuxClass(String x){                                                       
+     @wniemiec.executionflow.runtime.CollectCalls public AuxClass(String x){                                                       
           x = "2";                                                                                                        
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public void test(int x, int y, String k){                                        
+     @wniemiec.executionflow.runtime.CollectCalls public void test(int x, int y, String k){                                        
           x = 3;                                                                                                          
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public void test2() {                                                            
+     @wniemiec.executionflow.runtime.CollectCalls public void test2() {                                                            
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static void test3(int x, int y, String k){                                
+     @wniemiec.executionflow.runtime.CollectCalls public static void test3(int x, int y, String k){                                
           x = 0;                                                                                                          
           while (x < 3) {                                                                                                 
                x++;                                                                                                       
           }                                                                                                               
           x = 3;                                                                                                          
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static void test4() {                                                     
+     @wniemiec.executionflow.runtime.CollectCalls public static void test4() {                                                     
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public long factorial(int x){                                                    
+     @wniemiec.executionflow.runtime.CollectCalls public long factorial(int x){                                                    
           long response = 1;                                                                                              
           int i=1;                                                                                                        
           while (i<=x) {                                                                                                  
@@ -40,7 +40,7 @@ public class AuxClass{
           }                                                                                                               
           return response;                                                                                                
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public long fibonacci(int x){                                                    
+     @wniemiec.executionflow.runtime.CollectCalls public long fibonacci(int x){                                                    
           long response = 1;                                                                                              
           long last = 1;                                                                                                  
           long aux = 0;                                                                                                   
@@ -53,7 +53,7 @@ public class AuxClass{
           }                                                                                                               
           return response;                                                                                                
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static char[] parseLetters_noInternalCall(CharSequence cs){               
+     @wniemiec.executionflow.runtime.CollectCalls public static char[] parseLetters_noInternalCall(CharSequence cs){               
           char[] letters = cs.toString().toCharArray();                                                                   
           char[] response = new char[letters.length];                                                                     
           int i=0;                                                                                                        
@@ -68,7 +68,7 @@ public class AuxClass{
           }                                                                                                               
           return response;                                                                                                
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static char[] parseLetters_withInternalCall(char[] letters){              
+     @wniemiec.executionflow.runtime.CollectCalls public static char[] parseLetters_withInternalCall(char[] letters){              
           char[] response = new char[letters.length];                                                                     
           int i=0;                                                                                                        
           while (i<letters.length) {                                                                                      
@@ -77,13 +77,13 @@ public class AuxClass{
           }                                                                                                               
           return response;                                                                                                
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls private static char invertLetter(char letter){                                   
+     @wniemiec.executionflow.runtime.CollectCalls private static char invertLetter(char letter){                                   
           if (letter == Character.toUpperCase(letter)) {                                                                  
                return Character.toLowerCase(letter);                                                                      
           }                                                                                                               
           return Character.toUpperCase(letter);                                                                           
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public String threePaths(int num){                                               
+     @wniemiec.executionflow.runtime.CollectCalls public String threePaths(int num){                                               
           if (num == 1) {                                                                                                 
                return "one";                                                                                              
           }                                                                                                               
@@ -92,17 +92,17 @@ public class AuxClass{
           }                                                                                                               
           return "";                                                                                                      
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public int testObjParam(Object obj){                                             
+     @wniemiec.executionflow.runtime.CollectCalls public int testObjParam(Object obj){                                             
           return obj.hashCode();                                                                                          
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public int getNumber(){                                                          
+     @wniemiec.executionflow.runtime.CollectCalls public int getNumber(){                                                          
           return num;                                                                                                     
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public List<Integer> identity(int num1, int num2, int num3, int num4, int num5){ 
+     @wniemiec.executionflow.runtime.CollectCalls public List<Integer> identity(int num1, int num2, int num3, int num4, int num5){ 
           List<Integer> response = Arrays.asList( num1, num2, num3, num4, num5 );                                         
           return response;                                                                                                
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public ClassInterface anonymousObjectReturn(){                                   
+     @wniemiec.executionflow.runtime.CollectCalls public ClassInterface anonymousObjectReturn(){                                   
           return new ClassInterface("test") {                                                                             
                @Override public String interfaceMethod() {                                                                
                     String str = "test";                                                                                  
@@ -111,16 +111,16 @@ public class AuxClass{
           }                                                                                                               
           ;                                                                                                               
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static String trim(String text){                                          
+     @wniemiec.executionflow.runtime.CollectCalls public static String trim(String text){                                          
           if (text == null) {                                                                                             
                return "";                                                                                                 
           }                                                                                                               
           return text.trim();                                                                                             
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static String concatStrNum(String str, int num){                          
+     @wniemiec.executionflow.runtime.CollectCalls public static String concatStrNum(String str, int num){                          
           return str + num;                                                                                               
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static int countTotalArguments(Object... args){                           
+     @wniemiec.executionflow.runtime.CollectCalls public static int countTotalArguments(Object... args){                           
           int i = 2;                                                                                                      
           int k;int _5a1336feea8767db126c6223c4012a26=0;                                                                  
           k=0;                                                                                                            
@@ -131,7 +131,7 @@ public class AuxClass{
           }                                                                                                               
           return k;                                                                                                       
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static int countTotalArguments2(Object... args){                          
+     @wniemiec.executionflow.runtime.CollectCalls public static int countTotalArguments2(Object... args){                          
           int total = 0;                                                                                                  
           int i=0;                                                                                                        
           while (i<args.length) {                                                                                         
@@ -144,7 +144,7 @@ public class AuxClass{
           }                                                                                                               
           return total;                                                                                                   
      }                                                                                                                    
-     @executionflow.runtime.CollectCalls public static void infinite() {                                                  
+     @wniemiec.executionflow.runtime.CollectCalls public static void infinite() {                                                  
                while(true) ;                                                                                              
           }                                                                                                               
 }                                                                                                                         

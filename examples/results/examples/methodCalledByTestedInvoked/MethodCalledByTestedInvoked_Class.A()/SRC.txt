@@ -1,24 +1,24 @@
 package examples.methodCalledByTestedInvoked;                                                           
 public class MethodCalledByTestedInvoked_Class{                                                         
-     @executionflow.runtime.CollectCalls public MethodCalledByTestedInvoked_Class(boolean callMethods){ 
+     @wniemiec.executionflow.runtime.CollectCalls public MethodCalledByTestedInvoked_Class(boolean callMethods){ 
           if (callMethods) {                                                                            
                A();                                                                                     
                D();                                                                                     
           }                                                                                             
      }                                                                                                  
-     @executionflow.runtime.CollectCalls public void A(){                                               
+     @wniemiec.executionflow.runtime.CollectCalls public void A(){                                               
           Boolean.parseBoolean("True");                                                                 
           B();                                                                                          
           C();                                                                                          
      }                                                                                                  
-     @executionflow.runtime.CollectCalls public void B(){                                               
+     @wniemiec.executionflow.runtime.CollectCalls public void B(){                                               
           Boolean.parseBoolean("True");                                                                 
      }                                                                                                  
-     @executionflow.runtime.CollectCalls public void C(){                                               
+     @wniemiec.executionflow.runtime.CollectCalls public void C(){                                               
           Boolean.parseBoolean("True");                                                                 
           D();                                                                                          
      }                                                                                                  
-     @executionflow.runtime.CollectCalls public void D(){                                               
+     @wniemiec.executionflow.runtime.CollectCalls public void D(){                                               
           Boolean.parseBoolean("True");                                                                 
      }                                                                                                  
 }                                                                                                       
