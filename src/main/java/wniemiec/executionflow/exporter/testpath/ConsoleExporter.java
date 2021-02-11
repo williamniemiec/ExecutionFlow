@@ -3,7 +3,7 @@ package wniemiec.executionflow.exporter.testpath;
 import java.util.List;
 import java.util.Map;
 
-import wniemiec.executionflow.info.InvokedContainer;
+import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.util.console.ConsoleHeader;
 
 /**

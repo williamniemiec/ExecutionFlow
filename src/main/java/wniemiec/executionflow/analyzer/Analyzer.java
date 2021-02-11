@@ -13,7 +13,7 @@ import java.util.Set;
 
 import wniemiec.api.jdb.JDB;
 import wniemiec.executionflow.ExecutionFlow;
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.util.logger.Logger;
 import wniemiec.util.task.Scheduler;

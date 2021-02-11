@@ -1,4 +1,4 @@
-package wniemiec.executionflow.runtime.collector;
+package wniemiec.executionflow.runtime.hook;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,25 +9,26 @@ import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
 
-import wniemiec.executionflow.info.InvokedContainer;
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedContainer;
+import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
+import wniemiec.executionflow.runtime.collector.MethodCollector;
 
 /**
  * Responsible for data collection of methods and class constructors used in 
  * tests.
  * 
  * @apiNote		It will ignore all methods of a class if it has 
- * {@link wniemiec.executionflow.runtime.SkipCollection} annotation
+ * {@link executionflow.runtime.SkipCollection} annotation
  * @apiNote		It will ignore methods with 
- * {@link wniemiec.executionflow.runtime.SkipInvoked} annotation
+ * {@link executionflow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since		1.0
  */
-public abstract aspect RuntimeCollector {
+public abstract aspect RuntimeHook {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -37,28 +38,10 @@ public abstract aspect RuntimeCollector {
 	 * <b>Format: </b><code>method_name + method_arguments + 
 	 * constructor@hashCode (if it has one)</code>
 	 */
-	protected static List<String> collectedMethods;
+	protected static List<String> parsedMethods;
 	
-	/**
-	 * Stores information about collected methods.<hr/>
-	 * <ul>
-	 * 	<li><b>Key:</b> Method invocation line</li>
-	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
-	 * </ul>
-	 */
-	protected static Map<Integer, List<InvokedContainer>> methodCollector;
 	
-	/**
-	 * Stores information about collected constructor.<hr/>
-	 * <ul>
-	 * 	<li><b>Key(with arguments):</b>		
-	 * 	<code>invocationLine + classSignature[arg1,arg2,...]</code></li>
-	 * 	<li><b>Key(without arguments):</b>	
-	 * 	<code>invocationLine + classSignature[]</code></li>
-	 * 	<li><b>Value:</b> Informations about the constructor</li>
-	 * </ul>
-	 */
-	protected static Map<String, InvokedContainer> constructorCollector;
+	
 
 	/**
 	 * Stores anonymous class signature where it is created and where it is 
@@ -74,16 +57,13 @@ public abstract aspect RuntimeCollector {
 	protected static String testMethodSignature;
 	protected static InvokedInfo testMethodInfo;
 	protected static boolean skipCollection;
-	protected static int lastInvocationLine;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	static {
-		collectedMethods = new ArrayList<>();
-		methodCollector = new LinkedHashMap<>();
-		constructorCollector = new LinkedHashMap<>();
+		parsedMethods = new ArrayList<>();
 		methodsCalledByTestedInvoked = new HashMap<>();
 		anonymousClassSignatures = new HashMap<>();
 	}
@@ -92,7 +72,7 @@ public abstract aspect RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Pointcuts
 	//-------------------------------------------------------------------------
-	protected pointcut externalPackage():
+	protected pointcut isInternalPackage():
 		within(wniemiec..*);
 	
 	protected pointcut skipAnnotation():
@@ -160,12 +140,10 @@ public abstract aspect RuntimeCollector {
 	}
 
 	protected void reset() {
-		collectedMethods.clear();
-		methodCollector.clear();
-		constructorCollector.clear();
+		parsedMethods.clear();
+		MethodCollector.clear();
 		testMethodSignature = null;
 		skipCollection = false;
-		lastInvocationLine = 0;
 		methodsCalledByTestedInvoked.clear();
 		TestMethodFileProcessor.clearMapping();
 		InvokedFileProcessor.clearMapping();

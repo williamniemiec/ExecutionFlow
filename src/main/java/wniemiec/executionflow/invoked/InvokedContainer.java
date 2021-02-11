@@ -1,4 +1,4 @@
-package wniemiec.executionflow.info;
+package wniemiec.executionflow.invoked;
 
 import java.io.Serializable;
 

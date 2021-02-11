@@ -1,4 +1,4 @@
-package wniemiec.executionflow.runtime.collector;
+package wniemiec.executionflow.runtime.hook;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -8,12 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import wniemiec.executionflow.info.InvokedContainer;
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.runtime.collector.ClassPathSearcher;
+import wniemiec.executionflow.runtime.collector.MethodCollector;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -36,19 +35,22 @@ import wniemiec.util.logger.Logger;
  * from classes with {@link wniemiec.executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.4
+ * @version		7.0.0
  * @since		1.0 
  */
 @SuppressWarnings("unused")
-public aspect MethodCollector extends RuntimeCollector {	
+public aspect MethodHook extends RuntimeHook {	
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private String methodID;
 	private String signature;
+	private String classSignature;
 	private Path classPath;
 	private Path srcPath;
-	
+	private InvokedInfo methodInfo;
+
 	
 	//-----------------------------------------------------------------------
 	//		Pointcuts
@@ -58,7 +60,7 @@ public aspect MethodCollector extends RuntimeCollector {
 		&& insideJUnitTest()
 		&& !get(* *.*) 
 		&& !set(* *.*)
-		&& !externalPackage()
+		&& !isInternalPackage()
 		&& !execution(public int hashCode());
 	
 
@@ -66,82 +68,31 @@ public aspect MethodCollector extends RuntimeCollector {
 	//		Join points
 	//-------------------------------------------------------------------------
 	before(): insideTestedMethod() {
-		initializeSignature(thisJoinPoint);
-
-		if (!isValidState(thisJoinPoint))
+		if (!isValidMethod(thisJoinPoint))
 			return;
 		
-		String key = generateKey(thisJoinPoint);
+		parseMethodInfo(thisJoinPoint);
 		
-		if (alreadyCollected(key))
-			return;
-		
-		collectSourceAndBinaryPaths(thisJoinPoint);
-		
-		if ((srcPath == null) || (classPath == null))
-			return;
-		
-		collectMethod(thisJoinPoint, key);
+		if (!wasMethodAlreadyParsed() && hasSourceAndBinearyPath()) {
+			parseMethod(thisJoinPoint);	
+			collectMethod();
+			markMethodAsParsed();
+		}
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void initializeSignature(JoinPoint jp) {
-		fixAnonymousSignature(jp);
-		
-		signature = getSignature(jp);
-	}
-	
-	private void fixAnonymousSignature(JoinPoint jp) {
-		if (isStaticMethod(jp))
-			return;
-		
-		anonymousClassSignatures.put(
-				getConstructorName(jp), 
-				jp.getSignature().getDeclaringTypeName()
-		);
+	private boolean isValidMethod(JoinPoint jp) {
+		return	(isStaticMethod(jp) || !constructorBelongsToTestMethod(jp))
+				&& !belongsToTestMethod(jp)
+				&& isMethodSignature(jp) 
+				&& !isNativeMethod(jp); 
 	}
 	
 	private boolean isStaticMethod(JoinPoint jp) {
 		return jp.getTarget() == null;
-	}
-	
-	private String getConstructorName(JoinPoint jp) {
-		if (isStaticMethod(jp))
-			return "";
-		
-		return jp.getTarget().getClass().getName();
-	}
-	
-	private String getSignature(JoinPoint jp) {
-		StringBuilder signature = new StringBuilder();
-
-		if (isStaticMethod(jp)) {			
-			signature.append(jp.getSignature().getDeclaringTypeName());
-		}
-		else { 
-			if (anonymousClassSignatures.containsKey(getConstructorName(jp))) {
-				signature.append(anonymousClassSignatures.get(getConstructorName(jp)));
-			}
-			else {
-				signature.append(getConstructorName(jp));
-			}
-		}
-		
-		signature.append(".");
-		signature.append(jp.getSignature().getName());
-		signature.append(removeParametersFromSignature(jp.getSignature().toString()));
-		
-		return signature.toString();
-	}
-	
-	private boolean isValidState(JoinPoint jp) {
-		return	(isStaticMethod(jp) || !constructorBelongsToTestMethod(jp))
-				&& isMethodSignature(jp) 
-				&& !isNativeMethod(jp) 
-				&& !belongsToTestMethod(jp);
 	}
 	
 	private boolean constructorBelongsToTestMethod(JoinPoint jp) {
@@ -173,7 +124,65 @@ public aspect MethodCollector extends RuntimeCollector {
 				&& signature.contains(testMethodSignature);
 	}
 	
-	private String generateKey(JoinPoint jp) {
+	private void parseMethodInfo(JoinPoint jp) {
+		initializeSignature(jp);
+		methodID = generateMethodID(jp);
+	}
+	
+	private void initializeSignature(JoinPoint jp) {
+		fixAnonymousSignature(jp);
+		
+		signature = getSignature(jp);
+		classSignature = getClassSignature(jp);
+	}
+	
+	private void fixAnonymousSignature(JoinPoint jp) {
+		if (isStaticMethod(jp))
+			return;
+		
+		anonymousClassSignatures.put(
+				getConstructorName(jp), 
+				jp.getSignature().getDeclaringTypeName()
+		);
+	}
+	
+	private String getConstructorName(JoinPoint jp) {
+		if (isStaticMethod(jp))
+			return "";
+		
+		return jp.getTarget().getClass().getName();
+	}
+	
+	private String getSignature(JoinPoint jp) {
+		StringBuilder signature = new StringBuilder();
+
+		if (isStaticMethod(jp)) {			
+			signature.append(jp.getSignature().getDeclaringTypeName());
+		}
+		else { 
+			if (anonymousClassSignatures.containsKey(getConstructorName(jp))) {
+				signature.append(anonymousClassSignatures.get(getConstructorName(jp)));
+			}
+			else {
+				signature.append(getConstructorName(jp));
+			}
+		}
+		
+		signature.append(".");
+		signature.append(jp.getSignature().getName());
+		signature.append(removeParametersFromSignature(jp.getSignature().toString()));
+		
+		return signature.toString();
+	}
+	
+	private String getClassSignature(JoinPoint jp) {
+		if (jp.getTarget() == null)
+			return jp.getSignature().getDeclaringTypeName();
+		
+		return jp.getTarget().getClass().getName();
+	}
+	
+	private String generateMethodID(JoinPoint jp) {
 		// Key: <method_name>+<method_params>+<constructor@hashCode>
 		StringBuilder key = new StringBuilder();
 		
@@ -202,41 +211,36 @@ public aspect MethodCollector extends RuntimeCollector {
 		return (jp.getSourceLocation() == null) ? 0 : jp.getSourceLocation().getLine();
 	}
 	
-	private boolean alreadyCollected(String key) {
-		return collectedMethods.contains(key);
+	private boolean wasMethodAlreadyParsed() {
+		return parsedMethods.contains(methodID);
 	}
 	
-	private void collectSourceAndBinaryPaths(JoinPoint jp) {
+	private boolean hasSourceAndBinearyPath() {
+		findSourceAndBinaryPaths(classSignature);
+		
+		if ((srcPath == null) || (classPath == null)) {
+			Logger.warning("The method with the following signature" 
+					+ " will be skiped because its source file and / or " 
+					+ " binary file cannot be found: " + signature);
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private void findSourceAndBinaryPaths(String classSignature) {
 		try {
-			findSrcAndBinPath(jp);
+			classPath = ClassPathSearcher.findBinPath(classSignature);
+			srcPath = ClassPathSearcher.findSrcPath(classSignature);
 		} 
 		catch (IOException e) {
 			Logger.error("[ERROR] MethodCollector - " + e.getMessage() + "\n");
 		}
 	}
 	
-	private void findSrcAndBinPath(JoinPoint jp) throws IOException {
-		String classSignature = getClassSignature(jp);
-				
-		classPath = ClassPathSearcher.findBinPath(classSignature);
-		srcPath = ClassPathSearcher.findSrcPath(classSignature);
-		
-		if ((srcPath == null) || (classPath == null)) {
-			Logger.warning("The method with the following signature" 
-					+ " will be skiped because its source file and / or " 
-					+ " binary file cannot be found: " + signature);
-		}
-	}
-	
-	private String getClassSignature(JoinPoint jp) {
-		if (jp.getTarget() == null)
-			return jp.getSignature().getDeclaringTypeName();
-		
-		return jp.getTarget().getClass().getName();
-	}
-	
-	private void collectMethod(JoinPoint jp, String key) {
-		InvokedInfo methodInfo = new InvokedInfo.Builder()
+	private void parseMethod(JoinPoint jp) {
+		methodInfo = new InvokedInfo.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
 				.invokedSignature(signature)
@@ -247,13 +251,8 @@ public aspect MethodCollector extends RuntimeCollector {
 				.invocationLine(getInvocationLine(jp))
 				.build();
 		methodInfo.setConcreteMethodSignature(getConcreteMethodSignature(jp));
-		
-		storeCollector(jp, methodInfo);
-		collectedMethods.add(key);
-
-		lastInvocationLine = getInvocationLine(jp);
 	}
-		
+	
 	private Class<?>[] getParameterTypes(JoinPoint jp) { 
 		Method method = ((MethodSignature) jp.getSignature()).getMethod();
 		
@@ -292,16 +291,11 @@ public aspect MethodCollector extends RuntimeCollector {
 		return signature.matches(regexDollarSignAndNumbers);
 	}
 	
-	private void storeCollector(JoinPoint jp, InvokedInfo methodInfo) {
-		if (methodCollector.containsKey(getInvocationLine(jp))) {
-			List<InvokedContainer> list = methodCollector.get(getInvocationLine(jp));
-			list.add(new InvokedContainer(methodInfo, testMethodInfo));
-		} 
-		else {	
-			List<InvokedContainer> list = new ArrayList<>();
-			list.add(new InvokedContainer(methodInfo, testMethodInfo));
-			
-			methodCollector.put(getInvocationLine(jp), list);
-		}
+	private void collectMethod() {
+		MethodCollector.storeCollector(methodInfo, testMethodInfo);
+	}
+	
+	private void markMethodAsParsed() {
+		parsedMethods.add(methodID);
 	}
 }

@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import wniemiec.executionflow.info.InvokedContainer;
-import wniemiec.executionflow.io.manager.InvokedManager;
+import wniemiec.executionflow.invoked.InvokedContainer;
 
 /**
  * For each collected method, obtain the following information:
@@ -24,44 +23,34 @@ import wniemiec.executionflow.io.manager.InvokedManager;
 public class MethodExecutionFlow extends ExecutionFlow {
 	
 	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private Set<InvokedContainer> collectors;
-	
-
-	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public MethodExecutionFlow(InvokedManager processingManager, 
-							   Map<Integer, List<InvokedContainer>> collectedMethods) {
-		super(processingManager);
-		
-		this.collectors = new HashSet<>();
-		
+	public MethodExecutionFlow(Map<Integer, List<InvokedContainer>> collectedMethods) {
+		super(storeCollectedMethods(collectedMethods));
 		storeCollectedMethods(collectedMethods);
 	}
 	
-	public MethodExecutionFlow(InvokedManager processingManager, 
-							   Collection<InvokedContainer> collectedMethods) {
-		super(processingManager);
-		
-		this.collectors = new HashSet<>(collectedMethods);
+	public MethodExecutionFlow(Collection<InvokedContainer> collectedMethods) {
+		super(new HashSet<>(collectedMethods));
 	}
 
 
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void storeCollectedMethods(Map<Integer, List<InvokedContainer>> collectedMethods) {
+	private static Set<InvokedContainer> storeCollectedMethods(Map<Integer, List<InvokedContainer>> collectedMethods) {
 		// Stores only the first collector of each line, since the test path of
 		// methods called within a loop will be obtained at once
+		Set<InvokedContainer> collectors = new HashSet<>();
 		for (List<InvokedContainer> collector : collectedMethods.values()) {
 			collectors.add(collector.get(0));
 		}
-	}
-	
-	@Override
-	protected Set<InvokedContainer> getCollectors() {
+		
 		return collectors;
 	}
+	
+//	@Override
+//	protected Set<InvokedContainer> getCollectors() {
+//		return collectors;
+//	}
 }

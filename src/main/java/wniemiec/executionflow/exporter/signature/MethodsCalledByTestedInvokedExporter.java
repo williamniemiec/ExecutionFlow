@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import wniemiec.executionflow.ExecutionFlow;
 import wniemiec.executionflow.exporter.SignatureToPath;
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.util.io.manager.CSVFileManager;
 import wniemiec.util.logger.Logger;
 

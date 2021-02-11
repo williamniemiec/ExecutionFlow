@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wniemiec.executionflow.ExecutionFlow;
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.FileEncoding;
 import wniemiec.executionflow.io.compiler.Compiler;
 import wniemiec.executionflow.io.compiler.CompilerFactory;

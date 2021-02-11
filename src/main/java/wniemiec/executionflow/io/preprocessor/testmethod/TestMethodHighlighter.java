@@ -3,7 +3,7 @@ package wniemiec.executionflow.io.preprocessor.testmethod;
 import java.util.ArrayList;
 import java.util.List;
 
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.SourceCodeProcessor;
 import wniemiec.util.io.parser.balance.CurlyBracketBalance;
 

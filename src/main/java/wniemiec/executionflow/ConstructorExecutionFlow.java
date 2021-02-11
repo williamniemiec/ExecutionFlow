@@ -2,10 +2,9 @@ package wniemiec.executionflow;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
-import wniemiec.executionflow.info.InvokedContainer;
-import wniemiec.executionflow.io.manager.InvokedManager;
+import wniemiec.executionflow.invoked.InvokedContainer;
+import wniemiec.executionflow.runtime.hook.ConstructorHook;
 
 /**
  * For each collected constructor, obtain the following information:
@@ -22,12 +21,6 @@ import wniemiec.executionflow.io.manager.InvokedManager;
 public class ConstructorExecutionFlow extends ExecutionFlow {
 	
 	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private Set<InvokedContainer> collectors;	
-	
-	
-	//-------------------------------------------------------------------------
 	//		Constructors
 	//-------------------------------------------------------------------------
 	/**
@@ -35,13 +28,10 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	 * methods called by tested constructor will be exported to a CSV file.
 	 * 
 	 * @param		constructorCollector Collected constructors from 
-	 * {@link executionflow.runtime.ConstructorCollector}
+	 * {@link ConstructorHook.runtime.ConstructorCollector}
 	 */
-	public ConstructorExecutionFlow(InvokedManager processingManager, 
-									Collection<InvokedContainer> constructorCollector) {
-		super(processingManager);
-		
-		this.collectors = new HashSet<>(constructorCollector);
+	public ConstructorExecutionFlow(Collection<InvokedContainer> constructorCollector) {
+		super(new HashSet<>(constructorCollector));
 	}
 	
 	
@@ -51,10 +41,5 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	@Override
 	protected boolean isConstructor() {
 		return true;
-	}
-	
-	@Override
-	protected Set<InvokedContainer> getCollectors() {
-		return collectors;
 	}
 }

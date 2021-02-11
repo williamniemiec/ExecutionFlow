@@ -42,6 +42,7 @@ public class ClassPathSearcher {
 	private static String generateCompiledFilename(String classSignature) {
 		StringBuilder filename = new StringBuilder();
 
+//		filename.append(ExecutionFlow.isDevelopment() ? "target\\" : "");
 		filename.append(extractPathFromSignature(classSignature));
 		filename.append(extractClassNameFromClassSignature(classSignature));
 		filename.append(".class");

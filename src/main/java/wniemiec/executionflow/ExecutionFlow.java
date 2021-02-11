@@ -15,15 +15,16 @@ import java.util.Set;
 import wniemiec.executionflow.analyzer.Analyzer;
 import wniemiec.executionflow.analyzer.AnalyzerFactory;
 import wniemiec.executionflow.exporter.ExportManager;
-import wniemiec.executionflow.info.InvokedContainer;
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedContainer;
+import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.manager.FileManager;
 import wniemiec.executionflow.io.manager.InvokedManager;
 import wniemiec.executionflow.io.processor.factory.InvokedFileProcessorFactory;
 import wniemiec.executionflow.io.processor.factory.TestMethodFileProcessorFactory;
 import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
-import wniemiec.executionflow.runtime.collector.TestMethodCollector;
+import wniemiec.executionflow.runtime.hook.ProcessingManager;
+import wniemiec.executionflow.runtime.hook.TestMethodHook;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -55,7 +56,7 @@ public abstract class ExecutionFlow {
 	private static final boolean DEVELOPMENT;	
 	private static Path appRoot;
 	private static Path currentProjectRoot;
-	private InvokedManager processingManager;
+//	private InvokedManager processingManager;
 	private Analyzer analyzer;
 	private Map<String, Path> processedSourceFiles;
 	private ExportManager exportManager;
@@ -81,14 +82,14 @@ public abstract class ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------	
-	protected ExecutionFlow(InvokedManager processingManager) {		
-		this.processingManager = processingManager;
+	protected ExecutionFlow(Set<InvokedContainer> invokedCollector) {		
+//		this.processingManager = processingManager;
 		this.exportManager = new ExportManager(isDevelopment(), isConstructor());
 		this.computedTestPaths = new HashMap<>();
 		this.processedSourceFiles = new HashMap<>();
 		this.alreadyChanged = new HashSet<>();
 		this.testMode = false;
-		this.invokedCollector = getCollectors();
+		this.invokedCollector = invokedCollector;
 	}
 	
 
@@ -149,7 +150,7 @@ public abstract class ExecutionFlow {
 		
 		try {
 			processTestMethod(collector, testMethodFileManager);
-			processInvokedMethod(collector, testMethodFileManager, invokedFileManager);
+			processInvokedMethod(collector, invokedFileManager);
 			
 			runDebugger(collector);
 			
@@ -168,8 +169,8 @@ public abstract class ExecutionFlow {
 		catch (IOException e3) {
 			Logger.error(e3.getMessage());
 			
-			processingManager.restoreInvokedOriginalFile(invokedFileManager);
-			processingManager.restoreTestMethodOriginalFile(testMethodFileManager);
+			ProcessingManager.restoreInvokedToBeforeProcessing(invokedFileManager);
+			ProcessingManager.restoreTestMethodToBeforeProcessing(testMethodFileManager);
 		}
 	}
 
@@ -199,23 +200,22 @@ public abstract class ExecutionFlow {
 	
 	private void resetProcessing(FileManager invokedFileManager, 
 			 					 FileManager testMethodFileManager) {
-		processingManager.restoreInvokedOriginalFile(invokedFileManager);
-		processingManager.restoreTestMethodOriginalFile(testMethodFileManager);
+		ProcessingManager.restoreInvokedToBeforeProcessing(invokedFileManager);
+		ProcessingManager.restoreTestMethodToBeforeProcessing(testMethodFileManager);
 		
-		TestMethodCollector.restoreCollectorInvocationLine();
+		TestMethodHook.restoreCollectorInvocationLine();
 		
 		alreadyChanged.clear();
 	}
 
-	private void processInvokedMethod(InvokedContainer collector, 
-									  FileManager testMethodFileManager, 
+	private void processInvokedMethod(InvokedContainer collector,
 									  FileManager invokedFileManager) throws IOException {
 		Logger.info("Processing source file of invoked - " 
 				+ collector.getInvokedInfo().getConcreteInvokedSignature() 
 				+ "..."
 		);
 		
-		processingManager.processInvoked(testMethodFileManager, invokedFileManager);
+		ProcessingManager.doProcessingInInvoked(invokedFileManager);
 		
 		updateInvocationLineAfterInvokedProcessing(collector);
 		
@@ -251,7 +251,7 @@ public abstract class ExecutionFlow {
 				!invokedSrcPath.equals(testMethodSrcPath))
 			return;
 
-		TestMethodCollector.updateCollectorInvocationLines(
+		TestMethodHook.updateCollectorInvocationLines(
 				mapping, 
 				testMethodSrcPath
 		);
@@ -267,7 +267,7 @@ public abstract class ExecutionFlow {
 				+ "..."
 		);
 		
-		processingManager.processTestMethod(testMethodFileManager);
+		ProcessingManager.doProcessingInTestMethod(testMethodFileManager);
 		
 		updateInvocationLineAfterTestMethodProcessing(collector);
 		
@@ -346,12 +346,10 @@ public abstract class ExecutionFlow {
 		throw new InterruptedByTimeoutException();
 	}
 
-	protected abstract Set<InvokedContainer> getCollectors();
-
 	private void dump() {
 		Logger.debug(
 				this.getClass(), 
-				"collector: " + getCollectors().toString()
+				"collector: " + invokedCollector.toString()
 		);
 	}
 	

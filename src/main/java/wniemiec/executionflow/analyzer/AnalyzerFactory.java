@@ -2,7 +2,7 @@ package wniemiec.executionflow.analyzer;
 
 import java.io.IOException;
 
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedInfo;
 
 public class AnalyzerFactory {
 	

@@ -1,4 +1,4 @@
-package wniemiec.executionflow.runtime.collector;
+package wniemiec.executionflow.runtime.hook;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -7,8 +7,10 @@ import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
 
-import wniemiec.executionflow.info.InvokedContainer;
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedContainer;
+import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.runtime.collector.ClassPathSearcher;
+import wniemiec.executionflow.runtime.collector.ConstructorCollector;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -29,7 +31,7 @@ import wniemiec.util.logger.Logger;
  * 
  * @apiNote		Excludes calls to native java methods, methods with 
  * {@link executionflow.runtime.SkipInvoked]} annotation and all 
- * methods from classes with {@link wniemiec.executionflow.runtime.SkipCollection} 
+ * methods from classes with {@link executionflow.runtime.SkipCollection} 
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
@@ -37,7 +39,7 @@ import wniemiec.util.logger.Logger;
  * @since		1.0
  */
 @SuppressWarnings("unused")
-public aspect ConstructorCollector extends RuntimeCollector {
+public aspect ConstructorHook extends RuntimeHook {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -47,6 +49,9 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	private Path classPath;
 	private Path srcPath;
 	private String signature;
+	private String classSignature;
+	private InvokedInfo constructorInvokedInfo;
+	private String constructorID;
 	
 	
 	//-------------------------------------------------------------------------
@@ -55,17 +60,17 @@ public aspect ConstructorCollector extends RuntimeCollector {
 	private pointcut onClassInstantiation(): 
 		!skipAnnotation()
 		&& (insideJUnit4Test() || insideJUnit5Test())
-		&& !externalPackage()
+		&& !isInternalPackage()
 		&& call(*.new(..));
 
-	private pointcut insideConstructor(): 
+	private pointcut insideTestedConstructor(): 
 		!skipAnnotation()
 		&& !(JUnit4InternalCall() || JUnit5InternalCall())
 		&& call(*.new(..))
 		&& !cflowbelow(withincode(* *(..)))
 		&& !within(executionflow..*)
-		&& !externalPackage()
-		&& !within(ConstructorCollector);
+		&& !isInternalPackage()
+		&& !within(ConstructorHook);
 	
 	
 	//-------------------------------------------------------------------------
@@ -75,91 +80,93 @@ public aspect ConstructorCollector extends RuntimeCollector {
 		invocationLine = thisJoinPoint.getSourceLocation().getLine();
 	}
 	
-	before(): insideConstructor() {
-		if (!hasValidState())
+	before(): insideTestedConstructor() {
+		if (!isValidConstructor(thisJoinPoint))
 			return;
 
-		signature = getSignature(thisJoinPoint);
+		parseConstructorInfo(thisJoinPoint);
 		
-		if (!isValidConstructorSignature() || alreadyCollected())
-			return;
-		
-		collectedConstructors.add(signature);
-		
-		collectSourceAndBinaryPaths();
-		
-		if ((srcPath == null) || (classPath == null))
-			return;
-		
-		collectConstructor(thisJoinPoint);
-		
-		invocationLine = 0;
+		if (!wasConstructorAlreadyParsed() && hasSourceAndBinearyPath()) {
+			parseConstructor(thisJoinPoint);
+			collectConstructor();
+			markConstructorAsParsed();
+		}
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private boolean hasValidState() {
-		return !(invocationLine <= 0 || (testMethodInfo == null));
-	}
-	
-	private String getSignature(JoinPoint jp) {
-		return jp.getSignature().getDeclaringTypeName() 
-				+ removeParametersFromSignature(jp.getSignature().toString());
+	private boolean isValidConstructor(JoinPoint jp) {
+		String signature = getSignature(jp);
 		
-	}
-	
-	private boolean isValidConstructorSignature() {
-		return	!signature.contains("java.")
+		return	(invocationLine > 0) 
+				&& (testMethodInfo != null)
+				&& !signature.contains("java.")
 				&& !signature.matches(".+\\$[0-9]+.+")
-				&& isConstructorSignature();
+				&& isConstructorSignature(signature);
 	}
 	
-	private boolean isConstructorSignature() {
+	private boolean isConstructorSignature(String signature) {
 		final String regexConstructor = 
 				"[^\\s\\t]([A-z0-9-_$]*\\.)*[A-z0-9-_$]+\\([A-z0-9-_$,\\s]*\\)";
 		
 		return signature.matches(regexConstructor);
 	}
 	
-	private boolean alreadyCollected() {
-		return collectedConstructors.contains(signature);
+	private void parseConstructorInfo(JoinPoint jp) {
+		initializeSignature(jp);
+		constructorID = generateConstructorID();
 	}
 	
-	private void collectSourceAndBinaryPaths() {		
-		try {
-			findSrcAndBinPath();
-		} 
-		catch (IOException e1) {
-			Logger.error(e1.getMessage());
-		}
+	private void initializeSignature(JoinPoint jp) {
+		signature = getSignature(jp);
+		classSignature = extractClassSignatureFromSignature(signature);
 	}
 	
-	private void findSrcAndBinPath() throws IOException {
-		String classSignature = extractClassSignatureFromSignature(signature);
-		
-		srcPath = ClassPathSearcher.findSrcPath(classSignature);
-		classPath = ClassPathSearcher.findBinPath(classSignature);
-		
-		if (srcPath == null || classPath == null) {
-			Logger.warning("The constructor with the following signature" 
-					+ " will be skiped because its source file and / or " 
-					+ " binary file cannot be found: " + signature);
-		}
+	private String getSignature(JoinPoint jp) {
+		return jp.getSignature().getDeclaringTypeName() 
+				+ removeParametersFromSignature(jp.getSignature().toString());	
 	}
 	
 	private String extractClassSignatureFromSignature(String signature) {
 		return signature.split("\\(")[0];
 	}
 	
-	private void collectConstructor(JoinPoint jp) {
-		String key = invocationLine + signature;
+	private String generateConstructorID() {
+		return invocationLine + signature;
+	}
+	
+	private boolean wasConstructorAlreadyParsed() {
+		return collectedConstructors.contains(signature);
+	}
+	
+	private boolean hasSourceAndBinearyPath() {
+		findSourceAndBinaryPaths(classSignature);
 		
-		if (constructorCollector.containsKey(key))
-			return;
+		if (srcPath == null || classPath == null) {
+			Logger.warning("The constructor with the following signature" 
+					+ " will be skiped because its source file and / or " 
+					+ " binary file cannot be found: " + signature);
+			
+			return false;
+		}
 		
-		InvokedInfo constructorInvokedInfo = new InvokedInfo.Builder()
+		return true;
+	}
+	
+	private void findSourceAndBinaryPaths(String classSignature) {
+		try {
+			classPath = ClassPathSearcher.findBinPath(classSignature);
+			srcPath = ClassPathSearcher.findSrcPath(classSignature);
+		} 
+		catch (IOException e) {
+			Logger.error("[ERROR] ConstructorCollector - " + e.getMessage() + "\n");
+		}
+	}
+	
+	private void parseConstructor(JoinPoint jp) {
+		constructorInvokedInfo = new InvokedInfo.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
 				.invokedSignature(signature)
@@ -167,11 +174,6 @@ public aspect ConstructorCollector extends RuntimeCollector {
 				.args(getParameterValues(jp))
 				.invocationLine(invocationLine)
 				.build();
-		
-		constructorCollector.put(
-				key, 
-				new InvokedContainer(constructorInvokedInfo, testMethodInfo)
-		);
 	}
 	
 	private Class<?>[] getParameterTypes(JoinPoint jp) {
@@ -213,5 +215,15 @@ public aspect ConstructorCollector extends RuntimeCollector {
 			return new Object[0];
 		
 		return jp.getArgs();
+	}
+	
+	private void collectConstructor() {
+		ConstructorCollector.storeCollector(constructorID, constructorInvokedInfo, 
+											constructorInvokedInfo);
+	}
+	
+	private void markConstructorAsParsed() {
+		collectedConstructors.add(signature);
+		invocationLine = 0;
 	}
 }

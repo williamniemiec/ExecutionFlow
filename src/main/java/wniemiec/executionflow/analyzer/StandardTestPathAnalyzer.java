@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import wniemiec.executionflow.info.InvokedInfo;
+import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.util.io.parser.balance.RoundBracketBalance;
 import wniemiec.util.logger.Logger;
 

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import wniemiec.executionflow.ExecutionFlow;
-import wniemiec.executionflow.info.InvokedContainer;
+import wniemiec.executionflow.invoked.InvokedContainer;
 
 /**
  * Responsible for exporting the results obtained in {@link ExecutionFlow}.
