@@ -26,7 +26,7 @@ import util.logger.Logger;
  * must have {@link executionflow.runtime.CollectMethodsCalled} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.6
  * @since		2.0.0
  */
 @SuppressWarnings("unused")
@@ -46,7 +46,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	 * {@link executionflow.runtime.CollectMethodsCalled} annotation.
 	 */
 	private pointcut invokedSignature(): 
-		!within(@executionFlow.runtime.SkipCollection *)
+		!within(@executionflow.runtime.SkipCollection *)
 		&& !withincode(@executionflow.runtime.SkipInvoked * *.*(..))
 		&& cflow(execution(@executionflow.runtime.CollectMethodsCalled * *.*(..)))
 		&& insideJUnitTest()

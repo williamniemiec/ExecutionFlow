@@ -61,6 +61,7 @@ public abstract class ExecutionFlow {
 	private ExportManager exportManager;
 	private Set<String> alreadyChanged;
 	private boolean testMode;
+	private Set<InvokedContainer> invokedCollector;
 	
 	
 	//-------------------------------------------------------------------------
@@ -73,7 +74,7 @@ public abstract class ExecutionFlow {
 	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
 	}
 	
 	
@@ -87,6 +88,7 @@ public abstract class ExecutionFlow {
 		this.processedSourceFiles = new HashMap<>();
 		this.alreadyChanged = new HashSet<>();
 		this.testMode = false;
+		this.invokedCollector = getCollectors();
 	}
 	
 
@@ -116,12 +118,12 @@ public abstract class ExecutionFlow {
 	 * @return		Itself to allow chained calls
 	 */
 	public final ExecutionFlow run() {
-		if ((getCollectors() == null) || getCollectors().isEmpty())
+		if ((invokedCollector == null) || invokedCollector.isEmpty())
 			return this;
 		
 		dump();
 
-		for (InvokedContainer collector : getCollectors()) {
+		for (InvokedContainer collector : invokedCollector) {
 			parseCollector(collector);
 		}
 		
@@ -344,7 +346,7 @@ public abstract class ExecutionFlow {
 		throw new InterruptedByTimeoutException();
 	}
 
-	protected abstract List<InvokedContainer> getCollectors();
+	protected abstract Set<InvokedContainer> getCollectors();
 
 	private void dump() {
 		Logger.debug(
@@ -427,7 +429,7 @@ public abstract class ExecutionFlow {
 		String[] files = workingDirectory.list();
 		
 		for (int i=0; i<files.length; i++) {
-			if (files[i].equals(name) && new File(files[i]).isDirectory())
+			if (files[i].equals(name))
 				return true;
 		}
 		

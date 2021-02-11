@@ -1,9 +1,10 @@
 package executionflow;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import executionflow.info.InvokedContainer;
 import executionflow.io.manager.InvokedManager;
@@ -25,7 +26,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private List<InvokedContainer> collectors;
+	private Set<InvokedContainer> collectors;
 	
 
 	//-------------------------------------------------------------------------
@@ -35,7 +36,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 							   Map<Integer, List<InvokedContainer>> collectedMethods) {
 		super(processingManager);
 		
-		this.collectors = new ArrayList<>();
+		this.collectors = new HashSet<>();
 		
 		storeCollectedMethods(collectedMethods);
 	}
@@ -44,7 +45,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 							   Collection<InvokedContainer> collectedMethods) {
 		super(processingManager);
 		
-		this.collectors = new ArrayList<>(collectedMethods);
+		this.collectors = new HashSet<>(collectedMethods);
 	}
 
 
@@ -60,7 +61,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	}
 	
 	@Override
-	protected List<InvokedContainer> getCollectors() {
+	protected Set<InvokedContainer> getCollectors() {
 		return collectors;
 	}
 }

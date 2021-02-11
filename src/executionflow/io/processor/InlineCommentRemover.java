@@ -7,8 +7,7 @@ import java.util.regex.Pattern;
 import executionflow.io.SourceCodeProcessor;
 
 /**
- * Adds {@link executionflow.runtime.SkipCollection} annotation next to 
- * class declarations.
+ * Removes inline comments.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		6.0.1

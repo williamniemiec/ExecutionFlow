@@ -1,8 +1,8 @@
 package executionflow;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import executionflow.info.InvokedContainer;
 import executionflow.io.manager.InvokedManager;
@@ -24,7 +24,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private List<InvokedContainer> collectors;	
+	private Set<InvokedContainer> collectors;	
 	
 	
 	//-------------------------------------------------------------------------
@@ -41,7 +41,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 									Collection<InvokedContainer> constructorCollector) {
 		super(processingManager);
 		
-		this.collectors = new ArrayList<>(constructorCollector);
+		this.collectors = new HashSet<>(constructorCollector);
 	}
 	
 	
@@ -54,7 +54,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	}
 	
 	@Override
-	protected List<InvokedContainer> getCollectors() {
+	protected Set<InvokedContainer> getCollectors() {
 		return collectors;
 	}
 }
