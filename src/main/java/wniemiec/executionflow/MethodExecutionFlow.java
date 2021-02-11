@@ -1,9 +1,10 @@
 package wniemiec.executionflow;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import wniemiec.executionflow.info.InvokedContainer;
 import wniemiec.executionflow.io.manager.InvokedManager;
@@ -17,7 +18,7 @@ import wniemiec.executionflow.io.manager.InvokedManager;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow {
@@ -25,7 +26,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private List<InvokedContainer> collectors;
+	private Set<InvokedContainer> collectors;
 	
 
 	//-------------------------------------------------------------------------
@@ -35,7 +36,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 							   Map<Integer, List<InvokedContainer>> collectedMethods) {
 		super(processingManager);
 		
-		this.collectors = new ArrayList<>();
+		this.collectors = new HashSet<>();
 		
 		storeCollectedMethods(collectedMethods);
 	}
@@ -44,7 +45,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 							   Collection<InvokedContainer> collectedMethods) {
 		super(processingManager);
 		
-		this.collectors = new ArrayList<>(collectedMethods);
+		this.collectors = new HashSet<>(collectedMethods);
 	}
 
 
@@ -60,7 +61,7 @@ public class MethodExecutionFlow extends ExecutionFlow {
 	}
 	
 	@Override
-	protected List<InvokedContainer> getCollectors() {
+	protected Set<InvokedContainer> getCollectors() {
 		return collectors;
 	}
 }

@@ -1,8 +1,8 @@
 package wniemiec.executionflow;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import wniemiec.executionflow.info.InvokedContainer;
 import wniemiec.executionflow.io.manager.InvokedManager;
@@ -16,7 +16,7 @@ import wniemiec.executionflow.io.manager.InvokedManager;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow {
@@ -24,7 +24,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private List<InvokedContainer> collectors;	
+	private Set<InvokedContainer> collectors;	
 	
 	
 	//-------------------------------------------------------------------------
@@ -41,7 +41,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 									Collection<InvokedContainer> constructorCollector) {
 		super(processingManager);
 		
-		this.collectors = new ArrayList<>(constructorCollector);
+		this.collectors = new HashSet<>(constructorCollector);
 	}
 	
 	
@@ -54,7 +54,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	}
 	
 	@Override
-	protected List<InvokedContainer> getCollectors() {
+	protected Set<InvokedContainer> getCollectors() {
 		return collectors;
 	}
 }

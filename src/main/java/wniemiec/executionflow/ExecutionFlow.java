@@ -35,7 +35,7 @@ import wniemiec.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
+ * @version		7.0.0
  * @since		1.0
  */
 public abstract class ExecutionFlow {
@@ -60,6 +60,7 @@ public abstract class ExecutionFlow {
 	private Map<String, Path> processedSourceFiles;
 	private ExportManager exportManager;
 	private Set<String> alreadyChanged;
+	private Set<InvokedContainer> invokedCollector;
 	private boolean testMode;
 	
 	
@@ -87,6 +88,7 @@ public abstract class ExecutionFlow {
 		this.processedSourceFiles = new HashMap<>();
 		this.alreadyChanged = new HashSet<>();
 		this.testMode = false;
+		this.invokedCollector = getCollectors();
 	}
 	
 
@@ -116,12 +118,12 @@ public abstract class ExecutionFlow {
 	 * @return		Itself to allow chained calls
 	 */
 	public final ExecutionFlow run() {
-		if ((getCollectors() == null) || getCollectors().isEmpty())
+		if ((invokedCollector == null) || invokedCollector.isEmpty())
 			return this;
 		
 		dump();
 
-		for (InvokedContainer collector : getCollectors()) {
+		for (InvokedContainer collector : invokedCollector) {
 			parseCollector(collector);
 		}
 		
@@ -344,7 +346,7 @@ public abstract class ExecutionFlow {
 		throw new InterruptedByTimeoutException();
 	}
 
-	protected abstract List<InvokedContainer> getCollectors();
+	protected abstract Set<InvokedContainer> getCollectors();
 
 	private void dump() {
 		Logger.debug(
