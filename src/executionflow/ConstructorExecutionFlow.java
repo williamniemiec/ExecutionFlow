@@ -16,16 +16,10 @@ import executionflow.io.manager.InvokedManager;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.6
  * @since		2.0.0
  */
 public class ConstructorExecutionFlow extends ExecutionFlow {
-	
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private Set<InvokedContainer> collectors;	
-	
 	
 	//-------------------------------------------------------------------------
 	//		Constructors
@@ -39,9 +33,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	 */
 	public ConstructorExecutionFlow(InvokedManager processingManager, 
 									Collection<InvokedContainer> constructorCollector) {
-		super(processingManager);
-		
-		this.collectors = new HashSet<>(constructorCollector);
+		super(processingManager, new HashSet<>(constructorCollector));
 	}
 	
 	
@@ -51,10 +43,5 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	@Override
 	protected boolean isConstructor() {
 		return true;
-	}
-	
-	@Override
-	protected Set<InvokedContainer> getCollectors() {
-		return collectors;
 	}
 }

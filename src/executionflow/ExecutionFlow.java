@@ -74,21 +74,22 @@ public abstract class ExecutionFlow {
 	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------	
-	protected ExecutionFlow(InvokedManager processingManager) {		
+	protected ExecutionFlow(InvokedManager processingManager, 
+							Set<InvokedContainer> invokedCollector) {		
 		this.processingManager = processingManager;
 		this.exportManager = new ExportManager(isDevelopment(), isConstructor());
 		this.computedTestPaths = new HashMap<>();
 		this.processedSourceFiles = new HashMap<>();
 		this.alreadyChanged = new HashSet<>();
 		this.testMode = false;
-		this.invokedCollector = getCollectors();
+		this.invokedCollector = invokedCollector;
 	}
 	
 
@@ -346,12 +347,10 @@ public abstract class ExecutionFlow {
 		throw new InterruptedByTimeoutException();
 	}
 
-	protected abstract Set<InvokedContainer> getCollectors();
-
 	private void dump() {
 		Logger.debug(
 				this.getClass(), 
-				"collector: " + getCollectors().toString()
+				"collector: " + invokedCollector.toString()
 		);
 	}
 	

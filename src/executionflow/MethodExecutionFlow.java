@@ -18,50 +18,37 @@ import executionflow.io.manager.InvokedManager;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		6.0.6
  * @since		2.0.0
  */
 public class MethodExecutionFlow extends ExecutionFlow {
 	
 	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private Set<InvokedContainer> collectors;
-	
-
-	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
 	public MethodExecutionFlow(InvokedManager processingManager, 
 							   Map<Integer, List<InvokedContainer>> collectedMethods) {
-		super(processingManager);
-		
-		this.collectors = new HashSet<>();
-		
-		storeCollectedMethods(collectedMethods);
+		super(processingManager, extractCollectors(collectedMethods));
 	}
 	
 	public MethodExecutionFlow(InvokedManager processingManager, 
 							   Collection<InvokedContainer> collectedMethods) {
-		super(processingManager);
-		
-		this.collectors = new HashSet<>(collectedMethods);
+		super(processingManager, new HashSet<>(collectedMethods));
 	}
 
 
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void storeCollectedMethods(Map<Integer, List<InvokedContainer>> collectedMethods) {
+	private static Set<InvokedContainer> extractCollectors(Map<Integer, List<InvokedContainer>> collectedMethods) {
 		// Stores only the first collector of each line, since the test path of
 		// methods called within a loop will be obtained at once
+		Set<InvokedContainer> collectors = new HashSet<>();
+		
 		for (List<InvokedContainer> collector : collectedMethods.values()) {
 			collectors.add(collector.get(0));
 		}
-	}
-	
-	@Override
-	protected Set<InvokedContainer> getCollectors() {
+		
 		return collectors;
 	}
 }
