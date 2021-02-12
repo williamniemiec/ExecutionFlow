@@ -5,7 +5,6 @@ import java.io.IOException;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.manager.FileManager;
 import wniemiec.executionflow.io.manager.FilesManager;
-import wniemiec.executionflow.io.manager.InvokedManager;
 import wniemiec.executionflow.io.manager.InvokedProcessingManager;
 import wniemiec.executionflow.io.processor.ProcessorType;
 import wniemiec.executionflow.io.processor.factory.PreTestMethodFileProcessorFactory;
@@ -21,10 +20,12 @@ public class ProcessingManager {
 //	private static FilesManager testMethodManager;
 //	private static FileManager testMethodFileManager;
 	private static final boolean AUTO_RESTORE;
+	private static boolean successfullPreprocessing;
 	
 	static {
 		onShutdown();
 		AUTO_RESTORE = true;
+		successfullPreprocessing = false;
 	}
 	
 	private static void onShutdown() {
@@ -131,6 +132,8 @@ public class ProcessingManager {
 	
 	
 	public static void doPreprocessingInTestMethod(InvokedInfo testMethod) throws IOException {
+		initializePreTestMethodFileManager(testMethod);
+		
 		try {
 			Logger.info("Pre-processing test method...");
 			
@@ -148,12 +151,22 @@ public class ProcessingManager {
 			
 			throw e;
 		}
+		
+		successfullPreprocessing = true;
 	}
 	
 	private static void restoreOriginalFiles() {
-		restoreOriginalFilesFrom(testMethodProcessingManager);
-		restoreOriginalFilesFrom(invokedProcessingManager);
+		restoreOriginalFilesFromTestMethod();
+		restoreOriginalFilesFromInvoked();
 		restoreOriginalFilesFrom(preTestMethodProcessingManager);
+	}
+	
+	public static boolean restoreOriginalFilesFromTestMethod() {
+		return restoreOriginalFilesFrom(testMethodProcessingManager);
+	}
+	
+	public static boolean restoreOriginalFilesFromInvoked() {
+		return restoreOriginalFilesFrom(invokedProcessingManager);
 	}
 	
 	private static boolean restoreOriginalFilesFrom(InvokedProcessingManager processingManager) {
@@ -202,19 +215,20 @@ public class ProcessingManager {
 		invokedProcessingManager.deleteBackupFiles();
 	}
 	
-	public static void doProcessingInInvoked(FileManager invokedFileManager) 
+	public static void doProcessingInInvoked(FileManager invokedFileManager, FileManager testMethodFileManager) 
 			throws IOException {
 		if (invokedProcessingManager == null)
 			return;
 		
 		invokedProcessingManager.processAndCompile(
 				invokedFileManager, 
-				!isTestMethodFileAndInvokedFileTheSameFile(invokedFileManager)
+				testMethodFileManager.getSrcFile().equals(invokedFileManager.getSrcFile())
+//				!isTestMethodFileAndInvokedFileTheSameFile(invokedFileManager)
 		);
 	}
 	
 	private static boolean isTestMethodFileAndInvokedFileTheSameFile(FileManager invokedFileManager) {
-		return	!preTestMethodFileManager.getSrcFile()
+		return	preTestMethodFileManager.getSrcFile()
 				.equals(invokedFileManager.getSrcFile());
 	}
 	
@@ -238,5 +252,9 @@ public class ProcessingManager {
 			return;
 		
 		invokedProcessingManager.restoreInvokedOriginalFile(invokedFileManager);
+	}
+	
+	public static boolean wasPreprocessingDoneSuccessfully() {
+		return successfullPreprocessing;
 	}
 }

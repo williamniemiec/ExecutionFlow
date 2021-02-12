@@ -18,13 +18,12 @@ import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.manager.FileManager;
-import wniemiec.executionflow.io.manager.InvokedManager;
 import wniemiec.executionflow.io.processor.factory.InvokedFileProcessorFactory;
 import wniemiec.executionflow.io.processor.factory.TestMethodFileProcessorFactory;
 import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
+import wniemiec.executionflow.runtime.collector.CollectorContainer;
 import wniemiec.executionflow.runtime.hook.ProcessingManager;
-import wniemiec.executionflow.runtime.hook.TestMethodHook;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -150,7 +149,7 @@ public abstract class ExecutionFlow {
 		
 		try {
 			processTestMethod(collector, testMethodFileManager);
-			processInvokedMethod(collector, invokedFileManager);
+			processInvokedMethod(collector, invokedFileManager, testMethodFileManager);
 			
 			runDebugger(collector);
 			
@@ -203,19 +202,20 @@ public abstract class ExecutionFlow {
 		ProcessingManager.restoreInvokedToBeforeProcessing(invokedFileManager);
 		ProcessingManager.restoreTestMethodToBeforeProcessing(testMethodFileManager);
 		
-		TestMethodHook.restoreCollectorInvocationLine();
+		CollectorContainer.restoreCollectorInvocationLine();
 		
 		alreadyChanged.clear();
 	}
 
 	private void processInvokedMethod(InvokedContainer collector,
-									  FileManager invokedFileManager) throws IOException {
+									  FileManager invokedFileManager,
+									  FileManager testMethodFileManager) throws IOException {
 		Logger.info("Processing source file of invoked - " 
 				+ collector.getInvokedInfo().getConcreteInvokedSignature() 
 				+ "..."
 		);
 		
-		ProcessingManager.doProcessingInInvoked(invokedFileManager);
+		ProcessingManager.doProcessingInInvoked(invokedFileManager, testMethodFileManager);
 		
 		updateInvocationLineAfterInvokedProcessing(collector);
 		
@@ -251,7 +251,7 @@ public abstract class ExecutionFlow {
 				!invokedSrcPath.equals(testMethodSrcPath))
 			return;
 
-		TestMethodHook.updateCollectorInvocationLines(
+		CollectorContainer.updateCollectorInvocationLines(
 				mapping, 
 				testMethodSrcPath
 		);

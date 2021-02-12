@@ -70,14 +70,20 @@ public aspect TestMethodHook extends RuntimeHook {
 	
 	
 	
+	public TestMethodHook() {
+		onShutdown();
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	static {
 		inTestMethodWithAspectsDisabled = true;
-		remainingTests = -1;
+		
 	}
+	
+	
 	
 	
 	//-------------------------------------------------------------------------
@@ -136,12 +142,19 @@ public aspect TestMethodHook extends RuntimeHook {
 		
 		ProcessingManager.initializeManagers(!App.runningFromJUnitAPI());
 		App.onFirstRun();
-		beforeEachTestMethod();
+		App.beforeEachTestMethod();
 		App.initializeLogger();
 		
-		dump();
-		
-		doPreprocessing(); 
+		inTestMethodWithAspectsDisabled = App.inTestMethodWithAspectsDisabled();
+		try {
+			App.doPreprocessing(testMethodInfo);
+		}
+		catch (IOException e) {
+			Logger.error(e.getMessage());
+			reset();
+			
+			errorProcessingTestMethod = true;
+		}
 	}
 	
 	after(): insideTestMethod() {
@@ -160,12 +173,12 @@ public aspect TestMethodHook extends RuntimeHook {
 			success = true;			
 		}
 		else {
-			exportAllMethodsUsedInTestMethods();
-			exportAllConstructorsUsedInTestMethods();
+			App.exportAllMethodsUsedInTestMethods();
+			App.exportAllConstructorsUsedInTestMethods();
 			
 			App.runTestMethodWithAspectsDisabled(testMethodInfo);
 			
-			afterEachTestMethod(thisJoinPoint);
+			App.afterEachTestMethod();
 			
 			finishedTestMethodWithAspectsDisabled = true;
 			inTestMethodWithAspectsDisabled = true;
@@ -177,7 +190,14 @@ public aspect TestMethodHook extends RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------	
-	
+	private void onShutdown() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+		    	if (!success)
+		    		finishedTestMethodWithAspectsDisabled = true;
+		    }
+		});
+	}
 	
 	private void checkRepeatedTest(JoinPoint jp) {
 		// Prevents repeated tests from being performed more than once
@@ -203,20 +223,7 @@ public aspect TestMethodHook extends RuntimeHook {
 	
 	
 	
-	public static void doPreprocessing() {
-		try {
-			if (!inTestMethodWithAspectsDisabled()) {
-				currentTestMethodCheckpoint.enable();
-				ProcessingManager.doPreprocessingInTestMethod(testMethodInfo);
-			}
-		} 
-		catch (IOException e) {
-			disableCheckpoint(currentTestMethodCheckpoint);
-			reset();
-			
-			errorProcessingTestMethod = true;
-		}
-	}
+	
 	
 	
 	private String getSignature(JoinPoint jp) {
@@ -289,6 +296,8 @@ public aspect TestMethodHook extends RuntimeHook {
 				.invokedSignature(testMethodSignature)
 				.args(getParameterValues(jp))
 				.build();
+		
+		dump();
 	}
 	
 	
@@ -343,37 +352,7 @@ public aspect TestMethodHook extends RuntimeHook {
 	
 	
 	// EXPORT
-	private void exportAllMethodsUsedInTestMethods() {
-		List<InvokedContainer> collectors = new ArrayList<>();
-		
-		for (List<InvokedContainer> collector : MethodCollector.getCollector().values()) {
-			collectors.add(collector.get(0));
-		}
-		
-		exporMethodsAndConstructorsUsedInTestMethods(false, collectors);
-	}
 	
-	private void exporMethodsAndConstructorsUsedInTestMethods(boolean isConstructor, 
-															  Collection<InvokedContainer> invokedCollector) {
-		Set<InvokedContainer> invokedSet = new HashSet<>();
-		ExportManager exportManager = new ExportManager(
-				ExecutionFlow.isDevelopment(), 
-				isConstructor
-		);
-		
-		for (InvokedContainer collector : invokedCollector) {
-			invokedSet.add(new InvokedContainer(
-					collector.getInvokedInfo(),
-					collector.getTestMethodInfo()
-			));
-		}
-		
-		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(invokedSet);
-	}
-	
-	private void exportAllConstructorsUsedInTestMethods() {
-		exporMethodsAndConstructorsUsedInTestMethods(true, ConstructorCollector.getConstructorCollector().values());
-	}
 	
 	
 }

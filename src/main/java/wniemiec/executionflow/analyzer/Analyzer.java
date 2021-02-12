@@ -306,6 +306,8 @@ public abstract class Analyzer {
 			classPath.add(Path.of(cp));
 		}
 		
+		classPath.add(testMethod.getBinPath());
+		classPath.add(invoked.getBinPath());
 		classPath.add(LibraryManager.getLibrary("JUNIT_4"));
 		classPath.add(LibraryManager.getLibrary("HAMCREST"));
 		

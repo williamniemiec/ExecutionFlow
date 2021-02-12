@@ -17,7 +17,7 @@ public class MethodCollector {
 	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 	 * </ul>
 	 */
-	private static Map<Integer, List<InvokedContainer>> methodCollector;
+	private static volatile Map<Integer, List<InvokedContainer>> methodCollector;
 	
 	
 	

@@ -41,6 +41,7 @@ public class FileManager implements Serializable {
 	private FileProcessor fileProcessor;
 	private boolean encodingError;
 	private boolean lastWasError;
+	private boolean autoRestore;
 	
 	
 	//-------------------------------------------------------------------------
@@ -278,7 +279,8 @@ public class FileManager implements Serializable {
 	 * restore the original file, call {@link #revertProcessing()} function.
 	 */
 	public FileManager processFile(boolean autoRestore) throws IOException {
-		if (autoRestore)
+//		if (autoRestore)
+		this.autoRestore = autoRestore;
 			createSrcBackupFile();
 		
 		Path processedFile = processFile();
@@ -309,7 +311,10 @@ public class FileManager implements Serializable {
 		} 
 		catch (IOException e) {				// If already exists a backup file, this means
 			try {							// that last parsed file was not restored
-				revertProcessing();			// So, restore this file and starts again
+				if (autoRestore)			// So, restore this file and starts again
+					revertProcessing();
+				else
+					Files.deleteIfExists(bkpFile);
 				
 				if (!lastWasError) {		
 					lastWasError = true;
@@ -334,7 +339,7 @@ public class FileManager implements Serializable {
 	public FileManager revertProcessing() throws IOException {
 		if (!hasSrcBackupStored())
 			return this;
-		
+
 		try {
 			Files.move(srcFileBackup, srcFile, StandardCopyOption.REPLACE_EXISTING);
 		} 

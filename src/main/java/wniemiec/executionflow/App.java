@@ -4,12 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import wniemiec.api.junit4.JUnit4API;
+import wniemiec.executionflow.exporter.ExportManager;
+import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
 import wniemiec.executionflow.lib.LibraryManager;
+import wniemiec.executionflow.runtime.collector.ConstructorCollector;
+import wniemiec.executionflow.runtime.collector.MethodCollector;
 import wniemiec.executionflow.runtime.hook.ProcessingManager;
 import wniemiec.executionflow.user.RemoteControl;
 import wniemiec.executionflow.user.User;
@@ -55,6 +63,7 @@ public class App {
 				
 				onShutdown();
 				level = User.askUserForLogLevel();
+				
 			}
 			else {
 				 level = User.loadLogLevel();		
@@ -73,10 +82,7 @@ public class App {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	try {
-			    	if (!success) {
-			    		stopRunner();
-				    	finished = true;
-			    	}
+			    	stopRunner();
 			    	
 			    	disableCheckpoint(currentTestMethodCheckpoint);
 					disableCheckpoint(insideJUnitRunnerCheckpoint);
@@ -262,44 +268,55 @@ public class App {
 
 	
 	
-	private void beforeEachTestMethod() {
+	public static void beforeEachTestMethod() {
+		ProcessingManager.initializeManagers(!insideJUnitRunnerCheckpoint.isEnabled());
+		
 		if (App.runningTestMethod())
 			return;
 		
 		try {
-			ProcessingManager.initializeTestMethodManager();
-			App.cleanLastRun();
-			App.openControlWindow();
+			cleanLastRun();
+			openControlWindow();
 		}
-		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
+		catch(IOException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());
 			
 			System.exit(-1);
 		}
 	}
 	
-	private void afterEachTestMethod() {		
+	public static void afterEachTestMethod() {
 		updateRemainingTests();
 		
 		boolean successfullRestoration = false;
-		successfullRestoration = ProcessingManager.restoreTestMethodFiles();
+		successfullRestoration = ProcessingManager.restoreOriginalFilesFromTestMethod();
 		
 		if (remainingTests == 0) {
-			successfullRestoration = ProcessingManager.restoreInvokedFiles();
+			successfullRestoration = ProcessingManager.restoreOriginalFilesFromInvoked();
 			ProcessingManager.deleteInvokedBackupFiles();
 			App.closeControlWindow();
 		}
 		
-		ProcessingManager.restoreAllTestMethodFiles();
+		if (remainingTests == 0) {
+			remainingTests = -1;
+		}
+		
+		try {
+			ProcessingManager.restoreAllTestMethodFiles();
+		} 
+		catch (IOException e) {
+			successfullRestoration = false;
+		}
 
 		disableCheckpoint(currentTestMethodCheckpoint);
 		
 		if (!successfullRestoration) {
+			Logger.error("Error while restoring original files");
 			System.exit(-1);
 		}
 	}
 	
-	private void updateRemainingTests() {
+	private static void updateRemainingTests() {
 		if (remainingTests < 0) {
 			remainingTests = PreTestMethodFileProcessor.getTotalTests() - 1;
 		}
@@ -307,9 +324,9 @@ public class App {
 			remainingTests--;
 		}
 
-		if (remainingTests == 0) {
-			remainingTests = -1;
-		}
+//		if (remainingTests == 0) {
+//			remainingTests = -1;
+//		}
 	}
 	
 	public static boolean runningFromJUnitAPI() {
@@ -318,13 +335,13 @@ public class App {
 	
 	
 	public static boolean runningTestMethod() {
-		return	(testMethodManager != null) 
+		return	ProcessingManager.wasPreprocessingDoneSuccessfully()
 				|| currentTestMethodCheckpoint.isEnabled();
 	}
 	
 	public static void cleanLastRun() throws IOException {
 		if (hasTempFilesFromLastRun()) {
-			testMethodManager.deleteBackup();
+			ProcessingManager.deleteTestMethodBackupFiles();
 			currentTestMethodCheckpoint.delete();
 		}
 	}
@@ -336,5 +353,55 @@ public class App {
 	
 	public static boolean inTestMethodWithAspectsDisabled() {
 		return currentTestMethodCheckpoint.exists();
+	}
+	
+	
+	
+	
+	// EXPORT
+	public static void exportAllMethodsUsedInTestMethods() {
+		List<InvokedContainer> collectors = new ArrayList<>();
+		
+		for (List<InvokedContainer> collector : MethodCollector.getCollector().values()) {
+			collectors.add(collector.get(0));
+		}
+		
+		exporMethodsAndConstructorsUsedInTestMethods(false, collectors);
+	}
+	
+	public static void exporMethodsAndConstructorsUsedInTestMethods(boolean isConstructor, 
+															  Collection<InvokedContainer> invokedCollector) {
+		Set<InvokedContainer> invokedSet = new HashSet<>();
+		ExportManager exportManager = new ExportManager(
+				ExecutionFlow.isDevelopment(), 
+				isConstructor
+		);
+		
+		for (InvokedContainer collector : invokedCollector) {
+			invokedSet.add(new InvokedContainer(
+					collector.getInvokedInfo(),
+					collector.getTestMethodInfo()
+			));
+		}
+		
+		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(invokedSet);
+	}
+	
+	public static void exportAllConstructorsUsedInTestMethods() {
+		exporMethodsAndConstructorsUsedInTestMethods(true,
+				ConstructorCollector.getConstructorCollector().values());
+	}
+	
+	public static void doPreprocessing(InvokedInfo testMethod) throws IOException {
+		try {
+			if (!inTestMethodWithAspectsDisabled()) {
+				currentTestMethodCheckpoint.enable();
+				ProcessingManager.doPreprocessingInTestMethod(testMethod);
+			}
+		} 
+		catch (IOException e) {
+			disableCheckpoint(currentTestMethodCheckpoint);
+			throw e;
+		}
 	}
 }

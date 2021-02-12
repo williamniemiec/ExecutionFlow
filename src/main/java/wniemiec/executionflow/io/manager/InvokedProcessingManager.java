@@ -55,6 +55,12 @@ public class InvokedProcessingManager {
 	}
 
 	
+	@Override
+	public String toString() {
+		return "InvokedProcessingManager [invokedFilesManager=" + invokedFilesManager + "]";
+	}
+
+
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------	

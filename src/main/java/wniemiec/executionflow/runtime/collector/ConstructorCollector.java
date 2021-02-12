@@ -18,7 +18,7 @@ public class ConstructorCollector {
 	 * 	<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
-	protected static Map<String, InvokedContainer> constructorCollector;
+	protected static volatile Map<String, InvokedContainer> constructorCollector;
 	
 	static {
 		constructorCollector = new LinkedHashMap<>();

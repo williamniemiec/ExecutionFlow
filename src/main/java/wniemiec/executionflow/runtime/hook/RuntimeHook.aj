@@ -13,6 +13,7 @@ import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
+import wniemiec.executionflow.runtime.collector.ConstructorCollector;
 import wniemiec.executionflow.runtime.collector.MethodCollector;
 
 /**
@@ -142,6 +143,7 @@ public abstract aspect RuntimeHook {
 	protected void reset() {
 		parsedMethods.clear();
 		MethodCollector.clear();
+		ConstructorCollector.reset();
 		testMethodSignature = null;
 		skipCollection = false;
 		methodsCalledByTestedInvoked.clear();
