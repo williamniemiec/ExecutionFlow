@@ -171,6 +171,7 @@ public aspect ConstructorHook extends RuntimeHook {
 				.srcPath(srcPath)
 				.invokedSignature(signature)
 				.parameterTypes(getParameterTypes(jp))
+				.isConstructor(true)
 				.args(getParameterValues(jp))
 				.invocationLine(invocationLine)
 				.build();
