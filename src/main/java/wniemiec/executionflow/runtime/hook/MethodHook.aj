@@ -5,7 +5,9 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -50,7 +52,24 @@ public aspect MethodHook extends RuntimeHook {
 	private Path classPath;
 	private Path srcPath;
 	private InvokedInfo methodInfo;
+	
+	/**
+	 * Stores anonymous class signature where it is created and where it is 
+	 * declared.
+	 * <ul>
+	 * 	<li><b>Key:</b>	Class signature where anonymous class is created</li>
+	 * 	<li><b>Value:</b> Class signature where anonymous class is declared</li>
+	 * </ul> 
+	 */
+	private static Map<String, String> anonymousClassSignatures;
 
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
+	static {
+		anonymousClassSignatures = new HashMap<>();
+	}
 	
 	//-----------------------------------------------------------------------
 	//		Pointcuts
@@ -76,9 +95,10 @@ public aspect MethodHook extends RuntimeHook {
 		if (!wasMethodAlreadyParsed() && hasSourceAndBinearyPath()) {
 			parseMethod(thisJoinPoint);	
 			collectMethod();
-			markMethodAsParsed();
 		}
 	}
+	
+	
 	
 	
 	//-------------------------------------------------------------------------
@@ -96,11 +116,13 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private boolean constructorBelongsToTestMethod(JoinPoint jp) {
-		if ((jp.getClass() == null) || (testMethodSignature == null))
+		if ((jp.getClass() == null) || !isTestMethodSignatureInitialized())
 			return true;
 		
 		String objectClassName = extractClassNameFromClassSignature(jp.getClass().getName());
-		String testMethodClassName = extractClassNameFromClassSignature(testMethodSignature);
+		String testMethodClassName = extractClassNameFromClassSignature(
+				testMethodInfo.getInvokedSignature()
+		);
 		
 		return objectClassName.equals(testMethodClassName);
 	}
@@ -120,8 +142,13 @@ public aspect MethodHook extends RuntimeHook {
 	private boolean belongsToTestMethod(JoinPoint jp) {
 		String signature = jp.getSignature().toString();
 		
-		return 	(testMethodSignature != null)
-				&& signature.contains(testMethodSignature);
+		return 	isTestMethodSignatureInitialized()
+				&& signature.contains(testMethodInfo.getInvokedSignature());
+	}
+	
+	private boolean isTestMethodSignatureInitialized() {
+		return	(testMethodInfo != null)
+				&& (testMethodInfo.getInvokedSignature() != null);
 	}
 	
 	private void parseMethodInfo(JoinPoint jp) {
@@ -212,7 +239,7 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private boolean wasMethodAlreadyParsed() {
-		return parsedMethods.contains(methodID);
+		return MethodCollector.wasCollected(methodID);
 	}
 	
 	private boolean hasSourceAndBinearyPath() {
@@ -292,10 +319,6 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private void collectMethod() {
-		MethodCollector.storeCollector(methodInfo, testMethodInfo);
-	}
-	
-	private void markMethodAsParsed() {
-		parsedMethods.add(methodID);
+		MethodCollector.storeCollector(methodID, methodInfo, testMethodInfo);
 	}
 }

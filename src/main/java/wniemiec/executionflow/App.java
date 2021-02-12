@@ -404,4 +404,18 @@ public class App {
 			throw e;
 		}
 	}
+	
+	
+	// PARSE COLLECTORS
+	public static void parseInvokedCollector() {
+		ExecutionFlow methodExecutionFlow = new MethodExecutionFlow(
+				MethodCollector.getCollector()
+		);
+		methodExecutionFlow.run();
+		
+		ExecutionFlow constructorExecutionFlow = new ConstructorExecutionFlow(
+				ConstructorCollector.getConstructorCollector().values()
+		);
+		constructorExecutionFlow.run();
+	}
 }

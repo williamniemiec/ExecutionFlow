@@ -19,13 +19,20 @@ public class MethodCollector {
 	 */
 	private static volatile Map<Integer, List<InvokedContainer>> methodCollector;
 	
+	/**
+	 * Stores signature of collected methods.<hr/>
+	 * <b>Format: </b><code>method_name + method_arguments + 
+	 * constructor@hashCode (if it has one)</code>
+	 */
+	private static List<String> parsedMethods;
 	
 	
 	static {
 		methodCollector = new LinkedHashMap<>();
+		parsedMethods = new ArrayList<>();
 	}
 	
-	public static void storeCollector(InvokedInfo methodInfo, InvokedInfo testMethodInfo) {
+	public static void storeCollector(String methodID, InvokedInfo methodInfo, InvokedInfo testMethodInfo) {
 		if (methodCollector.containsKey(methodInfo.getInvocationLine())) {
 			List<InvokedContainer> list = methodCollector.get(methodInfo.getInvocationLine());
 			list.add(new InvokedContainer(methodInfo, testMethodInfo));
@@ -36,6 +43,12 @@ public class MethodCollector {
 			
 			methodCollector.put(methodInfo.getInvocationLine(), list);
 		}
+		
+		markMethodAsParsed(methodID);
+	}
+	
+	private static void markMethodAsParsed(String methodID) {
+		parsedMethods.add(methodID);
 	}
 	
 	public static Map<Integer, List<InvokedContainer>> getCollector() {
@@ -44,5 +57,10 @@ public class MethodCollector {
 	
 	public static void clear() {
 		methodCollector.clear();
+		parsedMethods.clear();
+	}
+	
+	public static boolean wasCollected(String methodID) {
+		return parsedMethods.contains(methodID);
 	}
 }

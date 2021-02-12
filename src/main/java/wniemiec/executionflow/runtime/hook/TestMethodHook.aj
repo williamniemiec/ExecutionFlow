@@ -57,10 +57,7 @@ public aspect TestMethodHook extends RuntimeHook {
 	//-------------------------------------------------------------------------
 	private static boolean inTestMethodWithAspectsDisabled;
 	private static boolean finishedTestMethodWithAspectsDisabled;
-	
-	
-	
-	
+	private static String testMethodSignature;
 	private static boolean errorProcessingTestMethod;
 	private static volatile boolean success;
 	private boolean isRepeatedTest;
@@ -69,7 +66,9 @@ public aspect TestMethodHook extends RuntimeHook {
 	private Path srcPath;
 	
 	
-	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public TestMethodHook() {
 		onShutdown();
 	}
@@ -82,8 +81,6 @@ public aspect TestMethodHook extends RuntimeHook {
 		inTestMethodWithAspectsDisabled = true;
 		
 	}
-	
-	
 	
 	
 	//-------------------------------------------------------------------------
@@ -167,7 +164,7 @@ public aspect TestMethodHook extends RuntimeHook {
 			return;
 
 		if (inTestMethodWithAspectsDisabled) {
-			parseInvokedCollector();
+			App.parseInvokedCollector();
 			reset();
 			
 			success = true;			
@@ -219,6 +216,7 @@ public aspect TestMethodHook extends RuntimeHook {
 		super.reset();
 		
 		success = false;
+		testMethodSignature = null;
 	}
 	
 	
@@ -300,59 +298,7 @@ public aspect TestMethodHook extends RuntimeHook {
 		dump();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	// APP
-	
-	
-	
-	
-	
-	
-	
-	
 	private void dump() {
 		Logger.debug("Test method collector: " + testMethodInfo);
 	}
-	
-	
-	
-	
-	
-	
-	
-	// PARSE COLLECTORS
-	private void parseInvokedCollector() {
-		ExecutionFlow methodExecutionFlow = new MethodExecutionFlow(
-				MethodCollector.getCollector()
-		);
-		methodExecutionFlow.run();
-		
-		ExecutionFlow constructorExecutionFlow = new ConstructorExecutionFlow(
-				ConstructorCollector.getConstructorCollector().values()
-		);
-		constructorExecutionFlow.run();
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	// EXPORT
-	
-	
-	
 }

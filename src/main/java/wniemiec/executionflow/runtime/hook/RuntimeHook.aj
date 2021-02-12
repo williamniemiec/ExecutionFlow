@@ -1,18 +1,11 @@
 package wniemiec.executionflow.runtime.hook;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.aspectj.lang.JoinPoint;
 
-import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
+import wniemiec.executionflow.runtime.collector.CallCollector;
 import wniemiec.executionflow.runtime.collector.ConstructorCollector;
 import wniemiec.executionflow.runtime.collector.MethodCollector;
 
@@ -34,40 +27,7 @@ public abstract aspect RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	/**
-	 * Stores signature of collected methods.<hr/>
-	 * <b>Format: </b><code>method_name + method_arguments + 
-	 * constructor@hashCode (if it has one)</code>
-	 */
-	protected static List<String> parsedMethods;
-	
-	
-	
-
-	/**
-	 * Stores anonymous class signature where it is created and where it is 
-	 * declared.
-	 * <ul>
-	 * 	<li><b>Key:</b>	Class signature where anonymous class is created</li>
-	 * 	<li><b>Value:</b> Class signature where anonymous class is declared</li>
-	 * </ul> 
-	 */
-	protected static Map<String, String> anonymousClassSignatures;
-	
-	protected static Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked;
-	protected static String testMethodSignature;
 	protected static InvokedInfo testMethodInfo;
-	protected static boolean skipCollection;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	static {
-		parsedMethods = new ArrayList<>();
-		methodsCalledByTestedInvoked = new HashMap<>();
-		anonymousClassSignatures = new HashMap<>();
-	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -141,12 +101,9 @@ public abstract aspect RuntimeHook {
 	}
 
 	protected void reset() {
-		parsedMethods.clear();
+		CallCollector.reset();
 		MethodCollector.clear();
 		ConstructorCollector.reset();
-		testMethodSignature = null;
-		skipCollection = false;
-		methodsCalledByTestedInvoked.clear();
 		TestMethodFileProcessor.clearMapping();
 		InvokedFileProcessor.clearMapping();
 	}

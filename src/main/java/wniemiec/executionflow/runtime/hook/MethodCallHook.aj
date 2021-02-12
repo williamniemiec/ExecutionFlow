@@ -90,8 +90,8 @@ public aspect MethodCallHook extends RuntimeHook {
 		if (!isMethod(thisJoinPoint) || isNativeMethod(thisJoinPoint) || !wasTestedInvokedCollected())
 			return;
 		
-		collectCall(extractMethodCalledSignature(thisJoinPoint));
-		storeCall();
+		CallCollector.collectCall(extractMethodCalledSignature(thisJoinPoint), invoked);
+		CallCollector.storeCall();
 	}
 	
 
@@ -161,25 +161,5 @@ public aspect MethodCallHook extends RuntimeHook {
 		methodSignature.append(signature.substring(signature.indexOf("(")));
 
 		return methodSignature.toString().replaceAll("\\$", ".");
-	}
-	
-	private void collectCall(String signature) {
-		if (methodsCalledByTestedInvoked.containsKey(invoked)) {
-			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invoked);
-			invokedMethods.add(signature);
-		}
-		else {
-			Set<String> invokedMethods = new HashSet<>();
-			invokedMethods.add(signature);
-			
-			methodsCalledByTestedInvoked.put(invoked, invokedMethods);
-		}
-	}
-	
-	private void storeCall() {
-		if (methodsCalledByTestedInvoked.isEmpty())
-			return;
-		
-		CallCollector.store(methodsCalledByTestedInvoked);
 	}
 }

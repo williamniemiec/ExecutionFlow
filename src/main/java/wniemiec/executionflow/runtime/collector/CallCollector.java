@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,31 @@ import wniemiec.util.logger.Logger;
 public class CallCollector {
 	
 	private static Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked;
+	
+	static {
+		methodsCalledByTestedInvoked = new HashMap<>();
+	}
+	
+	public static void collectCall(String signature, InvokedInfo invoked) {
+		if (methodsCalledByTestedInvoked.containsKey(invoked)) {
+			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invoked);
+			invokedMethods.add(signature);
+		}
+		else {
+			Set<String> invokedMethods = new HashSet<>();
+			invokedMethods.add(signature);
+			
+			methodsCalledByTestedInvoked.put(invoked, invokedMethods);
+		}
+	}
+	
+	public static void storeCall() {
+		if (methodsCalledByTestedInvoked.isEmpty())
+			return;
+		
+		CallCollector.store(methodsCalledByTestedInvoked);
+	}
+	
 	
 	public static void store(Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked) {
 		CallCollector.methodsCalledByTestedInvoked = methodsCalledByTestedInvoked;
@@ -117,5 +143,9 @@ public class CallCollector {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
 			oos.writeObject(methodsCalledByTestedInvoked);
 		}
+	}
+	
+	public static void reset() {
+		methodsCalledByTestedInvoked.clear();
 	}
 }
