@@ -53,15 +53,15 @@ public class InvokedInfo implements Serializable {
 		this.binPath = binPath;
 		this.srcPath = srcPath;
 		this.invocationLine = invocationLine;
-		this.invokedSignature = invokedSignature;
+		this.invokedSignature = removeKeywordFromSignature(invokedSignature);
 		this.invokedName = invokedName;
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
 		this.isConstructor = isConstructor;
 	}
-	
-	
+
+
 	//-------------------------------------------------------------------------
 	//		Builder
 	//-------------------------------------------------------------------------
@@ -280,6 +280,10 @@ public class InvokedInfo implements Serializable {
 		if (signature == null) {
 			throw new IllegalArgumentException("Invoked signature cannot be null");
 		}
+	}
+	
+	private String removeKeywordFromSignature(String signature) {
+		return signature.replaceAll("(final|transient|static|synchronized) ", "");
 	}
 	
 	/**
