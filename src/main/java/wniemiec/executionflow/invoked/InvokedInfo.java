@@ -58,10 +58,6 @@ public class InvokedInfo implements Serializable {
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
 		this.args = args;
-		
-		if (isConstructor)
-			this.classSignature = invokedSignature;
-		
 		this.isConstructor = isConstructor;
 	}
 	
@@ -458,8 +454,11 @@ public class InvokedInfo implements Serializable {
 		if ((invokedSignature == null) || invokedSignature.isBlank())
 			return "";
 		
+		if (isConstructor)
+			return getSignatureWithoutParameters();
+		
 		StringBuilder signature = new StringBuilder();
-		String[] terms = invokedSignature.split("\\.");
+		String[] terms = getSignatureWithoutParameters().split("\\.");
 
 		for (int i=0; i<terms.length-1; i++) {
 			signature.append(terms[i]);
@@ -529,7 +528,7 @@ public class InvokedInfo implements Serializable {
 	}
 	
 	public String getSignatureWithoutParameters() {
-		return invokedSignature.substring(0, invokedSignature.indexOf("(")+1);
+		return invokedSignature.substring(0, invokedSignature.indexOf("("));
 	}
 
 	/**
