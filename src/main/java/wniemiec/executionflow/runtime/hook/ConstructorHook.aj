@@ -220,7 +220,7 @@ public aspect ConstructorHook extends RuntimeHook {
 	
 	private void collectConstructor() {
 		ConstructorCollector.storeCollector(constructorID, constructorInvokedInfo, 
-											constructorInvokedInfo);
+											testMethodInfo);
 	}
 	
 	private void markConstructorAsParsed() {
