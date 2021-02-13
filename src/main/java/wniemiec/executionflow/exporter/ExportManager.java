@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.exporter.file.ProcessedSourceFileExporter;
 import wniemiec.executionflow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import wniemiec.executionflow.exporter.signature.TestedInvokedExporter;
@@ -91,12 +91,12 @@ public class ExportManager {
 	private void initializeTestersExporter() {		
 		this.mcutmEffective = new TestedInvokedExporter(
 				"MCUTM-EFFECTIVE", 
-				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)
+				new File(App.getCurrentProjectRoot().toFile(), outputDir)
 		);
 		
 		this.mcutmAll = new TestedInvokedExporter(
 				"MCUTM-ALL", 
-				new File(ExecutionFlow.getCurrentProjectRoot().toFile(), outputDir)
+				new File(App.getCurrentProjectRoot().toFile(), outputDir)
 		);
 	}
 	

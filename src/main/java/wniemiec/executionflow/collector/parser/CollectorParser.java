@@ -1,8 +1,6 @@
-package wniemiec.executionflow;
+package wniemiec.executionflow.collector.parser;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.analyzer.Analyzer;
 import wniemiec.executionflow.analyzer.AnalyzerFactory;
+import wniemiec.executionflow.collector.CollectorContainer;
 import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
@@ -22,7 +22,6 @@ import wniemiec.executionflow.io.processor.factory.InvokedFileProcessorFactory;
 import wniemiec.executionflow.io.processor.factory.TestMethodFileProcessorFactory;
 import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
-import wniemiec.executionflow.runtime.collector.CollectorContainer;
 import wniemiec.executionflow.runtime.hook.ProcessingManager;
 import wniemiec.util.logger.Logger;
 
@@ -38,7 +37,7 @@ import wniemiec.util.logger.Logger;
  * @version		7.0.0
  * @since		1.0
  */
-public abstract class ExecutionFlow {
+public abstract class CollectorParser {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -52,42 +51,28 @@ public abstract class ExecutionFlow {
 	 */
 	protected Map<InvokedContainer, List<List<Integer>>> computedTestPaths;
 	
-	private static final boolean DEVELOPMENT;	
-	private static Path appRoot;
-	private static Path currentProjectRoot;
+	
 //	private InvokedManager processingManager;
 	private Analyzer analyzer;
 	private Map<String, Path> processedSourceFiles;
 	private ExportManager exportManager;
 	private Set<String> alreadyChanged;
 	private Set<InvokedContainer> invokedCollector;
-	private boolean testMode;
 	
 	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------	
-	/**
-	 * Sets environment. If the code is executed outside project, that is,
-	 * through a jar file, it must be false. It will affect
-	 * {@link #getAppRootPath()} and 
-	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
-	 */
-	static {
-		DEVELOPMENT = true;
-	}
+	
+	
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------	
-	protected ExecutionFlow(Set<InvokedContainer> invokedCollector) {		
+	protected CollectorParser(Set<InvokedContainer> invokedCollector) {		
 //		this.processingManager = processingManager;
-		this.exportManager = new ExportManager(isDevelopment(), isConstructor());
+		this.exportManager = new ExportManager(App.isDevelopment(), isConstructor());
 		this.computedTestPaths = new HashMap<>();
 		this.processedSourceFiles = new HashMap<>();
 		this.alreadyChanged = new HashSet<>();
-		this.testMode = false;
 		this.invokedCollector = invokedCollector;
 	}
 	
@@ -95,16 +80,6 @@ public abstract class ExecutionFlow {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	/**
-	 * Checks if it is development environment. If it is production environment,
-	 * it will return false; otherwise, true.
-	 * 
-	 * @return		If it is development environment
-	 */
-	public static boolean isDevelopment() {
-		return DEVELOPMENT;
-	}
-	
 	/**
 	 * Runs the application by performing the following tasks: 
 	 * <ul>
@@ -117,7 +92,7 @@ public abstract class ExecutionFlow {
 	 * 
 	 * @return		Itself to allow chained calls
 	 */
-	public final ExecutionFlow run() {
+	public final CollectorParser run() {
 		if ((invokedCollector == null) || invokedCollector.isEmpty())
 			return this;
 		
@@ -223,7 +198,7 @@ public abstract class ExecutionFlow {
 	}
 
 	private void updateInvocationLineAfterInvokedProcessing(InvokedContainer collector) {
-		if (testMode) {
+		if (App.isTestMode()) {
 			if (collector.getInvokedInfo().getSrcPath().equals(
 					collector.getTestMethodInfo().getSrcPath())) {
 				updateCollector(collector, InvokedFileProcessor.getMapping());
@@ -275,7 +250,7 @@ public abstract class ExecutionFlow {
 	}
 
 	private void updateInvocationLineAfterTestMethodProcessing(InvokedContainer collector) {
-		if (testMode) {
+		if (App.isTestMode()) {
 			updateCollector(collector, TestMethodFileProcessor.getMapping());
 		}
 		else {
@@ -387,97 +362,7 @@ public abstract class ExecutionFlow {
 	}
 	
 	
-	//-------------------------------------------------------------------------
-	//		Getters & Setters
-	//-------------------------------------------------------------------------
-	/**
-	 * Finds current project root (project that is running the application). It
-	 * will return the path that contains a directory with name 'src'. 
-	 * 
-	 * @return		Project root path
-	 * 
-	 * @implSpec	Lazy initialization
-	 */
-	public static Path getCurrentProjectRoot() {
-		if (currentProjectRoot == null)
-			initializeCurrentProjectRoot();
-		
-		return currentProjectRoot;
-	}
 	
-	private static void initializeCurrentProjectRoot() {		
-		currentProjectRoot = search("src").toPath();
-	}
-	
-	public static File search(String directoryName) {
-		File currentDirectory = new File(System.getProperty("user.dir"));
-		boolean hasDirectoryWithProvidedName = false;
-		
-		while (!hasDirectoryWithProvidedName) {
-			hasDirectoryWithProvidedName = hasFileWithName(directoryName, currentDirectory);
-
-			if (!hasDirectoryWithProvidedName)
-				currentDirectory = new File(currentDirectory.getParent());
-		}
-		
-		return currentDirectory;
-	}
-
-	private static boolean hasFileWithName(String name, File workingDirectory) {
-		String[] files = workingDirectory.list();
-		
-		for (int i=0; i<files.length; i++) {
-			if (files[i].equals(name))
-				return true;
-		}
-		
-		return false;
-	}
-
-	/**
-	 * Gets application root path, based on class {@link ExecutionFlow} location.
-	 * 
-	 * @return		Application root path
-	 * 
-	 * @implSpec	Lazy initialization
-	 */
-	public static Path getAppRootPath() {
-		if (appRoot == null)
-			initializeAppRoot();
-		
-		return appRoot;
-	}
-	
-	private static void initializeAppRoot() {
-		try {
-			File executionFlowBinPath = new File(
-					ExecutionFlow.class
-						.getProtectionDomain()
-						.getCodeSource()
-						.getLocation()
-						.toURI()
-			);
-			
-			if (isDevelopment()) {
-				appRoot = executionFlowBinPath
-						.getAbsoluteFile()
-						.getParentFile()
-						.getParentFile()
-						.toPath();
-			}
-			else {
-				appRoot = executionFlowBinPath
-						.getAbsoluteFile()
-						.getParentFile()
-						.toPath();
-			}
-		} 
-		catch (URISyntaxException e) {
-			Logger.error("Error initializing application root path");
-			
-			appRoot = null;
-		}
-	}
 
 	/**
 	 * Gets computed test path.It will return the following map:
@@ -516,9 +401,5 @@ public abstract class ExecutionFlow {
 	
 	public ExportManager getExportManager() {
 		return exportManager;
-	}
-	
-	public void setTestMode(boolean status) {
-		this.testMode = status;
 	}
 }

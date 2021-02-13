@@ -10,7 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.FileEncoding;
 import wniemiec.executionflow.io.compiler.Compiler;
@@ -421,13 +421,13 @@ public class FileManager implements Serializable {
 	}
 
 	private Path generateAspectsRootDirectory() {
-		if (ExecutionFlow.isDevelopment()) {
-			return ExecutionFlow.getAppRootPath().resolve(
+		if (App.isDevelopment()) {
+			return App.getAppRootPath().resolve(
 					Path.of("target", "classes", "wniemiec", "executionflow", "runtime")
 			);
 		}
 		
-		return ExecutionFlow.getAppRootPath().resolve(
+		return App.getAppRootPath().resolve(
 				Path.of("classes", "wniemiec", "executionflow", "runtime")
 		);
 	}

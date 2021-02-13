@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import wniemiec.api.jdb.JDB;
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.util.logger.Logger;
@@ -57,7 +57,7 @@ public abstract class Analyzer {
 		this.testMethod = testMethodInfo;
 		this.methodsCalledByTestedInvoked = new HashMap<>();
 		this.analyzedInvokedSignature = "";
-		this.mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		this.mcti = new File(App.getAppRootPath().toFile(), "mcti.ef");
 
 		initializeJDB(testMethodInfo, invokedInfo);
 	}
@@ -334,10 +334,10 @@ public abstract class Analyzer {
 		srcPath.add(testMethodSrcPath);
 		
 		// Fix source file of anonymous and inner classes
-		Path mavenSrcPath = ExecutionFlow.getCurrentProjectRoot().resolve(Path.of("src", "main", "java"));
+		Path mavenSrcPath = App.getCurrentProjectRoot().resolve(Path.of("src", "main", "java"));
 		srcPath.add(mavenSrcPath);
 		
-		Path mavenTestPath = ExecutionFlow.getCurrentProjectRoot().resolve(Path.of("src", "test", "java"));
+		Path mavenTestPath = App.getCurrentProjectRoot().resolve(Path.of("src", "test", "java"));
 		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
 			srcPath.add(mavenTestPath);
 		}

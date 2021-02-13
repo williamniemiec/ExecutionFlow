@@ -7,7 +7,7 @@ import org.junit.Test;
 import examples.others.auxClasses.AuxClass;
 
 
-public class SimpleTestPath 
+public class SimpleTestPath_Example 
 {
 	@Test
 	public void simpleTestPath() 

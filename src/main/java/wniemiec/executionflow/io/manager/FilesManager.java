@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.io.processor.ProcessorType;
 
 /**
@@ -74,7 +74,7 @@ public class FilesManager {
 		this.autoDelete = autoDelete;
 		
 		this.backupFile = new File(
-				ExecutionFlow.getCurrentProjectRoot().toFile(), 
+				App.getCurrentProjectRoot().toFile(), 
 				"_EF_" + type.getName() + "_FILES.ef"
 		);
 

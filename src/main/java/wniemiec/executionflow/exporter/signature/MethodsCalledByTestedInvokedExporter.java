@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.exporter.SignatureToPath;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.util.io.manager.CSVFileManager;
@@ -113,7 +113,7 @@ public class MethodsCalledByTestedInvokedExporter
 		);
 	
 		return Path.of(
-				ExecutionFlow.getCurrentProjectRoot().toString(),
+				App.getCurrentProjectRoot().toString(),
 				dirName,
 				signaturePath
 		);

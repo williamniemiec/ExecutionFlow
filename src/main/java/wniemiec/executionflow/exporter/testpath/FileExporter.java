@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.exporter.SignatureToPath;
 import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.util.logger.Logger;
@@ -92,7 +92,7 @@ public class FileExporter implements TestPathExporter {
 		Logger.info(
 				"Location: " 
 				+ new File(
-						ExecutionFlow.getAppRootPath().toFile(), 
+						App.getAppRootPath().toFile(), 
 						dirName
 				).getAbsolutePath()
 		);
@@ -122,7 +122,7 @@ public class FileExporter implements TestPathExporter {
 	
 	private Path generateDirectoryFromSignature(String invokedSignature) {
 		return Paths.get(
-				ExecutionFlow.getCurrentProjectRoot().toString(), 
+				App.getCurrentProjectRoot().toString(), 
 				dirName,
 				SignatureToPath.generateDirectoryPathFromSignature(invokedSignature, 
 																   isConstructor)

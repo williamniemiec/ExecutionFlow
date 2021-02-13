@@ -2,6 +2,7 @@ package wniemiec.executionflow;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -11,13 +12,16 @@ import java.util.List;
 import java.util.Set;
 
 import wniemiec.api.junit4.JUnit4API;
+import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.MethodCollector;
+import wniemiec.executionflow.collector.parser.CollectorParser;
+import wniemiec.executionflow.collector.parser.ConstructorCollectorParser;
+import wniemiec.executionflow.collector.parser.MethodCollectorParser;
 import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
 import wniemiec.executionflow.lib.LibraryManager;
-import wniemiec.executionflow.runtime.collector.ConstructorCollector;
-import wniemiec.executionflow.runtime.collector.MethodCollector;
 import wniemiec.executionflow.runtime.hook.ProcessingManager;
 import wniemiec.executionflow.user.RemoteControl;
 import wniemiec.executionflow.user.User;
@@ -32,19 +36,39 @@ public class App {
 	private static Checkpoint currentTestMethodCheckpoint;
 	private static Checkpoint insideJUnitRunnerCheckpoint;
 	private static int remainingTests;
+	private static final boolean DEVELOPMENT;	
+	private static Path appRoot;
+	private static Path currentProjectRoot;
+	private static boolean testMode;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization blocks
+	//-------------------------------------------------------------------------	
+	/**
+	 * Sets environment. If the code is executed outside project, that is,
+	 * through a jar file, it must be false. It will affect
+	 * {@link #getAppRootPath()} and 
+	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
+	 */
+	static {
+		DEVELOPMENT = true;
+	}
+	
 	
 	static {
+		testMode = false;
 		remainingTests = -1;
 	}
 	
 	static {
 		firstRunCheckpoint = new Checkpoint(
-				ExecutionFlow.getAppRootPath(), 
+				getAppRootPath(), 
 				"app_running"
 		);
 		
 		currentTestMethodCheckpoint = new Checkpoint(
-				ExecutionFlow.getAppRootPath(), 
+				getAppRootPath(), 
 				"Test_Method"
 		);
 		
@@ -181,7 +205,7 @@ public class App {
 	}
 	
 	private static void resetMethodsCalledByTestedInvoked() {
-		File mcti = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		File mcti = new File(getAppRootPath().toFile(), "mcti.ef");
 		mcti.delete();
 	}
 	
@@ -373,7 +397,7 @@ public class App {
 															  Collection<InvokedContainer> invokedCollector) {
 		Set<InvokedContainer> invokedSet = new HashSet<>();
 		ExportManager exportManager = new ExportManager(
-				ExecutionFlow.isDevelopment(), 
+				isDevelopment(), 
 				isConstructor
 		);
 		
@@ -408,14 +432,131 @@ public class App {
 	
 	// PARSE COLLECTORS
 	public static void parseInvokedCollector() {
-		ExecutionFlow methodExecutionFlow = new MethodExecutionFlow(
+		CollectorParser methodExecutionFlow = new MethodCollectorParser(
 				MethodCollector.getCollector()
 		);
 		methodExecutionFlow.run();
 		
-		ExecutionFlow constructorExecutionFlow = new ConstructorExecutionFlow(
+		CollectorParser constructorExecutionFlow = new ConstructorCollectorParser(
 				ConstructorCollector.getConstructorCollector().values()
 		);
 		constructorExecutionFlow.run();
 	}
+	
+	
+	
+	
+	
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters & Setters
+	//-------------------------------------------------------------------------
+	/**
+	 * Finds current project root (project that is running the application). It
+	 * will return the path that contains a directory with name 'src'. 
+	 * 
+	 * @return		Project root path
+	 * 
+	 * @implSpec	Lazy initialization
+	 */
+	public static Path getCurrentProjectRoot() {
+		if (currentProjectRoot == null)
+			initializeCurrentProjectRoot();
+		
+		return currentProjectRoot;
+	}
+	
+	private static void initializeCurrentProjectRoot() {		
+		currentProjectRoot = search("src").toPath();
+	}
+	
+	public static File search(String directoryName) {
+		File currentDirectory = new File(System.getProperty("user.dir"));
+		boolean hasDirectoryWithProvidedName = false;
+		
+		while (!hasDirectoryWithProvidedName) {
+			hasDirectoryWithProvidedName = hasFileWithName(directoryName, currentDirectory);
+
+			if (!hasDirectoryWithProvidedName)
+				currentDirectory = new File(currentDirectory.getParent());
+		}
+		
+		return currentDirectory;
+	}
+
+	private static boolean hasFileWithName(String name, File workingDirectory) {
+		String[] files = workingDirectory.list();
+		
+		for (int i=0; i<files.length; i++) {
+			if (files[i].equals(name))
+				return true;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Gets application root path, based on class {@link CollectorParser} location.
+	 * 
+	 * @return		Application root path
+	 * 
+	 * @implSpec	Lazy initialization
+	 */
+	public static Path getAppRootPath() {
+		if (appRoot == null)
+			initializeAppRoot();
+		
+		return appRoot;
+	}
+	
+	private static void initializeAppRoot() {
+		try {
+			File executionFlowBinPath = new File(
+					App.class
+						.getProtectionDomain()
+						.getCodeSource()
+						.getLocation()
+						.toURI()
+			);
+			
+			if (isDevelopment()) {
+				appRoot = executionFlowBinPath
+						.getAbsoluteFile()
+						.getParentFile()
+						.getParentFile()
+						.toPath();
+			}
+			else {
+				appRoot = executionFlowBinPath
+						.getAbsoluteFile()
+						.getParentFile()
+						.toPath();
+			}
+		} 
+		catch (URISyntaxException e) {
+			Logger.error("Error initializing application root path");
+			
+			appRoot = null;
+		}
+	}
+	
+	/**
+	 * Checks if it is development environment. If it is production environment,
+	 * it will return false; otherwise, true.
+	 * 
+	 * @return		If it is development environment
+	 */
+	public static boolean isDevelopment() {
+		return DEVELOPMENT;
+	}
+	
+	public static boolean isTestMode() {
+		return testMode;
+	}
+	
+	public static void setTestMode(boolean status) {
+		testMode = status;
+	}
+	
 }

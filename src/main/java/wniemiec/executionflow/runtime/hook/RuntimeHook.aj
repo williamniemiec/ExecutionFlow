@@ -2,12 +2,12 @@ package wniemiec.executionflow.runtime.hook;
 
 import org.aspectj.lang.JoinPoint;
 
+import wniemiec.executionflow.collector.CallCollector;
+import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.MethodCollector;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
-import wniemiec.executionflow.runtime.collector.CallCollector;
-import wniemiec.executionflow.runtime.collector.ConstructorCollector;
-import wniemiec.executionflow.runtime.collector.MethodCollector;
 
 /**
  * Responsible for data collection of methods and class constructors used in 

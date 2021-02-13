@@ -1,4 +1,4 @@
-package wniemiec.executionflow.runtime.collector;
+package wniemiec.executionflow.collector;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.util.logger.Logger;
 
@@ -74,7 +74,7 @@ public class CallCollector {
 	 * @throws		IOException If 'mcti.ef' cannot be read
 	 */
 	private static void load() throws FileNotFoundException, IOException {
-		File file = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		File file = new File(App.getAppRootPath().toFile(), "mcti.ef");
 		
 		if (!file.exists())
 			return;
@@ -138,7 +138,7 @@ public class CallCollector {
 	 * @throws		IOException If 'mcti.ef' cannot be written
 	 */
 	private static void store() throws FileNotFoundException, IOException {
-		File file = new File(ExecutionFlow.getAppRootPath().toFile(), "mcti.ef");
+		File file = new File(App.getAppRootPath().toFile(), "mcti.ef");
 		
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
 			oos.writeObject(methodsCalledByTestedInvoked);

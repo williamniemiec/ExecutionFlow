@@ -1,4 +1,4 @@
-package wniemiec.executionflow;
+package wniemiec.executionflow.collector.parser;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ import wniemiec.executionflow.runtime.hook.ConstructorHook;
  * @version		7.0.0
  * @since		2.0.0
  */
-public class ConstructorExecutionFlow extends ExecutionFlow {
+public class ConstructorCollectorParser extends CollectorParser {
 	
 	//-------------------------------------------------------------------------
 	//		Constructors
@@ -30,7 +30,7 @@ public class ConstructorExecutionFlow extends ExecutionFlow {
 	 * @param		constructorCollector Collected constructors from 
 	 * {@link ConstructorHook.runtime.ConstructorCollector}
 	 */
-	public ConstructorExecutionFlow(Collection<InvokedContainer> constructorCollector) {
+	public ConstructorCollectorParser(Collection<InvokedContainer> constructorCollector) {
 		super(new HashSet<>(constructorCollector));
 	}
 	

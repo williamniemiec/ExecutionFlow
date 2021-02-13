@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 
 /**
  * Responsible for gathering all libraries that the application needs.
@@ -67,7 +67,7 @@ public class LibraryManager {
 
 	private static void initializeLibPath() {
 		libPath = Path.of(
-				ExecutionFlow.getAppRootPath().toAbsolutePath().toString(), 
+				App.getAppRootPath().toAbsolutePath().toString(), 
 				"lib"
 		);
 	}

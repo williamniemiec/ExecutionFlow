@@ -1,9 +1,9 @@
-package wniemiec.executionflow.runtime.collector;
+package wniemiec.executionflow.collector;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.util.io.search.FileSearcher;
 
 /**
@@ -34,7 +34,7 @@ public class ClassPathSearcher {
 	 * @throws		IOException If an error occurs while searching for the file
 	 */
 	public static Path findBinPath(String classSignature) throws IOException {
-		FileSearcher searcher = new FileSearcher(ExecutionFlow.getCurrentProjectRoot());
+		FileSearcher searcher = new FileSearcher(App.getCurrentProjectRoot());
 		
 		return searcher.search(generateCompiledFilename(classSignature));
 	}
@@ -100,7 +100,7 @@ public class ClassPathSearcher {
 	 * @throws		IOException If an error occurs while searching for the file
 	 */
 	public static Path findSrcPath(String classSignature) throws IOException {
-		FileSearcher searcher = new FileSearcher(ExecutionFlow.getCurrentProjectRoot());
+		FileSearcher searcher = new FileSearcher(App.getCurrentProjectRoot());
 		
 		return searcher.search(generateSrcFilename(classSignature));
 	}

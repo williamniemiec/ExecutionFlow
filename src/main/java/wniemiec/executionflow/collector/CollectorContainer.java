@@ -1,4 +1,4 @@
-package wniemiec.executionflow.runtime.collector;
+package wniemiec.executionflow.collector;
 
 import java.nio.file.Path;
 import java.util.Collection;

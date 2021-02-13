@@ -1,4 +1,4 @@
-package wniemiec.executionflow;
+package wniemiec.executionflow.collector.parser;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,17 +20,17 @@ import wniemiec.executionflow.invoked.InvokedContainer;
  * @version		7.0.0
  * @since		2.0.0
  */
-public class MethodExecutionFlow extends ExecutionFlow {
+public class MethodCollectorParser extends CollectorParser {
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public MethodExecutionFlow(Map<Integer, List<InvokedContainer>> collectedMethods) {
+	public MethodCollectorParser(Map<Integer, List<InvokedContainer>> collectedMethods) {
 		super(storeCollectedMethods(collectedMethods));
 		storeCollectedMethods(collectedMethods);
 	}
 	
-	public MethodExecutionFlow(Collection<InvokedContainer> collectedMethods) {
+	public MethodCollectorParser(Collection<InvokedContainer> collectedMethods) {
 		super(new HashSet<>(collectedMethods));
 	}
 

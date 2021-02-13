@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-import wniemiec.executionflow.ExecutionFlow;
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.exporter.SignatureToPath;
 import wniemiec.util.io.manager.TextFileManager;
 import wniemiec.util.io.processor.indenter.Indenter;
@@ -89,7 +89,7 @@ public class ProcessedSourceFileExporter {
 
 	private Path generateOutputPath(String invokedSignature) {
 		return Paths.get(
-				ExecutionFlow.getCurrentProjectRoot().toString(), 
+				App.getCurrentProjectRoot().toString(), 
 				dirName,
 				SignatureToPath.generateDirectoryPathFromSignature(invokedSignature, 
 																   isConstructor),
