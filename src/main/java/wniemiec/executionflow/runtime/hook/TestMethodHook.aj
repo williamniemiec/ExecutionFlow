@@ -18,12 +18,12 @@ import wniemiec.api.junit4.JUnit4API;
 import wniemiec.executionflow.App;
 import wniemiec.executionflow.collector.ClassPathSearcher;
 import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.InvokedCollection;
 import wniemiec.executionflow.collector.MethodCollector;
-import wniemiec.executionflow.collector.parser.CollectorParser;
+import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
 import wniemiec.executionflow.collector.parser.ConstructorCollectorParser;
 import wniemiec.executionflow.collector.parser.MethodCollectorParser;
 import wniemiec.executionflow.exporter.ExportManager;
-import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.executionflow.io.manager.FileManager;
 import wniemiec.executionflow.io.manager.FilesManager;
@@ -164,7 +164,9 @@ public aspect TestMethodHook extends RuntimeHook {
 			return;
 
 		if (inTestMethodWithAspectsDisabled) {
-			App.parseInvokedCollector();
+//			App.parseInvokedCollector();
+			App.parseMethodCollector();
+			App.parseConstructorCollector();
 			reset();
 			
 			success = true;			

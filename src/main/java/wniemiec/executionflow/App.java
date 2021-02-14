@@ -3,24 +3,32 @@ package wniemiec.executionflow;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import wniemiec.api.junit4.JUnit4API;
+import wniemiec.executionflow.analyzer.DebuggerAnalyzer;
+import wniemiec.executionflow.analyzer.DebuggerAnalyzerFactory;
 import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.InvokedCollection;
+import wniemiec.executionflow.collector.InvokedCollector;
 import wniemiec.executionflow.collector.MethodCollector;
-import wniemiec.executionflow.collector.parser.CollectorParser;
-import wniemiec.executionflow.collector.parser.ConstructorCollectorParser;
-import wniemiec.executionflow.collector.parser.MethodCollectorParser;
+import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
 import wniemiec.executionflow.exporter.ExportManager;
-import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.io.manager.FileManager;
+import wniemiec.executionflow.io.processor.factory.InvokedFileProcessorFactory;
+import wniemiec.executionflow.io.processor.factory.TestMethodFileProcessorFactory;
+import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
 import wniemiec.executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
+import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.executionflow.runtime.hook.ProcessingManager;
 import wniemiec.executionflow.user.RemoteControl;
@@ -40,6 +48,9 @@ public class App {
 	private static Path appRoot;
 	private static Path currentProjectRoot;
 	private static boolean testMode;
+	
+	private static Set<String> alreadyChanged;
+	
 	
 	
 	//-------------------------------------------------------------------------
@@ -384,9 +395,9 @@ public class App {
 	
 	// EXPORT
 	public static void exportAllMethodsUsedInTestMethods() {
-		List<InvokedContainer> collectors = new ArrayList<>();
+		List<InvokedCollection> collectors = new ArrayList<>();
 		
-		for (List<InvokedContainer> collector : MethodCollector.getCollector().values()) {
+		for (List<InvokedCollection> collector : MethodCollector.getCollector().values()) {
 			collectors.add(collector.get(0));
 		}
 		
@@ -394,15 +405,15 @@ public class App {
 	}
 	
 	public static void exporMethodsAndConstructorsUsedInTestMethods(boolean isConstructor, 
-															  Collection<InvokedContainer> invokedCollector) {
-		Set<InvokedContainer> invokedSet = new HashSet<>();
+															  Collection<InvokedCollection> invokedCollector) {
+		Set<InvokedCollection> invokedSet = new HashSet<>();
 		ExportManager exportManager = new ExportManager(
 				isDevelopment(), 
 				isConstructor
 		);
 		
-		for (InvokedContainer collector : invokedCollector) {
-			invokedSet.add(new InvokedContainer(
+		for (InvokedCollection collector : invokedCollector) {
+			invokedSet.add(new InvokedCollection(
 					collector.getInvokedInfo(),
 					collector.getTestMethodInfo()
 			));
@@ -413,7 +424,7 @@ public class App {
 	
 	public static void exportAllConstructorsUsedInTestMethods() {
 		exporMethodsAndConstructorsUsedInTestMethods(true,
-				ConstructorCollector.getConstructorCollector().values());
+				ConstructorCollector.getCollector().values());
 	}
 	
 	public static void doPreprocessing(InvokedInfo testMethod) throws IOException {
@@ -431,19 +442,220 @@ public class App {
 	
 	
 	// PARSE COLLECTORS
-	public static void parseInvokedCollector() {
-		CollectorParser methodExecutionFlow = new MethodCollectorParser(
-				MethodCollector.getCollector()
-		);
-		methodExecutionFlow.run();
+	/**
+	 * Runs the application by performing the following tasks: 
+	 * <ul>
+	 * 	<li>Computes test path</li>
+	 * 	<li>Exports test path</li>
+	 * 	<li>Exports methods called by tested invoked</li>
+	 * 	<li>Exports test methods that test the invoked</li>
+	 * 	<li>Exports processed source file</li>
+	 * </ul>
+	 */
+	public void parseInvokedCollector(Set<InvokedCollection> invokedCollector, boolean isConstructor) {
+		if ((invokedCollector == null) || invokedCollector.isEmpty())
+			return;
 		
-		CollectorParser constructorExecutionFlow = new ConstructorCollectorParser(
-				ConstructorCollector.getConstructorCollector().values()
-		);
-		constructorExecutionFlow.run();
+		
+		InvokedCollectorParser parser = new InvokedCollectorParser();
+		dump();
+
+		for (InvokedCollection collector : invokedCollector) {
+			FileManager invokedFileManager = createInvokedFileManager(collector);
+			FileManager testMethodFileManager = createTestMethodFileManager(collector);
+			
+			try {	
+				processTestMethod(collector, testMethodFileManager);
+				processInvokedMethod(collector, invokedFileManager, testMethodFileManager);
+				
+				DebuggerAnalyzer debuggerAnalyzer = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
+						collector.getInvokedInfo(), 
+						collector.getTestMethodInfo()
+				);
+				
+				
+				parser.parseCollector(collector, debuggerAnalyzer);
+				
+				if (isTestedInvokedInTheSameFileAsTestMethod(collector)) {
+					resetProcessing(invokedFileManager, testMethodFileManager);
+				}
+			}
+			catch (InterruptedByTimeoutException e1) {
+				Logger.error("Time exceeded");
+			} 
+			catch (IllegalStateException e2) {
+				Logger.error(e2.getMessage());
+			}
+			catch (IOException e3) {
+				Logger.error(e3.getMessage());
+				
+				ProcessingManager.restoreInvokedToBeforeProcessing(invokedFileManager);
+				ProcessingManager.restoreTestMethodToBeforeProcessing(testMethodFileManager);
+			}
+		}
+		
+		export(parser, isConstructor);
+		
+//		parseMethodCollector();
+//		parseConstructorCollector();
 	}
 	
+	private void export(InvokedCollectorParser parser, boolean isConstructor) {
+		ExportManager exportManager;
+		exportManager = new ExportManager(App.isDevelopment(), isConstructor);
+		
+		exportManager.exportTestPaths(parser.getTestPaths());
+		exportManager.exportEffectiveMethodsAndConstructorsUsedInTestMethods(
+				parser.getMethodsAndConstructorsUsedInTestMethod()
+		);
+		exportManager.exportProcessedSourceFiles(parser.getProcessedSourceFiles());
+		exportManager.exportMethodsCalledByTestedInvoked(
+				parser.getMethodsCalledByTestedInvoked()
+		);
+	}
 	
+	private boolean isTestedInvokedInTheSameFileAsTestMethod(InvokedCollection collector) {
+		return collector.getInvokedInfo().getSrcPath().equals(
+				collector.getTestMethodInfo().getSrcPath());
+	}
+	
+	private void resetProcessing(FileManager invokedFileManager, 
+			 					 FileManager testMethodFileManager) {
+		ProcessingManager.restoreInvokedToBeforeProcessing(invokedFileManager);
+		ProcessingManager.restoreTestMethodToBeforeProcessing(testMethodFileManager);
+		
+		InvokedCollector.restoreCollectorInvocationLine();
+		
+		alreadyChanged.clear();
+	}
+
+	private void processInvokedMethod(InvokedCollection collector,
+									  FileManager invokedFileManager,
+									  FileManager testMethodFileManager) throws IOException {
+		Logger.info("Processing source file of invoked - " 
+				+ collector.getInvokedInfo().getConcreteInvokedSignature() 
+				+ "..."
+		);
+		
+		ProcessingManager.doProcessingInInvoked(invokedFileManager, testMethodFileManager);
+		
+		updateInvocationLineAfterInvokedProcessing(collector);
+		
+		Logger.info("Processing completed");
+	}
+
+	private void updateInvocationLineAfterInvokedProcessing(InvokedCollection collector) {
+		if (App.isTestMode()) {
+			if (collector.getInvokedInfo().getSrcPath().equals(
+					collector.getTestMethodInfo().getSrcPath())) {
+				updateCollector(collector, InvokedFileProcessor.getMapping());
+			}
+		}
+		else {
+			updateCollectors(
+					InvokedFileProcessor.getMapping(),
+					collector.getTestMethodInfo().getSrcPath(), 
+					collector.getInvokedInfo().getSrcPath()
+			);
+		}
+	}
+
+	private void updateCollector(InvokedCollection collector, Map<Integer, Integer> mapping) {
+		int invocationLine = collector.getInvokedInfo().getInvocationLine();
+		
+		if (mapping.containsKey(invocationLine))
+			collector.getInvokedInfo().setInvocationLine(mapping.get(invocationLine));
+	}
+
+	private void updateCollectors(Map<Integer, Integer> mapping, Path testMethodSrcPath,
+								  Path invokedSrcPath) {
+		if (alreadyChanged.contains(testMethodSrcPath.toString()) && 
+				!invokedSrcPath.equals(testMethodSrcPath))
+			return;
+
+		ConstructorCollector.updateInvocationLines(
+				mapping, 
+				testMethodSrcPath
+		);
+		
+		MethodCollector.updateInvocationLines(
+				mapping, 
+				testMethodSrcPath
+		);
+		
+		alreadyChanged.add(testMethodSrcPath.toString());
+	}
+
+	private void processTestMethod(InvokedCollection collector, 
+								   FileManager testMethodFileManager) throws IOException {
+		Logger.info(
+				"Processing source file of test method "
+				+ collector.getTestMethodInfo().getConcreteInvokedSignature() 
+				+ "..."
+		);
+		
+		ProcessingManager.doProcessingInTestMethod(testMethodFileManager);
+		
+		updateInvocationLineAfterTestMethodProcessing(collector);
+		
+		Logger.info("Processing completed");
+	}
+
+	private void updateInvocationLineAfterTestMethodProcessing(InvokedCollection collector) {
+		if (App.isTestMode()) {
+			updateCollector(collector, TestMethodFileProcessor.getMapping());
+		}
+		else {
+			updateCollectors(
+					TestMethodFileProcessor.getMapping(),
+					collector.getTestMethodInfo().getSrcPath(), 
+					collector.getInvokedInfo().getSrcPath()
+			);
+		}
+	}
+
+	private FileManager createTestMethodFileManager(InvokedCollection collector) {
+		return new FileManager.Builder()
+				.srcPath(collector.getTestMethodInfo().getSrcPath())
+				.binDirectory(collector.getTestMethodInfo().getClassDirectory())
+				.classPackage(collector.getTestMethodInfo().getPackage())
+				.backupExtensionName("testMethod.bkp")
+				.fileParserFactory(new TestMethodFileProcessorFactory())
+				.build();
+	}
+
+	private FileManager createInvokedFileManager(InvokedCollection collector) {
+		return new FileManager.Builder()
+				.srcPath(collector.getInvokedInfo().getSrcPath())
+				.binDirectory(collector.getInvokedInfo().getClassDirectory())
+				.classPackage(collector.getInvokedInfo().getPackage())
+				.backupExtensionName("invoked.bkp")
+				.fileParserFactory(new InvokedFileProcessorFactory())
+				.build();
+	}
+	
+	private void dump() {
+		Logger.debug(
+				this.getClass(), 
+				"collector: " + invokedCollector.toString()
+		);
+	}
+	
+	private void parseMethodCollector() {
+		parseInvokedCollector(MethodCollector.getCollectorSet(), false);
+//		CollectorParser methodExecutionFlow = new MethodCollectorParser(
+//				MethodCollector.getCollector()
+//		);
+//		methodExecutionFlow.run();
+	}
+//	
+	private void parseConstructorCollector() {
+		parseInvokedCollector(ConstructorCollector.getCollectorSet(), true);
+//		CollectorParser methodExecutionFlow = new MethodCollectorParser(
+//				MethodCollector.getCollector()
+//		);
+//		methodExecutionFlow.run();
+	}
 	
 	
 	
@@ -497,7 +709,7 @@ public class App {
 	}
 
 	/**
-	 * Gets application root path, based on class {@link CollectorParser} location.
+	 * Gets application root path, based on class {@link InvokedCollectorParser} location.
 	 * 
 	 * @return		Application root path
 	 * 

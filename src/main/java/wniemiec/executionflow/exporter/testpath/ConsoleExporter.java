@@ -3,7 +3,7 @@ package wniemiec.executionflow.exporter.testpath;
 import java.util.List;
 import java.util.Map;
 
-import wniemiec.executionflow.invoked.InvokedContainer;
+import wniemiec.executionflow.collector.InvokedCollection;
 import wniemiec.util.console.ConsoleHeader;
 
 /**
@@ -26,7 +26,7 @@ public class ConsoleExporter implements TestPathExporter {
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<InvokedContainer, List<List<Integer>>> testPaths) {
+	public void export(Map<InvokedCollection, List<List<Integer>>> testPaths) {
 		if ((testPaths == null) || testPaths.isEmpty())
 			return;
 		
@@ -38,8 +38,8 @@ public class ConsoleExporter implements TestPathExporter {
 		printFooter();
 	}
 
-	private void printBody(Map<InvokedContainer, List<List<Integer>>> classTestPaths) {
-		for (Map.Entry<InvokedContainer, List<List<Integer>>> e : classTestPaths.entrySet()) {
+	private void printBody(Map<InvokedCollection, List<List<Integer>>> classTestPaths) {
+		for (Map.Entry<InvokedCollection, List<List<Integer>>> e : classTestPaths.entrySet()) {
 			printSignatures(e.getKey());
 			printAllTestPaths(e.getValue());
 		}
@@ -54,7 +54,7 @@ public class ConsoleExporter implements TestPathExporter {
 		System.out.println();
 	}
 
-	private void printSignatures(InvokedContainer invokedContainer) {
+	private void printSignatures(InvokedCollection invokedContainer) {
 		String testMethodSignature = invokedContainer.getTestMethodInfo().getInvokedSignature();
 		String invokedSignature = invokedContainer.getInvokedInfo().getConcreteInvokedSignature();
 

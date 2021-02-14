@@ -1,6 +1,8 @@
-package wniemiec.executionflow.invoked;
+package wniemiec.executionflow.collector;
 
 import java.io.Serializable;
+
+import wniemiec.executionflow.invoked.InvokedInfo;
 
 /**
  * Stores information about a method or constructor along with a test method.
@@ -9,7 +11,7 @@ import java.io.Serializable;
  * @version		6.0.0
  * @since		6.0.0
  */
-public class InvokedContainer implements Serializable {
+public class InvokedCollection implements Serializable {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -31,7 +33,7 @@ public class InvokedContainer implements Serializable {
 	 * @throws		IllegalArgumentException If invoked info or test method info
 	 * is null
 	 */
-	public InvokedContainer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) {
+	public InvokedCollection(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) {
 		if (invokedInfo == null)
 			throw new IllegalArgumentException("Invoked info cannot be null");
 		
@@ -78,7 +80,7 @@ public class InvokedContainer implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		
-		InvokedContainer other = (InvokedContainer) obj;
+		InvokedCollection other = (InvokedCollection) obj;
 		
 		if (!invokedInfo.equals(other.invokedInfo))
 			return false;

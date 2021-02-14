@@ -46,6 +46,7 @@ public aspect MethodHook extends RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private static List<String> parsedMethods;
 	private String methodID;
 	private String signature;
 	private String classSignature;
@@ -63,12 +64,13 @@ public aspect MethodHook extends RuntimeHook {
 	 */
 	private static Map<String, String> anonymousClassSignatures;
 
-	
+
 	//-------------------------------------------------------------------------
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	static {
 		anonymousClassSignatures = new HashMap<>();
+		parsedMethods = new ArrayList<>();
 	}
 	
 	//-----------------------------------------------------------------------
@@ -239,7 +241,7 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private boolean wasMethodAlreadyParsed() {
-		return MethodCollector.wasCollected(methodID);
+		return parsedMethods.contains(methodID);
 	}
 	
 	private boolean hasSourceAndBinearyPath() {
@@ -319,6 +321,12 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private void collectMethod() {
-		MethodCollector.storeCollector(methodID, methodInfo, testMethodInfo);
+		MethodCollector.storeCollector(methodInfo, testMethodInfo);
+	}
+	
+	@Override
+	protected void reset() {
+		super.reset();
+		parsedMethods.clear();
 	}
 }

@@ -16,7 +16,7 @@ import wniemiec.util.logger.Logger;
  * @version		6.0.5
  * @since		6.0.0
  */
-public class StandardTestPathAnalyzer extends Analyzer {
+public class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -44,7 +44,7 @@ public class StandardTestPathAnalyzer extends Analyzer {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public StandardTestPathAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) 
+	public StandardDebuggerAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) 
 			throws IOException {
 		super(invokedInfo, testMethodInfo);
 		

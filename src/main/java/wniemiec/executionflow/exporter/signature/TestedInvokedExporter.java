@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import wniemiec.executionflow.invoked.InvokedContainer;
+import wniemiec.executionflow.collector.InvokedCollection;
 import wniemiec.util.io.manager.CSVFileManager;
 import wniemiec.util.logger.Logger;
 
@@ -72,7 +72,7 @@ public class TestedInvokedExporter {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public void export(Set<InvokedContainer> invokedContainer) {
+	public void export(Set<InvokedCollection> invokedContainer) {
 		if (invokedContainer == null || invokedContainer.isEmpty())
 			return;
 
@@ -80,7 +80,7 @@ public class TestedInvokedExporter {
 		storeExportFile();
 	}
 
-	private void mergeWithStoredExport(Set<InvokedContainer> invokedContainer) {
+	private void mergeWithStoredExport(Set<InvokedCollection> invokedContainer) {
 		try {
 			invokedMethodSignatures = readStoredExportFile();
 		} 
@@ -162,10 +162,10 @@ public class TestedInvokedExporter {
 	 * @return		Map with the above structure
 	 */
 	private Map<String, List<String>> extractInvokedWithTesters(
-			Set<InvokedContainer> invokedContainer) {
+			Set<InvokedCollection> invokedContainer) {
 		Map<String, List<String>> invokedWithTesters = new HashMap<>();
 		
-		for (InvokedContainer container : invokedContainer) {
+		for (InvokedCollection container : invokedContainer) {
 			if (invokedWithTesters.containsKey(
 					container.getInvokedInfo().getConcreteInvokedSignature())) {
 				storeExistingInvoked(invokedWithTesters, container);
@@ -179,7 +179,7 @@ public class TestedInvokedExporter {
 	}
 
 	private void storeNewInvoked(Map<String, List<String>> invokedWithTesters, 
-								 InvokedContainer container) {
+								 InvokedCollection container) {
 		List<String> testMethodSignatures = new ArrayList<>();
 		testMethodSignatures.add(container.getTestMethodInfo().getInvokedSignature());
 		
@@ -190,7 +190,7 @@ public class TestedInvokedExporter {
 	}
 
 	private void storeExistingInvoked(Map<String, List<String>> invokedWithTesters,
-									  InvokedContainer container) {
+									  InvokedCollection container) {
 		List<String> testMethodSignatures = invokedWithTesters.get(
 				container.getInvokedInfo().getConcreteInvokedSignature()
 		);

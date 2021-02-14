@@ -1,12 +1,14 @@
 package wniemiec.executionflow.collector;
 
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
-import wniemiec.executionflow.invoked.InvokedContainer;
 import wniemiec.executionflow.invoked.InvokedInfo;
 
-public class ConstructorCollector {
+public class ConstructorCollector extends InvokedCollector {
 
 	/**
 	 * Stores information about collected constructor.<hr/>
@@ -18,7 +20,7 @@ public class ConstructorCollector {
 	 * 	<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
-	protected static volatile Map<String, InvokedContainer> constructorCollector;
+	protected static volatile Map<String, InvokedCollection> constructorCollector;
 	
 	static {
 		constructorCollector = new LinkedHashMap<>();
@@ -31,15 +33,36 @@ public class ConstructorCollector {
 		
 		constructorCollector.put(
 				id,
-				new InvokedContainer(constructorInvokedInfo, testMethodInfo)
+				new InvokedCollection(constructorInvokedInfo, testMethodInfo)
 		);
 	}
 	
-	public static Map<String, InvokedContainer> getConstructorCollector() {
+	public static Map<String, InvokedCollection> getCollector() {
 		return constructorCollector;
+	}
+	
+	public static Set<InvokedCollection> getCollectorSet() {
+		return new HashSet<>(constructorCollector.values());
 	}
 	
 	public static void reset() {
 		constructorCollector.clear();
+	}
+	
+
+	/**
+	 * Updates the invocation line of all collected constructors based on a 
+	 * mapping.
+	 * 
+	 * @param		mapping Mapping that will be used as base for the update
+	 * @param		testMethodSrcFile Test method source file
+	 */
+	public static void updateInvocationLines(Map<Integer, Integer> mapping, 
+														 Path testMethodSrcFile) {
+		updateInvokedInvocationLines(
+				mapping, 
+				testMethodSrcFile, 
+				constructorCollector.values()
+		);
 	}
 }

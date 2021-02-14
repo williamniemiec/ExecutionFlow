@@ -15,7 +15,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 
 import wniemiec.executionflow.collector.CallCollector;
-import wniemiec.executionflow.collector.parser.CollectorParser;
+import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
 import wniemiec.executionflow.invoked.InvokedInfo;
 import wniemiec.util.logger.Logger;
 

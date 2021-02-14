@@ -4,20 +4,20 @@ import java.io.IOException;
 
 import wniemiec.executionflow.invoked.InvokedInfo;
 
-public class AnalyzerFactory {
+public class DebuggerAnalyzerFactory {
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------	
-	private AnalyzerFactory() {
+	private DebuggerAnalyzerFactory() {
 	}
 	
 	//-------------------------------------------------------------------------
 	//		Factories
 	//-------------------------------------------------------------------------	
-	public static Analyzer createStandardTestPathAnalyzer(InvokedInfo invokedInfo, 
+	public static DebuggerAnalyzer createStandardTestPathAnalyzer(InvokedInfo invokedInfo, 
 														  InvokedInfo testMethodInfo) 
 			throws IOException {
-		return new StandardTestPathAnalyzer(invokedInfo, testMethodInfo);
+		return new StandardDebuggerAnalyzer(invokedInfo, testMethodInfo);
 	}
 }

@@ -25,7 +25,7 @@ import wniemiec.util.task.Scheduler;
  * @version		6.0.5
  * @since		2.0.0
  */
-public abstract class Analyzer {
+public abstract class DebuggerAnalyzer {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -51,7 +51,7 @@ public abstract class Analyzer {
 	 * 
 	 * @throws		IOException If occurs an error while fetching dependencies
 	 */
-	protected Analyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) 
+	protected DebuggerAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) 
 			throws IOException	{
 		this.invoked = invokedInfo;
 		this.testMethod = testMethodInfo;
@@ -77,7 +77,7 @@ public abstract class Analyzer {
 	 * @throws		IllegalStateException If JDB has not been initialized or 
 	 * if invocation line is incorrect
 	 */
-	public Analyzer analyze() throws IOException {
+	public DebuggerAnalyzer analyze() throws IOException {
 		if (jdb == null)
 			throw new IllegalStateException("JDB has not been initialized");
 		
