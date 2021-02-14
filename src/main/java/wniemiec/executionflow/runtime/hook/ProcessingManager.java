@@ -1,10 +1,22 @@
 package wniemiec.executionflow.runtime.hook;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import wniemiec.executionflow.App;
+import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.MethodCollector;
 import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
+import wniemiec.executionflow.io.processing.file.InvokedFileProcessor;
 import wniemiec.executionflow.io.processing.file.ProcessorType;
+import wniemiec.executionflow.io.processing.file.TestMethodFileProcessor;
+import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
 import wniemiec.executionflow.io.processing.file.factory.PreTestMethodFileProcessorFactory;
+import wniemiec.executionflow.io.processing.file.factory.TestMethodFileProcessorFactory;
 import wniemiec.executionflow.io.processing.manager.FileProcessingManager;
 import wniemiec.executionflow.io.processing.manager.FilesProcessingManager;
 import wniemiec.executionflow.io.processing.manager.InvokedProcessingManager;
@@ -12,21 +24,26 @@ import wniemiec.util.logger.Logger;
 
 public class ProcessingManager {
 
-//	private static InvokedManager processingManager;
 	private static InvokedProcessingManager preTestMethodProcessingManager;
 	private static InvokedProcessingManager testMethodProcessingManager;
 	private static InvokedProcessingManager invokedProcessingManager;
 	private static FileProcessingManager preTestMethodFileManager;
-//	private static FilesManager testMethodManager;
-//	private static FileManager testMethodFileManager;
 	private static final boolean AUTO_RESTORE;
 	private static boolean successfullPreprocessing;
+	private static FileProcessingManager currentInvokedFileManager;
+	private static FileProcessingManager currentTestMethodFileManager;
+	private static Set<String> alreadyChanged;
 	
 	static {
 		onShutdown();
 		AUTO_RESTORE = true;
 		successfullPreprocessing = false;
+		alreadyChanged = new HashSet<>();
 	}
+	
+	private ProcessingManager() {
+	}
+	
 	
 	private static void onShutdown() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -115,10 +132,6 @@ public class ProcessingManager {
 				))
 				.build();
 	}
-	
-	
-	
-	
 	
 	public static void restoreAllTestMethodFiles() throws IOException {
 		if (preTestMethodProcessingManager == null)
@@ -215,7 +228,7 @@ public class ProcessingManager {
 		invokedProcessingManager.deleteBackupFiles();
 	}
 	
-	public static void doProcessingInInvoked(FileProcessingManager invokedFileManager, FileProcessingManager testMethodFileManager) 
+	private static void doProcessingInInvoked(FileProcessingManager invokedFileManager, FileProcessingManager testMethodFileManager) 
 			throws IOException {
 		if (invokedProcessingManager == null)
 			return;
@@ -232,7 +245,7 @@ public class ProcessingManager {
 				.equals(invokedFileManager.getSrcFile());
 	}
 	
-	public static void doProcessingInTestMethod(FileProcessingManager testMethodFileManager) 
+	private static void doProcessingInTestMethod(FileProcessingManager testMethodFileManager) 
 			throws IOException {
 		if (testMethodProcessingManager == null)
 			return;
@@ -240,14 +253,14 @@ public class ProcessingManager {
 		testMethodProcessingManager.processAndCompile(testMethodFileManager, AUTO_RESTORE);
 	}
 	
-	public static void restoreTestMethodToBeforeProcessing(FileProcessingManager testMethodFileManager) {
+	private static void restoreTestMethodToBeforeProcessing(FileProcessingManager testMethodFileManager) {
 		if (testMethodProcessingManager == null)
 			return;
 		
 		testMethodProcessingManager.restoreInvokedOriginalFile(testMethodFileManager);
 	}
 	
-	public static void restoreInvokedToBeforeProcessing(FileProcessingManager invokedFileManager) {
+	private static void restoreInvokedToBeforeProcessing(FileProcessingManager invokedFileManager) {
 		if (invokedProcessingManager == null)
 			return;
 		
@@ -256,5 +269,129 @@ public class ProcessingManager {
 	
 	public static boolean wasPreprocessingDoneSuccessfully() {
 		return successfullPreprocessing;
+	}
+	
+	public static void doProcessingInTestedInvoked(TestedInvoked collector) throws IOException {
+		currentTestMethodFileManager = createTestMethodFileManager(collector.getTestMethod());
+		currentInvokedFileManager = createInvokedFileManager(collector.getTestedInvoked());
+		
+		processTestMethod(collector);
+		processInvokedMethod(collector);
+	}
+	
+	private static FileProcessingManager createTestMethodFileManager(Invoked testMethod) {
+		return new FileProcessingManager.Builder()
+				.srcPath(testMethod.getSrcPath())
+				.binDirectory(testMethod.getClassDirectory())
+				.classPackage(testMethod.getPackage())
+				.backupExtensionName("testMethod.bkp")
+				.fileParserFactory(new TestMethodFileProcessorFactory())
+				.build();
+	}
+
+	private static FileProcessingManager createInvokedFileManager(Invoked invoked) {
+		return new FileProcessingManager.Builder()
+				.srcPath(invoked.getSrcPath())
+				.binDirectory(invoked.getClassDirectory())
+				.classPackage(invoked.getPackage())
+				.backupExtensionName("invoked.bkp")
+				.fileParserFactory(new InvokedFileProcessorFactory())
+				.build();
+	}
+	
+	private static void processInvokedMethod(TestedInvoked collector) throws IOException {
+		Logger.info("Processing source file of invoked - " 
+				+ collector.getTestedInvoked().getConcreteSignature() 
+				+ "..."
+		);
+		
+		doProcessingInInvoked(currentInvokedFileManager, currentTestMethodFileManager);
+		
+		updateInvocationLineAfterInvokedProcessing(collector);
+		
+		Logger.info("Processing completed");
+	}
+	
+	private static void processTestMethod(TestedInvoked collector) throws IOException {
+		Logger.info(
+				"Processing source file of test method "
+				+ collector.getTestMethod().getConcreteSignature() 
+				+ "..."
+		);
+		
+		ProcessingManager.doProcessingInTestMethod(currentTestMethodFileManager);
+		
+		updateInvocationLineAfterTestMethodProcessing(collector);
+		
+		Logger.info("Processing completed");
+	}
+	
+	private static void updateInvocationLineAfterInvokedProcessing(TestedInvoked collector) {
+		if (App.isTestMode()) {
+			if (collector.getTestedInvoked().getSrcPath().equals(
+					collector.getTestMethod().getSrcPath())) {
+				updateCollector(collector, InvokedFileProcessor.getMapping());
+			}
+		}
+		else {
+			updateCollectors(
+					InvokedFileProcessor.getMapping(),
+					collector.getTestMethod().getSrcPath(), 
+					collector.getTestedInvoked().getSrcPath()
+			);
+		}
+	}
+
+	private static void updateCollector(TestedInvoked collector, Map<Integer, Integer> mapping) {
+		int invocationLine = collector.getTestedInvoked().getInvocationLine();
+		
+		if (mapping.containsKey(invocationLine))
+			collector.getTestedInvoked().setInvocationLine(mapping.get(invocationLine));
+	}
+
+	private static void updateCollectors(Map<Integer, Integer> mapping, Path testMethodSrcPath,
+								  Path invokedSrcPath) {
+		if (alreadyChanged.contains(testMethodSrcPath.toString()) && 
+				!invokedSrcPath.equals(testMethodSrcPath))
+			return;
+
+		ConstructorCollector.updateInvocationLines(
+				mapping, 
+				testMethodSrcPath
+		);
+		
+		MethodCollector.updateInvocationLines(
+				mapping, 
+				testMethodSrcPath
+		);
+		
+		alreadyChanged.add(testMethodSrcPath.toString());
+	}
+
+	
+
+	private static void updateInvocationLineAfterTestMethodProcessing(TestedInvoked collector) {
+		if (App.isTestMode()) {
+			updateCollector(collector, TestMethodFileProcessor.getMapping());
+		}
+		else {
+			updateCollectors(
+					TestMethodFileProcessor.getMapping(),
+					collector.getTestMethod().getSrcPath(), 
+					collector.getTestedInvoked().getSrcPath()
+			);
+		}
+	}
+	
+	public static void resetLastProcessing() {
+		if (currentTestMethodFileManager != null)
+			restoreTestMethodToBeforeProcessing(currentTestMethodFileManager);
+		
+		if (currentInvokedFileManager != null)
+			restoreInvokedToBeforeProcessing(currentInvokedFileManager);
+		
+		alreadyChanged.clear();
+		currentInvokedFileManager = null;
+		currentTestMethodFileManager = null;
 	}
 }

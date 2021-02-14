@@ -19,8 +19,10 @@ import wniemiec.util.logger.Logger;
 public class CallCollector {
 	
 	private static Map<Invoked, Set<String>> methodsCalledByTestedInvoked;
+	private static final File MCTI_FILE;
 	
 	static {
+		MCTI_FILE = new File(App.getAppRootPath().toFile(), "mcti.ef");
 		methodsCalledByTestedInvoked = new HashMap<>();
 	}
 	
@@ -74,12 +76,10 @@ public class CallCollector {
 	 * @throws		IOException If 'mcti.ef' cannot be read
 	 */
 	private static void load() throws FileNotFoundException, IOException {
-		File file = new File(App.getAppRootPath().toFile(), "mcti.ef");
-		
-		if (!file.exists())
+		if (!MCTI_FILE.exists())
 			return;
 
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(MCTI_FILE))) {
 			@SuppressWarnings("unchecked")
 			Map<Invoked, Set<String>> storedCollection = 
 					(Map<Invoked, Set<String>>) ois.readObject();
@@ -87,7 +87,7 @@ public class CallCollector {
 			combineCollectedMethodWithStoredCollection(storedCollection);
 		}
 		catch(java.io.EOFException | ClassNotFoundException e) {
-			file.delete();
+			MCTI_FILE.delete();
 		}
 	}
 	
@@ -138,14 +138,16 @@ public class CallCollector {
 	 * @throws		IOException If 'mcti.ef' cannot be written
 	 */
 	private static void store() throws FileNotFoundException, IOException {
-		File file = new File(App.getAppRootPath().toFile(), "mcti.ef");
-		
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(MCTI_FILE))) {
 			oos.writeObject(methodsCalledByTestedInvoked);
 		}
 	}
 	
 	public static void reset() {
 		methodsCalledByTestedInvoked.clear();
+	}
+	
+	public static void deleteStoredContent() {
+		MCTI_FILE.delete();
 	}
 }

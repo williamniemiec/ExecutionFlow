@@ -3,11 +3,11 @@ package wniemiec.executionflow.exporter.testpath;
 import java.util.List;
 import java.util.Map;
 
-import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
+import wniemiec.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.executionflow.invoked.TestedInvoked;
 
 /**
- * Responsible for exporting the results obtained in {@link InvokedCollectorParser}.
+ * Responsible for exporting the results obtained in {@link TestedInvokedParser}.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		6.0.0
