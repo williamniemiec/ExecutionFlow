@@ -13,18 +13,18 @@ import java.util.Map;
 import java.util.Set;
 
 import wniemiec.executionflow.App;
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.logger.Logger;
 
 public class CallCollector {
 	
-	private static Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked;
+	private static Map<Invoked, Set<String>> methodsCalledByTestedInvoked;
 	
 	static {
 		methodsCalledByTestedInvoked = new HashMap<>();
 	}
 	
-	public static void collectCall(String signature, InvokedInfo invoked) {
+	public static void collectCall(String signature, Invoked invoked) {
 		if (methodsCalledByTestedInvoked.containsKey(invoked)) {
 			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invoked);
 			invokedMethods.add(signature);
@@ -45,7 +45,7 @@ public class CallCollector {
 	}
 	
 	
-	public static void store(Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked) {
+	public static void store(Map<Invoked, Set<String>> methodsCalledByTestedInvoked) {
 		CallCollector.methodsCalledByTestedInvoked = methodsCalledByTestedInvoked;
 	}
 	
@@ -81,8 +81,8 @@ public class CallCollector {
 
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 			@SuppressWarnings("unchecked")
-			Map<InvokedInfo, Set<String>> storedCollection = 
-					(Map<InvokedInfo, Set<String>>) ois.readObject();
+			Map<Invoked, Set<String>> storedCollection = 
+					(Map<Invoked, Set<String>>) ois.readObject();
 			
 			combineCollectedMethodWithStoredCollection(storedCollection);
 		}
@@ -91,10 +91,10 @@ public class CallCollector {
 		}
 	}
 	
-	private static void combineCollectedMethodWithStoredCollection(Map<InvokedInfo, Set<String>> 
+	private static void combineCollectedMethodWithStoredCollection(Map<Invoked, Set<String>> 
 															storedCollection) {
-		for (Map.Entry<InvokedInfo, Set<String>> e : storedCollection.entrySet()) {
-			InvokedInfo storedInvocation = e.getKey();
+		for (Map.Entry<Invoked, Set<String>> e : storedCollection.entrySet()) {
+			Invoked storedInvocation = e.getKey();
 			Set<String> storedMethodsCalled = e.getValue();
 			
 			if (methodsCalledByTestedInvoked.containsKey(storedInvocation)) {
@@ -112,7 +112,7 @@ public class CallCollector {
 		}
 	}
 	
-	private static void mergeCollectedMethodWithStoredCollection(InvokedInfo storedInvocation, 
+	private static void mergeCollectedMethodWithStoredCollection(Invoked storedInvocation, 
 														  Set<String> storedMethodsCalled) {
 		Set<String> currentMethodsCalled = 
 				methodsCalledByTestedInvoked.get(storedInvocation);

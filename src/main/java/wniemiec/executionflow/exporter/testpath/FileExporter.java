@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 import wniemiec.executionflow.App;
-import wniemiec.executionflow.collector.InvokedCollection;
 import wniemiec.executionflow.exporter.SignatureToPath;
+import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -57,7 +57,7 @@ public class FileExporter implements TestPathExporter {
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void export(Map<InvokedCollection, List<List<Integer>>> testPaths) {
+	public void export(Map<TestedInvoked, List<List<Integer>>> testPaths) {
 		if ((testPaths == null) || testPaths.isEmpty())
 			return;
 		
@@ -70,12 +70,12 @@ public class FileExporter implements TestPathExporter {
 		}
 	}
 
-	private void exportTestPaths(Map<InvokedCollection, List<List<Integer>>> testPaths) 
+	private void exportTestPaths(Map<TestedInvoked, List<List<Integer>>> testPaths) 
 			throws IOException {
 		removeConflictingExportFiles(testPaths.keySet());
 
-		for (Map.Entry<InvokedCollection, List<List<Integer>>> e : testPaths.entrySet()) {
-			InvokedCollection invokedContainer = e.getKey();
+		for (Map.Entry<TestedInvoked, List<List<Integer>>> e : testPaths.entrySet()) {
+			TestedInvoked invokedContainer = e.getKey();
 			List<List<Integer>> tps = e.getValue();
 
 			prepareExportFile(invokedContainer);
@@ -84,7 +84,7 @@ public class FileExporter implements TestPathExporter {
 			
 			storeExportFile(
 					tps, 
-					invokedContainer.getTestMethodInfo().getInvokedSignature()
+					invokedContainer.getTestMethod().getInvokedSignature()
 			);
 		}
 
@@ -106,16 +106,16 @@ public class FileExporter implements TestPathExporter {
 	 * 
 	 * @throws		IOException If any test path file to be removed is in use
 	 */
-	private void removeConflictingExportFiles(Set<InvokedCollection> invokedContainer) 
+	private void removeConflictingExportFiles(Set<TestedInvoked> invokedContainer) 
 			throws IOException {
-		for (InvokedCollection container : invokedContainer) {		
+		for (TestedInvoked container : invokedContainer) {		
 			Path testPathExportDirectory = generateDirectoryFromSignature(
-					container.getInvokedInfo().getConcreteInvokedSignature()
+					container.getTestedInvoked().getConcreteSignature()
 			);
 			
 			removeTestPathExportFileWithTestMethodSignature(
 					testPathExportDirectory.toFile(), 
-					container.getTestMethodInfo().getInvokedSignature()
+					container.getTestMethod().getInvokedSignature()
 			);
 		}
 	}
@@ -156,9 +156,9 @@ public class FileExporter implements TestPathExporter {
 		return testMethodSignature;
 	}
 	
-	private void prepareExportFile(InvokedCollection invokedContainer) {
+	private void prepareExportFile(TestedInvoked invokedContainer) {
 		this.exportFile = generateDirectoryFromSignature(
-				invokedContainer.getInvokedInfo().getConcreteInvokedSignature()
+				invokedContainer.getTestedInvoked().getConcreteSignature()
 		);
 	}
 

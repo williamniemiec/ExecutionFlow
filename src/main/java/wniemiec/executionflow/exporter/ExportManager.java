@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import wniemiec.executionflow.App;
-import wniemiec.executionflow.collector.InvokedCollection;
 import wniemiec.executionflow.exporter.file.ProcessedSourceFileExporter;
 import wniemiec.executionflow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import wniemiec.executionflow.exporter.signature.TestedInvokedExporter;
@@ -16,7 +15,8 @@ import wniemiec.executionflow.exporter.testpath.ConsoleExporter;
 import wniemiec.executionflow.exporter.testpath.FileExporter;
 import wniemiec.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.executionflow.exporter.testpath.TestPathExporter;
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -113,21 +113,21 @@ public class ExportManager {
 		);
 	}
 	
-	public void exportEffectiveMethodsAndConstructorsUsedInTestMethods(Set<InvokedCollection> invokedSet) {
+	public void exportEffectiveMethodsAndConstructorsUsedInTestMethods(Set<TestedInvoked> invokedSet) {
 		if (!exportTesters)
 			return;
 		
 		mcutmEffective.export(invokedSet);
 	}
 	
-	public void exportAllMethodsAndConstructorsUsedInTestMethods(Set<InvokedCollection> invokedSet) {
+	public void exportAllMethodsAndConstructorsUsedInTestMethods(Set<TestedInvoked> invokedSet) {
 		if (!exportTesters)
 			return;
 	
 		mcutmAll.export(invokedSet);
 	}
 	
-	public void exportTestPaths(Map<InvokedCollection, List<List<Integer>>> testPaths) {
+	public void exportTestPaths(Map<TestedInvoked, List<List<Integer>>> testPaths) {
 		if (!exportTestPaths)
 			return;
 		
@@ -147,7 +147,7 @@ public class ExportManager {
 	}
 	
 	public void exportMethodsCalledByTestedInvoked(
-			Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked) {
+			Map<Invoked, Set<String>> methodsCalledByTestedInvoked) {
 		if (!exportCalledMethods)
 			return;
 		

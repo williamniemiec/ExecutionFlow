@@ -13,7 +13,7 @@ import java.util.Set;
 
 import wniemiec.api.jdb.JDB;
 import wniemiec.executionflow.App;
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.util.logger.Logger;
 import wniemiec.util.task.Scheduler;
@@ -34,9 +34,9 @@ public abstract class DebuggerAnalyzer {
 	protected static volatile boolean timeout;
 	protected volatile List<List<Integer>> testPaths;
 	protected String analyzedInvokedSignature;
-	protected Map<InvokedInfo, Set<String>> methodsCalledByTestedInvoked;
-	protected InvokedInfo invoked;
-	protected InvokedInfo testMethod;
+	protected Map<Invoked, Set<String>> methodsCalledByTestedInvoked;
+	protected Invoked invoked;
+	protected Invoked testMethod;
 	protected volatile JDB jdb;
 	protected boolean stopJDB;
 	private List<String> commands;
@@ -51,7 +51,7 @@ public abstract class DebuggerAnalyzer {
 	 * 
 	 * @throws		IOException If occurs an error while fetching dependencies
 	 */
-	protected DebuggerAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) 
+	protected DebuggerAnalyzer(Invoked invokedInfo, Invoked testMethodInfo) 
 			throws IOException	{
 		this.invoked = invokedInfo;
 		this.testMethod = testMethodInfo;
@@ -236,7 +236,7 @@ public abstract class DebuggerAnalyzer {
 		}, TIMEOUT_ID, TIMEOUT_TIME);
 	}
 	
-	private void initializeJDB(InvokedInfo testMethodInfo, InvokedInfo invokedInfo) {
+	private void initializeJDB(Invoked testMethodInfo, Invoked invokedInfo) {
 		Path testClassRootPath = extractRootPathDirectory(
 				testMethodInfo.getBinPath(), 
 				testMethodInfo.getPackage()
@@ -314,8 +314,8 @@ public abstract class DebuggerAnalyzer {
 		return classPath;
 	}
 
-	private List<Path> getSourcePath(InvokedInfo invokedInfo, 
-									 InvokedInfo testMethodInfo) {
+	private List<Path> getSourcePath(Invoked invokedInfo, 
+									 Invoked testMethodInfo) {
 		List<Path> srcPath = new ArrayList<>();
 		
 		srcPath.add(invokedInfo.getSrcPath());
@@ -369,19 +369,19 @@ public abstract class DebuggerAnalyzer {
 	 * by tested invoked will be deleted. Therefore, this method can only be 
 	 * called once for each {@link #run JDB execution}
 	 */
-	public Map<InvokedInfo, Set<String>> getMethodsCalledByTestedInvoked() {
+	public Map<Invoked, Set<String>> getMethodsCalledByTestedInvoked() {
 		return methodsCalledByTestedInvoked;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<InvokedInfo, Set<String>> loadMethodsCalledByTestedInvoked() {
+	private Map<Invoked, Set<String>> loadMethodsCalledByTestedInvoked() {
 		if (!mcti.exists())
 			return new HashMap<>();
 		
-		Map<InvokedInfo, Set<String>> invokedMethods = new HashMap<>();
+		Map<Invoked, Set<String>> invokedMethods = new HashMap<>();
 
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(mcti))) {
-			invokedMethods = (Map<InvokedInfo, Set<String>>) ois.readObject();
+			invokedMethods = (Map<Invoked, Set<String>>) ois.readObject();
 		} 
 		catch (IOException | ClassNotFoundException e) {
 			Logger.error("Methods called by tested invoked - " + e.getMessage());
@@ -393,9 +393,9 @@ public abstract class DebuggerAnalyzer {
 	}
 	
 	private void mergeMethodsCalledByTestedInvoked() {
-		Map<InvokedInfo, Set<String>> invokedMethods = loadMethodsCalledByTestedInvoked();
+		Map<Invoked, Set<String>> invokedMethods = loadMethodsCalledByTestedInvoked();
 		
-		for (Map.Entry<InvokedInfo, Set<String>> mcti : invokedMethods.entrySet()) {
+		for (Map.Entry<Invoked, Set<String>> mcti : invokedMethods.entrySet()) {
 			if (methodsCalledByTestedInvoked.containsKey(mcti.getKey())) {
 				methodsCalledByTestedInvoked.get(mcti.getKey()).addAll(mcti.getValue());
 			}

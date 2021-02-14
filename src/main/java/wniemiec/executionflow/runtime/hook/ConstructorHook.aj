@@ -11,8 +11,8 @@ import org.aspectj.lang.JoinPoint;
 
 import wniemiec.executionflow.collector.ClassPathSearcher;
 import wniemiec.executionflow.collector.ConstructorCollector;
-import wniemiec.executionflow.collector.InvokedCollection;
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -52,7 +52,7 @@ public aspect ConstructorHook extends RuntimeHook {
 	private Path srcPath;
 	private String signature;
 	private String classSignature;
-	private InvokedInfo constructorInvokedInfo;
+	private Invoked constructorInvokedInfo;
 	private String constructorID;
 
 	
@@ -168,10 +168,10 @@ public aspect ConstructorHook extends RuntimeHook {
 	}
 	
 	private void parseConstructor(JoinPoint jp) {
-		constructorInvokedInfo = new InvokedInfo.Builder()
+		constructorInvokedInfo = new Invoked.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
-				.invokedSignature(signature)
+				.signature(signature)
 				.parameterTypes(getParameterTypes(jp))
 				.isConstructor(true)
 				.args(getParameterValues(jp))

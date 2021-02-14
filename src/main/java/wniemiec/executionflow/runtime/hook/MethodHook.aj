@@ -14,7 +14,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 
 import wniemiec.executionflow.collector.ClassPathSearcher;
 import wniemiec.executionflow.collector.MethodCollector;
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -52,7 +52,7 @@ public aspect MethodHook extends RuntimeHook {
 	private String classSignature;
 	private Path classPath;
 	private Path srcPath;
-	private InvokedInfo methodInfo;
+	private Invoked methodInfo;
 	
 	/**
 	 * Stores anonymous class signature where it is created and where it is 
@@ -269,17 +269,17 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private void parseMethod(JoinPoint jp) {
-		methodInfo = new InvokedInfo.Builder()
+		methodInfo = new Invoked.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
-				.invokedSignature(signature)
-				.invokedName(InvokedInfo.extractMethodName(signature))
+				.signature(signature)
+				.name(Invoked.extractMethodName(signature))
 				.parameterTypes(getParameterTypes(jp))
 				.args(getParameterValues(jp))
 				.returnType(extractReturnType(jp))
 				.invocationLine(getInvocationLine(jp))
 				.build();
-		methodInfo.setConcreteMethodSignature(getConcreteMethodSignature(jp));
+		methodInfo.setConcreteSignature(getConcreteMethodSignature(jp));
 	}
 	
 	private Class<?>[] getParameterTypes(JoinPoint jp) { 

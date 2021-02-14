@@ -3,8 +3,8 @@ package wniemiec.executionflow.exporter.testpath;
 import java.util.List;
 import java.util.Map;
 
-import wniemiec.executionflow.collector.InvokedCollection;
 import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
+import wniemiec.executionflow.invoked.TestedInvoked;
 
 /**
  * Responsible for exporting the results obtained in {@link InvokedCollectorParser}.
@@ -20,5 +20,5 @@ public interface TestPathExporter {
 	 * 
 	 * @param		classTestPaths Test paths to be exported
 	 */
-	public void export(Map<InvokedCollection, List<List<Integer>>> classTestPaths);
+	public void export(Map<TestedInvoked, List<List<Integer>>> classTestPaths);
 }

@@ -5,9 +5,9 @@ import org.aspectj.lang.JoinPoint;
 import wniemiec.executionflow.collector.CallCollector;
 import wniemiec.executionflow.collector.ConstructorCollector;
 import wniemiec.executionflow.collector.MethodCollector;
-import wniemiec.executionflow.invoked.InvokedInfo;
-import wniemiec.executionflow.io.processor.fileprocessor.InvokedFileProcessor;
-import wniemiec.executionflow.io.processor.fileprocessor.TestMethodFileProcessor;
+import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.io.processing.file.InvokedFileProcessor;
+import wniemiec.executionflow.io.processing.file.TestMethodFileProcessor;
 
 /**
  * Responsible for data collection of methods and class constructors used in 
@@ -27,7 +27,7 @@ public abstract aspect RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected static InvokedInfo testMethodInfo;
+	protected static Invoked testMethodInfo;
 	
 	
 	//-------------------------------------------------------------------------

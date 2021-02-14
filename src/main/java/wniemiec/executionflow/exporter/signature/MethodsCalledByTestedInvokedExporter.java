@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import wniemiec.executionflow.App;
 import wniemiec.executionflow.exporter.SignatureToPath;
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.io.manager.CSVFileManager;
 import wniemiec.util.logger.Logger;
 
@@ -77,15 +77,15 @@ public class MethodsCalledByTestedInvokedExporter
 	 * 
 	 * @throws		IOException If it is not possible to generate CSV file
 	 */
-	public void export(Map<InvokedInfo, Set<String>> methodsCalledByAllTestedInvoked) 
+	public void export(Map<Invoked, Set<String>> methodsCalledByAllTestedInvoked) 
 			throws IOException {
 		
-		for (Map.Entry<InvokedInfo, Set<String>> mcti : methodsCalledByAllTestedInvoked.entrySet()) {
+		for (Map.Entry<Invoked, Set<String>> mcti : methodsCalledByAllTestedInvoked.entrySet()) {
 			exportRegistry(mcti.getKey(), mcti.getValue());
 		}
 	}
 	
-	private void exportRegistry(InvokedInfo invoked, Set<String> methodsCalledByTestedInvoked) 
+	private void exportRegistry(Invoked invoked, Set<String> methodsCalledByTestedInvoked) 
 			throws IOException {
 		if (methodsCalledByTestedInvoked == null || methodsCalledByTestedInvoked.isEmpty()) {
 			Logger.debug("There are no methods called by tested invoked");
@@ -99,7 +99,7 @@ public class MethodsCalledByTestedInvokedExporter
 		storeExportFile(invoked);
 	}
 
-	private void createExportFile(InvokedInfo invoked) throws IOException {
+	private void createExportFile(Invoked invoked) throws IOException {
 		Path directory = generateDirectoryFromSignature(invoked);
 		
 		Files.createDirectories(directory);
@@ -107,9 +107,9 @@ public class MethodsCalledByTestedInvokedExporter
 		csvFile = new CSVFileManager(directory.toFile(), filename);
 	}
 
-	private Path generateDirectoryFromSignature(InvokedInfo invoked) {
+	private Path generateDirectoryFromSignature(Invoked invoked) {
 		String signaturePath = SignatureToPath.generateDirectoryPathFromSignature(
-				invoked.getConcreteInvokedSignature(), invoked.isConstructor()
+				invoked.getConcreteSignature(), invoked.isConstructor()
 		);
 	
 		return Path.of(
@@ -139,14 +139,14 @@ public class MethodsCalledByTestedInvokedExporter
 		}
 	}
 	
-	private void storeExportFile(InvokedInfo invoked) {
+	private void storeExportFile(Invoked invoked) {
 		Logger.debug("Exporting methods called by tested invoked...");
 		
 		try {
 			List<String> mcti = methodsCalledByTestedInvoked.stream()
 					.collect(Collectors.toList());
 			
-			mcti.add(0, invoked.getConcreteInvokedSignature());
+			mcti.add(0, invoked.getConcreteSignature());
 			csvFile.writeLine(mcti, ";");
 		} 
 		catch (IOException e2) {

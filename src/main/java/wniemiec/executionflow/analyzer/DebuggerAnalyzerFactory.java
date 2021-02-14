@@ -2,7 +2,7 @@ package wniemiec.executionflow.analyzer;
 
 import java.io.IOException;
 
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
 
 public class DebuggerAnalyzerFactory {
 	
@@ -15,8 +15,8 @@ public class DebuggerAnalyzerFactory {
 	//-------------------------------------------------------------------------
 	//		Factories
 	//-------------------------------------------------------------------------	
-	public static DebuggerAnalyzer createStandardTestPathAnalyzer(InvokedInfo invokedInfo, 
-														  InvokedInfo testMethodInfo) 
+	public static DebuggerAnalyzer createStandardTestPathAnalyzer(Invoked invokedInfo, 
+														  Invoked testMethodInfo) 
 			throws IOException {
 		return new StandardDebuggerAnalyzer(invokedInfo, testMethodInfo);
 	}

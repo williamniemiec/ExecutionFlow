@@ -1,42 +1,14 @@
 package wniemiec.executionflow.runtime.hook;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
 
-import wniemiec.api.junit4.JUnit4API;
 import wniemiec.executionflow.App;
 import wniemiec.executionflow.collector.ClassPathSearcher;
-import wniemiec.executionflow.collector.ConstructorCollector;
-import wniemiec.executionflow.collector.InvokedCollection;
-import wniemiec.executionflow.collector.MethodCollector;
-import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
-import wniemiec.executionflow.collector.parser.ConstructorCollectorParser;
-import wniemiec.executionflow.collector.parser.MethodCollectorParser;
-import wniemiec.executionflow.exporter.ExportManager;
-import wniemiec.executionflow.invoked.InvokedInfo;
-import wniemiec.executionflow.io.manager.FileManager;
-import wniemiec.executionflow.io.manager.FilesManager;
-import wniemiec.executionflow.io.manager.InvokedManager;
-import wniemiec.executionflow.io.processor.ProcessorType;
-import wniemiec.executionflow.io.processor.factory.PreTestMethodFileProcessorFactory;
-import wniemiec.executionflow.io.processor.fileprocessor.PreTestMethodFileProcessor;
-import wniemiec.executionflow.lib.LibraryManager;
-import wniemiec.executionflow.user.RemoteControl;
-import wniemiec.executionflow.user.User;
-import wniemiec.util.data.storage.Session;
+import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.logger.Logger;
-import wniemiec.util.task.Checkpoint;
 
 /**
  * Run in each test method
@@ -290,10 +262,10 @@ public aspect TestMethodHook extends RuntimeHook {
 	}
 	
 	private void createTestMethodInfo(JoinPoint jp) {
-		testMethodInfo = new InvokedInfo.Builder()
+		testMethodInfo = new Invoked.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
-				.invokedSignature(testMethodSignature)
+				.signature(testMethodSignature)
 				.args(getParameterValues(jp))
 				.build();
 		

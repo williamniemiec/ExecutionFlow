@@ -16,7 +16,7 @@ import org.aspectj.lang.Signature;
 
 import wniemiec.executionflow.collector.CallCollector;
 import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -36,7 +36,7 @@ public aspect MethodCallHook extends RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private InvokedInfo invoked;
+	private Invoked invoked;
 	
 	
 	//-----------------------------------------------------------------------
@@ -105,8 +105,8 @@ public aspect MethodCallHook extends RuntimeHook {
 	}
 
 	private void collectInvoked(JoinPoint jp) {
-		invoked = new InvokedInfo.Builder()
-				.invokedSignature(extractSignatureFromTypedSignature(jp))
+		invoked = new Invoked.Builder()
+				.signature(extractSignatureFromTypedSignature(jp))
 				.isConstructor(isConstructor(jp))
 				.build();
 	}

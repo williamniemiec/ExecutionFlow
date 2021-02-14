@@ -6,7 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 
 public class ConstructorCollector extends InvokedCollector {
 
@@ -20,28 +21,28 @@ public class ConstructorCollector extends InvokedCollector {
 	 * 	<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
-	protected static volatile Map<String, InvokedCollection> constructorCollector;
+	protected static volatile Map<String, TestedInvoked> constructorCollector;
 	
 	static {
 		constructorCollector = new LinkedHashMap<>();
 	}
 	
-	public static void storeCollector(String id, InvokedInfo constructorInvokedInfo, 
-									  InvokedInfo testMethodInfo) {
+	public static void storeCollector(String id, Invoked constructorInvokedInfo, 
+									  Invoked testMethodInfo) {
 		if (constructorCollector.containsKey(id))
 			return;
 		
 		constructorCollector.put(
 				id,
-				new InvokedCollection(constructorInvokedInfo, testMethodInfo)
+				new TestedInvoked(constructorInvokedInfo, testMethodInfo)
 		);
 	}
 	
-	public static Map<String, InvokedCollection> getCollector() {
+	public static Map<String, TestedInvoked> getCollector() {
 		return constructorCollector;
 	}
 	
-	public static Set<InvokedCollection> getCollectorSet() {
+	public static Set<TestedInvoked> getCollectorSet() {
 		return new HashSet<>(constructorCollector.values());
 	}
 	

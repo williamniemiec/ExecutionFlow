@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.io.parser.balance.RoundBracketBalance;
 import wniemiec.util.logger.Logger;
 
@@ -44,7 +44,7 @@ public class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public StandardDebuggerAnalyzer(InvokedInfo invokedInfo, InvokedInfo testMethodInfo) 
+	public StandardDebuggerAnalyzer(Invoked invokedInfo, Invoked testMethodInfo) 
 			throws IOException {
 		super(invokedInfo, testMethodInfo);
 		
@@ -248,8 +248,8 @@ public class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	}
 	
 	private boolean hasLineInvokedName() {
-		return	line.contains(invoked.getInvokedName() + ".") 
-				|| line.contains(invoked.getInvokedName() + "(");
+		return	line.contains(invoked.getName() + ".") 
+				|| line.contains(invoked.getName() + "(");
 	}
 	
 	private boolean inConstructor() {
@@ -399,8 +399,8 @@ public class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 		if (anonymousConstructor)
 			return !line.contains("$") && inConstructor();
 
-		return 	line.contains(invoked.getInvokedName() + "(") 
-				|| line.contains(invoked.getInvokedName() + ".<init>");
+		return 	line.contains(invoked.getName() + "(") 
+				|| line.contains(invoked.getName() + ".<init>");
 
 	}
 	
@@ -460,7 +460,7 @@ public class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 				&& !line.contains("aspectj.")
 				&& !line.contains("executionflow.runtime")
 				&& !srcLine.contains("package ")
-				&& !line.contains(invoked.getInvokedName());
+				&& !line.contains(invoked.getName());
 	}
 	
 	private boolean isMethodDeclaration(String line) {
@@ -536,7 +536,7 @@ public class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	}
 	
 	private boolean hasInvokedNameDollarSign() {
-		return invoked.getInvokedName()
+		return invoked.getName()
 				.substring(1)
 				.matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
 	}
@@ -632,7 +632,7 @@ public class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 
 
 	private boolean hasInvokedName(String line) {
-		return	line.contains(invoked.getInvokedName()+".") 
-				|| line.contains(invoked.getInvokedName()+"(");
+		return	line.contains(invoked.getName()+".") 
+				|| line.contains(invoked.getName()+"(");
 	}
 }

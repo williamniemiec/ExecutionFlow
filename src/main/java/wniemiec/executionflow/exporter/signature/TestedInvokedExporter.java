@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import wniemiec.executionflow.collector.InvokedCollection;
+import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.io.manager.CSVFileManager;
 import wniemiec.util.logger.Logger;
 
@@ -72,7 +72,7 @@ public class TestedInvokedExporter {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public void export(Set<InvokedCollection> invokedContainer) {
+	public void export(Set<TestedInvoked> invokedContainer) {
 		if (invokedContainer == null || invokedContainer.isEmpty())
 			return;
 
@@ -80,7 +80,7 @@ public class TestedInvokedExporter {
 		storeExportFile();
 	}
 
-	private void mergeWithStoredExport(Set<InvokedCollection> invokedContainer) {
+	private void mergeWithStoredExport(Set<TestedInvoked> invokedContainer) {
 		try {
 			invokedMethodSignatures = readStoredExportFile();
 		} 
@@ -162,12 +162,12 @@ public class TestedInvokedExporter {
 	 * @return		Map with the above structure
 	 */
 	private Map<String, List<String>> extractInvokedWithTesters(
-			Set<InvokedCollection> invokedContainer) {
+			Set<TestedInvoked> invokedContainer) {
 		Map<String, List<String>> invokedWithTesters = new HashMap<>();
 		
-		for (InvokedCollection container : invokedContainer) {
+		for (TestedInvoked container : invokedContainer) {
 			if (invokedWithTesters.containsKey(
-					container.getInvokedInfo().getConcreteInvokedSignature())) {
+					container.getTestedInvoked().getConcreteSignature())) {
 				storeExistingInvoked(invokedWithTesters, container);
 			}
 			else {
@@ -179,22 +179,22 @@ public class TestedInvokedExporter {
 	}
 
 	private void storeNewInvoked(Map<String, List<String>> invokedWithTesters, 
-								 InvokedCollection container) {
+								 TestedInvoked container) {
 		List<String> testMethodSignatures = new ArrayList<>();
-		testMethodSignatures.add(container.getTestMethodInfo().getInvokedSignature());
+		testMethodSignatures.add(container.getTestMethod().getInvokedSignature());
 		
 		invokedWithTesters.put(
-				container.getInvokedInfo().getConcreteInvokedSignature(), 
+				container.getTestedInvoked().getConcreteSignature(), 
 				testMethodSignatures
 		);
 	}
 
 	private void storeExistingInvoked(Map<String, List<String>> invokedWithTesters,
-									  InvokedCollection container) {
+									  TestedInvoked container) {
 		List<String> testMethodSignatures = invokedWithTesters.get(
-				container.getInvokedInfo().getConcreteInvokedSignature()
+				container.getTestedInvoked().getConcreteSignature()
 		);
-		testMethodSignatures.add(container.getTestMethodInfo().getInvokedSignature());
+		testMethodSignatures.add(container.getTestMethod().getInvokedSignature());
 	}
 
 	private void storeExportFile() {

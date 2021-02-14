@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import wniemiec.executionflow.analyzer.DebuggerAnalyzer;
-import wniemiec.executionflow.collector.InvokedCollection;
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.Logger;
 
 public class InvokedCollectorParser {
@@ -26,11 +26,11 @@ public class InvokedCollectorParser {
 	 * 	<li><b>Value:</b> List of test paths</li>
 	 * </ul>
 	 */
-	protected Map<InvokedCollection, List<List<Integer>>> computedTestPaths;
+	protected Map<TestedInvoked, List<List<Integer>>> computedTestPaths;
 	
 	private DebuggerAnalyzer debuggerAnalyzer;
 	private Map<String, Path> processedSourceFiles;
-	private InvokedCollection collector;
+	private TestedInvoked collector;
 
 	
 	//-------------------------------------------------------------------------
@@ -45,14 +45,14 @@ public class InvokedCollectorParser {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public void parseCollector(InvokedCollection collector, DebuggerAnalyzer debuggerAnalyzer) 
+	public void parseCollector(TestedInvoked collector, DebuggerAnalyzer debuggerAnalyzer) 
 			throws InterruptedByTimeoutException, IOException {
 		initParser(debuggerAnalyzer, collector);
 		runDebugger();
 		storeResults();
 	}
 
-	private void initParser(DebuggerAnalyzer debuggerAnalyzer, InvokedCollection collector) {
+	private void initParser(DebuggerAnalyzer debuggerAnalyzer, TestedInvoked collector) {
 		this.debuggerAnalyzer = debuggerAnalyzer;
 		this.collector = collector;
 	}
@@ -62,26 +62,26 @@ public class InvokedCollectorParser {
 			return;
 		
 		if (isConstructor())
-			fixAnonymousClassSignature(collector.getInvokedInfo());
+			fixAnonymousClassSignature(collector.getTestedInvoked());
 		
 		storeTestPath(
-				new InvokedCollection(
-						collector.getInvokedInfo(), 
-						collector.getTestMethodInfo()
+				new TestedInvoked(
+						collector.getTestedInvoked(), 
+						collector.getTestMethod()
 		));
 		
 		processedSourceFiles.put(
-				collector.getInvokedInfo().getConcreteInvokedSignature(),
-				collector.getInvokedInfo().getSrcPath()
+				collector.getTestedInvoked().getConcreteSignature(),
+				collector.getTestedInvoked().getSrcPath()
 		);
 	}
 
-	private void fixAnonymousClassSignature(InvokedInfo invokedInfo) {
+	private void fixAnonymousClassSignature(Invoked invokedInfo) {
 		if (debuggerAnalyzer.getAnalyzedInvokedSignature().isBlank())
 			return;
 		
 		if (!invokedInfo.getInvokedSignature().equals(debuggerAnalyzer.getAnalyzedInvokedSignature())) {
-			invokedInfo.setInvokedSignature(debuggerAnalyzer.getAnalyzedInvokedSignature());
+			invokedInfo.setSignature(debuggerAnalyzer.getAnalyzedInvokedSignature());
 		}
 	}
 
@@ -89,7 +89,7 @@ public class InvokedCollectorParser {
 			throws IOException, InterruptedByTimeoutException {
 		Logger.info(
 				"Computing test path of invoked " 
-				+ collector.getInvokedInfo().getConcreteInvokedSignature() 
+				+ collector.getTestedInvoked().getConcreteSignature() 
 				+ "..."
 		);
 		
@@ -115,7 +115,7 @@ public class InvokedCollectorParser {
 		return false;
 	}
 	
-	protected void storeTestPath(InvokedCollection invokedContainer) {
+	protected void storeTestPath(TestedInvoked invokedContainer) {
 		if (!debuggerAnalyzer.hasTestPaths())
 			return;
 			
@@ -130,7 +130,7 @@ public class InvokedCollectorParser {
 		}
 	}
 
-	private void storeNewTestPath(InvokedCollection invokedContainer, 
+	private void storeNewTestPath(TestedInvoked invokedContainer, 
 								  List<Integer> testPath) {
 		List<List<Integer>> testPaths = new ArrayList<>();
 		testPaths.add(testPath);
@@ -138,7 +138,7 @@ public class InvokedCollectorParser {
 		computedTestPaths.put(invokedContainer, testPaths);
 	}
 
-	private void storeExistingTestPath(InvokedCollection invokedContainer, 
+	private void storeExistingTestPath(TestedInvoked invokedContainer, 
 									   List<Integer> testPath) {
 		List<List<Integer>> testPaths = computedTestPaths.get(invokedContainer);
 		testPaths.add(testPath);
@@ -160,7 +160,7 @@ public class InvokedCollectorParser {
 	 * @implNote	It must only be called after method {@link #run()} has 
 	 * been executed
 	 */
-	public List<List<Integer>> getTestPaths(InvokedCollection container) {
+	public List<List<Integer>> getTestPaths(TestedInvoked container) {
 		if (computedTestPaths.isEmpty())
 			return List.of(new ArrayList<Integer>(0));
 		
@@ -179,7 +179,7 @@ public class InvokedCollectorParser {
 	 * @implNote	It must only be called after method {@link #run()} has 
 	 * been executed
 	 */
-	public Map<InvokedCollection, List<List<Integer>>> getTestPaths() {
+	public Map<TestedInvoked, List<List<Integer>>> getTestPaths() {
 		return computedTestPaths;
 	}
 	
@@ -187,11 +187,11 @@ public class InvokedCollectorParser {
 		return processedSourceFiles;
 	}
 	
-	public Map<InvokedInfo, Set<String>> getMethodsCalledByTestedInvoked() {
+	public Map<Invoked, Set<String>> getMethodsCalledByTestedInvoked() {
 		return debuggerAnalyzer.getMethodsCalledByTestedInvoked();
 	}
 	
-	public Set<InvokedCollection> getMethodsAndConstructorsUsedInTestMethod() {
+	public Set<TestedInvoked> getMethodsAndConstructorsUsedInTestMethod() {
 		return computedTestPaths.keySet();
 	}
 }

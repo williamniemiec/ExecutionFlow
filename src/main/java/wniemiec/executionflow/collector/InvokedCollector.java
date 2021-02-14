@@ -5,32 +5,33 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import wniemiec.executionflow.invoked.InvokedInfo;
+import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 
-public class InvokedCollector {
+public abstract class InvokedCollector {
 	
-	private static Map<InvokedInfo, Integer> modifiedCollectorInvocationLine;
+	private static Map<Invoked, Integer> modifiedCollectorInvocationLine;
 	
 	protected InvokedCollector() {
 	}
 		
 	protected static void updateInvokedInvocationLines(Map<Integer, Integer> mapping, 
 													 Path testMethodSrcFile, 
-													 Collection<InvokedCollection> collector) {
+													 Collection<TestedInvoked> collector) {
 		if (modifiedCollectorInvocationLine == null)
 			modifiedCollectorInvocationLine = new HashMap<>();
 		
-		for (InvokedCollection cc : collector) {
-			int invocationLine = cc.getInvokedInfo().getInvocationLine();
+		for (TestedInvoked cc : collector) {
+			int invocationLine = cc.getTestedInvoked().getInvocationLine();
 			
-			if (!cc.getTestMethodInfo().getSrcPath().equals(testMethodSrcFile)  
+			if (!cc.getTestMethod().getSrcPath().equals(testMethodSrcFile)  
 					|| !mapping.containsKey(invocationLine))
 				continue;
 			
-			cc.getInvokedInfo().setInvocationLine(mapping.get(invocationLine));
+			cc.getTestedInvoked().setInvocationLine(mapping.get(invocationLine));
 			
-			if (!modifiedCollectorInvocationLine.containsKey(cc.getInvokedInfo()))
-				modifiedCollectorInvocationLine.put(cc.getInvokedInfo(), invocationLine);
+			if (!modifiedCollectorInvocationLine.containsKey(cc.getTestedInvoked()))
+				modifiedCollectorInvocationLine.put(cc.getTestedInvoked(), invocationLine);
 		}
 	}
 	
@@ -38,7 +39,7 @@ public class InvokedCollector {
 		if (modifiedCollectorInvocationLine == null)
 			return;
 		
-		for (Map.Entry<InvokedInfo, Integer> e : modifiedCollectorInvocationLine.entrySet()) {
+		for (Map.Entry<Invoked, Integer> e : modifiedCollectorInvocationLine.entrySet()) {
 			e.getKey().setInvocationLine(e.getValue());
 		}
 		
