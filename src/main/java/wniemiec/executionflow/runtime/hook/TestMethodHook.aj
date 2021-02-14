@@ -27,32 +27,11 @@ public aspect TestMethodHook extends RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static boolean inTestMethodWithAspectsDisabled;
-	private static boolean finishedTestMethodWithAspectsDisabled;
 	private static String testMethodSignature;
-	private static boolean errorProcessingTestMethod;
-	private static volatile boolean success;
 	private boolean isRepeatedTest;
 	private String lastRepeatedTestSignature;
 	private Path classPath;
 	private Path srcPath;
-	
-	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	public TestMethodHook() {
-		onShutdown();
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	static {
-		inTestMethodWithAspectsDisabled = true;
-		
-	}
 	
 	
 	//-------------------------------------------------------------------------
@@ -87,116 +66,46 @@ public aspect TestMethodHook extends RuntimeHook {
 	}
 	
 	before(): insideTestMethod() {	
-		if (errorProcessingTestMethod)
-			return;
-		
-		App.checkDevelopmentMode();
-		checkRepeatedTest(thisJoinPoint);
-		checkInTestMethodWithAspectDisabled();
-		
-		if (finishedTestMethodWithAspectsDisabled)
-			return;
-		
 		reset();
+		checkRepeatedTest(thisJoinPoint);
+		parseTestMethod(thisJoinPoint);
 		
-		testMethodSignature = getSignature(thisJoinPoint);
-		
-		collectSourceAndBinaryPaths(thisJoinPoint);
-		
-		if ((classPath == null) || (srcPath == null))
-			return;
-		
-		collectTestMethod(thisJoinPoint);
-		
-		
-		ProcessingManager.initializeManagers(!App.runningFromJUnitAPI());
-		App.onFirstRun();
-		App.beforeEachTestMethod();
-		App.initializeLogger();
-		
-		inTestMethodWithAspectsDisabled = App.inTestMethodWithAspectsDisabled();
-		try {
-			App.doPreprocessing(testMethodInfo);
-		}
-		catch (IOException e) {
-			Logger.error(e.getMessage());
-			reset();
-			
-			errorProcessingTestMethod = true;
+		if (hasSourceAndBinearyPath()) {
+			collectTestMethod(thisJoinPoint);
+			App.inEachTestMethod(testMethod, isRepeatedTest);
 		}
 	}
 	
 	after(): insideTestMethod() {
-		if (errorProcessingTestMethod) {
-			errorProcessingTestMethod = false;
+		if (!hasSourceAndBinearyPath())
 			return;
-		}
 		
-		if ((classPath == null) || (srcPath == null) || finishedTestMethodWithAspectsDisabled)
-			return;
-
-		if (inTestMethodWithAspectsDisabled) {
-//			App.parseInvokedCollector();
-			App.parseMethodCollector();
-			App.parseConstructorCollector();
-			reset();
-			
-			success = true;			
-		}
-		else {
-			App.exportAllMethodsUsedInTestMethods();
-			App.exportAllConstructorsUsedInTestMethods();
-			
-			App.runTestMethodWithAspectsDisabled(testMethodInfo);
-			
-			App.afterEachTestMethod();
-			
-			finishedTestMethodWithAspectsDisabled = true;
-			inTestMethodWithAspectsDisabled = true;
-			isRepeatedTest = false;
-			lastRepeatedTestSignature = thisJoinPoint.getSignature().toString();
-		}
+		App.afterEachTestMethod();
+		
+		if (!isRepeatedTest)
+			lastRepeatedTestSignature = getSignature(thisJoinPoint);
 	}
+
 	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------	
-	private void onShutdown() {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-		    public void run() {
-		    	if (!success)
-		    		finishedTestMethodWithAspectsDisabled = true;
-		    }
-		});
+	private boolean hasSourceAndBinearyPath() {
+		return ((srcPath != null) && (classPath != null));
 	}
+
+	private void parseTestMethod(JoinPoint jp) {
+		testMethodSignature = getSignature(jp);
+		findSourceAndBinaryPaths(jp);
+	}
+	
 	
 	private void checkRepeatedTest(JoinPoint jp) {
 		// Prevents repeated tests from being performed more than once
-		if (finishedTestMethodWithAspectsDisabled && isRepeatedTest && 
-				!jp.getSignature().toString().equals(lastRepeatedTestSignature)) {
+		if (isRepeatedTest && !jp.getSignature().toString().equals(lastRepeatedTestSignature)) {
 			isRepeatedTest = false;
 		}
 	}
-	
-	private void checkInTestMethodWithAspectDisabled() {
-		if (finishedTestMethodWithAspectsDisabled && inTestMethodWithAspectsDisabled && !isRepeatedTest) {
-			finishedTestMethodWithAspectsDisabled = false;
-			inTestMethodWithAspectsDisabled = true;
-		}
-	}
-	
-	@Override
-	protected void reset() {
-		super.reset();
-		
-		success = false;
-		testMethodSignature = null;
-	}
-	
-	
-	
-	
-	
 	
 	private String getSignature(JoinPoint jp) {
 		return removeReturnTypeFromSignature(jp.getSignature().toString());
@@ -206,12 +115,10 @@ public aspect TestMethodHook extends RuntimeHook {
 		return signature.substring(signature.indexOf(' ') + 1);
 	}
 	
-	private void collectSourceAndBinaryPaths(JoinPoint jp) {
-		String classSignature = getClassSignature(jp);
-				
+	private void findSourceAndBinaryPaths(JoinPoint jp) {
 		try {
-			classPath = ClassPathSearcher.findBinPath(classSignature);
-			srcPath = ClassPathSearcher.findSrcPath(classSignature);
+			classPath = ClassPathSearcher.findBinPath(getClassSignature(jp));
+			srcPath = ClassPathSearcher.findSrcPath(getClassSignature(jp));
 		}
 		catch(IOException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());
@@ -239,15 +146,6 @@ public aspect TestMethodHook extends RuntimeHook {
 		return removeReturnTypeFromSignature(classSignature.toString());
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	private Object[] getParameterValues(JoinPoint jp) {
 		return jp.getArgs();
 	}
@@ -257,12 +155,12 @@ public aspect TestMethodHook extends RuntimeHook {
 			createTestMethodInfo(jp);
 		} 
 		catch(IllegalArgumentException e) {
-			Logger.error("Test method info - "+e.getMessage());
+			Logger.error("Test method - " + e.getMessage());
 		}
 	}
 	
 	private void createTestMethodInfo(JoinPoint jp) {
-		testMethodInfo = new Invoked.Builder()
+		testMethod = new Invoked.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
 				.signature(testMethodSignature)
@@ -273,6 +171,13 @@ public aspect TestMethodHook extends RuntimeHook {
 	}
 	
 	private void dump() {
-		Logger.debug("Test method collector: " + testMethodInfo);
+		Logger.debug("Test method: " + testMethod);
+	}
+	
+	@Override
+	protected void reset() {
+		super.reset();
+		
+		testMethodSignature = null;
 	}
 }

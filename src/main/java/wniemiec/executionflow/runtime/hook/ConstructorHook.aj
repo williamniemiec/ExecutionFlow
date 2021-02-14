@@ -89,8 +89,7 @@ public aspect ConstructorHook extends RuntimeHook {
 		parseConstructorInfo(thisJoinPoint);
 		
 		if (!wasConstructorAlreadyParsed() && hasSourceAndBinearyPath()) {
-			parseConstructor(thisJoinPoint);
-			collectConstructor();
+			collectConstructor(thisJoinPoint);
 			markConstructorAsParsed();
 		}
 	}
@@ -103,7 +102,7 @@ public aspect ConstructorHook extends RuntimeHook {
 		String signature = getSignature(jp);
 		
 		return	(invocationLine > 0) 
-				&& (testMethodInfo != null)
+				&& (testMethod != null)
 				&& !signature.contains("java.")
 				&& !signature.matches(".+\\$[0-9]+.+")
 				&& isConstructorSignature(signature);
@@ -118,12 +117,12 @@ public aspect ConstructorHook extends RuntimeHook {
 	
 	private void parseConstructorInfo(JoinPoint jp) {
 		initializeSignature(jp);
+		findSourceAndBinaryPaths(jp);
 		constructorID = generateConstructorID();
 	}
 	
 	private void initializeSignature(JoinPoint jp) {
 		signature = getSignature(jp);
-		classSignature = extractClassSignatureFromSignature(signature);
 	}
 	
 	private String getSignature(JoinPoint jp) {
@@ -144,8 +143,6 @@ public aspect ConstructorHook extends RuntimeHook {
 	}
 	
 	private boolean hasSourceAndBinearyPath() {
-		findSourceAndBinaryPaths(classSignature);
-		
 		if (srcPath == null || classPath == null) {
 			Logger.warning("The constructor with the following signature" 
 					+ " will be skiped because its source file and / or " 
@@ -157,7 +154,9 @@ public aspect ConstructorHook extends RuntimeHook {
 		return true;
 	}
 	
-	private void findSourceAndBinaryPaths(String classSignature) {
+	private void findSourceAndBinaryPaths(JoinPoint jp) {
+		String classSignature = extractClassSignatureFromSignature(signature);
+		
 		try {
 			classPath = ClassPathSearcher.findBinPath(classSignature);
 			srcPath = ClassPathSearcher.findSrcPath(classSignature);
@@ -167,7 +166,7 @@ public aspect ConstructorHook extends RuntimeHook {
 		}
 	}
 	
-	private void parseConstructor(JoinPoint jp) {
+	private void collectConstructorInfo(JoinPoint jp) {
 		constructorInvokedInfo = new Invoked.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
@@ -220,9 +219,13 @@ public aspect ConstructorHook extends RuntimeHook {
 		return jp.getArgs();
 	}
 	
-	private void collectConstructor() {
-		ConstructorCollector.storeCollector(constructorID, constructorInvokedInfo, 
-											testMethodInfo);
+	private void collectConstructor(JoinPoint jp) {
+		collectConstructorInfo(jp);
+		ConstructorCollector.storeCollector(
+				constructorID, 
+				constructorInvokedInfo,
+				testMethod
+		);
 	}
 	
 	private void markConstructorAsParsed() {

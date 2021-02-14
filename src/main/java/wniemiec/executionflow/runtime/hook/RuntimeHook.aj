@@ -27,7 +27,7 @@ public abstract aspect RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected static Invoked testMethodInfo;
+	protected static Invoked testMethod;
 	
 	
 	//-------------------------------------------------------------------------

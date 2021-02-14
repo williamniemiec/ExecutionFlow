@@ -50,7 +50,9 @@ public class App {
 	private static boolean testMode;
 	
 	private static Set<String> alreadyChanged;
-	
+	private static boolean inTestMethodWithAspectsDisabled;
+	private static boolean errorProcessingTestMethod;
+	private static volatile boolean success;
 	
 	
 	//-------------------------------------------------------------------------
@@ -58,9 +60,7 @@ public class App {
 	//-------------------------------------------------------------------------	
 	/**
 	 * Sets environment. If the code is executed outside project, that is,
-	 * through a jar file, it must be false. It will affect
-	 * {@link #getAppRootPath()} and 
-	 * {@link executionflow.io.compiler.aspectj.StandardAspectJCompiler#compile()}.
+	 * through a jar file, it must be false.
 	 */
 	static {
 		DEVELOPMENT = true;
@@ -70,6 +70,7 @@ public class App {
 	static {
 		testMode = false;
 		remainingTests = -1;
+		inTestMethodWithAspectsDisabled = true;
 	}
 	
 	static {
@@ -89,34 +90,13 @@ public class App {
 		);
 	}
 	
-	public static void onFirstRun() {
-		try {
-			LogLevel level;
-			
-			if (!firstRunCheckpoint.isEnabled()) {
-				firstRunCheckpoint.enable();
-				
-				onShutdown();
-				level = User.askUserForLogLevel();
-				
-			}
-			else {
-				 level = User.loadLogLevel();		
-			}
-			
-			Logger.setLevel(level);
-		}
-		catch(IOException | NoClassDefFoundError e) {
-			Logger.error(e.getMessage());
-			
-			System.exit(-1);
-		}
-	}
-	
 	private static void onShutdown() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	try {
+		    		if (!success)
+			    		finishedTestMethodWithAspectsDisabled = true;
+		    		
 			    	stopRunner();
 			    	
 			    	disableCheckpoint(currentTestMethodCheckpoint);
@@ -145,10 +125,165 @@ public class App {
 		});
 	}
 	
+	
+	
+	
+	public static void inEachTestMethod(Invoked testMethod, boolean isRepeatedTest) {
+		if (errorProcessingTestMethod)
+			return;
+		
+		checkDevelopmentMode();
+		
+		checkInTestMethodWithAspectDisabled();
+		
+		if (finishedTestMethodWithAspectsDisabled)
+			return;
+		
+		try {
+			ProcessingManager.initializeManagers(!runningFromJUnitAPI());
+			inTheFirstRun();
+			beforeEachTestMethod();
+			initializeLogger();
+			
+			inTestMethodWithAspectsDisabled = inTestMethodWithAspectsDisabled();
+			
+			doPreprocessing(testMethod);
+		}
+		catch (IOException e) {
+			errorProcessingTestMethod = true;
+			Logger.error(e.getMessage());
+			reset();
+		}
+	}
+	
+	private void checkInTestMethodWithAspectDisabled() {
+		if (finishedTestMethodWithAspectsDisabled && inTestMethodWithAspectsDisabled && (!isRepeatedTest || isRepeatedTest && finishedTestMethodWithAspectsDisabled)) {
+			finishedTestMethodWithAspectsDisabled = false;
+			inTestMethodWithAspectsDisabled = true;
+		}
+	}
+	
+	public static void afterEachTestMethod(Invoked testMethod) {
+		if (errorProcessingTestMethod) {
+			errorProcessingTestMethod = false;
+			return;
+		}
+		
+		if (finishedTestMethodWithAspectsDisabled)
+			return;
+		
+		if (inTestMethodWithAspectsDisabled) {
+			parseMethodCollector();
+			parseConstructorCollector();
+			
+			reset();
+			success = true;
+		}
+		else {
+			exportAllMethodsUsedInTestMethods();
+			exportAllConstructorsUsedInTestMethods();
+			
+			runTestMethodWithAspectsDisabled(testMethod);
+			
+			afterEachTestMethod();
+			
+			finishedTestMethodWithAspectsDisabled = true;
+			inTestMethodWithAspectsDisabled = true;
+		}
+	}
+	
+	
+	
+	
+	public static void inTheFirstRun() {
+		try {
+			LogLevel level;
+			
+			if (!firstRunCheckpoint.isEnabled()) {
+				firstRunCheckpoint.enable();
+				
+				onShutdown();
+				success = false;
+				level = User.askUserForLogLevel();
+				
+			}
+			else {
+				 level = User.loadLogLevel();		
+			}
+			
+			Logger.setLevel(level);
+		}
+		catch(IOException | NoClassDefFoundError e) {
+			Logger.error(e.getMessage());
+			
+			System.exit(-1);
+		}
+	}
+	
+	public static void beforeEachTestMethod() {
+		ProcessingManager.initializeManagers(!insideJUnitRunnerCheckpoint.isEnabled());
+		
+		if (App.runningTestMethod())
+			return;
+		
+		try {
+			cleanLastRun();
+			openControlWindow();
+		}
+		catch(IOException | NoClassDefFoundError e) {
+			Logger.error(e.getMessage());
+			
+			System.exit(-1);
+		}
+	}
+	
+	public static void afterEachTestMethod() {
+		updateRemainingTests();
+		
+		boolean successfullRestoration = false;
+		successfullRestoration = ProcessingManager.restoreOriginalFilesFromTestMethod();
+		
+		if (remainingTests == 0) {
+			successfullRestoration = ProcessingManager.restoreOriginalFilesFromInvoked();
+			ProcessingManager.deleteInvokedBackupFiles();
+			App.closeControlWindow();
+		}
+		
+		if (remainingTests == 0) {
+			remainingTests = -1;
+		}
+		
+		try {
+			ProcessingManager.restoreAllTestMethodFiles();
+		} 
+		catch (IOException e) {
+			successfullRestoration = false;
+		}
+
+		disableCheckpoint(currentTestMethodCheckpoint);
+		
+		if (!successfullRestoration) {
+			Logger.error("Error while restoring original files");
+			System.exit(-1);
+		}
+	}
+	
 	public static void initializeLogger() {
 		Logger.setLevel(User.getSelectedLogLevel());
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// CONFIG	
 	public static void checkDevelopmentMode() {
 		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
 			Logger.error("Development mode is off even in a development "
@@ -165,6 +300,7 @@ public class App {
 	public static void closeControlWindow() {
 		RemoteControl.close();
 	}
+	
 	
 	
 	
@@ -303,53 +439,7 @@ public class App {
 
 	
 	
-	public static void beforeEachTestMethod() {
-		ProcessingManager.initializeManagers(!insideJUnitRunnerCheckpoint.isEnabled());
-		
-		if (App.runningTestMethod())
-			return;
-		
-		try {
-			cleanLastRun();
-			openControlWindow();
-		}
-		catch(IOException | NoClassDefFoundError e) {
-			Logger.error(e.getMessage());
-			
-			System.exit(-1);
-		}
-	}
 	
-	public static void afterEachTestMethod() {
-		updateRemainingTests();
-		
-		boolean successfullRestoration = false;
-		successfullRestoration = ProcessingManager.restoreOriginalFilesFromTestMethod();
-		
-		if (remainingTests == 0) {
-			successfullRestoration = ProcessingManager.restoreOriginalFilesFromInvoked();
-			ProcessingManager.deleteInvokedBackupFiles();
-			App.closeControlWindow();
-		}
-		
-		if (remainingTests == 0) {
-			remainingTests = -1;
-		}
-		
-		try {
-			ProcessingManager.restoreAllTestMethodFiles();
-		} 
-		catch (IOException e) {
-			successfullRestoration = false;
-		}
-
-		disableCheckpoint(currentTestMethodCheckpoint);
-		
-		if (!successfullRestoration) {
-			Logger.error("Error while restoring original files");
-			System.exit(-1);
-		}
-	}
 	
 	private static void updateRemainingTests() {
 		if (remainingTests < 0) {
@@ -615,7 +705,7 @@ public class App {
 	}
 
 	private FileProcessingManager createTestMethodFileManager(TestedInvoked collector) {
-		return new FileManager.Builder()
+		return new FileProcessingManager.Builder()
 				.srcPath(collector.getTestMethod().getSrcPath())
 				.binDirectory(collector.getTestMethod().getClassDirectory())
 				.classPackage(collector.getTestMethod().getPackage())
@@ -625,7 +715,7 @@ public class App {
 	}
 
 	private FileProcessingManager createInvokedFileManager(TestedInvoked collector) {
-		return new FileManager.Builder()
+		return new FileProcessingManager.Builder()
 				.srcPath(collector.getTestedInvoked().getSrcPath())
 				.binDirectory(collector.getTestedInvoked().getClassDirectory())
 				.classPackage(collector.getTestedInvoked().getPackage())

@@ -52,7 +52,7 @@ public aspect MethodHook extends RuntimeHook {
 	private String classSignature;
 	private Path classPath;
 	private Path srcPath;
-	private Invoked methodInfo;
+	private Invoked method;
 	
 	/**
 	 * Stores anonymous class signature where it is created and where it is 
@@ -92,15 +92,12 @@ public aspect MethodHook extends RuntimeHook {
 		if (!isValidMethod(thisJoinPoint))
 			return;
 		
-		parseMethodInfo(thisJoinPoint);
+		parseMethod(thisJoinPoint);
 		
 		if (!wasMethodAlreadyParsed() && hasSourceAndBinearyPath()) {
-			parseMethod(thisJoinPoint);	
-			collectMethod();
+			collectMethod(thisJoinPoint);
 		}
 	}
-	
-	
 	
 	
 	//-------------------------------------------------------------------------
@@ -123,7 +120,7 @@ public aspect MethodHook extends RuntimeHook {
 		
 		String objectClassName = extractClassNameFromClassSignature(jp.getClass().getName());
 		String testMethodClassName = extractClassNameFromClassSignature(
-				testMethodInfo.getInvokedSignature()
+				testMethod.getInvokedSignature()
 		);
 		
 		return objectClassName.equals(testMethodClassName);
@@ -145,16 +142,17 @@ public aspect MethodHook extends RuntimeHook {
 		String signature = jp.getSignature().toString();
 		
 		return 	isTestMethodSignatureInitialized()
-				&& signature.contains(testMethodInfo.getInvokedSignature());
+				&& signature.contains(testMethod.getInvokedSignature());
 	}
 	
 	private boolean isTestMethodSignatureInitialized() {
-		return	(testMethodInfo != null)
-				&& (testMethodInfo.getInvokedSignature() != null);
+		return	(testMethod != null)
+				&& (testMethod.getInvokedSignature() != null);
 	}
 	
-	private void parseMethodInfo(JoinPoint jp) {
+	private void parseMethod(JoinPoint jp) {
 		initializeSignature(jp);
+		findSourceAndBinaryPaths(jp);
 		methodID = generateMethodID(jp);
 	}
 	
@@ -245,8 +243,6 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private boolean hasSourceAndBinearyPath() {
-		findSourceAndBinaryPaths(classSignature);
-		
 		if ((srcPath == null) || (classPath == null)) {
 			Logger.warning("The method with the following signature" 
 					+ " will be skiped because its source file and / or " 
@@ -258,18 +254,23 @@ public aspect MethodHook extends RuntimeHook {
 		return true;
 	}
 	
-	private void findSourceAndBinaryPaths(String classSignature) {
+	private void findSourceAndBinaryPaths(JoinPoint jp) {
 		try {
-			classPath = ClassPathSearcher.findBinPath(classSignature);
-			srcPath = ClassPathSearcher.findSrcPath(classSignature);
+			classPath = ClassPathSearcher.findBinPath(getClassSignature(jp));
+			srcPath = ClassPathSearcher.findSrcPath(getClassSignature(jp));
 		} 
 		catch (IOException e) {
 			Logger.error("[ERROR] MethodCollector - " + e.getMessage() + "\n");
 		}
 	}
 	
-	private void parseMethod(JoinPoint jp) {
-		methodInfo = new Invoked.Builder()
+	private void collectMethod(JoinPoint jp) {
+		collectMethodInfo(jp);
+		MethodCollector.storeCollector(method, testMethod);
+	}
+	
+	private void collectMethodInfo(JoinPoint jp) {
+		method = new Invoked.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
 				.signature(signature)
@@ -279,7 +280,7 @@ public aspect MethodHook extends RuntimeHook {
 				.returnType(extractReturnType(jp))
 				.invocationLine(getInvocationLine(jp))
 				.build();
-		methodInfo.setConcreteSignature(getConcreteMethodSignature(jp));
+		method.setConcreteSignature(getConcreteMethodSignature(jp));
 	}
 	
 	private Class<?>[] getParameterTypes(JoinPoint jp) { 
@@ -318,10 +319,6 @@ public aspect MethodHook extends RuntimeHook {
 		final String regexDollarSignAndNumbers = ".+(\\$[0-9]+(\\.|\\()).*";
 		
 		return signature.matches(regexDollarSignAndNumbers);
-	}
-	
-	private void collectMethod() {
-		MethodCollector.storeCollector(methodInfo, testMethodInfo);
 	}
 	
 	@Override
