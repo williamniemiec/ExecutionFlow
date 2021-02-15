@@ -80,7 +80,7 @@ public aspect TestMethodHook extends RuntimeHook {
 		if (!hasSourceAndBinearyPath())
 			return;
 		
-		App.afterEachTestMethod();
+		App.afterEachTestMethod(testMethod);
 		
 		if (!isRepeatedTest)
 			lastRepeatedTestSignature = getSignature(thisJoinPoint);

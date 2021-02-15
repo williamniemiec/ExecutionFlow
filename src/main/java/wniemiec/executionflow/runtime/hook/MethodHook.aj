@@ -89,6 +89,8 @@ public aspect MethodHook extends RuntimeHook {
 	//		Join points
 	//-------------------------------------------------------------------------
 	before(): insideTestedMethod() {
+		initializeSignature(thisJoinPoint);
+		
 		if (!isValidMethod(thisJoinPoint))
 			return;
 		
@@ -107,7 +109,7 @@ public aspect MethodHook extends RuntimeHook {
 		return	(isStaticMethod(jp) || !constructorBelongsToTestMethod(jp))
 				&& !belongsToTestMethod(jp)
 				&& isMethodSignature(jp) 
-				&& !isNativeMethod(jp); 
+				&& !isNativeMethod(signature); 
 	}
 	
 	private boolean isStaticMethod(JoinPoint jp) {
@@ -151,7 +153,6 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private void parseMethod(JoinPoint jp) {
-		initializeSignature(jp);
 		findSourceAndBinaryPaths(jp);
 		methodID = generateMethodID(jp);
 	}

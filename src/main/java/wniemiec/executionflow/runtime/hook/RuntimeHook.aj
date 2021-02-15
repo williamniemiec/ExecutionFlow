@@ -74,20 +74,18 @@ public abstract aspect RuntimeHook {
 	//		Methods
 	//-------------------------------------------------------------------------	
 	/**
-	 * Checks whether a method signature belongs to a native Java method or 
+	 * Checks whether a signature belongs to a native Java method or 
 	 * if it is a JUnit method.
 	 * 
-	 * @param		methodSignature Signature of the method
+	 * @param		signature Signature to be analyzed
 	 * 
-	 * @return		If the method is a native method or JUnit method
+	 * @return		If the signature belongs to a native method or JUnit method
 	 */
-	protected boolean isNativeMethod(JoinPoint jp) {
-		String signature = jp.getSignature().toString();
-		
+	protected boolean isNativeMethod(String signature) {
 		return	(signature == null)
-				|| signature.contains("java.") 
-				|| signature.contains("jdk.")
-				|| signature.contains("org.junit.")
+				|| signature.matches("^java\\..+") 
+				|| signature.matches("^jdk\\..+")
+				|| signature.contains("^org\\.junit\\..+")
 				|| signature.matches(".+(\\$|\\.)[0-9]+.+");
 	}
 	
