@@ -1,0 +1,18 @@
+package foo.bar;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+public class AssertFailTest {
+
+	@Test
+	public void assertFailAtTheEndTest() {
+		AuxClass tc = new AuxClass(99);
+		
+		try {
+	try {			assertEquals("one", tc.threePaths(1));} catch(Throwable _0){}
+	try {			assertEquals("two", tc.threePaths(2));} catch(Throwable _0){}
+		catch (Exception e) {}
+	}
+}

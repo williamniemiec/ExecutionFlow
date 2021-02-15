@@ -38,7 +38,7 @@ public class AssertProcessor extends SourceCodeProcessor {
 	//---------------------------------------------------------------------	
 	@Override
 	protected String processLine(String line) {
-		if (!inAssert && (line.contains("try ") || insideIncompleteTryCatch()))
+		if (!inAssert && (line.contains("try ") || insideIncompleteTryCatch(line)))
 			return line;
 		
 		String processedLine = line;
@@ -51,9 +51,9 @@ public class AssertProcessor extends SourceCodeProcessor {
 		return processedLine;
 	}
 	
-	private boolean insideIncompleteTryCatch() {
+	private boolean insideIncompleteTryCatch(String line) {
 		return	getPreviousLine().contains("try ") 
-				&& !getPreviousLine().contains("catch(");
+				&& line.contains("catch(");
 	}
 	
 	private String processMultilineAssert(String line) {
