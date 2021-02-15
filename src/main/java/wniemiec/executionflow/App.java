@@ -5,11 +5,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import wniemiec.api.junit4.JUnit4API;
 import wniemiec.executionflow.collector.CallCollector;
@@ -19,7 +15,6 @@ import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
 import wniemiec.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.invoked.Invoked;
-import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.executionflow.io.processing.file.PreTestMethodFileProcessor;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.executionflow.runtime.hook.ProcessingManager;
@@ -32,18 +27,20 @@ import wniemiec.util.task.Checkpoint;
 
 public class App {
 
+	private static final boolean DEVELOPMENT;	
+	private static Path appRoot;
+	private static Path currentProjectRoot;
 	private static Checkpoint firstRunCheckpoint;
 	private static Checkpoint currentTestMethodCheckpoint;
 	private static Checkpoint insideJUnitRunnerCheckpoint;
 	private static int remainingTests;
-	private static final boolean DEVELOPMENT;	
-	private static Path appRoot;
-	private static Path currentProjectRoot;
 	private static boolean testMode;
 	private static boolean inTestMethodWithAspectsDisabled;
 	private static boolean finishedTestMethodWithAspectsDisabled;
 	private static boolean errorProcessingTestMethod;
 	private static volatile boolean success;
+	private static ExportManager methodExportManager;
+	private static ExportManager constructorExportManager;
 	
 	
 	//-------------------------------------------------------------------------
@@ -62,22 +59,25 @@ public class App {
 		testMode = false;
 		remainingTests = -1;
 		inTestMethodWithAspectsDisabled = true;
+		
+		methodExportManager = ExportManager.getMethodExportManager(isDevelopment());
+		constructorExportManager = ExportManager.getConstructorExportManager(isDevelopment());
 	}
 	
 	static {
 		firstRunCheckpoint = new Checkpoint(
 				getAppRootPath(), 
-				"app_running"
+				"first-run"
 		);
 		
 		currentTestMethodCheckpoint = new Checkpoint(
 				getAppRootPath(), 
-				"Test_Method"
+				"running-testmethod"
 		);
 		
 		insideJUnitRunnerCheckpoint = new Checkpoint(
-				Path.of(System.getProperty("user.home")),
-				"initial"
+				getAppRootPath(),
+				"running-debugger"
 		);
 	}
 	
@@ -95,6 +95,8 @@ public class App {
 					disableCheckpoint(firstRunCheckpoint);
 		    	}
 		    	catch (Throwable t) {
+		    		// As the application will have finished, it is not 
+		    		// relevant to deal with any errors 
 		    	}
 		    }
 			
@@ -124,7 +126,6 @@ public class App {
 			return;
 		
 		checkDevelopmentMode();
-		
 		checkInTestMethodWithAspectDisabled(isRepeatedTest);
 		
 		if (finishedTestMethodWithAspectsDisabled)
@@ -165,12 +166,8 @@ public class App {
 			return;
 		
 		if (inTestMethodWithAspectsDisabled) {
-			InvokedCollectorParser.parseMethodCollector(
-					MethodCollector.getCollectorSet()
-			);
-			InvokedCollectorParser.parseConstructorCollector(
-					ConstructorCollector.getCollectorSet()
-			);
+			parseMethodCollector();
+			parseConstructorCollector();
 
 			success = true;
 		}
@@ -186,9 +183,6 @@ public class App {
 			inTestMethodWithAspectsDisabled = true;
 		}
 	}
-	
-	
-	
 	
 	public static void inTheFirstRun() {
 		try {
@@ -265,10 +259,6 @@ public class App {
 		Logger.setLevel(User.getSelectedLogLevel());
 	}
 	
-	
-	
-	
-
 	public static void checkDevelopmentMode() {
 		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
 			Logger.error("Development mode is off even in a development "
@@ -285,12 +275,6 @@ public class App {
 	public static void closeControlWindow() {
 		RemoteControl.close();
 	}
-	
-	
-	
-	
-	
-	
 	
 	private static boolean disableCheckpoint(Checkpoint checkpoint) {
 		if (checkpoint == null)
@@ -418,61 +402,42 @@ public class App {
 		return currentTestMethodCheckpoint.exists();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	// EXPORT
-	public static void exportAllMethodsUsedInTestMethods() {
-		List<TestedInvoked> collectors = new ArrayList<>();
-		
-		for (List<TestedInvoked> collector : MethodCollector.getCollector().values()) {
-			collectors.add(collector.get(0));
-		}
-		
-		exporMethodsAndConstructorsUsedInTestMethods(false, collectors);
-	}
-	
-	public static void exporMethodsAndConstructorsUsedInTestMethods(boolean isConstructor, 
-															  Collection<TestedInvoked> invokedCollector) {
-		Set<TestedInvoked> invokedSet = new HashSet<>();
-		ExportManager exportManager = new ExportManager(
-				isDevelopment(), 
-				isConstructor
-		);
-		
-		for (TestedInvoked collector : invokedCollector) {
-			invokedSet.add(new TestedInvoked(
-					collector.getTestedInvoked(),
-					collector.getTestMethod()
-			));
-		}
-		
-		exportManager.exportAllMethodsAndConstructorsUsedInTestMethods(invokedSet);
-	}
-	
 	public static void exportAllConstructorsUsedInTestMethods() {
-		exporMethodsAndConstructorsUsedInTestMethods(true,
-				ConstructorCollector.getCollector().values());
+		constructorExportManager.exportAllMethodsAndConstructorsUsedInTestMethods(
+				ConstructorCollector.getCollectorSet()
+		);
 	}
 	
+	public static void exportAllMethodsUsedInTestMethods() {
+		methodExportManager.exportAllMethodsAndConstructorsUsedInTestMethods(
+				MethodCollector.getCollectorSet()
+		);
+	}
 	
+	private static void parseConstructorCollector() {
+		TestedInvokedParser parser = InvokedCollectorParser.parseConstructorCollector(
+				ConstructorCollector.getCollectorSet()
+		);
+		export(parser, constructorExportManager);
+	}
 	
+	private static void parseMethodCollector() {
+		TestedInvokedParser parser = InvokedCollectorParser.parseMethodCollector(
+				MethodCollector.getCollectorSet()
+		);
+		export(parser, methodExportManager);
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	// PROCESSING
-	
+	private static void export(TestedInvokedParser parser, ExportManager exportManager) {
+		exportManager.exportTestPaths(parser.getTestPaths());
+		exportManager.exportEffectiveMethodsAndConstructorsUsedInTestMethods(
+				parser.getMethodsAndConstructorsUsedInTestMethod()
+		);
+		exportManager.exportProcessedSourceFiles(parser.getProcessedSourceFiles());
+		exportManager.exportMethodsCalledByTestedInvoked(
+				parser.getMethodsCalledByTestedInvoked()
+		);
+	}
 	
 	public static void doPreprocessing(Invoked testMethod) throws IOException {
 		try {
@@ -491,13 +456,12 @@ public class App {
 	}
 	
 	public static void cleanLastRun() throws IOException {
-		if (hasTempFilesFromLastRun()) {
-			ProcessingManager.deleteTestMethodBackupFiles();
-			currentTestMethodCheckpoint.delete();
-		}
+		if (!hasTempFilesFromLastRun())
+			return;
+		
+		ProcessingManager.deleteTestMethodBackupFiles();
+		currentTestMethodCheckpoint.delete();
 	}
-	
-	
 	
 	
 	//-------------------------------------------------------------------------
@@ -522,7 +486,7 @@ public class App {
 		currentProjectRoot = searchDirectoryWithName("src").toPath();
 	}
 	
-	public static File searchDirectoryWithName(String directoryName) {
+	private static File searchDirectoryWithName(String directoryName) {
 		File currentDirectory = new File(System.getProperty("user.dir"));
 		boolean hasDirectoryWithProvidedName = false;
 		
@@ -609,5 +573,4 @@ public class App {
 	public static void setTestMode(boolean status) {
 		testMode = status;
 	}
-	
 }

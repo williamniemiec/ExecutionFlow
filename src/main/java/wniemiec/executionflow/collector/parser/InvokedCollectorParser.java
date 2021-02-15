@@ -4,13 +4,9 @@ import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.Set;
 
-import wniemiec.executionflow.App;
 import wniemiec.executionflow.analyzer.DebuggerAnalyzer;
 import wniemiec.executionflow.analyzer.DebuggerAnalyzerFactory;
-import wniemiec.executionflow.collector.ConstructorCollector;
 import wniemiec.executionflow.collector.InvokedCollector;
-import wniemiec.executionflow.collector.MethodCollector;
-import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.executionflow.runtime.hook.ProcessingManager;
 import wniemiec.util.logger.Logger;
@@ -20,12 +16,12 @@ public class InvokedCollectorParser {
 	private InvokedCollectorParser() {
 	}
 	
-	public static void parseMethodCollector(Set<TestedInvoked> methodCollector) {
-		parseInvokedCollector(methodCollector, false);
+	public static TestedInvokedParser parseMethodCollector(Set<TestedInvoked> methodCollector) {
+		return parseInvokedCollector(methodCollector, false);
 	}
 
-	public static void parseConstructorCollector(Set<TestedInvoked> constructorCollector) {
-		parseInvokedCollector(constructorCollector, true);
+	public static TestedInvokedParser parseConstructorCollector(Set<TestedInvoked> constructorCollector) {
+		return parseInvokedCollector(constructorCollector, true);
 	}
 	
 	/**
@@ -38,9 +34,10 @@ public class InvokedCollectorParser {
 	 * 	<li>Exports processed source file</li>
 	 * </ul>
 	 */
-	private static void parseInvokedCollector(Set<TestedInvoked> invokedCollector, boolean isConstructor) {
+	private static TestedInvokedParser parseInvokedCollector(Set<TestedInvoked> invokedCollector, 
+															 boolean isConstructor) {
 		if ((invokedCollector == null) || invokedCollector.isEmpty())
-			return;
+			return new TestedInvokedParser();
 		
 		TestedInvokedParser parser = new TestedInvokedParser();
 		
@@ -75,27 +72,13 @@ public class InvokedCollectorParser {
 			}
 		}
 		
-		export(parser, isConstructor);
+		return parser;
 	}
 	
 	private static void dumpCollector(Set<TestedInvoked> invokedCollector) {
 		Logger.debug(
 				InvokedCollectorParser.class, 
 				"collector: " + invokedCollector.toString()
-		);
-	}
-	
-	private static void export(TestedInvokedParser parser, boolean isConstructor) {
-		ExportManager exportManager;
-		exportManager = new ExportManager(App.isDevelopment(), isConstructor);
-		
-		exportManager.exportTestPaths(parser.getTestPaths());
-		exportManager.exportEffectiveMethodsAndConstructorsUsedInTestMethods(
-				parser.getMethodsAndConstructorsUsedInTestMethod()
-		);
-		exportManager.exportProcessedSourceFiles(parser.getProcessedSourceFiles());
-		exportManager.exportMethodsCalledByTestedInvoked(
-				parser.getMethodsCalledByTestedInvoked()
 		);
 	}
 	

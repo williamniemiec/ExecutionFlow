@@ -67,7 +67,7 @@ public class ExportManager {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public ExportManager(boolean isDevelopment, boolean isConstructor) {
+	private ExportManager(boolean isDevelopment, boolean isConstructor) {
 		this.isConstructor = isConstructor;
 		this.outputDir = isDevelopment ? "examples\\results" : "results";
 		
@@ -75,6 +75,18 @@ public class ExportManager {
 		initializeTestersExporter();
 		initializeProcessedSourceFileExporter();
 		initializeMethodsCalledByTestedInvokedExporter();
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Factories
+	//-------------------------------------------------------------------------
+	public static ExportManager getMethodExportManager(boolean isDevelopment) {
+		return new ExportManager(isDevelopment, false);
+	}
+	
+	public static ExportManager getConstructorExportManager(boolean isDevelopment) {
+		return new ExportManager(isDevelopment, true);
 	}
 	
 	
