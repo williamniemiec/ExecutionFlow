@@ -80,7 +80,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	//		Join points
 	//-------------------------------------------------------------------------
 	before(): invokedSignature() {
-		if (isNativeMethod(thisJoinPoint) || !isValidSignature(thisJoinPoint)) 
+		if (isNativeMethod(getSignature(thisJoinPoint)) || !isValidSignature(thisJoinPoint)) 
 			return;
 		
 		invoked = new InvokedInfo.Builder()
@@ -90,7 +90,7 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	}
 	
 	before(): invokedMethodByTestedInvoker() {
-		if (!isMethod(thisJoinPoint) || isNativeMethod(thisJoinPoint) || (invoked == null))
+		if (!isMethod(thisJoinPoint) || isNativeMethod(getSignature(thisJoinPoint)) || (invoked == null))
 			return;
 		
 		collectMethod(extractMethodCalledSignature(thisJoinPoint));
@@ -102,6 +102,10 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	private String getSignature(JoinPoint jp) {
+		return jp.getSignature().toString();
+	}
+	
 	private boolean isValidSignature(JoinPoint jp) {
 		String signature = jp.getSignature().toString();
 		
@@ -124,21 +128,21 @@ public aspect MethodCallsCollector extends RuntimeCollector {
 		return jp.getKind().equals("method-call");
 	}
 	
-	private String getSignature(JoinPoint jp) {
-		if (jp.getSignature().getName().contains("<init>"))
-			return jp.getSignature().getDeclaringTypeName();
-		
-		StringBuilder signature = new StringBuilder();
-		Signature jpSignature = jp.getSignature();
-		
-		signature.append(jp.getSignature().getDeclaringTypeName());
-		signature.append(".");
-		signature.append(jpSignature.getName());
-		signature.append(jpSignature.toString()
-						 .substring(jpSignature.toString().indexOf("(")));
-		
-		return signature.toString();
-	}
+//	private String getSignature(JoinPoint jp) {
+//		if (jp.getSignature().getName().contains("<init>"))
+//			return jp.getSignature().getDeclaringTypeName();
+//		
+//		StringBuilder signature = new StringBuilder();
+//		Signature jpSignature = jp.getSignature();
+//		
+//		signature.append(jp.getSignature().getDeclaringTypeName());
+//		signature.append(".");
+//		signature.append(jpSignature.getName());
+//		signature.append(jpSignature.toString()
+//						 .substring(jpSignature.toString().indexOf("(")));
+//		
+//		return signature.toString();
+//	}
 	
 	private String removeReturnTypeFromSignature(String signature) {
 		return signature.substring(signature.indexOf(' ') + 1);

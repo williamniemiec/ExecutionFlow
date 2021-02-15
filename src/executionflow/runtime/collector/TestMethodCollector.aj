@@ -602,7 +602,7 @@ public aspect TestMethodCollector extends RuntimeCollector {
 				methodCollector
 		);
 		methodExecutionFlow.run();
-		
+
 		ExecutionFlow constructorExecutionFlow = new ConstructorExecutionFlow(
 				processingManager, 
 				constructorCollector.values()
