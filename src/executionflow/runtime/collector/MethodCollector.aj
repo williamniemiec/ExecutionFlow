@@ -248,7 +248,7 @@ public aspect MethodCollector extends RuntimeCollector {
 				.invocationLine(getInvocationLine(jp))
 				.build();
 		methodInfo.setConcreteMethodSignature(getConcreteMethodSignature(jp));
-		System.out.println("5");
+
 		storeCollector(jp, methodInfo);
 		collectedMethods.add(key);
 
@@ -294,11 +294,11 @@ public aspect MethodCollector extends RuntimeCollector {
 	}
 	
 	private void storeCollector(JoinPoint jp, InvokedInfo methodInfo) {
-		if (methodCollector.containsKey(getInvocationLine(jp))) {System.out.println("6");
+		if (methodCollector.containsKey(getInvocationLine(jp))) {
 			List<InvokedContainer> list = methodCollector.get(getInvocationLine(jp));
 			list.add(new InvokedContainer(methodInfo, testMethodInfo));
 		} 
-		else {	System.out.println("7");
+		else {
 			List<InvokedContainer> list = new ArrayList<>();
 			list.add(new InvokedContainer(methodInfo, testMethodInfo));
 			
