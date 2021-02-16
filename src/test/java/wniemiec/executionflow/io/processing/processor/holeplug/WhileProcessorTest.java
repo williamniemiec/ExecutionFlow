@@ -10,12 +10,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import wniemiec.executionflow.io.processing.processor.SourceCodeProcessor;
 import wniemiec.executionflow.io.processing.processor.SourceCodeProcessorTest;
 
-class OpenCurlyBracketProcessorTest extends SourceCodeProcessorTest {
+class WhileProcessorTest extends SourceCodeProcessorTest {
 
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
-	OpenCurlyBracketProcessorTest() {
+	WhileProcessorTest() {
 		super(Path.of("holeplug"));
 	}
 	
@@ -25,9 +25,9 @@ class OpenCurlyBracketProcessorTest extends SourceCodeProcessorTest {
 	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
-			"open-curlybrackets"
+			"while"
 	})
-	void testOpenCurlyBracketProcessor(String filename) throws IOException {
+	void testWhileProcessor(String filename) throws IOException {
 		testProcessorOnFile(filename);
 	}
 	
@@ -37,6 +37,6 @@ class OpenCurlyBracketProcessorTest extends SourceCodeProcessorTest {
 	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
-		return new OpenCurlyBracketProcessor(sourceCode);
+		return new WhileProcessor(sourceCode);
 	}
 }

@@ -10,12 +10,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import wniemiec.executionflow.io.processing.processor.SourceCodeProcessor;
 import wniemiec.executionflow.io.processing.processor.SourceCodeProcessorTest;
 
-class OpenCurlyBracketProcessorTest extends SourceCodeProcessorTest {
+class TryCatchFinallyProcessorTest extends SourceCodeProcessorTest {
 
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
-	OpenCurlyBracketProcessorTest() {
+	TryCatchFinallyProcessorTest() {
 		super(Path.of("holeplug"));
 	}
 	
@@ -25,9 +25,9 @@ class OpenCurlyBracketProcessorTest extends SourceCodeProcessorTest {
 	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
-			"open-curlybrackets"
+			"try-catch-finally"
 	})
-	void testOpenCurlyBracketProcessor(String filename) throws IOException {
+	void testTryCatchFinallyProcessor(String filename) throws IOException {
 		testProcessorOnFile(filename);
 	}
 	
@@ -37,6 +37,6 @@ class OpenCurlyBracketProcessorTest extends SourceCodeProcessorTest {
 	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
-		return new OpenCurlyBracketProcessor(sourceCode);
+		return new TryCatchFinallyProcessor(sourceCode);
 	}
 }
