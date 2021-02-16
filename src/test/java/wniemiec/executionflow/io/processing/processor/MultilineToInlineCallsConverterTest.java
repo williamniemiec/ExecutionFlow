@@ -10,7 +10,7 @@ class MultilineToInlineCallsConverterTest extends SourceCodeProcessorTest {
 
 	@ParameterizedTest
 	@ValueSource(strings = {
-			
+			"multiline-to-inline"
 	})
 	void testMultilineToInlineCallsConverter(String filename) throws IOException {
 		testProcessorOnFile(filename);

@@ -27,7 +27,7 @@ public abstract class SourceCodeProcessorTest {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> testTxt = readTestFile(filename);
 		List<String> procTxt = processSourceCode(testTxt);
-//		ConsoleFilePrinter.printFileWithLines(procTxt);
+		ConsoleFilePrinter.printFileWithLines(procTxt);
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}
