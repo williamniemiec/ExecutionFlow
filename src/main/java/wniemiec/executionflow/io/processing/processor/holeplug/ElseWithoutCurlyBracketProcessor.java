@@ -44,7 +44,7 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 	
 	private String processLine(String line, String nextLine) {
 		String processedLine = line;
-		
+
 		if (removeClosedCurlyBracketFromNextLine) {
 			removeClosedCurlyBracketFromNextLine = false;
 			processedLine = line.substring(line.indexOf("}") + 1);
@@ -62,7 +62,7 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		processedLine = checkElseBlocks(processedLine);
 
 		if (isElseKeyword(processedLine))
-			parseElse(processedLine, nextLine);
+			processedLine = parseElse(processedLine, nextLine);
 		
 		return processedLine;
 	}
@@ -127,7 +127,7 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 					inElseWithoutCurlyBrackets = false;
 			}
 		} 
-		else if (!hasCatchKeyword(nextLine)) {	
+		else if (!hasCatchKeyword(nextLine)) {
 			processedLine += "}";
 			elseBlockManager.removeCurrentElseBlock();
 			
@@ -149,7 +149,9 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 		return line.matches(regexCatchKeyword);
 	}
 	
-	private void parseElse(String line, String nextLine) {
+	private String parseElse(String line, String nextLine) {
+		String processedLine = line;
+
 		if (isInlineElseWithMoreThanOneLine(line))
 			inElseWithoutCurlyBrackets = true;
 		
@@ -157,9 +159,16 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 			elseBlockManager.createNewElseBlock();
 			elseBlockManager.parse(line);
 			
-			if (!nextLine.contains("{") && isInlineCommand(nextLine))
-				inlineCommand = true;
+			if (!nextLine.contains("{")) {
+				processedLine += "{";
+				elseBlockManager.incrementBalance();
+				
+				if (isInlineCommand(nextLine))
+					inlineCommand = true;
+			}
 		}
+		
+		return processedLine;
 	}
 	
 	private boolean isInlineCommand(String line) {
