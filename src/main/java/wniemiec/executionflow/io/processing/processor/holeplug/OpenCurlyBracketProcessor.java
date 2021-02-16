@@ -5,7 +5,7 @@ import java.util.List;
 import wniemiec.executionflow.io.processing.processor.SourceCodeProcessor;
 
 /**
- * Moves aloonen opening curly bracket to the previous line.
+ * Moves alone opening curly bracket to the previous line.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @version		6.0.3

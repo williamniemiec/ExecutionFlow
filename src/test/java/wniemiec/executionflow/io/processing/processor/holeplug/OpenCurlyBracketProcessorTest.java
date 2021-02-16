@@ -1,21 +1,24 @@
 package wniemiec.executionflow.io.processing.processor.holeplug;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import wniemiec.executionflow.io.processing.processor.SourceCodeProcessor;
 import wniemiec.executionflow.io.processing.processor.SourceCodeProcessorTest;
 
-class ElseProcessorTest extends SourceCodeProcessorTest {
+class OpenCurlyBracketProcessorTest extends SourceCodeProcessorTest {
 
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
-	ElseProcessorTest() {
+	OpenCurlyBracketProcessorTest() {
 		super(Path.of("holeplug"));
 	}
 	
@@ -25,9 +28,9 @@ class ElseProcessorTest extends SourceCodeProcessorTest {
 	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
-			"else"
+			"open-curlybrackets"
 	})
-	void tesElseProcessor(String filename) throws IOException {
+	void testOpenCurlyBracketProcessor(String filename) throws IOException {
 		testProcessorOnFile(filename);
 	}
 	
@@ -37,6 +40,6 @@ class ElseProcessorTest extends SourceCodeProcessorTest {
 	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
-		return new ElseProcessor(sourceCode);
+		return new OpenCurlyBracketProcessor(sourceCode);
 	}
 }

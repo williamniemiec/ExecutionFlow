@@ -1,0 +1,50 @@
+public class SomeClass {
+	
+	public String ifElseMethod(int num) -{
+		if (num < 0) {
+			return "Negative value";
+		}
+		
+		String response = "";
+		
+		if (num == 0) {
+			response = "Number zero";
+		} else if (num == 1) {
+			response = "Number one";
+		} else {int _=0;
+			response = "Number "+num;
+		}
+		
+		return response;
+	}
+	
+	public boolean inlineIfElse(int n) {
+		if (n > 0) return true; else return false; 
+	}
+	
+	public int ifElseSameLine(int num) {
+		if (num > 0) { num *= 0; } else {
+			num = 10;
+		}
+		
+		return num;
+	}
+	
+	public int ifElseSameLine2(int num)	{
+		if (num > 0) { num *= 0; } else { num = 10; }
+		
+		return num;
+	}
+	
+	public static int countTotalArguments2(Object... args) {
+		int total = 0;
+		
+		for (int i=0; i<args.length; i++) {
+			if (i == 0)
+				continue;
+			total = i;
+		}
+		
+		return total;
+	}
+}
