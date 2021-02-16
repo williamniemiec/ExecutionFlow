@@ -33,7 +33,9 @@ public abstract class SourceCodeProcessorTest {
 	}
 	
 	private String normalizeRandomVariableName(String line) {
-		return line.trim().replaceAll("Throwable _[0-9A-z]+", "Throwable _").replaceAll("[\\s\\t]+"," ");
+		return	line.trim()
+				.replaceAll("Throwable _[0-9A-z]+", "Throwable _")
+				.replaceAll("[\\s\\t]+"," ");
 	}
 
 	protected void assertHasEqualNumberOfLines(List<String> answerText, 
