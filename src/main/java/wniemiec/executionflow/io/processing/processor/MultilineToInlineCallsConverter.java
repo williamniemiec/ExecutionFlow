@@ -12,7 +12,7 @@ import wniemiec.util.io.parser.balance.RoundBracketBalance;
  * arguments on a single line.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since 		6.0.0
  */
 public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
@@ -46,8 +46,8 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		
 		processedLine = combineMultilineArgs(line);
 		
-		if (!insideMultilineArgs)
-			idxMethodInvocation = -1;
+//		if (!insideMultilineArgs)
+//			idxMethodInvocation = -1;
 
 		return processedLine;
 	}
@@ -62,7 +62,6 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		else if (insideMultilineArgs) {
 			checkBalanceOfParentheses(line);
 			putOnMethodInvocationLine(line);
-			
 			insideMultilineArgs = !isParenthesesBalanced();
 			
 			processedLine = "";
@@ -73,8 +72,9 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			putOnMethodInvocationLine(line);
 			
 			processedLine = "";
+			idxMethodInvocation = -1;
 		}
-		
+
 		return processedLine;
 	}
 
@@ -85,9 +85,8 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	}
 
 	private boolean isMethodCallWithMultiArgs(String line) {
-		final String regexMultilineArgs = ".+,([^;{(\\[]+|[\\s\\t]*)$";
-		
-		return line.matches(regexMultilineArgs);
+		return	line.matches(".+,([^;{(\\[]+|[\\s\\t]*)$") 
+				|| line.matches(".+\\([^)]*$");
 	}
 	
 	private boolean hasClassKeywords(String line) {
@@ -123,7 +122,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 				insideMultilineArgs = true;
 			}
 			
-			processedLine = processedLine + getNextLine();
+			processedLine = processedLine + getNextLine().trim();
 			eraseLine(getCurrentIndex()+1);
 			
 			oldLine = getCurrentIndex()+1+1;
@@ -139,6 +138,8 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		if (rbb == null) {
 			rbb = new RoundBracketBalance();
 		}
+		
+		rbb.parse(line);
 	}
 	
 	private boolean isParenthesesBalanced() {
