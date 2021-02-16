@@ -1,14 +1,23 @@
 package wniemiec.executionflow.io.processing.processor;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
+import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class PrintCallDeactivatorTest extends SourceCodeProcessorTest {
 
-	@Test
-	void test() {
-		fail("Not yet implemented");
+	@ParameterizedTest
+	@ValueSource(strings = {
+			"print-call"
+	})
+	void testPrintCallDeactivator(String filename) throws IOException {
+		testProcessorOnFile(filename);
 	}
-
+	
+	@Override
+	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
+		return new PrintCallDeactivator(sourceCode);
+	}
 }

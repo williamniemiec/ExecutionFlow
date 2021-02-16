@@ -1,0 +1,10 @@
+public class MultiargsTest {
+
+	@Test
+	public void foo() {
+		
+		System.out.println("print-call");
+		someMethod();
+		System.out.println("print-call");
+	}
+}

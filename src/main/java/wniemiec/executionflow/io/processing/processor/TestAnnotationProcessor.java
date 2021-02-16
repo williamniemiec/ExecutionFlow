@@ -25,7 +25,7 @@ public class TestAnnotationProcessor extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	@Override
 	protected String processLine(String line) {
-		if (!isTestAnnotation(line) || hasSkipInvokedAnnotation(line))
+		if (!isTestAnnotation(line) || hasCollectMethodAnnotation(line))
 			return line;
 		
 		return "@wniemiec.executionflow.runtime.CollectMethodsCalled" + " " + line + " ";
@@ -37,7 +37,7 @@ public class TestAnnotationProcessor extends SourceCodeProcessor {
 				|| line.contains("@org.junit.Test");
 	}
 	
-	private boolean hasSkipInvokedAnnotation(String line) {
+	private boolean hasCollectMethodAnnotation(String line) {
 		return line.contains("@wniemiec.executionflow.runtime.CollectMethodsCalled");
 	}
 }

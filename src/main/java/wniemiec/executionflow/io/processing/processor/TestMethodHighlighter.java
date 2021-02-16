@@ -34,10 +34,13 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 								 String testMethodSignature) {
 		super(sourceCode, true);
 		
-		this.testMethodSignature = 
-				Invoked.extractMethodName(testMethodSignature)
-				+ testMethodSignature.substring(testMethodSignature.indexOf("("))
-									 .replace(" ", "");
+		if (!testMethodSignature.isBlank()) {
+			this.testMethodSignature = 
+					Invoked.extractMethodName(testMethodSignature)
+					+ testMethodSignature.substring(testMethodSignature.indexOf("("))
+										 .replace(" ", "");
+		}
+		
 		this.ignoredMethods = new ArrayList<>();
 	}
 
