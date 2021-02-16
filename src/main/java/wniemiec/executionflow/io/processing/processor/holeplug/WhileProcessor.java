@@ -35,7 +35,7 @@ public class WhileProcessor extends SourceCodeProcessor {
 	
 	private boolean isWhileStatement(String line) {
 		final String regexWhileStatement = 
-				".*while[\\s\\t]+\\([\\s\\t]*true[\\s\\t]*\\)[\\s\\t{]*[^}]";
+				".*while[\\s\\t]+\\(.+\\)[\\s\\t{]*[^};]";
 		
 		return line.matches(regexWhileStatement);
 	}
