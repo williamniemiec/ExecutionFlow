@@ -15,4 +15,17 @@ public class AssertFailTest {
 		assertEquals("two", tc.threePaths(2));
 		assertEquals("nine", tc.threePaths(3));		// It will fail
 	}
+	
+	@Test
+	public void curlyBrackets() {
+		Foo foo = new Foo();
+	
+		assertEquals(new int[] {2,3}, foo.get(new int[] {2, 3}));
+		assertEquals(new int[] {2,3}, // Expected 
+			foo.get(new int[] {2, 3}) // Result
+		); // end
+		
+		if (true) {
+			assertEquals(new int[] {2,3}, foo.get(new int[] {2, 3}));}	// some comment
+	}
 }

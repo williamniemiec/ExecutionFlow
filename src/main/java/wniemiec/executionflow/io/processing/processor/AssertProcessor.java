@@ -1,6 +1,7 @@
 package wniemiec.executionflow.io.processing.processor;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import wniemiec.util.io.parser.balance.RoundBracketBalance;
@@ -74,14 +75,14 @@ public class AssertProcessor extends SourceCodeProcessor {
 		final Pattern assertPattern = 
 				Pattern.compile("(\\ |\\t|\\{)+(Assert\\.)?assert[A-z]+" +
 								"(\\ |\\t)*\\((.+\\);)?");
-		
+
 		return	assertPattern.matcher(line).find()
 				&& !isDeclaration(line);
 	}
 
 	private boolean isDeclaration(String line) {
 		return line.matches(".*(public|protected|private|static|transient|" +
-							"class|new)[\\s\\t]+.+");
+							"class)[\\s\\t]+.+");
 	}
 
 	private String processAssert(String line) {
@@ -123,24 +124,28 @@ public class AssertProcessor extends SourceCodeProcessor {
 
 	private String processLineWithComment(String line) {	
 		String tryContent;
+		int idxStartComment = getStartIndexOfInlineComment(line);
 		
 		if (line.contains("}"))
 			tryContent = line.substring(0, line.lastIndexOf("}"));
 		else
-			tryContent = line.substring(0, getStartIndexOfInlineComment(line));
+			tryContent = line.substring(0, idxStartComment);
+		
+		String comment = line.substring(idxStartComment);
+		
 		
 		return line.contains("}") ? 
-				buildTryCatchStatement(tryContent, "") + "}"
-				: buildTryCatchStatement(tryContent, "");
+				buildTryCatchStatement(tryContent, "") + "}" + comment
+				: buildTryCatchStatement(tryContent, "") + comment;
 	}
 
 	private int getStartIndexOfInlineComment(String line) {
-		int commentStart = line.indexOf("//");
+		Pattern p = Pattern.compile("[\\s\\t]*(\\/\\/|\\*\\/)");
+		Matcher m = p.matcher(line);
 		
-		if (commentStart == -1)
-			commentStart = line.indexOf("*/");
+		m.find();
 		
-		return commentStart;
+		return m.start();
 	}
 	
 	private String buildTryCatchStatement(String tryContent, String catchContent) {

@@ -28,5 +28,15 @@ public class AssertFailTest {
 					bar2()
 				)
 			);} catch(Throwable _0){}}
+				
+		if (true) {
+		try {				assertEquals(
+				"one", 
+				tc.do(foo(),
+					bar(),
+					bar2()
+				)
+			);} catch(Throwable _0){}
+		}
 	}
 }

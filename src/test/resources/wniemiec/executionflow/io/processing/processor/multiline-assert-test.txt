@@ -28,5 +28,15 @@ public class AssertFailTest {
 					bar2()
 				)
 			);}
+			
+		if (true) {
+			assertEquals(
+				"one", 
+				tc.do(foo(),
+					bar(),
+					bar2()
+				)
+			);
+		}
 	}
 }
