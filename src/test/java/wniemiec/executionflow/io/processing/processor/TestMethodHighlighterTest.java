@@ -9,13 +9,24 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class TestMethodHighlighterTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Attributes
+	//-----------------------------------------------------------------------
 	private String testMethodSignature;
 	
+	
+	//-----------------------------------------------------------------------
+	//		Test hooks
+	//-----------------------------------------------------------------------
 	@BeforeEach
 	void beforeEachTest() {
 		testMethodSignature = null;
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"highlight-test-methods1"
@@ -70,9 +81,12 @@ class TestMethodHighlighterTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return new TestMethodHighlighter(sourceCode, testMethodSignature);
 	}
-
 }

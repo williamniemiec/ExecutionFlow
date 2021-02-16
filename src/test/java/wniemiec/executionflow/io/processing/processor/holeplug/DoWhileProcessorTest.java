@@ -12,10 +12,17 @@ import wniemiec.executionflow.io.processing.processor.SourceCodeProcessorTest;
 
 class DoWhileProcessorTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Constructor
+	//-----------------------------------------------------------------------
 	DoWhileProcessorTest() {
 		super(Path.of("holeplug"));
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"dowhile"
@@ -24,6 +31,10 @@ class DoWhileProcessorTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return new DoWhileProcessor(sourceCode);

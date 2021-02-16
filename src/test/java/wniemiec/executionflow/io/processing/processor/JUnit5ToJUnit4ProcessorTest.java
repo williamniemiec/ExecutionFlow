@@ -12,13 +12,24 @@ import wniemiec.executionflow.io.FileEncoding;
 
 class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Attributes
+	//-----------------------------------------------------------------------
 	private Object[] testMethodArgs;
 	
+	
+	//-----------------------------------------------------------------------
+	//		Test hooks
+	//-----------------------------------------------------------------------
 	@BeforeEach
 	void beforeEachTest() {
 		testMethodArgs = null;
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"junit5-test-annotation"
@@ -98,6 +109,10 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return	(testMethodArgs == null) 

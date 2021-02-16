@@ -8,6 +8,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class InlineCommentRemoverTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"inline-comment"
@@ -16,6 +19,10 @@ class InlineCommentRemoverTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return new InlineCommentRemover(sourceCode);

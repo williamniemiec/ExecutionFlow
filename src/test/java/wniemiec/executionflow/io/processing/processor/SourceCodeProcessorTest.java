@@ -13,8 +13,15 @@ import wniemiec.util.io.manager.TextFileManager;
 
 public abstract class SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Attributes
+	//-----------------------------------------------------------------------
 	private final Path workingDirectory;
 	
+	
+	//-----------------------------------------------------------------------
+	//		Constructors
+	//-----------------------------------------------------------------------
 	protected SourceCodeProcessorTest(Path relativePath) {
 		Path thisFolder = Path.of(
 				".", "src", "test", "resources", "wniemiec", 
@@ -29,6 +36,10 @@ public abstract class SourceCodeProcessorTest {
 		this(Path.of("."));
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------|
 	protected void testProcessorOnFile(String filename) throws IOException {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> testTxt = readTestFile(filename);

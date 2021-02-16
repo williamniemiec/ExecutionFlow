@@ -8,6 +8,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class PrintCallDeactivatorTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"print-call"
@@ -16,6 +19,10 @@ class PrintCallDeactivatorTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return new PrintCallDeactivator(sourceCode);

@@ -12,10 +12,17 @@ import wniemiec.executionflow.io.processing.processor.SourceCodeProcessorTest;
 
 class ContinueBreakProcessorTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Constructor
+	//-----------------------------------------------------------------------
 	ContinueBreakProcessorTest() {
 		super(Path.of("holeplug"));
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"continue-break"
@@ -24,6 +31,10 @@ class ContinueBreakProcessorTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return new ContinueBreakProcessor(sourceCode);

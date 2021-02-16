@@ -8,6 +8,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class ClassDeclarationProcessorTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"class-declaration"
@@ -16,6 +19,10 @@ class ClassDeclarationProcessorTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return new ClassDeclarationProcessor(sourceCode);

@@ -8,6 +8,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class AssertProcessorTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"inline-assert", 
@@ -19,6 +22,10 @@ class AssertProcessorTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return new AssertProcessor(sourceCode);

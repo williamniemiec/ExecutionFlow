@@ -8,6 +8,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class MultilineToInlineCallsConverterTest extends SourceCodeProcessorTest {
 
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"multiline-to-inline"
@@ -16,6 +19,10 @@ class MultilineToInlineCallsConverterTest extends SourceCodeProcessorTest {
 		testProcessorOnFile(filename);
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return new MultilineToInlineCallsConverter(sourceCode);
