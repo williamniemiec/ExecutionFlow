@@ -13,14 +13,20 @@ import wniemiec.util.io.manager.TextFileManager;
 
 public abstract class SourceCodeProcessorTest {
 
-	private static final Path RESOURCES_FOLDER;
+	private final Path workingDirectory;
 	
-	static {
-		RESOURCES_FOLDER = Path.of(
+	protected SourceCodeProcessorTest(Path relativePath) {
+		Path thisFolder = Path.of(
 				".", "src", "test", "resources", "wniemiec", 
 				"executionflow", "io", "processing", 
 				"processor"
-		).normalize();
+		);
+		
+		workingDirectory = thisFolder.resolve(relativePath).normalize();
+	}
+	
+	protected SourceCodeProcessorTest() {
+		this(Path.of("."));
 	}
 	
 	protected void testProcessorOnFile(String filename) throws IOException {
@@ -31,7 +37,7 @@ public abstract class SourceCodeProcessorTest {
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}
-	
+
 	protected void assertProcessedTextIsAccordingToExpected(List<String> answerText, 
 															List<String> processedText) {
 		for (int i = 0; i < processedText.size(); i++) { 
@@ -69,14 +75,14 @@ public abstract class SourceCodeProcessorTest {
 	
 	
 	protected List<String> readAnswerFile(String name) throws IOException {
-		Path ansFile = RESOURCES_FOLDER.resolve(name + "-answer.txt");
+		Path ansFile = workingDirectory.resolve(name + "-answer.txt");
 		TextFileManager txtManager = new TextFileManager(ansFile, StandardCharsets.ISO_8859_1);
 		
 		return txtManager.readLines();
 	}
 	
 	protected List<String> readTestFile(String name) throws IOException {
-		Path ansFile = RESOURCES_FOLDER.resolve(name + "-test.txt");
+		Path ansFile = workingDirectory.resolve(name + "-test.txt");
 		TextFileManager txtManager = new TextFileManager(ansFile, StandardCharsets.ISO_8859_1);
 		
 		return txtManager.readLines();
