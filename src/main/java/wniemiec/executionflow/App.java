@@ -51,7 +51,7 @@ public class App {
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
 	}
 	
 	
@@ -177,7 +177,7 @@ public class App {
 			
 			runTestMethodWithAspectsDisabled(testMethod);
 			
-			afterEachTestMethod();
+			checkNextTestMethods();
 			
 			finishedTestMethodWithAspectsDisabled = true;
 			inTestMethodWithAspectsDisabled = true;
@@ -224,7 +224,7 @@ public class App {
 		}
 	}
 	
-	public static void afterEachTestMethod() {
+	private static void checkNextTestMethods() {
 		updateRemainingTests();
 		
 		boolean successfullRestoration = false;

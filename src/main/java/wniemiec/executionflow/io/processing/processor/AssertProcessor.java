@@ -10,7 +10,7 @@ import wniemiec.util.io.parser.balance.RoundBracketBalance;
  * stop if an assert fails.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
+ * @version		7.0.0
  * @since 		6.0.0
  */
 public class AssertProcessor extends SourceCodeProcessor {
@@ -38,9 +38,6 @@ public class AssertProcessor extends SourceCodeProcessor {
 	//---------------------------------------------------------------------	
 	@Override
 	protected String processLine(String line) {
-		if (!inAssert && (line.contains("try ") || insideIncompleteTryCatch(line)))
-			return line;
-		
 		String processedLine = line;
 		
 		if (inAssert)
@@ -49,11 +46,6 @@ public class AssertProcessor extends SourceCodeProcessor {
 			processedLine = processAssert(line);
 		
 		return processedLine;
-	}
-	
-	private boolean insideIncompleteTryCatch(String line) {
-		return	getPreviousLine().contains("try ") 
-				&& line.contains("catch(");
 	}
 	
 	private String processMultilineAssert(String line) {
@@ -80,11 +72,18 @@ public class AssertProcessor extends SourceCodeProcessor {
 	
 	private boolean isAssertInstruction(String line) {
 		final Pattern assertPattern = 
-				Pattern.compile("^(\\ |\\t)+(Assert\\.)?assert[A-z]+(\\ |\\t)*\\((.+\\);)?");
+				Pattern.compile("(\\ |\\t|\\{)+(Assert\\.)?assert[A-z]+" +
+								"(\\ |\\t)*\\((.+\\);)?");
 		
-		return assertPattern.matcher(line).find();
+		return	assertPattern.matcher(line).find()
+				&& !isDeclaration(line);
 	}
-	
+
+	private boolean isDeclaration(String line) {
+		return line.matches(".*(public|protected|private|static|transient|" +
+							"class|new)[\\s\\t]+.+");
+	}
+
 	private String processAssert(String line) {
 		if (!roundBracketsBalance.parse(line).isBalanceEmpty()) {
 			inAssert = true;
@@ -92,14 +91,32 @@ public class AssertProcessor extends SourceCodeProcessor {
 			return openTryCatchStatement(line);
 		}
 		
-		if (hasInlineComment(line))
+		if (hasInlineTryCatch(line))
+			line = processLineWithInlineTryCatch(line);
+		else if (hasInlineComment(line))
 			line = processLineWithComment(line);
 		else
 			line = processLineWithoutComment(line);
 		
 		return line;
 	}
+	
+	private boolean hasInlineTryCatch(String line) {
+		return	line.matches("[\\s\\t]*try([\\s\\t]+\\{|\\{)[^;]+;\\}[\\s\\t]*"
+				+ "catch([\\s\\t]+\\(|\\()[^)]+\\).*");
+	}
 
+	private String processLineWithInlineTryCatch(String line) {
+		int idxStartTryContent = line.indexOf("{");
+		int idxEndTryContent = line.substring(0, line.indexOf("catch")).lastIndexOf(";");
+		
+		String tryContent = line.substring(idxStartTryContent+1, idxEndTryContent+1);
+
+		return	line.substring(0, idxStartTryContent+1) 
+				+ buildTryCatchStatement(tryContent, "") 
+				+ line.substring(idxEndTryContent+1);
+	}
+	
 	private boolean hasInlineComment(String line) {
 		return line.contains("//") || line.contains("*/");
 	}

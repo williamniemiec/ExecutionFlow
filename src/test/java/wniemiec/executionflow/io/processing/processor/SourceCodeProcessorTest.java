@@ -1,7 +1,7 @@
 package wniemiec.executionflow.io.processing.processor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +33,7 @@ public abstract class SourceCodeProcessorTest {
 	}
 	
 	private String normalizeRandomVariableName(String line) {
-		return line.trim().replaceAll("Throwable _[0-9A-z]+", "Throwable _");
+		return line.trim().replaceAll("Throwable _[0-9A-z]+", "Throwable _").replaceAll("[\\s\\t]+"," ");
 	}
 
 	protected void assertHasEqualNumberOfLines(List<String> answerText, 

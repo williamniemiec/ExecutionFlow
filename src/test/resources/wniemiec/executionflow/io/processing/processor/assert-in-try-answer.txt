@@ -13,6 +13,13 @@ public class AssertFailTest {
 		try {
 	try {			assertEquals("one", tc.threePaths(1));} catch(Throwable _0){}
 	try {			assertEquals("two", tc.threePaths(2));} catch(Throwable _0){}
-		catch (Exception e) {}
+		} catch (Exception e) {}
+	}
+	
+	@Test
+	public void inlineTryCatch() {
+		AuxClass tc = new AuxClass(99);
+		
+		try {try {assertEquals("two", tc.threePaths(2));} catch(Throwable _0){}} catch (Exception e) {}
 	}
 }
