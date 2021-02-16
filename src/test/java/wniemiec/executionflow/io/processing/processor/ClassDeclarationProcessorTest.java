@@ -12,13 +12,8 @@ class ClassDeclarationProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"class-declaration"
 	})
-	void testProcessorWithFile(String filename) throws IOException {
-		List<String> ansTxt = readAnswerFile(filename);
-		List<String> testTxt = readTestFile(filename);
-		List<String> procTxt = processSourceCode(testTxt);
-		
-		assertHasEqualNumberOfLines(ansTxt, procTxt);
-		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
+	void testClassDeclarationProcessor(String filename) throws IOException {
+		testProcessorOnFile(filename);
 	}
 	
 	@Override

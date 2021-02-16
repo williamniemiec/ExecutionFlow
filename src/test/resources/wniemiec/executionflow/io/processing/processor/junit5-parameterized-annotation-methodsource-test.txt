@@ -1,0 +1,14 @@
+public class JUnit5Tests {
+
+	@ParameterizedTest
+	@MethodSource("createWordsWithLength")
+	public void withMethodSource(String word, int length) {
+		someMethod();
+	}
+	 
+	private static Stream<Arguments> createWordsWithLength() 
+	{
+		return Stream.of(
+			Arguments.of("Hello", 5);
+	}
+}

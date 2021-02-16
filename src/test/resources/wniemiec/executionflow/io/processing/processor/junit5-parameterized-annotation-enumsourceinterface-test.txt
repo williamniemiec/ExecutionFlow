@@ -1,0 +1,8 @@
+public class JUnit5Tests {
+	
+	@ParameterizedTest
+	@EnumSource(names = {"DAYS", "HOURS"}, value = ChronoUnit.class)
+	public void testWithEnumSourceIncludeUsingInterface(TemporalUnit unit) {
+		someMethod();
+	}
+}

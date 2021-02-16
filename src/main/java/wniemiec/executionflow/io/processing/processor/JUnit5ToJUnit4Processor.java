@@ -39,6 +39,10 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 		parameterizedTestProcessor = new ParameterizedTestProcessor(testMethodArgs);
 	}
 	
+	public JUnit5ToJUnit4Processor(List<String> sourceCode) {
+		this(sourceCode, null);
+	}
+	
 	
 	//---------------------------------------------------------------------
 	//		Methods
@@ -75,15 +79,16 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 				|| isJUnit5ParameterizedTest(line);
 	}
 	
-	private boolean isJUnit5Annotation(String line) {
-		return line.contains("@org.junit.jupiter.api.Test");
-	}
-	
 	private boolean isJUnit4Annotation(String line) {
 		final String regexJUnit4Test = ".*@(.*\\.)?"
 				+ "(org\\.junit\\.)?Test(\\ |\\t)*(\\ |\\t)*(\\(.*\\))?";
 		
-		return line.matches(regexJUnit4Test);
+		return	!isJUnit5Annotation(line) 
+				&& line.matches(regexJUnit4Test);
+	}
+	
+	private boolean isJUnit5Annotation(String line) {
+		return line.contains("@org.junit.jupiter.api.Test");
 	}
 
 	private boolean isJUnit5RepeatedTestAnnotation(String line) {

@@ -1,0 +1,8 @@
+public class JUnit5Tests {
+	
+	@org.junit.Test
+	@NullSource
+	public void nullTest() {
+	    String text=null; someMethod();
+	}
+}
