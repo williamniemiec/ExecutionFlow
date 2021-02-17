@@ -204,7 +204,7 @@ public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {
 	
 	private boolean isElseKeyword(String line) {
 		final Pattern patternElse = Pattern.compile("[\\s\\t\\}]*"
-				+ "else(\\ |\\t|\\}|$)+.*");
+				+ "else(\\ |\\t|\\{|$)+.*");
 		
 		return	!line.contains("if") 
 				&& patternElse.matcher(line).find();

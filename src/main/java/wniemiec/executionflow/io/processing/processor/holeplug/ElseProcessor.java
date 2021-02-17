@@ -39,7 +39,7 @@ public class ElseProcessor extends SourceCodeProcessor {
 	
 	private boolean isElseKeyword(String line) {
 		final Pattern patternElse = 
-				Pattern.compile("[\\s\\t\\}]*else(\\ |\\t|\\}|$)+.*");
+				Pattern.compile("[\\s\\t\\}]*else(\\ |\\t|\\{|$)+.*");
 		
 		return !line.contains("if") && patternElse.matcher(line).find();
 	}
