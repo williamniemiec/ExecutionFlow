@@ -34,7 +34,7 @@ public class InvokedProcessor extends SourceCodeProcessor {
 	@Override
 	protected String processLine(String line) {	
 		String processedLine = line;
-		
+
 		if (insideInvoked) {
 			if (line.contains("{")) {
 				insideInvoked = false;
