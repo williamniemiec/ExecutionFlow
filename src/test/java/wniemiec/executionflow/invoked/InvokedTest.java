@@ -8,9 +8,16 @@ import org.junit.jupiter.api.Test;
 
 class InvokedTest {
 
+	//-----------------------------------------------------------------------
+	//		Attributes
+	//-----------------------------------------------------------------------
 	private final Invoked defaultMethodInvoked;
 	private final Invoked defaultConstructorInvoked;
 	
+	
+	//-----------------------------------------------------------------------
+	//		Constructor
+	//-----------------------------------------------------------------------
 	InvokedTest() {
 		defaultMethodInvoked = new Invoked.Builder()
 				.name("bar")
@@ -35,6 +42,10 @@ class InvokedTest {
 				.build();
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Test hooks
+	//-----------------------------------------------------------------------
 	@AfterEach
 	void restoreOriginalValues() {
 		defaultMethodInvoked.setInvocationLine(10);
@@ -47,6 +58,10 @@ class InvokedTest {
 		defaultConstructorInvoked.setConcreteSignature("foo.ClassName(String)");
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@Test
 	void testFullBuilder() {
 		Invoked invoked = new Invoked.Builder()
@@ -511,6 +526,10 @@ class InvokedTest {
 		});
 	}
 	
+	
+	//-----------------------------------------------------------------------
+	//		Methods
+	//-----------------------------------------------------------------------
 	private Invoked buildDefaultInvokedOfTypeMethod(String signature) {
 		return new Invoked.Builder()
 				.name("bar")
