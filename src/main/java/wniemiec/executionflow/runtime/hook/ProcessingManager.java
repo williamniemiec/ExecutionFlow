@@ -123,14 +123,18 @@ public class ProcessingManager {
 	private static void initializePreTestMethodFileManager(Invoked testMethod) {	
 		preTestMethodFileManager = new FileProcessingManager.Builder()
 				.srcPath(testMethod.getSrcPath())
-				.binDirectory(Invoked.getCompiledFileDirectory(testMethod.getBinPath()))
-				.classPackage(Invoked.extractPackage(testMethod.getClassSignature()))
+				.binDirectory(getCompiledFileDirectory(testMethod.getBinPath()))
+				.classPackage(Invoked.extractPackageFromClassSignature(testMethod.getClassSignature()))
 				.backupExtensionName("pretestmethod.bkp")
 				.fileParserFactory(new PreTestMethodFileProcessorFactory(
 						testMethod.getInvokedSignature(), 
 						testMethod.getArgs()
 				))
 				.build();
+	}
+	
+	private static Path getCompiledFileDirectory(Path compiledFilePath) {
+		return compiledFilePath.getParent();
 	}
 	
 	public static void restoreAllTestMethodFiles() throws IOException {
@@ -282,23 +286,27 @@ public class ProcessingManager {
 	private static FileProcessingManager createTestMethodFileManager(Invoked testMethod) {
 		return new FileProcessingManager.Builder()
 				.srcPath(testMethod.getSrcPath())
-				.binDirectory(testMethod.getClassDirectory())
+				.binDirectory(getBinDirectory(testMethod.getBinPath()))
 				.classPackage(testMethod.getPackage())
 				.backupExtensionName("testMethod.bkp")
 				.fileParserFactory(new TestMethodFileProcessorFactory())
 				.build();
 	}
+	
+	private static Path getBinDirectory(Path binPath) {
+		return binPath.getParent();
+	}
 
 	private static FileProcessingManager createInvokedFileManager(Invoked invoked) {
 		return new FileProcessingManager.Builder()
 				.srcPath(invoked.getSrcPath())
-				.binDirectory(invoked.getClassDirectory())
+				.binDirectory(getBinDirectory(invoked.getBinPath()))
 				.classPackage(invoked.getPackage())
 				.backupExtensionName("invoked.bkp")
 				.fileParserFactory(new InvokedFileProcessorFactory())
 				.build();
 	}
-	
+
 	private static void processInvokedMethod(TestedInvoked collector) throws IOException {
 		Logger.info("Processing source file of invoked - " 
 				+ collector.getTestedInvoked().getConcreteSignature() 

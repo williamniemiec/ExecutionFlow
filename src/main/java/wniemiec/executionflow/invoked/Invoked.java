@@ -49,9 +49,11 @@ public class Invoked implements Serializable {
 						Class<?> returnType, Class<?>[] parameterTypes, 
 						Object[] args, boolean isConstructor) {
 		checkSignature(invokedSignature);
+		checkBinPath(binPath);
+		checkSrcPath(srcPath);
 		
-		this.binPath = binPath;
-		this.srcPath = srcPath;
+		this.binPath = binPath.normalize().toAbsolutePath();
+		this.srcPath = srcPath.normalize().toAbsolutePath();
 		this.invocationLine = invocationLine;
 		this.invokedSignature = removeKeywordFromSignature(invokedSignature);
 		this.invokedName = invokedName;
@@ -79,8 +81,8 @@ public class Invoked implements Serializable {
 		private Path srcPath;
 		private String invokedSignature;
 		private int invocationLine;
-		private Class<?>[] parameterTypes;
-		private Object[] args;
+		private Class<?>[] parameterTypes = new Class<?>[0];
+		private Object[] args = new Object[0];
 		private Class<?> returnType = void.class;
 		private boolean isConstructor = false;
 		
@@ -109,7 +111,10 @@ public class Invoked implements Serializable {
 		 * @throws		IllegalArgumentException If binPath is null
 		 */
 		public Builder binPath(Path binPath) {
-			checkBinPath(binPath);
+			if (binPath == null) {
+				throw new IllegalArgumentException("Compiled file cannot "
+						+ "be null");
+			}
 			
 			this.binPath = binPath.isAbsolute() ? binPath : binPath.toAbsolutePath();
 			
@@ -124,7 +129,10 @@ public class Invoked implements Serializable {
 		 * @throws		IllegalArgumentException If srcPath is null
 		 */
 		public Builder srcPath(Path srcPath) {
-			checkSrcPath(srcPath);
+			if (srcPath == null) {
+				throw new IllegalArgumentException("Source file cannot "
+						+ "be null");
+			}
 			
 			this.srcPath = srcPath.isAbsolute() ? srcPath : srcPath.toAbsolutePath();
 			
@@ -150,7 +158,10 @@ public class Invoked implements Serializable {
 		 * @throws		IllegalArgumentException If methodSignature is null
 		 */
 		public Builder signature(String signature) {
-			checkSignature(signature);
+			if (signature == null) {
+				throw new IllegalArgumentException("Invoked signature cannot "
+						+ "be null");
+			}
 			
 			this.invokedSignature = signature.trim();
 			
@@ -187,8 +198,6 @@ public class Invoked implements Serializable {
 		 * @param		parameterTypes Types of invoked's parameters
 		 * 
 		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If parameterTypes is null
 		 */
 		public Builder parameterTypes(Class<?>[] parameterTypes) {
 			if (parameterTypes == null) {
@@ -248,7 +257,7 @@ public class Invoked implements Serializable {
 		 * 
 		 * @return		InvokedInfo with provided information
 		 * 
-		 * @throws		IllegalArgumentException If any required field is null
+		 * @throws		IllegalStateException If any required field is null
 		 */
 		public Invoked build() {
 			return new Invoked(
@@ -264,21 +273,21 @@ public class Invoked implements Serializable {
 	//-------------------------------------------------------------------------
 	private static void checkBinPath(Path binPath) {
 		if (binPath == null) {
-			throw new IllegalArgumentException("Invoked's compiled file path "
+			throw new IllegalStateException("Invoked's compiled file path "
 					+ "cannot be null");
 		}
 	}
 	
 	private static void checkSrcPath(Path srcPath) {
 		if (srcPath == null) {
-			throw new IllegalArgumentException("Invoked's source file path"
+			throw new IllegalStateException("Invoked's source file path"
 					+ "cannot be null");
 		}
 	}
 	
 	private static void checkSignature(String signature) {
 		if (signature == null) {
-			throw new IllegalArgumentException("Invoked signature cannot be null");
+			throw new IllegalStateException("Invoked signature cannot be null");
 		}
 	}
 	
@@ -289,11 +298,16 @@ public class Invoked implements Serializable {
 	/**
 	 * Extracts class name from a signature.
 	 * 
-	 * @param	signature Signature of a method or class
+	 * @param		signature Signature of a method or class
 	 * 
-	 * @return	Name of this class or method
+	 * @return		Name of this class or method
+	 * 
+	 * @throws		IllegalArgumentException If signature is null
 	 */
-	public static String extractMethodName(String signature) {
+	public static String extractMethodNameFromMethodSignature(String signature) {
+		if (signature == null)
+			throw new IllegalArgumentException("Signature cannot be null");
+		
 		String methodName = "";
 		
 		Pattern p = Pattern.compile("\\.[A-z0-9-_$]+\\(");
@@ -316,10 +330,15 @@ public class Invoked implements Serializable {
 	 * 
 	 * @param		classSignature Signature of the class
 	 * 
-	 * @return		Class package
+	 * @return		Package from class signature
+	 * 
+	 * @throws		IllegalArgumentException If class signature is null
 	 */
-	public static String extractPackage(String classSignature) {
-		if (classSignature == null || classSignature.isEmpty())
+	public static String extractPackageFromClassSignature(String classSignature) {
+		if (classSignature == null)
+			throw new IllegalArgumentException("Class signature cannot be null");
+		
+		if (classSignature.isEmpty())
 			return "";
 		
 		String[] tmp = classSignature.split("\\.");
@@ -353,20 +372,19 @@ public class Invoked implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "InvokedInfo ["
-				+ "invokedName=" + invokedName 
+		return "Invoked ["
+				+ "name=" + invokedName 
 				+ ", binPath=" + binPath 
 				+ ", srcPath=" + srcPath
 				+ ", classSignature=" + getClassSignature()
-				+ ", classPackage=" + getPackage()
-				+ ", invokedSignature=" + invokedSignature 
+				+ ", package=" + getPackage()
+				+ ", signature=" + invokedSignature 
 				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
 				+ ", args="	+ Arrays.toString(args) 
 				+ ", returnType=" + returnType 
 			+ "]";
 	}
-	
 	
 	@Override
 	public int hashCode() {
@@ -417,27 +435,16 @@ public class Invoked implements Serializable {
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
-	/**
-	 * Gets directory where a compiled file is.
-	 * 
-	 * @param		compiledFilePath Compiled file path
-	 * 
-	 * @return		Directory where the compiled test method file is
-	 */
-	public static Path getCompiledFileDirectory(Path compiledFilePath) {
-		return compiledFilePath.getParent();
-	}
-
 	public Path getBinPath() {
-		return this.binPath;
+		return binPath;
 	}
 	
 	public Path getSrcPath() {
-		return this.srcPath;
+		return srcPath;
 	}
 
 	public String getInvokedSignature() {
-		return this.invokedSignature;
+		return invokedSignature;
 	}
 	
 	/**
@@ -489,10 +496,16 @@ public class Invoked implements Serializable {
 	 * Sets invocation line.
 	 * 
 	 * @param		line Invocation line (must be greater than zero)
+	 * 
+	 * @throws		IllegalArgumentException If invocation line is negative
 	 */
-	public void setInvocationLine(int line) {
-		if (line > 0)
-			this.invocationLine = line;
+	public void setInvocationLine(int invocationLine) {
+		if (invocationLine <= 0) {
+			throw new IllegalArgumentException("Invocation line must be a "
+					+ "number greater than zero");
+		}
+
+		this.invocationLine = invocationLine;
 	}
 	
 	/**
@@ -504,27 +517,9 @@ public class Invoked implements Serializable {
 	 */
 	public String getPackage() {
 		if (classPackage == null)
-			classPackage = extractPackage(getClassSignature());
+			classPackage = extractPackageFromClassSignature(getClassSignature());
 
 		return classPackage;
-	}
-	
-	/**
-	 * Gets directory where the invoked's compiled file is.
-	 * 
-	 * @return		Directory where the invoked's source file is.
-	 */
-	public Path getClassDirectory() {
-		return binPath.getParent();
-	}
-	
-	/**
-	 * Gets directory where the invoked's source file is.
-	 * 
-	 * @return		Directory where the invoked's source file is.
-	 */
-	public Path getSrcDirectory() {
-		return srcPath.getParent();
 	}
 	
 	public Object[] getArgs() {
@@ -553,7 +548,11 @@ public class Invoked implements Serializable {
 		int idxParamStart = invokedSignature.indexOf("(");
 		
 		invokedName = invokedSignature.substring(0, idxParamStart);
-		invokedName = invokedName.substring(invokedName.lastIndexOf("."), idxParamStart);
+
+		if (isConstructor)
+			invokedName = invokedName.substring(invokedName.lastIndexOf(".")+1, idxParamStart);
+		else
+			invokedName = invokedName.substring(invokedName.lastIndexOf("."), idxParamStart);
 	}
 
 	public Class<?>[] getParameterTypes() {
@@ -564,30 +563,26 @@ public class Invoked implements Serializable {
 		return this.returnType;
 	}
 	
-	/**
-	 * Gets parameter types and return type of the method.
-	 * 
-	 * @return		Return type and parameter types of the method
-	 */
-	public MethodType getMethodTypes() {
-		if (args == null || args.length == 0)
-			return methodType(returnType);
-		
-		return methodType(returnType, parameterTypes);
-	}
-	
 	public String getConcreteSignature() {
-		if ((concreteInvokedSignature == null) || concreteInvokedSignature.isBlank())
-			concreteInvokedSignature = invokedSignature.replaceAll("\\$", ".");
+		if ((concreteInvokedSignature == null) || concreteInvokedSignature.isBlank()) {
+			concreteInvokedSignature = invokedSignature.replaceAll("\\$[0-9]+", "");
+			concreteInvokedSignature = concreteInvokedSignature.replaceAll("\\$", ".");
+		}
 		
 		return concreteInvokedSignature;
 	}
 	
 	public void setConcreteSignature(String concreteSignature) {
+		if (concreteSignature == null)
+			throw new IllegalArgumentException("Signature cannot be null");
+		
 		this.concreteInvokedSignature = concreteSignature;
 	}
 
 	public void setSignature(String signature) {
+		if (signature == null)
+			throw new IllegalArgumentException("Signature cannot be null");
+		
 		this.invokedSignature = signature;
 	}
 	

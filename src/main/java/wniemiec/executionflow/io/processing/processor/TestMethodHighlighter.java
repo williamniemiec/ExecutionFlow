@@ -36,7 +36,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 		
 		if (!testMethodSignature.isBlank()) {
 			this.testMethodSignature = 
-					Invoked.extractMethodName(testMethodSignature)
+					Invoked.extractMethodNameFromMethodSignature(testMethodSignature)
 					+ testMethodSignature.substring(testMethodSignature.indexOf("("))
 										 .replace(" ", "");
 		}

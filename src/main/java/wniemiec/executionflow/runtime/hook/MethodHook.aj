@@ -275,7 +275,7 @@ public aspect MethodHook extends RuntimeHook {
 				.binPath(classPath)
 				.srcPath(srcPath)
 				.signature(signature)
-				.name(Invoked.extractMethodName(signature))
+				.name(Invoked.extractMethodNameFromMethodSignature(signature))
 				.parameterTypes(getParameterTypes(jp))
 				.args(getParameterValues(jp))
 				.returnType(extractReturnType(jp))
