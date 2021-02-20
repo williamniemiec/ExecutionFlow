@@ -1,15 +1,18 @@
 package wniemiec.executionflow.io.processing.processor;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-public abstract class SourceCodeProcessorTest extends ProcessorTest {
+import wniemiec.executionflow.io.processing.Processing;
+
+public abstract class SourceCodeProcessorTest extends Processing {
 	
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
 	protected SourceCodeProcessorTest(Path relativePath) {
-		super(relativePath);
+		super(Path.of("processor").resolve(relativePath));
 	}
 	
 	protected SourceCodeProcessorTest() {
@@ -21,8 +24,8 @@ public abstract class SourceCodeProcessorTest extends ProcessorTest {
 	//		Methods
 	//-----------------------------------------------------------------------
 	@Override
-	protected List<String> processSourceCode(List<String> sourceCode) {
-		SourceCodeProcessor processor = getProcessorFor(sourceCode);
+	protected List<String> processSourceCodeFrom(String filename) throws IOException {
+		SourceCodeProcessor processor = getProcessorFor(readTestFile(filename));
 		
 		return processor.processLines();
 	}

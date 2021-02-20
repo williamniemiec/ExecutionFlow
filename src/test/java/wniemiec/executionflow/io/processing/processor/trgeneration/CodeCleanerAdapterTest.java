@@ -1,4 +1,4 @@
-package wniemiec.executionflow.io.processing.processor.holeplug;
+package wniemiec.executionflow.io.processing.processor.trgeneration;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test;
 
 import wniemiec.executionflow.io.processing.Processing;
 
-class HolePlugTest extends Processing {
+class CodeCleanerAdapterTest extends Processing {
 
 	//-----------------------------------------------------------------------
 	//		Constructor
 	//-----------------------------------------------------------------------
-	HolePlugTest() {
-		super(Path.of("processor", "holeplug"));
+	CodeCleanerAdapterTest() {
+		super(Path.of("processor", "codecleaner"));
 	}
 	
 	
@@ -22,8 +22,8 @@ class HolePlugTest extends Processing {
 	//		Methods
 	//-----------------------------------------------------------------------
 	@Test
-	void testHoleplug() throws IOException {
-		testProcessorOnFile("holeplug");
+	void testCodeCleaner() throws IOException {
+		testProcessorOnFile("codecleaner");
 	}
 
 	
@@ -32,8 +32,8 @@ class HolePlugTest extends Processing {
 	//-----------------------------------------------------------------------
 	@Override
 	protected List<String> processSourceCodeFrom(String filename) throws IOException {
-		HolePlug holeplug = new HolePlug(readTestFile(filename));
+		CodeCleanerAdapter processor = new CodeCleanerAdapter(readTestFile(filename));
 		
-		return holeplug.processLines();
+		return processor.processLines();
 	}
 }

@@ -1,4 +1,4 @@
-package wniemiec.executionflow.io.processing.processor;
+package wniemiec.executionflow.io.processing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -8,31 +8,29 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 
-import wniemiec.util.console.ConsoleFilePrinter;
 import wniemiec.util.io.manager.TextFileManager;
 
-public abstract class ProcessorTest {
+public abstract class Processing {
 
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	private final Path workingDirectory;
+	protected final Path workingDirectory;
 	
 	
 	//-----------------------------------------------------------------------
 	//		Constructors
 	//-----------------------------------------------------------------------
-	protected ProcessorTest(Path relativePath) {
+	protected Processing(Path relativePath) {
 		Path thisFolder = Path.of(
 				".", "src", "test", "resources", "wniemiec", 
-				"executionflow", "io", "processing", 
-				"processor"
+				"executionflow", "io", "processing"
 		);
 		
 		workingDirectory = thisFolder.resolve(relativePath).normalize();
 	}
 	
-	protected ProcessorTest() {
+	protected Processing() {
 		this(Path.of("."));
 	}
 	
@@ -42,9 +40,10 @@ public abstract class ProcessorTest {
 	//-----------------------------------------------------------------------|
 	protected void testProcessorOnFile(String filename) throws IOException {
 		List<String> ansTxt = readAnswerFile(filename);
-		List<String> testTxt = readTestFile(filename);
-		List<String> procTxt = processSourceCode(testTxt);
-//		ConsoleFilePrinter.printFileWithLines(procTxt);
+		List<String> procTxt = processSourceCodeFrom(filename);
+		for (String line : procTxt) {
+			System.out.println(line);
+		}
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}
@@ -75,8 +74,6 @@ public abstract class ProcessorTest {
 		fail("The number of lines in the processed file is different from " + 
 			 "the original file");
 	}
-
-	protected abstract List<String> processSourceCode(List<String> sourceCode);
 	
 	private List<String> readAnswerFile(String name) throws IOException {
 		Path ansFile = workingDirectory.resolve(name + "-answer.txt");
@@ -85,7 +82,9 @@ public abstract class ProcessorTest {
 		return txtManager.readLines();
 	}
 	
-	private List<String> readTestFile(String name) throws IOException {
+	abstract protected List<String> processSourceCodeFrom(String filename) throws IOException;
+	
+	protected List<String> readTestFile(String name) throws IOException {
 		Path ansFile = workingDirectory.resolve(name + "-test.txt");
 		TextFileManager txtManager = new TextFileManager(ansFile, StandardCharsets.ISO_8859_1);
 		
