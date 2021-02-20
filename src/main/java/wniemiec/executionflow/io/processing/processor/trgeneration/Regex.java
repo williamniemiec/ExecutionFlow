@@ -5,7 +5,7 @@ package wniemiec.executionflow.io.processing.processor.trgeneration;
  * @author		Murilo Wolfart
  * @see			https://bitbucket.org/mwolfart/trgeneration/
  */
-public class Regex {
+class Regex {
 	public static String classSignature = "(((|public|final|abstract|private|static|protected)(\\s+))?(class)(\\s+)(\\w+)(<.*>)?(\\s+extends\\s+\\w+)?(<.*>)?(\\s+implements\\s+)?(.*)?(<.*>)?(\\s*))\\{$";
 	public static String methodSignature = "(public|protected|private|\\s)(\\s*static)? +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])";
 	

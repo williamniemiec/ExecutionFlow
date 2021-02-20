@@ -16,7 +16,7 @@ import wniemiec.util.console.ConsoleFilePrinter;
  * @author		Murilo Wolfart
  * @see			https://bitbucket.org/mwolfart/trgeneration/
  */
-public class Helper {
+class Helper {
 	private static List<String> regexReservedChars = new ArrayList<String>(Arrays.asList(
 			"{", "}", "\\", "\"", "(", ")"
 			));

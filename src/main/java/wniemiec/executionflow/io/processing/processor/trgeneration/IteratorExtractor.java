@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class IteratorExtractor
+class IteratorExtractor
 {
 	public static Iterator<?> extractIterator(Iterable<?> iterable)
 	{

@@ -58,7 +58,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 										  String outputFilename, 
 										  FileEncoding encode) {
 		return new PreTestMethodFileProcessor.Builder()
-				.file(filepath)
+				.targetFile(filepath)
 				.outputDir(outputDir)
 				.outputFilename(outputFilename)
 				.testMethodSignature(testMethodSignature)

@@ -33,10 +33,9 @@ public abstract class SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	public final List<String> processLines() {
 		for (currentIdx = 0; currentIdx < sourceCode.size(); currentIdx++) {
-			if (ignoreComments)
-				checkComments(sourceCode.get(currentIdx));
+			checkComments(sourceCode.get(currentIdx));
 			
-			if (!inComment()) {
+			if (!inComment() || (inComment() && !ignoreComments)) {
 				String processedLine = processLine(sourceCode.get(currentIdx));
 			
 				sourceCode.set(currentIdx, processedLine);
@@ -68,7 +67,7 @@ public abstract class SourceCodeProcessor {
 		}
 	}
 	
-	private boolean inComment() {
+	protected boolean inComment() {
 		return	inMultiLineComment
 				|| inInlineComment
 				|| sourceCode.get(currentIdx).contains("*/");

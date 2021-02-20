@@ -21,7 +21,7 @@ import wniemiec.util.io.parser.balance.CurlyBracketBalance;
  * @author		Murilo Wolfart
  * @see			https://bitbucket.org/mwolfart/trgeneration/
  */
-public class CodeCleaner {
+class CodeCleaner {
 	// Processed source code
 	protected List<String> processedCode;
 	// (line mode only) Mappings containing information on processed code x original code

@@ -99,7 +99,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		 * 
 		 * @throws		IllegalArgumentException If file is null
 		 */
-		public Builder file(Path file) {
+		public Builder targetFile(Path file) {
 			if (file == null)
 				throw new IllegalArgumentException("File cannot be null");
 			
@@ -193,7 +193,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder fileExtension(String fileExtension) {
+		public Builder outputFileExtension(String fileExtension) {
 			if (fileExtension != null)
 				this.fileExtension = fileExtension;
 			
@@ -279,6 +279,10 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		totalTests = annotationProcessor.getTotalTests();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
 	public static int getTotalTests() {
 		return totalTests;
 	}
