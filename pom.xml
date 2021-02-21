@@ -24,6 +24,7 @@
 	</properties>
 
 	<dependencies>
+		<!-- AspectJ -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
@@ -35,6 +36,7 @@
 			<version>1.9.6</version>
 		</dependency>
 
+		<!-- JUnit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -42,11 +44,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.7.0</version>
-			<scope>test</scope>
-		</dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.7.1</version>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
@@ -54,6 +56,7 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- wniemiec -->
 		<dependency>
 			<groupId>wniemiec.api</groupId>
 			<artifactId>junit4</artifactId>
@@ -187,6 +190,11 @@
 					<configuration>
 						<outputDirectory>${project.build.directory}/../dist/${version.major}.x</outputDirectory>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.22.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
