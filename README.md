@@ -1,4 +1,4 @@
-![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/logo/logo.jpg?raw=true)
+![](https://github.com/williamniemiec/ExecutionFlow/blob/v7.x/docs/img/logo/logo.jpg?raw=true)
 
 <h1 align='center'>Execution Flow</h1>
 
