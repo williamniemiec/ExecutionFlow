@@ -1,9 +1,16 @@
 ![](https://github.com/williamniemiec/ExecutionFlow/blob/v7.x/docs/img/logo/logo.jpg?raw=true)
 
 <h1 align='center'>Execution Flow</h1>
-
 <p align='center'>Gera test path de métodos e construtores testados em testes JUnit</p>
-
+<p align="center">
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AWindows"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Windows?label=Windows" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AMacOS"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/MacOS?label=MacOS" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AUbuntu"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Ubuntu?label=Ubuntu" alt=""></a>
+	<a href="https://codecov.io/gh/williamniemiec/ExecutionFlow"><img src="https://codecov.io/gh/williamniemiec/ExecutionFlow/branch/v7.x/graph/badge.svg?token=R2SFS4SP86" alt="Coverage status"></a>
+	<a href="http://java.oracle.com"><img src="https://img.shields.io/badge/java-12+-D0008F.svg" alt="Java compatibility"></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/releases"><img src="https://img.shields.io/github/v/release/williamniemiec/ExecutionFlow" alt="Release"></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/blob/master/LICENCE"><img src="https://img.shields.io/github/license/williamniemiec/ExecutionFlow" alt="Licence"></a>
+</p>
 <hr />
 
 ## 🔵 Introdução
@@ -16,7 +23,7 @@ Veja a documentação na [wiki](https://github.com/williamniemiec/ExecutionFlow/
 A documentação sobre como usar a aplicação se encontra [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Não se esqueça de incluir a o arquivo [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar) no build path do projeto, pois caso contrário a aplicação não funcionará.
 
 ## ✔ Requisitos
-- [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
+- [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) ou superior
 - [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
 - [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior
 - JUnit 4 ou JUnit 5
