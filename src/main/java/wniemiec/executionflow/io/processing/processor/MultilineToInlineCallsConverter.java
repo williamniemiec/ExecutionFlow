@@ -68,13 +68,13 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			
 			mapping.put(getCurrentIndex()+1, idxMethodInvocation+1);
 		}
-		else if (hasOnlyClosedCurlyBracket(processedLine) && (idxMethodInvocation > 0)) {
+		else if (hasTestAnnotation(processedLine) && (idxMethodInvocation > 0)) {
 			putOnMethodInvocationLine(line);
 			
 			processedLine = "";
 			idxMethodInvocation = -1;
 		}
-
+		
 		return processedLine;
 	}
 
@@ -114,7 +114,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			newLine = idxMethodInvocation+1;
 		}
 		else {
-			if (hasOnlyClosedCurlyBracket(getNextLine())) {
+			if (hasOnlyClosedCurlyBracketAndSemicolon(getNextLine())) {
 				insideMultilineArgs = false;					
 			}
 			else {
@@ -153,10 +153,14 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		);
 	}
 
-	private boolean hasOnlyClosedCurlyBracket(String line) {
+	private boolean hasOnlyClosedCurlyBracketAndSemicolon(String line) {
 		final String regexOnlyClosedCurlyBracket = "^.*[\\s\\t)}]+;[\\s\\t]*$";
 		
 		return line.matches(regexOnlyClosedCurlyBracket);
+	}
+	
+	private boolean hasTestAnnotation(String line) {
+		return line.matches("[\\s\\t]*@Test.+");
 	}
 	
 	private void eraseLine(int idxLine) {

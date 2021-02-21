@@ -23,7 +23,7 @@ public class TestMethodFileProcessorFactory extends FileProcessorFactory {
 										  String outputFilename, 
 										  FileEncoding encode) {
 		return new TestMethodFileProcessor.Builder()
-				.file(filepath)
+				.targetFile(filepath)
 				.outputDir(outputDir)
 				.outputFilename(outputFilename)
 				.encoding(encode)

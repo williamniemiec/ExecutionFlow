@@ -41,9 +41,9 @@ public abstract class Processing {
 	protected void testProcessorOnFile(String filename) throws IOException {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> procTxt = processSourceCodeFrom(filename);
-		for (String line : procTxt) {
-			System.out.println(line);
-		}
+//		for (String line : procTxt) {
+//			System.out.println(line);
+//		}
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}
@@ -53,7 +53,8 @@ public abstract class Processing {
 		for (int i = 0; i < processedText.size(); i++) { 
 			assertEquals(
 					normalizeRandomVariableName(answerText.get(i)), 
-					normalizeRandomVariableName(processedText.get(i))
+					normalizeRandomVariableName(processedText.get(i)),
+					"Line: " + (i+1)
 			);
 		}
 	}

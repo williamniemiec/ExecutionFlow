@@ -18,26 +18,38 @@ public class MixedJUnit5Annotations {
 		System.out.println("BeforeEach");
 	}
 
-//	@org.junit.Test
-//	public void testAnnotation() {
-//		AuxClass tc = new AuxClass(4);
-//
-//		assertEquals(24, tc.factorial(4));
-//	}
+	@Test
+	public void testAnnotation() {
+		AuxClass tc = new AuxClass(4);
 
-	@org.junit.Test
+		assertEquals(24, tc.factorial(4));
+	}
+
+	@ParameterizedTest
 	@ValueSource(ints = { -1 })
 	public void parameterizedTestAnnotation(int num) {
 		AuxClass tc = new AuxClass(4);
 
-try {	assertEquals(1, tc.factorial(num));} catch(Throwable _0){}
+		assertEquals(1, tc.factorial(num));
 	}
 
-//@org.junit.Test
-//	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
-//	public void repeatedTestAnnotation() {int _0=0;while(_0++ < 2){
-//		AuxClass tc = new AuxClass(4);
-//
-//		assertEquals(24, tc.factorial(4));
-//	}}
+	@RepeatedTest(2)
+	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
+	public void repeatedTestAnnotation() {
+		AuxClass tc = new AuxClass(4);
+
+		assertEquals(24, tc.factorial(4));
+	}
+	
+	@Test public List<Integer> identity(int num1, int num2, int num3, int num4, int num5) {
+		List<Integer> response = Arrays.asList(
+				num1,
+				num2,
+				num3,
+				num4,
+				num5
+		);
+		
+		return response;
+	}
 }

@@ -31,7 +31,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 	//		Constructor
 	//---------------------------------------------------------------------
 	public JUnit5ToJUnit4Processor(List<String> sourceCode, Object[] testMethodArgs) {
-		super(sourceCode, false);
+		super(sourceCode, true);
 		
 		this.testMethodArgs = testMethodArgs;
 		testProcessor = new TestProcessor();
@@ -50,9 +50,6 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 	@Override
 	protected String processLine(String line) {
 		countTest(line);
-		
-		if (inComment())
-			return line;
 		
 		processedLine = line;
 		

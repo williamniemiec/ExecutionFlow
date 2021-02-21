@@ -19,7 +19,7 @@ public class SimpleTestPath {
 try {		assertEquals(expectedResult, res);} catch(Throwable _0){}
 	}
 	
-//	@Test
+//	@org.junit.Test
 //	public void test1() {
 //		doSomething();
 //		
