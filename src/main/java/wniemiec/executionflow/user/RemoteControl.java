@@ -1,20 +1,24 @@
 package wniemiec.executionflow.user;
 
-import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.WindowConstants;
+
 
 /**
  * Responsible for application control by the user, allowing the user to send 
  * commands to the application.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since		5.1.0
  */
 public class RemoteControl {
@@ -82,7 +86,7 @@ public class RemoteControl {
 	}
 
 	private static JButton createStopButton() {
-		JButton stop = new JButton("Stop");
+		JButton stop = new ThemeButton("Stop");
 		
 		stop.setFocusPainted(false);
 		stop.addActionListener(event ->
@@ -90,5 +94,54 @@ public class RemoteControl {
 		);
 		
 		return stop;
+	}
+	
+	private static class ThemeButton extends JButton {
+        private ThemeButton(String title) {
+            super(title);
+            setContentAreaFilled(false);
+            setFocusPainted(false); 
+            setForeground(Color.WHITE);
+            setFont(new Font("Arial", Font.BOLD, 30));
+            setBorder(BorderFactory.createEmptyBorder());
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            final Graphics2D g2 = (Graphics2D) g.create();
+            if (getModel().isPressed()) {
+            	g2.setPaint(new GradientPaint(
+                        new Point(0, 0), 
+                        new Color(78,0,142),
+                        new Point(0, getHeight()), 
+                        new Color(78,0,142))
+    			);
+            } 
+            else if (getModel().isRollover()) {
+            	g2.setPaint(new GradientPaint(
+                        new Point(0, 0), 
+                        new Color(255,0,144),
+                        new Point(0, getHeight()), 
+                        new Color(255,0,144))
+    			);
+          
+            }
+            else {
+	            g2.setPaint(new GradientPaint(
+	                    new Point(0, 0), 
+	                    new Color(255,0,144),
+	                    new Point(0, getHeight()), 
+	                    new Color(78,0,142))
+	    		);
+            }
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.dispose();
+
+            super.paintComponent(g);
+        }
+    }
+	
+	public static void main(String[] args) {
+		RemoteControl.open();
 	}
 }
