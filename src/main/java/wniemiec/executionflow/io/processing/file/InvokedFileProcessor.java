@@ -17,7 +17,7 @@ import wniemiec.executionflow.io.processing.processor.trgeneration.CodeCleanerAd
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor {
@@ -25,7 +25,7 @@ public class InvokedFileProcessor extends FileProcessor {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 600L;
+	private static final long serialVersionUID = 700L;
 	
 	/**
 	 * Stores the mapping of the original file with the modified file.
@@ -79,10 +79,9 @@ public class InvokedFileProcessor extends FileProcessor {
 	 * Builder for {@link InvokedFileProcessor}. It is necessary to provide all
 	 * required fields. The required fields are: <br />
 	 * <ul>
-	 * 	<li>file</li>
+	 * 	<li>targetFile</li>
 	 * 	<li>outputDir</li>
 	 * 	<li>outputFilename</li>
-	 * 	<li>isTestMethod</li>
 	 * </ul>
 	 */
 	public static class Builder	{
@@ -101,7 +100,7 @@ public class InvokedFileProcessor extends FileProcessor {
 		 * 
 		 * @throws		IllegalArgumentException If file is null
 		 */
-		public Builder file(Path file) {
+		public Builder targetFile(Path file) {
 			if (file == null)
 				throw new IllegalArgumentException("File cannot be null");
 			
@@ -160,7 +159,7 @@ public class InvokedFileProcessor extends FileProcessor {
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder fileExtension(String fileExtension) {
+		public Builder outputFileExtension(String fileExtension) {
 			if (fileExtension != null)
 				this.fileExtension = fileExtension;
 			
@@ -172,10 +171,9 @@ public class InvokedFileProcessor extends FileProcessor {
 		 * It is necessary to provide all required fields. The required 
 		 * fields are: <br />
 		 * <ul>
-		 * 	<li>file</li>
+		 * 	<li>targetFile</li>
 		 * 	<li>outputDir</li>
 		 * 	<li>outputFilename</li>
-		 * 	<li>isTestMethod</li>
 		 * </ul>
 		 * 
 		 * @return		InvokedFileProcessor with provided information

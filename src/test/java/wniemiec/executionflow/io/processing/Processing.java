@@ -41,6 +41,7 @@ public abstract class Processing {
 	protected void testProcessorOnFile(String filename) throws IOException {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> procTxt = processSourceCodeFrom(filename);
+		
 //		for (String line : procTxt) {
 //			System.out.println(line);
 //		}
@@ -50,7 +51,7 @@ public abstract class Processing {
 
 	protected void assertProcessedTextIsAccordingToExpected(List<String> answerText, 
 															List<String> processedText) {
-		for (int i = 0; i < processedText.size(); i++) { 
+		for (int i = 0; i < processedText.size(); i++) {
 			assertEquals(
 					normalizeRandomVariableName(answerText.get(i)), 
 					normalizeRandomVariableName(processedText.get(i)),
@@ -78,7 +79,7 @@ public abstract class Processing {
 	
 	private List<String> readAnswerFile(String name) throws IOException {
 		Path ansFile = workingDirectory.resolve(name + "-answer.txt");
-		TextFileManager txtManager = new TextFileManager(ansFile, StandardCharsets.ISO_8859_1);
+		TextFileManager txtManager = new TextFileManager(ansFile, StandardCharsets.UTF_8);
 		
 		return txtManager.readLines();
 	}
@@ -87,7 +88,7 @@ public abstract class Processing {
 	
 	protected List<String> readTestFile(String name) throws IOException {
 		Path ansFile = workingDirectory.resolve(name + "-test.txt");
-		TextFileManager txtManager = new TextFileManager(ansFile, StandardCharsets.ISO_8859_1);
+		TextFileManager txtManager = new TextFileManager(ansFile, StandardCharsets.UTF_8);
 		
 		return txtManager.readLines();
 	}

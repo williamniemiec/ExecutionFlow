@@ -23,7 +23,7 @@ public class InvokedFileProcessorFactory extends FileProcessorFactory {
 										  String outputFilename, 
 										  FileEncoding encode) {
 		return new InvokedFileProcessor.Builder()
-				.file(filepath)
+				.targetFile(filepath)
 				.outputDir(outputDir)
 				.outputFilename(outputFilename)
 				.encoding(encode)
