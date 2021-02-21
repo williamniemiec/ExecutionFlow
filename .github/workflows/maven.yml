@@ -16,13 +16,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.12
-    - name: Build with Maven
+    - name: Build with Maven and generate coverage report
       env:
         GITHUB_USERNAME: williamniemiec
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: mvn --settings settings.xml --file pom.xml install
-    - name: JaCoCo
-      run: mvn clean jacoco:prepare-agent install jacoco:report
+      run: mvn --settings settings.xml --file pom.xml jacoco:prepare-agent install jacoco:report
     - uses: codecov/codecov-action@v1
       with:
           file: ./**/target/site/jacoco/jacoco.xml
