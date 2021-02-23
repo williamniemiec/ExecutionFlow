@@ -70,7 +70,8 @@ public class CodeCleanerAdapter extends CodeCleaner {
 			int newLine = map.getKey()+1;
 			
 			for (Integer originalLine : originalLines) {
-				mapping.put(originalLine+1, newLine);
+				if (originalLine+1 != newLine)
+					mapping.put(originalLine+1, newLine);
 			}
 		}
 
