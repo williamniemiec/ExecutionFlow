@@ -42,9 +42,9 @@ public abstract class Processing {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> procTxt = processSourceCodeFrom(filename);
 		
-//		for (String line : procTxt) {
-//			System.out.println(line);
-//		}
+		for (String line : procTxt) {
+			System.out.println(line);
+		}
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}

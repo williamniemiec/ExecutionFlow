@@ -41,7 +41,7 @@ abstract class FileProcessorTest extends Processing {
 		return Path.of(processor.processFile());
 	}
 
-	private List<String> readLinesFrom(Path file) throws IOException {
+	protected List<String> readLinesFrom(Path file) throws IOException {
 		TextFileManager txtManager = new TextFileManager(
 				file, 
 				FileEncoding.UTF_8.getStandardCharset()
