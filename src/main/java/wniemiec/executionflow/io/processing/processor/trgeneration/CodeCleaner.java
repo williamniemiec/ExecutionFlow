@@ -96,13 +96,13 @@ class CodeCleaner {
 		convertForEachToFor();
 		if (debug) System.out.println("CLEANUP: Converted forEachs to fors");
 		trimLines();
-		separateLinesWithSemicolons();
+//		separateLinesWithSemicolons();
 		if (debug) System.out.println("CLEANUP: Separated lines with semicolons");
 		trimLines();
-		convertForToWhile();
+//		convertForToWhile();
 		if (debug) System.out.println("CLEANUP: Converted fors to whiles");
 		trimLines();
-		separateLinesWithSemicolons(); // separating again in case of continues
+//		separateLinesWithSemicolons(); // separating again in case of continues
 		if (debug) System.out.println("CLEANUP: Separated lines with semicolons");
 		trimLines();
 		separateCaseStatements();
@@ -450,13 +450,17 @@ class CodeCleaner {
 			
 			targetLinesIds.add(i);
 			if (statements.size() > 1 && !processedCode.get(i).contains("catch(Throwable _")) {
+				boolean isForExpression = processedCode.get(i).matches("for[\\s\\t]*\\(.+");
 				boolean lineEndsWithSemicolon = processedCode.get(i).matches("^.*;$");
 				processedCode.set(i, statements.get(0) + ";");
+
 				
 				for (int j=1; j < statements.size(); j++) {
 					String pause = (j == statements.size()-1 && !lineEndsWithSemicolon ? "" : ";");
 					processedCode.add(i+j, statements.get(j) + pause);
-					targetLinesIds.add(i+j);
+					
+					if (!isForExpression)
+						targetLinesIds.add(i+j);
 				}
 				
 				mapping.put(oldLineId, targetLinesIds);
@@ -667,7 +671,7 @@ class CodeCleaner {
 				
 				// Move the iterator to just before the close
 				List<Integer> targetLinesIds = mapping.get(i+1+depth);
-				targetLinesIds.add(closingLine-1);
+				targetLinesIds.add(closingLine-1 +1);
 				mapping.put(i+1+depth, targetLinesIds);
 				processedCode.add(closingLine+1, "%forcenode%" + iteratorStep + ";");
 				processedCode.remove(i+2); //remove old line
@@ -677,6 +681,9 @@ class CodeCleaner {
 				String testStatement = processedCode.get(i+1).substring(0, processedCode.get(i+1).length()-1).trim();
 				processedCode.set(i, "while (" + testStatement + ") {");
 				processedCode.remove(i+1); // Remove old (test) line
+				
+				mapping.put(i+1+depth+1, mapping.get(i+1+depth));
+				mapping.remove(i+1+depth);
 
 				loopsClosingLines.add(closingLine);
 			} else {
@@ -701,7 +708,6 @@ class CodeCleaner {
 				}
 			}
 		}
-		
 		lineMappings.add(mapping);
 	}
 	
