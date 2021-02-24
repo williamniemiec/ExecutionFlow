@@ -462,7 +462,7 @@ class CodeCleaner {
 				mapping.put(oldLineId, targetLinesIds);
 				numAddedLines += statements.size()-1;
 				i += statements.size()-1;	// can skip what we altered already
-			} else if (!processedCode.get(i).matches("[\\s\\t]*[\\}]+[\\s\\t]*")) {
+			} else if (!processedCode.get(i).matches("[\\s\\t]*[\\}\\{]+[\\s\\t]*")) {
 				mapping.put(oldLineId, targetLinesIds);
 			}			
 		}
