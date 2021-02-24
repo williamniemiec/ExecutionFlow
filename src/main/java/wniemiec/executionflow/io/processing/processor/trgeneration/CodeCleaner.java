@@ -74,7 +74,7 @@ class CodeCleaner {
 		eliminateComments();
 		if (debug) System.out.println("CLEANUP: Eliminated comments");
 		trimLines();
-		//eliminateAnnotations();
+		eliminateAnnotations();
 		if (debug) System.out.println("CLEANUP: Eliminated annotations");
 		trimLines();
 		removeBlankLines();
@@ -462,7 +462,7 @@ class CodeCleaner {
 				mapping.put(oldLineId, targetLinesIds);
 				numAddedLines += statements.size()-1;
 				i += statements.size()-1;	// can skip what we altered already
-			} else {
+			} else if (!processedCode.get(i).matches("[\\s\\t]*[\\}]+[\\s\\t]*")) {
 				mapping.put(oldLineId, targetLinesIds);
 			}			
 		}
