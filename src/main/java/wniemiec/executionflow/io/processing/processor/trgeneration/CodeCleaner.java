@@ -122,8 +122,8 @@ class CodeCleaner {
 		trimLines();
 		moveCodeAfterOpenedBracket();
 		trimLines();
-		moveClosingBrackets();
-		trimLines();
+//		moveClosingBrackets();
+//		trimLines();
 //		moveCodeAfterClosedBracket();
 	
 		// At this point, all opening brackets end a line and all closing brackets are on their own line
@@ -334,6 +334,7 @@ class CodeCleaner {
 	private void moveCodeAfterOpenedBracket() {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		int numAddedLines = 0;
+		boolean wasInlineWhile = false;
 		
 		for (int i=0; i<processedCode.size(); i++) {
 			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
@@ -344,7 +345,18 @@ class CodeCleaner {
 			// add current line to targets
 			List<Integer> targetLinesIds = (mapping.containsKey(oldLineId) ? 
 					mapping.get(oldLineId) : new ArrayList<Integer>());
-			targetLinesIds.add(i);
+
+			if (wasInlineWhile) {
+				targetLinesIds.add(i-1);
+				wasInlineWhile = false;
+			}
+			else
+				targetLinesIds.add(i);
+			
+			
+			if (processedCode.get(i).matches("while[\\s\\t]*\\([^\\)]+\\)[\\s\\t]*\\{[\\s\\t]*.+"))
+				wasInlineWhile = true;
+		
 			
 			// find bracket and check if there is code after
 			int idx = Helper.getIndexOfReservedChar(processedCode.get(i), "{");
@@ -363,7 +375,7 @@ class CodeCleaner {
 				mapping.put(oldLineId, targetLinesIds);
 			}
 		}
-//		System.out.println(lineMappings);
+		
 		lineMappings.add(mapping);
 	}
 	

@@ -77,15 +77,19 @@ public class CodeCleanerAdapter extends CodeCleaner {
 					currentMultiline = 0;
 				}
 				
-				mapping.put(originalLines.get(currentMultiline)+1, newLine);
+				if (originalLines.get(currentMultiline)+1 != newLine)
+					mapping.put(originalLines.get(currentMultiline)+1, newLine);
+//				System.out.println((originalLines.get(currentMultiline)+1) + " -> "+newLine);
 				
 				if (multiline > 0) {
 					multiline--;
 					currentMultiline++;
 				}
+				
 			}
 			else if (originalLines.size() == 1) {
-				mapping.put(originalLines.get(0)+1, newLine);
+				if (originalLines.get(0)+1 != newLine)
+					mapping.put(originalLines.get(0)+1, newLine);
 			}
 		}
 		return mapping;
