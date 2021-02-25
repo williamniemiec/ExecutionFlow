@@ -663,7 +663,7 @@ class CodeCleaner {
 				idx = processedCode.get(i+2).lastIndexOf(")");
 				String iteratorStep = processedCode.get(i+2).substring(0, idx).replaceAll(",", ";");
 				mapping.put(i+1+depth, new ArrayList<Integer>());
-
+	
 				// Clone the iterator to just before any continues present in the loop				
 				List<Integer> continueLinesId = getContinuesInLoopBlock(i, closingLine+1);
 				for(int lineId : continueLinesId) {
@@ -674,17 +674,12 @@ class CodeCleaner {
 					processedCode.set(lineId, "%forcenode%" + iteratorStep + "; continue;");
 				}
 				
-				// Move the iterator to just before the close
-				List<Integer> targetLinesIds = mapping.get(i+1+depth);
-				targetLinesIds.add(closingLine-1 +1);
-				mapping.put(i+1+depth, targetLinesIds);
-
+				// Move the iterator to just before the close				
 				processedCode.add(closingLine+1, "%forcenode%" + iteratorStep + ";");
 				processedCode.remove(i+2); //remove old line
 				
 				// Replace for initialization with while
-				mapping.put(i+depth, Helper.initArray(i));
-
+				mapping.put(i+depth, Helper.initArray(i+1));
 				String testStatement = processedCode.get(i+1).substring(0, processedCode.get(i+1).length()-1).trim();
 				processedCode.set(i, "while (" + testStatement + ") {");
 				processedCode.remove(i+1); // Remove old (test) line
