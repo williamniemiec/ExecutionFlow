@@ -81,6 +81,7 @@ public class CodeCleanerAdapter extends CodeCleaner {
 					mapping.put(originalLines.get(currentMultiline)+1, newLine);
 //				System.out.println((originalLines.get(currentMultiline)+1) + " -> "+newLine);
 				
+				
 				if (multiline > 0) {
 					multiline--;
 					currentMultiline++;

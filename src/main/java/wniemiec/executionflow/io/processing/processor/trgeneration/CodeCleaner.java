@@ -122,9 +122,9 @@ class CodeCleaner {
 		trimLines();
 		moveCodeAfterOpenedBracket();
 		trimLines();
-//		moveClosingBrackets();
-//		trimLines();
-//		moveCodeAfterClosedBracket();
+		moveClosingBrackets();
+		trimLines();
+		moveCodeAfterClosedBracket();
 	
 		// At this point, all opening brackets end a line and all closing brackets are on their own line
 	}
@@ -408,7 +408,7 @@ class CodeCleaner {
 				processedCode.set(i, preceding); // remove the text starting with the } on the current line
 				
 				mapping.put(oldLineId, targetLinesIds);
-				numAddedLines++;
+//				numAddedLines++;
 			} else {
 				mapping.put(oldLineId, targetLinesIds);
 			}
@@ -466,25 +466,26 @@ class CodeCleaner {
 				boolean isForExpression = processedCode.get(i).matches("for[\\s\\t]*\\(.+");
 				boolean lineEndsWithSemicolon = processedCode.get(i).matches("^.*;$");
 				boolean hasContinue = processedCode.get(i).contains("continue;");
-				
+				boolean inlineIfElse = processedCode.get(i).contains("else ");
 				processedCode.set(i, statements.get(0) + ";");
-//				
+				
 				for (int j=1; j < statements.size(); j++) {
 					String pause = (j == statements.size()-1 && !lineEndsWithSemicolon ? "" : ";");
 					processedCode.add(i+j, statements.get(j) + pause);
 					
-					if (!isForExpression)
+					if (!isForExpression && !inlineIfElse)
 						targetLinesIds.add(i+j);
 				}
-				
+
 				mapping.put(oldLineId, targetLinesIds);
+				
 				numAddedLines += statements.size()-1;
 				
 				if (!hasContinue)
 					i += statements.size()-1;	// can skip what we altered already
 			} else if (!processedCode.get(i).matches("[\\s\\t]*[\\}\\{]+[\\s\\t]*")) {
 				mapping.put(oldLineId, targetLinesIds);
-			}			
+			}
 		}
 
 		lineMappings.add(mapping);
