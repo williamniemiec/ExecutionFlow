@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since 		5.2.0
  */
 public class CodeCleanerAdapter extends CodeCleaner {
@@ -66,25 +66,32 @@ public class CodeCleanerAdapter extends CodeCleaner {
 		int totMap = (lineMappings.size() <= 1) ? 0 : lineMappings.size()-1;
 		int multiline = 0;
 		int currentMultiline = 0;
-		
+	
 		for (Map.Entry<Integer, List<Integer>> map : lineMappings.get(totMap).entrySet()) {
 			List<Integer> originalLines = map.getValue();
 			int newLine = map.getKey()+1;
 			
+			if (originalLines.size() > 1 && (originalLines.get(0) == originalLines.get(1)))
+				continue;
+			
 			if (originalLines.size() > 1) {
-				if (multiline == 0) {
+				if (multiline == 0 && currentMultiline == 0) {
 					multiline = originalLines.size();	
 					currentMultiline = 0;
 				}
-				
-				if (originalLines.get(currentMultiline)+1 != newLine)
+				if (originalLines.get(currentMultiline)+1 != newLine) {
 					mapping.put(originalLines.get(currentMultiline)+1, newLine);
-//				System.out.println((originalLines.get(currentMultiline)+1) + " -> "+newLine);
-				
+				}
 				
 				if (multiline > 0) {
 					multiline--;
 					currentMultiline++;
+					
+					if (currentMultiline == originalLines.size())
+						currentMultiline = 0;
+				}
+				else {
+					currentMultiline = 0;
 				}
 				
 			}

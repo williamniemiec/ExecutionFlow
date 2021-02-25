@@ -120,11 +120,11 @@ class CodeCleaner {
 		//  actually, in the functions, do not split if its only spaces and tabs
 		moveOpeningBrackets();
 		trimLines();
-//		moveCodeAfterOpenedBracket();
-//		trimLines();
-//		moveClosingBrackets();
-//		trimLines();
-//		moveCodeAfterClosedBracket();
+		moveCodeAfterOpenedBracket();
+		trimLines();
+		moveClosingBrackets();
+		trimLines();
+		moveCodeAfterClosedBracket();
 	
 		// At this point, all opening brackets end a line and all closing brackets are on their own line
 	}
@@ -354,7 +354,7 @@ class CodeCleaner {
 				targetLinesIds.add(i);
 			
 			
-			if (processedCode.get(i).matches("while[\\s\\t]*\\([^\\)]+\\)[\\s\\t]*\\{[\\s\\t]*.+"))
+			if (isInlineDoWhile(processedCode.get(i))|| processedCode.get(i).matches("while[\\s\\t]*\\([^\\)]+\\)[\\s\\t]*\\{[\\s\\t]*.+"))
 				wasInlineWhile = true;
 		
 			
@@ -372,7 +372,11 @@ class CodeCleaner {
 				mapping.put(oldLineId, targetLinesIds);
 				numAddedLines++;
 			} else {
-				mapping.put(oldLineId, targetLinesIds);
+				if (targetLinesIds.size() == 3) { // Fix inline if else
+					mapping.put(oldLineId, List.of(targetLinesIds.get(0)));
+				}
+				else 
+					mapping.put(oldLineId, targetLinesIds);
 			}
 		}
 		
@@ -410,6 +414,8 @@ class CodeCleaner {
 				mapping.put(oldLineId, targetLinesIds);
 				numAddedLines++;
 			} else {
+				if (targetLinesIds.size() == 3)
+					System.out.println(targetLinesIds);
 				mapping.put(oldLineId, targetLinesIds);
 			}
 		}
@@ -466,15 +472,17 @@ class CodeCleaner {
 				boolean isForExpression = processedCode.get(i).matches("for[\\s\\t]*\\(.+");
 				boolean lineEndsWithSemicolon = processedCode.get(i).matches("^.*;$");
 				boolean hasContinue = processedCode.get(i).contains("continue;");
-				boolean inlineIf = processedCode.get(i).matches("if[\\s\\t]*\\(.+\\)[\\s\\t]*return[\\s\\t]+[^;]+;.*");
-				boolean inlineDo = processedCode.get(i).matches("do[\\s\\t]*\\{.+\\}[\\s\\t]*while[\\s\\t]*\\(.+\\);.*");
 				boolean inlineTryCatch = processedCode.get(i).matches("try[\\s\\t]*\\{.+\\}[\\s\\t]*catch[\\s\\t]*\\(.+\\)[\\s\\t]*\\{.*\\}.*");
+				boolean isInlineIfElse = isInlineIfElse(processedCode.get(i));
+				boolean isInlineDoWhile = isInlineDoWhile(processedCode.get(i));
+				
 				processedCode.set(i, statements.get(0) + ";");
 				for (int j=1; j < statements.size(); j++) {
 					String pause = (j == statements.size()-1 && !lineEndsWithSemicolon ? "" : ";");
 					processedCode.add(i+j, statements.get(j) + pause);
 					
-					if (!isForExpression && !inlineIf && !inlineDo && !inlineTryCatch)
+					if (!isForExpression && !isInlineIfElse && 
+							!isInlineDoWhile && !inlineTryCatch)
 						targetLinesIds.add(i+j);
 				}
 
@@ -490,6 +498,15 @@ class CodeCleaner {
 		}
 
 		lineMappings.add(mapping);
+	}
+	
+	private boolean isInlineIfElse(String line) {
+		return	line.matches("if[\\s\\t]*\\(.+\\)[\\s\\t{]*return[\\s\\t]+[^;]+;.*")
+				|| line.matches("if[\\s\\t]*\\(.+\\)([\\s\\t]*\\{.+\\}[\\s\\t]*else)+[^;]+;.*");
+	}
+	
+	private boolean isInlineDoWhile(String line) {
+		return line.matches("do[\\s\\t]*\\{.+\\}[\\s\\t]*while[\\s\\t]*\\(.+\\);.*");
 	}
 	
 	private void combineMultiLineStatements() {
