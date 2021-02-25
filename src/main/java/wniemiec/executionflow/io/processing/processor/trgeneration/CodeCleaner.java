@@ -124,7 +124,8 @@ class CodeCleaner {
 		trimLines();
 		moveClosingBrackets();
 		trimLines();
-		moveCodeAfterClosedBracket();
+//		moveCodeAfterClosedBracket();
+	
 		// At this point, all opening brackets end a line and all closing brackets are on their own line
 	}
 
@@ -362,7 +363,7 @@ class CodeCleaner {
 				mapping.put(oldLineId, targetLinesIds);
 			}
 		}
-		
+//		System.out.println(lineMappings);
 		lineMappings.add(mapping);
 	}
 	

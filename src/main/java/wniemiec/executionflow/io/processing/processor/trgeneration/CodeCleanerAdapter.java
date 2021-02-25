@@ -64,17 +64,22 @@ public class CodeCleanerAdapter extends CodeCleaner {
 		
 		Map<Integer, Integer> mapping = new HashMap<>();
 		int totMap = (lineMappings.size() <= 1) ? 0 : lineMappings.size()-1;
-
+		
 		for (Map.Entry<Integer, List<Integer>> map : lineMappings.get(totMap).entrySet()) {
 			List<Integer> originalLines = map.getValue();
 			int newLine = map.getKey()+1;
 			
-			for (Integer originalLine : originalLines) {
-				if (originalLine+1 != newLine)
-					mapping.put(originalLine+1, newLine);
+			if (originalLines.size() > 1) {
+				mapping.put(newLine, newLine);
 			}
+			else if (originalLines.size() == 1) {
+				mapping.put(originalLines.get(0)+1, newLine);
+			}
+//			for (Integer originalLine : originalLines) {
+////				if (originalLine+1 != newLine)
+//					mapping.put(originalLine+1, newLine);
+//			}
 		}
-
 		return mapping;
 	}
 }
