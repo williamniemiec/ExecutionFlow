@@ -96,13 +96,13 @@ class CodeCleaner {
 		convertForEachToFor();
 		if (debug) System.out.println("CLEANUP: Converted forEachs to fors");
 		trimLines();
-//		separateLinesWithSemicolons();
+		separateLinesWithSemicolons();
 		if (debug) System.out.println("CLEANUP: Separated lines with semicolons");
 		trimLines();
-//		convertForToWhile();
+		convertForToWhile();
 		if (debug) System.out.println("CLEANUP: Converted fors to whiles");
 		trimLines();
-//		separateLinesWithSemicolons(); // separating again in case of continues
+		separateLinesWithSemicolons(); // separating again in case of continues
 		if (debug) System.out.println("CLEANUP: Separated lines with semicolons");
 		trimLines();
 		separateCaseStatements();
@@ -452,9 +452,10 @@ class CodeCleaner {
 			if (statements.size() > 1 && !processedCode.get(i).contains("catch(Throwable _")) {
 				boolean isForExpression = processedCode.get(i).matches("for[\\s\\t]*\\(.+");
 				boolean lineEndsWithSemicolon = processedCode.get(i).matches("^.*;$");
-				processedCode.set(i, statements.get(0) + ";");
-
+				boolean hasContinue = processedCode.get(i).contains("continue;");
 				
+				processedCode.set(i, statements.get(0) + ";");
+//				
 				for (int j=1; j < statements.size(); j++) {
 					String pause = (j == statements.size()-1 && !lineEndsWithSemicolon ? "" : ";");
 					processedCode.add(i+j, statements.get(j) + pause);
@@ -465,7 +466,9 @@ class CodeCleaner {
 				
 				mapping.put(oldLineId, targetLinesIds);
 				numAddedLines += statements.size()-1;
-				i += statements.size()-1;	// can skip what we altered already
+				
+				if (!hasContinue)
+					i += statements.size()-1;	// can skip what we altered already
 			} else if (!processedCode.get(i).matches("[\\s\\t]*[\\}\\{]+[\\s\\t]*")) {
 				mapping.put(oldLineId, targetLinesIds);
 			}			
@@ -586,7 +589,7 @@ class CodeCleaner {
 				int closingLine = Helper.findEndOfBlock(processedCode, i+3);
 				
 				// Move the initialization before the loop
-				mapping.put(i+depth, Helper.initArray(i));
+				mapping.put(i+depth, Helper.initArray(i+1));
 				int idx = processedCode.get(i).indexOf("(");
 				String initVar = processedCode.get(i).substring(idx+1).trim();
 				boolean isVarDeclaration = initVar.matches("[\\s\\t]*([^\\s\\t]+)[\\s\\t]+([^\\s\\t]+)[\\s\\t]*=.+");
@@ -659,13 +662,14 @@ class CodeCleaner {
 				idx = processedCode.get(i+2).lastIndexOf(")");
 				String iteratorStep = processedCode.get(i+2).substring(0, idx).replaceAll(",", ";");
 				mapping.put(i+1+depth, new ArrayList<Integer>());
-				
+
 				// Clone the iterator to just before any continues present in the loop				
 				List<Integer> continueLinesId = getContinuesInLoopBlock(i, closingLine+1);
 				for(int lineId : continueLinesId) {
 					List<Integer> targetLinesIds = mapping.get(i+1+depth);
 					targetLinesIds.add(lineId);
 					mapping.put(i+1+depth, targetLinesIds);
+
 					processedCode.set(lineId, "%forcenode%" + iteratorStep + "; continue;");
 				}
 				
@@ -673,25 +677,24 @@ class CodeCleaner {
 				List<Integer> targetLinesIds = mapping.get(i+1+depth);
 				targetLinesIds.add(closingLine-1 +1);
 				mapping.put(i+1+depth, targetLinesIds);
+
 				processedCode.add(closingLine+1, "%forcenode%" + iteratorStep + ";");
 				processedCode.remove(i+2); //remove old line
 				
 				// Replace for initialization with while
 				mapping.put(i+depth, Helper.initArray(i));
+
 				String testStatement = processedCode.get(i+1).substring(0, processedCode.get(i+1).length()-1).trim();
 				processedCode.set(i, "while (" + testStatement + ") {");
 				processedCode.remove(i+1); // Remove old (test) line
 				
-				mapping.put(i+1+depth+1, mapping.get(i+1+depth));
-				mapping.remove(i+1+depth);
-
 				loopsClosingLines.add(closingLine);
 			} else {
 				int depth = loopsClosingLines.size();
 				if (depth > 0 && i == loopsClosingLines.get(depth-1) - 1) {
 					loopsClosingLines.remove(loopsClosingLines.size()-1);
 				} else {
-					mapping.put(i+depth, Helper.initArray(i));
+						mapping.put(i+depth, Helper.initArray(i));
 				}
 			}
 			
