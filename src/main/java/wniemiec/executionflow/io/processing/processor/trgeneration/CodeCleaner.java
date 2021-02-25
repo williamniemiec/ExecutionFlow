@@ -468,13 +468,13 @@ class CodeCleaner {
 				boolean hasContinue = processedCode.get(i).contains("continue;");
 				boolean inlineIf = processedCode.get(i).matches("if[\\s\\t]*\\(.+\\)[\\s\\t]*return[\\s\\t]+[^;]+;.*");
 				boolean inlineDo = processedCode.get(i).matches("do[\\s\\t]*\\{.+\\}[\\s\\t]*while[\\s\\t]*\\(.+\\);.*");
-
+				boolean inlineTryCatch = processedCode.get(i).matches("try[\\s\\t]*\\{.+\\}[\\s\\t]*catch[\\s\\t]*\\(.+\\)[\\s\\t]*\\{.*\\}.*");
 				processedCode.set(i, statements.get(0) + ";");
 				for (int j=1; j < statements.size(); j++) {
 					String pause = (j == statements.size()-1 && !lineEndsWithSemicolon ? "" : ";");
 					processedCode.add(i+j, statements.get(j) + pause);
 					
-					if (!isForExpression && !inlineIf && !inlineDo)
+					if (!isForExpression && !inlineIf && !inlineDo && !inlineTryCatch)
 						targetLinesIds.add(i+j);
 				}
 
