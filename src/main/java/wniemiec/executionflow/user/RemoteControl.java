@@ -99,8 +99,8 @@ public class RemoteControl {
 	}
 	
 	public static void main(String[] args) {
-//		RemoteControl.open();
-		LogView.askLogLevel();
+		RemoteControl.open();
+//		LogView.askLogLevel();
 		
 		
 //		JOptionPane op = new JOptionPane("message", JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION); 

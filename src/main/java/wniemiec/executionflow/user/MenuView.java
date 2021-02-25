@@ -4,9 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,75 +42,101 @@ public class MenuView extends JFrame {
 	
 	public void open() {
 		
-		setTitle("Test");
+		setTitle("Execution Flow");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(300, 300, 820, 180);
 		setResizable(false);
+		
+		BufferedImage img = null;
+		try {
+		    img = ImageIO.read(new File("ef_icon.png"));
+		} catch (IOException e) {
+		}
+//		Icon icon = new ImageIcon("ef_icon.png",
+//                "a pretty but meaningless splat");
+		setIconImage(img);
+
 		JPanel central = new JPanel(new BorderLayout(0, 0));
 		central.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		central.setBackground(new Color(25,25,25));
+		central.add(createLoggingLevelSelector(), BorderLayout.CENTER);
+		central.add(createExportTypeSelector(), BorderLayout.NORTH);
 		
 		getContentPane().add(central);
-		
+	}
+
+	private JPanel createLoggingLevelSelector() {
 		JPanel panel = new JPanel();
 		panel.setBackground(bgColor);
-		central.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
-		JLabel lblLog = new JLabel("Logging level");
-		lblLog.setForeground(Color.white);
 		
-		panel.add(lblLog, BorderLayout.NORTH);
+		panel.add(createTitle("Logging level"), BorderLayout.NORTH);
+		
 		panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+		panel.add(createLoggingLevelOptions(), BorderLayout.CENTER);
 		
+		return panel;
+	}
+	
+	private JLabel createTitle(String title) {
+		JLabel lblTitle = new JLabel(title);
+		lblTitle.setForeground(Color.white);
+		
+		return lblTitle;
+	}
+
+	private JPanel createLoggingLevelOptions() {
 		JPanel panelLog = new JPanel();
 		panelLog.setBackground(bgColor);
-		panel.add(panelLog, BorderLayout.CENTER);
 		panelLog.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		for (JButton btn : initializeOptions()) {
 			panelLog.add(btn);
 		}
 		
-		JPanel panel_1 = new JPanel();
-		central.add(panel_1, BorderLayout.NORTH);
-		panel_1.setBackground(bgColor);
-		panel_1.setLayout(new BorderLayout(0, 0));
+		return panelLog;
+	}
+
+	private JPanel createExportTypeSelector() {
+		JPanel exportTypeSelector;
+		exportTypeSelector = new JPanel();
+		exportTypeSelector.setBackground(bgColor);
+		exportTypeSelector.setLayout(new BorderLayout(0, 0));
+		exportTypeSelector.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 		
-		JLabel lblNewLabel = new JLabel("Test path export mode");
-		lblNewLabel.setForeground(Color.white);
-		panel_1.add(lblNewLabel, BorderLayout.NORTH);
-		panel_1.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
+		exportTypeSelector.add(createTitle("Test path export mode"), BorderLayout.NORTH);
+		exportTypeSelector.add(createExportTypeOptions(), BorderLayout.SOUTH);
 		
-		
-		
-		
-		
-		JPanel panel_2 = new JPanel();
-		panel_1.add(panel_2, BorderLayout.SOUTH);
-		panel_2.setBackground(bgColor);
+		return exportTypeSelector;
+	}
+
+	private JPanel createExportTypeOptions() {				
+		JRadioButton rdoConsole = createThemeRadioButton("Console", false);
+		JRadioButton rdoFile = createThemeRadioButton("File", true);
 		
 		ButtonGroup rdoGroup = new ButtonGroup();
+		rdoGroup.add(rdoConsole);
+		rdoGroup.add(rdoFile);
 		
-		JRadioButton rdbtnNewRadioButton = new JRadioButton("Console");
-		rdbtnNewRadioButton.setBackground(bgColor);
-		rdbtnNewRadioButton.setForeground(Color.white);
-		rdbtnNewRadioButton.setRequestFocusEnabled(false);
-		rdbtnNewRadioButton.setBorderPainted(false);
-		rdbtnNewRadioButton.setBorder(BorderFactory.createEmptyBorder());
+		JPanel exportTypeOptions = new JPanel();
+		exportTypeOptions.setBackground(bgColor);
+		exportTypeOptions.add(rdoConsole);
+		exportTypeOptions.add(rdoFile);
 		
-		JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("File");
-		rdbtnNewRadioButton_1.setBackground(bgColor);
-		rdbtnNewRadioButton_1.setForeground(Color.white);
-		rdbtnNewRadioButton_1.setRequestFocusEnabled(false);
-		rdbtnNewRadioButton_1.setBorderPainted(false);
-		rdbtnNewRadioButton_1.setBorder(BorderFactory.createEmptyBorder());
+		return exportTypeOptions;
+	}
+
+	private JRadioButton createThemeRadioButton(String label, boolean selected) {
+		JRadioButton rdo = new JRadioButton(label);
+		rdo.setBackground(bgColor);
+		rdo.setForeground(Color.white);
+		rdo.setRequestFocusEnabled(false);
+		rdo.setBorderPainted(false);
+		rdo.setBorder(BorderFactory.createEmptyBorder());
+		rdo.setFocusable(false);
+		rdo.setSelected(selected);
 		
-		rdoGroup.add(rdbtnNewRadioButton);
-		rdoGroup.add(rdbtnNewRadioButton_1);
-		
-		panel_2.add(rdbtnNewRadioButton);
-		panel_2.add(rdbtnNewRadioButton_1);
-		
+		return rdo;
 	}
 	
 	private static JButton[] initializeOptions() {
