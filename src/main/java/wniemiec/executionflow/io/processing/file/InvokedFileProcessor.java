@@ -213,7 +213,7 @@ public class InvokedFileProcessor extends FileProcessor {
 		
 		removeInlineComments();
 		doTRGenerationProcesing();
-		doHolePlugProcessing();
+//		doHolePlugProcessing();
 		disablePrintCalls();
 		
 		return processedLines;

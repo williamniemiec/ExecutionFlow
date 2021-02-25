@@ -77,6 +77,15 @@ else {int _0=0;
 return false;
 }
 }
+@wniemiec.executionflow.runtime.CollectCalls public int ifElseSameLine(int num) {
+if (num > 0) {
+num *= 0;
+}
+else {int _0=0;
+num = 10;
+}
+return num;
+}
 @wniemiec.executionflow.runtime.CollectCalls public int ifElseSameLine2(int num)	{
 if (num > 0) {
 num *= 0;

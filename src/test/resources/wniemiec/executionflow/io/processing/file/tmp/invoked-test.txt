@@ -74,6 +74,14 @@ public class Foo {
 		if (n > 0) return true; else return false; 
 	}
 	
+	public int ifElseSameLine(int num) {
+		if (num > 0) { num *= 0; } else {
+			num = 10;
+		}
+		
+		return num;
+	}
+	
 	public int ifElseSameLine2(int num)	{
 		if (num > 0) { num *= 0; } else { num = 10; }
 		

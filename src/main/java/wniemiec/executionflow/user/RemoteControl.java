@@ -10,6 +10,8 @@ import java.awt.Point;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 
@@ -86,7 +88,7 @@ public class RemoteControl {
 	}
 
 	private static JButton createStopButton() {
-		JButton stop = new ThemeButton("Stop");
+		JButton stop = new ThemeButton("STOP");
 		
 		stop.setFocusPainted(false);
 		stop.addActionListener(event ->
@@ -96,52 +98,31 @@ public class RemoteControl {
 		return stop;
 	}
 	
-	private static class ThemeButton extends JButton {
-        private ThemeButton(String title) {
-            super(title);
-            setContentAreaFilled(false);
-            setFocusPainted(false); 
-            setForeground(Color.WHITE);
-            setFont(new Font("Arial", Font.BOLD, 30));
-            setBorder(BorderFactory.createEmptyBorder());
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            final Graphics2D g2 = (Graphics2D) g.create();
-            if (getModel().isPressed()) {
-            	g2.setPaint(new GradientPaint(
-                        new Point(0, 0), 
-                        new Color(78,0,142),
-                        new Point(0, getHeight()), 
-                        new Color(78,0,142))
-    			);
-            } 
-            else if (getModel().isRollover()) {
-            	g2.setPaint(new GradientPaint(
-                        new Point(0, 0), 
-                        new Color(255,0,144),
-                        new Point(0, getHeight()), 
-                        new Color(255,0,144))
-    			);
-          
-            }
-            else {
-	            g2.setPaint(new GradientPaint(
-	                    new Point(0, 0), 
-	                    new Color(255,0,144),
-	                    new Point(0, getHeight()), 
-	                    new Color(78,0,142))
-	    		);
-            }
-            g2.fillRect(0, 0, getWidth(), getHeight());
-            g2.dispose();
-
-            super.paintComponent(g);
-        }
-    }
-	
 	public static void main(String[] args) {
-		RemoteControl.open();
+//		RemoteControl.open();
+		LogView.askLogLevel();
+		
+		
+//		JOptionPane op = new JOptionPane("message", JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION); 
+//	     op.setOpaque(true);
+//	     op.setBackground(Color.WHITE);
+//	     op.createDialog(null, "Titel").setVisible(true);
+		
+		
+		
+//		JButton[] btnOptions = new JButton[] {
+//				new ThemeButton("STOP"),
+//				new ThemeButton("STOP")
+//		};
+//		
+//		 UIManager UI=new UIManager();
+//		 UI.put("OptionPane.background", Color.white);
+//		 UI.put("Panel.background", Color.white);
+//		 
+//		JOptionPane.showOptionDialog(
+//				null, "Choose log level", "Log option", 
+//				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
+//				null, btnOptions, btnOptions[1]
+//		);
 	}
 }
