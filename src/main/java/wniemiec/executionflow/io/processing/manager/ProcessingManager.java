@@ -90,8 +90,7 @@ public class ProcessingManager {
 	public static FilesProcessingManager initializePreTestMethodManager() 
 			throws ClassNotFoundException, IOException {
 		return new FilesProcessingManager(
-				ProcessorType.PRE_TEST_METHOD, 
-				false, 
+				ProcessorType.PRE_TEST_METHOD,
 				true
 		);
 	}
@@ -99,8 +98,7 @@ public class ProcessingManager {
 	private static FilesProcessingManager initializeTestMethodManager(boolean restoreOriginalFiles)
 			throws ClassNotFoundException, IOException {
 		return new FilesProcessingManager(
-				ProcessorType.TEST_METHOD, 
-				true, 
+				ProcessorType.TEST_METHOD,
 				restoreOriginalFiles
 		);
 	}
@@ -108,13 +106,12 @@ public class ProcessingManager {
 	private static FilesProcessingManager initializeInvokedManager(boolean restoreOriginalFiles)
 			throws ClassNotFoundException, IOException {
 		FilesProcessingManager invokedManager = new FilesProcessingManager(
-				ProcessorType.INVOKED, 
-				true, 
+				ProcessorType.INVOKED,
 				restoreOriginalFiles
 		);
 		
 		if (!restoreOriginalFiles)
-			invokedManager.load();
+			invokedManager.loadBackup();
 		
 		return invokedManager;
 	}

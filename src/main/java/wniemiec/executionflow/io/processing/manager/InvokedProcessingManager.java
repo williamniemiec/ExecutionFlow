@@ -40,7 +40,7 @@ public class InvokedProcessingManager {
 			this.invokedFilesManager = invokedFilesManager;
 			
 			if (!restoreOriginalFiles)
-				invokedFilesManager.load();
+				invokedFilesManager.loadBackup();
 		}
 		catch (ClassNotFoundException e) {
 			throw new ClassNotFoundException("Class FileManager not found");
@@ -129,7 +129,7 @@ public class InvokedProcessingManager {
 			return;
 		
 		try {
-			if (invokedFilesManager.load())
+			if (invokedFilesManager.loadBackup())
 				invokedFilesManager.restoreAll();
 		} 
 		catch (ClassNotFoundException e) {

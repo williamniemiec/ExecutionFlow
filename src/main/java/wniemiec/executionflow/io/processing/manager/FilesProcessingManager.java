@@ -21,7 +21,7 @@ import wniemiec.executionflow.io.processing.file.ProcessorType;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since		2.0.0
  */
 public class FilesProcessingManager {
@@ -56,9 +56,7 @@ public class FilesProcessingManager {
 	 * <code>_EF_ + type.getName() + _FILES.ef</code>
 	 * 
 	 * @param		type Type of parser that will be used in 
-	 * {@link #processFile(FileProcessingManager)}
-	 * @param		autoDelete If true, if there are backup files, it will 
-	 * delete them after restore them
+	 * {@link #process(FileProcessingManager)}
 	 * @param		autoRestore If true and if there are backup files, restore them
 	 * 
 	 * @throws		IOException If an error occurs during class deserialization
@@ -66,12 +64,15 @@ public class FilesProcessingManager {
 	 * @throws		ClassNotFoundException If class {@link FileProcessingManager} is not
 	 * found  
 	 */
-	public FilesProcessingManager(ProcessorType type, boolean autoDelete, boolean autoRestore) 
+	public FilesProcessingManager(ProcessorType type, boolean autoRestore) 
 			throws ClassNotFoundException, IOException {
 		this.files = new HashSet<>(); 
 		this.processedFiles = new HashSet<>();
 		this.compiledFiles = new HashSet<>();
-		this.autoDelete = autoDelete;
+		
+		// if there are backup files, it will 
+		// delete them after restore them
+		this.autoDelete = (type != ProcessorType.PRE_TEST_METHOD);
 		
 		this.backupFile = new File(
 				App.getCurrentProjectRoot().toFile(), 
@@ -86,51 +87,24 @@ public class FilesProcessingManager {
 	/**
 	 * Manages invoked file (an invoked can be a method or a constructor),
 	 * being responsible for its processing and compilation. It will avoid 
-	 * processing files that have already been processed. Also, if the 
-	 * application ends before the original files are restored, it will restore
-	 * them. It will create a backup file with the following name: <br /> <br />
+	 * processing files that have already been processed. Using this 
+	 * constructor,If there are backup files, it will restore them. Finally,
+	 * it will create a backup file with the following name: <br /> <br />
 	 * 
 	 * <code>_EF_ + type.getName() + _FILES.ef</code>
 	 * 
 	 * @param		type Type of parser that will be used in 
-	 * {@link #processFile(FileProcessingManager)}
-	 * @param		autoDelete If true, if there are backup files, it will 
-	 * delete them after restore them
-	 * @param		restore If true and if there are backup files, restore them
+	 * {@link #process(FileProcessingManager)}
+	 * @param		autoRestore If true and if there are backup files, restore them
 	 * 
 	 * @throws		IOException If an error occurs during class deserialization
 	 * (while restoring backup files)
 	 * @throws		ClassNotFoundException If class {@link FileProcessingManager} is not
 	 * found  
 	 */
-	public FilesProcessingManager(ProcessorType type, boolean autoDelete)
+	public FilesProcessingManager(ProcessorType type) 
 			throws ClassNotFoundException, IOException {
-		this(type, autoDelete, true);
-	}
-	
-	/**
-	 * Manages invoked file (an invoked can be a method or a constructor), 
-	 * being responsible for its processing and compilation. It will avoid
-	 * processing files that have already been processed. Also, if the 
-	 * application ends before the original files are restored, it will restore
-	 * them. Using this constructor, if there are backup files, they will be 
-	 * restored. Besides, {@link ProcessorType} will be 
-	 * {@link ProcessorType#INVOKED}. Also, it will create a backup file with the 
-	 * following name: <br /> <br />
-	 * 
-	 * <code>_EF_ + {@link ProcessorType#INVOKED}.getName() + _FILES.ef</code>
-	 * 
-	 * @param		autoDelete If true, if there are backup files, it will 
-	 * delete them after restore them
-	 * 
-	 * @throws		IOException If an error occurs during class deserialization
-	 * (while restoring backup files)
-	 * 
-	 * @throws		ClassNotFoundException If class {@link FileProcessingManager} is not
-	 * found  
-	 */
-	public FilesProcessingManager(boolean autoDelete) throws ClassNotFoundException, IOException {
-		this(ProcessorType.INVOKED, autoDelete, true);
+		this(type, true);
 	}
 	
 	
@@ -273,7 +247,7 @@ public class FilesProcessingManager {
 
 		if (!files.contains(fm)) {
 			files.add(fm);
-			save();
+			createBackup();
 		}
 	}
 	
@@ -283,7 +257,7 @@ public class FilesProcessingManager {
 	 * 
 	 * @throws		IOException If an error occurs during class serialization 
 	 */
-	public void save() throws IOException {
+	public void createBackup() throws IOException {
 		try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(backupFile))) {
 			ois.writeObject(files);
 			ois.writeObject(processedFiles);
@@ -302,7 +276,7 @@ public class FilesProcessingManager {
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesProcessingManager processFile(FileProcessingManager fm) throws IOException {
+	public FilesProcessingManager process(FileProcessingManager fm) throws IOException {
 		return processFile(fm, true);
 	}
 	
@@ -344,7 +318,7 @@ public class FilesProcessingManager {
 		
 		if (!files.contains(fm)) {
 			files.add(fm);
-			save();
+			createBackup();
 		}
 	}
 	
@@ -368,7 +342,8 @@ public class FilesProcessingManager {
 	 * Retrieves the list of file managers stores in a backup file. This list
 	 * will be saved in {@link #files}.
 	 * 
-	 * @return		If the lists of file managers were retrieved
+	 * @return		True if backup file has been successful loaded; false
+	 * otherwise
 	 * 
 	 * @throws 		IOException If an error occurs while deserializing the list
 	 * of file managers 
@@ -378,7 +353,7 @@ public class FilesProcessingManager {
 	 * @implNote	If backup file does not exist, {@link #files} will be null
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean load() throws IOException, ClassNotFoundException {
+	public boolean loadBackup() throws IOException, ClassNotFoundException {
 		if (!hasBackupStored())
 			return false;
 		

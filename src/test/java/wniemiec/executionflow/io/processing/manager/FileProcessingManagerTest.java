@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
@@ -22,7 +22,7 @@ class FileProcessingManagerTest {
 	private FileProcessingManager fileProcessingManager;
 	private static final boolean AUTO_RESTORE = false;
 	
-	@BeforeEach
+	@AfterEach
 	void clean() throws IOException {
 		if (fileProcessingManager == null)
 				return;
