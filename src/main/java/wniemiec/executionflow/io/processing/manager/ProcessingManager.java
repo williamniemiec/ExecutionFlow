@@ -1,4 +1,4 @@
-package wniemiec.executionflow.runtime.hook;
+package wniemiec.executionflow.io.processing.manager;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -17,9 +17,6 @@ import wniemiec.executionflow.io.processing.file.TestMethodFileProcessor;
 import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
 import wniemiec.executionflow.io.processing.file.factory.PreTestMethodFileProcessorFactory;
 import wniemiec.executionflow.io.processing.file.factory.TestMethodFileProcessorFactory;
-import wniemiec.executionflow.io.processing.manager.FileProcessingManager;
-import wniemiec.executionflow.io.processing.manager.FilesProcessingManager;
-import wniemiec.executionflow.io.processing.manager.InvokedProcessingManager;
 import wniemiec.util.logger.Logger;
 
 public class ProcessingManager {
@@ -126,9 +123,9 @@ public class ProcessingManager {
 		preTestMethodFileManager = new FileProcessingManager.Builder()
 				.srcPath(testMethod.getSrcPath())
 				.binPath(testMethod.getBinPath())
-				.classPackage(Invoked.extractPackageFromClassSignature(testMethod.getClassSignature()))
+				.filePackage(Invoked.extractPackageFromClassSignature(testMethod.getClassSignature()))
 				.backupExtensionName("pretestmethod.bkp")
-				.fileParserFactory(new PreTestMethodFileProcessorFactory(
+				.fileProcessorFactory(new PreTestMethodFileProcessorFactory(
 						testMethod.getInvokedSignature(), 
 						testMethod.getArgs()
 				))
@@ -287,9 +284,9 @@ public class ProcessingManager {
 		return new FileProcessingManager.Builder()
 				.srcPath(testMethod.getSrcPath())
 				.binPath(testMethod.getBinPath())
-				.classPackage(testMethod.getPackage())
+				.filePackage(testMethod.getPackage())
 				.backupExtensionName("testMethod.bkp")
-				.fileParserFactory(new TestMethodFileProcessorFactory())
+				.fileProcessorFactory(new TestMethodFileProcessorFactory())
 				.build();
 	}
 	
@@ -301,9 +298,9 @@ public class ProcessingManager {
 		return new FileProcessingManager.Builder()
 				.srcPath(invoked.getSrcPath())
 				.binPath(invoked.getBinPath())
-				.classPackage(invoked.getPackage())
+				.filePackage(invoked.getPackage())
 				.backupExtensionName("invoked.bkp")
-				.fileParserFactory(new InvokedFileProcessorFactory())
+				.fileProcessorFactory(new InvokedFileProcessorFactory())
 				.build();
 	}
 

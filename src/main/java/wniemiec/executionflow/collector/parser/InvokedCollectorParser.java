@@ -8,7 +8,7 @@ import wniemiec.executionflow.analyzer.DebuggerAnalyzer;
 import wniemiec.executionflow.analyzer.DebuggerAnalyzerFactory;
 import wniemiec.executionflow.collector.InvokedCollector;
 import wniemiec.executionflow.invoked.TestedInvoked;
-import wniemiec.executionflow.runtime.hook.ProcessingManager;
+import wniemiec.executionflow.io.processing.manager.ProcessingManager;
 import wniemiec.util.logger.Logger;
 
 public class InvokedCollectorParser {

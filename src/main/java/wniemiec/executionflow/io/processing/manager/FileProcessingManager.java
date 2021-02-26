@@ -65,8 +65,6 @@ public class FileProcessingManager implements Serializable {
 		srcFilePath = srcFilePath.normalize().toAbsolutePath();
 		binDirectory = binDirectory.normalize().toAbsolutePath();
 		
-		checkSrcPath(srcFilePath);
-		
 		String filename = extractFilenameWithoutExtension(srcFilePath);
 		String backupExtension = (backupExtensionName == null) 
 					? "bkp" 
@@ -83,82 +81,58 @@ public class FileProcessingManager implements Serializable {
 	//-------------------------------------------------------------------------
 	//		Builder
 	//-------------------------------------------------------------------------
-	/**
-	 * Builder for {@link Invoked}. It is necessary to provide all required
-	 * fields. The required fields are: <br />
-	 * <ul>
-	 * 	<li>srcPath</li>
-	 * 	<li>binDirectory</li>
-	 * 	<li>classPackage</li>
-	 * 	<li>fileParserFactory</li>
-	 * </ul>
-	 */
 	public static class Builder {
 		
 		private Path srcPath;
-		private Path binDirectory;
-		private String classPackage;
+		private Path binPath;
+		private String pkg;
 		private String backupExtensionName;
-		private FileProcessorFactory fileParserFactory;
+		private FileProcessorFactory fileProcessorFactory;
 		
 
-		/**
-		 * @param		srcPath Path where invoked's source file is
-		 * 
-		 * @return		Builder to allow chained calls
-		 */
 		public Builder srcPath(Path srcPath) {
+			if (srcPath == null)
+				throw new IllegalArgumentException("Source path cannot be null");
+			
 			this.srcPath = srcPath.isAbsolute() ? srcPath : srcPath.toAbsolutePath();
 			
 			return this;
 		}
 		
-		/**
-		 * @param		binDirectory Path of directory where .class of java
-		 * file is
-		 * 
-		 * @return		Builder to allow chained calls
-		 */
 		public Builder binPath(Path binPath) {
-			this.binDirectory = binPath.getParent();
+			if (binPath == null)
+				throw new IllegalArgumentException("Compiled path cannot be null");
+			
+			this.binPath = binPath;
 			
 			return this;
 		}
 		
-		/**
-		 * @param		classPackage Package of the class of the java file
-		 * 
-		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If srcPath is null
-		 */
-		public Builder classPackage(String classPackage) {
-			this.classPackage = classPackage;
+		public Builder filePackage(String pkg) {
+			if (pkg == null)
+				throw new IllegalArgumentException("Package cannot be null");
+			
+			this.pkg = pkg;
 			
 			return this;
 		}
-		
-		/**
-		 * @param		backupExtensionName Backup file extension name
-		 * 
-		 * @return		Builder to allow chained calls
-		 */
+
 		public Builder backupExtensionName(String backupExtensionName) {
+			if (backupExtensionName == null)
+				throw new IllegalArgumentException("Backup extension cannot " + 
+												   "be null");
+			
 			this.backupExtensionName = backupExtensionName;
 			
 			return this;
 		}
 		
-		/**
-		 * @param		fileParserFactory Factory that will produce 
-		 * {@link FileProcessor} that will be used for parsing file
-		 * 
-		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If srcPath is null
-		 */
-		public Builder fileParserFactory(FileProcessorFactory fileParserFactory) {
-			this.fileParserFactory = fileParserFactory;
+		public Builder fileProcessorFactory(FileProcessorFactory fileProcessorFactory) {
+			if (fileProcessorFactory == null)
+				throw new IllegalArgumentException("File processor factory " + 
+												   "cannot be null");
+			
+			this.fileProcessorFactory = fileProcessorFactory;
 			
 			return this;
 		}
@@ -169,23 +143,58 @@ public class FileProcessingManager implements Serializable {
 		 * are: <br />
 		 * <ul>
 		 * 	<li>srcPath</li>
-		 * 	<li>binDirectory</li>
+		 * 	<li>binPath</li>
 		 * 	<li>classPackage</li>
 		 * 	<li>fileParserFactory</li>
 		 * </ul>
 		 * 
 		 * @return		File manager with provided information
 		 * 
-		 * @throws		IllegalArgumentException If any required field is null
+		 * @throws		IllegalStateException If any required field is null
 		 */
 		public FileProcessingManager build() {
+			checkRequiredFields();
+			
 			return new FileProcessingManager(
 					srcPath,
-					binDirectory,
-					classPackage,
+					binPath.getParent(),
+					pkg,
 					backupExtensionName,
-					fileParserFactory
+					fileProcessorFactory
 			);
+		}
+		
+		private void checkRequiredFields() {
+			StringBuilder requiredFields = new StringBuilder();
+			
+			if (srcPath == null) {
+				requiredFields.append("Source path");
+				requiredFields.append(",");
+			}
+			
+			if (binPath == null) {
+				requiredFields.append("Compiled path");
+				requiredFields.append(",");
+			}
+			
+			if (pkg == null) {
+				requiredFields.append("Package");
+				requiredFields.append(",");
+			}
+			
+			if (fileProcessorFactory == null) {
+				requiredFields.append("File processor factory");
+				requiredFields.append(",");
+			}
+			
+			if (requiredFields.length() > 0) {
+				requiredFields.deleteCharAt(requiredFields.length()-1);
+				
+				throw new IllegalStateException(
+						"Required fields must be provided: "
+						+ requiredFields.toString()
+				);
+			}
 		}
 	}
 	
@@ -193,13 +202,6 @@ public class FileProcessingManager implements Serializable {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private static void checkSrcPath(Path srcPath) {
-		if (srcPath == null) {
-			throw new IllegalArgumentException("Invoked's source file path"
-					+ "cannot be null");
-		}
-	}
-	
 	private String extractFilenameWithoutExtension(Path file) {
 		String filenameWithExtension = file.getName(file.getNameCount()-1).toString(); 
 		

@@ -36,9 +36,9 @@ class FileProcessingManagerTest {
 		new FileProcessingManager.Builder()
 				.srcPath(srcPath)
 				.binPath(binPath)
-				.classPackage(pkg)
+				.filePackage(pkg)
 				.backupExtensionName("bkp")
-				.fileParserFactory(new InvokedFileProcessorFactory())
+				.fileProcessorFactory(new InvokedFileProcessorFactory())
 				.build();
 	}
 	
@@ -47,9 +47,109 @@ class FileProcessingManagerTest {
 		new FileProcessingManager.Builder()
 				.srcPath(srcPath)
 				.binPath(binPath)
-				.classPackage(pkg)
-				.fileParserFactory(new InvokedFileProcessorFactory())
+				.filePackage(pkg)
+				.fileProcessorFactory(new InvokedFileProcessorFactory())
 				.build();
+	}
+	
+	@Test
+	void testBuilderWithNullSrcPath() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			new FileProcessingManager.Builder()
+					.srcPath(null)
+					.binPath(binPath)
+					.filePackage(pkg)
+					.fileProcessorFactory(new InvokedFileProcessorFactory())
+			.build();
+		});
+	}
+	
+	@Test
+	void testBuilderWithNullBinPath() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			new FileProcessingManager.Builder()
+					.srcPath(srcPath)
+					.binPath(null)
+					.filePackage(pkg)
+					.fileProcessorFactory(new InvokedFileProcessorFactory())
+			.build();
+		});
+	}
+	
+	@Test
+	void testBuilderWithNullPackage() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			new FileProcessingManager.Builder()
+					.srcPath(srcPath)
+					.binPath(binPath)
+					.filePackage(null)
+					.fileProcessorFactory(new InvokedFileProcessorFactory())
+			.build();
+		});
+	}
+	
+	@Test
+	void testBuilderWithNullProcessorFactory() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			new FileProcessingManager.Builder()
+					.srcPath(srcPath)
+					.binPath(binPath)
+					.filePackage(pkg)
+					.fileProcessorFactory(null)
+			.build();
+		});
+	}
+	
+	@Test
+	void testBuilderWithoutSrcPath() {
+		Assertions.assertThrows(IllegalStateException.class, () -> {
+			new FileProcessingManager.Builder()
+					.binPath(binPath)
+					.filePackage(pkg)
+					.fileProcessorFactory(new InvokedFileProcessorFactory())
+			.build();
+		});
+	}
+	
+	@Test
+	void testBuilderWithoutBinPath() {
+		Assertions.assertThrows(IllegalStateException.class, () -> {
+			new FileProcessingManager.Builder()
+					.srcPath(srcPath)
+					.filePackage(pkg)
+					.fileProcessorFactory(new InvokedFileProcessorFactory())
+			.build();
+		});
+	}
+	
+	@Test
+	void testBuilderWithoutPackage() {
+		Assertions.assertThrows(IllegalStateException.class, () -> {
+			new FileProcessingManager.Builder()
+					.srcPath(srcPath)
+					.binPath(binPath)
+					.fileProcessorFactory(new InvokedFileProcessorFactory())
+			.build();
+		});
+	}
+	
+	@Test
+	void testBuilderWithoutProcessorFactory() {
+		Assertions.assertThrows(IllegalStateException.class, () -> {
+			new FileProcessingManager.Builder()
+					.srcPath(srcPath)
+					.binPath(binPath)
+					.filePackage(pkg)
+			.build();
+		});
+	}
+	
+	@Test
+	void testEmptyBuilder() {
+		Assertions.assertThrows(IllegalStateException.class, () -> {
+			new FileProcessingManager.Builder()
+					.build();
+		});
 	}
 	
 	@Test
@@ -186,13 +286,9 @@ class FileProcessingManagerTest {
 		return new FileProcessingManager.Builder()
 				.srcPath(srcPath)
 				.binPath(binPath)
-				.classPackage(pkg)
+				.filePackage(pkg)
 				.backupExtensionName("bkp")
-				.fileParserFactory(new InvokedFileProcessorFactory())
+				.fileProcessorFactory(new InvokedFileProcessorFactory())
 				.build();
-	}
-	
-	private void assertFileExists(Path file) {
-		Assertions.assertTrue(Files.exists(file));
 	}
 }
