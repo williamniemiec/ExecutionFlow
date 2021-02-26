@@ -24,7 +24,7 @@ import wniemiec.util.logger.Logger;
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since		1.3
  */
 public class FileProcessingManager implements Serializable {
@@ -41,7 +41,7 @@ public class FileProcessingManager implements Serializable {
 	private FileProcessor fileProcessor;
 	private boolean encodingError;
 	private boolean lastWasError;
-	private boolean autoRestore;
+//	private boolean autoRestore;
 	
 	
 	//-------------------------------------------------------------------------
@@ -62,14 +62,20 @@ public class FileProcessingManager implements Serializable {
 	private FileProcessingManager(Path srcFilePath, Path binDirectory,
 						String classPackage, String backupExtensionName, 
 						FileProcessorFactory fileParserFactory) {
+		srcFilePath = srcFilePath.normalize().toAbsolutePath();
+		binDirectory = binDirectory.normalize().toAbsolutePath();
+		
 		checkSrcPath(srcFilePath);
 		
 		String filename = extractFilenameWithoutExtension(srcFilePath);
+		String backupExtension = (backupExtensionName == null) 
+					? "bkp" 
+					: backupExtensionName;
 		
 		this.binDirectory = extractRootBinDirectory(binDirectory, classPackage);
 		
-		initializeBinFile(binDirectory, backupExtensionName, filename);
-		initializeSrcFile(srcFilePath, backupExtensionName);
+		initializeBinFile(binDirectory, backupExtension, filename);
+		initializeSrcFile(srcFilePath, backupExtension);
 		initializeFileProcessor(binDirectory, fileParserFactory, filename);
 	}
 		
@@ -84,7 +90,6 @@ public class FileProcessingManager implements Serializable {
 	 * 	<li>srcPath</li>
 	 * 	<li>binDirectory</li>
 	 * 	<li>classPackage</li>
-	 * 	<li>backupExtensionName</li>
 	 * 	<li>fileParserFactory</li>
 	 * </ul>
 	 */
@@ -101,12 +106,8 @@ public class FileProcessingManager implements Serializable {
 		 * @param		srcPath Path where invoked's source file is
 		 * 
 		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If srcPath is null
 		 */
 		public Builder srcPath(Path srcPath) {
-			checkSrcPath(srcPath);
-			
 			this.srcPath = srcPath.isAbsolute() ? srcPath : srcPath.toAbsolutePath();
 			
 			return this;
@@ -117,11 +118,9 @@ public class FileProcessingManager implements Serializable {
 		 * file is
 		 * 
 		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If srcPath is null
 		 */
-		public Builder binDirectory(Path binDirectory) {
-			this.binDirectory = binDirectory;
+		public Builder binPath(Path binPath) {
+			this.binDirectory = binPath.getParent();
 			
 			return this;
 		}
@@ -143,8 +142,6 @@ public class FileProcessingManager implements Serializable {
 		 * @param		backupExtensionName Backup file extension name
 		 * 
 		 * @return		Builder to allow chained calls
-		 * 
-		 * @throws		IllegalArgumentException If srcPath is null
 		 */
 		public Builder backupExtensionName(String backupExtensionName) {
 			this.backupExtensionName = backupExtensionName;
@@ -174,7 +171,6 @@ public class FileProcessingManager implements Serializable {
 		 * 	<li>srcPath</li>
 		 * 	<li>binDirectory</li>
 		 * 	<li>classPackage</li>
-		 * 	<li>backupExtensionName</li>
 		 * 	<li>fileParserFactory</li>
 		 * </ul>
 		 * 
@@ -204,7 +200,7 @@ public class FileProcessingManager implements Serializable {
 		}
 	}
 	
-	public String extractFilenameWithoutExtension(Path file) {
+	private String extractFilenameWithoutExtension(Path file) {
 		String filenameWithExtension = file.getName(file.getNameCount()-1).toString(); 
 		
 		return filenameWithExtension.split("\\.")[0];
@@ -279,9 +275,7 @@ public class FileProcessingManager implements Serializable {
 	 * restore the original file, call {@link #revertProcessing()} function.
 	 */
 	public FileProcessingManager processFile(boolean autoRestore) throws IOException {
-//		if (autoRestore)
-		this.autoRestore = autoRestore;
-			createSrcBackupFile();
+		createSrcBackupFile(autoRestore);
 		
 		Path processedFile = processFile();
 		
@@ -299,13 +293,13 @@ public class FileProcessingManager implements Serializable {
 	 * @implNote		Backup name will be &lt;<b>name_of_file</b>.original.java&gt;.
 	 * It will be saved in the same directory of the original file
 	 */
-	public FileProcessingManager createSrcBackupFile() {
-		createBackupFile(srcFile, srcFileBackup);
+	public FileProcessingManager createSrcBackupFile(boolean autoRestore) {
+		createBackupFile(srcFile, srcFileBackup, autoRestore);
 		
 		return this;
 	}
 	
-	private void createBackupFile(Path file, Path bkpFile) {
+	private void createBackupFile(Path file, Path bkpFile, boolean autoRestore) {
 		try {
 			Files.copy(file, bkpFile, StandardCopyOption.COPY_ATTRIBUTES);
 		} 
@@ -318,7 +312,7 @@ public class FileProcessingManager implements Serializable {
 				
 				if (!lastWasError) {		
 					lastWasError = true;
-					createBackupFile(file, bkpFile);	
+					createBackupFile(file, bkpFile, autoRestore);	
 					lastWasError = false;
 				}
 			} 
@@ -349,18 +343,9 @@ public class FileProcessingManager implements Serializable {
 		
 		return this;
 	}
-	
-	/**
-	 * Checks whether file has source backup file.
-	 * 
-	 * @return		True if file has source backup file; false otherwise
-	 */
-	public boolean hasSrcBackupStored() {
-		return Files.exists(srcFileBackup);
-	}
 
 	private Path processFile() throws IOException {
-		Path processedFile;
+		Path processedFile = null;
 		
 		try {	
 			processedFile = processFileUsingEncode(FileEncoding.UTF_8);
@@ -372,7 +357,7 @@ public class FileProcessingManager implements Serializable {
 				processedFile = processFileUsingEncode(FileEncoding.ISO_8859_1);
 			} 
 			catch (IOException e1) {
-				throw new IOException("Processing failed - " + e1.getMessage());
+				throw new IOException("Processing failed - " + e1.toString());
 			}
 		}
 		
@@ -476,6 +461,15 @@ public class FileProcessingManager implements Serializable {
 	}
 	
 	/**
+	 * Checks whether file has source backup file.
+	 * 
+	 * @return		True if file has source backup file; false otherwise
+	 */
+	public boolean hasSrcBackupStored() {
+		return Files.exists(srcFileBackup);
+	}
+	
+	/**
 	 * Creates a copy of binary file passed to the constructor to allow to 
 	 * restore it after.
 	 * 
@@ -484,18 +478,26 @@ public class FileProcessingManager implements Serializable {
 	 * @implNote		Backup name will be &lt; name_of_file.original.class &gt;.
 	 * It will be saved in the same directory of the original file
 	 */
-	public FileProcessingManager createBackupBinFile() {
-		createBackupFile(binFile, binFileBackup);
+	public FileProcessingManager createBinBackupFile(boolean autoRestore) {
+		createBackupFile(binFile, binFileBackup, autoRestore);
 		
 		return this;
 	}
 	
+	public void deleteSrcBackupFile() throws IOException {
+		Files.deleteIfExists(srcFileBackup);
+	}
+	
+	public void deleteBinBackupFile() throws IOException {
+		Files.deleteIfExists(binFileBackup);
+	}
+	
 	@Override
 	public String toString() {
-		return "FileManager ["
+		return "FileProcessingManager ["
 				+ "srcFile=" + srcFile
-				+ ", originalSrcFile=" + srcFileBackup 
-				+ ", compiledFile="	+ binFile 
+				+ ", srcBackupFile=" + srcFileBackup 
+				+ ", binFile="	+ binFile 
 				+ ", binFileBackup=" + binFileBackup
 				+ ", binDirectory=" + binDirectory
 				+ ", fileProcessor=" + fileProcessor 
@@ -513,19 +515,7 @@ public class FileProcessingManager implements Serializable {
 		if (obj == this)						{ return true;	}
 		if (this.getClass() != obj.getClass())	{ return false;	}
 		
-		return this.srcFile.equals(((FileProcessingManager)obj).getSrcFile());
-	}	
-	
-	
-	//-------------------------------------------------------------------------
-	//		Getters
-	//-------------------------------------------------------------------------
-	public Path getSrcFile() {
-		return srcFile;
-	}
-	
-	public Path getCompiledFile() {
-		return binFile;
+		return this.srcFile.equals(((FileProcessingManager)obj).srcFile);
 	}
 	
 	

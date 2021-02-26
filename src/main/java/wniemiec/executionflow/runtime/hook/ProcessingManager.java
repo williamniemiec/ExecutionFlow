@@ -33,6 +33,8 @@ public class ProcessingManager {
 	private static FileProcessingManager currentInvokedFileManager;
 	private static FileProcessingManager currentTestMethodFileManager;
 	private static Set<String> alreadyChanged;
+	private static Invoked currentTestedInvoked;
+	private static Invoked currentTestMethod;
 	
 	static {
 		onShutdown();
@@ -120,10 +122,10 @@ public class ProcessingManager {
 		return invokedManager;
 	}
 	
-	private static void initializePreTestMethodFileManager(Invoked testMethod) {	
+	private static void initializePreTestMethodFileManager(Invoked testMethod) {
 		preTestMethodFileManager = new FileProcessingManager.Builder()
 				.srcPath(testMethod.getSrcPath())
-				.binDirectory(getCompiledFileDirectory(testMethod.getBinPath()))
+				.binPath(testMethod.getBinPath())
 				.classPackage(Invoked.extractPackageFromClassSignature(testMethod.getClassSignature()))
 				.backupExtensionName("pretestmethod.bkp")
 				.fileParserFactory(new PreTestMethodFileProcessorFactory(
@@ -131,10 +133,6 @@ public class ProcessingManager {
 						testMethod.getArgs()
 				))
 				.build();
-	}
-	
-	private static Path getCompiledFileDirectory(Path compiledFilePath) {
-		return compiledFilePath.getParent();
 	}
 	
 	public static void restoreAllTestMethodFiles() throws IOException {
@@ -239,14 +237,14 @@ public class ProcessingManager {
 		
 		invokedProcessingManager.processAndCompile(
 				invokedFileManager, 
-				testMethodFileManager.getSrcFile().equals(invokedFileManager.getSrcFile())
+				currentTestMethod.getSrcPath().equals(currentTestedInvoked.getSrcPath())
 //				!isTestMethodFileAndInvokedFileTheSameFile(invokedFileManager)
 		);
 	}
 	
 	private static boolean isTestMethodFileAndInvokedFileTheSameFile(FileProcessingManager invokedFileManager) {
-		return	preTestMethodFileManager.getSrcFile()
-				.equals(invokedFileManager.getSrcFile());
+		return	currentTestMethod.getSrcPath()
+				.equals(currentTestedInvoked.getSrcPath());
 	}
 	
 	private static void doProcessingInTestMethod(FileProcessingManager testMethodFileManager) 
@@ -276,6 +274,8 @@ public class ProcessingManager {
 	}
 	
 	public static void doProcessingInTestedInvoked(TestedInvoked collector) throws IOException {
+		currentTestMethod = collector.getTestMethod();
+		currentTestedInvoked = collector.getTestedInvoked();
 		currentTestMethodFileManager = createTestMethodFileManager(collector.getTestMethod());
 		currentInvokedFileManager = createInvokedFileManager(collector.getTestedInvoked());
 		
@@ -286,7 +286,7 @@ public class ProcessingManager {
 	private static FileProcessingManager createTestMethodFileManager(Invoked testMethod) {
 		return new FileProcessingManager.Builder()
 				.srcPath(testMethod.getSrcPath())
-				.binDirectory(getBinDirectory(testMethod.getBinPath()))
+				.binPath(testMethod.getBinPath())
 				.classPackage(testMethod.getPackage())
 				.backupExtensionName("testMethod.bkp")
 				.fileParserFactory(new TestMethodFileProcessorFactory())
@@ -300,7 +300,7 @@ public class ProcessingManager {
 	private static FileProcessingManager createInvokedFileManager(Invoked invoked) {
 		return new FileProcessingManager.Builder()
 				.srcPath(invoked.getSrcPath())
-				.binDirectory(getBinDirectory(invoked.getBinPath()))
+				.binPath(invoked.getBinPath())
 				.classPackage(invoked.getPackage())
 				.backupExtensionName("invoked.bkp")
 				.fileParserFactory(new InvokedFileProcessorFactory())

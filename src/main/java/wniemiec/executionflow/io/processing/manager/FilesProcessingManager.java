@@ -320,7 +320,7 @@ public class FilesProcessingManager {
 		if (wasCompiled(fm))
 			return this;
 		
-		fm.createBackupBinFile();
+		fm.createBinBackupFile(false);
 		fm.compileFile();
 
 		markFileAsCompiled(fm);
