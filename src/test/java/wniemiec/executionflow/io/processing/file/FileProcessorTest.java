@@ -8,7 +8,7 @@ import wniemiec.executionflow.io.FileEncoding;
 import wniemiec.executionflow.io.processing.Processing;
 import wniemiec.util.io.manager.TextFileManager;
 
-abstract class FileProcessorTest extends Processing {
+public abstract class FileProcessorTest extends Processing {
 
 	//-----------------------------------------------------------------------
 	//		Attributes

@@ -256,7 +256,7 @@ public class FileProcessingManager implements Serializable {
 	private void initializeFileProcessor(Path binDirectory, 
 										 FileProcessorFactory fileParserFactory, 
 										 String filename) {
-		this.fileProcessor = fileParserFactory.newFileProcessor(
+		this.fileProcessor = fileParserFactory.createInstance(
 				srcFile, 
 				binDirectory, 
 				filename + "_parsed", 

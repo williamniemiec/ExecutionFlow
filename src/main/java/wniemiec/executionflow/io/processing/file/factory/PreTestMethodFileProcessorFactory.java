@@ -33,7 +33,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 	 * @param		args Test method arguments
 	 */
 	public PreTestMethodFileProcessorFactory(String testMethodSignature, Object[] args) {
-		this(testMethodSignature);
+		this.testMethodSignature = testMethodSignature;
 		
 		if (args != null && args.length > 0)
 			this.testMethodArgs = args;
@@ -46,7 +46,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 	 * @param		testMethodSignature Test method signature
 	 */
 	public PreTestMethodFileProcessorFactory(String testMethodSignature) { 
-		this.testMethodSignature = testMethodSignature;
+		this(testMethodSignature, null);
 	}
 	
 	
@@ -54,7 +54,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
+	public FileProcessor createInstance(Path filepath, Path outputDir, 
 										  String outputFilename, 
 										  FileEncoding encode) {
 		return new PreTestMethodFileProcessor.Builder()

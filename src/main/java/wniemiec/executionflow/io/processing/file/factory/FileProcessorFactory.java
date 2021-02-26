@@ -27,7 +27,7 @@ public abstract class FileProcessorFactory {
 	 * 
 	 * @return		FileProcessor instance 
 	 */
-	public abstract FileProcessor newFileProcessor(Path filepath, Path outputDir, 
+	public abstract FileProcessor createInstance(Path filepath, Path outputDir, 
 												   String outputFilename, 
 												   FileEncoding encode);
 }

@@ -19,7 +19,7 @@ public class InvokedFileProcessorFactory extends FileProcessorFactory {
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public FileProcessor newFileProcessor(Path filepath, Path outputDir, 
+	public FileProcessor createInstance(Path filepath, Path outputDir, 
 										  String outputFilename, 
 										  FileEncoding encode) {
 		return new InvokedFileProcessor.Builder()
