@@ -406,26 +406,28 @@ public class App {
 	
 	public static void exportAllConstructorsUsedInTestMethods() {
 		constructorExportManager.exportAllMethodsAndConstructorsUsedInTestMethods(
-				ConstructorCollector.getCollectorSet()
+				ConstructorCollector.getInstance().getCollectorSet()
 		);
 	}
 	
 	public static void exportAllMethodsUsedInTestMethods() {
 		methodExportManager.exportAllMethodsAndConstructorsUsedInTestMethods(
-				MethodCollector.getCollectorSet()
+				MethodCollector.getInstance().getCollectorSet()
 		);
 	}
 	
 	private static void parseConstructorCollector() {
-		TestedInvokedParser parser = InvokedCollectorParser.parseConstructorCollector(
-				ConstructorCollector.getCollectorSet()
+		InvokedCollectorParser collectionProcessor = new InvokedCollectorParser();
+		TestedInvokedParser parser = collectionProcessor.parse(
+				ConstructorCollector.getInstance().getCollectorSet()
 		);
 		export(parser, constructorExportManager);
 	}
 	
 	private static void parseMethodCollector() {
-		TestedInvokedParser parser = InvokedCollectorParser.parseMethodCollector(
-				MethodCollector.getCollectorSet()
+		InvokedCollectorParser collectionProcessor = new InvokedCollectorParser();
+		TestedInvokedParser parser = collectionProcessor.parse(
+				MethodCollector.getInstance().getCollectorSet()
 		);
 		export(parser, methodExportManager);
 	}

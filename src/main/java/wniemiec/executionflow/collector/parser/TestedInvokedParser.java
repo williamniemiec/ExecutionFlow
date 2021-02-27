@@ -16,6 +16,16 @@ import wniemiec.util.logger.Logger;
 
 public class TestedInvokedParser {
 	
+	@Override
+	public String toString() {
+		return "TestedInvokedParser ["
+					+ "testPaths=" + computedTestPaths 
+					+ ", debuggerAnalyzer=" + debuggerAnalyzer
+					+ ", processedSourceFiles=" + processedSourceFiles 
+					+ ", testedInvoked=" + testedInvoked 
+				+ "]";
+	}
+
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -30,7 +40,7 @@ public class TestedInvokedParser {
 	
 	private DebuggerAnalyzer debuggerAnalyzer;
 	private Map<String, Path> processedSourceFiles;
-	private TestedInvoked collector;
+	private TestedInvoked testedInvoked;
 
 	
 	//-------------------------------------------------------------------------
@@ -45,16 +55,16 @@ public class TestedInvokedParser {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public void parse(TestedInvoked collector, DebuggerAnalyzer debuggerAnalyzer) 
+	public void parse(TestedInvoked testedInvoked, DebuggerAnalyzer debuggerAnalyzer) 
 			throws InterruptedByTimeoutException, IOException {
-		initParser(debuggerAnalyzer, collector);
+		initParser(debuggerAnalyzer, testedInvoked);
 		runDebugger();
 		storeResults();
 	}
 
-	private void initParser(DebuggerAnalyzer debuggerAnalyzer, TestedInvoked collector) {
+	private void initParser(DebuggerAnalyzer debuggerAnalyzer, TestedInvoked testedInvoked) {
 		this.debuggerAnalyzer = debuggerAnalyzer;
-		this.collector = collector;
+		this.testedInvoked = testedInvoked;
 	}
 
 	private void storeResults() {
@@ -62,17 +72,17 @@ public class TestedInvokedParser {
 			return;
 		
 		if (isConstructor())
-			fixAnonymousClassSignature(collector.getTestedInvoked());
+			fixAnonymousClassSignature(testedInvoked.getTestedInvoked());
 		
 		storeTestPath(
 				new TestedInvoked(
-						collector.getTestedInvoked(), 
-						collector.getTestMethod()
+						testedInvoked.getTestedInvoked(), 
+						testedInvoked.getTestMethod()
 		));
 		
 		processedSourceFiles.put(
-				collector.getTestedInvoked().getConcreteSignature(),
-				collector.getTestedInvoked().getSrcPath()
+				testedInvoked.getTestedInvoked().getConcreteSignature(),
+				testedInvoked.getTestedInvoked().getSrcPath()
 		);
 	}
 
@@ -89,7 +99,7 @@ public class TestedInvokedParser {
 			throws IOException, InterruptedByTimeoutException {
 		Logger.info(
 				"Computing test path of invoked " 
-				+ collector.getTestedInvoked().getConcreteSignature() 
+				+ testedInvoked.getTestedInvoked().getConcreteSignature() 
 				+ "..."
 		);
 		
@@ -160,7 +170,7 @@ public class TestedInvokedParser {
 	 * @implNote	It must only be called after method {@link #run()} has 
 	 * been executed
 	 */
-	public List<List<Integer>> getTestPaths(TestedInvoked container) {
+	public List<List<Integer>> getTestPathsOf(TestedInvoked container) {
 		if (computedTestPaths.isEmpty())
 			return List.of(new ArrayList<Integer>(0));
 		

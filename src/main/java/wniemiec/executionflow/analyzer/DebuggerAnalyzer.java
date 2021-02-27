@@ -365,9 +365,8 @@ public abstract class DebuggerAnalyzer {
 	 * @return		Null if tested invoked does not call methods; otherwise, 
 	 * returns list of signature of methods called by tested invoked
 	 * 
-	 * @implSpec	After call this method, the file containing methods called
-	 * by tested invoked will be deleted. Therefore, this method can only be 
-	 * called once for each {@link #run JDB execution}
+	 * @implSpec	Only calling methods with the annotation '{@link 
+	 * wniemiec.executionflow.runtime.CollectCalls}' will be considered 
 	 */
 	public Map<Invoked, Set<String>> getMethodsCalledByTestedInvoked() {
 		return methodsCalledByTestedInvoked;

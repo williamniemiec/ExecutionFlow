@@ -2,6 +2,7 @@ package wniemiec.executionflow.collector.parser;
 
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
+import java.util.Collection;
 import java.util.Set;
 
 import wniemiec.executionflow.analyzer.DebuggerAnalyzer;
@@ -12,35 +13,27 @@ import wniemiec.executionflow.io.processing.manager.ProcessingManager;
 import wniemiec.util.logger.Logger;
 
 public class InvokedCollectorParser {
+	
+	private ProcessingManager processingManager;
 
-	private InvokedCollectorParser() {
+	public InvokedCollectorParser() {
+		processingManager = ProcessingManager.getInstance();
 	}
 	
-	public static TestedInvokedParser parseMethodCollector(Set<TestedInvoked> methodCollector) {
-		return parseInvokedCollector(methodCollector, false);
-	}
-
-	public static TestedInvokedParser parseConstructorCollector(Set<TestedInvoked> constructorCollector) {
-		return parseInvokedCollector(constructorCollector, true);
-	}
+//	public static TestedInvokedParser parseMethodCollector(Set<TestedInvoked> methodCollector) {
+//		return parseInvokedCollector(methodCollector, false);
+//	}
+//
+//	public static TestedInvokedParser parseConstructorCollector(Set<TestedInvoked> constructorCollector) {
+//		return parseInvokedCollector(constructorCollector, true);
+//	}
 	
-	/**
-	 * Runs the application by performing the following tasks: 
-	 * <ul>
-	 * 	<li>Computes test path</li>
-	 * 	<li>Exports test path</li>
-	 * 	<li>Exports methods called by tested invoked</li>
-	 * 	<li>Exports test methods that test the invoked</li>
-	 * 	<li>Exports processed source file</li>
-	 * </ul>
-	 */
-	private static TestedInvokedParser parseInvokedCollector(Set<TestedInvoked> invokedCollector, 
-															 boolean isConstructor) {
+	public TestedInvokedParser parse(Collection<TestedInvoked> invokedCollector) {
 		if ((invokedCollector == null) || invokedCollector.isEmpty())
 			return new TestedInvokedParser();
 		
 		TestedInvokedParser parser = new TestedInvokedParser();
-		ProcessingManager processingManager = ProcessingManager.getInstance();
+		processingManager.initializeManagers();
 		
 		dumpCollector(invokedCollector);
 
@@ -76,15 +69,20 @@ public class InvokedCollectorParser {
 		return parser;
 	}
 	
-	private static void dumpCollector(Set<TestedInvoked> invokedCollector) {
+	private void dumpCollector(Collection<TestedInvoked> invokedCollector) {
 		Logger.debug(
 				InvokedCollectorParser.class, 
 				"collector: " + invokedCollector.toString()
 		);
 	}
 	
-	private static boolean isTestedInvokedInTheSameFileAsTestMethod(TestedInvoked collector) {
+	private boolean isTestedInvokedInTheSameFileAsTestMethod(TestedInvoked collector) {
 		return collector.getTestedInvoked().getSrcPath().equals(
 				collector.getTestMethod().getSrcPath());
+	}
+	
+	public void restoreAll() {
+		processingManager.restoreOriginalFilesFromInvoked();
+		processingManager.restoreOriginalFilesFromTestMethod();
 	}
 }
