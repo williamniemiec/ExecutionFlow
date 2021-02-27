@@ -1,32 +1,23 @@
-package wniemiec.executionflow.collector.parser;
+package wniemiec.executionflow.io.processing.manager;
 
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.Collection;
-import java.util.Set;
 
 import wniemiec.executionflow.analyzer.DebuggerAnalyzer;
 import wniemiec.executionflow.analyzer.DebuggerAnalyzerFactory;
 import wniemiec.executionflow.collector.InvokedCollector;
+import wniemiec.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.executionflow.invoked.TestedInvoked;
-import wniemiec.executionflow.io.processing.manager.ProcessingManager;
 import wniemiec.util.logger.Logger;
 
-public class InvokedCollectorParser {
-	
+public class TestedInvokedProcessingManager {
+
 	private ProcessingManager processingManager;
 
-	public InvokedCollectorParser() {
+	public TestedInvokedProcessingManager() {
 		processingManager = ProcessingManager.getInstance();
 	}
-	
-//	public static TestedInvokedParser parseMethodCollector(Set<TestedInvoked> methodCollector) {
-//		return parseInvokedCollector(methodCollector, false);
-//	}
-//
-//	public static TestedInvokedParser parseConstructorCollector(Set<TestedInvoked> constructorCollector) {
-//		return parseInvokedCollector(constructorCollector, true);
-//	}
 	
 	public TestedInvokedParser parse(Collection<TestedInvoked> invokedCollector) {
 		if ((invokedCollector == null) || invokedCollector.isEmpty())
@@ -71,7 +62,7 @@ public class InvokedCollectorParser {
 	
 	private void dumpCollector(Collection<TestedInvoked> invokedCollector) {
 		Logger.debug(
-				InvokedCollectorParser.class, 
+				TestedInvokedProcessingManager.class, 
 				"collector: " + invokedCollector.toString()
 		);
 	}

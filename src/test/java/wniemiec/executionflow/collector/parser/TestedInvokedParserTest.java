@@ -8,11 +8,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import wniemiec.executionflow.analyzer.DebuggerAnalyzer;
 import wniemiec.executionflow.analyzer.DebuggerAnalyzerFactory;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
@@ -29,19 +27,17 @@ class TestedInvokedParserTest {
 	private TestedInvoked testedInvoked;
 	
 	public TestedInvokedParserTest() throws IOException {
-		srcDirectory = Path.of(".", "src", "test", "resources", "wniemiec", 
-				"executionflow", "collector", "parser");
-		binDirectory = Path.of(".", "target", "test-classes", "wniemiec", 
-				"executionflow", "collector", "parser");
+		srcDirectory = Path.of(".", "src", "test", "resources", "auxfiles");
+		binDirectory = Path.of(".", "target", "test-classes", "auxfiles");
 
-		Logger.setLevel(LogLevel.WARNING);
+		Logger.setLevel(LogLevel.DEBUG);
 	}
 	
 	private Invoked getAuxClassInvoked() {
 		return new Invoked.Builder()
 				.srcPath(srcDirectory.resolve("AuxClass.java"))
 				.binPath(binDirectory.resolve("AuxClass.class"))
-				.signature("wniemiec.executionflow.collector.parser.AuxClass.factorial(int)")
+				.signature("auxfiles.AuxClass.factorial(int)")
 				.invocationLine(32)
 				.build();
 	}
@@ -50,7 +46,7 @@ class TestedInvokedParserTest {
 		return new Invoked.Builder()
 				.srcPath(srcDirectory.resolve("Others.java"))
 				.binPath(binDirectory.resolve("Others.class"))
-				.signature("wniemiec.executionflow.collector.parser.Others.testFactorial()")
+				.signature("auxfiles.Others.testFactorial()")
 				.build();
 	}
 	

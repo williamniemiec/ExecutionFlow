@@ -1,4 +1,4 @@
-package wniemiec.executionflow.collector.parser;
+package auxfiles;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import wniemiec.executionflow.collector.parser.polymorphism.ClassInterface;
+import auxfiles.polymorphism.ClassInterface;
 
 /**
  * Some comment

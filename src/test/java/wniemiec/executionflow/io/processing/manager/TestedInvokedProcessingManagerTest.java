@@ -1,6 +1,6 @@
-package wniemiec.executionflow.collector.parser;
+package wniemiec.executionflow.io.processing.manager;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -12,26 +12,25 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.Logger;
 
-class InvokedCollectorParserTest {
-	
+class TestedInvokedProcessingManagerTest {
+
 	private Invoked testedMethod;
 	private Invoked testMethod;
 	private Path srcDirectory;
 	private Path binDirectory;
 	private List<TestedInvoked> invokedCollector;
-	private InvokedCollectorParser invokedCollectorParser;
+	private TestedInvokedProcessingManager invokedCollectorParser;
 	private TestedInvokedParser testedInvokedParser;
 	
-	InvokedCollectorParserTest() {
-		srcDirectory = Path.of(".", "src", "test", "resources", "wniemiec", 
-				"executionflow", "collector", "parser");
-		binDirectory = Path.of(".", "target", "test-classes", "wniemiec", 
-				"executionflow", "collector", "parser");
+	TestedInvokedProcessingManagerTest() {
+		srcDirectory = Path.of(".", "src", "test", "resources", "auxfiles");
+		binDirectory = Path.of(".", "target", "test-classes", "auxfiles");
 
 		Logger.setLevel(LogLevel.WARNING);
 	}
@@ -58,7 +57,7 @@ class InvokedCollectorParserTest {
 	
 	
 	private void parseAfterProcessing() {
-		invokedCollectorParser = new InvokedCollectorParser();
+		invokedCollectorParser = new TestedInvokedProcessingManager();
 		testedInvokedParser = invokedCollectorParser.parse(invokedCollector);
 	}
 
@@ -70,7 +69,7 @@ class InvokedCollectorParserTest {
 		return new Invoked.Builder()
 				.srcPath(srcDirectory.resolve("AuxClass.java"))
 				.binPath(binDirectory.resolve("AuxClass.class"))
-				.signature("wniemiec.executionflow.collector.parser.AuxClass.factorial(int)")
+				.signature("auxfiles.AuxClass.factorial(int)")
 				.invocationLine(32)
 				.build();
 	}
@@ -79,7 +78,7 @@ class InvokedCollectorParserTest {
 		return new Invoked.Builder()
 				.srcPath(srcDirectory.resolve("Others.java"))
 				.binPath(binDirectory.resolve("Others.class"))
-				.signature("wniemiec.executionflow.collector.parser.Others.testFactorial()")
+				.signature("auxfiles.Others.testFactorial()")
 				.build();
 	}
 	

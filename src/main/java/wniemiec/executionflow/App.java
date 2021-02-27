@@ -11,12 +11,12 @@ import wniemiec.api.junit4.JUnit4API;
 import wniemiec.executionflow.collector.CallCollector;
 import wniemiec.executionflow.collector.ConstructorCollector;
 import wniemiec.executionflow.collector.MethodCollector;
-import wniemiec.executionflow.collector.parser.InvokedCollectorParser;
 import wniemiec.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.io.processing.file.PreTestMethodFileProcessor;
 import wniemiec.executionflow.io.processing.manager.ProcessingManager;
+import wniemiec.executionflow.io.processing.manager.TestedInvokedProcessingManager;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.executionflow.user.RemoteControl;
 import wniemiec.executionflow.user.User;
@@ -52,7 +52,7 @@ public class App {
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = false;
+		DEVELOPMENT = true;
 	}
 	
 	
@@ -417,7 +417,7 @@ public class App {
 	}
 	
 	private static void parseConstructorCollector() {
-		InvokedCollectorParser collectionProcessor = new InvokedCollectorParser();
+		TestedInvokedProcessingManager collectionProcessor = new TestedInvokedProcessingManager();
 		TestedInvokedParser parser = collectionProcessor.parse(
 				ConstructorCollector.getInstance().getCollectorSet()
 		);
@@ -425,7 +425,7 @@ public class App {
 	}
 	
 	private static void parseMethodCollector() {
-		InvokedCollectorParser collectionProcessor = new InvokedCollectorParser();
+		TestedInvokedProcessingManager collectionProcessor = new TestedInvokedProcessingManager();
 		TestedInvokedParser parser = collectionProcessor.parse(
 				MethodCollector.getInstance().getCollectorSet()
 		);

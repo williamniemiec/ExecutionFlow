@@ -1,9 +1,9 @@
-package wniemiec.executionflow.collector.parser;
+package auxfiles;
 
 import java.util.Arrays;
 import java.util.List;
 
-import wniemiec.executionflow.collector.parser.polymorphism.ClassInterface;
+import auxfiles.polymorphism.ClassInterface;
 
 
 /**

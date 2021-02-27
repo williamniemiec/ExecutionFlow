@@ -35,7 +35,8 @@ public abstract aspect RuntimeHook {
 	//		Pointcuts
 	//-------------------------------------------------------------------------
 	protected pointcut isInternalPackage():
-		within(wniemiec..*);
+		within(wniemiec..*)
+		|| within(auxfiles..*);
 	
 	protected pointcut skipAnnotation():
 		within(@wniemiec.executionflow.runtime.SkipCollection *)
