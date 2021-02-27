@@ -1,12 +1,9 @@
 package wniemiec.executionflow.invoked;
 
-import static java.lang.invoke.MethodType.methodType;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.invoke.MethodType;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;

@@ -1,10 +1,17 @@
 package wniemiec.executionflow.io.processing.manager;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
+import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.InvokedCollector;
+import wniemiec.executionflow.collector.MethodCollector;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
+import wniemiec.executionflow.io.processing.file.InvokedFileProcessor;
 import wniemiec.executionflow.io.processing.file.ProcessorType;
+import wniemiec.executionflow.io.processing.file.TestMethodFileProcessor;
 import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
 import wniemiec.executionflow.io.processing.file.factory.PreTestMethodFileProcessorFactory;
 import wniemiec.executionflow.io.processing.file.factory.TestMethodFileProcessorFactory;
@@ -31,7 +38,11 @@ public class ProcessingManager {
 		onShutdown();
 		AUTO_RESTORE = true;
 		successfullPreprocessing = false;
-		collectorProcessingManager = CollectorProcessingManager.getInstance();
+		Set<InvokedCollector> collectors = new HashSet<>(Set.of(
+				MethodCollector.getInstance(),
+				ConstructorCollector.getInstance()
+		));
+		collectorProcessingManager = CollectorProcessingManager.getInstance(collectors);
 	}
 	
 	
@@ -307,7 +318,12 @@ public class ProcessingManager {
 		
 		doProcessingInInvoked(currentInvokedFileManager, currentTestMethodFileManager);
 		
-		collectorProcessingManager.refreshInvocationLineAfterInvokedProcessing(collector);
+//		collectorProcessingManager.refreshInvocationLineAfterInvokedProcessing(collector);
+		collectorProcessingManager.updateCollectorsFromMapping(
+				InvokedFileProcessor.getMapping(),
+				collector.getTestMethod().getSrcPath(),
+				collector.getTestedInvoked().getSrcPath()
+		);
 		
 		Logger.info("Processing completed");
 	}
@@ -333,7 +349,12 @@ public class ProcessingManager {
 		
 		doProcessingInTestMethod(currentTestMethodFileManager);
 		
-		collectorProcessingManager.refreshInvocationLineAfterTestMethodProcessing(collector);
+//		collectorProcessingManager.refreshInvocationLineAfterTestMethodProcessing(collector);
+		collectorProcessingManager.updateCollectorsFromMapping(
+				TestMethodFileProcessor.getMapping(),
+				collector.getTestMethod().getSrcPath(),
+				collector.getTestedInvoked().getSrcPath()
+		);
 		
 		Logger.info("Processing completed");
 	}

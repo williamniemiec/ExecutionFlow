@@ -13,6 +13,8 @@ import wniemiec.executionflow.invoked.TestedInvoked;
 
 public class MethodCollector extends InvokedCollector {
 
+	private static MethodCollector instance;
+	
 	/**
 	 * Stores information about collected methods.<hr/>
 	 * <ul>
@@ -20,30 +22,38 @@ public class MethodCollector extends InvokedCollector {
 	 * 	<li><b>Value:</b> List of methods invoked from this line</li>
 	 * </ul>
 	 */
-	private static volatile Map<Integer, List<TestedInvoked>> methodCollector;
+	private volatile Map<Integer, List<TestedInvoked>> methodCollector;
 	
-	static {
+	private MethodCollector() {
 		methodCollector = new LinkedHashMap<>();
 	}
 	
-	public static void storeCollector(Invoked methodInfo, Invoked testMethodInfo) {
-		if (methodCollector.containsKey(methodInfo.getInvocationLine())) {
-			List<TestedInvoked> list = methodCollector.get(methodInfo.getInvocationLine());
-			list.add(new TestedInvoked(methodInfo, testMethodInfo));
+	public static MethodCollector getInstance() {
+		if (instance == null)
+			instance = new MethodCollector();
+		
+		return instance;
+	}
+	
+	@Override
+	public void storeCollector(Invoked method, Invoked testMethod) {
+		if (methodCollector.containsKey(method.getInvocationLine())) {
+			List<TestedInvoked> list = methodCollector.get(method.getInvocationLine());
+			list.add(new TestedInvoked(method, testMethod));
 		} 
 		else {	
 			List<TestedInvoked> list = new ArrayList<>();
-			list.add(new TestedInvoked(methodInfo, testMethodInfo));
+			list.add(new TestedInvoked(method, testMethod));
 			
-			methodCollector.put(methodInfo.getInvocationLine(), list);
+			methodCollector.put(method.getInvocationLine(), list);
 		}
 	}
 	
-	public static Map<Integer, List<TestedInvoked>> getCollector() {
+	public Map<Integer, List<TestedInvoked>> getCollector() {
 		return methodCollector;
 	}
 	
-	public static Set<TestedInvoked> getCollectorSet() {
+	public Set<TestedInvoked> getCollectorSet() {
 		Set<TestedInvoked> collectors = new HashSet<>();
 		for (List<TestedInvoked> collector : methodCollector.values()) {
 			collectors.add(collector.get(0));
@@ -52,19 +62,15 @@ public class MethodCollector extends InvokedCollector {
 		return collectors;
 	}
 	
-	public static void clear() {
+	@Override
+	public void reset() {
 		methodCollector.clear();
 	}
 	
-	/**
-	 * Updates the invocation line of all collected methods based on a mapping.
-	 * 
-	 * @param		mapping Mapping that will be used as base for the update
-	 * @param		testMethodSrcFile Test method source file
-	 */
-	public static void updateInvocationLines(Map<Integer, Integer> mapping, 
+	@Override
+	public void updateInvocationLines(Map<Integer, Integer> mapping, 
 			Path testMethodSrcFile) {
-		for (List<TestedInvoked> methodCollectorList : MethodCollector.getCollector().values()) {
+		for (List<TestedInvoked> methodCollectorList : methodCollector.values()) {
 			updateInvokedInvocationLines(
 					mapping, 
 					testMethodSrcFile,

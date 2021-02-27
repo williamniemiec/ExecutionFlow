@@ -13,6 +13,8 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import wniemiec.executionflow.collector.ClassPathSearcher;
+import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.InvokedCollector;
 import wniemiec.executionflow.collector.MethodCollector;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.logger.Logger;
@@ -267,7 +269,10 @@ public aspect MethodHook extends RuntimeHook {
 	
 	private void collectMethod(JoinPoint jp) {
 		collectMethodInfo(jp);
-		MethodCollector.storeCollector(method, testMethod);
+		
+		InvokedCollector collector = MethodCollector.getInstance();
+		collector.storeCollector(method, testMethod);
+//		MethodCollector.storeCollector(method, testMethod);
 	}
 	
 	private void collectMethodInfo(JoinPoint jp) {

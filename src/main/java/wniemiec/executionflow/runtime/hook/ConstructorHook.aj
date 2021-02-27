@@ -2,17 +2,15 @@ package wniemiec.executionflow.runtime.hook;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
 
 import wniemiec.executionflow.collector.ClassPathSearcher;
 import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.InvokedCollector;
 import wniemiec.executionflow.invoked.Invoked;
-import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -52,7 +50,7 @@ public aspect ConstructorHook extends RuntimeHook {
 	private Path srcPath;
 	private String signature;
 	private String classSignature;
-	private Invoked constructorInvokedInfo;
+	private Invoked constructor;
 	private String constructorID;
 
 	
@@ -167,7 +165,7 @@ public aspect ConstructorHook extends RuntimeHook {
 	}
 	
 	private void collectConstructorInfo(JoinPoint jp) {
-		constructorInvokedInfo = new Invoked.Builder()
+		constructor = new Invoked.Builder()
 				.binPath(classPath)
 				.srcPath(srcPath)
 				.signature(signature)
@@ -221,11 +219,15 @@ public aspect ConstructorHook extends RuntimeHook {
 	
 	private void collectConstructor(JoinPoint jp) {
 		collectConstructorInfo(jp);
-		ConstructorCollector.storeCollector(
-				constructorID, 
-				constructorInvokedInfo,
-				testMethod
-		);
+		
+		InvokedCollector collector = ConstructorCollector.getInstance();
+		collector.storeCollector(constructor, testMethod);
+//		ConstructorCollector.storeCollector(
+//				constructorID, 
+//				constructorInvokedInfo,
+//				testMethod
+//		);
+		
 	}
 	
 	private void markConstructorAsParsed() {

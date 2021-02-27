@@ -14,7 +14,10 @@ public abstract class InvokedCollector {
 	
 	protected InvokedCollector() {
 	}
-		
+	
+	public abstract void storeCollector(Invoked invoked, Invoked testMethod);
+	public abstract void reset();	
+	
 	protected static void updateInvokedInvocationLines(Map<Integer, Integer> mapping, 
 													 Path testMethodSrcFile, 
 													 Collection<TestedInvoked> collector) {
@@ -45,4 +48,14 @@ public abstract class InvokedCollector {
 		
 		modifiedCollectorInvocationLine = null;
 	}
+	
+	/**
+	 * Updates the invocation line of all collected invoked based on a 
+	 * mapping.
+	 * 
+	 * @param		mapping Mapping that will be used as base for the update
+	 * @param		testMethodSrcFile Test method source file
+	 */
+	public abstract void updateInvocationLines(Map<Integer, Integer> mapping, 
+									  		   Path testMethodSrcFile);
 }

@@ -11,6 +11,8 @@ import wniemiec.executionflow.invoked.TestedInvoked;
 
 public class ConstructorCollector extends InvokedCollector {
 
+	private static ConstructorCollector instance;
+	
 	/**
 	 * Stores information about collected constructor.<hr/>
 	 * <ul>
@@ -21,45 +23,42 @@ public class ConstructorCollector extends InvokedCollector {
 	 * 	<li><b>Value:</b> Informations about the constructor</li>
 	 * </ul>
 	 */
-	protected static volatile Map<String, TestedInvoked> constructorCollector;
+	protected volatile Map<Integer, TestedInvoked> constructorCollector;
 	
-	static {
+	private ConstructorCollector() {
 		constructorCollector = new LinkedHashMap<>();
 	}
 	
-	public static void storeCollector(String id, Invoked constructorInvokedInfo, 
-									  Invoked testMethodInfo) {
-		if (constructorCollector.containsKey(id))
+	public static ConstructorCollector getInstance() {
+		if (instance == null)
+			instance = new ConstructorCollector();
+		
+		return instance;
+	}
+	
+	@Override
+	public void storeCollector(Invoked constructor, Invoked testMethod) {
+		if (constructorCollector.containsKey(constructor.getInvocationLine()))
 			return;
 		
 		constructorCollector.put(
-				id,
-				new TestedInvoked(constructorInvokedInfo, testMethodInfo)
+				constructor.getInvocationLine(),
+				new TestedInvoked(constructor, testMethod)
 		);
 	}
 	
-	public static Map<String, TestedInvoked> getCollector() {
-		return constructorCollector;
-	}
-	
-	public static Set<TestedInvoked> getCollectorSet() {
+	public Set<TestedInvoked> getCollectorSet() {
 		return new HashSet<>(constructorCollector.values());
 	}
 	
-	public static void reset() {
+	@Override
+	public void reset() {
 		constructorCollector.clear();
 	}
-	
 
-	/**
-	 * Updates the invocation line of all collected constructors based on a 
-	 * mapping.
-	 * 
-	 * @param		mapping Mapping that will be used as base for the update
-	 * @param		testMethodSrcFile Test method source file
-	 */
-	public static void updateInvocationLines(Map<Integer, Integer> mapping, 
-														 Path testMethodSrcFile) {
+	@Override
+	public void updateInvocationLines(Map<Integer, Integer> mapping, 
+									  Path testMethodSrcFile) {
 		updateInvokedInvocationLines(
 				mapping, 
 				testMethodSrcFile, 

@@ -4,6 +4,7 @@ import org.aspectj.lang.JoinPoint;
 
 import wniemiec.executionflow.collector.CallCollector;
 import wniemiec.executionflow.collector.ConstructorCollector;
+import wniemiec.executionflow.collector.InvokedCollector;
 import wniemiec.executionflow.collector.MethodCollector;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.io.processing.file.InvokedFileProcessor;
@@ -100,10 +101,17 @@ public abstract aspect RuntimeHook {
 
 	protected void reset() {
 		CallCollector.reset();
-		MethodCollector.clear();
-		ConstructorCollector.reset();
+		resetCollectors();
 		TestMethodFileProcessor.clearMapping();
 		InvokedFileProcessor.clearMapping();
+	}
+	
+	private void resetCollectors() {
+		InvokedCollector collector = MethodCollector.getInstance();
+		collector.reset();
+		
+		collector = ConstructorCollector.getInstance();
+		collector.reset();
 	}
 	
 	protected String removeParametersFromSignature(String signature) {
