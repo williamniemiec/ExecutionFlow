@@ -1,4 +1,4 @@
-package wniemiec.executionflow.collector;
+package wniemiec.executionflow.io;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,14 +35,14 @@ public class ClassPathSearcher {
 	 */
 	public static Path findBinPath(String classSignature) throws IOException {
 		FileSearcher searcher = new FileSearcher(App.getCurrentProjectRoot());
+		String filename = generateCompiledFilename(removeParameters(classSignature));
 		
-		return searcher.search(generateCompiledFilename(classSignature));
+		return searcher.search(filename);
 	}
 	
 	private static String generateCompiledFilename(String classSignature) {
 		StringBuilder filename = new StringBuilder();
 
-//		filename.append(ExecutionFlow.isDevelopment() ? "target\\" : "");
 		filename.append(extractPathFromSignature(classSignature));
 		filename.append(extractClassNameFromClassSignature(classSignature));
 		filename.append(".class");
@@ -101,10 +101,19 @@ public class ClassPathSearcher {
 	 */
 	public static Path findSrcPath(String classSignature) throws IOException {
 		FileSearcher searcher = new FileSearcher(App.getCurrentProjectRoot());
+		String filename = generateSrcFilename(removeParameters(classSignature));
 		
-		return searcher.search(generateSrcFilename(classSignature));
+		return searcher.search(filename);
 	}
 	
+	private static String removeParameters(String classSignature) {
+		if (!classSignature.contains("("))
+			return classSignature;
+		
+		return classSignature.substring(0, classSignature.indexOf("("));
+	}
+
+
 	private static String generateSrcFilename(String classSignature) {
 		StringBuilder filename = new StringBuilder();
 		String className = extractClassNameFromClassSignature(classSignature);
