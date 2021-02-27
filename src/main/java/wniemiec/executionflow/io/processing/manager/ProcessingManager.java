@@ -1,19 +1,10 @@
 package wniemiec.executionflow.io.processing.manager;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-import wniemiec.executionflow.App;
-import wniemiec.executionflow.collector.ConstructorCollector;
-import wniemiec.executionflow.collector.MethodCollector;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
-import wniemiec.executionflow.io.processing.file.InvokedFileProcessor;
 import wniemiec.executionflow.io.processing.file.ProcessorType;
-import wniemiec.executionflow.io.processing.file.TestMethodFileProcessor;
 import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
 import wniemiec.executionflow.io.processing.file.factory.PreTestMethodFileProcessorFactory;
 import wniemiec.executionflow.io.processing.file.factory.TestMethodFileProcessorFactory;
@@ -21,30 +12,37 @@ import wniemiec.util.logger.Logger;
 
 public class ProcessingManager {
 
-	private static InvokedProcessingManager preTestMethodProcessingManager;
-	private static InvokedProcessingManager testMethodProcessingManager;
-	private static InvokedProcessingManager invokedProcessingManager;
-	private static FileProcessingManager preTestMethodFileManager;
-	private static final boolean AUTO_RESTORE;
-	private static boolean successfullPreprocessing;
-	private static FileProcessingManager currentInvokedFileManager;
-	private static FileProcessingManager currentTestMethodFileManager;
-	private static Set<String> alreadyChanged;
-	private static Invoked currentTestedInvoked;
-	private static Invoked currentTestMethod;
+	private static ProcessingManager instance;
+	private InvokedProcessingManager preTestMethodProcessingManager;
+	private InvokedProcessingManager testMethodProcessingManager;
+	private InvokedProcessingManager invokedProcessingManager;
+	private FileProcessingManager preTestMethodFileManager;
+	private final boolean AUTO_RESTORE;
+	private boolean successfullPreprocessing;
+	private FileProcessingManager currentInvokedFileManager;
+	private FileProcessingManager currentTestMethodFileManager;
 	
-	static {
+	private Invoked currentTestedInvoked;
+	private Invoked currentTestMethod;
+	private CollectorProcessingManager collectorProcessingManager;
+	
+	
+	private ProcessingManager() {
 		onShutdown();
 		AUTO_RESTORE = true;
 		successfullPreprocessing = false;
-		alreadyChanged = new HashSet<>();
-	}
-	
-	private ProcessingManager() {
+		collectorProcessingManager = CollectorProcessingManager.getInstance();
 	}
 	
 	
-	private static void onShutdown() {
+	public static ProcessingManager getInstance() {
+		if (instance == null)
+			instance = new ProcessingManager();
+		
+		return instance;
+	}
+	
+	private void onShutdown() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	try {
@@ -58,36 +56,36 @@ public class ProcessingManager {
 		});
 	}
 	
-	public static void initializeManagers(boolean restoreOriginalFiles) {
+	public void initializeManagers(boolean restoreOriginalFiles) {
 		try {
-			//processingManager = new InvokedManager(restoreOriginalFiles);
-			
-			preTestMethodProcessingManager = new InvokedProcessingManager(
-					initializePreTestMethodManager(),
-					restoreOriginalFiles
-			);
-			
-			testMethodProcessingManager = new InvokedProcessingManager(
-					initializeTestMethodManager(restoreOriginalFiles),
-					restoreOriginalFiles
-			);
-			
-			invokedProcessingManager = new InvokedProcessingManager(
-					initializeInvokedManager(restoreOriginalFiles),
-					restoreOriginalFiles
-			);
-			
-//			testMethodProcessingManager = new InvokedProcessingManager(initializeTestMethodManager(), invokedFileManager)
-//			initializeFileManager();
+			initializeProcessingManagers(restoreOriginalFiles);
 		}
 		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
-			Logger.error(e.getMessage());
+			Logger.error(e.toString());
 			
 			System.exit(-1);
 		}
 	}
+
+	private void initializeProcessingManagers(boolean restoreOriginalFiles) 
+			throws ClassNotFoundException, IOException {
+		preTestMethodProcessingManager = new InvokedProcessingManager(
+				initializePreTestMethodManager(),
+				restoreOriginalFiles
+		);
+		
+		testMethodProcessingManager = new InvokedProcessingManager(
+				initializeTestMethodManager(restoreOriginalFiles),
+				restoreOriginalFiles
+		);
+		
+		invokedProcessingManager = new InvokedProcessingManager(
+				initializeInvokedManager(restoreOriginalFiles),
+				restoreOriginalFiles
+		);
+	}
 	
-	public static FilesProcessingManager initializePreTestMethodManager() 
+	private FilesProcessingManager initializePreTestMethodManager() 
 			throws ClassNotFoundException, IOException {
 		return new FilesProcessingManager(
 				ProcessorType.PRE_TEST_METHOD,
@@ -95,7 +93,7 @@ public class ProcessingManager {
 		);
 	}
 	
-	private static FilesProcessingManager initializeTestMethodManager(boolean restoreOriginalFiles)
+	private FilesProcessingManager initializeTestMethodManager(boolean restoreOriginalFiles)
 			throws ClassNotFoundException, IOException {
 		return new FilesProcessingManager(
 				ProcessorType.TEST_METHOD,
@@ -103,7 +101,7 @@ public class ProcessingManager {
 		);
 	}
 
-	private static FilesProcessingManager initializeInvokedManager(boolean restoreOriginalFiles)
+	private FilesProcessingManager initializeInvokedManager(boolean restoreOriginalFiles)
 			throws ClassNotFoundException, IOException {
 		FilesProcessingManager invokedManager = new FilesProcessingManager(
 				ProcessorType.INVOKED,
@@ -116,7 +114,7 @@ public class ProcessingManager {
 		return invokedManager;
 	}
 	
-	private static void initializePreTestMethodFileManager(Invoked testMethod) {
+	private void initializePreTestMethodFileManager(Invoked testMethod) {
 		preTestMethodFileManager = new FileProcessingManager.Builder()
 				.srcPath(testMethod.getSrcPath())
 				.binPath(testMethod.getBinPath())
@@ -129,7 +127,7 @@ public class ProcessingManager {
 				.build();
 	}
 	
-	public static void restoreAllTestMethodFiles() throws IOException {
+	public void restoreAllTestMethodFiles() throws IOException {
 		if (preTestMethodProcessingManager == null)
 			return;
 
@@ -140,7 +138,7 @@ public class ProcessingManager {
 	
 	
 	
-	public static void doPreprocessingInTestMethod(Invoked testMethod) throws IOException {
+	public void doPreprocessingInTestMethod(Invoked testMethod) throws IOException {
 		initializePreTestMethodFileManager(testMethod);
 		
 		try {
@@ -164,21 +162,21 @@ public class ProcessingManager {
 		successfullPreprocessing = true;
 	}
 	
-	private static void restoreOriginalFiles() {
+	private void restoreOriginalFiles() {
 		restoreOriginalFilesFromTestMethod();
 		restoreOriginalFilesFromInvoked();
 		restoreOriginalFilesFrom(preTestMethodProcessingManager);
 	}
 	
-	public static boolean restoreOriginalFilesFromTestMethod() {
+	public boolean restoreOriginalFilesFromTestMethod() {
 		return restoreOriginalFilesFrom(testMethodProcessingManager);
 	}
 	
-	public static boolean restoreOriginalFilesFromInvoked() {
+	public boolean restoreOriginalFilesFromInvoked() {
 		return restoreOriginalFilesFrom(invokedProcessingManager);
 	}
 	
-	private static boolean restoreOriginalFilesFrom(InvokedProcessingManager processingManager) {
+	private boolean restoreOriginalFilesFrom(InvokedProcessingManager processingManager) {
 		if (processingManager == null)
 			return true;
 		
@@ -203,7 +201,7 @@ public class ProcessingManager {
 		return success;
 	}
 	
-	public static void deleteTestMethodBackupFiles() {
+	public void deleteTestMethodBackupFiles() {
 		if ((testMethodProcessingManager != null) && 
 				testMethodProcessingManager.isInvokedFilesManagerInitialized())
 			testMethodProcessingManager.deleteBackupFiles();
@@ -217,31 +215,31 @@ public class ProcessingManager {
 	}
 	
 	
-	public static void deleteInvokedBackupFiles() {
+	public void deleteInvokedBackupFiles() {
 		if (invokedProcessingManager == null)
 			return;
 		
 		invokedProcessingManager.deleteBackupFiles();
 	}
 	
-	private static void doProcessingInInvoked(FileProcessingManager invokedFileManager, FileProcessingManager testMethodFileManager) 
+	private void doProcessingInInvoked(FileProcessingManager invokedFileManager, 
+									   FileProcessingManager testMethodFileManager) 
 			throws IOException {
 		if (invokedProcessingManager == null)
 			return;
 		
 		invokedProcessingManager.processAndCompile(
 				invokedFileManager, 
-				currentTestMethod.getSrcPath().equals(currentTestedInvoked.getSrcPath())
-//				!isTestMethodFileAndInvokedFileTheSameFile(invokedFileManager)
+				isTestMethodFileAndInvokedFileTheSameFile()
 		);
 	}
 	
-	private static boolean isTestMethodFileAndInvokedFileTheSameFile(FileProcessingManager invokedFileManager) {
+	private boolean isTestMethodFileAndInvokedFileTheSameFile() {
 		return	currentTestMethod.getSrcPath()
 				.equals(currentTestedInvoked.getSrcPath());
 	}
 	
-	private static void doProcessingInTestMethod(FileProcessingManager testMethodFileManager) 
+	private void doProcessingInTestMethod(FileProcessingManager testMethodFileManager) 
 			throws IOException {
 		if (testMethodProcessingManager == null)
 			return;
@@ -249,25 +247,25 @@ public class ProcessingManager {
 		testMethodProcessingManager.processAndCompile(testMethodFileManager, AUTO_RESTORE);
 	}
 	
-	private static void restoreTestMethodToBeforeProcessing(FileProcessingManager testMethodFileManager) {
+	private void restoreTestMethodToBeforeProcessing(FileProcessingManager testMethodFileManager) {
 		if (testMethodProcessingManager == null)
 			return;
 		
 		testMethodProcessingManager.restoreInvokedOriginalFile(testMethodFileManager);
 	}
 	
-	private static void restoreInvokedToBeforeProcessing(FileProcessingManager invokedFileManager) {
+	private void restoreInvokedToBeforeProcessing(FileProcessingManager invokedFileManager) {
 		if (invokedProcessingManager == null)
 			return;
 		
 		invokedProcessingManager.restoreInvokedOriginalFile(invokedFileManager);
 	}
 	
-	public static boolean wasPreprocessingDoneSuccessfully() {
+	public boolean wasPreprocessingDoneSuccessfully() {
 		return successfullPreprocessing;
 	}
 	
-	public static void doProcessingInTestedInvoked(TestedInvoked collector) throws IOException {
+	public void doProcessingInTestedInvoked(TestedInvoked collector) throws IOException {
 		currentTestMethod = collector.getTestMethod();
 		currentTestedInvoked = collector.getTestedInvoked();
 		currentTestMethodFileManager = createTestMethodFileManager(collector.getTestMethod());
@@ -277,7 +275,7 @@ public class ProcessingManager {
 		processInvokedMethod(collector);
 	}
 	
-	private static FileProcessingManager createTestMethodFileManager(Invoked testMethod) {
+	private FileProcessingManager createTestMethodFileManager(Invoked testMethod) {
 		return new FileProcessingManager.Builder()
 				.srcPath(testMethod.getSrcPath())
 				.binPath(testMethod.getBinPath())
@@ -287,11 +285,7 @@ public class ProcessingManager {
 				.build();
 	}
 	
-	private static Path getBinDirectory(Path binPath) {
-		return binPath.getParent();
-	}
-
-	private static FileProcessingManager createInvokedFileManager(Invoked invoked) {
+	private FileProcessingManager createInvokedFileManager(Invoked invoked) {
 		return new FileProcessingManager.Builder()
 				.srcPath(invoked.getSrcPath())
 				.binPath(invoked.getBinPath())
@@ -301,7 +295,7 @@ public class ProcessingManager {
 				.build();
 	}
 
-	private static void processInvokedMethod(TestedInvoked collector) throws IOException {
+	private void processInvokedMethod(TestedInvoked collector) throws IOException {
 		Logger.info("Processing source file of invoked - " 
 				+ collector.getTestedInvoked().getConcreteSignature() 
 				+ "..."
@@ -309,91 +303,48 @@ public class ProcessingManager {
 		
 		doProcessingInInvoked(currentInvokedFileManager, currentTestMethodFileManager);
 		
-		updateInvocationLineAfterInvokedProcessing(collector);
+		collectorProcessingManager.refreshInvocationLineAfterInvokedProcessing(collector);
 		
 		Logger.info("Processing completed");
 	}
 	
-	private static void processTestMethod(TestedInvoked collector) throws IOException {
-		Logger.info(
-				"Processing source file of test method "
-				+ collector.getTestMethod().getConcreteSignature() 
-				+ "..."
-		);
-		
-		ProcessingManager.doProcessingInTestMethod(currentTestMethodFileManager);
-		
-		updateInvocationLineAfterTestMethodProcessing(collector);
-		
-		Logger.info("Processing completed");
-	}
-	
-	private static void updateInvocationLineAfterInvokedProcessing(TestedInvoked collector) {
-		if (App.isTestMode()) {
-			if (collector.getTestedInvoked().getSrcPath().equals(
-					collector.getTestMethod().getSrcPath())) {
-				updateCollector(collector, InvokedFileProcessor.getMapping());
-			}
-		}
-		else {
-			updateCollectors(
-					InvokedFileProcessor.getMapping(),
-					collector.getTestMethod().getSrcPath(), 
-					collector.getTestedInvoked().getSrcPath()
-			);
-		}
-	}
-
-	private static void updateCollector(TestedInvoked collector, Map<Integer, Integer> mapping) {
-		int invocationLine = collector.getTestedInvoked().getInvocationLine();
-		
-		if (mapping.containsKey(invocationLine))
-			collector.getTestedInvoked().setInvocationLine(mapping.get(invocationLine));
-	}
-
-	private static void updateCollectors(Map<Integer, Integer> mapping, Path testMethodSrcPath,
-								  Path invokedSrcPath) {
-		if (alreadyChanged.contains(testMethodSrcPath.toString()) && 
-				!invokedSrcPath.equals(testMethodSrcPath))
-			return;
-
-		ConstructorCollector.updateInvocationLines(
-				mapping, 
-				testMethodSrcPath
-		);
-		
-		MethodCollector.updateInvocationLines(
-				mapping, 
-				testMethodSrcPath
-		);
-		
-		alreadyChanged.add(testMethodSrcPath.toString());
-	}
-
-	
-
-	private static void updateInvocationLineAfterTestMethodProcessing(TestedInvoked collector) {
-		if (App.isTestMode()) {
-			updateCollector(collector, TestMethodFileProcessor.getMapping());
-		}
-		else {
-			updateCollectors(
-					TestMethodFileProcessor.getMapping(),
-					collector.getTestMethod().getSrcPath(), 
-					collector.getTestedInvoked().getSrcPath()
-			);
-		}
-	}
-	
-	public static void resetLastProcessing() {
+	public void resetLastProcessing() {
 		if (currentTestMethodFileManager != null)
 			restoreTestMethodToBeforeProcessing(currentTestMethodFileManager);
 		
 		if (currentInvokedFileManager != null)
 			restoreInvokedToBeforeProcessing(currentInvokedFileManager);
 		
-		alreadyChanged.clear();
+		collectorProcessingManager.reset();
 		currentInvokedFileManager = null;
 		currentTestMethodFileManager = null;
 	}
+	
+	private void processTestMethod(TestedInvoked collector) throws IOException {
+		Logger.info(
+				"Processing source file of test method "
+				+ collector.getTestMethod().getConcreteSignature() 
+				+ "..."
+		);
+		
+		doProcessingInTestMethod(currentTestMethodFileManager);
+		
+		collectorProcessingManager.refreshInvocationLineAfterTestMethodProcessing(collector);
+		
+		Logger.info("Processing completed");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

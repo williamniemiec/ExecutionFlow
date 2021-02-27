@@ -41,6 +41,7 @@ public class App {
 	private static volatile boolean success;
 	private static ExportManager methodExportManager;
 	private static ExportManager constructorExportManager;
+	private static ProcessingManager processingManager;
 	
 	
 	//-------------------------------------------------------------------------
@@ -132,7 +133,8 @@ public class App {
 			return;
 		
 		try {
-			ProcessingManager.initializeManagers(!runningFromJUnitAPI());
+			processingManager = ProcessingManager.getInstance();
+			processingManager.initializeManagers(!runningFromJUnitAPI());
 			inTheFirstRun();
 			beforeEachTestMethod();
 			initializeLogger();
@@ -228,11 +230,11 @@ public class App {
 		updateRemainingTests();
 		
 		boolean successfullRestoration = false;
-		successfullRestoration = ProcessingManager.restoreOriginalFilesFromTestMethod();
+		successfullRestoration = processingManager.restoreOriginalFilesFromTestMethod();
 		
 		if (remainingTests == 0) {
-			successfullRestoration = ProcessingManager.restoreOriginalFilesFromInvoked();
-			ProcessingManager.deleteInvokedBackupFiles();
+			successfullRestoration = processingManager.restoreOriginalFilesFromInvoked();
+			processingManager.deleteInvokedBackupFiles();
 			App.closeControlWindow();
 		}
 		
@@ -241,7 +243,7 @@ public class App {
 		}
 		
 		try {
-			ProcessingManager.restoreAllTestMethodFiles();
+			processingManager.restoreAllTestMethodFiles();
 		} 
 		catch (IOException e) {
 			successfullRestoration = false;
@@ -442,7 +444,7 @@ public class App {
 	public static void doPreprocessing(Invoked testMethod) throws IOException {
 		try {
 			currentTestMethodCheckpoint.enable();
-			ProcessingManager.doPreprocessingInTestMethod(testMethod);
+			processingManager.doPreprocessingInTestMethod(testMethod);
 		} 
 		catch (IOException e) {
 			disableCheckpoint(currentTestMethodCheckpoint);
@@ -451,7 +453,7 @@ public class App {
 	}
 	
 	public static boolean runningTestMethod() {
-		return	ProcessingManager.wasPreprocessingDoneSuccessfully()
+		return	processingManager.wasPreprocessingDoneSuccessfully()
 				|| currentTestMethodCheckpoint.isEnabled();
 	}
 	
@@ -459,7 +461,7 @@ public class App {
 		if (!hasTempFilesFromLastRun())
 			return;
 		
-		ProcessingManager.deleteTestMethodBackupFiles();
+		processingManager.deleteTestMethodBackupFiles();
 		currentTestMethodCheckpoint.delete();
 	}
 	

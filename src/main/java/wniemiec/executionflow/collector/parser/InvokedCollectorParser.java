@@ -40,12 +40,13 @@ public class InvokedCollectorParser {
 			return new TestedInvokedParser();
 		
 		TestedInvokedParser parser = new TestedInvokedParser();
+		ProcessingManager processingManager = ProcessingManager.getInstance();
 		
 		dumpCollector(invokedCollector);
 
 		for (TestedInvoked collector : invokedCollector) {				
 			try {
-				ProcessingManager.doProcessingInTestedInvoked(collector);
+				processingManager.doProcessingInTestedInvoked(collector);
 				
 				DebuggerAnalyzer debuggerAnalyzer = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
 						collector.getTestedInvoked(), 
@@ -55,7 +56,7 @@ public class InvokedCollectorParser {
 				parser.parse(collector, debuggerAnalyzer);
 				
 				if (isTestedInvokedInTheSameFileAsTestMethod(collector)) {
-					ProcessingManager.resetLastProcessing();
+					processingManager.resetLastProcessing();
 					InvokedCollector.restoreCollectorInvocationLine();
 				}
 			}
@@ -68,7 +69,7 @@ public class InvokedCollectorParser {
 			catch (IOException e3) {
 				Logger.error(e3.getMessage());
 				
-				ProcessingManager.resetLastProcessing();
+				processingManager.resetLastProcessing();
 			}
 		}
 		
