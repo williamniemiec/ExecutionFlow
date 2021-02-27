@@ -37,17 +37,27 @@ public class ConstructorCollector extends InvokedCollector {
 	}
 	
 	@Override
-	public void storeCollector(Invoked constructor, Invoked testMethod) {
-		if (constructorCollector.containsKey(constructor.getInvocationLine()))
+	public void collect(TestedInvoked testedInvoked) {
+		if (wasConstructorCollected(testedInvoked.getTestedInvoked()))
 			return;
 		
+		putInConstructorCollection(testedInvoked.getTestedInvoked(), testedInvoked);
+	}
+	
+	private boolean wasConstructorCollected(Invoked constructor) {
+		return constructorCollector.containsKey(constructor.getInvocationLine());
+	}
+	
+	private void putInConstructorCollection(Invoked constructor, 
+											TestedInvoked testedInvoked) {
 		constructorCollector.put(
 				constructor.getInvocationLine(),
-				new TestedInvoked(constructor, testMethod)
+				testedInvoked
 		);
 	}
 	
-	public Set<TestedInvoked> getCollectorSet() {
+	@Override
+	public Set<TestedInvoked> getAllCollectedInvoked() {
 		return new HashSet<>(constructorCollector.values());
 	}
 	

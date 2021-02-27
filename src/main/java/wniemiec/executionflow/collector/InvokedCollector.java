@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
@@ -15,7 +16,7 @@ public abstract class InvokedCollector {
 	protected InvokedCollector() {
 	}
 	
-	public abstract void storeCollector(Invoked invoked, Invoked testMethod);
+	public abstract void collect(TestedInvoked testedInvoked);
 	public abstract void reset();	
 	
 	protected static void updateInvokedInvocationLines(Map<Integer, Integer> mapping, 
@@ -58,4 +59,6 @@ public abstract class InvokedCollector {
 	 */
 	public abstract void updateInvocationLines(Map<Integer, Integer> mapping, 
 									  		   Path testMethodSrcFile);
+	
+	public abstract Set<TestedInvoked> getAllCollectedInvoked();
 }

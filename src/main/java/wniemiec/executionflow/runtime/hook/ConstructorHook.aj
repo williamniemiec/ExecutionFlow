@@ -221,7 +221,7 @@ public aspect ConstructorHook extends RuntimeHook {
 		collectConstructorInfo(jp);
 		
 		InvokedCollector collector = ConstructorCollector.getInstance();
-		collector.storeCollector(constructor, testMethod);
+		collector.collect(constructor, testMethod);
 //		ConstructorCollector.storeCollector(
 //				constructorID, 
 //				constructorInvokedInfo,

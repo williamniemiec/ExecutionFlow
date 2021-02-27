@@ -271,7 +271,7 @@ public aspect MethodHook extends RuntimeHook {
 		collectMethodInfo(jp);
 		
 		InvokedCollector collector = MethodCollector.getInstance();
-		collector.storeCollector(method, testMethod);
+		collector.collect(method, testMethod);
 //		MethodCollector.storeCollector(method, testMethod);
 	}
 	

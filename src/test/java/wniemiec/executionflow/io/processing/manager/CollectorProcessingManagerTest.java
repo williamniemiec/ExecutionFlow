@@ -12,6 +12,7 @@ import wniemiec.executionflow.collector.ConstructorCollector;
 import wniemiec.executionflow.collector.InvokedCollector;
 import wniemiec.executionflow.collector.MethodCollector;
 import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 
 class CollectorProcessingManagerTest {
 
@@ -55,7 +56,7 @@ class CollectorProcessingManagerTest {
 				Map.entry(5, 4)
 		);
 		
-		methodCollector.storeCollector(testedMethod, testMethod);
+		methodCollector.collect(new TestedInvoked(testMethod, testMethod));
 	}
 	
 	@AfterEach

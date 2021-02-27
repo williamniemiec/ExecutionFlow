@@ -36,24 +36,35 @@ public class MethodCollector extends InvokedCollector {
 	}
 	
 	@Override
-	public void storeCollector(Invoked method, Invoked testMethod) {
-		if (methodCollector.containsKey(method.getInvocationLine())) {
-			List<TestedInvoked> list = methodCollector.get(method.getInvocationLine());
-			list.add(new TestedInvoked(method, testMethod));
+	public void collect(TestedInvoked testedInvoked) {
+		if (wasMethodCollected(testedInvoked.getTestedInvoked())) {
+			List<TestedInvoked> list = getAllCollectedInvokedFromMethod(
+					testedInvoked.getTestedInvoked()
+			);
+			list.add(testedInvoked);
 		} 
 		else {	
 			List<TestedInvoked> list = new ArrayList<>();
-			list.add(new TestedInvoked(method, testMethod));
+			list.add(testedInvoked);
 			
-			methodCollector.put(method.getInvocationLine(), list);
+			putInMethodCollection(testedInvoked.getTestedInvoked(), list);
 		}
 	}
 	
-	public Map<Integer, List<TestedInvoked>> getCollector() {
-		return methodCollector;
+	private boolean wasMethodCollected(Invoked method) {
+		return methodCollector.containsKey(method.getInvocationLine());
 	}
 	
-	public Set<TestedInvoked> getCollectorSet() {
+	private List<TestedInvoked> getAllCollectedInvokedFromMethod(Invoked method) {
+		return methodCollector.get(method.getInvocationLine());
+	}
+	
+	private void putInMethodCollection(Invoked method, List<TestedInvoked> list) {
+		methodCollector.put(method.getInvocationLine(), list);
+	}
+	
+	@Override
+	public Set<TestedInvoked> getAllCollectedInvoked() {
 		Set<TestedInvoked> collectors = new HashSet<>();
 		for (List<TestedInvoked> collector : methodCollector.values()) {
 			collectors.add(collector.get(0));
