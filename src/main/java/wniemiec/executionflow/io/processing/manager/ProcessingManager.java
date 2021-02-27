@@ -66,6 +66,10 @@ public class ProcessingManager {
 			System.exit(-1);
 		}
 	}
+	
+	public void initializeManagers() {
+		initializeManagers(false);
+	}
 
 	private void initializeProcessingManagers(boolean restoreOriginalFiles) 
 			throws ClassNotFoundException, IOException {
@@ -333,18 +337,4 @@ public class ProcessingManager {
 		
 		Logger.info("Processing completed");
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
