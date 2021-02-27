@@ -7,17 +7,17 @@ import org.junit.jupiter.api.Test;
 
 import wniemiec.executionflow.invoked.Invoked;
 
-class MethodCollectorTest extends InvokedCollectorTest {
-	
+class ConstructorCollectorTest extends InvokedCollectorTest {
+
 	@BeforeEach
 	void restore() {
-		collector = MethodCollector.getInstance();
+		collector = ConstructorCollector.getInstance();
 	}
 	
 	@Test
 	void testStoreAndGetCollector() {
-		withTestedMethod(getTestedInvokedM3Method());
-		withTestMethod(getTestMethodMethod1());
+		withTestedMethod(getTestedConstructor());
+		withTestMethod(getTestMethodMethod4());
 		doCollection();
 		
 		assertTestedInvokedWasCollected();
@@ -25,32 +25,31 @@ class MethodCollectorTest extends InvokedCollectorTest {
 
 	@Test
 	void testUpdateInvocationLine() {
-		withTestedMethod(getTestedInvokedM3Method());
-		withTestMethod(getTestMethodMethod1());
+		withTestedMethod(getTestedConstructor());
+		withTestMethod(getTestMethodMethod4());
 		doCollection();
 		
 		updateInvocationLineFromMapping(Map.ofEntries(
-				Map.entry(9, 99)
+				Map.entry(24, 99)
 		));
 		
 		assertTestedInvokedHasInvocationLine(99);
 	}
 	
-	private Invoked getTestMethodMethod1() {
+	private Invoked getTestMethodMethod4() {
 		return new Invoked.Builder()
 				.srcPath(getResourcesSrc().resolve("testmethod.java"))
 				.binPath(getResourcesBin().resolve("testmethod.class"))
-				.signature("wniemiec.executionflow.io.processing.manager.testmethod.method1()")
+				.signature("wniemiec.executionflow.io.processing.manager.testmethod.method4()")
 				.build();
 	}
 
-	private Invoked getTestedInvokedM3Method() {
+	private Invoked getTestedConstructor() {
 		return new Invoked.Builder()
 				.srcPath(getResourcesSrc().resolve("testedinvoked.java"))
 				.binPath(getResourcesBin().resolve("testedinvoked.class"))
 				.signature("wniemiec.executionflow.io.processing.manager.testedinvoked(int)")
-				.invocationLine(9)
-				.isConstructor(true)
+				.invocationLine(24)
 				.build();
 	}
 }

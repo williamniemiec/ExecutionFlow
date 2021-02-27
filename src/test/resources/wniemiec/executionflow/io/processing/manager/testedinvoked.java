@@ -6,6 +6,12 @@ import java.io.IOException;
 
 public class testedinvoked {
 	
+	private int number;
+	
+	public testedinvoked(int x) {
+		number = x;
+	}
+	
 	public static int countTotalArguments(Object... args) {
 		int i = 2;
 		int k;

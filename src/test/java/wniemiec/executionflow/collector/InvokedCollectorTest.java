@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -34,6 +35,11 @@ abstract class InvokedCollectorTest {
 	void restore() {
 		testedMethod = null;
 		testMethod = null;
+	}
+	
+	@AfterEach
+	void clean() {
+		collector.reset();
 	}
 	
 	protected Path getResourcesSrc() {

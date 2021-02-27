@@ -24,7 +24,7 @@ public abstract class InvokedCollector {
 													 Collection<TestedInvoked> collector) {
 		if (modifiedCollectorInvocationLine == null)
 			modifiedCollectorInvocationLine = new HashMap<>();
-		
+	
 		for (TestedInvoked cc : collector) {
 			int invocationLine = cc.getTestedInvoked().getInvocationLine();
 			

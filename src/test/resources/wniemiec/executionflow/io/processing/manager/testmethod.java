@@ -21,7 +21,7 @@ public class testmethod {
 	
 	@Test
 	public void method4() {
-		// code
+		new testedinvoked(0);
 	}
 	
 	public void method5() {
