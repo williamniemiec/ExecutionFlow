@@ -11,6 +11,7 @@ import wniemiec.executionflow.collector.ClassPathSearcher;
 import wniemiec.executionflow.collector.ConstructorCollector;
 import wniemiec.executionflow.collector.InvokedCollector;
 import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -221,12 +222,7 @@ public aspect ConstructorHook extends RuntimeHook {
 		collectConstructorInfo(jp);
 		
 		InvokedCollector collector = ConstructorCollector.getInstance();
-		collector.collect(constructor, testMethod);
-//		ConstructorCollector.storeCollector(
-//				constructorID, 
-//				constructorInvokedInfo,
-//				testMethod
-//		);
+		collector.collect(new TestedInvoked(constructor, testMethod));
 		
 	}
 	

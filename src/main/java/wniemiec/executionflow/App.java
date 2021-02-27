@@ -406,7 +406,7 @@ public class App {
 	
 	public static void exportAllConstructorsUsedInTestMethods() {
 		constructorExportManager.exportAllMethodsAndConstructorsUsedInTestMethods(
-				ConstructorCollector.getInstance().getCollector()
+				ConstructorCollector.getInstance().getAllCollectedInvoked()
 		);
 	}
 	
@@ -419,7 +419,7 @@ public class App {
 	private static void parseConstructorCollector() {
 		TestedInvokedProcessingManager collectionProcessor = new TestedInvokedProcessingManager();
 		TestedInvokedParser parser = collectionProcessor.parse(
-				ConstructorCollector.getInstance().getCollector()
+				ConstructorCollector.getInstance().getAllCollectedInvoked()
 		);
 		export(parser, constructorExportManager);
 	}
