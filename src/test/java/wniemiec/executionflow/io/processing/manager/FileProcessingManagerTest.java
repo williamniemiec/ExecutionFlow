@@ -249,6 +249,12 @@ class FileProcessingManagerTest {
 		);
 	}
 
+	
+	private void createBackupFiles() {
+		fileProcessingManager.createBinBackupFile(AUTO_RESTORE);
+		fileProcessingManager.createSrcBackupFile(AUTO_RESTORE);
+	}
+	
 	private void assertSrcFileIsCompiledAfterProcessing() throws IOException {
 		FileTime binFileTime = Files.getLastModifiedTime(binPath);
 		
@@ -261,10 +267,6 @@ class FileProcessingManagerTest {
 		);
 	}
 
-	private void createBackupFiles() {
-		fileProcessingManager.createBinBackupFile(AUTO_RESTORE);
-		fileProcessingManager.createSrcBackupFile(AUTO_RESTORE);
-	}
 
 	private void assertSrcFileIsProcessed() throws IOException {
 		FileTime srcFileTime = Files.getLastModifiedTime(srcPath);

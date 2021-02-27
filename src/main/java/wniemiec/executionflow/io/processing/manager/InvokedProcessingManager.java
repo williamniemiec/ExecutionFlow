@@ -34,7 +34,8 @@ public class InvokedProcessingManager {
 	 * found
 	 * @throws		IOException If backup files could not be restored
 	 */
-	public InvokedProcessingManager(FilesProcessingManager invokedFilesManager, boolean restoreOriginalFiles/*, FileManager invokedFileManager*/) 
+	public InvokedProcessingManager(FilesProcessingManager invokedFilesManager, 
+									boolean restoreOriginalFiles) 
 			throws ClassNotFoundException, IOException {
 		try {
 			this.invokedFilesManager = invokedFilesManager;
@@ -55,6 +56,21 @@ public class InvokedProcessingManager {
 		}
 	}
 
+	/**
+	 * Initializes invoked managers. If some error occurs, should stop the
+	 * application execution; otherwise, the original files that have been 
+	 * modified in the last run may be lost. Using this constructor, if
+	 * there are backup files, they will be restored.
+	 * 
+	 * @throws		ClassNotFoundException If FileManager class has not been
+	 * found
+	 * @throws		IOException If backup files could not be restored
+	 */
+	public InvokedProcessingManager(FilesProcessingManager invokedFilesManager) 
+			throws ClassNotFoundException, IOException {
+		this(invokedFilesManager, true);
+	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -64,14 +80,22 @@ public class InvokedProcessingManager {
 	}
 	
 	public void restoreInvokedOriginalFile(FileProcessingManager invokedFileManager) {
+		checkInvokedFilesManagerIsInitialized();
+		checkFileProcessingManager(invokedFileManager);
+		
 		restoreOriginalFile(invokedFileManager);
 		invokedFilesManager.remove(invokedFileManager);
 	}
 	
-	/**
-	 * Restores original files, displaying an error message if an error occurs.
-	 */
+	private void checkFileProcessingManager(FileProcessingManager invokedFileManager) {
+		if (invokedFileManager == null) {
+			throw new IllegalArgumentException("Invoked file manager cannot be null");
+		}
+	}
+
 	private void restoreOriginalFile(FileProcessingManager invokedFileManager) {
+		checkFileProcessingManager(invokedFileManager);
+		
 		restoreBinaryFile(invokedFileManager);
 		restoreSourceFile(invokedFileManager);
 	}
@@ -100,8 +124,12 @@ public class InvokedProcessingManager {
 		}
 	}
 	
-	public void processAndCompile(FileProcessingManager invokedFileManager, boolean autoRestore) 
+	public void processAndCompile(FileProcessingManager invokedFileManager, 
+								  boolean autoRestore) 
 			throws IOException {
+		checkInvokedFilesManagerIsInitialized();
+		checkFileProcessingManager(invokedFileManager);
+		
 		if (invokedFilesManager.wasProcessed(invokedFileManager))
 			return;
 		
@@ -111,16 +139,33 @@ public class InvokedProcessingManager {
 		Logger.info("Processing completed");	
 	}
 	
+	private void checkInvokedFilesManagerIsInitialized() {
+		if (!isInvokedFilesManagerInitialized()) {
+			throw new IllegalStateException("Invoked files manager was destroyed");
+		}
+	}
+
+	public void processAndCompile(FileProcessingManager invokedFileManager) 
+			throws IOException {
+		processAndCompile(invokedFileManager, false);
+	}
+	
 	
 	public boolean isInvokedFilesManagerInitialized() {
 		return (invokedFilesManager != null);
 	}
 	
 	public void deleteBackupFiles() {
-		if (!isInvokedFilesManagerInitialized())
-			return;
+		checkInvokedFilesManagerIsInitialized();
 		
 		invokedFilesManager.deleteBackup();
+	}
+	
+	public boolean hasBackupFiles() {
+		if (!isInvokedFilesManagerInitialized())
+			return false;
+		
+		return invokedFilesManager.hasBackupStored();
 	}
 	
 	public void restoreInvokedOriginalFiles() 
