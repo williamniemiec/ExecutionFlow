@@ -182,13 +182,32 @@
 						<includes>
 							<include>src/main/**/*aj</include>
 							<include>src/main/**/*java</include>
-							<include>src/test/resources/**/*java</include>
 						</includes>
-						<source>1.8</source>
-						<target>1.8</target>
+						<source>1.9</source>
+						<target>1.9</target>
 						<useIncrementalCompilation>false</useIncrementalCompilation>
 					</configuration>
 				</plugin>
+				
+				<plugin>
+		            <groupId>org.codehaus.mojo</groupId>
+		            <artifactId>build-helper-maven-plugin</artifactId>
+		            <version>3.2.0</version>
+		            <executions>
+		                <execution>
+		                    <phase>generate-sources</phase>
+		                    <goals>
+		                        <goal>add-source</goal>
+		                    </goals>
+		                    <configuration>
+		                        <sources>
+		                            <source>src/test/resources</source>
+		                        </sources>
+		                    </configuration>
+		                </execution>
+		            </executions>
+		        </plugin>
+				
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
