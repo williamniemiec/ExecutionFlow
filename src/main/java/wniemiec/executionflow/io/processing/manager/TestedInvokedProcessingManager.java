@@ -33,8 +33,7 @@ public class TestedInvokedProcessingManager {
 				processingManager.doProcessingInTestedInvoked(collector);
 				
 				DebuggerAnalyzer debuggerAnalyzer = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
-						collector.getTestedInvoked(), 
-						collector.getTestMethod()
+						collector
 				);
 				
 				parser.parse(collector, debuggerAnalyzer);

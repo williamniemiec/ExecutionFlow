@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.io.parser.balance.RoundBracketBalance;
 import wniemiec.util.logger.Logger;
 
@@ -13,7 +13,7 @@ import wniemiec.util.logger.Logger;
  * methods called by it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
+ * @version		7.0.0
  * @since		6.0.0
  */
 class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
@@ -44,11 +44,11 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	public StandardDebuggerAnalyzer(Invoked invokedInfo, Invoked testMethodInfo) 
+	public StandardDebuggerAnalyzer(TestedInvoked testedInvoked) 
 			throws IOException {
-		super(invokedInfo, testMethodInfo);
+		super(testedInvoked);
 		
-		anonymousConstructor = checkAnonymousConstructor(invokedInfo.getClassSignature());
+		anonymousConstructor = checkAnonymousConstructor();
 		testPath = new ArrayList<>();
 		testPaths = new ArrayList<>();
 	}
@@ -57,11 +57,11 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private boolean checkAnonymousConstructor(String classSignature) {
-		if (!classSignature.contains("$"))
+	private boolean checkAnonymousConstructor() {
+		if (!testedInvoked.getClassSignature().contains("$"))
 			return false;
 		
-		return invoked.getInvokedSignature().matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
+		return testedInvoked.getInvokedSignature().matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
 	}
 	
 	protected void run() throws IOException {
@@ -217,9 +217,9 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 		}
 		
 		throw new IllegalStateException("Incorrect invocation line {invocationLine: " 
-				+ invoked.getInvocationLine() + ", test method signature: "
+				+ testedInvoked.getInvocationLine() + ", test method signature: "
 				+ testMethod.getSignatureWithoutParameters() + ")" + ", invokedSignature: " 
-				+ invoked.getInvokedSignature() + "}"
+				+ testedInvoked.getInvokedSignature() + "}"
 		);
 	}
 	
@@ -248,8 +248,8 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	}
 	
 	private boolean hasLineInvokedName() {
-		return	line.contains(invoked.getName() + ".") 
-				|| line.contains(invoked.getName() + "(");
+		return	line.contains(testedInvoked.getName() + ".") 
+				|| line.contains(testedInvoked.getName() + "(");
 	}
 	
 	private boolean inConstructor() {
@@ -322,7 +322,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 		if (line == null)
 			return false;
 		
-		return	(getLine(line) == invoked.getInvocationLine())
+		return	(getLine(line) == testedInvoked.getInvocationLine())
 				&& line.contains(testMethod.getClassSignature());
 	}
 	
@@ -399,8 +399,8 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 		if (anonymousConstructor)
 			return !line.contains("$") && inConstructor();
 
-		return 	line.contains(invoked.getName() + "(") 
-				|| line.contains(invoked.getName() + ".<init>");
+		return 	line.contains(testedInvoked.getName() + "(") 
+				|| line.contains(testedInvoked.getName() + ".<init>");
 
 	}
 	
@@ -460,7 +460,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 				&& !line.contains("aspectj.")
 				&& !line.contains("executionflow.runtime")
 				&& !srcLine.contains("package ")
-				&& !line.contains(invoked.getName());
+				&& !line.contains(testedInvoked.getName());
 	}
 	
 	private boolean isMethodDeclaration(String line) {
@@ -530,13 +530,13 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 		if (anonymousConstructor || hasInvokedNameDollarSign())	
 			analyzedInvokedSignature = fixAnonymousSignature();
 		else
-			analyzedInvokedSignature = invoked.getInvokedSignature();
+			analyzedInvokedSignature = testedInvoked.getInvokedSignature();
 		
 		analyzedInvokedSignature = analyzedInvokedSignature.trim();
 	}
 	
 	private boolean hasInvokedNameDollarSign() {
-		return invoked.getName()
+		return testedInvoked.getName()
 				.substring(1)
 				.matches(REGEX_DOLLAR_SIGN_PLUS_NUMBERS);
 	}
@@ -550,7 +550,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	private String extractSignatureParameters() {
 		StringBuilder params = new StringBuilder();
 		String[] signatureParams = 
-				extractContentBetweenParentheses(invoked.getInvokedSignature()).split(",");
+				extractContentBetweenParentheses(testedInvoked.getInvokedSignature()).split(",");
 		
 		for (int i=1; i<signatureParams.length; i++) {
 			params.append(signatureParams[i].trim().replace(",", ""));
@@ -573,7 +573,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 		return 	!inMethod 
 				&& line.contains("Step completed")
 				&& line.contains(testMethod.getClassSignature()) 
-				&& line.contains("line=" + invoked.getInvocationLine()); 
+				&& line.contains("line=" + testedInvoked.getInvocationLine()); 
 	}
 	
 	private void checkOverloadedConstructor() {
@@ -612,7 +612,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 					|| (
 							shouldIgnore()
 							&& line.contains(testMethod.getSignatureWithoutParameters()) 
-							&& getSrcLine(srcLine) > invoked.getInvocationLine()
+							&& getSrcLine(srcLine) > testedInvoked.getInvocationLine()
 		));
 	}
 	
@@ -632,7 +632,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 
 
 	private boolean hasInvokedName(String line) {
-		return	line.contains(invoked.getName()+".") 
-				|| line.contains(invoked.getName()+"(");
+		return	line.contains(testedInvoked.getName()+".") 
+				|| line.contains(testedInvoked.getName()+"(");
 	}
 }

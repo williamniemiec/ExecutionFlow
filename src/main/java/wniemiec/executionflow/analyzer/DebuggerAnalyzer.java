@@ -11,6 +11,7 @@ import wniemiec.api.jdb.JDB;
 import wniemiec.executionflow.App;
 import wniemiec.executionflow.collector.CallCollector;
 import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.util.logger.Logger;
 import wniemiec.util.task.Scheduler;
@@ -19,7 +20,7 @@ import wniemiec.util.task.Scheduler;
  * Computes the test path for a method or constructor using a debugger.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
+ * @version		7.0.0
  * @since		2.0.0
  */
 public abstract class DebuggerAnalyzer {
@@ -27,18 +28,18 @@ public abstract class DebuggerAnalyzer {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected static volatile boolean timeout;
-	protected volatile List<List<Integer>> testPaths;
-	protected String analyzedInvokedSignature;
-	protected Invoked invoked;
-	protected Invoked testMethod;
+	protected volatile boolean timeout;
 	protected volatile JDB jdb;
+	protected volatile List<List<Integer>> testPaths;
 	protected boolean stopJDB;
+	protected String analyzedInvokedSignature;
+	protected Invoked testedInvoked;
+	protected Invoked testMethod;
 	private List<String> commands;
-	private Object lock = new Object();
-	private static int timeoutTime;
+	private int timeoutTime;
 	private CallCollector callCollector;
-	
+	private Object lock = new Object();
+
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
@@ -48,15 +49,16 @@ public abstract class DebuggerAnalyzer {
 	 * 
 	 * @throws		IOException If occurs an error while fetching dependencies
 	 */
-	protected DebuggerAnalyzer(Invoked invokedInfo, Invoked testMethodInfo) 
+	protected DebuggerAnalyzer(TestedInvoked testedInvoked) 
 			throws IOException	{
-		this.invoked = invokedInfo;
-		this.testMethod = testMethodInfo;
+		this.testedInvoked = testedInvoked.getTestedInvoked();
+		this.testMethod = testedInvoked.getTestMethod();
 		this.analyzedInvokedSignature = "";
-		this.timeoutTime = 10 * 60 * 1000;
-		callCollector = CallCollector.getInstance();
 		
-		initializeJDB(testMethodInfo, invokedInfo);
+		callCollector = CallCollector.getInstance();
+		timeoutTime = 10 * 60 * 1000;
+		
+		initializeJDB();
 	}
 
 
@@ -102,8 +104,6 @@ public abstract class DebuggerAnalyzer {
 		
 		return this;
 	}
-
-	protected abstract void run() throws IOException;
 	
 	private void startJDB() throws IOException {
 		jdb.run().send(buildInitCommand());
@@ -125,23 +125,9 @@ public abstract class DebuggerAnalyzer {
 		Logger.debug(this.getClass(), "COMMAND: clear");
 	}
 	
-	private void initializeRunClass() {
-		StringBuilder command = new StringBuilder();
-		
-		command.append("stop at");
-		command.append(" ");
-		command.append(testMethod.getClassSignature());
-		command.append(":");
-		command.append(invoked.getInvocationLine());
-		
-		commands.add(command.toString());
-		
-		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
-	}
-
 	private void initializeBreakpoint() {
 		StringBuilder command = new StringBuilder();
-	
+		
 		command.append("run org.junit.runner.JUnitCore");
 		command.append(" ");
 		command.append(testMethod.getClassSignature());
@@ -150,24 +136,35 @@ public abstract class DebuggerAnalyzer {
 		
 		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
 	}
-
-	private void closeJDB() {
-		if ((jdb == null) || !jdb.isRunning())
-			return;
+	
+	private void initializeRunClass() {
+		StringBuilder command = new StringBuilder();
 		
-		stopJDB = true;
+		command.append("stop at");
+		command.append(" ");
+		command.append(testMethod.getClassSignature());
+		command.append(":");
+		command.append(testedInvoked.getInvocationLine());
 		
-		try {
-			jdb.send(buildExitCommand());
-			jdb.quit();
-		} 
-		catch (IllegalStateException | InterruptedException e) {
-			// If an exception occurs, JDB will have ended 
-		}
+		commands.add(command.toString());
 		
-		stopJDB = true;
+		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
 	}
 	
+	private void enableTimeout(final int TIMEOUT_ID) {
+		timeout = false;
+		
+		Scheduler.setTimeout(() -> {
+			synchronized(lock) {
+				callCollector.deleteStoredContent();
+				closeJDBImmediately();
+				testPaths.clear();
+				
+				timeout = true;
+			}
+		}, TIMEOUT_ID, timeoutTime);
+	}
+
 	private void closeJDBImmediately() {
 		if (jdb == null)
 			return;
@@ -183,6 +180,29 @@ public abstract class DebuggerAnalyzer {
 		catch (IOException e) {
 			Logger.error(e.getMessage());
 		}
+	}
+
+	protected abstract void run() throws IOException;
+
+	private void disableTimeout(final int TIMEOUT_ID) {
+		Scheduler.clearTimeout(TIMEOUT_ID);
+	}
+	
+	private void closeJDB() {
+		if ((jdb == null) || !jdb.isRunning())
+			return;
+		
+		stopJDB = true;
+		
+		try {
+			jdb.send(buildExitCommand());
+			jdb.quit();
+		} 
+		catch (IllegalStateException | InterruptedException e) {
+			// If an exception occurs, JDB will have ended 
+		}
+		
+		stopJDB = true;
 	}
 	
 	private String[] buildExitCommand() {
@@ -201,7 +221,7 @@ public abstract class DebuggerAnalyzer {
 		command.append(" ");
 		command.append(testMethod.getClassSignature());
 		command.append(":");
-		command.append(invoked.getInvocationLine());
+		command.append(testedInvoked.getInvocationLine());
 		
 		commands.add(command.toString());
 		
@@ -215,31 +235,13 @@ public abstract class DebuggerAnalyzer {
 		Logger.debug(this.getClass(), "COMMAND: exit");
 	}
 	
-	private void disableTimeout(final int TIMEOUT_ID) {
-		Scheduler.clearTimeout(TIMEOUT_ID);
-	}
-
-	private void enableTimeout(final int TIMEOUT_ID) {
-		timeout = false;
-		
-		Scheduler.setTimeout(() -> {
-			synchronized(lock) {
-				callCollector.deleteStoredContent();
-				closeJDBImmediately();
-				testPaths.clear();
-				
-				timeout = true;
-			}
-		}, TIMEOUT_ID, timeoutTime);
-	}
-	
-	private void initializeJDB(Invoked testMethodInfo, Invoked invokedInfo) {
+	private void initializeJDB() {
 		Path testClassRootPath = extractRootPathDirectory(
-				testMethodInfo.getBinPath(), 
-				testMethodInfo.getPackage()
+				testMethod.getBinPath(), 
+				testMethod.getPackage()
 		);
 		
-		List<Path> srcPath = getSourcePath(invokedInfo, testMethodInfo);
+		List<Path> srcPath = getSourcePath(testedInvoked, testMethod);
 		List<Path> classPath = getClassPath();
 
 		jdb = new JDB.Builder()
@@ -251,16 +253,6 @@ public abstract class DebuggerAnalyzer {
 		Logger.debug(this.getClass(), "Classpath: " + classPath);
 		Logger.debug(this.getClass(), "Srcpath: " + srcPath);
 		Logger.debug(this.getClass(), "Working directory: " + testClassRootPath);
-	}
-	
-	
-	/**
-	 * Deletes file containing methods called by tested invoked.
-	 * 
-	 * @return		If file has been successfully removed
-	 */
-	public boolean deleteMethodsCalledByTestedInvoked()	{
-		return callCollector.deleteStoredContent();
 	}
 	
 	/**
@@ -295,6 +287,42 @@ public abstract class DebuggerAnalyzer {
 		
 		return classPath;
 	}
+	
+	private List<Path> getSourcePath(Invoked invokedInfo, 
+			Invoked testMethodInfo) {
+		List<Path> srcPath = new ArrayList<>();
+		
+		srcPath.add(invokedInfo.getSrcPath());
+		srcPath.add(testMethodInfo.getSrcPath());
+		
+		Path srcRootPath = extractRootPathDirectory(
+				invokedInfo.getSrcPath(), 
+				invokedInfo.getPackage()
+				);
+		srcPath.add(srcRootPath);
+		
+		Path testMethodSrcPath = extractRootPathDirectory(
+				testMethodInfo.getSrcPath(), 
+				testMethodInfo.getPackage()
+				);
+		srcPath.add(testMethodSrcPath);
+		
+		// Fix source file of anonymous and inner classes
+		Path mavenSrcPath = App.getCurrentProjectRoot().resolve(
+				Path.of("src", "main", "java")
+		);
+		srcPath.add(mavenSrcPath);
+		
+		Path mavenTestPath = App.getCurrentProjectRoot().resolve(
+				Path.of("src", "test", "java")
+		);
+		
+		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
+			srcPath.add(mavenTestPath);
+		}
+		
+		return srcPath;
+	}
 
 	private List<Path> getClassPath() {
 		List<Path> classPath = new ArrayList<>();
@@ -304,42 +332,11 @@ public abstract class DebuggerAnalyzer {
 		}
 		
 		classPath.add(testMethod.getBinPath());
-		classPath.add(invoked.getBinPath());
+		classPath.add(testedInvoked.getBinPath());
 		classPath.add(LibraryManager.getLibrary("JUNIT_4"));
 		classPath.add(LibraryManager.getLibrary("HAMCREST"));
 		
 		return classPath;
-	}
-
-	private List<Path> getSourcePath(Invoked invokedInfo, 
-									 Invoked testMethodInfo) {
-		List<Path> srcPath = new ArrayList<>();
-		
-		srcPath.add(invokedInfo.getSrcPath());
-		srcPath.add(testMethodInfo.getSrcPath());
-		
-		Path srcRootPath = extractRootPathDirectory(
-				invokedInfo.getSrcPath(), 
-				invokedInfo.getPackage()
-		);
-		srcPath.add(srcRootPath);
-		
-		Path testMethodSrcPath = extractRootPathDirectory(
-				testMethodInfo.getSrcPath(), 
-				testMethodInfo.getPackage()
-		);
-		srcPath.add(testMethodSrcPath);
-		
-		// Fix source file of anonymous and inner classes
-		Path mavenSrcPath = App.getCurrentProjectRoot().resolve(Path.of("src", "main", "java"));
-		srcPath.add(mavenSrcPath);
-		
-		Path mavenTestPath = App.getCurrentProjectRoot().resolve(Path.of("src", "test", "java"));
-		if (testMethodInfo.getSrcPath().equals(invokedInfo.getSrcPath())) {
-			srcPath.add(mavenTestPath);
-		}
-		
-		return srcPath;
 	}
 	
 	
@@ -390,6 +387,7 @@ public abstract class DebuggerAnalyzer {
 	public void setTimeout(int ms) {
 		if (ms < 0)
 			throw new IllegalArgumentException("Timeout cannot be negative");
+		
 		timeoutTime = ms;
 	}
 	
@@ -411,6 +409,7 @@ public abstract class DebuggerAnalyzer {
 		if (testPaths == null)
 			return false;
 		
-		return !testPaths.isEmpty() && !testPaths.get(0).isEmpty();
+		return	!testPaths.isEmpty() 
+				&& !testPaths.get(0).isEmpty();
 	}
 }

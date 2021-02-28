@@ -2,8 +2,15 @@ package wniemiec.executionflow.analyzer;
 
 import java.io.IOException;
 
-import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 
+/**
+ * Responsible for creating {@link DebuggerAnalyzer} instances.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class DebuggerAnalyzerFactory {
 	
 	//-------------------------------------------------------------------------
@@ -15,15 +22,11 @@ public class DebuggerAnalyzerFactory {
 	//-------------------------------------------------------------------------
 	//		Factories
 	//-------------------------------------------------------------------------	
-	public static DebuggerAnalyzer createStandardTestPathAnalyzer(Invoked testedInvoked, 
-														  		  Invoked testMethod) 
+	public static DebuggerAnalyzer createStandardTestPathAnalyzer(TestedInvoked testedInvoked) 
 			throws IOException {
 		if (testedInvoked == null)
 			throw new IllegalArgumentException("Tested invoked cannot be null");
 		
-		if (testMethod == null)
-			throw new IllegalArgumentException("Test method cannot be null");
-		
-		return new StandardDebuggerAnalyzer(testedInvoked, testMethod);
+		return new StandardDebuggerAnalyzer(testedInvoked);
 	}
 }
