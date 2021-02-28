@@ -7,17 +7,35 @@ import java.util.Set;
 
 import wniemiec.executionflow.collector.InvokedCollector;
 
+/**
+ * Responsible for managing processing in collected methods and constructors.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class CollectorProcessingManager {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static CollectorProcessingManager instance;
 	private Set<String> alreadyChanged;
 	private Set<InvokedCollector> collectors;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructors
+	//-------------------------------------------------------------------------
 	private CollectorProcessingManager(Set<InvokedCollector> collectors) {
 		alreadyChanged = new HashSet<>();
 		this.collectors = collectors;
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	public static CollectorProcessingManager getInstance(Set<InvokedCollector> collectors) {
 		if ((collectors == null) || collectors.isEmpty())
 			throw new IllegalArgumentException("Collectors cannot be empty");
@@ -28,30 +46,15 @@ public class CollectorProcessingManager {
 		return instance;
 	}
 	
-	
-//	public void refreshInvocationLineAfterInvokedProcessing(TestedInvoked collector) {
-//		if (App.isTestMode()) {
-//			if (collector.getTestedInvoked().getSrcPath().equals(
-//					collector.getTestMethod().getSrcPath())) {
-//				updateCollector(collector, InvokedFileProcessor.getMapping());
-//			}
-//		}
-//		else {
-//			updateCollectors(
-//					InvokedFileProcessor.getMapping(),
-//					collector.getTestMethod().getSrcPath(), 
-//					collector.getTestedInvoked().getSrcPath()
-//			);
-//		}
-//	}
-
-//	private void updateInvocationLineFromMapping(TestedInvoked collector, Map<Integer, Integer> mapping) {
-//		int invocationLine = collector.getTestedInvoked().getInvocationLine();
-//		
-//		if (mapping.containsKey(invocationLine))
-//			collector.getTestedInvoked().setInvocationLine(mapping.get(invocationLine));
-//	}
-
+	/**
+	 * Updates invocation line of all collected collectors based on a 
+	 * processing performed in a test method.
+	 * 
+	 * @param		mapping Mapping of the old lines in relation to the new 
+	 * lines of the processed test method 
+	 * @param		testMethodSrcPath Test method that has been processed
+	 * @param		invokedSrcPath Tested invoked
+	 */
 	public void updateCollectorsFromMapping(Map<Integer, Integer> mapping, 
 								 			Path testMethodSrcPath,
 								 			Path invokedSrcPath) {
@@ -76,33 +79,13 @@ public class CollectorProcessingManager {
 					testMethodSrcPath
 			);
 		}
-
-//		ConstructorCollector.updateInvocationLines(
-//				mapping, 
-//				testMethodSrcPath
-//		);
-//		
-//		MethodCollector.updateInvocationLines(
-//				mapping, 
-//				testMethodSrcPath
-//		);
 		
 		alreadyChanged.add(testMethodSrcPath.toString());
 	}
-
-//	public void refreshInvocationLineAfterTestMethodProcessing(TestedInvoked collector) {
-//		if (App.isTestMode()) {
-//			updateCollector(collector, TestMethodFileProcessor.getMapping());
-//		}
-//		else {
-//			updateCollectors(
-//					TestMethodFileProcessor.getMapping(),
-//					collector.getTestMethod().getSrcPath(), 
-//					collector.getTestedInvoked().getSrcPath()
-//			);
-//		}
-//	}
 	
+	/**
+	 * Removes already processed collectors
+	 */
 	public void reset() {
 		alreadyChanged.clear();
 	}

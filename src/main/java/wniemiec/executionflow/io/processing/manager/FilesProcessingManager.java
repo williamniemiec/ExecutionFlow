@@ -57,12 +57,13 @@ public class FilesProcessingManager {
 	 * 
 	 * @param		type Type of parser that will be used in 
 	 * {@link #process(FileProcessingManager)}
-	 * @param		autoRestore If true and if there are backup files, restore them
+	 * @param		autoRestore If true and if there are backup files, restore
+	 * them
 	 * 
 	 * @throws		IOException If an error occurs during class deserialization
 	 * (while restoring backup files)
-	 * @throws		ClassNotFoundException If class {@link FileProcessingManager} is not
-	 * found  
+	 * @throws		ClassNotFoundException If class {@link FileProcessingManager}
+	 * is not found  
 	 */
 	public FilesProcessingManager(ProcessorType type, boolean autoRestore) 
 			throws ClassNotFoundException, IOException {
@@ -70,8 +71,7 @@ public class FilesProcessingManager {
 		this.processedFiles = new HashSet<>();
 		this.compiledFiles = new HashSet<>();
 		
-		// if there are backup files, it will 
-		// delete them after restore them
+		// if there are backup files, it will delete them after restore them
 		this.autoDelete = (type != ProcessorType.PRE_TEST_METHOD);
 		
 		this.backupFile = new File(
@@ -95,12 +95,13 @@ public class FilesProcessingManager {
 	 * 
 	 * @param		type Type of parser that will be used in 
 	 * {@link #process(FileProcessingManager)}
-	 * @param		autoRestore If true and if there are backup files, restore them
+	 * @param		autoRestore If true and if there are backup files, restore
+	 * them
 	 * 
 	 * @throws		IOException If an error occurs during class deserialization
 	 * (while restoring backup files)
-	 * @throws		ClassNotFoundException If class {@link FileProcessingManager} is not
-	 * found  
+	 * @throws		ClassNotFoundException If class {@link FileProcessingManager}
+	 * is not found  
 	 */
 	public FilesProcessingManager(ProcessorType type) 
 			throws ClassNotFoundException, IOException {
@@ -115,8 +116,8 @@ public class FilesProcessingManager {
 	 * Restores list of files modified in the last execution.
 	 * 
 	 * @throws		IOException If an error occurs during class deserialization 
-	 * @throws		ClassNotFoundException If class {@link FileProcessingManager} is not
-	 * found 
+	 * @throws		ClassNotFoundException If class {@link FileProcessingManager}
+	 * is not found 
 	 */
 	private void restoreFromBackup() throws IOException, ClassNotFoundException {
 		if (!backupFile.exists())
@@ -220,7 +221,8 @@ public class FilesProcessingManager {
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesProcessingManager processFile(FileProcessingManager fm, boolean autoRestore) 
+	public FilesProcessingManager processFile(FileProcessingManager fm, 
+											  boolean autoRestore) 
 			throws IOException {
 		if (wasProcessed(fm))
 			return this;
@@ -242,7 +244,8 @@ public class FilesProcessingManager {
 		return processedFiles.contains(fm.hashCode());
 	}
 	
-	private void markFileAsProcessed(FileProcessingManager fm) throws IOException {
+	private void markFileAsProcessed(FileProcessingManager fm) 
+			throws IOException {
 		processedFiles.add(fm.hashCode());
 
 		if (!files.contains(fm)) {
@@ -276,7 +279,8 @@ public class FilesProcessingManager {
 	 * @throws		IOException If an error occurs during parsing or during
 	 * class serialization
 	 */
-	public FilesProcessingManager process(FileProcessingManager fm) throws IOException {
+	public FilesProcessingManager process(FileProcessingManager fm) 
+			throws IOException {
 		return processFile(fm, true);
 	}
 	
@@ -290,7 +294,8 @@ public class FilesProcessingManager {
 	 * @throws		IOException If an error occurs during compilation or during
 	 * class serialization
 	 */
-	public FilesProcessingManager compile(FileProcessingManager fm) throws IOException {	
+	public FilesProcessingManager compile(FileProcessingManager fm) 
+			throws IOException {	
 		if (wasCompiled(fm))
 			return this;
 		
@@ -313,7 +318,8 @@ public class FilesProcessingManager {
 		return compiledFiles.contains(fm.hashCode());
 	}
 
-	private void markFileAsCompiled(FileProcessingManager fm) throws IOException {
+	private void markFileAsCompiled(FileProcessingManager fm) 
+			throws IOException {
 		compiledFiles.add(fm.hashCode());
 		
 		if (!files.contains(fm)) {
@@ -347,8 +353,8 @@ public class FilesProcessingManager {
 	 * 
 	 * @throws 		IOException If an error occurs while deserializing the list
 	 * of file managers 
-	 * @throws 		ClassNotFoundException If class {@link FileProcessingManager} is not
-	 * found 
+	 * @throws 		ClassNotFoundException If class {@link FileProcessingManager}
+	 * is not found 
 	 * 
 	 * @implNote	If backup file does not exist, {@link #files} will be null
 	 */
@@ -391,12 +397,12 @@ public class FilesProcessingManager {
 	
 	@Override
 	public String toString() {
-		return "FilesManager ["
-				+ "backupFile=" + backupFile 
-				+ ", files=" + files 
-				+ ", processedFiles=" + processedFiles
-				+ ", compiledFiles=" + compiledFiles 
-				+ ", autoDelete=" + autoDelete 
-			+ "]";
+		return "FilesProcessingManager ["
+					+ "autoDelete=" + autoDelete 
+					+ ", backupFile=" + backupFile 
+					+ ", files=" + files
+					+ ", processedFiles=" + processedFiles 
+					+ ", compiledFiles=" + compiledFiles 
+				+ "]";
 	}
 }

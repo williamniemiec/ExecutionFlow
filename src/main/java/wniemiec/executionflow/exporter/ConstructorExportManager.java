@@ -42,7 +42,7 @@ public class ConstructorExportManager extends ExportManager {
 	public void exportAll() {
 		TestedInvokedProcessingManager collectionProcessor = 
 				new TestedInvokedProcessingManager();
-		TestedInvokedParser parser = collectionProcessor.parse(
+		TestedInvokedParser parser = collectionProcessor.processAndParse(
 				collector.getAllCollectedInvoked()
 		);
 		

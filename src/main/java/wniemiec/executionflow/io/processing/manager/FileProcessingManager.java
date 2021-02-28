@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wniemiec.executionflow.App;
-import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.io.FileEncoding;
 import wniemiec.executionflow.io.compiler.Compiler;
 import wniemiec.executionflow.io.compiler.CompilerFactory;
@@ -32,7 +31,7 @@ public class FileProcessingManager implements Serializable {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final long serialVersionUID = 600L;
+	private static final long serialVersionUID = 700L;
 	private transient Path srcFile;
 	private transient Path srcFileBackup; 
 	private transient Path binFile;
@@ -41,7 +40,6 @@ public class FileProcessingManager implements Serializable {
 	private FileProcessor fileProcessor;
 	private boolean encodingError;
 	private boolean lastWasError;
-//	private boolean autoRestore;
 	
 	
 	//-------------------------------------------------------------------------

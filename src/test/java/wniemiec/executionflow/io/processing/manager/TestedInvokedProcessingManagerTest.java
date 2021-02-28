@@ -58,7 +58,7 @@ class TestedInvokedProcessingManagerTest {
 	
 	private void parseAfterProcessing() {
 		invokedCollectorParser = new TestedInvokedProcessingManager();
-		testedInvokedParser = invokedCollectorParser.parse(invokedCollector);
+		testedInvokedParser = invokedCollectorParser.processAndParse(invokedCollector);
 	}
 
 	private void withTestedInvoked(Invoked testedInvoked, Invoked testMethod) {
