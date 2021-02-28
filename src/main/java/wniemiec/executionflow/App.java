@@ -38,6 +38,7 @@ public class App {
 	private static int remainingTests;
 	private static Path appRoot;
 	private static Path currentProjectRoot;
+	private static Path targetPath;
 	private static Checkpoint firstRunCheckpoint;
 	private static Checkpoint currentTestMethodCheckpoint;
 	private static ExportManager methodExporter;
@@ -321,9 +322,30 @@ public class App {
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	public static Path getTargetPath() {
-		return searchDirectoryWithName("target").toPath();
+		if (targetPath == null)
+			targetPath = initializeTargetPath();
+		
+		return targetPath;
 	}
 	
+	private static Path initializeTargetPath() {
+		try {
+			return Path
+					.of(
+						App.class
+							.getProtectionDomain()
+							.getCodeSource()
+							.getLocation()
+							.toURI()
+					)
+					.getParent();
+		} 
+		catch (URISyntaxException e) {
+			return null;
+		}
+	}
+
+
 	/**
 	 * Finds current project root (project that is running the application). It
 	 * will return the path that contains a directory with name 'src'. 

@@ -34,9 +34,9 @@ abstract class InvokedCollectorTest {
 				Path.of(".", "src", "test", "resources", "wniemiec", 
 						"executionflow", "io", "processing", "manager")
 		);
-		resourcesBin = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "target", "test-classes", "wniemiec", 
-						"executionflow", "io", "processing", "manager")
+		resourcesBin = App.getTargetPath().resolve(
+				Path.of("test-classes", "wniemiec", "executionflow", "io", 
+						"processing", "manager")
 		);
 		
 		collectedTestedInvoked = new HashSet<>();

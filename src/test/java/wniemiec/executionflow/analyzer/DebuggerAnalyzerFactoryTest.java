@@ -26,8 +26,8 @@ class DebuggerAnalyzerFactoryTest {
 		resourcesSrc = App.getCurrentProjectRoot().resolve(
 				Path.of(".", "src", "test", "resources", "auxfiles")
 		);
-		resourcesBin = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "target", "test-classes", "auxfiles")
+		resourcesBin = App.getTargetPath().resolve(
+				Path.of("test-classes", "auxfiles")
 		);
 	}
 	

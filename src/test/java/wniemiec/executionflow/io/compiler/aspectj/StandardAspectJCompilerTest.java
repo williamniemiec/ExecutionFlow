@@ -38,22 +38,10 @@ class StandardAspectJCompilerTest {
 				Path.of("src", "test", "resources", "auxfiles", "aspectj")
 		);
 		resourcesBin = App.getTargetPath().resolve(
-				Path.of(".", "target", "test-classes", "auxfiles", "aspectj")
+				Path.of("test-classes", "auxfiles", "aspectj")
 		);
+		
 		outputDir = Path.of(System.getProperty("java.io.tmpdir"));
-		
-		System.out.println("@@@ "+App.getTargetPath());
-		
-		try {
-			System.out.println(App.class
-							.getProtectionDomain()
-							.getCodeSource()
-							.getLocation()
-							.toURI());
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	

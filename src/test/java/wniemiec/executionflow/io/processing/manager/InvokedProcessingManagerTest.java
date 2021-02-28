@@ -39,10 +39,9 @@ class InvokedProcessingManagerTest {
 						"fileprocessing.java")
 		);
 		
-		binPath = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "target", "test-classes", "wniemiec", 
-						"executionflow", "io", "processing", "manager", 
-						"fileprocessing.class")
+		binPath = App.getTargetPath().resolve(
+				Path.of("test-classes", "wniemiec", "executionflow", "io", 
+						"processing", "manager", "fileprocessing.class")
 		);
 		
 		pkg = "wniemiec.executionflow.io.processing.manager";

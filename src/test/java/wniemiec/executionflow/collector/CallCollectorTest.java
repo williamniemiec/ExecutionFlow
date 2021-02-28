@@ -31,9 +31,9 @@ class CallCollectorTest {
 		resourcesSrc = App.getCurrentProjectRoot().resolve(
 				Path.of(".", "src", "test", "resources", "auxfiles", "mcti")
 		);
-		resourcesBin = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "target", "test-classes", "auxfiles", "mcti")
-		);
+		resourcesBin = App.getTargetPath().resolve(
+				Path.of("test-classes", "auxfiles", "mcti")
+			);
 		
 		callCollector = CallCollector.getInstance();
 		signatureOfMethodsCalled = new HashSet<>();

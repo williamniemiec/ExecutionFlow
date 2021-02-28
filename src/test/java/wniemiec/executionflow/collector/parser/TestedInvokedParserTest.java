@@ -38,8 +38,8 @@ class TestedInvokedParserTest {
 		srcDirectory = App.getCurrentProjectRoot().resolve(
 				Path.of(".", "src", "test", "resources", "auxfiles")
 		);
-		binDirectory = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "target", "test-classes", "auxfiles")
+		binDirectory = App.getTargetPath().resolve(
+				Path.of("test-classes", "auxfiles")
 		);
 
 		Logger.setLevel(LogLevel.WARNING);

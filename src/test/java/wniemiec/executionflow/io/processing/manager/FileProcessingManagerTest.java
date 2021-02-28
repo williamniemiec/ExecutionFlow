@@ -43,10 +43,9 @@ class FileProcessingManagerTest {
 						"fileprocessing.java")
 		);
 		
-		binPath = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "target", "test-classes", "wniemiec", 
-						"executionflow", "io", "processing", "manager", 
-						"fileprocessing.class")
+		binPath = App.getTargetPath().resolve(
+				Path.of("test-classes", "wniemiec", "executionflow", "io", 
+						"processing", "manager", "fileprocessing.class")
 		);
 		
 		pkg = "wniemiec.executionflow.io.processing.manager";
@@ -71,7 +70,6 @@ class FileProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	@Test
 	void testFullBuilder() {
-		System.out.println(App.getCurrentProjectRoot());
 		new FileProcessingManager.Builder()
 				.srcPath(srcPath)
 				.binPath(binPath)
