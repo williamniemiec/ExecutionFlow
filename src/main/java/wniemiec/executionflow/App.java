@@ -168,14 +168,14 @@ public class App {
 			return;
 		
 		if (inTestMethodWithAspectsDisabled) {
-			parseMethodCollector();
-			parseConstructorCollector();
+			methodExportManager.exportAll();
+			constructorExportManager.exportAll();
 
 			success = true;
 		}
 		else {
-			exportAllMethodsUsedInTestMethods();
-			exportAllConstructorsUsedInTestMethods();
+			methodExportManager.exportAllInvokedUsedInTestMethods();
+			constructorExportManager.exportAllInvokedUsedInTestMethods();
 			
 			runTestMethodWithAspectsDisabled(testMethod);
 			
@@ -217,7 +217,7 @@ public class App {
 		
 		try {
 			cleanLastRun();
-			openControlWindow();
+			User.openRemoteControl();
 		}
 		catch(IOException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());
@@ -235,7 +235,7 @@ public class App {
 		if (remainingTests == 0) {
 			successfullRestoration = processingManager.restoreOriginalFilesFromInvoked();
 			processingManager.deleteInvokedBackupFiles();
-			App.closeControlWindow();
+			User.closeRemoteControl();
 		}
 		
 		if (remainingTests == 0) {
@@ -268,14 +268,6 @@ public class App {
 			
 			System.exit(-1);
 		}
-	}
-
-	public static void openControlWindow() {
-		RemoteControl.open();
-	}
-	
-	public static void closeControlWindow() {
-		RemoteControl.close();
 	}
 	
 	private static boolean disableCheckpoint(Checkpoint checkpoint) {
@@ -403,45 +395,6 @@ public class App {
 	
 	public static boolean inTestMethodWithAspectsDisabled() {
 		return currentTestMethodCheckpoint.exists();
-	}
-	
-	public static void exportAllConstructorsUsedInTestMethods() {
-		constructorExportManager.exportAllMethodsAndConstructorsUsedInTestMethods(
-				ConstructorCollector.getInstance().getAllCollectedInvoked()
-		);
-	}
-	
-	public static void exportAllMethodsUsedInTestMethods() {
-		methodExportManager.exportAllMethodsAndConstructorsUsedInTestMethods(
-				MethodCollector.getInstance().getAllCollectedInvoked()
-		);
-	}
-	
-	private static void parseConstructorCollector() {
-		TestedInvokedProcessingManager collectionProcessor = new TestedInvokedProcessingManager();
-		TestedInvokedParser parser = collectionProcessor.parse(
-				ConstructorCollector.getInstance().getAllCollectedInvoked()
-		);
-		export(parser, constructorExportManager);
-	}
-	
-	private static void parseMethodCollector() {
-		TestedInvokedProcessingManager collectionProcessor = new TestedInvokedProcessingManager();
-		TestedInvokedParser parser = collectionProcessor.parse(
-				MethodCollector.getInstance().getAllCollectedInvoked()
-		);
-		export(parser, methodExportManager);
-	}
-	
-	private static void export(TestedInvokedParser parser, ExportManager exportManager) {
-		exportManager.exportTestPaths(parser.getTestPaths());
-		exportManager.exportEffectiveMethodsAndConstructorsUsedInTestMethods(
-				parser.getMethodsAndConstructorsUsedInTestMethod()
-		);
-		exportManager.exportProcessedSourceFiles(parser.getProcessedSourceFiles());
-		exportManager.exportMethodsCalledByTestedInvoked(
-				parser.getMethodsCalledByTestedInvoked()
-		);
 	}
 	
 	public static void doPreprocessing(Invoked testMethod) throws IOException {

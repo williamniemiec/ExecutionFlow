@@ -73,4 +73,12 @@ public class User {
 		
 		return logLevel;
 	}
+
+	public static void openRemoteControl() {
+		RemoteControl.open();
+	}
+	
+	public static void closeRemoteControl() {
+		RemoteControl.close();
+	}
 }

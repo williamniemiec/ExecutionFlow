@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import wniemiec.executionflow.App;
+import wniemiec.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.executionflow.exporter.file.ProcessedSourceFileExporter;
 import wniemiec.executionflow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import wniemiec.executionflow.exporter.signature.TestedInvokedExporter;
@@ -33,7 +34,7 @@ import wniemiec.util.logger.Logger;
  * @version		6.0.5
  * @since		6.0.0
  */
-public class ExportManager {
+public abstract class ExportManager {
 
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -67,7 +68,7 @@ public class ExportManager {
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
-	private ExportManager(boolean isDevelopment, boolean isConstructor) {
+	protected ExportManager(boolean isDevelopment, boolean isConstructor) {
 		this.isConstructor = isConstructor;
 		this.outputDir = isDevelopment ? "examples\\results" : "results";
 		
@@ -82,11 +83,11 @@ public class ExportManager {
 	//		Factories
 	//-------------------------------------------------------------------------
 	public static ExportManager getMethodExportManager(boolean isDevelopment) {
-		return new ExportManager(isDevelopment, false);
+		return new MethodExportManager(isDevelopment);
 	}
 	
 	public static ExportManager getConstructorExportManager(boolean isDevelopment) {
-		return new ExportManager(isDevelopment, true);
+		return new ConstructorExportManager(isDevelopment);
 	}
 	
 	
@@ -139,6 +140,8 @@ public class ExportManager {
 		mcutmAll.export(invokedSet);
 	}
 	
+	public abstract void exportAllInvokedUsedInTestMethods();
+	
 	public void exportTestPaths(Map<TestedInvoked, List<List<Integer>>> testPaths) {
 		if (!exportTestPaths)
 			return;
@@ -170,6 +173,19 @@ public class ExportManager {
 			Logger.error(e.getMessage());
 		}
 	}
+	
+	protected void exportResultsFromParser(TestedInvokedParser parser) {
+		exportTestPaths(parser.getTestPaths());
+		exportEffectiveMethodsAndConstructorsUsedInTestMethods(
+				parser.getMethodsAndConstructorsUsedInTestMethod()
+		);
+		exportProcessedSourceFiles(parser.getProcessedSourceFiles());
+		exportMethodsCalledByTestedInvoked(
+				parser.getMethodsCalledByTestedInvoked()
+		);
+	}
+	
+	public abstract void exportAll();
 	
 	public void enableTestPathExport() {
 		exportTestPaths = true;
