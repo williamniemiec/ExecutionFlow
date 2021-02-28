@@ -9,14 +9,41 @@ import java.util.Set;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
 
+/**
+ * Responsible for collect methods or constructors.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public abstract class InvokedCollector {
 	
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static Map<Invoked, Integer> modifiedCollectorInvocationLine;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	protected InvokedCollector() {
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	/**
+	 * Collect an invoked.
+	 * 
+	 * @param		testedInvoked Tested invoked to be collected
+	 */
 	public abstract void collect(TestedInvoked testedInvoked);
+	
+	/**
+	 * Removes all collected invoked.
+	 */
 	public abstract void reset();	
 	
 	protected static void updateInvokedInvocationLines(Map<Integer, Integer> mapping, 
@@ -39,6 +66,9 @@ public abstract class InvokedCollector {
 		}
 	}
 	
+	/**
+	 * Restores original invocation line of all collected invoked.
+	 */
 	public static void restoreCollectorInvocationLine() {
 		if (modifiedCollectorInvocationLine == null)
 			return;

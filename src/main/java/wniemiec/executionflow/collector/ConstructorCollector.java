@@ -9,8 +9,18 @@ import java.util.Set;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
 
+/**
+ * Responsible for collect constructors.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class ConstructorCollector extends InvokedCollector {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static ConstructorCollector instance;
 	
 	/**
@@ -25,10 +35,18 @@ public class ConstructorCollector extends InvokedCollector {
 	 */
 	protected volatile Map<Integer, TestedInvoked> constructorCollector;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	private ConstructorCollector() {
 		constructorCollector = new LinkedHashMap<>();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	public static ConstructorCollector getInstance() {
 		if (instance == null)
 			instance = new ConstructorCollector();

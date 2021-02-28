@@ -11,8 +11,18 @@ import java.util.Set;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
 
+/**
+ * Responsible for collect methods.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class MethodCollector extends InvokedCollector {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static MethodCollector instance;
 	
 	/**
@@ -23,11 +33,19 @@ public class MethodCollector extends InvokedCollector {
 	 * </ul>
 	 */
 	private volatile Map<Integer, List<TestedInvoked>> methodCollector;
+
 	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	private MethodCollector() {
 		methodCollector = new LinkedHashMap<>();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	public static MethodCollector getInstance() {
 		if (instance == null)
 			instance = new MethodCollector();

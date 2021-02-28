@@ -15,22 +15,45 @@ import java.util.Set;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.logger.Logger;
 
+/**
+ * Responsible for collect method signatures of methods called inside a method
+ * or constructor.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class CallCollector {
 	
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static CallCollector instance;
 	private Map<Invoked, Set<String>> methodsCalledByTestedInvoked;
 	private static final File MCTI_FILE;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization blocks
+	//-------------------------------------------------------------------------
 	static {
 		File tmpDir = new File(System.getProperty("java.io.tmpdir"));
 		
 		MCTI_FILE = new File(tmpDir, "mcti.ef");
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	private CallCollector() {
 		methodsCalledByTestedInvoked = new HashMap<>();	
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	public static CallCollector getInstance() {
 		if (instance == null)
 			instance = new CallCollector();
@@ -38,6 +61,16 @@ public class CallCollector {
 		return instance;
 	}
 	
+	/**
+	 * Stores the signature of a method called inside a method or constructor.
+	 * 
+	 * @param		signatureOfMethodCalledByInvoked Signature of the method 
+	 * called
+	 * @param		invoked Method or constructor that made the call
+	 * 
+	 * @throws		IllegalArgumentException If invoked or signature of method
+	 * called by invoked is null or if it is a empty string
+	 */
 	public void collectCall(String signatureOfMethodCalledByInvoked, Invoked invoked) {
 		if ((signatureOfMethodCalledByInvoked == null) 
 				|| signatureOfMethodCalledByInvoked.isBlank()) 
@@ -67,7 +100,6 @@ public class CallCollector {
 		
 		store(methodsCalledByTestedInvoked);
 	}
-	
 	
 	private void store(Map<Invoked, Set<String>> methodsCalledByTestedInvoked) {
 		this.methodsCalledByTestedInvoked = methodsCalledByTestedInvoked;
@@ -155,6 +187,21 @@ public class CallCollector {
 		methodsCalledByTestedInvoked.put(storedInvocation, currentMethodsCalled);
 	}
 	
+	/**
+	 * Stores {@link #methodsCalledByTestedInvoked} in the 'mcti.ef' file.
+	 * 
+	 * @throws		FileNotFoundException If 'mcti.ef' does not exist, is a 
+	 * directory rather than a regular file, or for some other reason cannot be
+	 * opened for reading.
+	 * @throws		IOException If 'mcti.ef' cannot be written
+	 */
+	private void store() throws FileNotFoundException, IOException {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(MCTI_FILE))) {
+			oos.writeObject(methodsCalledByTestedInvoked);
+			oos.flush();
+		}
+	}
+	
 	public void mergeMethodsCalledByTestedInvoked() {
 		Map<Invoked, Set<String>> invokedMethods = loadMethodsCalledByTestedInvoked();
 		
@@ -187,21 +234,6 @@ public class CallCollector {
 		return invokedMethods;
 	}
 	
-	/**
-	 * Stores {@link #methodsCalledByTestedInvoked} in the 'mcti.ef' file.
-	 * 
-	 * @throws		FileNotFoundException If 'mcti.ef' does not exist, is a 
-	 * directory rather than a regular file, or for some other reason cannot be
-	 * opened for reading.
-	 * @throws		IOException If 'mcti.ef' cannot be written
-	 */
-	private void store() throws FileNotFoundException, IOException {
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(MCTI_FILE))) {
-			oos.writeObject(methodsCalledByTestedInvoked);
-			oos.flush();
-		}
-	}
-	
 	public void reset() {
 		methodsCalledByTestedInvoked.clear();
 	}
@@ -210,6 +242,10 @@ public class CallCollector {
 		return MCTI_FILE.delete();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
 	public Map<Invoked, Set<String>> getMethodsCalledByTestedInvoked() {
 		try {
 			load();
