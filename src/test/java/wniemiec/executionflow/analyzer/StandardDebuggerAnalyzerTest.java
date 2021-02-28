@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 
 class StandardDebuggerAnalyzerTest {
 
@@ -105,8 +106,7 @@ class StandardDebuggerAnalyzerTest {
 	
 	private void runDebuggerAnalyzerWithTimeout(int timeout) throws IOException {
 		debugger = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
-				testedInvoked, 
-				testMethod
+				new TestedInvoked(testedInvoked, testMethod)
 		);
 		
 		debugger.enableTimeout();
@@ -116,8 +116,7 @@ class StandardDebuggerAnalyzerTest {
 	
 	private void runDebuggerAnalyzer() throws IOException {
 		debugger = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
-				testedInvoked, 
-				testMethod
+				new TestedInvoked(testedInvoked, testMethod)
 		);
 		
 		debugger.disableTimeout();

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.executionflow.invoked.Invoked;
+import wniemiec.executionflow.invoked.TestedInvoked;
 
 class DebuggerAnalyzerFactoryTest {
 
@@ -21,8 +22,10 @@ class DebuggerAnalyzerFactoryTest {
 	@Test
 	void testCreateStandardTestPathAnalyzer() throws IOException {
 		DebuggerAnalyzer debugger = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
-				getTestedInvokedFactorial(), 
-				getTestMethodTestFactorial()
+				new TestedInvoked(
+						getTestedInvokedFactorial(), 
+						getTestMethodTestFactorial()
+				)
 		);
 		
 		Assertions.assertTrue(debugger instanceof StandardDebuggerAnalyzer);
@@ -31,20 +34,7 @@ class DebuggerAnalyzerFactoryTest {
 	@Test
 	void testCreateStandardTestPathAnalyzerWithNullTestedInvoked() throws IOException {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
-			DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
-					null, 
-					getTestMethodTestFactorial()
-			);		
-		});
-	}
-	
-	@Test
-	void testCreateStandardTestPathAnalyzerWithNullTestMethod() throws IOException {
-		Assertions.assertThrows(IllegalArgumentException.class, () -> {
-			DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
-					getTestedInvokedFactorial(), 
-					null
-			);		
+			DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(null);		
 		});
 	}
 	

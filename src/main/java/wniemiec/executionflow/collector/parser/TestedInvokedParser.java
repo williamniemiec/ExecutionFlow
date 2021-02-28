@@ -14,18 +14,16 @@ import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.Logger;
 
+/**
+ * Responsible for running {@link DebuggerAnalyzer} from a 
+ * {@link TestedInvoked}.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class TestedInvokedParser {
 	
-	@Override
-	public String toString() {
-		return "TestedInvokedParser ["
-					+ "testPaths=" + computedTestPaths 
-					+ ", debuggerAnalyzer=" + debuggerAnalyzer
-					+ ", processedSourceFiles=" + processedSourceFiles 
-					+ ", testedInvoked=" + testedInvoked 
-				+ "]";
-	}
-
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
@@ -55,18 +53,47 @@ public class TestedInvokedParser {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public void parse(TestedInvoked testedInvoked, DebuggerAnalyzer debuggerAnalyzer) 
-			throws InterruptedByTimeoutException, IOException {
+	/**
+	 * Runs {@link DebuggerAnalyzer} in a {@link TestedInvoked}.
+	 * 
+	 * @param		testedInvoked 
+	 * @param		debuggerAnalyzer
+	 * @throws		InterruptedByTimeoutException If timeout has been reached
+	 * @throws		IOException If an error occurs while running debugger 
+	 */
+	public void parse(TestedInvoked testedInvoked, 
+					  DebuggerAnalyzer debuggerAnalyzer) 
+			throws IOException {
 		initParser(debuggerAnalyzer, testedInvoked);
 		runDebugger();
 		storeResults();
 	}
 
-	private void initParser(DebuggerAnalyzer debuggerAnalyzer, TestedInvoked testedInvoked) {
+	private void initParser(DebuggerAnalyzer debuggerAnalyzer, 
+							TestedInvoked testedInvoked) {
 		this.debuggerAnalyzer = debuggerAnalyzer;
 		this.testedInvoked = testedInvoked;
 	}
 
+	private void runDebugger() throws IOException {
+		Logger.info(
+				"Computing test path of invoked " 
+				+ testedInvoked.getTestedInvoked().getConcreteSignature() 
+				+ "..."
+		);
+		
+		debuggerAnalyzer.analyze();
+
+		checkDebuggerTimeout();
+	}
+
+	private void checkDebuggerTimeout() throws InterruptedByTimeoutException {
+		if (!debuggerAnalyzer.checkTimeout())
+			return;
+		
+		throw new InterruptedByTimeoutException();
+	}
+	
 	private void storeResults() {
 		if (!debuggerAnalyzer.hasTestPaths())
 			return;
@@ -85,44 +112,24 @@ public class TestedInvokedParser {
 				testedInvoked.getTestedInvoked().getSrcPath()
 		);
 	}
+	
+	protected boolean isConstructor() {
+		return false;
+	}
 
-	private void fixAnonymousClassSignature(Invoked invokedInfo) {
+	private void fixAnonymousClassSignature(Invoked invoked) {
 		if (debuggerAnalyzer.getAnalyzedInvokedSignature().isBlank())
 			return;
 		
-		if (!invokedInfo.getInvokedSignature().equals(debuggerAnalyzer.getAnalyzedInvokedSignature())) {
-			invokedInfo.setSignature(debuggerAnalyzer.getAnalyzedInvokedSignature());
+		if (!isAnalyzedInvokedSignatureEqualsToInvoked(invoked)) {
+			invoked.setSignature(debuggerAnalyzer.getAnalyzedInvokedSignature());
 		}
 	}
-
-	private void runDebugger() 
-			throws IOException, InterruptedByTimeoutException {
-		Logger.info(
-				"Computing test path of invoked " 
-				+ testedInvoked.getTestedInvoked().getConcreteSignature() 
-				+ "..."
-		);
-		
-		debuggerAnalyzer.analyze();
-
-		checkDebuggerTimeout();
-	}
-
-	private void checkDebuggerTimeout() throws InterruptedByTimeoutException {
-		if (!debuggerAnalyzer.checkTimeout())
-			return;
-		
-		try {
-			Thread.sleep(2000);
-		} 
-		catch (InterruptedException e) {
-		}
-		
-		throw new InterruptedByTimeoutException();
-	}
-
-	protected boolean isConstructor() {
-		return false;
+	
+	private boolean isAnalyzedInvokedSignatureEqualsToInvoked(Invoked invoked) {
+		return	invoked.getInvokedSignature().equals(
+						debuggerAnalyzer.getAnalyzedInvokedSignature()
+				);
 	}
 	
 	protected void storeTestPath(TestedInvoked invokedContainer) {
@@ -139,6 +146,12 @@ public class TestedInvokedParser {
 				storeNewTestPath(invokedContainer, testPath);
 		}
 	}
+	
+	private void storeExistingTestPath(TestedInvoked invokedContainer, 
+									   List<Integer> testPath) {
+		List<List<Integer>> testPaths = computedTestPaths.get(invokedContainer);
+		testPaths.add(testPath);
+	}
 
 	private void storeNewTestPath(TestedInvoked invokedContainer, 
 								  List<Integer> testPath) {
@@ -148,10 +161,14 @@ public class TestedInvokedParser {
 		computedTestPaths.put(invokedContainer, testPaths);
 	}
 
-	private void storeExistingTestPath(TestedInvoked invokedContainer, 
-									   List<Integer> testPath) {
-		List<List<Integer>> testPaths = computedTestPaths.get(invokedContainer);
-		testPaths.add(testPath);
+	@Override
+	public String toString() {
+		return "TestedInvokedParser ["
+					+ "testPaths=" + computedTestPaths 
+					+ ", debuggerAnalyzer=" + debuggerAnalyzer
+					+ ", processedSourceFiles=" + processedSourceFiles 
+					+ ", testedInvoked=" + testedInvoked 
+				+ "]";
 	}
 	
 	
@@ -159,10 +176,9 @@ public class TestedInvokedParser {
 	//		Getters
 	//-------------------------------------------------------------------------
 	/**
-	 * Gets a specific computed test path.
+	 * Gets a specific computed test path from a tested invoked.
 	 * 
-	 * @param		testMethodSignature Test method signature
-	 * @param		invokedSignature Invoked signature
+	 * @param		testedInvoked Tested invoked
 	 * 
 	 * @return		List of test paths for the specified invoked or empty list
 	 * if specified invoked has not a test path
@@ -170,11 +186,11 @@ public class TestedInvokedParser {
 	 * @implNote	It must only be called after method {@link #run()} has 
 	 * been executed
 	 */
-	public List<List<Integer>> getTestPathsOf(TestedInvoked container) {
+	public List<List<Integer>> getTestPathsOf(TestedInvoked testedInvoked) {
 		if (computedTestPaths.isEmpty())
 			return List.of(new ArrayList<Integer>(0));
 		
-		return computedTestPaths.get(container);
+		return computedTestPaths.get(testedInvoked);
 	}
 	
 	/**

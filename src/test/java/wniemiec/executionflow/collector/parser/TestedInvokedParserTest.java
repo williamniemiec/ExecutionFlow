@@ -78,7 +78,7 @@ class TestedInvokedParserTest {
 		
 		testedInvokedParser.parse(
 				testedInvoked, 
-				DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(testedMethod, testMethod)
+				DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(testedInvoked)
 		);
 	}
 
