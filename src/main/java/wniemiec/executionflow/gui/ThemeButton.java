@@ -1,4 +1,4 @@
-package wniemiec.executionflow.user;
+package wniemiec.executionflow.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,7 +11,7 @@ import java.awt.Point;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
-class ThemeButton extends JButton {
+public class ThemeButton extends JButton {
 	
     public ThemeButton(String title) {
         super(title);
@@ -25,8 +25,8 @@ class ThemeButton extends JButton {
     public ThemeButton(String title, boolean small) {
     	this(title);
     	//setBounds(0, 0, 100, 30);
-    	setFont(new Font("Arial", Font.PLAIN, 15));
-    	setPreferredSize(new Dimension(150, 50));
+    	setFont(new Font("Arial", Font.BOLD, 14));
+    	setPreferredSize(new Dimension(160, 50));
     }
 
     @Override

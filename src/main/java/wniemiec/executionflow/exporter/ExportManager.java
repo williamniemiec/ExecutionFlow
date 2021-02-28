@@ -39,7 +39,7 @@ public abstract class ExportManager {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	protected static final TestPathExportType TEST_PATH_EXPORTER;
+	protected static TestPathExportType testPathExportType;
 	private TestPathExporter testPathExporter;
 	private MethodsCalledByTestedInvokedExporter mcti;
 	private ProcessedSourceFileExporter processedSourceFileExporter;
@@ -54,23 +54,14 @@ public abstract class ExportManager {
 	
 	
 	//-------------------------------------------------------------------------
-	//		Initialization block
-	//-------------------------------------------------------------------------
-	/**
-	 * Sets test path export type.
-	 */
-	static {
-		TEST_PATH_EXPORTER = TestPathExportType.CONSOLE;
-//		TEST_PATH_EXPORTER = TestPathExportType.FILE;
-	}
-	
-	
-	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
 	protected ExportManager(boolean isDevelopment, boolean isConstructor) {
 		this.isConstructor = isConstructor;
 		this.outputDir = isDevelopment ? "examples\\results" : "results";
+
+		if (testPathExportType == null)
+			testPathExportType = TestPathExportType.FILE;
 		
 		initializeTestPathExporter();
 		initializeTestersExporter();
@@ -114,7 +105,7 @@ public abstract class ExportManager {
 	}
 	
 	private void initializeTestPathExporter() {
-		this.testPathExporter = TEST_PATH_EXPORTER.equals(TestPathExportType.CONSOLE) ? 
+		this.testPathExporter = testPathExportType.equals(TestPathExportType.CONSOLE) ? 
 				new ConsoleExporter() 
 				: new FileExporter(outputDir, isConstructor);
 	}
@@ -217,5 +208,9 @@ public abstract class ExportManager {
 	
 	public void disableTestersExport() {
 		exportTesters = false;
+	}
+	
+	public static void setTestPathExportType(TestPathExportType type) {
+		testPathExportType = type;
 	}
 }

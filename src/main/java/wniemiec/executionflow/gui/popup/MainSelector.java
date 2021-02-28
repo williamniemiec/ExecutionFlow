@@ -1,4 +1,4 @@
-package wniemiec.executionflow.user.popup;
+package wniemiec.executionflow.gui.popup;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,6 +16,7 @@ import javax.swing.WindowConstants;
 import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.executionflow.gui.AppIcon;
+import wniemiec.executionflow.gui.ThemeButton;
 import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.Logger;
 
@@ -41,13 +42,6 @@ public class MainSelector extends JFrame {
 	private static final int X0 = 250;
 	private static final int Y0 = 280;
 	private Color bgColor = new Color(80,80,80);
-	
-	
-	//-------------------------------------------------------------------------
-	//		Constructor
-	//-------------------------------------------------------------------------
-	private MainSelector() {
-	}
 	
 	
 	//-------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package wniemiec.executionflow.user;
+package wniemiec.executionflow.gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -33,7 +33,7 @@ public class RemoteControl {
 	private static final int MAIN_FRAME_HEIGHT = 100;
 	private static final int MAIN_FRAME_X = 100;
 	private static final int MAIN_FRAME_Y = 100;
-	private static final String TITLE = "Execution Flow - Remote control";
+	private static final String TITLE = "Execution Flow";
 	
 	
 	//-------------------------------------------------------------------------
@@ -96,33 +96,5 @@ public class RemoteControl {
 		);
 		
 		return stop;
-	}
-	
-	public static void main(String[] args) {
-		RemoteControl.open();
-//		LogView.askLogLevel();
-		
-		
-//		JOptionPane op = new JOptionPane("message", JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION); 
-//	     op.setOpaque(true);
-//	     op.setBackground(Color.WHITE);
-//	     op.createDialog(null, "Titel").setVisible(true);
-		
-		
-		
-//		JButton[] btnOptions = new JButton[] {
-//				new ThemeButton("STOP"),
-//				new ThemeButton("STOP")
-//		};
-//		
-//		 UIManager UI=new UIManager();
-//		 UI.put("OptionPane.background", Color.white);
-//		 UI.put("Panel.background", Color.white);
-//		 
-//		JOptionPane.showOptionDialog(
-//				null, "Choose log level", "Log option", 
-//				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
-//				null, btnOptions, btnOptions[1]
-//		);
 	}
 }

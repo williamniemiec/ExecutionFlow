@@ -3,6 +3,8 @@ package wniemiec.executionflow.user;
 import java.io.File;
 import java.io.IOException;
 
+import wniemiec.executionflow.gui.RemoteControl;
+import wniemiec.executionflow.gui.popup.MainSelector;
 import wniemiec.util.data.storage.Session;
 import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.LogView;
@@ -23,12 +25,13 @@ public class User {
 	
 	
 	public static LogLevel askUserForLogLevel() throws IOException {
-		LogLevel level = LogView.askLogLevel();
+		MainSelector selector = new MainSelector();
+		selector.open();
 		
 		session.destroy();
-		session.save("LOG_LEVEL", level); 
+		session.save("LOG_LEVEL", Logger.getLevel()); 
 		
-		return level;
+		return Logger.getLevel();
 	}
 	
 	public static LogLevel loadLogLevel() throws IOException {
