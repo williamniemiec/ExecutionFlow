@@ -15,9 +15,15 @@ public class DebuggerAnalyzerFactory {
 	//-------------------------------------------------------------------------
 	//		Factories
 	//-------------------------------------------------------------------------	
-	public static DebuggerAnalyzer createStandardTestPathAnalyzer(Invoked invokedInfo, 
-														  Invoked testMethodInfo) 
+	public static DebuggerAnalyzer createStandardTestPathAnalyzer(Invoked testedInvoked, 
+														  		  Invoked testMethod) 
 			throws IOException {
-		return new StandardDebuggerAnalyzer(invokedInfo, testMethodInfo);
+		if (testedInvoked == null)
+			throw new IllegalArgumentException("Tested invoked cannot be null");
+		
+		if (testMethod == null)
+			throw new IllegalArgumentException("Test method cannot be null");
+		
+		return new StandardDebuggerAnalyzer(testedInvoked, testMethod);
 	}
 }

@@ -41,6 +41,7 @@ public abstract class DebuggerAnalyzer {
 	protected boolean stopJDB;
 	private List<String> commands;
 	private Object lock = new Object();
+	private static int timeoutTime;
 	
 	
 	//-------------------------------------------------------------------------
@@ -58,7 +59,8 @@ public abstract class DebuggerAnalyzer {
 		this.methodsCalledByTestedInvoked = new HashMap<>();
 		this.analyzedInvokedSignature = "";
 		this.mcti = new File(App.getAppRootPath().toFile(), "mcti.ef");
-
+		this.timeoutTime = 10 * 60 * 1000;
+		
 		initializeJDB(testMethodInfo, invokedInfo);
 	}
 
@@ -82,11 +84,10 @@ public abstract class DebuggerAnalyzer {
 			throw new IllegalStateException("JDB has not been initialized");
 		
 		final int timeoutID = 1;
-		final int timeoutTime = 10 * 60 * 1000;
 
 		try {
 			startJDB();
-			enableTimeout(timeoutID, timeoutTime);
+			enableTimeout(timeoutID);
 			run();
 		}
 		finally {
@@ -160,12 +161,13 @@ public abstract class DebuggerAnalyzer {
 			return;
 		
 		stopJDB = true;
-		jdb.send(buildExitCommand());
 		
 		try {
+			jdb.send(buildExitCommand());
 			jdb.quit();
 		} 
-		catch (InterruptedException e) {
+		catch (IllegalStateException | InterruptedException e) {
+			// If an exception occurs, JDB will have ended 
 		}
 		
 		stopJDB = true;
@@ -222,7 +224,7 @@ public abstract class DebuggerAnalyzer {
 		Scheduler.clearTimeout(TIMEOUT_ID);
 	}
 
-	private void enableTimeout(final int TIMEOUT_ID, final int TIMEOUT_TIME) {
+	private void enableTimeout(final int TIMEOUT_ID) {
 		timeout = false;
 		
 		Scheduler.setTimeout(() -> {
@@ -233,7 +235,7 @@ public abstract class DebuggerAnalyzer {
 				
 				timeout = true;
 			}
-		}, TIMEOUT_ID, TIMEOUT_TIME);
+		}, TIMEOUT_ID, timeoutTime);
 	}
 	
 	private void initializeJDB(Invoked testMethodInfo, Invoked invokedInfo) {
@@ -411,25 +413,27 @@ public abstract class DebuggerAnalyzer {
 	/**
 	 * Enables 10-minute timeout.
 	 */
-	public static void enableTimeout() {
+	public void enableTimeout() {
 		timeout = true;
 	}
 	
 	/**
 	 * Disables 10-minute timeout.
 	 */
-	public static void disableTimeout() {
+	public void disableTimeout() {
 		timeout = false;
 	}
 	
-	static void setTimeout(boolean status) {
-		timeout = status;
+	public void setTimeout(int ms) {
+		if (ms < 0)
+			throw new IllegalArgumentException("Timeout cannot be negative");
+		timeoutTime = ms;
 	}
 	
 	/**
 	 * @return		True if runtime has been exceeded; false otherwise
 	 */
-	public static boolean checkTimeout() {
+	public boolean checkTimeout() {
 		return timeout;
 	}
 

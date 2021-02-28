@@ -109,7 +109,7 @@ public class TestedInvokedParser {
 	}
 
 	private void checkDebuggerTimeout() throws InterruptedByTimeoutException {
-		if (!DebuggerAnalyzer.checkTimeout())
+		if (!debuggerAnalyzer.checkTimeout())
 			return;
 		
 		try {

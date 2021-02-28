@@ -16,7 +16,7 @@ import wniemiec.util.logger.Logger;
  * @version		6.0.5
  * @since		6.0.0
  */
-public class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
+class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	
 	//-------------------------------------------------------------------------
 	//		Attributes
