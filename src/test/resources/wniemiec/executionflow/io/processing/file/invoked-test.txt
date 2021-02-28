@@ -113,7 +113,7 @@ public class Foo {
 		someMethod();
 	}
 	
-	public synchronized m4(int num) 
+	public synchronized void m4(int num) 
 	{
 		someMethod();
 	}
@@ -188,5 +188,9 @@ public class Foo {
 		}
 		
 		x = 3;
+	}
+	
+	private static void someMethod() {
+		// Code
 	}
 }

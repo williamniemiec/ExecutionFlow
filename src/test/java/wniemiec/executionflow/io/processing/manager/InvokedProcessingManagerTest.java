@@ -62,10 +62,20 @@ class InvokedProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	@Test
 	void testProcessAndCompile() throws ClassNotFoundException, IOException {
+		FileTime binFileTime = Files.getLastModifiedTime(binPath);
+		FileTime srcFileTime = Files.getLastModifiedTime(srcPath);
+		
 		invokedProcessingManager.processAndCompile(fileProcessingManager);
 		
-		assertSrcFileIsProcessed();
-		assertSrcFileIsCompiledAfterProcessing();
+		Assertions.assertNotEquals(
+				binFileTime, 
+				Files.getLastModifiedTime(binPath)
+		);
+		
+		Assertions.assertNotEquals(
+				srcFileTime, 
+				Files.getLastModifiedTime(srcPath)
+		);
 	}
 	
 	@Test
@@ -115,7 +125,6 @@ class InvokedProcessingManagerTest {
 	void testRestoreNullInvokedOriginalFile() 
 			throws ClassNotFoundException, IOException {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
-			invokedProcessingManager.processAndCompile(fileProcessingManager);
 			invokedProcessingManager.restoreInvokedOriginalFile(null);	
 		});
 	}
@@ -133,29 +142,6 @@ class InvokedProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void assertSrcFileIsProcessed() throws IOException {
-		FileTime srcFileTime = Files.getLastModifiedTime(srcPath);
-		
-		fileProcessingManager.processFile(false);
-		
-		Assertions.assertNotEquals(
-				srcFileTime, 
-				Files.getLastModifiedTime(srcPath)
-		);
-	}
-	
-	private void assertSrcFileIsCompiledAfterProcessing() throws IOException {
-		FileTime binFileTime = Files.getLastModifiedTime(binPath);
-		
-		fileProcessingManager.processFile(false);
-		fileProcessingManager.compileFile();
-		
-		Assertions.assertNotEquals(
-				binFileTime, 
-				Files.getLastModifiedTime(binPath)
-		);
-	}
-	
 	private FileProcessingManager createFileProcessingManager() {
 		return new FileProcessingManager.Builder()
 				.srcPath(srcPath)

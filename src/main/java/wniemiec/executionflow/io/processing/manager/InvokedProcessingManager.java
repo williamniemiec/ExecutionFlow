@@ -133,6 +133,7 @@ public class InvokedProcessingManager {
 		if (invokedFilesManager.wasProcessed(invokedFileManager))
 			return;
 		
+		invokedFilesManager.createBackup();
 		invokedFilesManager.processFile(invokedFileManager, autoRestore);
 		invokedFilesManager.compile(invokedFileManager);
 		
