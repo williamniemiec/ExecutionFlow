@@ -1,18 +1,15 @@
 package wniemiec.executionflow.analyzer;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import wniemiec.api.jdb.JDB;
 import wniemiec.executionflow.App;
+import wniemiec.executionflow.collector.CallCollector;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.util.logger.Logger;
@@ -30,11 +27,9 @@ public abstract class DebuggerAnalyzer {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private final File mcti;
 	protected static volatile boolean timeout;
 	protected volatile List<List<Integer>> testPaths;
 	protected String analyzedInvokedSignature;
-	protected Map<Invoked, Set<String>> methodsCalledByTestedInvoked;
 	protected Invoked invoked;
 	protected Invoked testMethod;
 	protected volatile JDB jdb;
@@ -42,6 +37,7 @@ public abstract class DebuggerAnalyzer {
 	private List<String> commands;
 	private Object lock = new Object();
 	private static int timeoutTime;
+	private CallCollector callCollector;
 	
 	
 	//-------------------------------------------------------------------------
@@ -56,10 +52,9 @@ public abstract class DebuggerAnalyzer {
 			throws IOException	{
 		this.invoked = invokedInfo;
 		this.testMethod = testMethodInfo;
-		this.methodsCalledByTestedInvoked = new HashMap<>();
 		this.analyzedInvokedSignature = "";
-		this.mcti = new File(App.getAppRootPath().toFile(), "mcti.ef");
 		this.timeoutTime = 10 * 60 * 1000;
+		callCollector = CallCollector.getInstance();
 		
 		initializeJDB(testMethodInfo, invokedInfo);
 	}
@@ -103,7 +98,7 @@ public abstract class DebuggerAnalyzer {
 			}
 		}
 		
-		mergeMethodsCalledByTestedInvoked();
+		callCollector.mergeMethodsCalledByTestedInvoked();
 		
 		return this;
 	}
@@ -229,7 +224,7 @@ public abstract class DebuggerAnalyzer {
 		
 		Scheduler.setTimeout(() -> {
 			synchronized(lock) {
-				mcti.delete();
+				callCollector.deleteStoredContent();
 				closeJDBImmediately();
 				testPaths.clear();
 				
@@ -265,7 +260,7 @@ public abstract class DebuggerAnalyzer {
 	 * @return		If file has been successfully removed
 	 */
 	public boolean deleteMethodsCalledByTestedInvoked()	{
-		return mcti.delete();
+		return callCollector.deleteStoredContent();
 	}
 	
 	/**
@@ -371,39 +366,7 @@ public abstract class DebuggerAnalyzer {
 	 * wniemiec.executionflow.runtime.CollectCalls}' will be considered 
 	 */
 	public Map<Invoked, Set<String>> getMethodsCalledByTestedInvoked() {
-		return methodsCalledByTestedInvoked;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Map<Invoked, Set<String>> loadMethodsCalledByTestedInvoked() {
-		if (!mcti.exists())
-			return new HashMap<>();
-		
-		Map<Invoked, Set<String>> invokedMethods = new HashMap<>();
-
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(mcti))) {
-			invokedMethods = (Map<Invoked, Set<String>>) ois.readObject();
-		} 
-		catch (IOException | ClassNotFoundException e) {
-			Logger.error("Methods called by tested invoked - " + e.getMessage());
-		}
-	
-		mcti.delete();
-		
-		return invokedMethods;
-	}
-	
-	private void mergeMethodsCalledByTestedInvoked() {
-		Map<Invoked, Set<String>> invokedMethods = loadMethodsCalledByTestedInvoked();
-		
-		for (Map.Entry<Invoked, Set<String>> mcti : invokedMethods.entrySet()) {
-			if (methodsCalledByTestedInvoked.containsKey(mcti.getKey())) {
-				methodsCalledByTestedInvoked.get(mcti.getKey()).addAll(mcti.getValue());
-			}
-			else {
-				methodsCalledByTestedInvoked.put(mcti.getKey(), mcti.getValue());
-			}
-		}
+		return callCollector.getMethodsCalledByTestedInvoked();
 	}
 	
 	public List<List<Integer>> getTestPaths() { 	

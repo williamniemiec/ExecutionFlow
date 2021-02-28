@@ -39,6 +39,14 @@ public class CallCollector {
 	}
 	
 	public void collectCall(String signatureOfMethodCalledByInvoked, Invoked invoked) {
+		if ((signatureOfMethodCalledByInvoked == null) 
+				|| signatureOfMethodCalledByInvoked.isBlank()) 
+			throw new IllegalArgumentException("Signature of method called " + 
+											   "cannot be empty");
+		
+		if (invoked == null)
+			throw new IllegalArgumentException("Invoked cannot be null");
+		
 		if (methodsCalledByTestedInvoked.containsKey(invoked)) {
 			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invoked);
 			invokedMethods.add(signatureOfMethodCalledByInvoked);
@@ -168,7 +176,6 @@ public class CallCollector {
 		Map<Invoked, Set<String>> invokedMethods = new HashMap<>();
 
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(MCTI_FILE))) {
-			System.out.println(ois.available());
 			invokedMethods = (Map<Invoked, Set<String>>) ois.readObject();
 		} 
 		catch (IOException | ClassNotFoundException e) {
@@ -190,7 +197,6 @@ public class CallCollector {
 	 */
 	private void store() throws FileNotFoundException, IOException {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(MCTI_FILE))) {
-			System.out.println(methodsCalledByTestedInvoked);
 			oos.writeObject(methodsCalledByTestedInvoked);
 			oos.flush();
 		}

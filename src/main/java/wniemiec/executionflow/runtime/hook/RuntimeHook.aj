@@ -101,7 +101,6 @@ public abstract aspect RuntimeHook {
 	}
 
 	protected void reset() {
-		CallCollector.reset();
 		resetCollectors();
 		TestMethodFileProcessor.clearMapping();
 		InvokedFileProcessor.clearMapping();
@@ -113,6 +112,9 @@ public abstract aspect RuntimeHook {
 		
 		collector = ConstructorCollector.getInstance();
 		collector.reset();
+		
+		CallCollector callCollector = CallCollector.getInstance();
+		callCollector.reset();
 	}
 	
 	protected String removeParametersFromSignature(String signature) {

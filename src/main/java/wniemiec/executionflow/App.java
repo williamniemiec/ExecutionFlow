@@ -307,7 +307,8 @@ public class App {
 			if (!insideJUnitRunnerCheckpoint.isEnabled())
 				insideJUnitRunnerCheckpoint.enable();
 			
-			CallCollector.deleteStoredContent();
+			CallCollector callCollector = CallCollector.getInstance();
+			callCollector.deleteStoredContent();
 			runJUnitRunner(testMethod);
 			waitForJUnit4API();
 		}
