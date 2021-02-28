@@ -58,6 +58,7 @@ public class MainSelector extends JFrame {
 		setResizable(false);
 		setIconImage(AppIcon.getIcon());
 		getContentPane().add(createBody());
+		setVisible(true);
 	}
 
 	private JPanel createBody() {
@@ -243,6 +244,6 @@ public class MainSelector extends JFrame {
 		btn.append("</body>");
 		btn.append("</html>");
 		
-		return new ThemeButton(btn.toString(), true);
+		return ThemeButton.createRegularThemeButton(btn.toString());
 	}
 }

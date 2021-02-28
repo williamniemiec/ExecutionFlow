@@ -1,8 +1,6 @@
 package wniemiec.executionflow.gui;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -14,8 +12,12 @@ public class AppIcon {
 	private static final Path ICON_LOCATION;
 	
 	static {
-		ICON_LOCATION = Path.of(".", "src", "main", "resources", "images", "icon", "ef-icon.png");
+		ICON_LOCATION = Path.of(".", "src", "main", "resources", "images", 
+								"icon", "ef-icon.png");
 		ICON = loadIcon();
+	}
+	
+	private AppIcon() {
 	}
 	
 	private static Image loadIcon() {

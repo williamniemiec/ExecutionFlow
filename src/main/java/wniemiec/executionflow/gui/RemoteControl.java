@@ -1,18 +1,10 @@
 package wniemiec.executionflow.gui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+
+import wniemiec.executionflow.gui.popup.MainSelector;
 
 
 /**
@@ -41,7 +33,9 @@ public class RemoteControl {
 	//-------------------------------------------------------------------------
 	private RemoteControl() {
 	}
-	
+	public static void main(String[] args) {
+		RemoteControl.open();
+	}
 	
 	//-------------------------------------------------------------------------
 	//		Methods
@@ -73,6 +67,7 @@ public class RemoteControl {
 	private static void createWindow() {		
 		window = new JFrame(TITLE);
 		
+		window.setIconImage(AppIcon.getIcon());
 		window.add(createStopButton());
 		window.setBounds(
 				MAIN_FRAME_X, 
@@ -88,7 +83,7 @@ public class RemoteControl {
 	}
 
 	private static JButton createStopButton() {
-		JButton stop = new ThemeButton("STOP");
+		JButton stop = ThemeButton.createBigThemeButton("STOP");
 		
 		stop.setFocusPainted(false);
 		stop.addActionListener(event ->
