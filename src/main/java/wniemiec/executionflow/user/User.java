@@ -10,10 +10,24 @@ import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.LogView;
 import wniemiec.util.logger.Logger;
 
+/**
+ * Responsible for handling user interactions as well as managing your session.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class User {
 	
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static Session session;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization blocks
+	//-------------------------------------------------------------------------
 	static {
 		session = new Session(
 				"session.ef", 
@@ -22,8 +36,16 @@ public class User {
 	}
 	
 	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private User() {
+	}
 	
 	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	public static LogLevel askUserForLogLevel() throws IOException {
 		MainSelector selector = new MainSelector();
 		selector.open();

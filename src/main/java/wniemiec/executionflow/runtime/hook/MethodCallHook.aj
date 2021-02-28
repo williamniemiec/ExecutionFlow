@@ -135,22 +135,6 @@ public aspect MethodCallHook extends RuntimeHook {
 		return (invoked != null);
 	}
 	
-//	private String getSignature(JoinPoint jp) {
-//		if (jp.getSignature().getName().contains("<init>"))
-//			return jp.getSignature().getDeclaringTypeName();
-//		
-//		StringBuilder signature = new StringBuilder();
-//		Signature jpSignature = jp.getSignature();
-//		
-//		signature.append(jp.getSignature().getDeclaringTypeName());
-//		signature.append(".");
-//		signature.append(jpSignature.getName());
-//		signature.append(jpSignature.toString()
-//						 .substring(jpSignature.toString().indexOf("(")));
-//		
-//		return signature.toString();
-//	}
-	
 	private String removeReturnTypeFromSignature(String signature) {
 		return signature.substring(signature.indexOf(' ') + 1);
 	}
