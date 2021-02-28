@@ -7,11 +7,21 @@ import wniemiec.executionflow.io.compiler.aspectj.StandardAspectJCompiler;
  * Responsible for generating compilers.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
+ * @version		7.0.0
  * @since		6.0.0
  */
 public class CompilerFactory {
 	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	private CompilerFactory() {
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Factories
+	//-------------------------------------------------------------------------
 	public static AspectJCompilerBuilder createStandardAspectJCompiler() {
 		return new StandardAspectJCompiler.Builder();
 	}

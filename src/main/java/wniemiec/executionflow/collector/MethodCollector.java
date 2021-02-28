@@ -107,4 +107,9 @@ public class MethodCollector extends InvokedCollector {
 			);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "MethodCollector [methodCollector=" + methodCollector + "]";
+	}
 }

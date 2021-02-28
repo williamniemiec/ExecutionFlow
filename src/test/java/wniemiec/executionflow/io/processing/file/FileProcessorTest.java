@@ -35,7 +35,7 @@ public abstract class FileProcessorTest extends Processing {
 		return readLinesFrom(outputFile);
 	}
 	
-	private Path doProcessing(String filename) throws IOException {
+	protected Path doProcessing(String filename) throws IOException {
 		FileProcessor processor = getFileProcessor(filename);
 		
 		return Path.of(processor.processFile());

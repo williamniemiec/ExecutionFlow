@@ -93,4 +93,9 @@ public class ConstructorCollector extends InvokedCollector {
 				constructorCollector.values()
 		);
 	}
+
+	@Override
+	public String toString() {
+		return "ConstructorCollector [constructorCollector=" + constructorCollector + "]";
+	}
 }

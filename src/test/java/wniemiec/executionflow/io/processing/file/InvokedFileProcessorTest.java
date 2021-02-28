@@ -100,7 +100,7 @@ class InvokedFileProcessorTest extends FileProcessorTest {
 	
 	@Test
 	void testMapping() throws IOException {
-		withFilename("invoked");
+		doProcessing("invoked");
 
 		assertMappingIs(Map.ofEntries(
 				Map.entry(3, 2),
@@ -213,10 +213,6 @@ class InvokedFileProcessorTest extends FileProcessorTest {
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
-	private void withFilename(String filename) {
-		this.filename = filename;
-	}
-	
 	private void assertMappingIs(Map<Integer, Integer> expectedMapping) 
 			throws IOException {
 		Assertions.assertEquals(

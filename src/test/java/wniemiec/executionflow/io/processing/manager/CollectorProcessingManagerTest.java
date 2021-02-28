@@ -34,8 +34,6 @@ class CollectorProcessingManagerTest {
 		methodCollector = MethodCollector.getInstance();
 		constructorCollector = ConstructorCollector.getInstance();
 		
-		
-		
 		testedMethod = new Invoked.Builder()
 				.binPath(Path.of("foo/bar/testedmethod.class"))
 				.srcPath(Path.of("foo/bar/testedmethod.java"))
@@ -63,7 +61,7 @@ class CollectorProcessingManagerTest {
 				Map.entry(5, 4)
 		);
 		
-		methodCollector.collect(new TestedInvoked(testMethod, testMethod));
+		methodCollector.collect(new TestedInvoked(testedMethod, testMethod));
 	}
 	
 	

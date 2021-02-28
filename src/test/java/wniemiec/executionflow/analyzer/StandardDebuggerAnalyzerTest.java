@@ -134,7 +134,7 @@ class StandardDebuggerAnalyzerTest {
 		debugger.analyze();
 	}
 	
-	private void assertTestPathIs(int... testPath) {
+	private void assertTestPathIs(Integer... testPath) {
 		assertEquals(
 				List.of(Arrays.asList(testPath)), 
 				debugger.getTestPaths()

@@ -37,7 +37,7 @@ class TestedInvokedParserTest {
 		srcDirectory = Path.of(".", "src", "test", "resources", "auxfiles");
 		binDirectory = Path.of(".", "target", "test-classes", "auxfiles");
 
-		Logger.setLevel(LogLevel.DEBUG);
+		Logger.setLevel(LogLevel.WARNING);
 	}
 	
 	

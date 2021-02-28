@@ -38,9 +38,15 @@ public class StandardAspectJCompiler implements Compiler {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	private StandardAspectJCompiler(Path inpath, List<Path> classpaths) {
+		if (inpath == null)
+			throw new IllegalArgumentException("Inpath cannot be null");
+		
+		if (classpaths == null)
+			throw new IllegalArgumentException("Classpaths cannot be null");
+		
 		this.compiler = new Main();
 		this.messageHandler = new MessageHandler();
-		this.inpath = inpath;
+		this.inpath = inpath.normalize().toAbsolutePath();
 		this.classpaths = classpaths;
 	}
 	
@@ -85,7 +91,7 @@ public class StandardAspectJCompiler implements Compiler {
 			messageHandler
 		);
 		compiler.quit();
-		
+
 		dump(outputDir);
 		
 		if (checkError())
@@ -98,9 +104,9 @@ public class StandardAspectJCompiler implements Compiler {
 		ignoreUncheckedWarnings();
 		initializeInpath();
 		initializeCompilerVersion();
+		initializeOutput(outputDir);
 		initializeEncoding(encode);
 		initializeClassPaths();
-		initializeOutput(outputDir);
 		initializeTarget(target);
 		
 		return commands.toArray(new String[] {});
@@ -148,7 +154,7 @@ public class StandardAspectJCompiler implements Compiler {
 	}
 	
 	private void initializeTarget(Path target) {
-		commands.add(target.toAbsolutePath().toString());
+		commands.add(target.normalize().toAbsolutePath().toString());
 	}
 	
 	private void dump(Path outputDir) {

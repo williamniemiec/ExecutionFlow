@@ -41,10 +41,7 @@ public abstract class Processing {
 	protected void testProcessorOnFile(String filename) throws IOException {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> procTxt = processSourceCodeFrom(filename);
-		
-		for (String line : procTxt) {
-			System.out.println(line);
-		}
+
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}
