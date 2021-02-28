@@ -143,6 +143,7 @@
 	</distributionManagement>
 
 	<build>
+		<sourceDirectory>.</sourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
@@ -179,8 +180,9 @@
 					<version>${maven.compiler.plugin.version}</version>
 					<configuration>
 						<includes>
-							<include>**/*aj</include>
-							<include>**/*java</include>
+							<include>src/main/**/*aj</include>
+							<include>src/main/**/*java</include>
+							<include>src/test/resources/**/*java</include>
 						</includes>
 						<source>1.8</source>
 						<target>1.8</target>
