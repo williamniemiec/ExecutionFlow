@@ -16,6 +16,9 @@ import wniemiec.executionflow.invoked.TestedInvoked;
 
 class CollectorProcessingManagerTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private final Invoked testedMethod;
 	private final Invoked testMethod;
 	private final InvokedCollector methodCollector;
@@ -23,6 +26,10 @@ class CollectorProcessingManagerTest {
 	private final Map<Integer, Integer> mapping; 
 	private final CollectorProcessingManager collectorManager;
 		
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	CollectorProcessingManagerTest() {
 		methodCollector = MethodCollector.getInstance();
 		constructorCollector = ConstructorCollector.getInstance();
@@ -59,12 +66,20 @@ class CollectorProcessingManagerTest {
 		methodCollector.collect(new TestedInvoked(testMethod, testMethod));
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@AfterEach
 	void restoreDefaultValues() {
 		testedMethod.setInvocationLine(5);
 		collectorManager.reset();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testGetInstanceWithNullCollectors() {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {

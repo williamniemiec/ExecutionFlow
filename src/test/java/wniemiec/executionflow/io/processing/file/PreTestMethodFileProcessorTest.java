@@ -165,7 +165,7 @@ class PreTestMethodFileProcessorTest extends FileProcessorTest {
 				(PreTestMethodFileProcessor) getFileProcessor(filename);
 		processor.processFile();
 		
-		Assertions.assertEquals(totalTests, processor.getTotalTests());
+		Assertions.assertEquals(totalTests, PreTestMethodFileProcessor.getTotalTests());
 	}
 		
 	@Override

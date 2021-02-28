@@ -11,6 +11,9 @@ import wniemiec.executionflow.io.processing.file.PreTestMethodFileProcessor;
 
 class PreTestMethodFileProcessorFactoryTest {
 
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testCreateInstance() {
 		Path targetFile = Path.of(".");

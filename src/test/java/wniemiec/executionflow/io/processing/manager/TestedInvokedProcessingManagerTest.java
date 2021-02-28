@@ -20,14 +20,19 @@ import wniemiec.util.logger.Logger;
 
 class TestedInvokedProcessingManagerTest {
 
-	private Invoked testedMethod;
-	private Invoked testMethod;
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private Path srcDirectory;
 	private Path binDirectory;
 	private List<TestedInvoked> invokedCollector;
 	private TestedInvokedProcessingManager invokedCollectorParser;
 	private TestedInvokedParser testedInvokedParser;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	TestedInvokedProcessingManagerTest() {
 		srcDirectory = Path.of(".", "src", "test", "resources", "auxfiles");
 		binDirectory = Path.of(".", "target", "test-classes", "auxfiles");
@@ -35,6 +40,10 @@ class TestedInvokedProcessingManagerTest {
 		Logger.setLevel(LogLevel.WARNING);
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void prepare() {
 		invokedCollector = new ArrayList<>();
@@ -45,6 +54,10 @@ class TestedInvokedProcessingManagerTest {
 		invokedCollectorParser.restoreAll();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testParse() throws IOException {
 		withTestedInvoked(getAuxClassInvoked(), getOthersInvoked());
@@ -56,13 +69,23 @@ class TestedInvokedProcessingManagerTest {
 	}
 	
 	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void withTestedInvoked(Invoked testedInvoked, Invoked testMethod) {
+		invokedCollector.add(new TestedInvoked(testedInvoked, testMethod));
+	}
+	
 	private void parseAfterProcessing() {
 		invokedCollectorParser = new TestedInvokedProcessingManager();
 		testedInvokedParser = invokedCollectorParser.processAndParse(invokedCollector);
 	}
-
-	private void withTestedInvoked(Invoked testedInvoked, Invoked testMethod) {
-		invokedCollector.add(new TestedInvoked(testedInvoked, testMethod));
+	
+	private void assertTestPathIs(TestedInvoked testedInvoked, Integer... testPath) {
+		assertEquals(
+				List.of(Arrays.asList(testPath)), 
+				testedInvokedParser.getTestPathsOf(testedInvoked)
+		);
 	}
 
 	private Invoked getAuxClassInvoked() {
@@ -80,12 +103,5 @@ class TestedInvokedProcessingManagerTest {
 				.binPath(binDirectory.resolve("Others.class"))
 				.signature("auxfiles.Others.testFactorial()")
 				.build();
-	}
-	
-	private void assertTestPathIs(TestedInvoked testedInvoked, Integer... testPath) {
-		assertEquals(
-				List.of(Arrays.asList(testPath)), 
-				testedInvokedParser.getTestPathsOf(testedInvoked)
-		);
 	}
 }

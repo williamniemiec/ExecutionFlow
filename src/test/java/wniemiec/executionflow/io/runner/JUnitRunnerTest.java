@@ -10,15 +10,26 @@ import wniemiec.executionflow.invoked.Invoked;
 
 class JUnitRunnerTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private final Path resourcesSrc;
 	private final Path resourcesBin;
 	private Invoked testMethod;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public JUnitRunnerTest() {
 		resourcesSrc = Path.of(".", "src", "test", "resources", "auxfiles");
 		resourcesBin = Path.of(".", "target", "test-classes", "auxfiles");
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testRunTestmethod() throws InterruptedException, IOException {
 		withTestMethod(getTestMethodTestFactorial());
@@ -29,6 +40,14 @@ class JUnitRunnerTest {
 		Assertions.assertFalse(JUnitRunner.isRunningFromJUnitAPI());
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void withTestMethod(Invoked testMethod) {
+		this.testMethod = testMethod;
+	}
+	
 	private void runJUnitRunner() throws InterruptedException {
 		Thread t = new Thread(() -> {
 			JUnitRunner.runTestMethod(testMethod);			
@@ -37,10 +56,6 @@ class JUnitRunnerTest {
 		t.start();
 		
 		Thread.sleep(400);
-	}
-	
-	private void withTestMethod(Invoked testMethod) {
-		this.testMethod = testMethod;
 	}
 	
 	private Invoked getTestMethodTestFactorial() {

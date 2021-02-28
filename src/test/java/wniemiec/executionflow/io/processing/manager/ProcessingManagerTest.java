@@ -14,10 +14,17 @@ import wniemiec.util.logger.Logger;
 
 class ProcessingManagerTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private ProcessingManager processingManager;
 	private final Invoked testedMethod;
 	private final Invoked testMethod;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	ProcessingManagerTest() {
 		final Path resourcesSrc = Path.of(".", "src", "test", "resources", 
 				"wniemiec",	"executionflow", "io", "processing", "manager");
@@ -42,6 +49,10 @@ class ProcessingManagerTest {
 		Logger.setLevel(LogLevel.WARNING);
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testDoPreprocessing() throws IOException {
 		processingManager.initializeManagers();

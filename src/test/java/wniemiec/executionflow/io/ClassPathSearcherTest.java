@@ -8,9 +8,16 @@ import org.junit.jupiter.api.Test;
 
 class ClassPathSearcherTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private final Path thisSrcFile;
 	private final Path thisBinFile;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public ClassPathSearcherTest() {
 		thisSrcFile = normalizePath(Path.of(".", "src", "test", "java", "wniemiec", 
 						   				 "executionflow", "io", 
@@ -21,10 +28,10 @@ class ClassPathSearcherTest {
 											"ClassPathSearcherTest.class"));
 	}
 	
-	private Path normalizePath(Path path) {
-		return path.normalize().toAbsolutePath();
-	}
 	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testSearchSrcPath() throws IOException {
 		Path file = ClassPathSearcher.findSrcPath("wniemiec.executionflow.io" + 
@@ -39,5 +46,13 @@ class ClassPathSearcherTest {
 												  ".ClassPathSearcherTest(int)");
 		
 		Assertions.assertEquals(thisBinFile, file);
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private Path normalizePath(Path path) {
+		return path.normalize().toAbsolutePath();
 	}
 }

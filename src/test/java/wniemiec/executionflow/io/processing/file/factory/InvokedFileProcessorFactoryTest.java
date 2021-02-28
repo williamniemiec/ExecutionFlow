@@ -11,6 +11,9 @@ import wniemiec.executionflow.io.processing.file.InvokedFileProcessor;
 
 class InvokedFileProcessorFactoryTest {
 
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testCreateInstance() {
 		Path targetFile = Path.of(".");

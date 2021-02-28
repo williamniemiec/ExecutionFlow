@@ -16,17 +16,28 @@ import wniemiec.executionflow.invoked.TestedInvoked;
 
 class StandardDebuggerAnalyzerTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private final Path resourcesSrc;
 	private final Path resourcesBin;
 	private DebuggerAnalyzer debugger;
 	private Invoked testMethod;
 	private Invoked testedInvoked;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public StandardDebuggerAnalyzerTest() {
 		resourcesSrc = Path.of(".", "src", "test", "resources", "auxfiles");
 		resourcesBin = Path.of(".", "target", "test-classes", "auxfiles");
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void prepare() {
 		testedInvoked = null;
@@ -34,6 +45,10 @@ class StandardDebuggerAnalyzerTest {
 		debugger = null;
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testGetTestPath() throws IOException {
 		withTestedInvoked(getTestedInvokedFactorial());
@@ -88,20 +103,25 @@ class StandardDebuggerAnalyzerTest {
 		assertNoTimeoutOcurred();
 	}
 	
-	private void assertNoTimeoutOcurred() {
-		Assertions.assertFalse(debugger.checkTimeout());
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void withTestedInvoked(Invoked testedInvoked) {
+		this.testedInvoked = testedInvoked;
 	}
-
-	private void assertTimeoutOcurred() {
-		Assertions.assertTrue(debugger.checkTimeout());
-	}
-
+	
 	private void withTestMethod(Invoked testMethod) {
 		this.testMethod = testMethod;
 	}
-	
-	private void withTestedInvoked(Invoked testedInvoked) {
-		this.testedInvoked = testedInvoked;
+		
+	private void runDebuggerAnalyzer() throws IOException {
+		debugger = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
+				new TestedInvoked(testedInvoked, testMethod)
+		);
+		
+		debugger.disableTimeout();
+		debugger.analyze();
 	}
 	
 	private void runDebuggerAnalyzerWithTimeout(int timeout) throws IOException {
@@ -111,15 +131,6 @@ class StandardDebuggerAnalyzerTest {
 		
 		debugger.enableTimeout();
 		debugger.setTimeout(timeout);
-		debugger.analyze();
-	}
-	
-	private void runDebuggerAnalyzer() throws IOException {
-		debugger = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
-				new TestedInvoked(testedInvoked, testMethod)
-		);
-		
-		debugger.disableTimeout();
 		debugger.analyze();
 	}
 	
@@ -138,6 +149,14 @@ class StandardDebuggerAnalyzerTest {
 		);
 		
 		Assertions.assertTrue(debugger.wasTestPathObtainedInALoop());
+	}
+	
+	private void assertNoTimeoutOcurred() {
+		Assertions.assertFalse(debugger.checkTimeout());
+	}
+
+	private void assertTimeoutOcurred() {
+		Assertions.assertTrue(debugger.checkTimeout());
 	}
 	
 	private Invoked getTestMethodTestFactorial() {

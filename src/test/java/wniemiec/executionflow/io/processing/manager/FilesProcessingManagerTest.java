@@ -13,6 +13,9 @@ import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFac
 
 class FilesProcessingManagerTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private Path srcPath = Path.of(".", "src", "test", "resources", "wniemiec", 
 			"executionflow", "io", "processing", "manager", "fileprocessing.java");
 	private Path binPath = Path.of(".", "target", "test-classes", "wniemiec", 
@@ -21,10 +24,18 @@ class FilesProcessingManagerTest {
 	private FileProcessingManager fileProcessingManager;
 	private FilesProcessingManager processingManager;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	FilesProcessingManagerTest() {
 		fileProcessingManager = createFileProcessingManager();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void prepare() throws ClassNotFoundException, IOException {
 		processingManager = new FilesProcessingManager(
@@ -37,6 +48,10 @@ class FilesProcessingManagerTest {
 		processingManager.restoreAll();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testProcessing() 
 			throws ClassNotFoundException, IOException {
@@ -108,6 +123,10 @@ class FilesProcessingManagerTest {
 		Assertions.assertFalse(processingManager.hasBackupStored());
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	private FileProcessingManager createFileProcessingManager() {
 		return new FileProcessingManager.Builder()
 				.srcPath(srcPath)

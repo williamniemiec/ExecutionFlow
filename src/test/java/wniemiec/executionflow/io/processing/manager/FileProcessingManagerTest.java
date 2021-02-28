@@ -14,6 +14,9 @@ import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFac
 
 class FileProcessingManagerTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private Path srcPath = Path.of(".", "src", "test", "resources", "wniemiec", 
 			"executionflow", "io", "processing", "manager", "fileprocessing.java");
 	private Path binPath = Path.of(".", "target", "test-classes", "wniemiec", 
@@ -22,6 +25,10 @@ class FileProcessingManagerTest {
 	private FileProcessingManager fileProcessingManager;
 	private static final boolean AUTO_RESTORE = false;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@AfterEach
 	void clean() throws IOException {
 		if (fileProcessingManager == null)
@@ -31,6 +38,10 @@ class FileProcessingManagerTest {
 		fileProcessingManager.deleteSrcBackupFile();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testFullBuilder() {
 		new FileProcessingManager.Builder()
@@ -224,6 +235,25 @@ class FileProcessingManagerTest {
 		restoreBackupFiles();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void createBackupFiles() {
+		fileProcessingManager.createBinBackupFile(AUTO_RESTORE);
+		fileProcessingManager.createSrcBackupFile(AUTO_RESTORE);
+	}
+	
+	private FileProcessingManager createFileProcessingManager() {
+		return new FileProcessingManager.Builder()
+				.srcPath(srcPath)
+				.binPath(binPath)
+				.filePackage(pkg)
+				.backupExtensionName("bkp")
+				.fileProcessorFactory(new InvokedFileProcessorFactory())
+				.build();
+	}
+	
 	private void assertSrcFileIsRestoredAfterProcessing() throws IOException {
 		List<String> originalSrcFile = Files.readAllLines(srcPath);
 		
@@ -249,12 +279,6 @@ class FileProcessingManagerTest {
 		);
 	}
 
-	
-	private void createBackupFiles() {
-		fileProcessingManager.createBinBackupFile(AUTO_RESTORE);
-		fileProcessingManager.createSrcBackupFile(AUTO_RESTORE);
-	}
-	
 	private void assertSrcFileIsCompiledAfterProcessing() throws IOException {
 		FileTime binFileTime = Files.getLastModifiedTime(binPath);
 		
@@ -278,19 +302,9 @@ class FileProcessingManagerTest {
 				Files.getLastModifiedTime(srcPath)
 		);
 	}
-
+	
 	private void restoreBackupFiles() throws IOException {
 		fileProcessingManager.revertCompilation();
 		fileProcessingManager.revertProcessing();
-	}
-
-	private FileProcessingManager createFileProcessingManager() {
-		return new FileProcessingManager.Builder()
-				.srcPath(srcPath)
-				.binPath(binPath)
-				.filePackage(pkg)
-				.backupExtensionName("bkp")
-				.fileProcessorFactory(new InvokedFileProcessorFactory())
-				.build();
 	}
 }

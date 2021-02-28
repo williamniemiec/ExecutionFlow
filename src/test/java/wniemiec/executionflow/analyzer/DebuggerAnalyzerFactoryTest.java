@@ -11,14 +11,25 @@ import wniemiec.executionflow.invoked.TestedInvoked;
 
 class DebuggerAnalyzerFactoryTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private final Path resourcesSrc;
 	private final Path resourcesBin;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public DebuggerAnalyzerFactoryTest() {
 		resourcesSrc = Path.of(".", "src", "test", "resources", "auxfiles");
 		resourcesBin = Path.of(".", "target", "test-classes", "auxfiles");
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testCreateStandardTestPathAnalyzer() throws IOException {
 		DebuggerAnalyzer debugger = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
@@ -38,6 +49,10 @@ class DebuggerAnalyzerFactoryTest {
 		});
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	private Invoked getTestMethodTestFactorial() {
 		return new Invoked.Builder()
 				.srcPath(resourcesSrc.resolve("Others.java"))

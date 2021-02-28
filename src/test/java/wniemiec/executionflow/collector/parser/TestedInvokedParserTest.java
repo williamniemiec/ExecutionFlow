@@ -19,6 +19,9 @@ import wniemiec.util.logger.Logger;
 
 class TestedInvokedParserTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private Invoked testedMethod;
 	private Invoked testMethod;
 	private TestedInvokedParser testedInvokedParser;
@@ -26,6 +29,10 @@ class TestedInvokedParserTest {
 	private Path binDirectory;
 	private TestedInvoked testedInvoked;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public TestedInvokedParserTest() throws IOException {
 		srcDirectory = Path.of(".", "src", "test", "resources", "auxfiles");
 		binDirectory = Path.of(".", "target", "test-classes", "auxfiles");
@@ -33,28 +40,19 @@ class TestedInvokedParserTest {
 		Logger.setLevel(LogLevel.DEBUG);
 	}
 	
-	private Invoked getAuxClassInvoked() {
-		return new Invoked.Builder()
-				.srcPath(srcDirectory.resolve("AuxClass.java"))
-				.binPath(binDirectory.resolve("AuxClass.class"))
-				.signature("auxfiles.AuxClass.factorial(int)")
-				.invocationLine(32)
-				.build();
-	}
 	
-	private Invoked getOthersInvoked() {
-		return new Invoked.Builder()
-				.srcPath(srcDirectory.resolve("Others.java"))
-				.binPath(binDirectory.resolve("Others.class"))
-				.signature("auxfiles.Others.testFactorial()")
-				.build();
-	}
-	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void prepare() throws InterruptedByTimeoutException, IOException {
 		testedInvokedParser = new TestedInvokedParser();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testTestPath() throws InterruptedByTimeoutException, IOException {
 		withTestedInvoked(getAuxClassInvoked());
@@ -65,6 +63,9 @@ class TestedInvokedParserTest {
 		assertTestPathIs(94, 96, 98, 99, 98, 99, 98, 99, 98, 99, 98, 102);
 	}
 	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	private void withTestMethod(Invoked testMethod) {
 		this.testMethod = testMethod;
 	}
@@ -87,5 +88,22 @@ class TestedInvokedParserTest {
 				List.of(Arrays.asList(testPath)), 
 				testedInvokedParser.getTestPathsOf(testedInvoked)
 		);
+	}
+	
+	private Invoked getAuxClassInvoked() {
+		return new Invoked.Builder()
+				.srcPath(srcDirectory.resolve("AuxClass.java"))
+				.binPath(binDirectory.resolve("AuxClass.class"))
+				.signature("auxfiles.AuxClass.factorial(int)")
+				.invocationLine(32)
+				.build();
+	}
+	
+	private Invoked getOthersInvoked() {
+		return new Invoked.Builder()
+				.srcPath(srcDirectory.resolve("Others.java"))
+				.binPath(binDirectory.resolve("Others.class"))
+				.signature("auxfiles.Others.testFactorial()")
+				.build();
 	}
 }

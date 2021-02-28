@@ -9,11 +9,18 @@ import wniemiec.executionflow.invoked.Invoked;
 
 class MethodCollectorTest extends InvokedCollectorTest {
 	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void restore() {
 		collector = MethodCollector.getInstance();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testStoreAndGetCollector() {
 		withTestedMethod(getTestedInvokedM3Method());
@@ -36,6 +43,10 @@ class MethodCollectorTest extends InvokedCollectorTest {
 		assertTestedInvokedHasInvocationLine(99);
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	private Invoked getTestMethodMethod1() {
 		return new Invoked.Builder()
 				.srcPath(getResourcesSrc().resolve("testmethod.java"))

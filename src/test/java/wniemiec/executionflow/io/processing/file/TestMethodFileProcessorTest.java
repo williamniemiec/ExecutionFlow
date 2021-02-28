@@ -11,14 +11,25 @@ import wniemiec.executionflow.io.FileEncoding;
 
 class TestMethodFileProcessorTest extends FileProcessorTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private String filename;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void clean() {
 		filename = "";
 		TestMethodFileProcessor.clearMapping();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testFullBuilder() {
 		new TestMethodFileProcessor.Builder()
@@ -137,7 +148,7 @@ class TestMethodFileProcessorTest extends FileProcessorTest {
 		
 		processor.processFile();
 		
-		Assertions.assertEquals(expectedMapping, processor.getMapping());
+		Assertions.assertEquals(expectedMapping, TestMethodFileProcessor.getMapping());
 	}
 	
 	@Override

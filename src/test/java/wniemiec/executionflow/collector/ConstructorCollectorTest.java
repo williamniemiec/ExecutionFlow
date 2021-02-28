@@ -9,11 +9,18 @@ import wniemiec.executionflow.invoked.Invoked;
 
 class ConstructorCollectorTest extends InvokedCollectorTest {
 
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void restore() {
 		collector = ConstructorCollector.getInstance();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testStoreAndGetCollector() {
 		withTestedMethod(getTestedConstructor());
@@ -36,6 +43,10 @@ class ConstructorCollectorTest extends InvokedCollectorTest {
 		assertTestedInvokedHasInvocationLine(99);
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
 	private Invoked getTestMethodMethod4() {
 		return new Invoked.Builder()
 				.srcPath(getResourcesSrc().resolve("testmethod.java"))

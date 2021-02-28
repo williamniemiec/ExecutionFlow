@@ -17,6 +17,9 @@ import wniemiec.util.logger.Logger;
 
 class InvokedProcessingManagerTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private Path srcPath = Path.of(".", "src", "test", "resources", "wniemiec", 
 			"executionflow", "io", "processing", "manager", "fileprocessing.java");
 	private Path binPath = Path.of(".", "target", "test-classes", "wniemiec", 
@@ -26,6 +29,10 @@ class InvokedProcessingManagerTest {
 	private FilesProcessingManager filesProcessingManager;
 	private InvokedProcessingManager invokedProcessingManager;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructors
+	//-------------------------------------------------------------------------
 	InvokedProcessingManagerTest() throws ClassNotFoundException, IOException {
 		fileProcessingManager = createFileProcessingManager();
 		filesProcessingManager = new FilesProcessingManager(
@@ -35,6 +42,10 @@ class InvokedProcessingManagerTest {
 		Logger.setLevel(LogLevel.WARNING);
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void prepare() throws ClassNotFoundException, IOException {
 		invokedProcessingManager = new InvokedProcessingManager(filesProcessingManager);
@@ -45,6 +56,10 @@ class InvokedProcessingManagerTest {
 		invokedProcessingManager.restoreInvokedOriginalFiles();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testProcessAndCompile() throws ClassNotFoundException, IOException {
 		invokedProcessingManager.processAndCompile(fileProcessingManager);
@@ -114,6 +129,21 @@ class InvokedProcessingManagerTest {
 		});
 	}
 	
+		
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void assertSrcFileIsProcessed() throws IOException {
+		FileTime srcFileTime = Files.getLastModifiedTime(srcPath);
+		
+		fileProcessingManager.processFile(false);
+		
+		Assertions.assertNotEquals(
+				srcFileTime, 
+				Files.getLastModifiedTime(srcPath)
+		);
+	}
+	
 	private void assertSrcFileIsCompiledAfterProcessing() throws IOException {
 		FileTime binFileTime = Files.getLastModifiedTime(binPath);
 		
@@ -123,17 +153,6 @@ class InvokedProcessingManagerTest {
 		Assertions.assertNotEquals(
 				binFileTime, 
 				Files.getLastModifiedTime(binPath)
-		);
-	}
-
-	private void assertSrcFileIsProcessed() throws IOException {
-		FileTime srcFileTime = Files.getLastModifiedTime(srcPath);
-		
-		fileProcessingManager.processFile(false);
-		
-		Assertions.assertNotEquals(
-				srcFileTime, 
-				Files.getLastModifiedTime(srcPath)
 		);
 	}
 	

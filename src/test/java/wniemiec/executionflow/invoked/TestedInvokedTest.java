@@ -33,7 +33,9 @@ class TestedInvokedTest {
 	}
 	
 	
-	
+	//-----------------------------------------------------------------------
+	//		Tests
+	//-----------------------------------------------------------------------
 	@Test
 	void testConstructorWithNullTestMethod() {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -50,29 +52,47 @@ class TestedInvokedTest {
 	
 	@Test
 	void testGetTestedInvoked() {
-		TestedInvoked testedInvoked = new TestedInvoked(defaultTestedMethod, defaultTestMethod);
+		TestedInvoked testedInvoked = new TestedInvoked(
+				defaultTestedMethod,
+				defaultTestMethod
+		);
 		
 		Assertions.assertEquals(defaultTestedMethod, testedInvoked.getTestedInvoked());
 	}
 	
 	@Test
 	void testGetTestMethod() {
-		TestedInvoked testedInvoked = new TestedInvoked(defaultTestedMethod, defaultTestMethod);
+		TestedInvoked testedInvoked = new TestedInvoked(
+				defaultTestedMethod,
+				defaultTestMethod
+		);
 		
 		Assertions.assertEquals(defaultTestMethod, testedInvoked.getTestMethod());
 	}
 	
 	@Test
 	void testEquals() {
-		TestedInvoked testedInvoked = new TestedInvoked(defaultTestedMethod, defaultTestMethod);
+		TestedInvoked testedInvoked = new TestedInvoked(
+				defaultTestedMethod,
+				defaultTestMethod
+		);
 		
-		Assertions.assertEquals(new TestedInvoked(defaultTestedMethod, defaultTestMethod), testedInvoked);
+		Assertions.assertEquals(
+				new TestedInvoked(defaultTestedMethod, defaultTestMethod), 
+				testedInvoked
+		);
 	}
 	
 	@Test
 	void testNotEquals() {
-		TestedInvoked testedInvoked = new TestedInvoked(defaultTestedMethod, defaultTestMethod);
+		TestedInvoked testedInvoked = new TestedInvoked(
+				defaultTestedMethod,
+				defaultTestMethod
+		);
 		
-		Assertions.assertNotEquals(new TestedInvoked(defaultTestMethod, defaultTestedMethod), testedInvoked);
+		Assertions.assertNotEquals(
+				new TestedInvoked(defaultTestMethod, defaultTestedMethod), 
+				testedInvoked
+		);
 	}
 }

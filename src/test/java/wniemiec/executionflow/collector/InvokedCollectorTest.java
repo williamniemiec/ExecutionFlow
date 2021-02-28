@@ -14,6 +14,9 @@ import wniemiec.executionflow.invoked.TestedInvoked;
 
 abstract class InvokedCollectorTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private final Path resourcesSrc;
 	private final Path resourcesBin;
 	private Set<TestedInvoked> collectedTestedInvoked;
@@ -22,6 +25,9 @@ abstract class InvokedCollectorTest {
 	protected InvokedCollector collector;
 	
 	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	protected InvokedCollectorTest() {
 		resourcesSrc = Path.of(".", "src", "test", "resources", 
 				"wniemiec",	"executionflow", "io", "processing", "manager");
@@ -31,6 +37,10 @@ abstract class InvokedCollectorTest {
 		collectedTestedInvoked = new HashSet<>();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void restore() {
 		testedMethod = null;
@@ -42,12 +52,16 @@ abstract class InvokedCollectorTest {
 		collector.reset();
 	}
 	
-	protected Path getResourcesSrc() {
-		return resourcesSrc;
-	}
 	
-	protected Path getResourcesBin() {
-		return resourcesBin;
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	protected void withTestedMethod(Invoked testedMethod) {
+		this.testedMethod = testedMethod;
+	}
+			
+	protected void withTestMethod(Invoked testMethod) {
+		this.testMethod = testMethod;
 	}
 	
 	protected void doCollection() {
@@ -56,14 +70,6 @@ abstract class InvokedCollectorTest {
 		collector.collect(testedInvoked);
 		collectedTestedInvoked.add(testedInvoked);
 		
-	}
-
-	protected void withTestedMethod(Invoked testedMethod) {
-		this.testedMethod = testedMethod;
-	}
-			
-	protected void withTestMethod(Invoked testMethod) {
-		this.testMethod = testMethod;
 	}
 	
 	protected void assertTestedInvokedWasCollected() {
@@ -79,5 +85,17 @@ abstract class InvokedCollectorTest {
 	
 	protected void assertTestedInvokedHasInvocationLine(int line) {
 		Assertions.assertEquals(line, testedMethod.getInvocationLine());
+	}
+
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	protected Path getResourcesSrc() {
+		return resourcesSrc;
+	}
+	
+	protected Path getResourcesBin() {
+		return resourcesBin;
 	}
 }

@@ -13,12 +13,19 @@ import wniemiec.executionflow.invoked.Invoked;
 
 class CallCollectorTest {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private final Path resourcesSrc;
 	private final Path resourcesBin;
 	private CallCollector callCollector;
 	private Invoked testedInvoked;
 	private Set<String> signatureOfMethodsCalled;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	public CallCollectorTest() {
 		resourcesSrc = Path.of(".", "src", "test", "resources", "auxfiles",	
 							   "mcti");
@@ -29,6 +36,10 @@ class CallCollectorTest {
 		signatureOfMethodsCalled = new HashSet<>();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void prepare() {
 		callCollector.reset();
@@ -42,6 +53,10 @@ class CallCollectorTest {
 		signatureOfMethodsCalled.clear();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testCollectCall() {
 		withTestedInvoked(getTestedInvokedA());
@@ -72,6 +87,19 @@ class CallCollectorTest {
 		});
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private void withTestedInvoked(Invoked testedInvoked) {
+		this.testedInvoked = testedInvoked;
+	}
+	
+	private void doCollectionCall(String signatureOfMethodCalled) {
+		callCollector.collectCall(signatureOfMethodCalled, testedInvoked);
+		signatureOfMethodsCalled.add(signatureOfMethodCalled);
+	}
+	
 	private void assertCallsWereCollected() {
 		Assertions.assertEquals(
 				signatureOfMethodsCalled, 
@@ -82,17 +110,6 @@ class CallCollectorTest {
 	private Set<String> getMethodsCalledByTestedInvokedFrom(Invoked testedInvoked) {
 		return callCollector.getMethodsCalledByTestedInvoked().get(testedInvoked);
 	}
-
-	private void withTestedInvoked(Invoked testedInvoked) {
-		this.testedInvoked = testedInvoked;
-	}
-	
-	private void doCollectionCall(String signatureOfMethodCalled) {
-		callCollector.collectCall(signatureOfMethodCalled, testedInvoked);
-		signatureOfMethodsCalled.add(signatureOfMethodCalled);
-	}
-
-	
 
 	private Invoked getTestedInvokedA() {
 		return new Invoked.Builder()

@@ -1,7 +1,6 @@
 package wniemiec.executionflow.io.processing.file;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -13,14 +12,25 @@ import wniemiec.executionflow.io.FileEncoding;
 
 class InvokedFileProcessorTest extends FileProcessorTest {
 
-private String filename;
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
+	private String filename;
 	
+	
+	//-------------------------------------------------------------------------
+	//		Test hooks
+	//-------------------------------------------------------------------------
 	@BeforeEach
 	void clean() {
 		filename = "";
 		InvokedFileProcessor.clearMapping();
 	}
 	
+	
+	//-------------------------------------------------------------------------
+	//		Tests
+	//-------------------------------------------------------------------------
 	@Test
 	void testFullBuilder() {
 		new InvokedFileProcessor.Builder()
@@ -199,6 +209,7 @@ private String filename;
 		));
 	}
 	
+	
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
@@ -206,24 +217,12 @@ private String filename;
 		this.filename = filename;
 	}
 	
-	private void assertMappingIs(Map<Integer, Integer> expectedMapping) throws IOException {
-		InvokedFileProcessor processor = new InvokedFileProcessor.Builder()
-				.targetFile(getTestFile(filename))
-				.outputDir(getTempFolder())
-				.outputFilename(filename + "-output")
-				.build();
-		
-		Path out = Path.of(processor.processFile());
-		
-		for (String line : readLinesFrom(out)) {
-			System.out.println(line);
-		}
-		
-		
-		
-//		System.out.println(m);
-		Assertions.assertEquals(new TreeMap(expectedMapping), new TreeMap(processor.getMapping()));
-//		Assertions.assertEquals(expectedMapping, processor.getMapping());
+	private void assertMappingIs(Map<Integer, Integer> expectedMapping) 
+			throws IOException {
+		Assertions.assertEquals(
+				new TreeMap<Integer, Integer>(expectedMapping), 
+				new TreeMap<Integer, Integer>(InvokedFileProcessor.getMapping())
+		);
 	}
 	
 	@Override
