@@ -152,6 +152,14 @@
 					<include>**/*.gwt.xml</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.java</include>
+					<include>**/*.aj</include>
+					<include>**/*.gwt.xml</include>
+				</includes>
+			</resource>
 		</resources>
 
 		<pluginManagement>
