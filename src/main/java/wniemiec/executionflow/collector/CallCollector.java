@@ -12,50 +12,65 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.util.logger.Logger;
 
 public class CallCollector {
 	
-	private static Map<Invoked, Set<String>> methodsCalledByTestedInvoked;
+	private static CallCollector instance;
+	private Map<Invoked, Set<String>> methodsCalledByTestedInvoked;
 	private static final File MCTI_FILE;
 	
 	static {
-		MCTI_FILE = new File(App.getAppRootPath().toFile(), "mcti.ef");
-		methodsCalledByTestedInvoked = new HashMap<>();
+		File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+		
+		MCTI_FILE = new File(tmpDir, "mcti.ef");
 	}
 	
-	public static void collectCall(String signature, Invoked invoked) {
+	private CallCollector() {
+		methodsCalledByTestedInvoked = new HashMap<>();	
+	}
+	
+	public static CallCollector getInstance() {
+		if (instance == null)
+			instance = new CallCollector();
+		
+		return instance;
+	}
+	
+	public void collectCall(String signatureOfMethodCalledByInvoked, Invoked invoked) {
 		if (methodsCalledByTestedInvoked.containsKey(invoked)) {
 			Set<String> invokedMethods = methodsCalledByTestedInvoked.get(invoked);
-			invokedMethods.add(signature);
+			invokedMethods.add(signatureOfMethodCalledByInvoked);
 		}
 		else {
 			Set<String> invokedMethods = new HashSet<>();
-			invokedMethods.add(signature);
+			invokedMethods.add(signatureOfMethodCalledByInvoked);
 			
 			methodsCalledByTestedInvoked.put(invoked, invokedMethods);
 		}
+		
+		storeCall();
 	}
 	
-	public static void storeCall() {
+	private void storeCall() {
 		if (methodsCalledByTestedInvoked.isEmpty())
 			return;
 		
-		CallCollector.store(methodsCalledByTestedInvoked);
+		store(methodsCalledByTestedInvoked);
 	}
 	
 	
-	public static void store(Map<Invoked, Set<String>> methodsCalledByTestedInvoked) {
-		CallCollector.methodsCalledByTestedInvoked = methodsCalledByTestedInvoked;
+	private void store(Map<Invoked, Set<String>> methodsCalledByTestedInvoked) {
+		this.methodsCalledByTestedInvoked = methodsCalledByTestedInvoked;
+		storeCollectedMethods();
 	}
 	
 	/**
 	 * Saves methods called by tested invoked. It will save to a file named
 	 * 'mcti.ef' (Methods Called by Tested Invoked).
 	 */
-	private static void storeCollectedMethods() {
+	private void storeCollectedMethods() {
 		try {
 			load();
 			store();
@@ -75,11 +90,14 @@ public class CallCollector {
 	 * opened for reading.
 	 * @throws		IOException If 'mcti.ef' cannot be read
 	 */
-	private static void load() throws FileNotFoundException, IOException {
+	private void load() throws FileNotFoundException, IOException {
 		if (!MCTI_FILE.exists())
 			return;
-
+	
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(MCTI_FILE))) {
+			if (ois.available() == 0)
+				return;
+			
 			@SuppressWarnings("unchecked")
 			Map<Invoked, Set<String>> storedCollection = 
 					(Map<Invoked, Set<String>>) ois.readObject();
@@ -91,7 +109,7 @@ public class CallCollector {
 		}
 	}
 	
-	private static void combineCollectedMethodWithStoredCollection(Map<Invoked, Set<String>> 
+	private void combineCollectedMethodWithStoredCollection(Map<Invoked, Set<String>> 
 															storedCollection) {
 		for (Map.Entry<Invoked, Set<String>> e : storedCollection.entrySet()) {
 			Invoked storedInvocation = e.getKey();
@@ -112,7 +130,7 @@ public class CallCollector {
 		}
 	}
 	
-	private static void mergeCollectedMethodWithStoredCollection(Invoked storedInvocation, 
+	private void mergeCollectedMethodWithStoredCollection(Invoked storedInvocation, 
 														  Set<String> storedMethodsCalled) {
 		Set<String> currentMethodsCalled = 
 				methodsCalledByTestedInvoked.get(storedInvocation);
@@ -129,6 +147,39 @@ public class CallCollector {
 		methodsCalledByTestedInvoked.put(storedInvocation, currentMethodsCalled);
 	}
 	
+	public void mergeMethodsCalledByTestedInvoked() {
+		Map<Invoked, Set<String>> invokedMethods = loadMethodsCalledByTestedInvoked();
+		
+		for (Map.Entry<Invoked, Set<String>> mcti : invokedMethods.entrySet()) {
+			if (methodsCalledByTestedInvoked.containsKey(mcti.getKey())) {
+				methodsCalledByTestedInvoked.get(mcti.getKey()).addAll(mcti.getValue());
+			}
+			else {
+				methodsCalledByTestedInvoked.put(mcti.getKey(), mcti.getValue());
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<Invoked, Set<String>> loadMethodsCalledByTestedInvoked() {
+		if (!MCTI_FILE.exists())
+			return new HashMap<>();
+		
+		Map<Invoked, Set<String>> invokedMethods = new HashMap<>();
+
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(MCTI_FILE))) {
+			System.out.println(ois.available());
+			invokedMethods = (Map<Invoked, Set<String>>) ois.readObject();
+		} 
+		catch (IOException | ClassNotFoundException e) {
+			Logger.error("Methods called by tested invoked - " + e.getMessage());
+		}
+	
+		MCTI_FILE.delete();
+		
+		return invokedMethods;
+	}
+	
 	/**
 	 * Stores {@link #methodsCalledByTestedInvoked} in the 'mcti.ef' file.
 	 * 
@@ -137,17 +188,30 @@ public class CallCollector {
 	 * opened for reading.
 	 * @throws		IOException If 'mcti.ef' cannot be written
 	 */
-	private static void store() throws FileNotFoundException, IOException {
+	private void store() throws FileNotFoundException, IOException {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(MCTI_FILE))) {
+			System.out.println(methodsCalledByTestedInvoked);
 			oos.writeObject(methodsCalledByTestedInvoked);
+			oos.flush();
 		}
 	}
 	
-	public static void reset() {
+	public void reset() {
 		methodsCalledByTestedInvoked.clear();
 	}
 	
-	public static void deleteStoredContent() {
-		MCTI_FILE.delete();
+	public boolean deleteStoredContent() {
+		return MCTI_FILE.delete();
+	}
+	
+	public Map<Invoked, Set<String>> getMethodsCalledByTestedInvoked() {
+		try {
+			load();
+		} 
+		catch (IOException e) {
+			// If an exception occurs, returns the current collection
+		}
+		
+		return methodsCalledByTestedInvoked;
 	}
 }
