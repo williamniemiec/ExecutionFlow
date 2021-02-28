@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.io.processing.file.ProcessorType;
 import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
 
@@ -16,11 +17,9 @@ class FilesProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Path srcPath = Path.of(".", "src", "test", "resources", "wniemiec", 
-			"executionflow", "io", "processing", "manager", "fileprocessing.java");
-	private Path binPath = Path.of(".", "target", "test-classes", "wniemiec", 
-			"executionflow", "io", "processing", "manager", "fileprocessing.class");
-	private String pkg = "wniemiec.executionflow.io.processing.manager";
+	private Path srcPath;
+	private Path binPath;
+	private String pkg;
 	private FileProcessingManager fileProcessingManager;
 	private FilesProcessingManager processingManager;
 	
@@ -29,6 +28,19 @@ class FilesProcessingManagerTest {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	FilesProcessingManagerTest() {
+		srcPath = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "src", "test", "resources", "wniemiec",
+						"executionflow", "io", "processing", "manager", 
+						"fileprocessing.java")
+		);
+		
+		binPath = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "target", "test-classes", "wniemiec", 
+						"executionflow", "io", "processing", "manager", 
+						"fileprocessing.class")
+		);
+		
+		pkg = "wniemiec.executionflow.io.processing.manager";
 		fileProcessingManager = createFileProcessingManager();
 	}
 	

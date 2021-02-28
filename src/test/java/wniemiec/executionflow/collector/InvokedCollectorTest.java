@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
 
@@ -29,10 +30,14 @@ abstract class InvokedCollectorTest {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	protected InvokedCollectorTest() {
-		resourcesSrc = Path.of(".", "src", "test", "resources", 
-				"wniemiec",	"executionflow", "io", "processing", "manager");
-		resourcesBin = Path.of(".", "target", "test-classes", 
-				"wniemiec", "executionflow", "io", "processing", "manager");
+		resourcesSrc = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "src", "test", "resources", "wniemiec", 
+						"executionflow", "io", "processing", "manager")
+		);
+		resourcesBin = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "target", "test-classes", "wniemiec", 
+						"executionflow", "io", "processing", "manager")
+		);
 		
 		collectedTestedInvoked = new HashSet<>();
 	}

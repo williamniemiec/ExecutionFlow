@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.App;
+
 class ClassPathSearcherTest {
 
 	//-------------------------------------------------------------------------
@@ -19,13 +21,15 @@ class ClassPathSearcherTest {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	public ClassPathSearcherTest() {
-		thisSrcFile = normalizePath(Path.of(".", "src", "test", "java", "wniemiec", 
-						   				 "executionflow", "io", 
-						   				 "ClassPathSearcherTest.java"));
+		thisSrcFile = normalizePath(App.getCurrentProjectRoot().resolve(
+				Path.of("src", "test", "java", "wniemiec", "executionflow", 
+						"io", "ClassPathSearcherTest.java"))
+		);
 		
-		thisBinFile = normalizePath(Path.of(".", "target", "test-classes", 
-											"wniemiec", "executionflow", "io",
-											"ClassPathSearcherTest.class"));
+		thisBinFile = normalizePath(App.getCurrentProjectRoot().resolve(
+				Path.of("target", "test-classes", "wniemiec", "executionflow",
+						"io", "ClassPathSearcherTest.class"))
+		);
 	}
 	
 	

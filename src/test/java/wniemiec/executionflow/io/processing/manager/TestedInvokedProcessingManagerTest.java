@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
@@ -34,8 +35,12 @@ class TestedInvokedProcessingManagerTest {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	TestedInvokedProcessingManagerTest() {
-		srcDirectory = Path.of(".", "src", "test", "resources", "auxfiles");
-		binDirectory = Path.of(".", "target", "test-classes", "auxfiles");
+		srcDirectory = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "src", "test", "resources", "auxfiles")
+		);
+		binDirectory = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "target", "test-classes", "auxfiles")
+		);
 
 		Logger.setLevel(LogLevel.WARNING);
 	}

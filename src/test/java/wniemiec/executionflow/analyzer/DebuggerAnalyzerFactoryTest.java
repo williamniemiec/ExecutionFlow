@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
 
@@ -22,8 +23,12 @@ class DebuggerAnalyzerFactoryTest {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	public DebuggerAnalyzerFactoryTest() {
-		resourcesSrc = Path.of(".", "src", "test", "resources", "auxfiles");
-		resourcesBin = Path.of(".", "target", "test-classes", "auxfiles");
+		resourcesSrc = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "src", "test", "resources", "auxfiles")
+		);
+		resourcesBin = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "target", "test-classes", "auxfiles")
+		);
 	}
 	
 	

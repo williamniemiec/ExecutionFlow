@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.io.FileEncoding;
 import wniemiec.executionflow.io.compiler.Compiler;
 import wniemiec.executionflow.io.compiler.CompilerFactory;
@@ -32,8 +33,12 @@ class StandardAspectJCompilerTest {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	public StandardAspectJCompilerTest() {
-		resourcesSrc = Path.of(".", "src", "test", "resources", "auxfiles", "aspectj");
-		resourcesBin = Path.of(".", "target", "test-classes", "auxfiles", "aspectj");
+		resourcesSrc = App.getCurrentProjectRoot().resolve(
+				Path.of("src", "test", "resources", "auxfiles", "aspectj")
+		);
+		resourcesBin = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "target", "test-classes", "auxfiles", "aspectj")
+		);
 		outputDir = Path.of(System.getProperty("java.io.tmpdir"));
 	}
 	

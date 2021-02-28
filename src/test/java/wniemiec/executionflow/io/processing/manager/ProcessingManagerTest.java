@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
 import wniemiec.util.logger.LogLevel;
@@ -26,10 +27,14 @@ class ProcessingManagerTest {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	ProcessingManagerTest() {
-		final Path resourcesSrc = Path.of(".", "src", "test", "resources", 
-				"wniemiec",	"executionflow", "io", "processing", "manager");
-		final Path resourcesBin = Path.of(".", "target", "test-classes", 
-				"wniemiec", "executionflow", "io", "processing", "manager");
+		final Path resourcesSrc = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "src", "test", "resources", "wniemiec", 
+						"executionflow", "io", "processing", "manager")
+		);
+		final Path resourcesBin = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "target", "test-classes", "wniemiec", 
+						"executionflow", "io", "processing", "manager")
+		);
 		
 		processingManager = ProcessingManager.getInstance();
 		

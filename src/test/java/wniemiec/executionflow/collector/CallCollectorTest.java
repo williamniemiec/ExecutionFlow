@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.Invoked;
 
 class CallCollectorTest {
@@ -27,10 +28,12 @@ class CallCollectorTest {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	public CallCollectorTest() {
-		resourcesSrc = Path.of(".", "src", "test", "resources", "auxfiles",	
-							   "mcti");
-		resourcesBin = Path.of(".", "target", "test-classes", "auxfiles", 
-							   "mcti");
+		resourcesSrc = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "src", "test", "resources", "auxfiles", "mcti")
+		);
+		resourcesBin = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "target", "test-classes", "auxfiles", "mcti")
+		);
 		
 		callCollector = CallCollector.getInstance();
 		signatureOfMethodsCalled = new HashSet<>();

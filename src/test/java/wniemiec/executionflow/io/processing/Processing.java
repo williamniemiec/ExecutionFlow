@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 
+import wniemiec.executionflow.App;
 import wniemiec.util.io.manager.TextFileManager;
 
 public abstract class Processing {
@@ -22,9 +23,9 @@ public abstract class Processing {
 	//		Constructors
 	//-----------------------------------------------------------------------
 	protected Processing(Path relativePath) {
-		Path thisFolder = Path.of(
-				".", "src", "test", "resources", "wniemiec", 
-				"executionflow", "io", "processing"
+		Path thisFolder = App.getCurrentProjectRoot().resolve(
+				Path.of("src", "test", "resources", "wniemiec", 
+						"executionflow", "io", "processing")
 		);
 		
 		workingDirectory = thisFolder.resolve(relativePath).normalize();

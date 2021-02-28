@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import wniemiec.executionflow.App;
 import wniemiec.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
 
 class FileProcessingManagerTest {
@@ -17,13 +18,39 @@ class FileProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private Path srcPath = Path.of(".", "src", "test", "resources", "wniemiec", 
-			"executionflow", "io", "processing", "manager", "fileprocessing.java");
-	private Path binPath = Path.of(".", "target", "test-classes", "wniemiec", 
-			"executionflow", "io", "processing", "manager", "fileprocessing.class");
-	private String pkg = "wniemiec.executionflow.io.processing.manager";
+	private Path srcPath;
+	private Path binPath;
+	private String pkg;
 	private FileProcessingManager fileProcessingManager;
-	private static final boolean AUTO_RESTORE = false;
+	private static final boolean AUTO_RESTORE;
+	
+	
+	//-------------------------------------------------------------------------
+	//		Initialization block
+	//-------------------------------------------------------------------------
+	static {
+		AUTO_RESTORE = false;
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	FileProcessingManagerTest() {
+		srcPath = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "src", "test", "resources", "wniemiec",
+						"executionflow", "io", "processing", "manager", 
+						"fileprocessing.java")
+		);
+		
+		binPath = App.getCurrentProjectRoot().resolve(
+				Path.of(".", "target", "test-classes", "wniemiec", 
+						"executionflow", "io", "processing", "manager", 
+						"fileprocessing.class")
+		);
+		
+		pkg = "wniemiec.executionflow.io.processing.manager";
+	}
 	
 	
 	//-------------------------------------------------------------------------
