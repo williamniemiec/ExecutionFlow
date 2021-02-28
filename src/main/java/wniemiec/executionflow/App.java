@@ -53,7 +53,8 @@ public class App {
 	 * through a jar file, it must be false.
 	 */
 	static {
-		DEVELOPMENT = true;
+		DEVELOPMENT = false;
+		Logger.setLevel(LogLevel.DEBUG);
 	}
 	
 	
