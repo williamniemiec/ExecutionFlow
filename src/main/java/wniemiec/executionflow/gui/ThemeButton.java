@@ -11,10 +11,24 @@ import java.awt.Point;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
+/**
+ * Responsible for generating application buttons.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class ThemeButton extends JButton {
 	
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 700L;
 
+	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
 	private ThemeButton(String title) {
         super(title);
         setContentAreaFilled(false);
@@ -23,6 +37,10 @@ public class ThemeButton extends JButton {
         setBorder(BorderFactory.createEmptyBorder());
     }
     
+	
+	//-------------------------------------------------------------------------
+	//		Factories
+	//-------------------------------------------------------------------------
     public static ThemeButton createRegularThemeButton(String title) {
     	ThemeButton btn = new ThemeButton(title);
     	
@@ -40,6 +58,10 @@ public class ThemeButton extends JButton {
     	return btn;
     }
 
+    
+    //-------------------------------------------------------------------------
+  	//		Methods
+  	//-------------------------------------------------------------------------
     @Override
     protected void paintComponent(Graphics g) {
         final Graphics2D g2 = (Graphics2D) g.create();

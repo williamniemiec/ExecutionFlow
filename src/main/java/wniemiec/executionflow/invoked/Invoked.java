@@ -390,7 +390,9 @@ public class Invoked implements Serializable {
 		
 		result = prime * result + ((binPath == null) ? 0 : binPath.hashCode());
 		result = prime * result + ((invocationLine <= 0) ? 0 : invocationLine);
-		result = prime * result + ((invokedSignature == null) ? 0 : invokedSignature.hashCode());
+		result = prime * result + ((invokedSignature == null) 
+				? 0 
+				: invokedSignature.hashCode());
 		result = prime * result + ((srcPath == null) ? 0 : srcPath.hashCode());
 		
 		return result;
@@ -546,10 +548,18 @@ public class Invoked implements Serializable {
 		
 		invokedName = invokedSignature.substring(0, idxParamStart);
 
-		if (isConstructor)
-			invokedName = invokedName.substring(invokedName.lastIndexOf(".")+1, idxParamStart);
-		else
-			invokedName = invokedName.substring(invokedName.lastIndexOf("."), idxParamStart);
+		if (isConstructor) {
+			invokedName = invokedName.substring(
+					invokedName.lastIndexOf(".")+1, 
+					idxParamStart
+			);
+		}
+		else {
+			invokedName = invokedName.substring(
+					invokedName.lastIndexOf("."), 
+					idxParamStart
+			);
+		}
 	}
 
 	public Class<?>[] getParameterTypes() {

@@ -31,7 +31,7 @@ import wniemiec.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
+ * @version		7.0.0
  * @since		6.0.0
  */
 public abstract class ExportManager {
@@ -105,8 +105,8 @@ public abstract class ExportManager {
 	}
 	
 	private void initializeTestPathExporter() {
-		this.testPathExporter = testPathExportType.equals(TestPathExportType.CONSOLE) ? 
-				new ConsoleExporter() 
+		this.testPathExporter = testPathExportType.equals(TestPathExportType.CONSOLE)
+				? new ConsoleExporter() 
 				: new FileExporter(outputDir, isConstructor);
 	}
 	
@@ -117,27 +117,38 @@ public abstract class ExportManager {
 		);
 	}
 	
-	public void exportEffectiveMethodsAndConstructorsUsedInTestMethods(Set<TestedInvoked> invokedSet) {
+	public void exportAllMethodsAndConstructorsUsedInTestMethods(Set<TestedInvoked> 
+	 															 invokedSet) {
 		if (!exportTesters)
 			return;
 		
-		mcutmEffective.export(invokedSet);
-	}
-	
-	public void exportAllMethodsAndConstructorsUsedInTestMethods(Set<TestedInvoked> invokedSet) {
-		if (!exportTesters)
-			return;
-	
 		mcutmAll.export(invokedSet);
 	}
 	
-	public abstract void exportAllInvokedUsedInTestMethods();
+	protected void exportResultsFromParser(TestedInvokedParser parser) {
+		exportTestPaths(parser.getTestPaths());
+		exportEffectiveMethodsAndConstructorsUsedInTestMethods(
+				parser.getMethodsAndConstructorsUsedInTestMethod()
+		);
+		exportProcessedSourceFiles(parser.getProcessedSourceFiles());
+		exportMethodsCalledByTestedInvoked(
+				parser.getMethodsCalledByTestedInvoked()
+		);
+	}
 	
 	public void exportTestPaths(Map<TestedInvoked, List<List<Integer>>> testPaths) {
 		if (!exportTestPaths)
 			return;
 		
 		testPathExporter.export(testPaths);
+	}
+	
+	public void exportEffectiveMethodsAndConstructorsUsedInTestMethods(Set<TestedInvoked> 
+																	   invokedSet) {
+		if (!exportTesters)
+			return;
+		
+		mcutmEffective.export(invokedSet);
 	}
 	
 	public void exportProcessedSourceFiles(Map<String, Path> processedSourceFiles) {
@@ -165,16 +176,7 @@ public abstract class ExportManager {
 		}
 	}
 	
-	protected void exportResultsFromParser(TestedInvokedParser parser) {
-		exportTestPaths(parser.getTestPaths());
-		exportEffectiveMethodsAndConstructorsUsedInTestMethods(
-				parser.getMethodsAndConstructorsUsedInTestMethod()
-		);
-		exportProcessedSourceFiles(parser.getProcessedSourceFiles());
-		exportMethodsCalledByTestedInvoked(
-				parser.getMethodsCalledByTestedInvoked()
-		);
-	}
+	public abstract void exportAllInvokedUsedInTestMethods();
 	
 	public abstract void exportAll();
 	

@@ -4,9 +4,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import wniemiec.executionflow.gui.popup.MainSelector;
-
-
 /**
  * Responsible for application control by the user, allowing the user to send 
  * commands to the application.
@@ -33,9 +30,7 @@ public class RemoteControl {
 	//-------------------------------------------------------------------------
 	private RemoteControl() {
 	}
-	public static void main(String[] args) {
-		RemoteControl.open();
-	}
+	
 	
 	//-------------------------------------------------------------------------
 	//		Methods

@@ -191,7 +191,8 @@ public class InvokedFileProcessor extends FileProcessor {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void checkRequiredFields(Path file, Path outputDir, String outputFilename) {
+	private void checkRequiredFields(Path file, Path outputDir, 
+									 String outputFilename) {
 		StringBuilder nullFields = new StringBuilder();
 		
 		if (file == null)
