@@ -5,42 +5,43 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
-import wniemiec.api.junit4.JUnit4API;
-import wniemiec.executionflow.collector.CallCollector;
-import wniemiec.executionflow.collector.ConstructorCollector;
-import wniemiec.executionflow.collector.MethodCollector;
-import wniemiec.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.io.processing.file.PreTestMethodFileProcessor;
 import wniemiec.executionflow.io.processing.manager.ProcessingManager;
-import wniemiec.executionflow.io.processing.manager.TestedInvokedProcessingManager;
+import wniemiec.executionflow.io.runner.JUnitRunner;
 import wniemiec.executionflow.lib.LibraryManager;
-import wniemiec.executionflow.user.RemoteControl;
 import wniemiec.executionflow.user.User;
-import wniemiec.util.data.storage.Session;
 import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.Logger;
 import wniemiec.util.task.Checkpoint;
 
+/**
+ * Responsible for deciding what to do when a {@link wniemiec.executionflow
+ * .runtime.hook} is triggered.
+ * 
+ * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
+ * @version		7.0.0
+ * @since		7.0.0
+ */
 public class App {
 
+	//-------------------------------------------------------------------------
+	//		Attributes
+	//-------------------------------------------------------------------------
 	private static final boolean DEVELOPMENT;	
+	private static volatile boolean success;
+	private static boolean inTestMethodWithAspectsDisabled;
+	private static boolean finishedTestMethodWithAspectsDisabled;
+	private static boolean errorProcessingTestMethod;
+	private static int remainingTests;
 	private static Path appRoot;
 	private static Path currentProjectRoot;
 	private static Checkpoint firstRunCheckpoint;
 	private static Checkpoint currentTestMethodCheckpoint;
-	private static Checkpoint insideJUnitRunnerCheckpoint;
-	private static int remainingTests;
-	private static boolean testMode;
-	private static boolean inTestMethodWithAspectsDisabled;
-	private static boolean finishedTestMethodWithAspectsDisabled;
-	private static boolean errorProcessingTestMethod;
-	private static volatile boolean success;
-	private static ExportManager methodExportManager;
-	private static ExportManager constructorExportManager;
+	private static ExportManager methodExporter;
+	private static ExportManager constructorExporter;
 	private static ProcessingManager processingManager;
 	
 	
@@ -57,12 +58,11 @@ public class App {
 	
 	
 	static {
-		testMode = false;
 		remainingTests = -1;
 		inTestMethodWithAspectsDisabled = true;
 		
-		methodExportManager = ExportManager.getMethodExportManager(isDevelopment());
-		constructorExportManager = ExportManager.getConstructorExportManager(isDevelopment());
+		methodExporter = ExportManager.getMethodExportManager(isDevelopment());
+		constructorExporter = ExportManager.getConstructorExportManager(isDevelopment());
 	}
 	
 	static {
@@ -75,66 +75,32 @@ public class App {
 				getAppRootPath(), 
 				"running-testmethod"
 		);
-		
-		insideJUnitRunnerCheckpoint = new Checkpoint(
-				getAppRootPath(),
-				"running-debugger"
-		);
-	}
-	
-	private static void onShutdown() {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-		    public void run() {
-		    	try {
-		    		if (!success)
-			    		finishedTestMethodWithAspectsDisabled = true;
-		    		
-			    	stopRunner();
-			    	
-			    	disableCheckpoint(currentTestMethodCheckpoint);
-					disableCheckpoint(insideJUnitRunnerCheckpoint);
-					disableCheckpoint(firstRunCheckpoint);
-		    	}
-		    	catch (Throwable t) {
-		    		// As the application will have finished, it is not 
-		    		// relevant to deal with any errors 
-		    	}
-		    }
-			
-			private void stopRunner() {
-				if (!Session.hasKeyShared("JUNIT4_RUNNER"))
-					return;
-				
-				try {
-					JUnit4API runner = 
-							(JUnit4API) Session.readShared("JUNIT4_RUNNER");
-					runner.quit();
-				} 
-				catch (IOException e) {
-				}
-				finally {
-					Session.removeShared("JUNIT4_RUNNER");						
-				}
-			}
-		});
 	}
 	
 	
+	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------	
+	private App() {
+	}
 	
 	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------	
 	public static void inEachTestMethod(Invoked testMethod, boolean isRepeatedTest) {
 		if (errorProcessingTestMethod)
 			return;
 		
 		checkDevelopmentMode();
-		checkInTestMethodWithAspectDisabled(isRepeatedTest);
+		checkInTestMethodWithAspectDisabled();
 		
 		if (finishedTestMethodWithAspectsDisabled)
 			return;
 		
 		try {
 			processingManager = ProcessingManager.getInstance();
-			processingManager.initializeManagers(!runningFromJUnitAPI());
+			processingManager.initializeManagers(!JUnitRunner.isRunningFromJUnitAPI());
 			inTheFirstRun();
 			beforeEachTestMethod();
 			initializeLogger();
@@ -145,43 +111,25 @@ public class App {
 				doPreprocessing(testMethod);
 		}
 		catch (IOException e) {
+			Logger.error(e.toString());
+			
 			errorProcessingTestMethod = true;
-			Logger.error(e.getMessage());
 			success = false;
 		}
 	}
 	
-	private static void checkInTestMethodWithAspectDisabled(boolean isRepeatedTest) {
-		if (finishedTestMethodWithAspectsDisabled && inTestMethodWithAspectsDisabled && (!isRepeatedTest || isRepeatedTest && finishedTestMethodWithAspectsDisabled)) {
-			finishedTestMethodWithAspectsDisabled = false;
-			inTestMethodWithAspectsDisabled = true;
+	public static void checkDevelopmentMode() {
+		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
+			Logger.error("Development mode is off even in a development "
+					+ "environment. Turn it on in the ExecutionFlow class");
+			
+			System.exit(-1);
 		}
 	}
 	
-	public static void afterEachTestMethod(Invoked testMethod) {
-		if (errorProcessingTestMethod) {
-			errorProcessingTestMethod = false;
-			return;
-		}
-		
-		if (finishedTestMethodWithAspectsDisabled)
-			return;
-		
-		if (inTestMethodWithAspectsDisabled) {
-			methodExportManager.exportAll();
-			constructorExportManager.exportAll();
-
-			success = true;
-		}
-		else {
-			methodExportManager.exportAllInvokedUsedInTestMethods();
-			constructorExportManager.exportAllInvokedUsedInTestMethods();
-			
-			runTestMethodWithAspectsDisabled(testMethod);
-			
-			checkNextTestMethods();
-			
-			finishedTestMethodWithAspectsDisabled = true;
+	private static void checkInTestMethodWithAspectDisabled() {
+		if (finishedTestMethodWithAspectsDisabled && inTestMethodWithAspectsDisabled) {
+			finishedTestMethodWithAspectsDisabled = false;
 			inTestMethodWithAspectsDisabled = true;
 		}
 	}
@@ -211,8 +159,42 @@ public class App {
 		}
 	}
 	
-	public static void beforeEachTestMethod() {
-		if (App.runningTestMethod())
+	private static void onShutdown() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+		    	try {
+		    		if (!success)
+			    		finishedTestMethodWithAspectsDisabled = true;
+		    		
+			    	disableCheckpoint(currentTestMethodCheckpoint);
+					disableCheckpoint(firstRunCheckpoint);
+		    	}
+		    	catch (Throwable t) {
+		    		// As the application will have finished, it is not 
+		    		// relevant to deal with any errors 
+		    	}
+		    }
+		});
+	}
+	
+	private static boolean disableCheckpoint(Checkpoint checkpoint) {
+		if (checkpoint == null)
+			return true;
+		
+		boolean success = true;
+		
+		try {
+			checkpoint.disable();
+		} 
+		catch (IOException e) {
+			success = false;
+		}
+		
+		return success;
+	}
+	
+	private static void beforeEachTestMethod() {
+		if (runningTestMethod())
 			return;
 		
 		try {
@@ -226,6 +208,74 @@ public class App {
 		}
 	}
 	
+	public static boolean runningTestMethod() {
+		return	processingManager.wasPreprocessingDoneSuccessfully()
+				|| currentTestMethodCheckpoint.isEnabled();
+	}
+	
+	private static void cleanLastRun() throws IOException {
+		if (!hasTempFilesFromLastRun())
+			return;
+		
+		processingManager.deleteTestMethodBackupFiles();
+		currentTestMethodCheckpoint.delete();
+	}
+	
+	private static boolean hasTempFilesFromLastRun() {
+		return	currentTestMethodCheckpoint.exists() 
+				&& !currentTestMethodCheckpoint.isEnabled();
+	}
+	
+	private static void initializeLogger() {
+		Logger.setLevel(User.getSelectedLogLevel());
+	}
+	
+	private static boolean inTestMethodWithAspectsDisabled() {
+		return currentTestMethodCheckpoint.exists();
+	}
+	
+	private static void doPreprocessing(Invoked testMethod) throws IOException {
+		try {
+			currentTestMethodCheckpoint.enable();
+			processingManager.doPreprocessingInTestMethod(testMethod);
+		} 
+		catch (IOException e) {
+			disableCheckpoint(currentTestMethodCheckpoint);
+			throw e;
+		}
+	}
+	
+	public static void afterEachTestMethod(Invoked testMethod) {
+		if (errorProcessingTestMethod) {
+			errorProcessingTestMethod = false;
+			return;
+		}
+		
+		if (finishedTestMethodWithAspectsDisabled)
+			return;
+		
+		if (inTestMethodWithAspectsDisabled) {
+			methodExporter.exportAll();
+			constructorExporter.exportAll();
+
+			success = true;
+		}
+		else {
+			methodExporter.exportAllInvokedUsedInTestMethods();
+			constructorExporter.exportAllInvokedUsedInTestMethods();
+			
+			runTestMethodWithAspectsDisabled(testMethod);
+			checkNextTestMethods();
+			
+			finishedTestMethodWithAspectsDisabled = true;
+			inTestMethodWithAspectsDisabled = true;
+		}
+	}
+	
+	private static void runTestMethodWithAspectsDisabled(Invoked testMethod) {
+		JUnitRunner.runTestMethod(testMethod);
+	}
+
 	private static void checkNextTestMethods() {
 		updateRemainingTests();
 		
@@ -257,124 +307,6 @@ public class App {
 		}
 	}
 	
-	public static void initializeLogger() {
-		Logger.setLevel(User.getSelectedLogLevel());
-	}
-	
-	public static void checkDevelopmentMode() {
-		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
-			Logger.error("Development mode is off even in a development "
-					+ "environment. Turn it on in the ExecutionFlow class");
-			
-			System.exit(-1);
-		}
-	}
-	
-	private static boolean disableCheckpoint(Checkpoint checkpoint) {
-		if (checkpoint == null)
-			return true;
-		
-		boolean success = true;
-		
-		try {
-			checkpoint.disable();
-		} 
-		catch (IOException e) {
-			success = false;
-		}
-		
-		return success;
-	}
-	
-	/**
-	 * Restarts the application by starting it in CLI mode.
-	 * 
-	 * @throws		IOException If an error occurs when creating the process 
-	 * containing {@link JUnit4API}
-	 * @throws		InterruptedException If the process containing 
-	 * {@link JUnit4API} is interrupted while it is waiting  
-	 */
-	public static void runTestMethodWithAspectsDisabled(Invoked testMethod) {
-		try {
-			if (!insideJUnitRunnerCheckpoint.isEnabled())
-				insideJUnitRunnerCheckpoint.enable();
-			
-			CallCollector callCollector = CallCollector.getInstance();
-			callCollector.deleteStoredContent();
-			runJUnitRunner(testMethod);
-			waitForJUnit4API();
-		}
-		catch (IOException | InterruptedException e) {
-			Logger.error("Restart - " + e.getMessage());
-			e.printStackTrace();
-		}
-		finally {
-			Session.removeShared("JUNIT4_RUNNER");
-			disableCheckpoint(insideJUnitRunnerCheckpoint);
-		}
-	}
-	
-	private static void runJUnitRunner(Invoked testMethod) 
-			throws IOException, InterruptedException {
-		JUnit4API junit4API = new JUnit4API.Builder()
-				.workingDirectory(generateClassRootDirectory(testMethod))
-				.classPath(generateClasspaths())
-				.classSignature(testMethod.getClassSignature())
-				.build();
-		
-		Session.saveShared("JUNIT4_RUNNER", junit4API);
-		
-		junit4API.run();
-	}
-	
-	/**
-	 * Extracts class root directory. <br />
-	 * Example: <br />
-	 * <li><b>Class path:</b> C:/app/bin/packageName1/packageName2/className.java</li>
-	 * <li><b>Class root directory:</b> C:/app/bin</li>
-	 * 
-	 * @param		classPath Path where compiled file is
-	 * @param		classPackage Package of this class
-	 * @return		Class root directory
-	 */
-	private static Path generateClassRootDirectory(Invoked testMethod) {
-		Path binRootPath = testMethod.getBinPath();
-		String classPackage = testMethod.getPackage();
-		int packageFolders = 0;
-		
-		if (!(classPackage.isEmpty() || (classPackage == null)))
-			packageFolders = classPackage.split("\\.").length;
-
-		binRootPath = binRootPath.getParent();
-
-		for (int i=0; i<packageFolders; i++) {
-			binRootPath = binRootPath.getParent();
-		}
-		
-		return binRootPath;
-	}
-	
-	private static List<Path> generateClasspaths() {
-		List<Path> classpaths = LibraryManager.getJavaClassPath();
-		classpaths.add(LibraryManager.getLibrary("JUNIT_4"));
-		classpaths.add(LibraryManager.getLibrary("HAMCREST"));
-		
-		return classpaths;
-	}
-	
-	private static void waitForJUnit4API() throws IOException, InterruptedException {
-		JUnit4API junit4API = (JUnit4API) Session.readShared("JUNIT4_RUNNER");
-		
-		while (junit4API.isRunning()) {
-			Thread.sleep(2000);
-			
-			if (!insideJUnitRunnerCheckpoint.isEnabled())
-				junit4API.quit();
-		}
-		
-		junit4API.quit();
-	}
-
 	private static void updateRemainingTests() {
 		if (remainingTests < 0) {
 			remainingTests = PreTestMethodFileProcessor.getTotalTests() - 1;
@@ -382,43 +314,6 @@ public class App {
 		else {
 			remainingTests--;
 		}
-	}
-	
-	public static boolean runningFromJUnitAPI() {
-		return insideJUnitRunnerCheckpoint.isEnabled();
-	}
-	
-	public static boolean hasTempFilesFromLastRun() {
-		return	currentTestMethodCheckpoint.exists() 
-				&& !currentTestMethodCheckpoint.isEnabled();
-	}
-	
-	public static boolean inTestMethodWithAspectsDisabled() {
-		return currentTestMethodCheckpoint.exists();
-	}
-	
-	public static void doPreprocessing(Invoked testMethod) throws IOException {
-		try {
-			currentTestMethodCheckpoint.enable();
-			processingManager.doPreprocessingInTestMethod(testMethod);
-		} 
-		catch (IOException e) {
-			disableCheckpoint(currentTestMethodCheckpoint);
-			throw e;
-		}
-	}
-	
-	public static boolean runningTestMethod() {
-		return	processingManager.wasPreprocessingDoneSuccessfully()
-				|| currentTestMethodCheckpoint.isEnabled();
-	}
-	
-	public static void cleanLastRun() throws IOException {
-		if (!hasTempFilesFromLastRun())
-			return;
-		
-		processingManager.deleteTestMethodBackupFiles();
-		currentTestMethodCheckpoint.delete();
 	}
 	
 	
@@ -470,7 +365,7 @@ public class App {
 	}
 
 	/**
-	 * Gets application root path, based on class {@link TestedInvokedParser} location.
+	 * Gets application root path.
 	 * 
 	 * @return		Application root path
 	 * 
@@ -522,13 +417,5 @@ public class App {
 	 */
 	public static boolean isDevelopment() {
 		return DEVELOPMENT;
-	}
-	
-	public static boolean isTestMode() {
-		return testMode;
-	}
-	
-	public static void setTestMode(boolean status) {
-		testMode = status;
 	}
 }
