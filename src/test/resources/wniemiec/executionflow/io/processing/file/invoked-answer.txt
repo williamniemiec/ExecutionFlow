@@ -111,7 +111,7 @@ someMethod();
 @wniemiec.executionflow.runtime.CollectCalls public static void m3(int num){
 someMethod();
 }
-@wniemiec.executionflow.runtime.CollectCalls public synchronized m4(int num){
+@wniemiec.executionflow.runtime.CollectCalls public synchronized void m4(int num){
 someMethod();
 }
 @wniemiec.executionflow.runtime.CollectCalls public char switchCaseMethod(char letter) {
@@ -177,5 +177,7 @@ while (x < 3) {int _0=0;
 x++;
 }
 x = 3;
+}
+@wniemiec.executionflow.runtime.CollectCalls private static void someMethod() {
 }
 }
