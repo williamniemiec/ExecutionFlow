@@ -54,8 +54,7 @@ public class JUnitRunner {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	try {
-					insideJUnitAPICheckpoint.disable();
-					stopRunner();
+		    		stopRunner();
 				} 
 		    	catch (IOException e) {
 					// As the application will have finished, it is not 
@@ -65,22 +64,22 @@ public class JUnitRunner {
 	    });
 	}
 	
-	public static void stopRunner() {
+	public static void stopRunner() throws IOException {
 		if (!Session.hasKeyShared("JUNIT4_RUNNER"))
 			return;
 		
 		try {
 			JUnit4API runner = 
 					(JUnit4API) Session.readShared("JUNIT4_RUNNER");
-			runner.quit();
-		} 
-		catch (IOException e) {
-			// As the application will have finished, it is not 
-    		// relevant to deal with any errors 
+			
+			if (runner.isRunning())
+				runner.quit();
 		}
 		finally {
 			Session.removeShared("JUNIT4_RUNNER");						
 		}
+		
+		disableJUnitRunnerCheckpoint();
 	}
 	
 	public static void runTestMethod(Invoked testMethod) {
@@ -155,7 +154,7 @@ public class JUnitRunner {
 		return classpaths;
 	}
 	
-	public static void waitForJUnitAPI() throws IOException, InterruptedException {
+	private static void waitForJUnitAPI() throws IOException, InterruptedException {
 		JUnit4API junit4API = (JUnit4API) Session.readShared("JUNIT4_RUNNER");
 		
 		while (junit4API.isRunning()) {

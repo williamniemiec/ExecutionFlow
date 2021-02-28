@@ -114,8 +114,6 @@ class StandardDebuggerAnalyzerTest {
 		debugger.analyze();
 	}
 	
-	
-	
 	private void runDebuggerAnalyzer() throws IOException {
 		debugger = DebuggerAnalyzerFactory.createStandardTestPathAnalyzer(
 				testedInvoked, 
