@@ -71,6 +71,7 @@ class FileProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	@Test
 	void testFullBuilder() {
+		System.out.println(App.getCurrentProjectRoot());
 		new FileProcessingManager.Builder()
 				.srcPath(srcPath)
 				.binPath(binPath)

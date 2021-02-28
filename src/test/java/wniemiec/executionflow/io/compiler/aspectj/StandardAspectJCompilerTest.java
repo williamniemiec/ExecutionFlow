@@ -1,6 +1,7 @@
 package wniemiec.executionflow.io.compiler.aspectj;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -36,10 +37,23 @@ class StandardAspectJCompilerTest {
 		resourcesSrc = App.getCurrentProjectRoot().resolve(
 				Path.of("src", "test", "resources", "auxfiles", "aspectj")
 		);
-		resourcesBin = App.getCurrentProjectRoot().resolve(
+		resourcesBin = App.getTargetPath().resolve(
 				Path.of(".", "target", "test-classes", "auxfiles", "aspectj")
 		);
 		outputDir = Path.of(System.getProperty("java.io.tmpdir"));
+		
+		System.out.println("@@@ "+App.getTargetPath());
+		
+		try {
+			System.out.println(App.class
+							.getProtectionDomain()
+							.getCodeSource()
+							.getLocation()
+							.toURI());
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

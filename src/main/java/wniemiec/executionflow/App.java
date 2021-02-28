@@ -320,6 +320,10 @@ public class App {
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
+	public static Path getTargetPath() {
+		return searchDirectoryWithName("target").toPath();
+	}
+	
 	/**
 	 * Finds current project root (project that is running the application). It
 	 * will return the path that contains a directory with name 'src'. 
