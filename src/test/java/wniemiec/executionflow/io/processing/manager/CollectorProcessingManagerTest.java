@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,8 +70,8 @@ class CollectorProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	//		Test hooks
 	//-------------------------------------------------------------------------
-	@BeforeEach
-	void prepare() {
+	@AfterAll
+	void clean() {
 		methodCollector.reset();
 		constructorCollector.reset();
 	}
