@@ -25,14 +25,14 @@ public class JUnitRunner {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static Checkpoint insideJUnitAPICheckpoint;
+	private static CP insideJUnitAPICheckpoint;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	static {
-		insideJUnitAPICheckpoint = new Checkpoint(
+		insideJUnitAPICheckpoint = new CP(
 				Path.of(System.getProperty("java.io.tmpdir")),
 				"running-junit-api"
 		);
@@ -84,14 +84,13 @@ public class JUnitRunner {
 	}
 	
 	public static void runTestMethod(Invoked testMethod) {
-		try {Logger.setLevel(LogLevel.DEBUG);
+		try {
 			if (!insideJUnitAPICheckpoint.isEnabled())
 				insideJUnitAPICheckpoint.enable();
 			
-			resetCallsCollection();System.out.println("@@ RUN");
-			System.out.println(insideJUnitAPICheckpoint.isEnabled());
-			run(testMethod);System.out.println("@@ WAIT");
-			waitForJUnitAPI();System.out.println("@@ END WAIT");
+			resetCallsCollection();
+			run(testMethod);
+			waitForJUnitAPI();
 		}
 		catch (IOException | InterruptedException e) {
 			Logger.error("Restart - " + e.toString());
