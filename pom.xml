@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>wniemiec.util.task</groupId>
 			<artifactId>checkpoint</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.task</groupId>

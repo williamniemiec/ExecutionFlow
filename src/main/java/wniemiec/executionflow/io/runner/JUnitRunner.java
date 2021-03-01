@@ -25,14 +25,14 @@ public class JUnitRunner {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static CP insideJUnitAPICheckpoint;
+	private static Checkpoint insideJUnitAPICheckpoint;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	static {
-		insideJUnitAPICheckpoint = new CP(
+		insideJUnitAPICheckpoint = new Checkpoint(
 				Path.of(System.getProperty("java.io.tmpdir")),
 				"running-junit-api"
 		);
