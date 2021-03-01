@@ -65,9 +65,9 @@ class JUnitRunnerTest {
 	
 	private Invoked getTestMethodTestFactorial() {
 		return new Invoked.Builder()
-				.srcPath(resourcesSrc.resolve("Others.java"))
-				.binPath(resourcesBin.resolve("Others.class"))
-				.signature("auxfiles.Others.testFactorial()")
+				.srcPath(resourcesSrc.resolve(Path.of("loop", "InfiniteLoop.java")))
+				.binPath(resourcesBin.resolve(Path.of("loop", "InfiniteLoop.class")))
+				.signature("auxfiles.loop.InfiniteLoop.infinite()")
 				.build();
 	}
 }

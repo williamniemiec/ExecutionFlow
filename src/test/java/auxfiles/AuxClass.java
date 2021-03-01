@@ -274,9 +274,4 @@ public class AuxClass
 		
 		return total;
 	}
-
-	public static void infinite() {
-		while(true)
-			;
-	}
 }

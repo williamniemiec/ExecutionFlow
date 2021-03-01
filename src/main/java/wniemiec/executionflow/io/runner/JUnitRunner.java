@@ -64,7 +64,7 @@ public class JUnitRunner {
 	    });
 	}
 	
-	public static void stopRunner() throws IOException {System.out.println("1");
+	public static void stopRunner() throws IOException {
 		if (!Session.hasKeyShared("JUNIT4_RUNNER"))
 			return;
 		
