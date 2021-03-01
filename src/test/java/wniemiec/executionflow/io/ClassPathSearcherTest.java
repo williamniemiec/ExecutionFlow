@@ -39,7 +39,7 @@ class ClassPathSearcherTest {
 	@Test
 	void testSearchSrcPath() throws IOException {
 		Path file = ClassPathSearcher.findSrcPath("wniemiec.executionflow.io" + 
-												  ".ClassPathSearcherTest(int)");
+												  ".ClassPathSearcherTest");
 		
 		Assertions.assertEquals(thisSrcFile, file);
 	}
@@ -47,7 +47,7 @@ class ClassPathSearcherTest {
 	@Test
 	void testSearchBinPath() throws IOException {
 		Path file = ClassPathSearcher.findBinPath("wniemiec.executionflow.io" + 
-												  ".ClassPathSearcherTest(int)");
+												  ".ClassPathSearcherTest");
 		
 		Assertions.assertEquals(thisBinFile, file);
 	}

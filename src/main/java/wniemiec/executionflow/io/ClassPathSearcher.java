@@ -34,6 +34,7 @@ public class ClassPathSearcher {
 	 * @throws		IOException If an error occurs while searching for the file
 	 */
 	public static Path findBinPath(String classSignature) throws IOException {
+		System.out.println("@@@@" + App.getCurrentProjectRoot());
 		FileSearcher searcher = new FileSearcher(App.getCurrentProjectRoot());
 		String filename = generateCompiledFilename(removeParameters(classSignature));
 		
