@@ -1,5 +1,6 @@
 package wniemiec.executionflow.lib;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +83,7 @@ public class LibraryManager {
 	private static void initializeJavaClassPath() {
 		javaClassPath = new ArrayList<>();
 		
-		for (String path : System.getProperty("java.class.path").split("\\;")) {
+		for (String path : System.getProperty("java.class.path").split("\\" + File.pathSeparator)) {
 			javaClassPath.add(Path.of(path));
 		}
 	}

@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import wniemiec.executionflow.App;
 import wniemiec.executionflow.invoked.Invoked;
-import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
 
 class JUnitRunnerTest {
 
@@ -61,8 +59,8 @@ class JUnitRunnerTest {
 		});
 		
 		t.start();
-		Logger.setLevel(LogLevel.DEBUG);
-		Thread.sleep(800);
+		
+		Thread.sleep(400);
 	}
 	
 	private Invoked getTestMethodTestFactorial() {
