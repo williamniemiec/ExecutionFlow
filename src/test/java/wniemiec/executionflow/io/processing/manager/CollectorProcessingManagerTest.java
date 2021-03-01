@@ -23,8 +23,8 @@ class CollectorProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	private final Invoked testedMethod;
 	private final Invoked testMethod;
-	private final InvokedCollector methodCollector;
-	private final InvokedCollector constructorCollector;
+	private static InvokedCollector methodCollector;
+	private static InvokedCollector constructorCollector;
 	private final Map<Integer, Integer> mapping; 
 	private final CollectorProcessingManager collectorManager;
 		
@@ -71,7 +71,7 @@ class CollectorProcessingManagerTest {
 	//		Test hooks
 	//-------------------------------------------------------------------------
 	@AfterAll
-	void clean() {
+	static void clean() {
 		methodCollector.reset();
 		constructorCollector.reset();
 	}
