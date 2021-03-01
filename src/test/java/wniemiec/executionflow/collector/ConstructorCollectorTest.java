@@ -10,11 +10,19 @@ import wniemiec.executionflow.invoked.Invoked;
 class ConstructorCollectorTest extends InvokedCollectorTest {
 
 	//-------------------------------------------------------------------------
+	//		Constructor
+	//-------------------------------------------------------------------------
+	ConstructorCollectorTest() {
+		collector = ConstructorCollector.getInstance();
+	}
+	
+	
+	//-------------------------------------------------------------------------
 	//		Test hooks
 	//-------------------------------------------------------------------------
 	@BeforeEach
 	void restore() {
-		collector = ConstructorCollector.getInstance();
+		collector.reset();
 	}
 	
 	

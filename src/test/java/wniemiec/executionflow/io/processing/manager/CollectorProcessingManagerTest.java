@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.executionflow.collector.ConstructorCollector;
@@ -68,6 +69,12 @@ class CollectorProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	//		Test hooks
 	//-------------------------------------------------------------------------
+	@BeforeEach
+	void prepare() {
+		methodCollector.reset();
+		constructorCollector.reset();
+	}
+	
 	@AfterEach
 	void restoreDefaultValues() {
 		testedMethod.setInvocationLine(5);
