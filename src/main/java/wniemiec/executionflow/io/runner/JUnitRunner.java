@@ -9,6 +9,7 @@ import wniemiec.executionflow.collector.CallCollector;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.util.data.storage.Session;
+import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.Logger;
 import wniemiec.util.task.Checkpoint;
 
@@ -83,13 +84,14 @@ public class JUnitRunner {
 	}
 	
 	public static void runTestMethod(Invoked testMethod) {
-		try {
+		try {Logger.setLevel(LogLevel.DEBUG);
 			if (!insideJUnitAPICheckpoint.isEnabled())
 				insideJUnitAPICheckpoint.enable();
 			
-			resetCallsCollection();
-			run(testMethod);
-			waitForJUnitAPI();
+			resetCallsCollection();System.out.println("@@ RUN");
+			System.out.println(insideJUnitAPICheckpoint.isEnabled());
+			run(testMethod);System.out.println("@@ WAIT");
+			waitForJUnitAPI();System.out.println("@@ END WAIT");
 		}
 		catch (IOException | InterruptedException e) {
 			Logger.error("Restart - " + e.toString());
