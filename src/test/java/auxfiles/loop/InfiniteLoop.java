@@ -5,7 +5,7 @@ import org.junit.Test;
 public class InfiniteLoop {
 	
 	@Test
-	public static void infinite() {
+	public void infinite() {
 		while(true)
 			;
 	}
