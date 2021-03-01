@@ -1,5 +1,6 @@
 package wniemiec.executionflow.io.compiler.aspectj;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -142,7 +143,7 @@ public class StandardAspectJCompiler implements Compiler {
 		
 		for (Path classpath : classpaths) {
 			cps.append(classpath.toAbsolutePath().toString());
-			cps.append(";");
+			cps.append(File.pathSeparator);
 		}
 		
 		commands.add(cps.toString());

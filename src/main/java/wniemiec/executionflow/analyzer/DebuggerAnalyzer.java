@@ -1,5 +1,6 @@
 package wniemiec.executionflow.analyzer;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -327,7 +328,7 @@ public abstract class DebuggerAnalyzer {
 	private List<Path> getClassPath() {
 		List<Path> classPath = new ArrayList<>();
 		
-		for (String cp : System.getProperty("java.class.path").split(";")) {
+		for (String cp : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			classPath.add(Path.of(cp));
 		}
 		
