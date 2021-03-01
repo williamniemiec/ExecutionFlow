@@ -51,7 +51,7 @@ class ConstructorCollectorTest extends InvokedCollectorTest {
 		return new Invoked.Builder()
 				.srcPath(getResourcesSrc().resolve("testmethod.java"))
 				.binPath(getResourcesBin().resolve("testmethod.class"))
-				.signature("wniemiec.executionflow.io.processing.manager.testmethod.method4()")
+				.signature("auxfiles.wniemiec.executionflow.io.processing.manager.testmethod.method4()")
 				.build();
 	}
 
@@ -59,8 +59,9 @@ class ConstructorCollectorTest extends InvokedCollectorTest {
 		return new Invoked.Builder()
 				.srcPath(getResourcesSrc().resolve("testedinvoked.java"))
 				.binPath(getResourcesBin().resolve("testedinvoked.class"))
-				.signature("wniemiec.executionflow.io.processing.manager.testedinvoked(int)")
+				.signature("auxfiles.wniemiec.executionflow.io.processing.manager.testedinvoked(int)")
 				.invocationLine(24)
+				.isConstructor(true)
 				.build();
 	}
 }
