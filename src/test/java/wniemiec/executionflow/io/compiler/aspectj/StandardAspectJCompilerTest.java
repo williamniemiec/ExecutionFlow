@@ -14,6 +14,8 @@ import wniemiec.executionflow.io.FileEncoding;
 import wniemiec.executionflow.io.compiler.Compiler;
 import wniemiec.executionflow.io.compiler.CompilerFactory;
 import wniemiec.executionflow.lib.LibraryManager;
+import wniemiec.util.logger.LogLevel;
+import wniemiec.util.logger.Logger;
 
 class StandardAspectJCompilerTest {
 
@@ -22,7 +24,7 @@ class StandardAspectJCompilerTest {
 	//-------------------------------------------------------------------------
 	private final Path resourcesSrc;
 	private final Path resourcesBin;
-	private final Path outputDir;
+	private Path outputDir;
 	private Path base;
 	private Path inpath;
 	private List<Path> classpath;
@@ -34,13 +36,15 @@ class StandardAspectJCompilerTest {
 	//-------------------------------------------------------------------------
 	public StandardAspectJCompilerTest() {
 		resourcesSrc = App.getCurrentProjectRoot().resolve(
-				Path.of("src", "test", "java", "auxfiles", "aspectj")
+				Path.of("src", "test", "java")
 		);
 		resourcesBin = App.getTargetPath().resolve(
 				Path.of("test-classes", "auxfiles", "aspectj")
 		);
 		
 		outputDir = Path.of(System.getProperty("java.io.tmpdir"));
+		
+		Logger.setLevel(LogLevel.WARNING);
 	}
 	
 	
@@ -123,6 +127,7 @@ class StandardAspectJCompilerTest {
 
 	private void assertFileWasCompiled() {
 		assertFileExists(outputDir.resolve(base.resolve(filename + ".class")));
+		
 	}
 	
 	private void assertFileExists(Path file) {
