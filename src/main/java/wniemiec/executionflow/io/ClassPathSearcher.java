@@ -1,5 +1,6 @@
 package wniemiec.executionflow.io;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -37,8 +38,6 @@ public class ClassPathSearcher {
 		FileSearcher searcher = new FileSearcher(App.getCurrentProjectRoot());
 		String filename = generateCompiledFilename(removeParameters(classSignature));
 		
-		System.out.println("@@@@" + filename);
-		
 		return searcher.search(filename);
 	}
 	
@@ -66,13 +65,13 @@ public class ClassPathSearcher {
 		String terms[] = classSignature.split("\\.");
 		
 		if (terms.length == 1)
-			return "\\";
+			return File.separator;
 		
 		StringBuilder response = new StringBuilder();
 		
 		for (int i=0; i<terms.length-1; i++) {
 			response.append(terms[i]);
-			response.append("\\");
+			response.append(File.separator);
 		}
 		
 		return response.toString();
