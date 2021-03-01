@@ -134,4 +134,11 @@ public class Others
 		
 		ac.anonymousObjectReturn().interfaceMethod(); 
 	}
+	
+	@Test
+	public void infiniteLoop()
+	{
+		while(true)
+			;
+	}
 }

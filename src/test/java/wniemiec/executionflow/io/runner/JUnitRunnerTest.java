@@ -60,7 +60,7 @@ class JUnitRunnerTest {
 		
 		t.start();
 		
-		Thread.sleep(400);
+		Thread.sleep(500);
 	}
 	
 	private Invoked getTestMethodTestFactorial() {

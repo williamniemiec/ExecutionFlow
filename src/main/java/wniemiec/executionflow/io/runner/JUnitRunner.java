@@ -64,7 +64,7 @@ public class JUnitRunner {
 	    });
 	}
 	
-	public static void stopRunner() throws IOException {
+	public static void stopRunner() throws IOException {System.out.println("1");
 		if (!Session.hasKeyShared("JUNIT4_RUNNER"))
 			return;
 		
@@ -95,8 +95,6 @@ public class JUnitRunner {
 			Logger.error("Restart - " + e.toString());
 		}
 		finally {
-			Session.removeShared("JUNIT4_RUNNER");
-			
 			disableJUnitRunnerCheckpoint();
 		}
 	}
