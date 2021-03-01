@@ -36,7 +36,7 @@ class TestedInvokedParserTest {
 	//-------------------------------------------------------------------------
 	public TestedInvokedParserTest() throws IOException {
 		srcDirectory = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "src", "test", "resources", "auxfiles")
+				Path.of(".", "src", "test", "java", "auxfiles")
 		);
 		binDirectory = App.getTargetPath().resolve(
 				Path.of("test-classes", "auxfiles")

@@ -24,7 +24,7 @@ public abstract class Processing {
 	//-----------------------------------------------------------------------
 	protected Processing(Path relativePath) {
 		Path thisFolder = App.getCurrentProjectRoot().resolve(
-				Path.of("src", "test", "resources", "wniemiec", 
+				Path.of("src", "test", "java", "auxfiles", "wniemiec", 
 						"executionflow", "io", "processing")
 		);
 		

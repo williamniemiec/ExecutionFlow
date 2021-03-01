@@ -29,7 +29,7 @@ class CallCollectorTest {
 	//-------------------------------------------------------------------------
 	public CallCollectorTest() {
 		resourcesSrc = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "src", "test", "resources", "auxfiles", "mcti")
+				Path.of(".", "src", "test", "java", "auxfiles", "mcti")
 		);
 		resourcesBin = App.getTargetPath().resolve(
 				Path.of("test-classes", "auxfiles", "mcti")

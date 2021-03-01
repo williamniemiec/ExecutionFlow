@@ -34,17 +34,17 @@ class InvokedProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	InvokedProcessingManagerTest() throws ClassNotFoundException, IOException {
 		srcPath = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "src", "test", "resources", "wniemiec",
+				Path.of(".", "src", "test", "java", "auxfiles", "wniemiec",
 						"executionflow", "io", "processing", "manager", 
 						"fileprocessing.java")
 		);
 		
 		binPath = App.getTargetPath().resolve(
-				Path.of("test-classes", "wniemiec", "executionflow", "io", 
-						"processing", "manager", "fileprocessing.class")
+				Path.of("test-classes", "auxfiles", "wniemiec", "executionflow",
+						"io", "processing", "manager", "fileprocessing.class")
 		);
 		
-		pkg = "wniemiec.executionflow.io.processing.manager";
+		pkg = "auxfiles.wniemiec.executionflow.io.processing.manager";
 		
 		fileProcessingManager = createFileProcessingManager();
 		filesProcessingManager = new FilesProcessingManager(

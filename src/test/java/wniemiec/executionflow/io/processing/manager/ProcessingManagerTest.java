@@ -28,12 +28,12 @@ class ProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	ProcessingManagerTest() {
 		final Path resourcesSrc = App.getCurrentProjectRoot().resolve(
-				Path.of(".", "src", "test", "resources", "wniemiec", 
+				Path.of(".", "src", "test", "java", "auxfiles", "wniemiec", 
 						"executionflow", "io", "processing", "manager")
 		);
 		final Path resourcesBin = App.getTargetPath().resolve(
-				Path.of("test-classes", "wniemiec", 
-						"executionflow", "io", "processing", "manager")
+				Path.of("test-classes", "auxfiles", "wniemiec", "executionflow",
+						"io", "processing", "manager")
 		);
 		
 		processingManager = ProcessingManager.getInstance();
@@ -41,14 +41,14 @@ class ProcessingManagerTest {
 		testedMethod = new Invoked.Builder()
 				.srcPath(resourcesSrc.resolve("testedinvoked.java"))
 				.binPath(resourcesBin.resolve("testedinvoked.class"))
-				.signature("wniemiec.executionflow.io.processing.manager.testedinvoked.m3(int)")
+				.signature("auxfiles.wniemiec.executionflow.io.processing.manager.testedinvoked.m3(int)")
 				.invocationLine(9)
 				.build();
 		
 		testMethod = new Invoked.Builder()
 				.srcPath(resourcesSrc.resolve("testmethod.java"))
 				.binPath(resourcesBin.resolve("testmethod.class"))
-				.signature("wniemiec.executionflow.io.processing.manager.testmethod.method1()")
+				.signature("auxfiles.wniemiec.executionflow.io.processing.manager.testmethod.method1()")
 				.build();
 		
 		Logger.setLevel(LogLevel.WARNING);

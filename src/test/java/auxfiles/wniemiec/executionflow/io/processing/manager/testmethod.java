@@ -1,4 +1,4 @@
-package wniemiec.executionflow.io.processing.manager;
+package auxfiles.wniemiec.executionflow.io.processing.manager;
 
 import org.junit.Test;
 
