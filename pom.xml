@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>wniemiec.executionflow</groupId>
+	<groupId>wniemiec.app</groupId>
 	<artifactId>executionflow</artifactId>
 	<version>7.0.0</version>
 	<packaging>jar</packaging>
@@ -19,8 +19,7 @@
 		<aspectj.version>1.9.6</aspectj.version>
 		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.12</maven.compiler.source>
-		<maven.compiler.target>1.12</maven.compiler.target>
+		<java.source-target.version>12</java.source-target.version>
 	</properties>
 
 	<dependencies>
@@ -28,31 +27,31 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.8.13</version>
+			<version>${aspectj.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjtools</artifactId>
-			<version>1.9.6</version>
+			<version>${aspectj.version}</version>
 		</dependency>
 
 		<!-- JUnit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13</version>
+			<version>[4.13,)</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.7.1</version>
+            <version>[5.7.0,)</version>
             <scope>test</scope>
         </dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
-			<version>5.7.0</version>
+			<version>[5.7.0,)</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -60,77 +59,77 @@
 		<dependency>
 			<groupId>wniemiec.api</groupId>
 			<artifactId>junit4</artifactId>
-			<version>1.0.3</version>
+			<version>[1.0.3,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.api</groupId>
 			<artifactId>jdb</artifactId>
-			<version>1.0.2</version>
+			<version>[1.0.2,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util</groupId>
 			<artifactId>logger</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.task</groupId>
 			<artifactId>checkpoint</artifactId>
-			<version>1.0.1</version>
+			<version>[1.0.1,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.task</groupId>
 			<artifactId>scheduler</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.data.structure</groupId>
 			<artifactId>pair</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.data.storage</groupId>
 			<artifactId>session</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.data.encrypt</groupId>
 			<artifactId>md5</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.io.search</groupId>
 			<artifactId>file-searcher</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.io.parser</groupId>
 			<artifactId>balance</artifactId>
-			<version>1.0.1</version>
+			<version>[1.0.1,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.io.processor.indenter</groupId>
 			<artifactId>java-code-indenter</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.console</groupId>
 			<artifactId>console-file-printer</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.console</groupId>
 			<artifactId>console-header</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.io.manager</groupId>
 			<artifactId>csv-file-manager</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.io.path.replacer</groupId>
 			<artifactId>reserved-character-replacer</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.0,)</version>
 		</dependency>
 	</dependencies>
 
@@ -143,7 +142,6 @@
 	</distributionManagement>
 
 	<build>
-		<sourceDirectory>.</sourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
@@ -152,38 +150,35 @@
 					<include>**/*.aj</include>
 					<include>**/*.gwt.xml</include>
 				</includes>
-			</resource>						
+			</resource>
 		</resources>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>com.nickwongdev</groupId>
-					<artifactId>aspectj-maven-plugin</artifactId>
-					<version>1.12.6</version>
-					<configuration>
-						<complianceLevel>1.12</complianceLevel>
-						<source>1.12</source>
-						<target>1.12</target>
-					</configuration>
-				</plugin>
+				<!-- Compilation -->		
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven.compiler.plugin.version}</version>
+					<version>3.8.1</version>
 					<configuration>
 						<includes>
-							<include>src/main/**/*aj</include>
-							<include>src/main/**/*java</include>
+							<include>**/*aj</include>
 						</includes>
-						<source>1.9</source>
-						<target>1.9</target>
+						<source>${java.source-target.version}</source>
+						<target>${java.source-target.version}</target>
 						<useIncrementalCompilation>false</useIncrementalCompilation>
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.6.0</version>
+					<groupId>com.nickwongdev</groupId>
+					  <artifactId>aspectj-maven-plugin</artifactId>
+					  <version>1.12.6</version>
+					<configuration>
+						<complianceLevel>${java.source-target.version}</complianceLevel>
+						<source>${java.source-target.version}</source>
+						<target>${java.source-target.version}</target>
+					</configuration>
 				</plugin>
+				
+				<!-- JAR -->
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>3.0.2</version>
@@ -196,6 +191,8 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.22.1</version>
 				</plugin>
+				
+				<!-- Coverage -->
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
@@ -221,12 +218,12 @@
 
 		<plugins>
 			<plugin>
-				<groupId>com.nickwongdev</groupId>
-				<artifactId>aspectj-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
+			<plugin>
+			    <groupId>com.nickwongdev</groupId>
+			    <artifactId>aspectj-maven-plugin</artifactId>
+		    </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>

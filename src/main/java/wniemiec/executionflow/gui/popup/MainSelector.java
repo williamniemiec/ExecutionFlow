@@ -17,6 +17,7 @@ import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.executionflow.gui.AppIcon;
 import wniemiec.executionflow.gui.ThemeButton;
+import wniemiec.executionflow.gui.ThemePanel;
 import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.Logger;
 
@@ -43,7 +44,9 @@ public class MainSelector extends JFrame {
 	private static final int Y0 = 280;
 	private Color bgColor = new Color(80,80,80);
 	
-	
+	public static void main(String[] args) {
+		new MainSelector().open();
+	}
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -62,10 +65,9 @@ public class MainSelector extends JFrame {
 	}
 
 	private JPanel createBody() {
-		JPanel body = new JPanel(new BorderLayout(0, 0));
+		JPanel body = new ThemePanel(new BorderLayout(0, 0));
 		
 		body.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		body.setBackground(new Color(25,25,25));
 		body.add(createExportTypeSelector(), BorderLayout.NORTH);
 		body.add(createLoggingLevelSelector(), BorderLayout.CENTER);
 		
@@ -212,7 +214,7 @@ public class MainSelector extends JFrame {
 	}
 	
 	private JButton createInfoButton() {
-		JButton btn = createHTMLButton("Info<br>(recommended \\u2714)");
+		JButton btn = createHTMLButton("Info<br>(recommended \u2714)");
 		
 		btn.addActionListener(event -> {
 			Logger.setLevel(LogLevel.INFO);
