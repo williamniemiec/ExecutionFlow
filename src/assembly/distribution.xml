@@ -10,8 +10,14 @@
 	<dependencySets>
 		<dependencySet>
 			<outputDirectory>/</outputDirectory>
-			<useProjectArtifact>true</useProjectArtifact>
+			<useProjectArtifact>false</useProjectArtifact>
 			<unpack>false</unpack>
+			<scope>runtime</scope>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>/</outputDirectory>
+			<useProjectArtifact>true</useProjectArtifact>
+			<unpack>true</unpack>
 			<scope>runtime</scope>
 		</dependencySet>
 	</dependencySets>
