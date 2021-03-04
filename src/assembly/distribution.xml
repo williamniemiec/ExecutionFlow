@@ -26,6 +26,8 @@
 				<include>wniemiec.util.console:*</include>
 				<include>wniemiec.util.io.manager:*</include>
 				<include>wniemiec.util.io.path.replacer:*</include>
+				<include>wniemiec.util.io.path:*</include>
+				<include>wniemiec.util.data:*</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>

@@ -7,7 +7,7 @@ import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -32,7 +32,7 @@ import wniemiec.util.logger.Logger;
  * @version		7.0.0
  * @since		7.0.0
  */
-public class MainSelector extends JFrame {
+public class MainSelector extends JDialog {
 
 	//-------------------------------------------------------------------------
 	//		Attributes
@@ -44,9 +44,7 @@ public class MainSelector extends JFrame {
 	private static final int Y0 = 280;
 	private Color bgColor = new Color(80,80,80);
 	
-	public static void main(String[] args) {
-		new MainSelector().open();
-	}
+
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -56,11 +54,13 @@ public class MainSelector extends JFrame {
 	
 	public void open() {
 		setTitle("Execution Flow");
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setBounds(X0, Y0, WIDTH, HEIGHT);
 		setResizable(false);
 		setIconImage(AppIcon.getIcon());
 		getContentPane().add(createBody());
+		pack();
+		setModal(true);
 		setVisible(true);
 	}
 
