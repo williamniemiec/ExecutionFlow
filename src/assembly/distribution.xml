@@ -11,23 +11,31 @@
 		<dependencySet>
 			<outputDirectory>/</outputDirectory>
 			<useProjectArtifact>false</useProjectArtifact>
-			<unpack>false</unpack>
-			<scope>runtime</scope>
-		</dependencySet>
-		<dependencySet>
-			<outputDirectory>/</outputDirectory>
-			<useProjectArtifact>true</useProjectArtifact>
 			<unpack>true</unpack>
 			<scope>runtime</scope>
+			<includes>
+				<include>wniemiec.api:*</include>
+				<include>wniemiec.util:*</include>
+				<include>wniemiec.util.task:*</include>
+				<include>wniemiec.util.data.structure:*</include>
+				<include>wniemiec.util.data.storage:*</include>
+				<include>wniemiec.util.data.encrypt:*</include>
+				<include>wniemiec.util.io.search:*</include>
+				<include>wniemiec.util.io.parser:*</include>
+				<include>wniemiec.util.io.processor.indenter:*</include>
+				<include>wniemiec.util.console:*</include>
+				<include>wniemiec.util.io.manager:*</include>
+				<include>wniemiec.util.io.path.replacer:*</include>
+			</includes>
 		</dependencySet>
 	</dependencySets>
 	
 	<fileSets>
 		<fileSet>
-			<directory>${project.build.outputDirectory}/examples</directory>
+			<directory>${project.build.outputDirectory}</directory>
 			<outputDirectory>/</outputDirectory>
 			<excludes>
-				<exclude>**/*</exclude>
+				<exclude>examples/**</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
