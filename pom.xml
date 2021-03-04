@@ -212,6 +212,7 @@
 					<version>3.3.0</version>
 					<executions>
 						<execution>
+							<id>make-assembly</id>
 							<phase>package</phase>
 							<goals>
 								<goal>single</goal>
@@ -221,11 +222,11 @@
 					<configuration>
 						<appendAssemblyId>false</appendAssemblyId>
 						<descriptorRefs>
-		                    <descriptorRef>jar-with-dependencies</descriptorRef>
-		                </descriptorRefs>
-		                <descriptors>
-	                        <descriptor>${basedir}/src/assembly/distribution.xml</descriptor>
-	                    </descriptors>
+							<descriptorRef>jar-with-dependencies</descriptorRef>
+						</descriptorRefs>
+						<descriptors>
+							<descriptor>${basedir}/src/assembly/distribution.xml</descriptor>
+						</descriptors>
 						<outputDirectory>${project.build.directory}/../dist/${version.major}.x</outputDirectory>
 					</configuration>
 				</plugin>

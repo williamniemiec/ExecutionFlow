@@ -18,10 +18,10 @@
 	
 	<fileSets>
 		<fileSet>
-			<directory>${basedir}/target/classes</directory>
+			<directory>${project.build.outputDirectory}/examples</directory>
 			<outputDirectory>/</outputDirectory>
 			<excludes>
-				<exclude>examples</exclude>
+				<exclude>**/*</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
