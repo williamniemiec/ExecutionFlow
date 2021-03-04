@@ -415,7 +415,7 @@ public class App {
 	}
 	
 	private static boolean isDevelopment(Path appRoot) {
-		return appRoot.endsWith("classes");
+		return appRoot.endsWith(Path.of("ExecutionFlow", "target", "classes"));
 	}
 	
 	/**
