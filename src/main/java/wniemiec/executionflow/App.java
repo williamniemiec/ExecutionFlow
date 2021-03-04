@@ -403,9 +403,6 @@ public class App {
 						.getLocation()
 						.toURI()
 			);
-			
-			if (isDevelopment(appRoot))
-				appRoot = appRoot.getParent().getParent();
 		} 
 		catch (URISyntaxException e) {
 			Logger.error("Error initializing application root path");
