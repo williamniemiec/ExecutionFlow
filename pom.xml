@@ -19,7 +19,7 @@
 		<aspectj.version>1.9.6</aspectj.version>
 		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.source-target.version>12</java.source-target.version>
+		<java.source-target.version>11</java.source-target.version>
 	</properties>
 
 	<dependencies>
@@ -156,7 +156,7 @@
 				</includes>
 			</resource>
 		</resources>
-		
+
 		<pluginManagement>
 			<plugins>
 				<!-- Compilation -->
@@ -207,9 +207,25 @@
 
 				<!-- JAR -->
 				<plugin>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.3.0</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+						</execution>
+					</executions>
 					<configuration>
+						<appendAssemblyId>false</appendAssemblyId>
+						<descriptorRefs>
+		                    <descriptorRef>jar-with-dependencies</descriptorRef>
+		                </descriptorRefs>
+		                <descriptors>
+	                        <descriptor>${basedir}/src/assembly/distribution.xml</descriptor>
+	                    </descriptors>
 						<outputDirectory>${project.build.directory}/../dist/${version.major}.x</outputDirectory>
 					</configuration>
 				</plugin>
@@ -245,15 +261,19 @@
 
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>com.nickwongdev</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

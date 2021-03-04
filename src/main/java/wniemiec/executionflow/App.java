@@ -30,7 +30,6 @@ public class App {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final boolean DEVELOPMENT;	
 	private static volatile boolean success;
 	private static boolean inTestMethodWithAspectsDisabled;
 	private static boolean finishedTestMethodWithAspectsDisabled;
@@ -49,15 +48,6 @@ public class App {
 	//-------------------------------------------------------------------------
 	//		Initialization blocks
 	//-------------------------------------------------------------------------	
-	/**
-	 * Sets environment. If the code is executed outside project, that is,
-	 * through a jar file, it must be false.
-	 */
-	static {
-		DEVELOPMENT = false;
-	}
-	
-	
 	static {
 		remainingTests = -1;
 		inTestMethodWithAspectsDisabled = true;
@@ -406,7 +396,7 @@ public class App {
 	
 	private static void initializeAppRoot() {
 		try {
-			File executionFlowBinPath = new File(
+			appRoot = Path.of(
 					App.class
 						.getProtectionDomain()
 						.getCodeSource()
@@ -414,19 +404,8 @@ public class App {
 						.toURI()
 			);
 			
-			if (isDevelopment()) {
-				appRoot = executionFlowBinPath
-						.getAbsoluteFile()
-						.getParentFile()
-						.getParentFile()
-						.toPath();
-			}
-			else {
-				appRoot = executionFlowBinPath
-						.getAbsoluteFile()
-						.getParentFile()
-						.toPath();
-			}
+			if (isDevelopment(appRoot))
+				appRoot = appRoot.getParent().getParent();
 		} 
 		catch (URISyntaxException e) {
 			Logger.error("Error initializing application root path");
@@ -435,13 +414,16 @@ public class App {
 		}
 	}
 	
+	private static boolean isDevelopment(Path appRoot) {
+		return appRoot.endsWith("classes");
+	}
+	
 	/**
-	 * Checks if it is development environment. If it is production environment,
-	 * it will return false; otherwise, true.
+	 * Checks if it is development environment.
 	 * 
-	 * @return		If it is development environment
+	 * @return		 True if it is production environment; false otherwise.
 	 */
 	public static boolean isDevelopment() {
-		return DEVELOPMENT;
+		return isDevelopment(getAppRootPath());
 	}
 }

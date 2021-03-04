@@ -67,10 +67,7 @@ public class LibraryManager {
 	}
 
 	private static void initializeLibPath() {
-		libPath = Path.of(
-				App.getAppRootPath().toAbsolutePath().toString(), 
-				"lib"
-		);
+		libPath = App.getAppRootPath().resolve("lib");
 	}
 	
 	public static List<Path> getJavaClassPath()	{
@@ -83,8 +80,14 @@ public class LibraryManager {
 	private static void initializeJavaClassPath() {
 		javaClassPath = new ArrayList<>();
 		
-		for (String path : System.getProperty("java.class.path").split("\\" + File.pathSeparator)) {
+		for (String path : extractJavaClassPath()) {
 			javaClassPath.add(Path.of(path));
 		}
+	}
+	
+	private static String[] extractJavaClassPath() {
+		return	System
+					.getProperty("java.class.path")
+					.split("\\" + File.pathSeparator);
 	}
 }
