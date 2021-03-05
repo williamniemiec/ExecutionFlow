@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -65,6 +66,7 @@ public class ConstructorCollector extends InvokedCollector {
 			return;
 		
 		putInConstructorCollection(testedInvoked.getTestedInvoked(), testedInvoked);
+		storeConstructorCollector();
 	}
 	
 	private boolean wasConstructorCollected(Invoked constructor) {
@@ -77,7 +79,9 @@ public class ConstructorCollector extends InvokedCollector {
 				constructor.getInvocationLine(),
 				testedInvoked
 		);
-		
+	}
+	
+	private void storeConstructorCollector() {
 		try {
 			User.storeConstructorCollector(constructorCollector);
 		} 
@@ -94,7 +98,12 @@ public class ConstructorCollector extends InvokedCollector {
 	
 	private Collection<TestedInvoked> getConstructorCollection() {
 		try {
-			return User.getConstructorCollector().values();
+			constructorCollector = User.getConstructorCollector();
+			
+			if (constructorCollector == null)
+				constructorCollector = new HashMap<>();
+			
+			return constructorCollector.values();
 		} 
 		catch (IOException e) {
 			return new ArrayList<>();
@@ -104,6 +113,7 @@ public class ConstructorCollector extends InvokedCollector {
 	@Override
 	public void reset() {
 		constructorCollector.clear();
+		User.unlink();
 	}
 
 	@Override

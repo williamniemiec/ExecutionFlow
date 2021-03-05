@@ -123,4 +123,8 @@ public class User {
 			throws IOException {
 		return (Map<Integer, TestedInvoked>) session.read("CONSTRUCTOR_COLLECTOR");
 	}
+
+	public static void unlink() {
+		session.destroy();
+	}
 }

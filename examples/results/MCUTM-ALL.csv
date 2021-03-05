@@ -1,4 +1,5 @@
-examples.others.auxClasses.AuxClass(int);examples.others.SimpleTestPath.simpleTestPath();examples.others.SimpleTestPath_Example.simpleTestPath();examples.others.auxClasses.AuxClass(int)
+examples.others.auxClasses.AuxClass(int);examples.others.SimpleTestPath.simpleTestPath();examples.others.SimpleTestPath_Example.simpleTestPath();examples.others.auxClasses.AuxClass(int);examples.others.MultiargsTest.methodCallMultLineArgsWithBrokenLines()
 auxfiles.AuxClass.testObjParam(Object);auxfiles.Others.testParamSignature_object()
 auxfiles.AuxClass(int);auxfiles.Others.testParamSignature_object()
 examples.others.auxClasses.AuxClass.factorial(int);examples.others.SimpleTestPath.simpleTestPath();examples.others.SimpleTestPath_Example.simpleTestPath()
+examples.others.auxClasses.AuxClass.identity(int, int, int, int, int);examples.others.MultiargsTest.methodCallMultLineArgsWithBrokenLines();examples.others.MultiargsTest.methodCallMultiLineArgsTest()

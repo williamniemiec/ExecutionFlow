@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,10 +69,11 @@ class CollectorProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	//		Test hooks
 	//-------------------------------------------------------------------------
-	@AfterAll
-	static void clean() {
+	@BeforeEach
+	void clean() {
 		methodCollector.reset();
 		constructorCollector.reset();
+		methodCollector.collect(new TestedInvoked(testedMethod, testMethod));
 	}
 	
 	@AfterEach
@@ -108,7 +108,7 @@ class CollectorProcessingManagerTest {
 				testedMethod.getSrcPath() 
 		);
 		
-		Assertions.assertEquals(4, testedMethod.getInvocationLine());
+		Assertions.assertEquals(4, getFirstCollectedTestedMethod().getInvocationLine());
 	}
 	
 	@Test
@@ -152,7 +152,7 @@ class CollectorProcessingManagerTest {
 				testedMethod.getSrcPath()
 		);
 		
-		Assertions.assertEquals(4, testedMethod.getInvocationLine());
+		Assertions.assertEquals(4, getFirstCollectedTestedMethod().getInvocationLine());
 		
 		collectorManager.updateCollectorsFromMapping(
 				Map.of(4, 99), 
@@ -160,7 +160,7 @@ class CollectorProcessingManagerTest {
 				testedMethod.getSrcPath()
 		);
 		
-		Assertions.assertEquals(4, testedMethod.getInvocationLine());
+		Assertions.assertEquals(4, getFirstCollectedTestedMethod().getInvocationLine());
 	}
 	
 	@Test
@@ -171,7 +171,7 @@ class CollectorProcessingManagerTest {
 				testMethod.getSrcPath()
 		);
 		
-		Assertions.assertEquals(4, testedMethod.getInvocationLine());
+		Assertions.assertEquals(4, getFirstCollectedTestedMethod().getInvocationLine());
 		
 		collectorManager.updateCollectorsFromMapping(
 				Map.of(4, 99), 
@@ -179,6 +179,18 @@ class CollectorProcessingManagerTest {
 				testMethod.getSrcPath()
 		);
 		
-		Assertions.assertEquals(99, testedMethod.getInvocationLine());
+		Assertions.assertEquals(99, getFirstCollectedTestedMethod().getInvocationLine());
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Methods
+	//-------------------------------------------------------------------------
+	private Invoked getFirstCollectedTestedMethod() {
+		return methodCollector
+					.getAllCollectedInvoked()
+					.iterator()
+					.next()
+					.getTestedInvoked();
 	}
 }

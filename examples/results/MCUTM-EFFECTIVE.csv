@@ -1,2 +1,3 @@
-examples.others.auxClasses.AuxClass(int);examples.others.SimpleTestPath.simpleTestPath();examples.others.SimpleTestPath_Example.simpleTestPath()
+examples.others.auxClasses.AuxClass(int);examples.others.SimpleTestPath.simpleTestPath();examples.others.SimpleTestPath_Example.simpleTestPath();examples.others.MultiargsTest.methodCallMultLineArgsWithBrokenLines();examples.others.MultiargsTest.methodCallMultiLineArgsTest()
 examples.others.auxClasses.AuxClass.factorial(int);examples.others.SimpleTestPath.simpleTestPath();examples.others.SimpleTestPath_Example.simpleTestPath()
+examples.others.auxClasses.AuxClass.identity(int, int, int, int, int);examples.others.MultiargsTest.methodCallMultiLineArgsTest()

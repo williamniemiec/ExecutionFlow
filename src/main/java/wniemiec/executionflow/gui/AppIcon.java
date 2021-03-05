@@ -6,6 +6,8 @@ import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
+import wniemiec.executionflow.App;
+
 /**
  * Responsible for managing application icon.
  * 
@@ -26,8 +28,8 @@ public class AppIcon {
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	static {
-		ICON_LOCATION = Path.of(".", "src", "main", "resources", "images", 
-								"icon", "ef-icon.png");
+		ICON_LOCATION = getBasePath().resolve(Path.of("resources", "images", 
+													  "icon", "ef-icon.png"));
 		ICON = loadIcon();
 	}
 	
@@ -42,6 +44,12 @@ public class AppIcon {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	private static Path getBasePath() {
+		return App.isDevelopment() 
+				? Path.of(".", "src", "main") 
+				: Path.of(".");
+	}
+	
 	private static Image loadIcon() {
 		try {
 			return ImageIO.read(ICON_LOCATION.toFile());

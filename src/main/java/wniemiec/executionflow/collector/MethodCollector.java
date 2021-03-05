@@ -63,6 +63,7 @@ public class MethodCollector extends InvokedCollector {
 			List<TestedInvoked> list = getAllCollectedInvokedFromMethod(
 					testedInvoked.getTestedInvoked()
 			);
+			
 			list.add(testedInvoked);
 		} 
 		else {	
@@ -71,6 +72,8 @@ public class MethodCollector extends InvokedCollector {
 			
 			putInMethodCollection(testedInvoked.getTestedInvoked(), list);
 		}
+		
+		storeMethodCollector();
 	}
 	
 	private boolean wasMethodCollected(Invoked method) {
@@ -83,7 +86,9 @@ public class MethodCollector extends InvokedCollector {
 	
 	private void putInMethodCollection(Invoked method, List<TestedInvoked> list) {
 		methodCollector.put(method.getInvocationLine(), list);
-		
+	}
+
+	private void storeMethodCollector() {
 		try {
 			User.storeMethodCollector(methodCollector);
 		} 
@@ -96,6 +101,7 @@ public class MethodCollector extends InvokedCollector {
 	@Override
 	public Set<TestedInvoked> getAllCollectedInvoked() {
 		Set<TestedInvoked> collectors = new HashSet<>();
+		
 		for (List<TestedInvoked> collector : getMethodCollection()) {
 			collectors.add(collector.get(0));
 		}
@@ -105,7 +111,12 @@ public class MethodCollector extends InvokedCollector {
 	
 	private Collection<List<TestedInvoked>> getMethodCollection() {
 		try {
-			return User.getMethodCollector().values();
+			methodCollector = User.getMethodCollector();
+			
+			if (methodCollector == null)
+				methodCollector = new HashMap<>();
+			
+			return methodCollector.values();
 		} 
 		catch (IOException e) {
 			return List.of(new ArrayList<>());
@@ -115,6 +126,7 @@ public class MethodCollector extends InvokedCollector {
 	@Override
 	public void reset() {
 		methodCollector.clear();
+		User.unlink();
 	}
 	
 	@Override
@@ -127,6 +139,8 @@ public class MethodCollector extends InvokedCollector {
 					methodCollectorList
 			);
 		}
+		
+		storeMethodCollector();
 	}
 
 	@Override

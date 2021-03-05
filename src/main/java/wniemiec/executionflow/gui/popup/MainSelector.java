@@ -106,7 +106,7 @@ public class MainSelector extends JDialog {
 	}
 	
 	private JRadioButton createConsoleRdoButton() {
-		JRadioButton rdoConsole = createThemeRadioButton("Console", false);
+		JRadioButton rdoConsole = createThemeRadioButton("Console");
 		
 		rdoConsole.addActionListener(event -> 
 			selectedTestPathExportType = TestPathExportType.CONSOLE
@@ -116,16 +116,18 @@ public class MainSelector extends JDialog {
 	}
 	
 	private JRadioButton createFileRdoButton() {
-		JRadioButton rdoFile = createThemeRadioButton("File", true);
+		JRadioButton rdoFile = createThemeRadioButton("File");
 		
 		rdoFile.addActionListener(event -> 
 			selectedTestPathExportType = TestPathExportType.FILE
 		);
 		
+		rdoFile.doClick();
+		
 		return rdoFile;
 	}
 
-	private JRadioButton createThemeRadioButton(String label, boolean selected) {
+	private JRadioButton createThemeRadioButton(String label) {
 		JRadioButton rdo = new JRadioButton(label);
 		
 		rdo.setBackground(bgColor);
@@ -134,9 +136,6 @@ public class MainSelector extends JDialog {
 		rdo.setBorderPainted(false);
 		rdo.setBorder(BorderFactory.createEmptyBorder());
 		rdo.setFocusable(false);
-		
-		if (selected)
-			rdo.doClick();
 		
 		return rdo;
 	}

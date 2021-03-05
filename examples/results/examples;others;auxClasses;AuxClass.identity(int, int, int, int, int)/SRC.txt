@@ -1,0 +1,150 @@
+package examples.others.auxClasses;
+import java.util.Arrays;
+import java.util.List;
+import examples.polymorphism.ClassInterface;
+public class AuxClass{
+	public String text;
+	private int num;
+	@wniemiec.executionflow.runtime.CollectCalls public AuxClass(String t, int x){
+		this.text = t;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public AuxClass(int num){
+		this.num = num;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public AuxClass(int x, int y){
+		x = 2;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public AuxClass(String x){
+		x = "2";
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public void test(int x, int y, String k){
+		x = 3;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public void test2() {
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static void test3(int x, int y, String k){
+		x = 0;
+		while (x < 3) {int _b8b15a036a6715fcfe2264bb71ca93b9=0;
+			x++;
+		}
+		x = 3;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static void test4() {
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public long factorial(int x){
+		long response = 1;
+		int i=1;
+		while (i<=x) {int _6bf36c363dfbdfcdd3401680175a4a52=0;
+			response *= i;
+			i++;
+		}
+		return response;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public long fibonacci(int x){
+		long response = 1;
+		long last = 1;
+		long aux = 0;
+		int i=2;
+		while (i<x) {int _f8498bdbd249187b2ae65c970c7f9c4=0;
+			aux = response;
+			response = response + last;
+			last = aux;
+			i++;
+		}
+		return response;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static char[] parseLetters_noInternalCall(CharSequence cs){
+		char[] letters = cs.toString().toCharArray();
+		char[] response = new char[letters.length];
+		int i=0;
+		while (i<letters.length) {int _4306072d03276b3914ac230fb6b39746=0;
+			if (letters[i] == Character.toUpperCase(letters[i])) {
+				response[i] =  Character.toLowerCase(letters[i]);
+			}
+			else {int _f198c249a2c7e763bc4b9fb89e891693=0;
+				response[i] =  Character.toUpperCase(letters[i]);
+			}
+			i++;
+		}
+		return response;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static char[] parseLetters_withInternalCall(char[] letters){
+		char[] response = new char[letters.length];
+		int i=0;
+		while (i<letters.length) {int _d75cc8fcc1f22791ee03306f3265828b=0;
+			response[i] = invertLetter(letters[i]);
+			i++;
+		}
+		return response;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls private static char invertLetter(char letter){
+		if (letter == Character.toUpperCase(letter)) {
+			return Character.toLowerCase(letter);
+		}
+		return Character.toUpperCase(letter);
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public String threePaths(int num){
+		if (num == 1) {
+			return "one";
+		}
+		if (num == 2) {
+			return "two";
+		}
+		return "";
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public int testObjParam(Object obj){
+		return obj.hashCode();
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public int getNumber(){
+		return num;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public List<Integer> identity(int num1, int num2, int num3, int num4, int num5){
+		List<Integer> response = Arrays.asList( num1, num2, num3, num4, num5 );
+		return response;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public ClassInterface anonymousObjectReturn(){
+		return new ClassInterface("test") {
+			@wniemiec.executionflow.runtime.CollectCalls public String interfaceMethod() {
+				String str = "test";
+				return str;
+			}
+		}
+		;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static String trim(String text){
+		if (text == null) {
+			return "";
+		}
+		return text.trim();
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static String concatStrNum(String str, int num){
+		return str + num;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static int countTotalArguments(Object... args){
+		int i = 2;
+		int k;int _6443b71aed35ee36772bf096c03a8772=0;
+		k=0;
+		while (k<args.length) {int _b891afb35fac655dbf28d8a6c2180134=0;
+			k++;
+			if (Boolean.parseBoolean("True")) {continue;}
+			k++;
+		}
+		return k;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static int countTotalArguments2(Object... args){
+		int total = 0;
+		int i=0;
+		while (i<args.length) {int _dd979f1528330087d1ce4ea33be236c5=0;
+			if (i == 0) {
+				i++;
+				if (Boolean.parseBoolean("True")) {continue;}
+			}
+			total = i;
+			i++;
+		}
+		return total;
+	}
+	@wniemiec.executionflow.runtime.CollectCalls public static void infinite() {
+		while(true) ;
+	}
+}
