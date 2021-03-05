@@ -606,13 +606,13 @@ public class Invoked implements Serializable {
 			oos.defaultWriteObject();
 			oos.writeUTF((srcPath == null) ? "NULL" : srcPath.toAbsolutePath().toString());
 			oos.writeUTF((binPath == null) ? "NULL" : binPath.toAbsolutePath().toString());
-			oos.writeObject((binPath == null) ? null : Arrays.asList(args));
+			oos.writeObject((args == null) ? new Object[0] : args);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void readObject(ObjectInputStream ois) {
 		try {
 			ois.defaultReadObject();
@@ -631,11 +631,8 @@ public class Invoked implements Serializable {
 		return path.equals("NULL") ? null : Path.of(path);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Object[] readArgs(ObjectInputStream ois) 
 			throws IOException, ClassNotFoundException {
-		Object rawList = ois.readObject();
-		
-		return (rawList == null) ? null : ((List<Object>) ois.readObject()).toArray();
+		return (Object[]) ois.readObject();
 	}
 }
