@@ -113,7 +113,7 @@ public class ConstructorCollector extends InvokedCollector {
 	@Override
 	public void reset() {
 		constructorCollector.clear();
-		User.unlink();
+		User.resetConstructorCollector();
 	}
 
 	@Override

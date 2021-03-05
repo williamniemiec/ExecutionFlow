@@ -2,6 +2,7 @@ package wniemiec.executionflow.user;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -114,6 +115,9 @@ public class User {
 	@SuppressWarnings("unchecked")
 	public static Map<Integer, List<TestedInvoked>> getMethodCollector() 
 			throws IOException {
+		if (!session.exists())
+			return new HashMap<>();
+		
 		return (Map<Integer, List<TestedInvoked>>) session.read("METHOD_COLLECTOR");
 	}
 
@@ -125,7 +129,28 @@ public class User {
 	@SuppressWarnings("unchecked")
 	public static Map<Integer, TestedInvoked> getConstructorCollector() 
 			throws IOException {
+		if (!session.exists())
+			return new HashMap<>();
+		
 		return (Map<Integer, TestedInvoked>) session.read("CONSTRUCTOR_COLLECTOR");
+	}
+	
+	public static void resetMethodCollector() {
+		try {
+			storeMethodCollector(new HashMap<>());
+		} 
+		catch (IOException e) {
+			Logger.error("Reset method collector - failed");
+		}
+	}
+	
+	public static void resetConstructorCollector() {
+		try {
+			storeConstructorCollector(new HashMap<>());
+		} 
+		catch (IOException e) {
+			Logger.error("Reset constructor collector - failed");
+		}
 	}
 
 	public static void unlink() {

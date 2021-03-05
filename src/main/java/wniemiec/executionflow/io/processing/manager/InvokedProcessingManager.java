@@ -136,8 +136,6 @@ public class InvokedProcessingManager {
 		invokedFilesManager.createBackup();
 		invokedFilesManager.processFile(invokedFileManager, autoRestore);
 		invokedFilesManager.compile(invokedFileManager);
-		
-		Logger.info("Processing completed");	
 	}
 	
 	private void checkInvokedFilesManagerIsInitialized() {

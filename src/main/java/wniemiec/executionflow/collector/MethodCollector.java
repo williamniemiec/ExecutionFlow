@@ -126,7 +126,7 @@ public class MethodCollector extends InvokedCollector {
 	@Override
 	public void reset() {
 		methodCollector.clear();
-		User.unlink();
+		User.resetMethodCollector();
 	}
 	
 	@Override
