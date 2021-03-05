@@ -286,18 +286,31 @@ public class ProcessingManager {
 	 * 	<li>Processing of tested methods and constructors</li>
 	 * </ul>
 	 * 
-	 * @param		collector Tested invoked
+	 * @param		testedInvoked Tested invoked
 	 * 
 	 * @throws		IOException If an error occurs while processing files
 	 */
-	public void doProcessingInTestedInvoked(TestedInvoked collector) throws IOException {
-		currentTestMethod = collector.getTestMethod();
-		currentTestedInvoked = collector.getTestedInvoked();
-		currentTestMethodFileManager = createTestMethodFileManager(collector.getTestMethod());
-		currentInvokedFileManager = createInvokedFileManager(collector.getTestedInvoked());
+	public void doProcessingInTestedInvoked(TestedInvoked testedInvoked) throws IOException {
+		withTestedInvoked(testedInvoked);
 		
 		processTestMethod();
 		processInvokedMethod();
+	}
+	
+	private void withTestedInvoked(TestedInvoked testedInvoked) {
+		currentTestMethod = testedInvoked.getTestMethod();
+		currentTestedInvoked = testedInvoked.getTestedInvoked();
+		currentTestMethodFileManager = createTestMethodFileManager(
+				testedInvoked.getTestMethod()
+		);
+		currentInvokedFileManager = createInvokedFileManager(
+				testedInvoked.getTestedInvoked()
+		);
+		
+		if (testedInvoked.getTestedInvoked().isConstructor())
+			ConstructorCollector.getInstance().collect(testedInvoked);
+		else
+			MethodCollector.getInstance().collect(testedInvoked);
 	}
 	
 	private FileProcessingManager createTestMethodFileManager(Invoked testMethod) {
