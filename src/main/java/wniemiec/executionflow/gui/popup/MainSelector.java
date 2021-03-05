@@ -43,8 +43,8 @@ public class MainSelector extends JDialog {
 	private Color bgColor = new Color(80,80,80);
 	private TestPathExportType selectedTestPathExportType;
 	private LogLevel selectedLoggingLevel;
-	
 
+	
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
@@ -62,6 +62,9 @@ public class MainSelector extends JDialog {
 		pack();
 		setModal(true);
 		setVisible(true);
+		
+		if (!wasLoggingLevelSelected())
+			System.exit(-1);
 	}
 
 	private JPanel createBody() {
@@ -247,6 +250,10 @@ public class MainSelector extends JDialog {
 		btn.append("</html>");
 		
 		return ThemeButton.createRegularThemeButton(btn.toString());
+	}
+	
+	private boolean wasLoggingLevelSelected() {
+		return (selectedLoggingLevel != null);
 	}
 	
 	
