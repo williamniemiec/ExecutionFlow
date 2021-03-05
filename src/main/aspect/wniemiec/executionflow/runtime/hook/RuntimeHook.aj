@@ -36,7 +36,11 @@ public abstract aspect RuntimeHook {
 	//-------------------------------------------------------------------------
 	protected pointcut isInternalPackage():
 		within(wniemiec..*)
-		|| within(auxfiles..*);
+		|| within(auxfiles..*)
+		|| within(org.aspectj..*)
+		|| within(org.eclipse..*)
+		|| within(org.osgi..*)
+		|| within(org.objectweb.asm..*);
 	
 	protected pointcut skipAnnotation():
 		within(@wniemiec.executionflow.runtime.SkipCollection *)

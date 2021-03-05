@@ -64,14 +64,17 @@ public aspect MethodCallHook extends RuntimeHook {
 		!withincode(@wniemiec.executionflow.runtime.SkipInvoked * *.*(..))
 		&& !get(* *.*) 
 		&& !set(* *.*) 
+		&& !isInternalPackage()
 		&& insideConstructor()	|| insideMethod();
 	
 	private pointcut insideConstructor():
 		withincode(@wniemiec.executionflow.runtime.CollectCalls *.new(..))  
+		&& !isInternalPackage()
 		&& !cflowbelow(withincode(@wniemiec.executionflow.runtime.CollectCalls * *(..)));
 	
 	private pointcut insideMethod():
 		withincode(@wniemiec.executionflow.runtime.CollectCalls * *(..))
+		&& !isInternalPackage()
 		&& !cflowbelow(withincode(@wniemiec.executionflow.runtime.CollectCalls *.new(..)))  
 		&& !cflowbelow(withincode(@wniemiec.executionflow.runtime.CollectCalls * *(..)));
 	

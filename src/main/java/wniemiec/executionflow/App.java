@@ -157,6 +157,7 @@ public class App {
 			    	disableCheckpoint(currentTestMethodCheckpoint);
 					disableCheckpoint(firstRunCheckpoint);
 					
+					JUnitRunner.stopRunner();
 					User.unlink();
 		    	}
 		    	catch (Throwable t) {

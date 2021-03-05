@@ -38,7 +38,8 @@ public aspect TestMethodHook extends RuntimeHook {
 	//		Pointcuts
 	//-------------------------------------------------------------------------
 	private pointcut insideJUnit5RepeatedTest():
-		!skipAnnotation() 
+		!skipAnnotation()
+		&& !isInternalPackage()
 		&& execution(@org.junit.jupiter.api.RepeatedTest * *.*(..));
 	
 	private pointcut insideTestMethod():
@@ -49,13 +50,16 @@ public aspect TestMethodHook extends RuntimeHook {
 	
 	protected pointcut JUnit4Annotation():
 		!skipAnnotation()
+		&& !isInternalPackage()
 		&& execution(@org.junit.Test * *.*());
 	
 	protected pointcut JUnit5Annotation():
-		!skipAnnotation() && (
-		execution(@org.junit.jupiter.api.Test * *.*())
-		|| execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..))
-		|| execution(@org.junit.jupiter.api.RepeatedTest * *.*(..)));
+		!isInternalPackage()
+		&& !skipAnnotation() 
+		&& (
+			execution(@org.junit.jupiter.api.Test * *.*())
+			|| execution(@org.junit.jupiter.params.ParameterizedTest * *.*(..))
+			|| execution(@org.junit.jupiter.api.RepeatedTest * *.*(..)));
 	
 	
 	//-------------------------------------------------------------------------

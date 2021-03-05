@@ -227,7 +227,7 @@
 						<descriptors>
 							<descriptor>${basedir}/src/assembly/distribution.xml</descriptor>
 						</descriptors>
-						<outputDirectory>${project.build.directory}/../dist/${version.major}.x</outputDirectory>
+						<outputDirectory>${basedir}/dist/${version.major}.x</outputDirectory>
 					</configuration>
 				</plugin>
 				<plugin>
