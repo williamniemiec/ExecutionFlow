@@ -89,9 +89,16 @@ abstract class InvokedCollectorTest {
 	}
 	
 	protected void assertTestedInvokedHasInvocationLine(int line) {
-		Assertions.assertEquals(line, testedMethod.getInvocationLine());
+		Assertions.assertEquals(line, getFirstCollectedTestedMethod().getInvocationLine());
 	}
 
+	private Invoked getFirstCollectedTestedMethod() {
+		return collector
+					.getAllCollectedInvoked()
+					.iterator()
+					.next()
+					.getTestedInvoked();
+	}
 	
 	//-------------------------------------------------------------------------
 	//		Getters

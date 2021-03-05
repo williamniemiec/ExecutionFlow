@@ -124,6 +124,8 @@ public class ConstructorCollector extends InvokedCollector {
 				testMethodSrcFile, 
 				getConstructorCollection()
 		);
+		
+		storeConstructorCollector();
 	}
 
 	@Override
