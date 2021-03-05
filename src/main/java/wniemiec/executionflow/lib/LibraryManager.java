@@ -67,7 +67,10 @@ public class LibraryManager {
 	}
 
 	private static void initializeLibPath() {
-		libPath = App.getAppRootPath().resolve("lib");
+		libPath = App.getAppRootPath();
+		
+		if (App.isDevelopment())
+			libPath = libPath.resolve("lib");
 	}
 	
 	public static List<Path> getJavaClassPath()	{

@@ -25,7 +25,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	private static final long serialVersionUID = 600L;
 	private static int totalTests;
 	private String testMethodSignature;
-	private transient Object[] testMethodArgs;
+	private List<String> testMethodArgs;
 	private List<String> processedLines;
 		
 	
@@ -50,7 +50,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	 */ 
 	private PreTestMethodFileProcessor(Path file, Path outputDir, 
 			String outputFilename, String testMethodSignature, 
-			Object[] testMethodArgs, String fileExtension, FileEncoding encoding) {
+			List<String> testMethodArgs, String fileExtension, FileEncoding encoding) {
 		checkRequiredFields(file, outputDir, outputFilename, testMethodSignature);
 		
 		this.file = file;
@@ -89,7 +89,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		private Path outputDir;
 		private String outputFilename;
 		private String testMethodSignature;
-		private Object[] testMethodArgs;
+		private List<String> testMethodArgs;
 
 		
 		/**
@@ -181,7 +181,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		 * 
 		 * @return		Itself to allow chained calls
 		 */
-		public Builder testMethodArgs(Object... testMethodArgs) {
+		public Builder testMethodArgs(List<String> testMethodArgs) {
 			this.testMethodArgs = testMethodArgs;
 			
 			return this;

@@ -22,7 +22,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 	private TestProcessor testProcessor;
 	private RepeatedTestProcessor repeatedTestProcessor;
 	private ParameterizedTestProcessor parameterizedTestProcessor;
-	private Object[] testMethodArgs;
+	private List<String> testMethodArgs;
 	private int totalTests;
 	private String processedLine;
 	
@@ -30,7 +30,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	//		Constructor
 	//---------------------------------------------------------------------
-	public JUnit5ToJUnit4Processor(List<String> sourceCode, Object[] testMethodArgs) {
+	public JUnit5ToJUnit4Processor(List<String> sourceCode, List<String> testMethodArgs) {
 		super(sourceCode, true);
 		
 		this.testMethodArgs = testMethodArgs;
@@ -292,7 +292,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 		//---------------------------------------------------------------------
 		//		Attributes
 		//---------------------------------------------------------------------
-		private Object[] testMethodArgs;
+		private List<String> testMethodArgs;
 		private String[] testMethodParams;
 		private boolean inParameterizedTestMethod;
 		private String paramEnumType;
@@ -301,7 +301,7 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 		//---------------------------------------------------------------------
 		//		Constructor
 		//---------------------------------------------------------------------
-		public ParameterizedTestProcessor(Object[] testMethodArgs) {
+		public ParameterizedTestProcessor(List<String> testMethodArgs) {
 			this.testMethodArgs = testMethodArgs;
 		}
 		
@@ -415,27 +415,26 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 		}
 		
 		private String getArgument(int i) {
-			if (testMethodArgs[i] == null)
+			if (testMethodArgs.get(i) == null)
 				return "null";
 			
 			String argument;
 
 			// Checks if parameterized test contains 'EnumSource' annotation
 			if (paramEnumType != null)
-				testMethodArgs[i] = extractEnumTypeArgs(i);
+				testMethodArgs.set(i, extractEnumTypeArgs(i));
 			
-			if (testMethodParams[i].contains("String "))
-				argument = "\"" + ((String)testMethodArgs[i])
+			if (isStringArg(i))
+				argument = "\"" + testMethodArgs.get(i)
 						.replace("\n", "\\n")
 						.replace("\t", "\\t")
 						.replace("\r", "\\r") + "\"";
 			else
-				argument = "" + testMethodArgs[i];
+				argument = "" + testMethodArgs.get(i);
 			
 			return argument;
 		}
 		
-		@SuppressWarnings("rawtypes")
 		private String extractEnumTypeArgs(int i) {
 			StringBuilder args = new StringBuilder();
 			
@@ -445,9 +444,14 @@ public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {
 				args.append(paramEnumType);
 			
 			args.append(".");
-			args.append(((Enum)testMethodArgs[i]).name());
+			args.append(testMethodArgs.get(i));
 			
 			return args.toString();
+		}
+		
+		private boolean isStringArg(int i) {
+			return	testMethodParams[i].contains("String ") 
+					&& !testMethodArgs.get(i).matches("null");
 		}
 	}
 }

@@ -128,14 +128,17 @@ public class App {
 		try {
 			if (!firstRunCheckpoint.isEnabled()) {
 				firstRunCheckpoint.enable();
-				onShutdown();
 				success = false;
+				
+				onShutdown();
 				
 				User.openMainSelector();
 			}
 			
 			ExportManager.setTestPathExportType(User.getSelectedTestPathExportType());
 			Logger.setLevel(User.getSelectedLogLevel());
+			
+			dumpPaths();
 		}
 		catch(IOException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());
@@ -143,7 +146,7 @@ public class App {
 			System.exit(-1);
 		}
 	}
-	
+
 	private static void onShutdown() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
@@ -153,6 +156,8 @@ public class App {
 		    		
 			    	disableCheckpoint(currentTestMethodCheckpoint);
 					disableCheckpoint(firstRunCheckpoint);
+					
+					User.unlink();
 		    	}
 		    	catch (Throwable t) {
 		    		// As the application will have finished, it is not 
@@ -176,6 +181,12 @@ public class App {
 		}
 		
 		return success;
+	}
+	
+	private static void dumpPaths() {
+		Logger.debug("AppRootPath: " + getAppRootPath());
+		Logger.debug("CurrentProjectPath: " + getCurrentProjectRoot());
+		Logger.debug("AppTargetPath: " + getAppTargetPath());
 	}
 	
 	private static void beforeEachTestMethod() {
@@ -305,7 +316,7 @@ public class App {
 	//-------------------------------------------------------------------------
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
-	public static Path getTargetPath() {
+	public static Path getAppTargetPath() {
 		if (targetPath == null)
 			targetPath = initializeTargetPath();
 		

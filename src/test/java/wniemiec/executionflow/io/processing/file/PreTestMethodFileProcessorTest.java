@@ -1,6 +1,7 @@
 package wniemiec.executionflow.io.processing.file;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +52,7 @@ class PreTestMethodFileProcessorTest extends FileProcessorTest {
 				.outputFileExtension("txt")
 				.encoding(FileEncoding.UTF_8)
 				.testMethodSignature("examples.others.auxClasses.AuxClass.MixedJUnit5Annotations.parameterizedTestAnnotation(int)")
-				.testMethodArgs(-1)
+				.testMethodArgs(List.of("-1"))
 				.build();
 	}
 	

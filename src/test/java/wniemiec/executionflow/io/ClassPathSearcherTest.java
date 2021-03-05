@@ -26,7 +26,7 @@ class ClassPathSearcherTest {
 						"io", "ClassPathSearcherTest.java"))
 		);
 		
-		thisBinFile = normalizePath(App.getTargetPath().resolve(
+		thisBinFile = normalizePath(App.getAppTargetPath().resolve(
 				Path.of("test-classes", "wniemiec", "executionflow",
 						"io", "ClassPathSearcherTest.class"))
 		);

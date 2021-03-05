@@ -42,7 +42,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>${basedir}/lib</directory>
-			<outputDirectory>/lib/</outputDirectory>
+			<outputDirectory>/</outputDirectory>
 		</fileSet>
 		<fileSet>
 			<directory>${basedir}/src/main/resources</directory>

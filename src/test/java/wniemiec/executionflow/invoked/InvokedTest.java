@@ -1,6 +1,7 @@
 package wniemiec.executionflow.invoked;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -436,12 +437,15 @@ class InvokedTest {
 	
 	@Test
 	void testGetArgs() {
-		Assertions.assertArrayEquals(new Object[] {1}, defaultMethodInvoked.getArgs());
+		Assertions.assertEquals(List.of("1"), defaultMethodInvoked.getArgs());
 	}
 	
 	@Test
 	void testGetParameterTypes() {
-		Assertions.assertArrayEquals(new Class[] {int.class}, defaultMethodInvoked.getParameterTypes());
+		Assertions.assertArrayEquals(
+				new Class[] {int.class}, 
+				defaultMethodInvoked.getParameterTypes()
+		);
 	}
 	
 	@Test

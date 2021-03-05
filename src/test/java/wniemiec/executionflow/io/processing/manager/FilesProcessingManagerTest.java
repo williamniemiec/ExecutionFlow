@@ -34,7 +34,7 @@ class FilesProcessingManagerTest {
 						"fileprocessing.java")
 		);
 		
-		binPath = App.getTargetPath().resolve(
+		binPath = App.getAppTargetPath().resolve(
 				Path.of("test-classes", "auxfiles", "wniemiec", "executionflow",
 						"io", "processing", "manager", "fileprocessing.class")
 		);

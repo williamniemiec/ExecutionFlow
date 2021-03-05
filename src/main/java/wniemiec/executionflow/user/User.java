@@ -140,6 +140,7 @@ public class User {
 			storeMethodCollector(new HashMap<>());
 		} 
 		catch (IOException e) {
+			Logger.error(e.toString());
 			Logger.error("Reset method collector - failed");
 		}
 	}
@@ -149,6 +150,7 @@ public class User {
 			storeConstructorCollector(new HashMap<>());
 		} 
 		catch (IOException e) {
+			Logger.error(e.toString());
 			Logger.error("Reset constructor collector - failed");
 		}
 	}

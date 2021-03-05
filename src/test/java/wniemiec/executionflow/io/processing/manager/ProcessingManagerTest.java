@@ -31,7 +31,7 @@ class ProcessingManagerTest {
 				Path.of(".", "src", "test", "java", "auxfiles", "wniemiec", 
 						"executionflow", "io", "processing", "manager")
 		);
-		final Path resourcesBin = App.getTargetPath().resolve(
+		final Path resourcesBin = App.getAppTargetPath().resolve(
 				Path.of("test-classes", "auxfiles", "wniemiec", "executionflow",
 						"io", "processing", "manager")
 		);

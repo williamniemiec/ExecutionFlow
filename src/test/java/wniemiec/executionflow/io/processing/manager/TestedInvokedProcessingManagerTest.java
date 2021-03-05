@@ -38,7 +38,7 @@ class TestedInvokedProcessingManagerTest {
 		srcDirectory = App.getCurrentProjectRoot().resolve(
 				Path.of(".", "src", "test", "java", "auxfiles")
 		);
-		binDirectory = App.getTargetPath().resolve(
+		binDirectory = App.getAppTargetPath().resolve(
 				Path.of("test-classes", "auxfiles")
 		);
 

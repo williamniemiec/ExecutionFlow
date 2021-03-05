@@ -114,9 +114,11 @@ public class JUnitRunner {
 		
 		Session.saveShared("JUNIT4_RUNNER", junit4API);
 		
+		dump(testMethod);
+		
 		junit4API.run();
 	}
-	
+
 	/**
 	 * Extracts class root directory. <br />
 	 * Example: <br />
@@ -150,6 +152,12 @@ public class JUnitRunner {
 		classpaths.add(LibraryManager.getLibrary("HAMCREST"));
 		
 		return classpaths;
+	}
+	
+	private static void dump(Invoked testMethod) {
+		Logger.debug("Working directory: " + generateClassRootDirectory(testMethod));
+		Logger.debug("Classpath: " + generateClasspaths());
+		Logger.debug("Class signature: " + testMethod.getClassSignature());
 	}
 	
 	private static void waitForJUnitAPI() throws IOException, InterruptedException {

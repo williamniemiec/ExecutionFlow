@@ -5,9 +5,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import wniemiec.util.logger.Logger;
 
 /**
  * Stores information about an invoked, where an invoked can be a 
@@ -30,7 +34,7 @@ public class Invoked implements Serializable {
 	private String classPackage;
 	private int invocationLine;
 	private Class<?>[] parameterTypes;
-	private transient Object[] args;
+	private List<String> args;
 	private String concreteInvokedSignature;
 	private String invokedName;
 	private Class<?> returnType;
@@ -41,9 +45,9 @@ public class Invoked implements Serializable {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	private Invoked(Path binPath, Path srcPath, int invocationLine,	
-						String invokedSignature, String invokedName, 
-						Class<?> returnType, Class<?>[] parameterTypes, 
-						Object[] args, boolean isConstructor) {
+					String invokedSignature, String invokedName, 
+					Class<?> returnType, Class<?>[] parameterTypes, 
+					Object[] args, boolean isConstructor) {
 		checkSignature(invokedSignature);
 		checkBinPath(binPath);
 		checkSrcPath(srcPath);
@@ -55,8 +59,39 @@ public class Invoked implements Serializable {
 		this.invokedName = invokedName;
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
-		this.args = args;
+		this.args = argsToStringList(args);
 		this.isConstructor = isConstructor;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unused" })
+	private Object[] normalizeArgs(Object[] args) {
+		for (int i = 0; i < args.length; i++) {
+			if (args[i] instanceof Enum)
+				args[i] = ((Enum) args[i]).name();
+		}
+		
+		return args;
+	}
+
+	private List<String> argsToStringList(Object[] args) {
+		List<String> stringArgsList = new ArrayList<>();
+		
+		for (String arg : convertArrayToString(args)) {
+			if (arg == null)
+				stringArgsList.add(null);
+			else
+				stringArgsList.add(arg);
+		}
+		
+		return stringArgsList;
+	}
+	
+	private String[] convertArrayToString(Object[] args) {
+		String toStringArray = Arrays.toString(args);
+		String individualArgs = toStringArray.substring(1, toStringArray.length()-1);
+		individualArgs = individualArgs.replaceAll(", ", ",");
+		
+		return individualArgs.split(",");
 	}
 
 
@@ -377,7 +412,7 @@ public class Invoked implements Serializable {
 				+ ", signature=" + invokedSignature 
 				+ ", invocationLine=" + invocationLine 
 				+ ", parameterTypes=" + Arrays.toString(parameterTypes) 
-				+ ", args="	+ Arrays.toString(args) 
+				+ ", args="	+ args.toString() 
 				+ ", returnType=" + returnType 
 			+ "]";
 	}
@@ -520,7 +555,7 @@ public class Invoked implements Serializable {
 		return classPackage;
 	}
 	
-	public Object[] getArgs() {
+	public List<String> getArgs() {
 		return args;
 	}
 	
@@ -605,10 +640,9 @@ public class Invoked implements Serializable {
 			oos.defaultWriteObject();
 			oos.writeUTF((srcPath == null) ? "NULL" : srcPath.toAbsolutePath().toString());
 			oos.writeUTF((binPath == null) ? "NULL" : binPath.toAbsolutePath().toString());
-			oos.writeObject((args == null) ? new Object[0] : args);
 		} 
 		catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e.toString());
 		}
 	}
 
@@ -617,10 +651,9 @@ public class Invoked implements Serializable {
 			ois.defaultReadObject();
 			this.srcPath = readPath(ois);
 			this.binPath = readPath(ois);
-			this.args = readArgs(ois);
 		} 
 		catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
+			Logger.error(e.toString());
 		}
 	}
 	
@@ -628,10 +661,5 @@ public class Invoked implements Serializable {
 		String path = ois.readUTF();
 		
 		return path.equals("NULL") ? null : Path.of(path);
-	}
-	
-	private Object[] readArgs(ObjectInputStream ois) 
-			throws IOException, ClassNotFoundException {
-		return (Object[]) ois.readObject();
 	}
 }

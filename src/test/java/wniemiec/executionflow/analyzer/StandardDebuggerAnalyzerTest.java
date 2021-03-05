@@ -34,7 +34,7 @@ class StandardDebuggerAnalyzerTest {
 		resourcesSrc = App.getCurrentProjectRoot().resolve(
 				Path.of(".", "src", "test", "java", "auxfiles")
 		);
-		resourcesBin = App.getTargetPath().resolve(
+		resourcesBin = App.getAppTargetPath().resolve(
 				Path.of("test-classes", "auxfiles")
 		);
 	}

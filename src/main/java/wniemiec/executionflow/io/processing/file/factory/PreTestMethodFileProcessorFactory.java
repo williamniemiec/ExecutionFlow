@@ -1,6 +1,7 @@
 package wniemiec.executionflow.io.processing.file.factory;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import wniemiec.executionflow.io.FileEncoding;
 import wniemiec.executionflow.io.processing.file.FileProcessor;
@@ -19,7 +20,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private String testMethodSignature;	
-	private Object[] testMethodArgs;
+	private List<String> testMethodArgs;
 	
 	
 	//-------------------------------------------------------------------------
@@ -32,10 +33,10 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 	 * @param		testMethodSignature Test method signature
 	 * @param		args Test method arguments
 	 */
-	public PreTestMethodFileProcessorFactory(String testMethodSignature, Object[] args) {
+	public PreTestMethodFileProcessorFactory(String testMethodSignature, List<String> args) {
 		this.testMethodSignature = testMethodSignature;
 		
-		if (args != null && args.length > 0)
+		if (args != null && args.size() > 0)
 			this.testMethodArgs = args;
 	}
 	

@@ -2,6 +2,8 @@ package wniemiec.executionflow.io.processing.processor;
 
 import java.io.IOException;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +17,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	//-----------------------------------------------------------------------
 	//		Attributes
 	//-----------------------------------------------------------------------
-	private Object[] testMethodArgs;
+	private List<String> testMethodArgs;
 	
 	
 	//-----------------------------------------------------------------------
@@ -51,7 +53,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 			"junit5-parameterized-annotation-valuesource1"
 	})
 	void testParameterizedAnnotationValueSource1(String filename) throws IOException {
-		testMethodArgs = new Object[] {" "};
+		withTestMethodArgs(" ");
 		testProcessorOnFile(filename);
 	}
 	
@@ -60,7 +62,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 			"junit5-parameterized-annotation-valuesource2"
 	})
 	void testParameterizedAnnotationValueSource2(String filename) throws IOException {
-		testMethodArgs = new Object[] {"\t"};
+		withTestMethodArgs("\t");
 		testProcessorOnFile(filename);
 	}
 	
@@ -69,7 +71,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 			"junit5-parameterized-annotation-csvsource"
 	})
 	void testParameterizedAnnotationCSVSource(String filename) throws IOException {
-		testMethodArgs = new Object[] {"I", -1};
+		withTestMethodArgs("I", -1);
 		testProcessorOnFile(filename);
 	}
 	
@@ -78,7 +80,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 			"junit5-parameterized-annotation-enumsourceinterface"
 	})
 	void testParameterizedAnnotationEnumSourceInterface(String filename) throws IOException {
-		testMethodArgs = new Object[] {ChronoUnit.DAYS};
+		withTestMethodArgs(ChronoUnit.DAYS);
 		testProcessorOnFile(filename);
 	}
 	
@@ -87,7 +89,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 			"junit5-parameterized-annotation-enumsourcewithclass"
 	})
 	void testParameterizedAnnotationEnumSourceWithClass(String filename) throws IOException {
-		testMethodArgs = new Object[] {FileEncoding.ISO_8859_1};
+		withTestMethodArgs(FileEncoding.ISO_8859_1);
 		testProcessorOnFile(filename);
 	}
 	
@@ -96,7 +98,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 			"junit5-parameterized-annotation-methodsource"
 	})
 	void testParameterizedAnnotationMethodSource(String filename) throws IOException {
-		testMethodArgs = new Object[] {"Hello", 5};
+		withTestMethodArgs("Hello", 5);
 		testProcessorOnFile(filename);
 	}
 	
@@ -105,7 +107,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 			"junit5-parameterized-annotation-nullsource"
 	})
 	void testParameterizedAnnotationNullSource(String filename) throws IOException {
-		testMethodArgs = new Object[] {null};
+		withTestMethodArgs(new Object[] {null});
 		testProcessorOnFile(filename);
 	}
 	
@@ -113,6 +115,41 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------
+	private void withTestMethodArgs(Object... args) {
+		testMethodArgs = argsToStringList(normalizeArgs(args));
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private Object[] normalizeArgs(Object[] args) {
+		for (int i = 0; i < args.length; i++) {
+			if (args[i] instanceof Enum)
+				args[i] = ((Enum) args[i]).name();
+		}
+		
+		return args;
+	}
+
+	private List<String> argsToStringList(Object[] args) {
+		List<String> stringArgsList = new ArrayList<>();
+		
+		for (String arg : convertArrayToString(args)) {
+			if (arg == null)
+				stringArgsList.add(null);
+			else
+				stringArgsList.add(arg);
+		}
+		
+		return stringArgsList;
+	}
+	
+	private String[] convertArrayToString(Object[] args) {
+		String toStringArray = Arrays.toString(args);
+		String individualArgs = toStringArray.substring(1, toStringArray.length()-1);
+		individualArgs = individualArgs.replaceAll(", ", ",");
+		
+		return individualArgs.split(",");
+	}
+	
 	@Override
 	protected SourceCodeProcessor getProcessorFor(List<String> sourceCode) {
 		return	(testMethodArgs == null) 

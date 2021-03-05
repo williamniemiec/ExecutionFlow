@@ -1,6 +1,7 @@
 package wniemiec.executionflow.io.processing.file.factory;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class PreTestMethodFileProcessorFactoryTest {
 		
 		FileProcessorFactory factory = new PreTestMethodFileProcessorFactory(
 				"foo.SomeClass.bar(int)",
-				new Object[] {1}
+				List.of("1")
 		);
 		FileProcessor processor = factory.createInstance(
 				targetFile, 
