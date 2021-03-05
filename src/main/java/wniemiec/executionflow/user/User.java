@@ -37,8 +37,6 @@ public class User {
 				"session.ef", 
 				new File(System.getProperty("user.home")
 		));
-		
-		selector = new MainSelector();
 	}
 	
 	
@@ -53,11 +51,17 @@ public class User {
 	//		Methods
 	//-------------------------------------------------------------------------
 	public static void openMainSelector() throws IOException {
+		initializeMainSelector();
 		selector.open();
 		
 		session.destroy();
 		session.save("LOG_LEVEL", selector.getSelectedLoggingLevel());
 		session.save("TESTPATH_EXPORT_TYPE", selector.getSelectedTestPathExportType());
+	}
+	
+	private static void initializeMainSelector() {
+		if (selector == null)
+			selector = new MainSelector();
 	}
 	
 	public static LogLevel getSelectedLogLevel() {
