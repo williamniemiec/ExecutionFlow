@@ -18,6 +18,7 @@ import wniemiec.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.executionflow.exporter.testpath.TestPathExporter;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
+import wniemiec.executionflow.user.User;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -40,7 +41,7 @@ public abstract class ExportManager {
 	//		Attributes
 	//-------------------------------------------------------------------------
 	protected static TestPathExportType testPathExportType;
-	private TestPathExporter testPathExporter;
+	private static TestPathExporter testPathExporter;
 	private MethodsCalledByTestedInvokedExporter mcti;
 	private ProcessedSourceFileExporter processedSourceFileExporter;
 	private TestedInvokedExporter mcutmEffective;
@@ -49,18 +50,18 @@ public abstract class ExportManager {
 	private boolean exportCalledMethods = true;
 	private boolean exportProcessedSourceFile = true;
 	private boolean exportTesters = true;
-	private boolean isConstructor;
-	private String outputDir;
+	private static boolean isConstructor;
+	private static String outputDir;
 	
 	
 	//-------------------------------------------------------------------------
 	//		Constructor
 	//-------------------------------------------------------------------------
 	protected ExportManager(boolean isDevelopment, boolean isConstructor) {
-		this.isConstructor = isConstructor;
-		this.outputDir = isDevelopment ? "examples\\results" : "results";
+		ExportManager.isConstructor = isConstructor;
+		outputDir = isDevelopment ? "examples\\results" : "results";
 
-		if (testPathExportType == null)
+		if (getTestPathExportType() == null)
 			testPathExportType = TestPathExportType.FILE;
 		
 		initializeTestPathExporter();
@@ -68,8 +69,8 @@ public abstract class ExportManager {
 		initializeProcessedSourceFileExporter();
 		initializeMethodsCalledByTestedInvokedExporter();
 	}
-	
-	
+
+
 	//-------------------------------------------------------------------------
 	//		Factories
 	//-------------------------------------------------------------------------
@@ -85,6 +86,10 @@ public abstract class ExportManager {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	private Object getTestPathExportType() {
+		return User.getSelectedTestPathExportType();
+	}
+	
 	private void initializeProcessedSourceFileExporter() {
 		this.processedSourceFileExporter = new ProcessedSourceFileExporter(
 				outputDir, 
@@ -104,8 +109,8 @@ public abstract class ExportManager {
 		);
 	}
 	
-	private void initializeTestPathExporter() {
-		this.testPathExporter = testPathExportType.equals(TestPathExportType.CONSOLE)
+	private static void initializeTestPathExporter() {
+		testPathExporter = testPathExportType.equals(TestPathExportType.CONSOLE)
 				? new ConsoleExporter() 
 				: new FileExporter(outputDir, isConstructor);
 	}
@@ -126,6 +131,9 @@ public abstract class ExportManager {
 	}
 	
 	protected void exportResultsFromParser(TestedInvokedParser parser) {
+		if (parser.getTestPaths().isEmpty())
+			return;
+		
 		exportTestPaths(parser.getTestPaths());
 		exportEffectiveMethodsAndConstructorsUsedInTestMethods(
 				parser.getMethodsAndConstructorsUsedInTestMethod()
@@ -178,7 +186,7 @@ public abstract class ExportManager {
 	
 	public abstract void exportAllInvokedUsedInTestMethods();
 	
-	public abstract void exportAll();
+	public abstract void parseAndExportAll();
 	
 	public void enableTestPathExport() {
 		exportTestPaths = true;
@@ -214,5 +222,6 @@ public abstract class ExportManager {
 	
 	public static void setTestPathExportType(TestPathExportType type) {
 		testPathExportType = type;
+		initializeTestPathExporter();
 	}
 }

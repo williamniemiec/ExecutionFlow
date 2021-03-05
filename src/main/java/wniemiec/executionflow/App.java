@@ -13,7 +13,6 @@ import wniemiec.executionflow.io.processing.manager.ProcessingManager;
 import wniemiec.executionflow.io.runner.JUnitRunner;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.executionflow.user.User;
-import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.Logger;
 import wniemiec.util.task.Checkpoint;
 
@@ -127,21 +126,16 @@ public class App {
 	
 	public static void inTheFirstRun() {
 		try {
-			LogLevel level;
-			
 			if (!firstRunCheckpoint.isEnabled()) {
 				firstRunCheckpoint.enable();
-				
 				onShutdown();
 				success = false;
-				level = User.askUserForLogLevel();
 				
-			}
-			else {
-				 level = User.loadLogLevel();		
+				User.openMainSelector();
 			}
 			
-			Logger.setLevel(level);
+			ExportManager.setTestPathExportType(User.getSelectedTestPathExportType());
+			Logger.setLevel(User.getSelectedLogLevel());
 		}
 		catch(IOException | NoClassDefFoundError e) {
 			Logger.error(e.getMessage());
@@ -246,8 +240,8 @@ public class App {
 			return;
 		
 		if (inTestMethodWithAspectsDisabled) {
-			methodExporter.exportAll();
-			constructorExporter.exportAll();
+			methodExporter.parseAndExportAll();
+			constructorExporter.parseAndExportAll();
 
 			success = true;
 		}

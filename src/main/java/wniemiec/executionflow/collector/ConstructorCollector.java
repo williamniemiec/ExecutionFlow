@@ -1,6 +1,9 @@
 package wniemiec.executionflow.collector;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,6 +11,8 @@ import java.util.Set;
 
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
+import wniemiec.executionflow.user.User;
+import wniemiec.util.logger.Logger;
 
 /**
  * Responsible for collect constructors.
@@ -72,11 +77,28 @@ public class ConstructorCollector extends InvokedCollector {
 				constructor.getInvocationLine(),
 				testedInvoked
 		);
+		
+		try {
+			User.storeConstructorCollector(constructorCollector);
+		} 
+		catch (IOException e) {
+			Logger.error(e.toString());
+			Logger.error("Constructor collector cannot be stored");
+		}
 	}
 	
 	@Override
 	public Set<TestedInvoked> getAllCollectedInvoked() {
-		return new HashSet<>(constructorCollector.values());
+		return new HashSet<>(getConstructorCollection());
+	}
+	
+	private Collection<TestedInvoked> getConstructorCollection() {
+		try {
+			return User.getConstructorCollector().values();
+		} 
+		catch (IOException e) {
+			return new ArrayList<>();
+		}
 	}
 	
 	@Override
@@ -90,7 +112,7 @@ public class ConstructorCollector extends InvokedCollector {
 		updateInvokedInvocationLines(
 				mapping, 
 				testMethodSrcFile, 
-				constructorCollector.values()
+				getConstructorCollection()
 		);
 	}
 

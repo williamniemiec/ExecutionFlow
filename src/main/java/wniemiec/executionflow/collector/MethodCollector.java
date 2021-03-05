@@ -1,15 +1,19 @@
 package wniemiec.executionflow.collector;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
+import wniemiec.executionflow.user.User;
+import wniemiec.util.logger.Logger;
 
 /**
  * Responsible for collect methods.
@@ -39,7 +43,7 @@ public class MethodCollector extends InvokedCollector {
 	//		Constructor
 	//-------------------------------------------------------------------------
 	private MethodCollector() {
-		methodCollector = new LinkedHashMap<>();
+		methodCollector = new HashMap<>();
 	}
 	
 	
@@ -79,16 +83,33 @@ public class MethodCollector extends InvokedCollector {
 	
 	private void putInMethodCollection(Invoked method, List<TestedInvoked> list) {
 		methodCollector.put(method.getInvocationLine(), list);
+		
+		try {
+			User.storeMethodCollector(methodCollector);
+		} 
+		catch (IOException e) {
+			Logger.error(e.toString());
+			Logger.error("Method collector cannot be stored");
+		}
 	}
 	
 	@Override
 	public Set<TestedInvoked> getAllCollectedInvoked() {
 		Set<TestedInvoked> collectors = new HashSet<>();
-		for (List<TestedInvoked> collector : methodCollector.values()) {
+		for (List<TestedInvoked> collector : getMethodCollection()) {
 			collectors.add(collector.get(0));
 		}
 		
 		return collectors;
+	}
+	
+	private Collection<List<TestedInvoked>> getMethodCollection() {
+		try {
+			return User.getMethodCollector().values();
+		} 
+		catch (IOException e) {
+			return List.of(new ArrayList<>());
+		}
 	}
 	
 	@Override
@@ -99,7 +120,7 @@ public class MethodCollector extends InvokedCollector {
 	@Override
 	public void updateInvocationLines(Map<Integer, Integer> mapping, 
 			Path testMethodSrcFile) {
-		for (List<TestedInvoked> methodCollectorList : methodCollector.values()) {
+		for (List<TestedInvoked> methodCollectorList : getMethodCollection()) {
 			updateInvokedInvocationLines(
 					mapping, 
 					testMethodSrcFile,

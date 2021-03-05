@@ -13,13 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.WindowConstants;
 
-import wniemiec.executionflow.exporter.ExportManager;
 import wniemiec.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.executionflow.gui.AppIcon;
 import wniemiec.executionflow.gui.ThemeButton;
 import wniemiec.executionflow.gui.ThemePanel;
 import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
 
 /**
  * Responsible for asking the user:
@@ -43,6 +41,8 @@ public class MainSelector extends JDialog {
 	private static final int X0 = 250;
 	private static final int Y0 = 280;
 	private Color bgColor = new Color(80,80,80);
+	private TestPathExportType selectedTestPathExportType;
+	private LogLevel selectedLoggingLevel;
 	
 
 	//-------------------------------------------------------------------------
@@ -106,7 +106,7 @@ public class MainSelector extends JDialog {
 		JRadioButton rdoConsole = createThemeRadioButton("Console", false);
 		
 		rdoConsole.addActionListener(event -> 
-				ExportManager.setTestPathExportType(TestPathExportType.CONSOLE)
+			selectedTestPathExportType = TestPathExportType.CONSOLE
 		);
 		
 		return rdoConsole;
@@ -116,7 +116,7 @@ public class MainSelector extends JDialog {
 		JRadioButton rdoFile = createThemeRadioButton("File", true);
 		
 		rdoFile.addActionListener(event -> 
-				ExportManager.setTestPathExportType(TestPathExportType.FILE)
+			selectedTestPathExportType = TestPathExportType.FILE
 		);
 		
 		return rdoFile;
@@ -184,7 +184,7 @@ public class MainSelector extends JDialog {
 		JButton btn = createHTMLButton("None<br>(not recommended \u274C)");
 		
 		btn.addActionListener(event -> {
-			Logger.setLevel(LogLevel.OFF);
+			selectedLoggingLevel = LogLevel.OFF;
 			close();
 		});
 		
@@ -195,7 +195,7 @@ public class MainSelector extends JDialog {
 		JButton btn = createHTMLButton("Error");
 		
 		btn.addActionListener(event -> {
-			Logger.setLevel(LogLevel.ERROR);
+			selectedLoggingLevel = LogLevel.ERROR;
 			close();
 		});
 		
@@ -206,7 +206,7 @@ public class MainSelector extends JDialog {
 		JButton btn = createHTMLButton("Warning");
 		
 		btn.addActionListener(event -> {
-			Logger.setLevel(LogLevel.WARNING);
+			selectedLoggingLevel = LogLevel.WARNING;
 			close();
 		});
 		
@@ -217,7 +217,7 @@ public class MainSelector extends JDialog {
 		JButton btn = createHTMLButton("Info<br>(recommended \u2714)");
 		
 		btn.addActionListener(event -> {
-			Logger.setLevel(LogLevel.INFO);
+			selectedLoggingLevel = LogLevel.INFO;
 			close();
 		});
 		
@@ -228,7 +228,7 @@ public class MainSelector extends JDialog {
 		JButton btn = createHTMLButton("Debug");
 		
 		btn.addActionListener(event -> {
-			Logger.setLevel(LogLevel.DEBUG);
+			selectedLoggingLevel = LogLevel.DEBUG;
 			close();
 		});
 		
@@ -247,5 +247,17 @@ public class MainSelector extends JDialog {
 		btn.append("</html>");
 		
 		return ThemeButton.createRegularThemeButton(btn.toString());
+	}
+	
+	
+	//-------------------------------------------------------------------------
+	//		Getters
+	//-------------------------------------------------------------------------
+	public TestPathExportType getSelectedTestPathExportType() {
+		return selectedTestPathExportType;
+	}
+	
+	public LogLevel getSelectedLoggingLevel() {
+		return selectedLoggingLevel;
 	}
 }

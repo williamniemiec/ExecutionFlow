@@ -79,7 +79,8 @@ public class CodeCleanerAdapter extends CodeCleaner {
 					multiline = originalLines.size();	
 					currentMultiline = 0;
 				}
-				if (originalLines.get(currentMultiline)+1 != newLine) {
+				if ((currentMultiline < originalLines.size()) 
+						&& (originalLines.get(currentMultiline)+1 != newLine)) {
 					mapping.put(originalLines.get(currentMultiline)+1, newLine);
 				}
 				

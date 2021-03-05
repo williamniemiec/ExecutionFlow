@@ -65,7 +65,7 @@ public aspect TestMethodHook extends RuntimeHook {
 		isRepeatedTest = true;
 	}
 	
-	before(): insideTestMethod() {	
+	before(): insideTestMethod() {
 		reset();
 		checkRepeatedTest(thisJoinPoint);
 		parseTestMethod(thisJoinPoint);

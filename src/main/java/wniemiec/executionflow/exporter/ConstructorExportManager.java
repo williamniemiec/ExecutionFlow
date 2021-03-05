@@ -39,7 +39,7 @@ public class ConstructorExportManager extends ExportManager {
 	//		Methods
 	//-------------------------------------------------------------------------
 	@Override
-	public void exportAll() {
+	public void parseAndExportAll() {
 		TestedInvokedProcessingManager collectionProcessor = 
 				new TestedInvokedProcessingManager();
 		TestedInvokedParser parser = collectionProcessor.processAndParse(
