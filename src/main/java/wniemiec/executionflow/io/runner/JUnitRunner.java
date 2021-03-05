@@ -9,7 +9,6 @@ import wniemiec.executionflow.collector.CallCollector;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.lib.LibraryManager;
 import wniemiec.util.data.storage.Session;
-import wniemiec.util.logger.LogLevel;
 import wniemiec.util.logger.Logger;
 import wniemiec.util.task.Checkpoint;
 

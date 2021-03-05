@@ -60,22 +60,6 @@ public class User {
 		session.save("TESTPATH_EXPORT_TYPE", selector.getSelectedTestPathExportType());
 	}
 	
-//	public static LogLevel loadLogLevel() throws IOException {
-//		LogLevel level;
-//		
-//		try {
-//			level = (LogLevel) session.read("LOG_LEVEL");
-//		} 
-//		catch (IOException e) {
-//			Logger.error("Corrupted session");
-//			
-//			level = LogView.askLogLevel();
-//			session.save("LOG_LEVEL", level);
-//		}
-//		
-//		return level;
-//	}
-	
 	public static LogLevel getSelectedLogLevel() {
 		LogLevel logLevel = null;
 		
@@ -103,14 +87,18 @@ public class User {
 	}
 
 	public static TestPathExportType getSelectedTestPathExportType() {
-		if (!session.hasKey("TESTPATH_EXPORT_TYPE"))
-			return null;
-		
 		try {
-			return (TestPathExportType) session.read("TESTPATH_EXPORT_TYPE");
+			Object exportType = session.read("TESTPATH_EXPORT_TYPE");
+			
+			return (exportType == null) 
+						? TestPathExportType.FILE 
+						: (TestPathExportType) exportType;
 		} 
 		catch (IOException e) {
-			return null;
+			Logger.error("Corrupted session");
+			Logger.info("Default test path export type selected: FILE");
+			
+			return TestPathExportType.FILE;
 		}
 	}
 

@@ -18,7 +18,6 @@ import wniemiec.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.executionflow.exporter.testpath.TestPathExporter;
 import wniemiec.executionflow.invoked.Invoked;
 import wniemiec.executionflow.invoked.TestedInvoked;
-import wniemiec.executionflow.user.User;
 import wniemiec.util.logger.Logger;
 
 /**
@@ -61,7 +60,7 @@ public abstract class ExportManager {
 		ExportManager.isConstructor = isConstructor;
 		outputDir = isDevelopment ? "examples\\results" : "results";
 
-		if (getTestPathExportType() == null)
+		if (testPathExportType == null)
 			testPathExportType = TestPathExportType.FILE;
 		
 		initializeTestPathExporter();
@@ -86,10 +85,6 @@ public abstract class ExportManager {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private Object getTestPathExportType() {
-		return User.getSelectedTestPathExportType();
-	}
-	
 	private void initializeProcessedSourceFileExporter() {
 		this.processedSourceFileExporter = new ProcessedSourceFileExporter(
 				outputDir, 
