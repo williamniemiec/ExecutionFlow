@@ -28,8 +28,7 @@ public class AppIcon {
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	static {
-		ICON_LOCATION = getBasePath().resolve(Path.of("resources", "images", 
-													  "icon", "ef-icon.png"));
+		ICON_LOCATION = getBasePath().resolve(getIconRelativeLocation());
 		ICON = loadIcon();
 	}
 	
@@ -44,10 +43,18 @@ public class AppIcon {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
+	private static Path getIconRelativeLocation() {
+		return Path.of("resources", "images", "icon", "ef-icon.png");
+	}
+	
 	private static Path getBasePath() {
 		return App.isDevelopment() 
-				? Path.of(".", "src", "main") 
-				: Path.of(".");
+				? normalize(App.getAppRootPath().resolve(Path.of("src", "main")))
+				: normalize(App.getAppRootPath());
+	}
+	
+	private static Path normalize(Path p) {
+		return p.normalize().toAbsolutePath();
 	}
 	
 	private static Image loadIcon() {

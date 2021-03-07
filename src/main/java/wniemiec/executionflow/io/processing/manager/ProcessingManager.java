@@ -78,6 +78,7 @@ public class ProcessingManager {
 		    public void run() {
 		    	try {
 		    		restoreOriginalFiles();
+		    		deleteBackupFilesOfPreprocessingOfTestMethod();
 			    	deleteBackupFilesOfProcessingOfInvoked();
 			    	deleteBackupFilesOfProcessingOfTestMethod();
 		    	}

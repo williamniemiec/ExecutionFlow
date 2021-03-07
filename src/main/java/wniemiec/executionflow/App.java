@@ -288,7 +288,7 @@ public class App {
 		}
 		
 		if (!currentTestMethodCheckpoint.isEnabled()) {
-			try {System.out.println("RESTORING");
+			try {
 				processingManager.undoPreprocessing();
 				processingManager.deleteBackupFilesOfPreprocessingOfTestMethod();
 			} 
