@@ -38,6 +38,7 @@
 			<outputDirectory>/</outputDirectory>
 			<excludes>
 				<exclude>examples/**</exclude>
+				<exclude>results/**</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
