@@ -221,9 +221,6 @@
 					</executions>
 					<configuration>
 						<appendAssemblyId>false</appendAssemblyId>
-						<descriptorRefs>
-							<descriptorRef>jar-with-dependencies</descriptorRef>
-						</descriptorRefs>
 						<descriptors>
 							<descriptor>${basedir}/src/assembly/distribution.xml</descriptor>
 						</descriptors>
