@@ -282,20 +282,15 @@ public class App {
 		if (remainingTests == 0) {
 			remainingTests = -1;
 			
-			successfullRestoration = processingManager.restoreOriginalFilesFromInvoked();
-			processingManager.deleteBackupFilesOfProcessingOfInvoked();
+			successfullRestoration = undoInvokedProcessng();
+			
 			User.closeRemoteControl();
 		}
 		
 		if (!currentTestMethodCheckpoint.isEnabled()) {
-			try {
-				processingManager.undoPreprocessing();
-				processingManager.deleteBackupFilesOfPreprocessingOfTestMethod();
-			} 
-			catch (IOException e) {
-				successfullRestoration = false;
-			}
+			successfullRestoration = undoPreprocessing();
 		}
+		
 		disableCheckpoint(currentTestMethodCheckpoint);
 		
 		if (!successfullRestoration) {
@@ -309,6 +304,29 @@ public class App {
 			remainingTests = PreTestMethodFileProcessor.getTotalTests() - 1;
 		else
 			remainingTests--;
+	}
+
+	private static boolean undoInvokedProcessng() {
+		boolean successfullRestoration = 
+				processingManager.restoreOriginalFilesFromInvoked();
+			
+		processingManager.deleteBackupFilesOfProcessingOfInvoked();
+		
+		return successfullRestoration;
+	}
+
+	private static boolean undoPreprocessing() {
+		boolean successfullRestoration = true;
+		
+		try {
+			processingManager.undoPreprocessing();
+			processingManager.deleteBackupFilesOfPreprocessingOfTestMethod();
+		} 
+		catch (IOException e) {
+			successfullRestoration = false;
+		}
+		
+		return successfullRestoration;
 	}
 	
 	
