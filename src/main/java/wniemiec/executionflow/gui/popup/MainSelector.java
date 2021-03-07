@@ -40,7 +40,7 @@ public class MainSelector extends JDialog {
 	private static final int HEIGHT = 180;
 	private static final int X0 = 250;
 	private static final int Y0 = 280;
-	private Color bgColor = new Color(80,80,80);
+	private Color bgColor = new Color(20,20,20);
 	private TestPathExportType selectedTestPathExportType;
 	private LogLevel selectedLoggingLevel;
 
@@ -51,7 +51,8 @@ public class MainSelector extends JDialog {
 	public void close() {
 		dispose();
 	}
-	
+
+
 	public void open() {
 		setTitle("Execution Flow");
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

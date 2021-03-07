@@ -91,7 +91,7 @@ public class ThemeButton extends JButton {
 	private void paintOnHoover(final Graphics2D g2) {
 		g2.setPaint(new GradientPaint(
 		        new Point(0, 0), 
-		        new Color(255,0,88),			// e50081
+		        new Color(245,0,86),			// #f50056
 		        new Point(0, getHeight()), 
 		        new Color(160,0,90))			// #a0005a
 		);
@@ -100,7 +100,7 @@ public class ThemeButton extends JButton {
 	private void paintDefault(final Graphics2D g2) {
 		g2.setPaint(new GradientPaint(
 		        new Point(0, 0), 
-		        new Color(255,0,88),			// e50081
+		        new Color(245,0,86),			// #f50056
 		        new Point(0, getHeight()), 
 		        new Color(78,0,142))			// 4e008e
 		);

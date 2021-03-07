@@ -28,47 +28,13 @@ public class InvokedProcessingManager {
 	 * application execution; otherwise, the original files that have been 
 	 * modified in the last run may be lost.
 	 * 
-	 * @param		restoreOriginalFiles If true and if there are backup files,
-	 * restore them
-	 * @throws		ClassNotFoundException If FileManager class has not been
-	 * found
-	 * @throws		IOException If backup files could not be restored
-	 */
-	public InvokedProcessingManager(FilesProcessingManager invokedFilesManager, 
-									boolean restoreOriginalFiles) 
-			throws ClassNotFoundException, IOException {
-		try {
-			this.invokedFilesManager = invokedFilesManager;
-			
-			if (!restoreOriginalFiles)
-				invokedFilesManager.loadBackup();
-		}
-		catch (ClassNotFoundException e) {
-			throw new ClassNotFoundException("Class FileManager not found");
-		} 
-		catch (IOException e) {
-			throw new IOException(
-					"Could not recover all backup files\n"
-					+ "See more: https://github.com/williamniemiec/"
-					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
-					+ "#could-not-recover-all-backup-files"
-			);
-		}
-	}
-
-	/**
-	 * Initializes invoked managers. If some error occurs, should stop the
-	 * application execution; otherwise, the original files that have been 
-	 * modified in the last run may be lost. Using this constructor, if
-	 * there are backup files, they will be restored.
-	 * 
 	 * @throws		ClassNotFoundException If FileManager class has not been
 	 * found
 	 * @throws		IOException If backup files could not be restored
 	 */
 	public InvokedProcessingManager(FilesProcessingManager invokedFilesManager) 
 			throws ClassNotFoundException, IOException {
-		this(invokedFilesManager, true);
+			this.invokedFilesManager = invokedFilesManager;
 	}
 	
 	

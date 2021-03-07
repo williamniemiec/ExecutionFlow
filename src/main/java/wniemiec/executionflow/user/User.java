@@ -155,7 +155,11 @@ public class User {
 		}
 	}
 
-	public static void unlink() {
+	public static void unlinkSession() {
 		session.destroy();
+	}
+	
+	public static boolean hasLinkedSession() {
+		return session.exists();
 	}
 }

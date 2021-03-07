@@ -78,8 +78,8 @@ public class ProcessingManager {
 		    public void run() {
 		    	try {
 		    		restoreOriginalFiles();
-			    	deleteInvokedBackupFiles();
-			    	deleteTestMethodBackupFiles();
+			    	deleteBackupFilesOfProcessingOfInvoked();
+			    	deleteBackupFilesOfProcessingOfTestMethod();
 		    	}
 		    	catch (Throwable t) {
 		    	}
@@ -126,21 +126,25 @@ public class ProcessingManager {
 		return success;
 	}
 	
-	public void deleteTestMethodBackupFiles() {
-		if ((testMethodProcessingManager != null) && 
-				testMethodProcessingManager.isInvokedFilesManagerInitialized())
-			testMethodProcessingManager.deleteBackupFiles();
+	public void deleteBackupFilesOfProcessingOfTestMethod() {
+		if (testMethodProcessingManager == null)
+			return;
 		
-		if (preTestMethodProcessingManager != null) {
-			preTestMethodProcessingManager.deleteBackupFiles();
-			preTestMethodProcessingManager = null;
-		}
+		if (testMethodProcessingManager.isInvokedFilesManagerInitialized())
+			testMethodProcessingManager.deleteBackupFiles();
 		
 		testMethodProcessingManager.destroyInvokedFilesManager();
 	}
 	
+	public void deleteBackupFilesOfPreprocessingOfTestMethod() {
+		if (preTestMethodProcessingManager == null)
+			return;
+		
+		preTestMethodProcessingManager.deleteBackupFiles();
+		preTestMethodProcessingManager = null;
+	}
 	
-	public void deleteInvokedBackupFiles() {
+	public void deleteBackupFilesOfProcessingOfInvoked() {
 		if (invokedProcessingManager == null)
 			return;
 		
@@ -172,26 +176,23 @@ public class ProcessingManager {
 	private void initializeProcessingManagers(boolean restoreOriginalFiles) 
 			throws ClassNotFoundException, IOException {
 		preTestMethodProcessingManager = new InvokedProcessingManager(
-				initializePreTestMethodManager(),
-				restoreOriginalFiles
+				initializePreTestMethodManager(restoreOriginalFiles)
 		);
 		
 		testMethodProcessingManager = new InvokedProcessingManager(
-				initializeTestMethodManager(restoreOriginalFiles),
-				restoreOriginalFiles
+				initializeTestMethodManager(restoreOriginalFiles)
 		);
 		
 		invokedProcessingManager = new InvokedProcessingManager(
-				initializeInvokedManager(restoreOriginalFiles),
-				restoreOriginalFiles
+				initializeInvokedManager(restoreOriginalFiles)
 		);
 	}
 	
-	private FilesProcessingManager initializePreTestMethodManager() 
+	private FilesProcessingManager initializePreTestMethodManager(boolean restoreOriginalFiles) 
 			throws ClassNotFoundException, IOException {
 		return new FilesProcessingManager(
 				ProcessorType.PRE_TEST_METHOD,
-				true
+				restoreOriginalFiles
 		);
 	}
 	
@@ -216,13 +217,11 @@ public class ProcessingManager {
 		return invokedManager;
 	}
 	
-	public void restoreAllTestMethodFiles() throws IOException {
+	public void undoPreprocessing() throws IOException {
 		if (preTestMethodProcessingManager == null)
 			return;
 
 		preTestMethodProcessingManager.restoreInvokedOriginalFiles();
-		
-		deleteTestMethodBackupFiles();
 	}
 	
 	/**
@@ -253,7 +252,7 @@ public class ProcessingManager {
 			
 			if (preTestMethodProcessingManager != null) {
 				preTestMethodProcessingManager.restoreInvokedOriginalFiles();
-				deleteTestMethodBackupFiles();
+				deleteBackupFilesOfProcessingOfTestMethod();
 			}
 			
 			throw e;
@@ -391,26 +390,26 @@ public class ProcessingManager {
 				.equals(currentTestedInvoked.getSrcPath());
 	}
 	
-	public void resetLastProcessing() {
+	public void undoLastProcessing() {
 		if (currentTestMethodFileManager != null)
-			restoreTestMethodToBeforeProcessing(currentTestMethodFileManager);
+			undoTestMethodProcessing(currentTestMethodFileManager);
 		
 		if (currentInvokedFileManager != null)
-			restoreInvokedToBeforeProcessing(currentInvokedFileManager);
+			undoInvokedProcessing(currentInvokedFileManager);
 		
 		collectorProcessingManager.reset();
 		currentInvokedFileManager = null;
 		currentTestMethodFileManager = null;
 	}
 	
-	private void restoreTestMethodToBeforeProcessing(FileProcessingManager testMethodFileManager) {
+	private void undoTestMethodProcessing(FileProcessingManager testMethodFileManager) {
 		if (testMethodProcessingManager == null)
 			return;
 		
 		testMethodProcessingManager.restoreInvokedOriginalFile(testMethodFileManager);
 	}
 	
-	private void restoreInvokedToBeforeProcessing(FileProcessingManager invokedFileManager) {
+	private void undoInvokedProcessing(FileProcessingManager invokedFileManager) {
 		if (invokedProcessingManager == null)
 			return;
 		

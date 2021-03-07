@@ -60,7 +60,7 @@ public class TestedInvokedProcessingManager {
 			catch (IOException e3) {
 				Logger.error(e3.toString());
 				
-				processingManager.resetLastProcessing();
+				processingManager.undoLastProcessing();
 			}
 		}
 		
@@ -75,7 +75,7 @@ public class TestedInvokedProcessingManager {
 		parser.parse(collector, getDebuggerAnalyzerFor(collector));
 		
 		if (isTestedInvokedInTheSameFileAsTestMethod(collector)) {
-			processingManager.resetLastProcessing();
+			processingManager.undoLastProcessing();
 			InvokedCollector.restoreCollectorInvocationLine();
 		}
 	}

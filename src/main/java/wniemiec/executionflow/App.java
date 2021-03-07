@@ -53,6 +53,8 @@ public class App {
 		
 		methodExporter = ExportManager.getMethodExportManager(isDevelopment());
 		constructorExporter = ExportManager.getConstructorExportManager(isDevelopment());
+		
+		onShutdown();
 	}
 	
 	static {
@@ -81,7 +83,7 @@ public class App {
 	public static void inEachTestMethod(Invoked testMethod, boolean isRepeatedTest) {
 		if (errorProcessingTestMethod)
 			return;
-		
+
 		checkDevelopmentMode();
 		checkInTestMethodWithAspectDisabled();
 		
@@ -130,8 +132,6 @@ public class App {
 				firstRunCheckpoint.enable();
 				success = false;
 				
-				onShutdown();
-				
 				User.openMainSelector();
 			}
 			
@@ -158,7 +158,7 @@ public class App {
 					disableCheckpoint(firstRunCheckpoint);
 					
 					JUnitRunner.stopRunner();
-					User.unlink();
+					User.unlinkSession();
 		    	}
 		    	catch (Throwable t) {
 		    		// As the application will have finished, it is not 
@@ -214,7 +214,7 @@ public class App {
 		if (!hasTempFilesFromLastRun())
 			return;
 		
-		processingManager.deleteTestMethodBackupFiles();
+		processingManager.deleteBackupFilesOfProcessingOfTestMethod();
 		currentTestMethodCheckpoint.delete();
 	}
 	
@@ -280,22 +280,22 @@ public class App {
 		successfullRestoration = processingManager.restoreOriginalFilesFromTestMethod();
 		
 		if (remainingTests == 0) {
+			remainingTests = -1;
+			
 			successfullRestoration = processingManager.restoreOriginalFilesFromInvoked();
-			processingManager.deleteInvokedBackupFiles();
+			processingManager.deleteBackupFilesOfProcessingOfInvoked();
 			User.closeRemoteControl();
 		}
 		
-		if (remainingTests == 0) {
-			remainingTests = -1;
+		if (!currentTestMethodCheckpoint.isEnabled()) {
+			try {System.out.println("RESTORING");
+				processingManager.undoPreprocessing();
+				processingManager.deleteBackupFilesOfPreprocessingOfTestMethod();
+			} 
+			catch (IOException e) {
+				successfullRestoration = false;
+			}
 		}
-		
-		try {
-			processingManager.restoreAllTestMethodFiles();
-		} 
-		catch (IOException e) {
-			successfullRestoration = false;
-		}
-
 		disableCheckpoint(currentTestMethodCheckpoint);
 		
 		if (!successfullRestoration) {
@@ -305,12 +305,10 @@ public class App {
 	}
 	
 	private static void updateRemainingTests() {
-		if (remainingTests < 0) {
+		if (remainingTests < 0)
 			remainingTests = PreTestMethodFileProcessor.getTotalTests() - 1;
-		}
-		else {
+		else
 			remainingTests--;
-		}
 	}
 	
 	

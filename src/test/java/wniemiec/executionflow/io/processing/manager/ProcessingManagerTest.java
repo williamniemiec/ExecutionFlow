@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -52,6 +53,13 @@ class ProcessingManagerTest {
 				.build();
 		
 		Logger.setLevel(LogLevel.WARNING);
+	}
+	
+	@AfterEach
+	void clean() {
+		processingManager.deleteBackupFilesOfPreprocessingOfTestMethod();
+		processingManager.deleteBackupFilesOfProcessingOfTestMethod();
+		processingManager.deleteBackupFilesOfProcessingOfInvoked();
 	}
 	
 	
@@ -111,7 +119,7 @@ class ProcessingManagerTest {
 				new TestedInvoked(testedMethod, testMethod)
 		);
 		
-		processingManager.resetLastProcessing();
+		processingManager.undoLastProcessing();
 
 		Assertions.assertArrayEquals(
 				testMethodSrcFileContent, 

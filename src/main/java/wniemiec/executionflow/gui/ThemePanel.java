@@ -42,7 +42,7 @@ public class ThemePanel extends JPanel {
         		RenderingHints.VALUE_RENDER_QUALITY
 		);
 
-        Color color1 = new Color(255,0,88);
+        Color color1 = new Color(245,0,86);
         Color color2 = new Color(78,0,142);
         
         GradientPaint gp = new GradientPaint(
