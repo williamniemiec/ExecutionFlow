@@ -1,4 +1,3 @@
-examples.junit5.RepeatedTestAnnotation.test1()
-[35, 36, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 41]
+examples.others.SimpleTestPath_Example.simpleTestPath()
 [35, 36, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 38, 39, 37, 41]
 

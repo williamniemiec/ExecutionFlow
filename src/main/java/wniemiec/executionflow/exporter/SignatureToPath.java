@@ -1,7 +1,5 @@
 package wniemiec.executionflow.exporter;
 
-import java.io.File;
-
 import wniemiec.util.io.path.replacer.ReservedCharactersReplacerFactory;
 
 /**
@@ -49,7 +47,7 @@ public class SignatureToPath {
 		String folderName = getFolderName(signatureFields, isConstructor) 
 				+ reduceSignature(extractParametersFromSignature(invokedSignature));
 		
-		return folderPath + File.pathSeparator + replaceAllReservedCharacters(folderName);
+		return folderPath + "/" + replaceAllReservedCharacters(folderName);
 	}
 	
 	private static String[] extractSignatureFields(String signature) {
@@ -97,7 +95,7 @@ public class SignatureToPath {
 		
 		for (int i=0; i<size; i++) {
 			folderPath.append(signatureFields[i]);
-			folderPath.append(File.pathSeparator);
+			folderPath.append("/");
 		}
 		
 		// Removes last slash

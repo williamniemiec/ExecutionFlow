@@ -1,3 +1,0 @@
-examples.others.MultiargsTest.methodCallMultiLineArgsTest()
-[102, 103]
-
