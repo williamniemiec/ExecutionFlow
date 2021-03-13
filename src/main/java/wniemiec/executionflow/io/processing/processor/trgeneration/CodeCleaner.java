@@ -800,7 +800,7 @@ class CodeCleaner {
 				}
 
 				processedCode.set(i, "for (java.util.Iterator<" + typeIterator + "> " + itName + 
-						" = (java.util.Iterator<" + typeIterator + ">) executionflow.io.processor.invoked.trgeneration.IteratorExtractor.extractIterator(" + setName + "); " + 
+						" = (java.util.Iterator<" + typeIterator + ">) executionflow.io.processing.processor.trgeneration.IteratorExtractor.extractIterator(" + setName + "); " + 
 						itName + ".hasNext(); ) {");
 				
 				if (isMapEntry || isGenericType) {
