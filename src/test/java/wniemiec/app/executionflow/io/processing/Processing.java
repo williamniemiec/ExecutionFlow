@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import wniemiec.app.executionflow.App;
+import wniemiec.util.console.ConsoleFilePrinter;
 import wniemiec.util.io.manager.TextFileManager;
 
 public abstract class Processing {
@@ -42,7 +43,7 @@ public abstract class Processing {
 	protected void testProcessorOnFile(String filename) throws IOException {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> procTxt = processSourceCodeFrom(filename);
-
+		
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}
@@ -63,6 +64,10 @@ public abstract class Processing {
 				.replaceAll("Throwable _[0-9A-z]+", "_")
 				.replaceAll("int _[0-9A-z]+[\\s\\t]*=", "int _=")
 				.replaceAll("_[0-9A-z]+\\+\\+", "_++")
+				.replaceAll("java\\.util\\.Iterator<.+> _[0-9A-z]+", "java.util.Iterator<?> _")
+				.replaceAll("\\(_[A-z0-9]+", "(_")
+				.replaceAll("_[A-z0-9]+ =", "_=")
+				.replaceAll("_[A-z0-9]+\\.", "_.")
 				.replaceAll("[\\s\\t]+"," ");
 	}
 

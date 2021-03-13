@@ -615,7 +615,7 @@ class CodeCleaner {
 		
 		for (int i=0; i<processedCode.size(); i++) {
 			// Updates the scope visibility of variables already initialized		
-			if (processedCode.get(i).matches("^for.+$")) {
+			if (processedCode.get(i).matches("^for([\\s\\t]+|\\().+$")) {
 				String REGEX_MULTI_INITILIZATION = "^.+(=.+,.+).+;$";
 				int depth = loopsClosingLines.size();
 				int closingLine = Helper.findEndOfBlock(processedCode, i+3);
@@ -701,12 +701,13 @@ class CodeCleaner {
 					List<Integer> targetLinesIds = mapping.get(i+1+depth);
 					targetLinesIds.add(lineId);
 					mapping.put(i+1+depth, targetLinesIds);
-
+					
 					processedCode.set(lineId, "%forcenode%" + iteratorStep + "; continue;");
 				}
-				
-				// Move the iterator to just before the close				
-				processedCode.add(closingLine+1, "%forcenode%" + iteratorStep + ";");
+	
+				// Move the iterator to just before the close
+				if (iteratorStep.contains("++"))
+					processedCode.add(closingLine+1, "%forcenode%" + iteratorStep + ";");
 				processedCode.remove(i+2); //remove old line
 				
 				// Replace for initialization with while
@@ -762,7 +763,7 @@ class CodeCleaner {
 		
 		
 		for (int i=0; i<processedCode.size(); i++) {			
-			if (processedCode.get(i).matches("^for.+$")
+			if (processedCode.get(i).matches("^for([\\s\\t]+|\\().+$")
 					&& Helper.lineContainsReservedChar(processedCode.get(i), ":")) {
 				if (processedCode.get(i).contains("final ")) {
 					processedCode.set(i, processedCode.get(i).replace("final ", ""));

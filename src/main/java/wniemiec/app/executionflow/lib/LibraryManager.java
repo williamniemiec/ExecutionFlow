@@ -37,11 +37,11 @@ public class LibraryManager {
 	//		Initialization block
 	//-------------------------------------------------------------------------
 	static {
-		libraries.put("HAMCREST", getLibPath().resolve("hamcrest-all-1.3.jar"));
-		libraries.put("JUNIT_4", getLibPath().resolve("junit-4.13.jar"));
-		libraries.put("ASPECTJRT", getLibPath().resolve("aspectjrt.jar"));
-		libraries.put("JUNIT_5_API", getLibPath().resolve("junit-jupiter-api-5.6.2.jar"));
-		libraries.put("JUNIT_5_PARAMS", getLibPath().resolve("junit-jupiter-params-5.6.2.jar"));
+		libraries.put("HAMCREST", getLibPath().resolve("hamcrest-all-1.3.jar").toAbsolutePath());
+		libraries.put("JUNIT_4", getLibPath().resolve("junit-4.13.jar").toAbsolutePath());
+		libraries.put("ASPECTJRT", getLibPath().resolve("aspectjrt.jar").toAbsolutePath());
+		libraries.put("JUNIT_5_API", getLibPath().resolve("junit-jupiter-api-5.6.2.jar").toAbsolutePath());
+		libraries.put("JUNIT_5_PARAMS", getLibPath().resolve("junit-jupiter-params-5.6.2.jar").toAbsolutePath());
 	}
 	
 	

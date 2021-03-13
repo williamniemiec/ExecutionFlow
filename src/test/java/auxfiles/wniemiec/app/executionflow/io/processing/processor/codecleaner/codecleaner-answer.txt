@@ -188,4 +188,21 @@ x++;
 }
 x = 3;
 }
+public static void cleanDirectory(final File directory) throws IOException {
+final File[] files = verifiedListFiles(directory);
+IOException exception = null;
+java.util.Iterator<File> _0 = (java.util.Iterator<File>) wniemiec.app.executionflow.io.processing.processor.trgeneration.IteratorExtractor.extractIterator(files);
+while (_0.hasNext()) {
+File file = _0.next();
+try {
+forceDelete(file);
+}
+catch (final IOException ioe) {
+exception = ioe;
+}
+}
+if (null != exception) {
+throw exception;
+}
+}
 }
