@@ -28,9 +28,18 @@
 				<include>wniemiec.util.io.path.replacer:*</include>
 				<include>wniemiec.util.io.path:*</include>
 				<include>wniemiec.util.data:*</include>
-				<include>org.junit.jupiter:*</include>
 			</includes>
 		</dependencySet>
+		<dependencySet>
+			<outputDirectory>/</outputDirectory>
+            <scope>test</scope>
+            <unpack>true</unpack>
+            <includes>
+				<include>org.junit.jupiter:junit-jupiter-params</include>
+				<include>org.junit.jupiter:junit-jupiter</include>
+				<include>junit:junit</include>
+			</includes>
+        </dependencySet>
 	</dependencySets>
 	
 	<fileSets>
@@ -43,6 +52,7 @@
 			</excludes>
 		</fileSet>
 		<fileSet>
+		
 			<directory>${basedir}/lib</directory>
 			<outputDirectory>/lib/</outputDirectory>
 		</fileSet>
