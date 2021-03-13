@@ -428,6 +428,8 @@ public class App {
 			
 			if (isDevelopment(appRoot))
 				appRoot = appRoot.getParent().getParent();
+			
+			appRoot = appRoot.normalize().toAbsolutePath();
 		} 
 		catch (URISyntaxException e) {
 			Logger.error("Error initializing application root path");
