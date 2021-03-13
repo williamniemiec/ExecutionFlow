@@ -1,0 +1,8 @@
+public class JUnit5Tests {
+	
+	@org.junit.Test
+	@ValueSource(strings = {" ", "   ", "\t", "\n"})
+	public void nullEmptyAndBlankStrings() {
+	    String text="\t"; someMethod();
+	}
+}

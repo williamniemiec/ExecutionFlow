@@ -1,0 +1,10 @@
+public class MultiargsTest {
+
+	@Test
+	public void foo() {
+		
+		Boolean.parseBoolean("True");
+		someMethod();
+		Boolean.parseBoolean("True");
+	}
+}

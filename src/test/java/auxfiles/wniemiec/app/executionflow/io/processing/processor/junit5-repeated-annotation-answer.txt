@@ -1,0 +1,20 @@
+public class JUnit5Tests {
+	
+	@org.junit.Test
+	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
+	public void test1()	{int _0=0;while(_0++ < 2){
+		// Code
+	}}
+	
+	@org.junit.Test
+	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
+	public void test2()	{int _0=0;while(_0++ < 2){
+		// Code
+	}}
+	
+	@org.junit.Test
+	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
+	public void test3()	{int _0=0;while(_0++ < 2){
+		// Code
+	}}
+}

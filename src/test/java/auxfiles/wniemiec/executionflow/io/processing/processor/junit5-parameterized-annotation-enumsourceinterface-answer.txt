@@ -1,8 +1,0 @@
-public class JUnit5Tests {
-	
-	@org.junit.Test
-	@EnumSource(names = {"DAYS", "HOURS"}, value = ChronoUnit.class)
-	public void testWithEnumSourceIncludeUsingInterface() {
-		TemporalUnit unit=ChronoUnit.DAYS; someMethod();
-	}
-}

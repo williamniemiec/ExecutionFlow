@@ -1,8 +1,0 @@
-public class JUnit5Tests {
-
-	@org.junit.Test
-	@CsvSource({"I, -1", "II, 0", "III, 1"})
-	public void test1() {
-		String word="I";int num=-1; someMethod();
-	}
-}

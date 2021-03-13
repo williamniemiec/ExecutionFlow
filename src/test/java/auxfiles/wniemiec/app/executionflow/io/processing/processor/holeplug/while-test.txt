@@ -1,0 +1,40 @@
+public class SomeClass {
+
+	public int doWhileMethod(int a, int b) {
+		if (a == 0)
+			return b;
+		if (b == 0)
+			return a;
+		
+		do {
+			a++;
+			b--;
+		} while (b != 0);
+		
+		return a;	// a = a + b;
+	}
+	
+	public int inlineWhile(int a) {
+		while (a > 0) a--;
+		
+		return a;
+	}
+	
+	public int inlineDoWhile(int n) {
+		if (n <= 0)
+			n = 1;
+		
+		do { n--; } while (n > 0);
+		
+		return n;
+	}
+	
+	public static void test3(int x, int y, String k) {
+		x = 0;
+		while (x < 3) {
+			x++;
+		}
+		
+		x = 3;
+	}
+}
