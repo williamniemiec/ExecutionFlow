@@ -407,7 +407,7 @@ public class FileProcessingManager implements Serializable {
 
 	private Path generateAspectsRootDirectory() {
 		return App.getAppTargetPath().resolve(
-				Path.of("classes", "wniemiec", "executionflow", "runtime")
+				Path.of("classes", "wniemiec", "app", "executionflow", "runtime")
 		);
 	}
 

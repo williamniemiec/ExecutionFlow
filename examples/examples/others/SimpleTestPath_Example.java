@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import examples.others.auxClasses.AuxClass;
+import wniemiec.util.logger.LogLevel;
+import wniemiec.util.logger.Logger;
 
 
 public class SimpleTestPath_Example 
