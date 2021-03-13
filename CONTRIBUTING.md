@@ -51,23 +51,19 @@
 
 Após realizada as modificações no projeto, crie um pull request com o projeto que você modificou. Procure adicionar uma descrição detalhada do que você alterou com relação ao projeto original. Evite ao máximo alterar a estrutura do projeto, a fim de evitar quebra de código.
 <b>ATENÇÃO:</b> Antes de realizar o pull request, certifique-se de:
-* Deixar as variáveis `DEBUG` como `false`;
-* Deixar a variável `ExecutionFlow.ENVIRONMENT` como `true`;
-* Gerar jar da versão `ConsoleExporter` e da versão `FileExporter`;
+* Gerar o JAR na localização correta
+* Atualizar `pom.xml` com a nova versão
 * Documentar as alterações de acordo com o [padrão de documentação citado acima](#doc-standard).
-* [Atualizar diagrama UML](#uml), se necessário.
 
 
 ## <a name="development-setup"></a> Configurando ambiente de desenvolvimento
 
 Para que seja possível executar algum arquivo do projeto é necessário importar algumas dependências para sua IDE. Até o momento, devido as dependências do projeto, só é possível executá-lo usando a IDE [Eclipse v2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) ou inferior. Mais especificamente, a dependência AJDT só funciona corretamente até essa versão, o que impossibilita o uso de versões mais recentes.
 
-* [Eclipse v2019-06](https://www.eclipse.org/downloads/packages/release/2019-06): Como já citado anteriormente, até o momento não é possível usar uma versão mais nova da IDE devido a incompatibilidade com a dependência AJDT.
+* [Eclipse v2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) ou superior
 * [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update): Plugin da IDE Eclipse usado para habilitar [programação orientada a aspectos](https://en.wikipedia.org/wiki/Aspect-oriented_programming).
 * [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior.
 * JUnit 4 ou 5
-* [AspectJ Tools](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar): É utilizado para a compilação dos arquivos processados durante a execução da aplicação. Essa compilação é referente a execução da aplicação em outros projetos, e não a compilação do projeto da aplicação em si.
-
 
 ### <a name="development-setup-run"></a> Rodando o projeto no Eclipse
 Com o Eclipse, Java e AJDT instalados, para executar o projeto na IDE é necessário incluir as dependências do projeto no build path do projeto. Para isso:
@@ -119,7 +115,7 @@ Onde [Nome_seção] pode ser:
 * Setters
 * Initialization block
 * Tests
-* Test preparers
+* Test hooks
 * Serialization and deserialization methods
 * Enumerations
 * Inner classes
@@ -132,46 +128,25 @@ Os métodos devem ser documentados usando javadoc. É altamente recomendado adic
 
 ## <a name="jar-generation"></a>Geração jar
 Para gerar arquivo jar:
-1) Certifique-se que todas as variáveis `DEBUG` são `false`. Lembre-se que as as classes em que ela se encontra são:
 
-* Analyzer
-* ExecutionFlow
-* FileCompiler
-* InvokedFileProcessor
-* PreTestMethodFileProcessor
-* TestMethodFileProcessor
+1) No `pom.xml` atualize:
 
-2) Certifique-se que a variável `ENVIRONMENT` na classe `ExecutionFlow` seja `false`
+* project.version
+* project.properties.version.major (se necessário)
 
-3) Exporte o projeto
+2) Gere o JAR
 
-![jar-export-1](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig1.png?raw=true)
+* Console
+> `mvn package`
 
-4) Na janela de exportação, selecione `Java` -> `JAR file with AspectJ support`.
+* Eclipse
+> Clique com o botão esquerdo no `pom.xml` -> Run As -> Maven build...
+> Em `Goals:` digite: `package`
+> Clique em `Run`
 
-![jar-export-2](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig2.png?raw=true)
-
-5) Salve o jar no diretório `dist/X.Y/<NOME_ARQUIVO>`, onde X e Y são os números da versão atual e o \<NOME_ARQUIVO\> é definido da seguinte maneira:
-`ExecutionFlow_<TYPE>Exporter_vX.Y.Z.jar`
-onde:
-* X, Y, Z: Números da versão da aplicação
-* \<TYPE\>: Tipo de exportação dos test paths, podendo ser `Console` ou `File`
-
-![jar-export-3](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/export/fig3.png?raw=true)
-
-### <a name="jar-generation-console"></a> Geração da versão ConsoleExporter
-1) Na classe `ExecutionFlow` comente a linha `EXPORT = Export.FILE;` e retire o comentário da linha `EXPORT = Export.CONSOLE;`
-2) Siga os [passos da geração do jar acima](#jar-generation).
-
-
-### <a name="jar-generation-file"></a> Geração da versão FileExporter
-1) Na classe `ExecutionFlow` comente a linha `EXPORT = Export.CONSOLE;` e retire o comentário da linha `EXPORT = Export.FILE;`
-2) Siga os [passos da geração do jar acima](#jar-generation).
-
-
-## <a name="uml"></a> Alteração no diagrama UML
-Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário baixar o programa [Dia Diagram Editor](http://dia-installer.de/index.html). Ao editar o diagrama, salve o arquivo .dia no diretório e também exporte o diagrama como png, salvando também no mesmo diretório. O nome dos arquivos deve ser `uml`. Não se esqueça de salvar o arquivo do projeto uml alterado (`.dia`) junto com exportações do uml no formato `.png` e `.svg`.
-
+3) Certifique-se de que o arquivo JAR foi gerado no diretório `dist/V.X/<NOME_ARQUIVO>`, onde V = `project.properties.version.major` e o \<NOME_ARQUIVO\> é definido da seguinte maneira:
+`executionflow-X.Y.Z.jar`
+onde X, Y, Z são os números da versão da aplicação correspondente a `project.version`
 
 ## <a name="project-structure"></a> Estrutura do projeto
 |        Nome        |Tipo|Descrição|
@@ -184,14 +159,12 @@ Para alterar o diagrama UML, presente no diretório `docs/uml`, é necessário b
 |test|`Diretório`|Testes dos arquivos fonte|
 
 
-### <a name="project-structure-uml"></a> UML
-![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/uml.png?raw=true)
-
-<b>OBS:</b> Não esta representada as classes do pacote [executionFlow.util](https://github.com/williamniemiec/ExecutionFlow/tree/master/src/executionFlow/util) para evitar que o diagrama fique poluido - com pouco legibilidade.
-
 <hr />
 
 ## Apendice
+
+### Instalando maven
+Veja [aqui](https://maven.apache.org/install.html) como instalar.
 
 ### <a name="new-branch"></a> Criando branch
 De maneira resumida, para criar um novo branch:

@@ -28,6 +28,7 @@
 				<include>wniemiec.util.io.path.replacer:*</include>
 				<include>wniemiec.util.io.path:*</include>
 				<include>wniemiec.util.data:*</include>
+				<include>org.junit.jupiter:*</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>

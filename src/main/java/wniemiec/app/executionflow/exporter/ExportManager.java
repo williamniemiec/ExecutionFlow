@@ -119,9 +119,6 @@ public abstract class ExportManager {
 	
 	public void exportAllMethodsAndConstructorsUsedInTestMethods(Set<TestedInvoked> 
 	 															 invokedSet) {
-		if (!exportTesters)
-			return;
-		
 		mcutmAll.export(invokedSet);
 	}
 	
