@@ -1,95 +1,103 @@
-![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/logo/logo.jpg?raw=true)
+![](https://github.com/williamniemiec/ExecutionFlow/blob/v7.x/docs/img/logo/logo.jpg?raw=true)
 
 <h1 align='center'>Execution Flow</h1>
-
-<p align='center'>Gera test path de métodos e construtores testados em testes JUnit</p>
-
+<p align='center'>Generates test path for tested methods and constructors from JUnit tests</p>
+<p align="center">
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AWindows"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Windows?label=Windows" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AMacOS"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/MacOS?label=MacOS" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AUbuntu"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Ubuntu?label=Ubuntu" alt=""></a>
+	<a href="https://codecov.io/gh/williamniemiec/ExecutionFlow"><img src="https://codecov.io/gh/williamniemiec/ExecutionFlow/branch/v7.x/graph/badge.svg?token=R2SFS4SP86" alt="Coverage status"></a>
+	<a href="http://java.oracle.com"><img src="https://img.shields.io/badge/java-12+-D0008F.svg" alt="Java compatibility"></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/releases"><img src="https://img.shields.io/github/v/release/williamniemiec/ExecutionFlow" alt="Release"></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/blob/master/LICENCE"><img src="https://img.shields.io/github/license/williamniemiec/ExecutionFlow" alt="Licence"></a>
+</p>
 <hr />
 
-## 🔵 Introdução
-Computa test path de métodos e construtores testados em testes JUnit. [Veja como usar nos seus projetos](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar).
+## ❇ Introduction
+Computes test path for tested methods and constructors from JUnit tests using a debugger and aspect-oriented programming.
 
-## 📖 Documentação
-Veja a documentação na [wiki](https://github.com/williamniemiec/ExecutionFlow/wiki). Veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Limita%C3%A7%C3%B5es-e-pontos-importantes) as limitações da aplicação e outros pontos importantes.
+## ❓ How to use
+The step by step on how to use the application can be found [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Don't forget to include [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar) in the build path of the project (otherwise the application will not work).
 
-## ❓ Como usar
-A documentação sobre como usar a aplicação se encontra [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Não se esqueça de incluir a o arquivo [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar) no build path do projeto, pois caso contrário a aplicação não funcionará.
+## 📖 Documentation
+See the full documentation on [wiki](https://github.com/williamniemiec/ExecutionFlow/wiki). See [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Limita%C3%A7%C3%B5es-e-pontos-importantes) the application restrictions and other important points .
 
-## ✔ Requisitos
-- [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06)
-- [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update)
-- [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior
-- JUnit 4 ou JUnit 5
+## ✔ Requiremens
+- [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) ou higher;
+- [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update);
+- [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) or higher;
+- JUnit 4 or 5.
 
-## ⚠ Avisos
-Caso você encontre algum problema na aplicação, certifique-se de verificar a solução de problemas na wiki. Caso seu problema não seja resolvido, verifique se já existe uma [issue](https://github.com/williamniemiec/ExecutionFlow/issues) com seu problema. Se não tiver, [crie uma issue](https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) descrevendo detalhadamente o problema ocorrido.
+## 🖨 Output
+![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/export.png?raw=true)
 
-### Incompatibilidade entre as versões
-Na maioria das vezes as versões não são compatíveis entre si.  Caso você tenha usado uma versão anterior em seu projeto, é necessário eliminar a versão antiga antes de utilizar a nova. Para isso, certifique-se de excluir o diretório com o nome `executionFlow` dos arquivos de seu projeto. Além disso, use apenas uma versão no classpath / buildpath de seu projeto, pois caso contrário pode haver conflito entre as versões. Faça o procedimento abaixo antes de utilizar a nova versão.
+### Example - [SimpleTestPath](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/examples/others/SimpleTestPath.java)
+```	
+--------------------------------------------------------------------------------
+				     EXPORT
+--------------------------------------------------------------------------------
+examples.others.SimpleTestPath.simpleTestPath()
+examples.others.auxClasses.AuxClass.factorial(int)
+[35, 36, 37, 36, 37, 36, 37, 36, 37, 36, 39]
+
+[...]
+
+--------------------------------------------------------------------------------
+				     EXPORT
+--------------------------------------------------------------------------------
+examples.others.SimpleTestPath.simpleTestPath()
+examples.others.auxClasses.AuxClass(int)
+[12]
+```
+
+See more [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Exemplos).
+
+## ℹ How it works?
+![app-schema](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/schemas/app.png?raw=true)
+
+See more [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-funciona).
+
+## ⚠ Warnings
+If you encounter any problems with the application, be sure to check the wiki for troubleshooting. If your problem is not resolved, check to see if there is already an [issue](https://github.com/williamniemiec/ExecutionFlow/issues) with your problem. If not, [create an issue](https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) describing the problem in detail. 
+
+### Incompatibility between versions 
+Most of the time the versions are not compatible with each other. If you have used a previous version in your project, you must delete the old version before using the new one. To do this, be sure to delete the directory named `executionflow` from your project files. Also, use only one version in your project's classpath / buildpath, otherwise the versions may conflict. Do the procedure below before using the new version. 
 
 ![migration](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/gif/migration.gif)
 
-### Parar a execução
-Para parar a aplicação, utilize o botão `Stop` na janela `Execution Flow - Remote control`. Não use o botão stop do eclipse, pois senão os arquivos originais não serão restaurados. Isso ocorre porque o stop do eclipse emite um comando SIGKILL, enquanto que o botão stop da janela `Execution Flow - Remote control` emite um comando SIGTERM para finalizar a aplicação. Veja [aqui](https://major.io/2010/03/18/sigterm-vs-sigkill/) mais sobre a diferença desses dois comandos.
+### ⛔ Stop
+In order to stop the application, use the `Stop` button in the` Execution Flow` window. Do not use the eclipse stop button, otherwise the original files will not be restored. This is because the eclipse stop issues a SIGKILL command, while the stop button in the `Execution Flow` window issues a SIGTERM command to end the application. See [here](https://major.io/2010/03/18/sigterm-vs-sigkill/) more about the difference between these two commands. 
 
 ![stop](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/howToUse/stop.png)
 
-### Warning durante a execução
-Se for exibida essa mensagem durante a execução da aplicação, apenas clique em `continue` (informa que o código foi alterado durante a execução). Isso ocorre porque durante a execução da aplicação o código fonte é alterado, sendo que no final o código fonte original é restaurado.
+### Runtime warnings
+If this message is displayed during the execution of the application, just click on `continue` (informs that the code was changed during the execution). This is because during the execution of the application the source code is changed, and in the end the original source code is restored. 
 
 ![eclipse_msg](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/others/eclipse_msg.PNG?raw=true)
 
 ## 🚩 Changelog
-Detalhes sobre cada versão estão documentadas na [seção releases](https://github.com/williamniemiec/ExecutionFlow/releases).
+Details about each version are documented in the [releases section](https://github.com/williamniemiec/ExecutionFlow/releases).
 
 ## 🤝 Contribua
-Veja a documentação sobre como é possível contribuir com o projeto [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/CONTRIBUTING.md).
+See the documentation on how you can contribute to the project [here](https://github.com/williamniemiec/ExecutionFlow/blob/master/CONTRIBUTING.md).
 
-## 💻 Desenvolvedores
-Veja a documentação específica para programadores que buscam alterar o código fonte [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/DEVELOPERS.md).
+## 🗺 Project structure
+![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/global.png?raw=true)
 
-## 🗺 Organização do projeto (desatualizado)
-![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/uml.png?raw=true)
+## 📁 Files
 
-<b>OBS:</b> Não esta representada as classes do pacote [executionFlow.util](https://github.com/williamniemiec/ExecutionFlow/tree/master/src/executionFlow/util) para evitar que o diagrama fique poluído - com pouca legibilidade.
-
-## Exemplo de saída - [SimpleTestPath](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/examples/others/SimpleTestPath.java)
-<code>
-	
-	--------------------------------------------------------------------------------
-	                                     EXPORT
-	--------------------------------------------------------------------------------
-	examples.others.SimpleTestPath.simpleTestPath()
-	examples.others.auxClasses.AuxClass.factorial(int)
-	[35, 36, 37, 36, 37, 36, 37, 36, 37, 36, 39]
-	 
-	[...]
-	 
-	--------------------------------------------------------------------------------
-	    	                             EXPORT
-	--------------------------------------------------------------------------------
-	examples.others.SimpleTestPath.simpleTestPath()
-	examples.others.auxClasses.AuxClass(int)
-	[12]
-</code>
-
-Veja mais exemplos de test paths gerados [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Exemplos).
-
-## ℹ Como funciona?
-![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/others/visao-geral.png?raw=true)
-
-Veja mais detalhes [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-funciona).
-
-
-## 📁 Arquivos
 ### /
-|        Nome        |Tipo|Descrição|
+|        Name        |Type|Description|
 |----------------|-------------------------------|-----------------------------|
-|dist |`Diretório`|Versões lançadas da aplicação|
-|docs |`Diretório`|Informações relativos a documentação|
-|examples   |`Diretório`|	Exemplos de testes JUnit para ver o funcionamento da aplicação   |
-|lib   |`Diretório`|Bibliotecas que o projeto depende   |
-|src     |`Diretório`| Arquivos fonte|
-|test|`Diretório`|Testes dos arquivos fonte|
+|dist |`Directory`|Released versions|
+|docs |`Directory`|Documentation files|
+|examples   |`Directory`| Examples of JUnit tests to see how the application works    |
+|lib   |`Directory`|Libraries the project uses   |
+|src     |`Directory`| Source files|
 
-Veja a descrição de todos os arquivos [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Arquivos).
+### /src
+|        Name        |Type|Description|
+|----------------|-------------------------------|-----------------------------|
+|assembly|`Directory`|Configuration files related to the generation of the JAR file |
+|main|`Directory`|Application source files |
+|test|`Directory`|Application test files  |

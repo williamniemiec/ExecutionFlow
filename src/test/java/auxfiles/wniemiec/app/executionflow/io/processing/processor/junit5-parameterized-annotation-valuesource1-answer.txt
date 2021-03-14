@@ -1,0 +1,10 @@
+public class JUnit5Tests {
+	
+	@org.junit.Test
+	@ValueSource(strings = {" ", "   ", "\t", "\n"})
+	public void nullEmptyAndBlankStrings() {
+		if (someCondition()) {String text=" ";
+			someMethod();
+		}
+	}
+}

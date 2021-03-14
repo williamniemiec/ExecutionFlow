@@ -1,0 +1,17 @@
+public class JUnit5Tests {
+	
+	@org.junit.Test
+	public void test1()	{
+		// Code
+	}
+	
+	@org.junit.Test
+	public void test1()	{
+		// Code
+	}
+	
+	@org.junit.Test
+	public void test1()	{
+		// Code
+	}
+}

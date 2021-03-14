@@ -1,0 +1,217 @@
+public class SomeClass {
+	
+	public static int countTotalArguments(Object... args) {
+		int i = 2;
+		int k;
+		
+		for (k=0; k<args.length; k++) {
+			continue;
+		}
+		
+		return k;
+	}
+	
+	public static int countTotalArguments2(Object... args) {
+		int total = 0;
+		
+		for (int i=0; i<args.length; i++) {
+			if (i == 0)
+				continue;
+			total = i;
+		}
+		
+		return total;
+	}
+	
+	public int doWhileMethod(int a, int b) {
+		if (a == 0)
+			return b;
+		if (b == 0)
+			return a;
+		
+		do {
+			a++;
+			b--;
+		} while (b != 0);
+		
+		return a;	// a = a + b;
+	}
+	
+	public int inlineWhile(int a) {
+		while (a > 0) a--;
+		
+		return a;
+	}
+	
+	public int inlineDoWhile(int n)	{
+		if (n <= 0)
+			n = 1;
+		
+		do { n--; } while (n > 0);
+		
+		return n;
+	}
+	
+	public String ifElseMethod(int num) {
+		if (num < 0) {
+			return "Negative value";
+		}
+		
+		String response = "";
+		
+		if (num == 0) {
+			response = "Number zero";
+		} else if (num == 1) {
+			response = "Number one";
+		} else {
+			response = "Number "+num;
+		}
+		
+		return response;
+	}
+	
+	public boolean inlineIfElse(int n) {
+		if (n > 0) return true; else return false; 
+	}
+	
+	public int ifElseSameLine(int num) {
+		if (num > 0) { num *= 0; } else {
+			num = 10;
+		}
+		
+		return num;
+	}
+	
+	public int ifElseSameLine2(int num)	{
+		if (num > 0) { num *= 0; } else { num = 10; }
+		
+		return num;
+	}
+	
+	public String ifElseMethod2(int num) {
+		if (num < 0) {
+			return "Negative value";
+		}
+		
+		String response = "";
+		
+		if (num == 0)
+			response = "Number zero";
+		else if (num == 1)
+			response = "Number one";
+		else
+			response = "Number "+num;
+		
+		
+		return response;
+	}
+	
+	public void m1(int num) 
+	{
+		someMethod();
+	}
+	
+	private void m2(int num) 
+	{
+		someMethod();
+	}
+	
+	public static void m3(int num) 
+	{
+		someMethod();
+	}
+	
+	public synchronized m4(int num) 
+	{
+		someMethod();
+	}
+	
+	public char switchCaseMethod(char letter) { 
+		letter = Character.toUpperCase(letter);
+				
+		switch (letter) {
+			case 'Á':
+			case 'À':
+			case 'Ã':
+			case 'Â':
+				letter = 'A';
+				break;
+			case 'É':
+			case 'È':
+			case 'Ê':
+				letter = 'E';
+				break;
+			case 'Ì':
+			case 'Í':
+			case 'Î':
+				letter = 'I';
+				break;
+			case 'Ò':
+			case 'Ó':
+			case 'Ô':
+			case 'Õ':
+				letter = 'O';
+				break;
+			case 'Ú':
+			case 'Ù':
+			case 'Û':
+				letter = 'U';
+				break;
+		}
+		
+		return letter;
+	}
+	
+	public boolean tryCatchMethod_try() {
+		File f = new File("tmp");
+		
+		FileWriter fw;
+		try {
+			fw = new FileWriter(f);
+			fw.write('x');
+			fw.close();
+			f.delete();
+		} catch (IOException e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean tryCatchMethod_catch() {
+		File f = new File("tmp");
+		
+		FileWriter fw;
+		try {
+			throw new IOException();
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
+	public static void test3(int x, int y, String k) {
+		x = 0;
+		while (x < 3) {
+			x++;
+		}
+		
+		x = 3;
+	}
+	
+	public static void cleanDirectory(final File directory) throws IOException {
+        final File[] files = verifiedListFiles(directory);
+
+        IOException exception = null;
+        for (final File file : files) {
+            try {
+                forceDelete(file);
+            } catch (final IOException ioe) {
+                exception = ioe;
+            }
+        }
+
+        if (null != exception) {
+            throw exception;
+        }
+    }
+}

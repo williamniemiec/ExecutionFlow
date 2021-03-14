@@ -17,7 +17,7 @@ public class MultiargsTest
 		AuxClass ac = new AuxClass(1);
 		assertEquals(Arrays.asList(1, 2, 3, 4, 5), ac.identity(1,2,3,4,5));
 	}
-	
+
 	@Test
 	public void methodCallMultLineArgsWithBrokenLines()
 	{
@@ -29,6 +29,6 @@ public class MultiargsTest
 						3,
 						4,
 						5)
-		);
+				);
 	}
 }

@@ -1,0 +1,10 @@
+public class JUnit5Tests {
+	
+	@ParameterizedTest
+	@ValueSource(strings = {" ", "   ", "\t", "\n"})
+	public void nullEmptyAndBlankStrings(String text) {
+	    if (someCondition()) {
+			someMethod();
+		}
+	}
+}

@@ -1,0 +1,18 @@
+public class SomeClass {
+
+	public boolean tryCatchMethod_try() {
+		File f = new File("tmp");
+		FileWriter fw;int _0=0;
+		
+		try {
+			fw = new FileWriter(f);
+			fw.write('x');
+			fw.close();
+			f.delete();
+		} catch (IOException e) {
+			return false;
+		}
+		
+		return true;
+	}
+}

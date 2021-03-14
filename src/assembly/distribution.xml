@@ -1,0 +1,64 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+	<id>distribution</id>
+	<formats>
+		<format>jar</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/</outputDirectory>
+			<useProjectArtifact>false</useProjectArtifact>
+			<unpack>true</unpack>
+			<scope>runtime</scope>
+			<includes>
+				<include>wniemiec.api:*</include>
+				<include>wniemiec.util:*</include>
+				<include>wniemiec.util.task:*</include>
+				<include>wniemiec.util.data.structure:*</include>
+				<include>wniemiec.util.data.storage:*</include>
+				<include>wniemiec.util.data.encrypt:*</include>
+				<include>wniemiec.util.io.search:*</include>
+				<include>wniemiec.util.io.parser:*</include>
+				<include>wniemiec.util.io.processor.indenter:*</include>
+				<include>wniemiec.util.console:*</include>
+				<include>wniemiec.util.io.manager:*</include>
+				<include>wniemiec.util.io.path.replacer:*</include>
+				<include>wniemiec.util.io.path:*</include>
+				<include>wniemiec.util.data:*</include>
+			</includes>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>/</outputDirectory>
+            <scope>test</scope>
+            <unpack>true</unpack>
+            <includes>
+				<include>org.junit.jupiter:junit-jupiter-params</include>
+				<include>org.junit.jupiter:junit-jupiter</include>
+				<include>junit:junit</include>
+			</includes>
+        </dependencySet>
+	</dependencySets>
+	
+	<fileSets>
+		<fileSet>
+			<directory>${project.build.outputDirectory}</directory>
+			<outputDirectory>/</outputDirectory>
+			<excludes>
+				<exclude>examples/**</exclude>
+				<exclude>results/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+		
+			<directory>${basedir}/lib</directory>
+			<outputDirectory>/lib/</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/src/main/resources</directory>
+			<outputDirectory>/resources/</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>

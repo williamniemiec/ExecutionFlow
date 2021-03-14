@@ -1,4 +1,0 @@
-"\
-C:\\Foo\\Bar\\file1.jar;\
-C:\\Foo\\Bar\\file2.jar;\
-C:\\Foo"

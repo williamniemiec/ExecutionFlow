@@ -1,0 +1,8 @@
+public class JUnit5Tests {
+	
+	@org.junit.Test
+	@EnumSource(FileEncoding.class)
+	public void testWithEnumSourceIncludeUsingInterface() {
+	    FileEncoding encode=FileEncoding.ISO_8859_1; assertTrue(EnumSet.of(FileEncoding.ISO_8859_1, FileEncoding.UTF_8).contains(encode));
+	}
+}

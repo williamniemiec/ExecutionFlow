@@ -1,0 +1,8 @@
+public class JUnit5Tests {
+
+	@ParameterizedTest
+	@CsvSource({"I, -1", "II, 0", "III, 1"})
+	public void test1(String word, int num) {
+		someMethod();
+	}
+}

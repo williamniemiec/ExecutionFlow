@@ -1,0 +1,38 @@
+ public class SomeClass {
+
+	public char switchCaseMethod(char letter) { 
+		letter = Character.toUpperCase(letter);
+				
+		switch (letter) {
+			case 'Á':int _0=0;
+			case 'À':int _0=0;
+			case 'Ã':int _0=0;
+			case 'Â':int _0=0;
+				letter = 'A';
+				break;
+			case 'É':int _0=0;
+			case 'È':int _0=0;
+			case 'Ê':int _0=0;
+				letter = 'E';
+				break;
+			case 'Ì':int _0=0;
+			case 'Í':int _0=0;
+			case 'Î':int _0=0;
+				letter = 'I';
+				break;
+			case 'Ò':int _0=0;
+			case 'Ó':int _0=0;
+			case 'Ô':int _0=0;
+			case 'Õ':int _0=0;
+				letter = 'O';
+				break;
+			case 'Ú':int _0=0;
+			case 'Ù':int _0=0;
+			case 'Û':int _0=0;
+				letter = 'U';
+				break;
+		}
+		
+		return letter;
+	}
+}
