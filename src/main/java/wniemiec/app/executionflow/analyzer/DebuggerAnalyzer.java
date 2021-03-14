@@ -326,11 +326,7 @@ public abstract class DebuggerAnalyzer {
 	}
 
 	private List<Path> getClassPath() {
-		List<Path> classPath = new ArrayList<>();
-		
-		for (String cp : System.getProperty("java.class.path").split(File.pathSeparator)) {
-			classPath.add(Path.of(cp));
-		}
+		List<Path> classPath = LibraryManager.getJavaClassPath();
 		
 		classPath.add(testMethod.getBinPath());
 		classPath.add(testedInvoked.getBinPath());
