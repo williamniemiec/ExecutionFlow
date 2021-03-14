@@ -167,27 +167,27 @@ where X, Y, Z are the version numbers of the application corresponding to `proje
 ![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/global.png?raw=true)
 
 ### /
-|        Nome        |Tipo|Descrição|
+|        Name        |Type|Description|
 |----------------|-------------------------------|-----------------------------|
-|dist |`Diretório`|Versões lançadas da aplicação|
-|docs |`Diretório`|Informações relativos a documentação|
-|examples   |`Diretório`| Exemplos de testes JUnit para ver o funcionamento da aplicação   |
-|lib   |`Diretório`|Bibliotecas que o projeto depende   |
-|src     |`Diretório`| Arquivos fonte|
+|dist |`Directory`|Released versions|
+|docs |`Directory`|Documentation files|
+|examples   |`Directory`| Examples of JUnit tests to see how the application works    |
+|lib   |`Directory`|Libraries the project uses   |
+|src     |`Directory`| Source files|
 
 ### /src
-|        Nome        |Tipo|Descrição|
+|        Name        |Type|Description|
 |----------------|-------------------------------|-----------------------------|
-|assembly|`Diretório`|Arquivos de configuração relativos a geração do JAR|
-|main|`Diretório`|Arquivos fonte da aplicação|
-|test|`Diretório`|Testes dos arquivos fonte|
+|assembly|`Directory`|Configuration files related to the generation of the JAR file |
+|main|`Directory`|Application source files |
+|test|`Directory`|Application test files  |
 
 
 <hr />
 
 ## <a name="appendix"></a> Appendix
 
-### Instalando maven
+### Maven
 See [here](https://maven.apache.org/install.html) how to install.
 
 ### <a name="new-branch"></a> Creating branches
