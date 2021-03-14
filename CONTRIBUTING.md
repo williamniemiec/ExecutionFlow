@@ -1,108 +1,128 @@
-# Execution Flow -  Contributing Guide
+# Execution Flow - Contributing Guide
 
-- [Problemas](#issues)
-- [Pull Request - Guia](#pull-request-guide)
-- [Configurando ambiente de desenvolvimento](#development-setup)
-- [Padrão de documentação](#doc-standard)
-- [Geração jar](#jar-generation)
-- [Estrutura do projeto](#project-structure)
-- [Apêndice](#appendix)
-
-
-## <a name="issues"></a> Problemas
-
-- Se ocorrer algum problema ou dúvida durante a edição do projeto, crie uma [issue](https://github.com/williamniemiec/ExecutionFlow/issues) detalhando o problema / dúvida.
+- [Issues](#issues)
+- [Pull Request - Guide](#pull-request-guide)
+- [Environment setup](#environment-setup)
+- [Documentation standard](#doc-standard)
+- [JAR generation](#jar-generation)
+- [Project structure](#project-structure)
+- [Appendix](#appendix)
 
 
-## <a name="pull-request-guide"></a> Pull Request - Guia
+## <a name="issues"></a> Issues
+
+- If any problems or doubts occur while editing the project, create an [issue](https://github.com/williamniemiec/ExecutionFlow/issues) describing the problem / doubt.
+
+## <a name="pull-request-guide"></a> Pull Request - Guide
 
 ### Branch
-- Caso as alterações que foram feitas não alteram a estrutura da aplicação e nem o modo de usar alguma funcionalidade, use o branch atual. Caso contrário, [crie um novo branch](#new-branch) no seguinte formato:
+- If the changes made do not change the structure of the application or the way to use any functionality, use the current branch; otherwise, [creates a new branch](#new-branch) in the following format:
 
-> Se o branch atual for `N.x`, o novo branch deve se chamar `N+1.x`, onde N é um número
+> If the current branch is `N.x`, the new branch should be called `(N + 1).x` (without parentheses), where N is a number
 
-<b>OBS:</b> Não faça nenhuma alteração usando o branch `master`, pois ele será resultado do merge com a última versão lançada
+<b>Attention:</b> Do not make any changes using the `master` branch, as it will be the result of the merge with the latest version released.
 
 ### Tag
-- Sempre, antes de criar um pull request, crie uma tag
-- Só crie a tag ao final de suas alterações - deve ser criada apenas uma tag por pull request
-- Escolha uma tag diferente da tag atual. Se a tag atual for X.Y.Z, onde X, Y e Z são números, [crie uma nova tag](#new-tag) usando o seguinte critério:
-<ul>
-	<li>Se as alterações feitas são pequenas, isto é, pequenas modificações que não modificam a forma de utilização de uma funcionalidade ou mesmo para correções de bugs, crie a tag `X.Y.Z+1`</li>
-	<li>Se for adicionado novas funcionalidades, crie a tag `X.Y+1.0`</li>
-	<li>Se for alterada a forma de usar uma ou mais funcionalidades, ou mesmo se uma funcionalidade for excluída, crie um novo branch como o nome `X+1.x` e crie uma nova tag com o nome `X+1.0.0`</li>
-</ul>
-
-<b>OBS:</b> A criação de tags deve ser do tipo `Annotated Tags`.
-
-
-- As versões lançadas devem ser colocadas no diretório `dist/X.Y`, onde X e Y são os números da versão lançada
-
-- Procure sempre que possível adicionar testes em cada funcionalidade adicionada. Se uma funcionalidade for editada, certifique-se que os testes relacionados a ela continuam funcionando.
-
-- Antes de adicionar uma nova funcionalidade, é recomendado criar uma issue descrevendo a nova funcionalidade e uma justificativa do porquê ela seria util à aplicação.
-
-- Se a contribuição for corrigindo algum bug, o commit deve ser: `bug fix #xyzw`, onde #xyzw é o id da issue que cita o bug. Se não existir, o commit deve ser `bug fix <DESCRIPTION>`, onde \<DESCRIPTION\> é uma breve descrição do bug que foi corrigido.
+- Always create a tag before creating a pull request  
+- Only create the tag at the end of your changes 
+- only one tag per pull request must be created  
+- Choose a different tag from the current tag. If the current tag is X.Y.Z, where X, Y and Z are numbers, [create a new tag](#new-tag) using the following criteria:  
+  - If the changes made are minor, that is, small modifications that do not change the way of using a feature or even for bug fixes, create the tag `X.Y.(Z + 1)` (without parentheses) 
+  - If new features are added, create the `X.(Y + 1).0` tag (without parentheses)
+  - If the way of using one or more features is changed, or even if a feature is deleted, create a new branch with the name `(X + 1).x` and create a new tag with the name `(X + 1).0.0` (without parentheses) 
+ 
+<b>Attention:</b> Tag creation should be `Annotated Tags` type.
 
 
-### <a name="pull-request-submit"></a> Submetendo alterações
+- Released versions should be placed in the `dist/X.Y` directory, where X and Y are the released version numbers  
+- Try whenever possible to add tests on each added feature. If a feature is edited, make sure the tests related to it continue to work.  
+- Before adding a new functionality, it is recommended to create an issue describing the new functionality and a justification of why it would be useful to the application.
 
-Após realizada as modificações no projeto, crie um pull request com o projeto que você modificou. Procure adicionar uma descrição detalhada do que você alterou com relação ao projeto original. Evite ao máximo alterar a estrutura do projeto, a fim de evitar quebra de código.
-<b>ATENÇÃO:</b> Antes de realizar o pull request, certifique-se de:
-* Gerar o JAR na localização correta
-* Atualizar `pom.xml` com a nova versão
-* Documentar as alterações de acordo com o [padrão de documentação citado acima](#doc-standard).
+If the contribution is to correct a bug, the commit should be: `bug fix # xyzw`, where #xyzw is the issue id that quotes the bug. If not, the commit should be `bug fix <DESCRIPTION>`, where \<DESCRIPTION\> is a brief description of the bug that has been fixed.
 
+### <a name="pull-request-submit"></a> Pull request submit
+After making changes to the project, create a pull request with the project you have modified. Try to add a detailed description of what you changed from the original project. Avoid changing the structure of the project as much as possible to avoid breaking code. 
 
-## <a name="development-setup"></a> Configurando ambiente de desenvolvimento
+ <b> Attention: </b> Before making the pull request, make sure that:  
+ * Generate the version jar in the following format: `executionflow-X.Y.Z.jar`, where X, Y and Z are the numbers corresponding to the tag that will contain the changes made;  
+ * Update `pom.xml` with new version;
+ * Document the changes according to the [documentation standard mentioned above](#doc-standard);
+ * Create a new [release](https://github.com/williamniemiec/ExecutionFlow/releases) with changelog.
 
-Para que seja possível executar algum arquivo do projeto é necessário importar algumas dependências para sua IDE. Até o momento, devido as dependências do projeto, só é possível executá-lo usando a IDE [Eclipse v2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) ou inferior. Mais especificamente, a dependência AJDT só funciona corretamente até essa versão, o que impossibilita o uso de versões mais recentes.
+## <a name="environment-setup"></a> Setting up development environment
 
-* [Eclipse v2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) ou superior
-* [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update): Plugin da IDE Eclipse usado para habilitar [programação orientada a aspectos](https://en.wikipedia.org/wiki/Aspect-oriented_programming).
-* [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) ou superior.
-* JUnit 4 ou 5
+In order to be able to execute any project file, it is necessary to import some dependencies to your IDE, among them:
+
+* [Eclipse v2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) or higher;
+* [AJDT dev builds for Eclipse 4.8](http://download.eclipse.org/tools/ajdt/48/dev/update): Eclipse IDE plugin used to enable [aspect-oriented programming](https://en.wikipedia.org/wiki/Aspect-oriented_programming);
+* [Java 12](https://www.oracle.com/java/technologies/javase/jdk12-archive-downloads.html) or higher;
+* JUnit 4 or 5.
 
 ### <a name="development-setup-run"></a> Rodando o projeto no Eclipse
-Com o Eclipse, Java 12 ou sperior e AJDT (eclipse plugin) instalados, para executar o projeto na IDE faça o seguinte:
-1) Importe o projeto no eclipse
-2) Provavelmente irá aparecer vários erros. Ignore-os. Clique com o botão esquerdo no arquivo `pom.xml` e selecione `Run As` -> `Maven install`
+With Eclipse and dependencies installed, in order to run the project in the IDE, do the following: 
+1) Import the project
+2) Probably several errors will appear. Ignore them. Left-click on the file `pom.xml` and select `Run As` -> `Maven install`
 
 ![step1](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/env-setup/step1.png?raw=true)
 
-3) Após terminado a instalação, clique novamente com o botão esquerdo no arquivo `pom.xml` e selecione `Maven` -> `Update Project...`
+3) After installation is complete, left-click on the file `pom.xml` and select `Maven` -> `Update Project...`
 
 ![step2](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/env-setup/step2.png?raw=true)
 
-4) Selecione o projeto, marque as 3 últimas opções e clique em `Ok`
+4) Select the project, check the last 3 options and click on `Ok`
 
 ![step3](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/env-setup/step3.png?raw=true)
 
-## <a name="doc-standard"></a>Padrão de documentação
-Todas as classes, métodos e algumas variáveis utilizam [javadoc](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javadoc.html) para explicar suas funcionalidades.
+## <a name="code-style"></a>Code style guide
+The project uses the [code style recommended by Oracle](https://www.oracle.com/java/technologies/javase/codeconventions-contents.html), with one exception: structures `if-then-else`, `try-catch-finally` and the like should not have a closed curly bracket (`}`) to the left of the keyword.
 
-### <a name="doc-standard-class-enum"></a> Classes, classes internas e enumerações
-As classes devem conter a seguinte padrão:
+### Example
+#### Good
+<pre>
+if (x == 2) {
+	return "two";
+}
+else if (x == 3) {
+	return "three"
+}
+</pre>
+
+#### Bad
+<pre>
+if (x == 2) {
+	return "two";
+} else if (x == 3) {
+	return "three"
+}
+</pre>
+
+
+## <a name="doc-standard"></a>Documentation standard
+All classes, public methods and some variables use [javadoc](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javadoc.html) to explain its functionality.
+
+
+### <a name="doc-standard-class-enum"></a>Classes, inner classes and enumerations
+Classes should use the following pattern:
 
 <pre>
 /**
- * Descrição da classe.
+ * Class description.
  * 
- * @author		SeuNome &lt; seuemail@email.com &gt;
+ * @author		YourName &lt; your_email@email.com &gt;
  * @version		X.Y.Z
  * @since		A.B.C
  */
 </pre>
-Onde X, Y e Z  são números relativos a versão da apllicação em que a classe foi modificada pela última vez e A, B e C identificam a versão da aplicação em que a classe foi criada. A anotação é separada do conteúdo com 2 tabs.
-Além disso, internamente, a classe deve ser dividida em seções, sendo estas identificadas com o seguinte padrão:
+
+Where X, Y and Z are numbers relative to the version of the application in which the class was last modified and A, B and C identify the version of the application in which the class was created. The annotation is separated from the content with 2 tabs.  In addition, internally, the class should be divided into sections, which are identified with the following pattern:
 
 <pre>
 //-------------------------------------------------------------------------
-//    [Nome_seção]
+//    [section_name]
 //-------------------------------------------------------------------------
 </pre>
 
-Onde [Nome_seção] pode ser:
+Where [section_name] can be:
 * Attributes
 * Constructor(s)
 * Methods
@@ -117,34 +137,33 @@ Onde [Nome_seção] pode ser:
 * Inner classes
 
 
-### <a name="doc-standard-methods"></a> Metodos
-Os métodos devem ser documentados usando javadoc. É altamente recomendado adicionar comentários dentro do método para facilitar o entendimento (mas não é obrigatório).
+### <a name="doc-standard-methods"></a> Methods
+Public methods must be documented using javadoc.
 
-<b>Atenção: </b> As documentações que utilizam javadoc devem ter o nome da tag seguido de duas tabulações seguido de seu valor, com exceção das tags `@implSpec`, `@apiNote` e `@implNote`, as quais contém apenas uma tabulação. Isso é feito a fim de manter a apresentação da documentação de forma uniforme
+<b>Attention: </b> Documentations using javadoc must have the tag name followed by two tabs followed by its value, with the exception of the `@implSpec`, `@apiNote` and `@implNote` tags, which contain only one tab. This is done in order to maintain uniform presentation of documentation
 
-## <a name="jar-generation"></a>Geração jar
-Para gerar arquivo jar:
+## <a name="jar-generation"></a>Jar generation
+In order to generate the JAR file do the following:
 
-1) No `pom.xml` atualize:
+1) On the file `pom.xml`, update:
 
 * project.version
-* project.properties.version.major (se necessário)
+* project.properties.version.major (if necessary)
 
-2) Gere o JAR
+2) Generate JAR file
 
 * Console
 > `mvn package`
 
 * Eclipse
-> Clique com o botão esquerdo no `pom.xml` -> Run As -> Maven build...
-> Em `Goals:` digite: `package`
-> Clique em `Run`
-
-3) Certifique-se de que o arquivo JAR foi gerado no diretório `dist/V.X/<NOME_ARQUIVO>`, onde V = `project.properties.version.major` e o \<NOME_ARQUIVO\> é definido da seguinte maneira:
+1) Left-click on the file `pom.xml` and select `pom.xml` -> `Run As` -> `Maven build...`
+2) In the `Goals` field, type: `package`
+3) Click on `Run`
+4) Make sure that the JAR file has been generated in the directory `dist/V.X/<FILENAME>`, where V = `project.properties.version.major` and \<FILENAME\> is:
 `executionflow-X.Y.Z.jar`
-onde X, Y, Z são os números da versão da aplicação correspondente a `project.version`
+where X, Y, Z are the version numbers of the application corresponding to `project.version`.
 
-## <a name="project-structure"></a> Estrutura do projeto
+## <a name="project-structure"></a> Project structure
 ![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/global.png?raw=true)
 
 ### /
@@ -166,50 +185,47 @@ onde X, Y, Z são os números da versão da aplicação correspondente a `projec
 
 <hr />
 
-## <a name="appendix"></a> Apendice
+## <a name="appendix"></a> Appendix
 
 ### Instalando maven
-Veja [aqui](https://maven.apache.org/install.html) como instalar.
+See [here](https://maven.apache.org/install.html) how to install.
 
-### <a name="new-branch"></a> Criando branch
-De maneira resumida, para criar um novo branch:
+### <a name="new-branch"></a> Creating branches
+Create a new branch:
 
-<code>
+<pre>
+git checkout -b branch_name
+</pre>
 
-	git checkout -b nome-branch
-</code>
+Add to the remote repository:
 
-Para adicionar ao repositório remoto:
-<code>
-	
-	git push -u origin nome-branch
-</code>
+<pre>
+git push -u origin branch_name
+</pre>
 
-#### Exemplo
-<code>
+#### Example
+<pre>
+git checkout -b v1.x
+git push -u origin v1.x
+</pre>
 
-	git checkout -b v1.x
-	git push -u origin v1.x
-</code>
+See more [here](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging).
 
-Veja mais detalhes [aqui](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging).
+### <a name="new-tag"></a> Creating tags
+<pre>
+git tag -a tag_name -m description
+</pre>
 
-### <a name="new-tag"></a> Criando tags
-<code>
+Add to the remote repository:
 
-	git tag -a nome-tag -m descricao
-</code>
+<pre>
+git push -u origin tag_name
+</pre>
 
-Para adicionar ao repositório remoto:
-<code>
-	git push -u origin nome-tag
-</code>
+#### Example
+<pre>
+git tag -a v1.0.1 -m "Performance improvement"
+git push -u origin v1.0.1
+</pre>
 
-#### Exemplo
-<code>
-	
-	git tag -a v1.0.1 -m "Melhoria de performance"
-	git push -u origin v1.0.1
-</code>
-
-Veja mais detalhes [aqui](https://git-scm.com/book/en/v2/Git-Basics-Tagging).
+See more [here](https://git-scm.com/book/en/v2/Git-Basics-Tagging).
