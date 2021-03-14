@@ -32,42 +32,41 @@ See the full documentation on [wiki](https://github.com/williamniemiec/Execution
 ![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/export.png?raw=true)
 
 ### Example - [SimpleTestPath](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/examples/others/SimpleTestPath.java)
-<code>
-	
-	--------------------------------------------------------------------------------
-	                                     EXPORT
-	--------------------------------------------------------------------------------
-	examples.others.SimpleTestPath.simpleTestPath()
-	examples.others.auxClasses.AuxClass.factorial(int)
-	[35, 36, 37, 36, 37, 36, 37, 36, 37, 36, 39]
-	 
-	[...]
-	 
-	--------------------------------------------------------------------------------
-	    	                             EXPORT
-	--------------------------------------------------------------------------------
-	examples.others.SimpleTestPath.simpleTestPath()
-	examples.others.auxClasses.AuxClass(int)
-	[12]
-</code>
+```	
+--------------------------------------------------------------------------------
+				     EXPORT
+--------------------------------------------------------------------------------
+examples.others.SimpleTestPath.simpleTestPath()
+examples.others.auxClasses.AuxClass.factorial(int)
+[35, 36, 37, 36, 37, 36, 37, 36, 37, 36, 39]
+
+[...]
+
+--------------------------------------------------------------------------------
+				     EXPORT
+--------------------------------------------------------------------------------
+examples.others.SimpleTestPath.simpleTestPath()
+examples.others.auxClasses.AuxClass(int)
+[12]
+```
 
 See more [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Exemplos).
 
 ## ℹ How it works?
-![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/schemas/app.png?raw=true)
+![app-schema](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/schemas/app.png?raw=true)
 
 See more [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-funciona).
 
 ## ⚠ Warnings
-If you encounter any problems with the application, be sure to check the wiki for troubleshooting. If your problem is not resolved, check to see if there is already an [issue] (https://github.com/williamniemiec/ExecutionFlow/issues) with your problem. If not, [create an issue] (https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) describing the problem in detail. 
+If you encounter any problems with the application, be sure to check the wiki for troubleshooting. If your problem is not resolved, check to see if there is already an [issue](https://github.com/williamniemiec/ExecutionFlow/issues) with your problem. If not, [create an issue](https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) describing the problem in detail. 
 
 ### Incompatibility between versions 
 Most of the time the versions are not compatible with each other. If you have used a previous version in your project, you must delete the old version before using the new one. To do this, be sure to delete the directory named `executionflow` from your project files. Also, use only one version in your project's classpath / buildpath, otherwise the versions may conflict. Do the procedure below before using the new version. 
 
 ![migration](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/gif/migration.gif)
 
-### ✋ Stop
-In order to stop the application, use the `Stop` button in the` Execution Flow` window. Do not use the eclipse stop button, otherwise the original files will not be restored. This is because the eclipse stop issues a SIGKILL command, while the stop button in the `Execution Flow - Remote control` window issues a SIGTERM command to end the application. See [here] (https://major.io/2010/03/18/sigterm-vs-sigkill/) more about the difference between these two commands. 
+### ⛔ Stop
+In order to stop the application, use the `Stop` button in the` Execution Flow` window. Do not use the eclipse stop button, otherwise the original files will not be restored. This is because the eclipse stop issues a SIGKILL command, while the stop button in the `Execution Flow` window issues a SIGTERM command to end the application. See [here](https://major.io/2010/03/18/sigterm-vs-sigkill/) more about the difference between these two commands. 
 
 ![stop](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/howToUse/stop.png)
 
