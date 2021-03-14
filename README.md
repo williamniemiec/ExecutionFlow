@@ -13,14 +13,14 @@
 </p>
 <hr />
 
-## 🔵 Introdução
+## ❇ Introdução
 Computa test path de métodos e construtores testados em testes JUnit. [Veja como usar nos seus projetos](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar).
-
-## 📖 Documentação
-Veja a documentação na [wiki](https://github.com/williamniemiec/ExecutionFlow/wiki). Veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Limita%C3%A7%C3%B5es-e-pontos-importantes) as limitações da aplicação e outros pontos importantes.
 
 ## ❓ Como usar
 A documentação sobre como usar a aplicação se encontra [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Não se esqueça de incluir a o arquivo [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar) no build path do projeto, pois caso contrário a aplicação não funcionará.
+
+## 📖 Documentação
+Veja a documentação na [wiki](https://github.com/williamniemiec/ExecutionFlow/wiki). Veja [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Limita%C3%A7%C3%B5es-e-pontos-importantes) as limitações da aplicação e outros pontos importantes.
 
 ## ✔ Requisitos
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) ou superior
@@ -52,15 +52,13 @@ Detalhes sobre cada versão estão documentadas na [seção releases](https://gi
 ## 🤝 Contribua
 Veja a documentação sobre como é possível contribuir com o projeto [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/CONTRIBUTING.md).
 
-## 💻 Desenvolvedores
-Veja a documentação específica para programadores que buscam alterar o código fonte [aqui](https://github.com/williamniemiec/ExecutionFlow/blob/master/DEVELOPERS.md).
+## 🗺 Organização do projeto
+![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/global.png?raw=true)
 
-## 🗺 Organização do projeto (desatualizado)
-![UML diagram](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/uml/uml.png?raw=true)
+## Output
+![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/export.png?raw=true)
 
-<b>OBS:</b> Não esta representada as classes do pacote [executionFlow.util](https://github.com/williamniemiec/ExecutionFlow/tree/master/src/executionFlow/util) para evitar que o diagrama fique poluído - com pouca legibilidade.
-
-## Exemplo de saída - [SimpleTestPath](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/examples/others/SimpleTestPath.java)
+### Exemplo de saída - [SimpleTestPath](https://github.com/williamniemiec/ExecutionFlow/blob/master/examples/examples/others/SimpleTestPath.java)
 <code>
 	
 	--------------------------------------------------------------------------------
@@ -94,9 +92,13 @@ Veja mais detalhes [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/C
 |----------------|-------------------------------|-----------------------------|
 |dist |`Diretório`|Versões lançadas da aplicação|
 |docs |`Diretório`|Informações relativos a documentação|
-|examples   |`Diretório`|	Exemplos de testes JUnit para ver o funcionamento da aplicação   |
+|examples   |`Diretório`| Exemplos de testes JUnit para ver o funcionamento da aplicação   |
 |lib   |`Diretório`|Bibliotecas que o projeto depende   |
 |src     |`Diretório`| Arquivos fonte|
-|test|`Diretório`|Testes dos arquivos fonte|
 
-Veja a descrição de todos os arquivos [aqui](https://github.com/williamniemiec/ExecutionFlow/wiki/Arquivos).
+### /src
+|        Nome        |Tipo|Descrição|
+|----------------|-------------------------------|-----------------------------|
+|assembly|`Diretório`|Arquivos de configuração relativos a geração do JAR|
+|main|`Diretório`|Arquivos fonte da aplicação|
+|test|`Diretório`|Testes dos arquivos fonte|

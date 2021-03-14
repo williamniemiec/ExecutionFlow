@@ -1,14 +1,12 @@
-# ExecutionFlow -  Contributing Guide
+# Execution Flow -  Contributing Guide
 
 - [Problemas](#issues)
 - [Pull Request - Guia](#pull-request-guide)
 - [Configurando ambiente de desenvolvimento](#development-setup)
 - [Padrão de documentação](#doc-standard)
--  [Geração jar ](#jar-generation)
--  [Alteração no diagrama UML](#uml)
+- [Geração jar](#jar-generation)
 - [Estrutura do projeto](#project-structure)
-- [Criando branch](#new-branch)
-- [Criando tags](#new-tag)
+- [Apêndice](#appendix)
 
 
 ## <a name="issues"></a> Problemas
@@ -66,24 +64,22 @@ Para que seja possível executar algum arquivo do projeto é necessário importa
 * JUnit 4 ou 5
 
 ### <a name="development-setup-run"></a> Rodando o projeto no Eclipse
-Com o Eclipse, Java e AJDT instalados, para executar o projeto na IDE é necessário incluir as dependências do projeto no build path do projeto. Para isso:
-1) Clique com o botão direito no projeto
-2) Selecione `Build Path` e `Configure Build path...` 
-3) Clique em `Classpath` e clique em `Add External JARS...`
-4) Selecione os arquivos .jar das seguintes dependências (as outras dependências a própria aplicação pegará do diretório `lib`):
-* AspectJ Tools
-* JUnit 4
-5) Por fim clique em `Apply and Close`.
+Com o Eclipse, Java 12 ou sperior e AJDT (eclipse plugin) instalados, para executar o projeto na IDE faça o seguinte:
+1) Importe o projeto no eclipse
+2) Provavelmente irá aparecer vários erros. Ignore-os. Clique com o botão esquerdo no arquivo `pom.xml` e selecione `Run As` -> `Maven install`
 
-### <a name="development-setup-environment"></a> Rodando aplicação como projeto e como plugin
-Antes de executar a aplicação é necessário configurar seu ambiente. Existem 2 ambientes: Development e No-development. Se a aplicação for executada como projeto, isto é, ela não for executada como um plugin em outros projetos, é necessário informar a aplicação em qual ambiente ela será executada. Para isso, vá até o arquivo `src/executionFlow/ExecutionFlow.java` e procure pelo bloco de inicialização estático que define a variável `DEVELOPMENT`. Se a aplicação for executada como projeto, atribua `true` a essa variável; caso contrário, atribua `false`. Caso isso não seja feito, a aplicação pode ter mal funcionamento.
+![step1](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/env-setup/step1.png?raw=true)
 
-### <a name="output-dir"></a>Output directory
-O diretório de saída do projeto, isto é, o diretório onde serão colocados os arquivos compilados deve ser `bin`, sendo que este deve ficar na raiz do projeto. Vale ressaltar que esse diretório não deve ser submetido ao repositório (`.gitignore` ignorará esse diretório).
+3) Após terminado a instalação, clique novamente com o botão esquerdo no arquivo `pom.xml` e selecione `Maven` -> `Update Project...`
+
+![step2](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/env-setup/step2.png?raw=true)
+
+4) Selecione o projeto, marque as 3 últimas opções e clique em `Ok`
+
+![step3](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/env-setup/step3.png?raw=true)
 
 ## <a name="doc-standard"></a>Padrão de documentação
 Todas as classes, métodos e algumas variáveis utilizam [javadoc](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javadoc.html) para explicar suas funcionalidades.
-
 
 ### <a name="doc-standard-class-enum"></a> Classes, classes internas e enumerações
 As classes devem conter a seguinte padrão:
@@ -149,6 +145,9 @@ Para gerar arquivo jar:
 onde X, Y, Z são os números da versão da aplicação correspondente a `project.version`
 
 ## <a name="project-structure"></a> Estrutura do projeto
+![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/global.png?raw=true)
+
+### /
 |        Nome        |Tipo|Descrição|
 |----------------|-------------------------------|-----------------------------|
 |dist |`Diretório`|Versões lançadas da aplicação|
@@ -156,12 +155,18 @@ onde X, Y, Z são os números da versão da aplicação correspondente a `projec
 |examples   |`Diretório`| Exemplos de testes JUnit para ver o funcionamento da aplicação   |
 |lib   |`Diretório`|Bibliotecas que o projeto depende   |
 |src     |`Diretório`| Arquivos fonte|
+
+### /src
+|        Nome        |Tipo|Descrição|
+|----------------|-------------------------------|-----------------------------|
+|assembly|`Diretório`|Arquivos de configuração relativos a geração do JAR|
+|main|`Diretório`|Arquivos fonte da aplicação|
 |test|`Diretório`|Testes dos arquivos fonte|
 
 
 <hr />
 
-## Apendice
+## <a name="appendix"></a> Apendice
 
 ### Instalando maven
 Veja [aqui](https://maven.apache.org/install.html) como instalar.
