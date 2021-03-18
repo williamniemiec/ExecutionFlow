@@ -45,15 +45,14 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		String processedLine = line;
 		
 		processedLine = combineMultilineArgs(line);
-		
-//		if (!insideMultilineArgs)
-//			idxMethodInvocation = -1;
 
 		return processedLine;
 	}
 
 	private String combineMultilineArgs(String line) {
 		String processedLine = line;
+
+		checkIsOutOfMethod();
 		
 		if (isMethodCallWithMultipleLines(line)) {
 			processedLine = parseMethodCallWithMultipleLines(line);
@@ -76,6 +75,15 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		}
 		
 		return processedLine;
+	}
+
+
+	private void checkIsOutOfMethod() {
+		if ((rbb != null) && rbb.alreadyIncreased() && rbb.isBalanceEmpty()) {
+			rbb = null;
+			insideMultilineArgs = false;
+			idxMethodInvocation = -1;
+		}
 	}
 
 	private boolean isMethodCallWithMultipleLines(String line) {
