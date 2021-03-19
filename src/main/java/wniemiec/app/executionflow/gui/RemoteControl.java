@@ -54,6 +54,7 @@ public class RemoteControl {
 			return;
 		
 		window.dispose();
+		window = null;
 	}
 	
 	/**

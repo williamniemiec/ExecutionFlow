@@ -143,6 +143,7 @@ public class ProcessingManager {
 		
 		preTestMethodProcessingManager.deleteBackupFiles();
 		preTestMethodProcessingManager = null;
+		successfullPreprocessing = false;
 	}
 	
 	public void deleteBackupFilesOfProcessingOfInvoked() {

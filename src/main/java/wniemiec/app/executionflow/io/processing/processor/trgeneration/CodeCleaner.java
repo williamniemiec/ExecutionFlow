@@ -216,10 +216,14 @@ class CodeCleaner {
 			boolean testAnnotation = processedCode.get(i).contains("Test");
 			boolean supressAnnotation = processedCode.get(i).contains("@SuppressWarnings");
 			
-			if (processedCode.get(i).matches("^@.*") && !executionFlowAnnotation && !testAnnotation && !supressAnnotation) {
+			if (isAnnotation(processedCode.get(i)) && !executionFlowAnnotation && !testAnnotation && !supressAnnotation) {
 				processedCode.set(i, "");
 			}
 		}		
+	}
+	
+	private boolean isAnnotation(String line) {
+		return line.matches("^@.*");
 	}
 	
 	private void removeBlankLines() {		
@@ -227,6 +231,9 @@ class CodeCleaner {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		
 		for(int i = 0; i < processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			if (processedCode.get(i).equals("")) {
 				blankLines++;
 				emptyLines.add(i);
@@ -309,6 +316,9 @@ class CodeCleaner {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
 				continue;
 			
@@ -337,6 +347,9 @@ class CodeCleaner {
 		boolean wasInlineWhile = false;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
 				continue;
 			
@@ -394,6 +407,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
 				continue;
 			
@@ -429,6 +445,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			if (isForIterationAndHasNewKeyword(processedCode.get(i)))
 				continue;
 			
@@ -463,6 +482,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 
 		for (int i=0; i < processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			int oldLineId = i-numAddedLines;
 			List<Integer> targetLinesIds = new ArrayList<Integer>();
 			List<String> statements = Helper.splitByReserved(processedCode.get(i), ';');
@@ -514,6 +536,9 @@ class CodeCleaner {
 		int removedLines = 0;
 		
 		for (int i=0; i < processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			mapping.put(i+removedLines, Helper.initArray(i));
 			String curLine = processedCode.get(i);
 			
@@ -551,6 +576,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			int oldLineId = i-numAddedLines;
 
 			// add current line to targets
@@ -577,7 +605,10 @@ class CodeCleaner {
 	}
 	
 	private void prepareTryCatchBlocks() {
-		for (int i=0; i<processedCode.size(); i++) {	
+		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			if (processedCode.get(i).matches("^try.+$") 
 					|| processedCode.get(i).matches("^catch.+$") 
 					|| processedCode.get(i).matches("^finally.+$")) {
@@ -596,6 +627,9 @@ class CodeCleaner {
 	
 	private void convertEmptyForToWhile() {
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			if (processedCode.get(i).matches("^for[\\s\\t]*\\([\\s\\t]*;[\\s\\t]*;[\\s\\t]*\\).*$")) { // for(;;)
 				Matcher m = Pattern.compile("for[\\s\\t]*\\([\\s\\t]*;[\\s\\t]*;[\\s\\t]*\\)").matcher(processedCode.get(i));
 				m.find();
@@ -614,6 +648,9 @@ class CodeCleaner {
 		
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			// Updates the scope visibility of variables already initialized		
 			if (processedCode.get(i).matches("^for([\\s\\t]+|\\().+$")) {
 				String REGEX_MULTI_INITILIZATION = "^.+(=.+,.+).+;$";
@@ -745,6 +782,9 @@ class CodeCleaner {
 	private List<Integer> getContinuesInLoopBlock(int loopStartingLine, int loopClosingLine) {
 		List<Integer> foundLineIds = new ArrayList<Integer>();
 		for (int i=loopStartingLine+1; i<loopClosingLine; i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			String curLine = processedCode.get(i);
 			if (curLine.matches("^\\b(for|while|do)\\b.*")) {
 				i = Helper.findEndOfBlock(processedCode, i);
@@ -762,7 +802,10 @@ class CodeCleaner {
 				".*(boolean|char|byte|short|int|float|long|double).*";
 		
 		
-		for (int i=0; i<processedCode.size(); i++) {			
+		for (int i=0; i<processedCode.size(); i++) {	
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			if (processedCode.get(i).matches("^for([\\s\\t]+|\\().+$")
 					&& Helper.lineContainsReservedChar(processedCode.get(i), ":")) {
 				if (processedCode.get(i).contains("final ")) {
@@ -917,6 +960,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isAnnotation(processedCode.get(i)))
+				continue;
+			
 			String line = processedCode.get(i);
 			
 			if (Helper.lineContainsReservedChar(line, "}")) {

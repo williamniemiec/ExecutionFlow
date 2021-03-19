@@ -82,7 +82,7 @@ class ProcessingManagerTest {
 		processingManager.initializeManagers();
 		processingManager.doProcessingInTestedInvoked(new TestedInvoked(testedMethod, testMethod));
 		
-		Assertions.assertTrue(processingManager.wasPreprocessingDoneSuccessfully());
+		Assertions.assertFalse(processingManager.wasPreprocessingDoneSuccessfully());
 		
 		processingManager.restoreOriginalFilesFromInvoked();
 	}

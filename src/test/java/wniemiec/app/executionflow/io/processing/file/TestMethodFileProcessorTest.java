@@ -132,7 +132,6 @@ class TestMethodFileProcessorTest extends FileProcessorTest {
 				Map.entry(51, 45)
 		));
 	}
-
 	
 	//-----------------------------------------------------------------------
 	//		Methods
