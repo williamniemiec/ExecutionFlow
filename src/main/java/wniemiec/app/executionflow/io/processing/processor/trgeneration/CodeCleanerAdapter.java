@@ -32,7 +32,7 @@ public class CodeCleanerAdapter extends CodeCleaner {
 	public List<String> processLines() {
 		cleanupCode(sourceCode);	
 		deleteContentBetweenPercentages(processedCode);
-		
+
 		return processedCode;
 	}
 	

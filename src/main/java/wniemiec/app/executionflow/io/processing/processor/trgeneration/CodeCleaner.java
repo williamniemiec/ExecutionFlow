@@ -546,8 +546,8 @@ class CodeCleaner {
 					&& !Helper.lineContainsReservedChar(curLine, "{") 
 					&& !Helper.lineContainsReservedChar(curLine, "}")
 					&& !(
-							(Helper.lineContainsReservedWord(curLine, "case") 
-							|| Helper.lineContainsReservedWord(curLine, "default")
+							(curLine.contains("case ") 
+							|| curLine.contains("default:")
 							)
 							&& Helper.lineContainsReservedChar(curLine, ":"))
 					) {
@@ -598,7 +598,6 @@ class CodeCleaner {
 					processedCode.add(i+1, processedCode.get(i).substring(idx+1));
 					processedCode.set(i, processedCode.get(i).substring(0, idx+1));
 					numAddedLines++;
-					i++;
 				}
 			}
 		}
