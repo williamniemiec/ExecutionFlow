@@ -13,7 +13,6 @@ import java.util.Set;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.user.User;
-import wniemiec.util.logger.Logger;
 
 /**
  * Responsible for collect constructors.
@@ -86,8 +85,6 @@ public class ConstructorCollector extends InvokedCollector {
 			User.storeConstructorCollector(constructorCollector);
 		} 
 		catch (IOException e) {
-			Logger.error(e.toString());
-			Logger.error("Constructor collector cannot be stored");
 		}
 	}
 	

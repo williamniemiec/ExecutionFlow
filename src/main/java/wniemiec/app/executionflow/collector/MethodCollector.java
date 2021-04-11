@@ -13,7 +13,6 @@ import java.util.Set;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.user.User;
-import wniemiec.util.logger.Logger;
 
 /**
  * Responsible for collect methods.
@@ -91,10 +90,8 @@ public class MethodCollector extends InvokedCollector {
 	private void storeMethodCollector() {
 		try {
 			User.storeMethodCollector(methodCollector);
-		} 
+		}
 		catch (IOException e) {
-			Logger.error(e.toString());
-			Logger.error("Method collector cannot be stored");
 		}
 	}
 	

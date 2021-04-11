@@ -109,6 +109,9 @@ public class User {
 
 	public static void storeMethodCollector(Map<Integer, List<TestedInvoked>> collector)
 			throws IOException {
+		if (!session.exists())
+			return;
+		
 		session.save("METHOD_COLLECTOR", collector);
 	}
 	

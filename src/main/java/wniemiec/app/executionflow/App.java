@@ -151,6 +151,8 @@ public class App {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	try {
+		    		User.closeRemoteControl();
+		    		
 		    		if (!success)
 			    		finishedTestMethodWithAspectsDisabled = true;
 		    		
@@ -284,7 +286,7 @@ public class App {
 			
 			successfullRestoration = undoInvokedProcessng();
 			
-			User.closeRemoteControl();
+			//User.closeRemoteControl();
 		}
 		
 		if (!currentTestMethodCheckpoint.isEnabled()) {
