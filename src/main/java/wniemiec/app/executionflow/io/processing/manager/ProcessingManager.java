@@ -168,7 +168,7 @@ public class ProcessingManager {
 		try {
 			initializeProcessingManagers(restoreOriginalFiles);
 		}
-		catch(IOException | ClassNotFoundException | NoClassDefFoundError e) {
+		catch(IOException | NoClassDefFoundError e) {
 			Logger.error(e.toString());
 			
 			System.exit(-1);
@@ -176,47 +176,88 @@ public class ProcessingManager {
 	}
 
 	private void initializeProcessingManagers(boolean restoreOriginalFiles) 
-			throws ClassNotFoundException, IOException {
+			throws IOException {
+		initializePreTestMethodProcessingManager(restoreOriginalFiles);
+		initializeTestMethodProcessingManager(restoreOriginalFiles);
+		initializeInvokedProcessingManager(restoreOriginalFiles);
+	}
+	
+	private void initializePreTestMethodProcessingManager(boolean restoreOriginalFiles) 
+			throws IOException {
 		preTestMethodProcessingManager = new InvokedProcessingManager(
 				initializePreTestMethodManager(restoreOriginalFiles)
-		);
-		
-		testMethodProcessingManager = new InvokedProcessingManager(
-				initializeTestMethodManager(restoreOriginalFiles)
-		);
-		
-		invokedProcessingManager = new InvokedProcessingManager(
-				initializeInvokedManager(restoreOriginalFiles)
 		);
 	}
 	
 	private FilesProcessingManager initializePreTestMethodManager(boolean restoreOriginalFiles) 
-			throws ClassNotFoundException, IOException {
-		return new FilesProcessingManager(
-				ProcessorType.PRE_TEST_METHOD,
-				restoreOriginalFiles
+			throws IOException {
+		FilesProcessingManager manager = null;
+		
+		try {
+			manager = new FilesProcessingManager(
+					ProcessorType.PRE_TEST_METHOD,
+					restoreOriginalFiles
+			);
+		} 
+		catch (ClassNotFoundException e) {
+			Logger.error(e.toString());
+			System.exit(-1);
+		}
+		
+		return manager;
+	}
+	
+	private void initializeTestMethodProcessingManager(boolean restoreOriginalFiles) 
+			throws IOException {
+		testMethodProcessingManager = new InvokedProcessingManager(
+				initializeTestMethodManager(restoreOriginalFiles)
 		);
 	}
 	
 	private FilesProcessingManager initializeTestMethodManager(boolean restoreOriginalFiles)
-			throws ClassNotFoundException, IOException {
-		return new FilesProcessingManager(
-				ProcessorType.TEST_METHOD,
-				restoreOriginalFiles
+			throws IOException {
+		FilesProcessingManager manager = null;
+		
+		try {
+			manager = new FilesProcessingManager(
+					ProcessorType.TEST_METHOD,
+					restoreOriginalFiles
+			);
+		} 
+		catch (ClassNotFoundException e) {
+			Logger.error(e.toString());
+			System.exit(-1);
+		}
+		
+		return manager;
+	}
+	
+	private void initializeInvokedProcessingManager(boolean restoreOriginalFiles) 
+			throws IOException {
+		invokedProcessingManager = new InvokedProcessingManager(
+				initializeInvokedManager(restoreOriginalFiles)
 		);
 	}
 
 	private FilesProcessingManager initializeInvokedManager(boolean restoreOriginalFiles)
-			throws ClassNotFoundException, IOException {
-		FilesProcessingManager invokedManager = new FilesProcessingManager(
-				ProcessorType.INVOKED,
-				restoreOriginalFiles
-		);
+			throws IOException {
+		FilesProcessingManager manager = null;
 		
-		if (!restoreOriginalFiles)
-			invokedManager.loadBackup();
+		try {
+			manager = new FilesProcessingManager(
+					ProcessorType.INVOKED,
+					restoreOriginalFiles
+			);
+			
+			if (!restoreOriginalFiles)
+				manager.loadBackup();
+		} 
+		catch (ClassNotFoundException e) {
+			Logger.error(e.toString());
+			System.exit(-1);
+		}
 		
-		return invokedManager;
+		return manager;
 	}
 	
 	public void undoPreprocessing() throws IOException {
@@ -355,7 +396,7 @@ public class ProcessingManager {
 	private void doProcessingInTestMethod(FileProcessingManager testMethodFileManager) 
 			throws IOException {
 		if (testMethodProcessingManager == null)
-			return;
+			initializeTestMethodProcessingManager(true);
 		
 		testMethodProcessingManager.processAndCompile(testMethodFileManager, autoRestore);
 	}
@@ -367,6 +408,7 @@ public class ProcessingManager {
 		);
 		
 		doProcessingInInvoked(currentInvokedFileManager);
+		
 		collectorProcessingManager.updateCollectorsFromMapping(
 				InvokedFileProcessor.getMapping(),
 				currentTestMethod.getSrcPath(),
@@ -379,7 +421,7 @@ public class ProcessingManager {
 	private void doProcessingInInvoked(FileProcessingManager invokedFileManager) 
 			throws IOException {
 		if (invokedProcessingManager == null)
-			return;
+			initializeInvokedProcessingManager(true);
 		
 		invokedProcessingManager.processAndCompile(
 				invokedFileManager, 

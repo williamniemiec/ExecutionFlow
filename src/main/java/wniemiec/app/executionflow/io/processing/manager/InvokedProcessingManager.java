@@ -28,13 +28,11 @@ public class InvokedProcessingManager {
 	 * application execution; otherwise, the original files that have been 
 	 * modified in the last run may be lost.
 	 * 
-	 * @throws		ClassNotFoundException If FileManager class has not been
-	 * found
 	 * @throws		IOException If backup files could not be restored
 	 */
 	public InvokedProcessingManager(FilesProcessingManager invokedFilesManager) 
-			throws ClassNotFoundException, IOException {
-			this.invokedFilesManager = invokedFilesManager;
+			throws IOException {
+		this.invokedFilesManager = invokedFilesManager;
 	}
 	
 	
