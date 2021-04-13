@@ -7,7 +7,6 @@ import java.io.Serializable;
  * method that test them.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class TestedInvoked implements Serializable {

@@ -10,7 +10,6 @@ import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
  * Responsible for generating {@link InvokedFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		5.2.0
  * @since		2.0.0
  */
 public class InvokedFileProcessorFactory extends FileProcessorFactory {

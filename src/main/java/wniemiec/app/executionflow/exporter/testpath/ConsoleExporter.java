@@ -4,13 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.util.console.ConsoleHeader;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Displays the results on the console.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		1.0
  */
 public class ConsoleExporter implements TestPathExporter {
@@ -47,11 +46,11 @@ public class ConsoleExporter implements TestPathExporter {
 	
 	private void printHeader()
 	{
-		ConsoleHeader.printHeader("EXPORT", '-');
+		Consolex.writeHeader("EXPORT", "-");
 	}
 
 	private static void printFooter() {
-		System.out.println();
+		Consolex.writeLine("");
 	}
 
 	private void printSignatures(TestedInvoked invokedContainer) {
@@ -63,16 +62,16 @@ public class ConsoleExporter implements TestPathExporter {
 		}
 		
 		if (!testMethodSignature.equals(currentTestMethodSignature)) {
-			System.out.println(testMethodSignature);	
-			System.out.println(invokedSignature);
+			Consolex.writeLine(testMethodSignature);	
+			Consolex.writeLine(invokedSignature);
 			
 			currentTestMethodSignature = testMethodSignature;
 			currentInvoked = invokedSignature;
 		} 
 		else if (!invokedSignature.equals(currentInvoked)) {	
-			System.out.println();
-			System.out.println(testMethodSignature);
-			System.out.println(invokedSignature);
+			Consolex.writeLine("");
+			Consolex.writeLine(testMethodSignature);
+			Consolex.writeLine(invokedSignature);
 			
 			currentInvoked = invokedSignature;
 		}
@@ -80,7 +79,7 @@ public class ConsoleExporter implements TestPathExporter {
 
 	private void printAllTestPaths(List<List<Integer>> testPaths) {
 		for (List<Integer> testPath : testPaths) {
-			System.out.println(testPath);
+			Consolex.writeLine(testPath);
 		}
 	}
 }

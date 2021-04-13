@@ -12,7 +12,7 @@ import org.aspectj.tools.ajc.Main;
 
 import wniemiec.app.executionflow.io.FileEncoding;
 import wniemiec.app.executionflow.io.compiler.Compiler;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for compiling Java files.
@@ -20,7 +20,6 @@ import wniemiec.util.logger.Logger;
  * @apiNote		Compatible with AspectJ
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		1.3
  */
 public class StandardAspectJCompiler implements Compiler {
@@ -159,15 +158,16 @@ public class StandardAspectJCompiler implements Compiler {
 	}
 	
 	private void dump(Path outputDir) {
-		Logger.debug(this.getClass(), "start");
+		Consolex.writeDebug(this.getClass().getName() + " - start");
 		
 		for (IMessage message : messageHandler.getMessages(null, true)) {
-			Logger.debug(message.toString());
+			Consolex.writeDebug(message.toString());
 		}
 		
-		Logger.debug(
-				this.getClass(),
-				"Output dir: " + outputDir.toAbsolutePath().toString()
+		Consolex.writeDebug(
+				this.getClass().getName()
+				+ " - Output dir: " 
+				+ outputDir.toAbsolutePath().toString()
 		);
 	}
 

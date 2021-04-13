@@ -8,7 +8,6 @@ import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
  * Moves alone opening curly bracket to the previous line.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.3
  * @since 		6.0.0
  */
 public class OpenCurlyBracketProcessor extends SourceCodeProcessor {

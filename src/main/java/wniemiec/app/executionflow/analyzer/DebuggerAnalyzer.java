@@ -1,6 +1,5 @@
 package wniemiec.app.executionflow.analyzer;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,14 +13,13 @@ import wniemiec.app.executionflow.collector.CallCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.lib.LibraryManager;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 import wniemiec.util.task.Scheduler;
 
 /**
  * Computes the test path for a method or constructor using a debugger.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		2.0.0
  */
 public abstract class DebuggerAnalyzer {
@@ -123,7 +121,7 @@ public abstract class DebuggerAnalyzer {
 	private void clearBreakpoints() {
 		commands.add("clear");
 		
-		Logger.debug(this.getClass(), "COMMAND: clear");
+		Consolex.writeDebug(this.getClass().getName() + " - COMMAND: clear");
 	}
 	
 	private void initializeBreakpoint() {
@@ -135,7 +133,7 @@ public abstract class DebuggerAnalyzer {
 		
 		commands.add(command.toString());
 		
-		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
+		Consolex.writeDebug(this.getClass().getName() + " - COMMAND: " + command.toString());
 	}
 	
 	private void initializeRunClass() {
@@ -149,7 +147,7 @@ public abstract class DebuggerAnalyzer {
 		
 		commands.add(command.toString());
 		
-		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
+		Consolex.writeDebug(this.getClass().getName() + " - COMMAND: " + command.toString());
 	}
 	
 	private void enableTimeout(final int TIMEOUT_ID) {
@@ -179,7 +177,7 @@ public abstract class DebuggerAnalyzer {
 			jdb.forceQuit();
 		} 
 		catch (IOException e) {
-			Logger.error(e.getMessage());
+			Consolex.writeError(e.getMessage());
 		}
 	}
 
@@ -226,14 +224,14 @@ public abstract class DebuggerAnalyzer {
 		
 		commands.add(command.toString());
 		
-		Logger.debug(this.getClass(), "COMMAND: " + command.toString());
+		Consolex.writeDebug(this.getClass().getName() + " - COMMAND: " + command.toString());
 	}
 
 	private void exitCommand() {
 		commands.add("exit");
 		commands.add("exit");
 		
-		Logger.debug(this.getClass(), "COMMAND: exit");
+		Consolex.writeDebug(this.getClass().getName() + " - COMMAND: exit");
 	}
 	
 	private void initializeJDB() {
@@ -251,9 +249,9 @@ public abstract class DebuggerAnalyzer {
 				.srcPath(srcPath)
 				.build();
 		
-		Logger.debug(this.getClass(), "Classpath: " + classPath);
-		Logger.debug(this.getClass(), "Srcpath: " + srcPath);
-		Logger.debug(this.getClass(), "Working directory: " + testClassRootPath);
+		Consolex.writeDebug(this.getClass().getName() + " - Classpath: " + classPath);
+		Consolex.writeDebug(this.getClass().getName() + " - Srcpath: " + srcPath);
+		Consolex.writeDebug(this.getClass().getName() + " - Working directory: " + testClassRootPath);
 	}
 	
 	/**

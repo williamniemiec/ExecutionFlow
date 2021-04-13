@@ -12,7 +12,7 @@ import wniemiec.app.executionflow.collector.InvokedCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.io.ClassPathSearcher;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Captures class instantiation within test methods.
@@ -143,7 +143,7 @@ public aspect ConstructorHook extends RuntimeHook {
 	
 	private boolean hasSourceAndBinearyPath() {
 		if (srcPath == null || classPath == null) {
-			Logger.warning("The constructor with the following signature" 
+			Consolex.writeWarning("The constructor with the following signature" 
 					+ " will be skiped because its source file and / or " 
 					+ " binary file cannot be found: " + signature);
 			
@@ -161,7 +161,7 @@ public aspect ConstructorHook extends RuntimeHook {
 			srcPath = ClassPathSearcher.findSrcPath(classSignature);
 		} 
 		catch (IOException e) {
-			Logger.error("[ERROR] ConstructorCollector - " + e.getMessage() + "\n");
+			Consolex.writeError("ConstructorCollector - " + e.getMessage() + "\n");
 		}
 	}
 	

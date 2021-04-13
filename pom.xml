@@ -66,11 +66,6 @@
 			<version>[1.0.2,)</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util</groupId>
-			<artifactId>logger</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
 			<groupId>wniemiec.util.task</groupId>
 			<artifactId>checkpoint</artifactId>
 			<version>[1.0.3,)</version>
@@ -111,16 +106,6 @@
 			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.console</groupId>
-			<artifactId>console-file-printer</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
-			<groupId>wniemiec.util.console</groupId>
-			<artifactId>console-header</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
 			<groupId>wniemiec.util.io.manager</groupId>
 			<artifactId>csv-file-manager</artifactId>
 			<version>[1.0.0,)</version>
@@ -129,6 +114,11 @@
 			<groupId>wniemiec.util.io.path.replacer</groupId>
 			<artifactId>reserved-character-replacer</artifactId>
 			<version>[1.0.0,)</version>
+		</dependency>
+		<dependency>
+			<groupId>wniemiec.io</groupId>
+			<artifactId>consolex</artifactId>
+			<version>[1.0.1,)</version>
 		</dependency>
 	</dependencies>
 

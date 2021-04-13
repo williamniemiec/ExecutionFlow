@@ -11,7 +11,6 @@ import wniemiec.app.executionflow.collector.InvokedCollector;
  * Responsible for managing processing in collected methods and constructors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class CollectorProcessingManager {

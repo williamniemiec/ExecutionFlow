@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import wniemiec.app.executionflow.App;
-import wniemiec.util.console.ConsoleFilePrinter;
 import wniemiec.util.io.manager.TextFileManager;
 
 public abstract class Processing {

@@ -13,7 +13,6 @@ import wniemiec.app.executionflow.App;
  * Responsible for gathering all libraries that the application needs.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		5.2.0
  */
 public class LibraryManager {

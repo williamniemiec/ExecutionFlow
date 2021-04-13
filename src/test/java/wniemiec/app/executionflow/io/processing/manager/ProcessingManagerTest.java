@@ -12,8 +12,8 @@ import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.io.processing.manager.ProcessingManager;
-import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
+import wniemiec.io.consolex.LogLevel;
 
 class ProcessingManagerTest {
 
@@ -53,7 +53,7 @@ class ProcessingManagerTest {
 				.signature("auxfiles.wniemiec.app.executionflow.io.processing.manager.testmethod.method1()")
 				.build();
 		
-		Logger.setLevel(LogLevel.WARNING);
+		Consolex.setLoggerLevel(LogLevel.WARNING);
 	}
 	
 	@AfterEach

@@ -10,7 +10,6 @@ import wniemiec.util.io.parser.balance.CurlyBracketBalance;
  * Comments on all test methods except the one with the signature provided.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.4
  * @since 		6.0.0
  */
 public class TestMethodHighlighter extends SourceCodeProcessor {

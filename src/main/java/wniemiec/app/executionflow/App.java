@@ -14,14 +14,13 @@ import wniemiec.app.executionflow.io.processing.manager.ProcessingManager;
 import wniemiec.app.executionflow.io.runner.JUnitRunner;
 import wniemiec.app.executionflow.lib.LibraryManager;
 import wniemiec.app.executionflow.user.User;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 import wniemiec.util.task.Checkpoint;
 
 /**
  * Responsible for deciding what to do when a {@link wniemiec.app.executionflow.runtime.hook} is triggered.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class App {
@@ -37,8 +36,8 @@ public class App {
 	private static Path appRoot;
 	private static Path currentProjectRoot;
 	private static Path targetPath;
-	private static Checkpoint firstRunCheckpoint;
-	private static Checkpoint currentTestMethodCheckpoint;
+	private static transient Checkpoint firstRunCheckpoint;
+	private static transient Checkpoint currentTestMethodCheckpoint;
 	private static ExportManager methodExporter;
 	private static ExportManager constructorExporter;
 	private static ProcessingManager processingManager;
@@ -103,7 +102,7 @@ public class App {
 				doPreprocessing(testMethod);
 		}
 		catch (IOException e) {
-			Logger.error(e.toString());
+			Consolex.writeError(e.toString());
 			
 			errorProcessingTestMethod = true;
 			success = false;
@@ -112,7 +111,7 @@ public class App {
 	
 	public static void checkDevelopmentMode() {
 		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
-			Logger.error("Development mode is off even in a development "
+			Consolex.writeError("Development mode is off even in a development "
 					+ "environment. Turn it on in the ExecutionFlow class");
 			
 			System.exit(-1);
@@ -136,12 +135,12 @@ public class App {
 			}
 			
 			ExportManager.setTestPathExportType(User.getSelectedTestPathExportType());
-			Logger.setLevel(User.getSelectedLogLevel());
+			Consolex.setLoggerLevel(User.getSelectedLogLevel());
 			
 			dumpPaths();
 		}
 		catch(IOException | NoClassDefFoundError e) {
-			Logger.error(e.getMessage());
+			Consolex.writeError(e.getMessage());
 			
 			System.exit(-1);
 		}
@@ -187,9 +186,9 @@ public class App {
 	}
 	
 	private static void dumpPaths() {
-		Logger.debug("AppRootPath: " + getAppRootPath());
-		Logger.debug("CurrentProjectPath: " + getCurrentProjectRoot());
-		Logger.debug("AppTargetPath: " + getAppTargetPath());
+		Consolex.writeDebug("AppRootPath: " + getAppRootPath());
+		Consolex.writeDebug("CurrentProjectPath: " + getCurrentProjectRoot());
+		Consolex.writeDebug("AppTargetPath: " + getAppTargetPath());
 	}
 	
 	private static void beforeEachTestMethod() {
@@ -201,7 +200,7 @@ public class App {
 			User.openRemoteControl();
 		}
 		catch(IOException | NoClassDefFoundError e) {
-			Logger.error(e.getMessage());
+			Consolex.writeError(e.getMessage());
 			
 			System.exit(-1);
 		}
@@ -226,7 +225,7 @@ public class App {
 	}
 	
 	private static void initializeLogger() {
-		Logger.setLevel(User.getSelectedLogLevel());
+		Consolex.setLoggerLevel(User.getSelectedLogLevel());
 	}
 	
 	private static boolean inTestMethodWithAspectsDisabled() {
@@ -296,7 +295,7 @@ public class App {
 		disableCheckpoint(currentTestMethodCheckpoint);
 		
 		if (!successfullRestoration) {
-			Logger.error("Error while restoring original files");
+			Consolex.writeError("Error while restoring original files");
 			System.exit(-1);
 		}
 	}

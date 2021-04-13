@@ -10,10 +10,9 @@ import java.lang.annotation.Target;
  * all collectors will ignore it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
  * @since		2.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface SkipInvoked 
-{}
+public @interface SkipInvoked {
+}

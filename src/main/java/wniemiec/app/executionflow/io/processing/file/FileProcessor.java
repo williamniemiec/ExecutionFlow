@@ -8,11 +8,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 import wniemiec.app.executionflow.io.FileEncoding;
-import wniemiec.util.console.ConsoleFilePrinter;
 import wniemiec.util.io.manager.TextFileManager;
 import wniemiec.util.io.processor.indenter.JavaCodeIndenter;
-import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.*;
 
 /**
  * A file processor will add or replace some code to an existing code if some
@@ -20,7 +18,6 @@ import wniemiec.util.logger.Logger;
  * classes that implement this class.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since		2.0.0
  */
 public abstract class FileProcessor implements Serializable {
@@ -82,14 +79,14 @@ public abstract class FileProcessor implements Serializable {
 	}
 	
 	protected void dump(List<String> sourceCode) {
-		if (Logger.getLevel() != LogLevel.DEBUG)
+		if (Consolex.getLoggerLevel() != LogLevel.DEBUG)
 			return;
 		
 		JavaCodeIndenter indenter = new JavaCodeIndenter();
 		List<String> indentedFile = indenter.indent(sourceCode);
 
-		Logger.debug(this.getClass(), "Processed file");
-		ConsoleFilePrinter.printFileWithLines(indentedFile);
+		Consolex.writeDebug(this.getClass().getName() + " - Processed file");
+		Consolex.writeLines(indentedFile);
 		
 	}
 	

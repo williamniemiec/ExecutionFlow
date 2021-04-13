@@ -10,10 +10,9 @@ import java.lang.annotation.Target;
  * methods called within it will be collected.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
  * @since		2.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface CollectCalls 
-{}
+public @interface CollectCalls {
+}

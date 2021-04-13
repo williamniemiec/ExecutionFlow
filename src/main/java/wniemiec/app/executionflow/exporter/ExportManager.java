@@ -18,7 +18,7 @@ import wniemiec.app.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.app.executionflow.exporter.testpath.TestPathExporter;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for performing the exports that the application performs, which 
@@ -31,7 +31,6 @@ import wniemiec.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		6.0.0
  */
 public abstract class ExportManager {
@@ -159,7 +158,7 @@ public abstract class ExportManager {
 			processedSourceFileExporter.export(processedSourceFiles);
 		} 
 		catch (IOException e) {
-			Logger.error(e.getMessage());
+			Consolex.writeError(e.getMessage());
 		}
 	}
 	
@@ -172,7 +171,7 @@ public abstract class ExportManager {
 			mcti.export(methodsCalledByTestedInvoked);
 		} 
 		catch (IOException e) {
-			Logger.error(e.getMessage());
+			Consolex.writeError(e.getMessage());
 		}
 	}
 	

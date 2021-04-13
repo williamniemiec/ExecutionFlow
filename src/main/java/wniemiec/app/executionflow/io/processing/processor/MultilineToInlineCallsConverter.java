@@ -12,7 +12,6 @@ import wniemiec.util.io.parser.balance.RoundBracketBalance;
  * arguments on a single line.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since 		6.0.0
  */
 public class MultilineToInlineCallsConverter extends SourceCodeProcessor {

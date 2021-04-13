@@ -12,7 +12,7 @@ import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.exporter.SignatureToPath;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.util.io.manager.CSVFileManager;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Exports signature of methods called by a tested invoked in a CSV file with
@@ -25,7 +25,6 @@ import wniemiec.util.logger.Logger;
  * </code>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since		2.0.0
  */
 public class MethodsCalledByTestedInvokedExporter 
@@ -88,7 +87,7 @@ public class MethodsCalledByTestedInvokedExporter
 	private void exportRegistry(Invoked invoked, Set<String> methodsCalledByTestedInvoked) 
 			throws IOException {
 		if (methodsCalledByTestedInvoked == null || methodsCalledByTestedInvoked.isEmpty()) {
-			Logger.debug("There are no methods called by tested invoked");
+			Consolex.writeDebug("There are no methods called by tested invoked");
 			return;
 		}
 
@@ -135,12 +134,12 @@ public class MethodsCalledByTestedInvokedExporter
 			csvFile.delete();
 		} 
 		catch (IOException e2) {
-			Logger.debug("Failed to read CSV file - "+e2.getMessage());
+			Consolex.writeDebug("Failed to read CSV file - "+e2.getMessage());
 		}
 	}
 	
 	private void storeExportFile(Invoked invoked) {
-		Logger.debug("Exporting methods called by tested invoked...");
+		Consolex.writeDebug("Exporting methods called by tested invoked...");
 		
 		try {
 			List<String> mcti = methodsCalledByTestedInvoked.stream()
@@ -150,7 +149,7 @@ public class MethodsCalledByTestedInvokedExporter
 			csvFile.writeLine(mcti, ";");
 		} 
 		catch (IOException e2) {
-			Logger.debug("Failed to write CSV file - "+e2.getMessage());
+			Consolex.writeDebug("Failed to write CSV file - "+e2.getMessage());
 		}
 	}
 }

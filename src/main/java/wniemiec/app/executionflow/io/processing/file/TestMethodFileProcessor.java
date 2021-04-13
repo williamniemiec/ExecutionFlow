@@ -19,7 +19,6 @@ import wniemiec.app.executionflow.io.processing.processor.TestAnnotationProcesso
  * removes inline comments and converts multiline calls to inline calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor {

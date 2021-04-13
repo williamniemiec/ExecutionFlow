@@ -9,7 +9,6 @@ import wniemiec.app.executionflow.io.processing.file.FileProcessor;
  * Responsible for generating {@link FileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
  * @since		2.0.0
  */
 public abstract class FileProcessorFactory {

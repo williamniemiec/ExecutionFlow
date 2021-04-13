@@ -17,13 +17,12 @@ import wniemiec.app.executionflow.io.compiler.CompilerFactory;
 import wniemiec.app.executionflow.io.processing.file.FileProcessor;
 import wniemiec.app.executionflow.io.processing.file.factory.FileProcessorFactory;
 import wniemiec.app.executionflow.lib.LibraryManager;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for managing file processing and compilation for a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		1.3
  */
 public class FileProcessingManager implements Serializable {
@@ -317,7 +316,7 @@ public class FileProcessingManager implements Serializable {
 				}
 			} 
 			catch (IOException e1) {
-				Logger.error(e1.getMessage());
+				Consolex.writeError(e1.getMessage());
 			}				
 		}
 	}
@@ -398,7 +397,7 @@ public class FileProcessingManager implements Serializable {
 				compiler.compile(srcFile, binDirectory, FileEncoding.UTF_8);
 		} 
 		catch (java.lang.NoClassDefFoundError e) {
-			Logger.error("aspectjtools.jar not found");
+			Consolex.writeError("aspectjtools.jar not found");
 			throw e;
 		}
 		

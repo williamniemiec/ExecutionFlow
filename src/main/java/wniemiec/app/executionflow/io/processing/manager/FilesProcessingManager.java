@@ -21,7 +21,6 @@ import wniemiec.app.executionflow.io.processing.file.ProcessorType;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		2.0.0
  */
 public class FilesProcessingManager {

@@ -11,7 +11,6 @@ import wniemiec.util.io.parser.balance.CurlyBracketBalance;
  * Adds curly brackets in else blocks that does not have curly brackets.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since 		6.0.0
  */
 public class ElseWithoutCurlyBracketProcessor extends SourceCodeProcessor {

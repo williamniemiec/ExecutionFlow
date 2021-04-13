@@ -14,8 +14,8 @@ import wniemiec.app.executionflow.io.FileEncoding;
 import wniemiec.app.executionflow.io.compiler.Compiler;
 import wniemiec.app.executionflow.io.compiler.CompilerFactory;
 import wniemiec.app.executionflow.lib.LibraryManager;
-import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
+import wniemiec.io.consolex.LogLevel;
 
 class StandardAspectJCompilerTest {
 
@@ -44,7 +44,7 @@ class StandardAspectJCompilerTest {
 		
 		outputDir = Path.of(System.getProperty("java.io.tmpdir"));
 		
-		Logger.setLevel(LogLevel.WARNING);
+		Consolex.setLoggerLevel(LogLevel.WARNING);
 	}
 	
 	

@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import wniemiec.util.console.ConsoleFilePrinter;
-
+import wniemiec.io.consolex.Consolex;
 
 /**
  * @author		Murilo Wolfart
@@ -64,7 +63,7 @@ class Helper {
 		File dir = new File(dirPath);
 		if (dir.exists()) return;
 		if (!dir.mkdir()) {
-			System.err.println("Could not create directory " + dirPath);
+			Consolex.writeError("Could not create directory " + dirPath);
 //			System.exit(2);
 		}
 	}
@@ -77,7 +76,7 @@ class Helper {
 			fr.write(content);
 			fr.close();
 		} catch (IOException e) {
-			System.err.println("Error in writing file " + filePath);
+			Consolex.writeError("Error in writing file " + filePath);
 		}
 	}
 	
@@ -172,8 +171,8 @@ class Helper {
 		}
 
 		if (openingLine == -1) {
-			System.err.println("Braces are not balanced");
-			System.err.println("When trying to find start of block ending at line " + (startingLine+1));
+			Consolex.writeError("Braces are not balanced");
+			Consolex.writeError("When trying to find start of block ending at line " + (startingLine+1));
 //			System.exit(2);
 		}
 		
@@ -201,13 +200,13 @@ class Helper {
 		}
 
 		if (closingLine == -1) {
-			System.out.println("----");
-			ConsoleFilePrinter.printFileWithLines(sourceCode);
+			Consolex.writeLine("----");
+			Consolex.writeLines(sourceCode);
 			
 			
-			System.err.println("Braces are not balanced");
-			System.err.println("When trying to find end of block starting at line " + (startingLine+1));
-			System.err.println("Line content: " + sourceCode.get(startingLine));
+			Consolex.writeError("Braces are not balanced");
+			Consolex.writeError("When trying to find end of block starting at line " + (startingLine+1));
+			Consolex.writeError("Line content: " + sourceCode.get(startingLine));
 //			System.exit(2);
 		}
 		
@@ -232,8 +231,8 @@ class Helper {
 		}
 
 		if (conditionalLine == -1) {
-			System.err.println("Continue without while or do");
-			System.err.println("When trying to find conditional of continue at line " + (startingLine+1));			
+			Consolex.writeError("Continue without while or do");
+			Consolex.writeError("When trying to find conditional of continue at line " + (startingLine+1));			
 //			System.exit(2);
 		}
 		

@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
  * class declarations.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.1
  * @since 		6.0.0
  */
 public class InlineCommentRemover extends SourceCodeProcessor {

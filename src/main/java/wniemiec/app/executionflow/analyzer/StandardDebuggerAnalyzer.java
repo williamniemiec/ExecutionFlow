@@ -6,14 +6,13 @@ import java.util.List;
 
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.util.io.parser.balance.RoundBracketBalance;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Standard strategy for computing test path of a method and records the 
  * methods called by it.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		6.0.0
  */
 class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
@@ -126,7 +125,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	private void sendJDB(String command) {
 		jdb.send(command);
 		
-		Logger.debug(this.getClass(), "COMMAND: " + command);
+		Consolex.writeDebug(this.getClass().getName() + " - COMMAND: " + command);
 	}
 	
 	private void readAllOutput() throws IOException	{
@@ -182,7 +181,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	private void initializeLine() {
 		line = jdb.read();
     	
-    	Logger.debug(this.getClass(), "LINE: " + line);
+    	Consolex.writeDebug(this.getClass().getName() + " - LINE: " + line);
 	}
 
 	private boolean isEmptyLine() {
@@ -308,7 +307,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	private void initializeSrcLine() {
 		srcLine = jdb.read();
 		
-		Logger.debug(this.getClass(), "SRC: " + srcLine);
+		Consolex.writeDebug(this.getClass().getName() + " - SRC: " + srcLine);
 	}
 
 	private boolean isNewIteration() {

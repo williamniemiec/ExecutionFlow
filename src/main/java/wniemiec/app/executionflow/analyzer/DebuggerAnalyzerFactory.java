@@ -8,7 +8,6 @@ import wniemiec.app.executionflow.invoked.TestedInvoked;
  * Responsible for creating {@link DebuggerAnalyzer} instances.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class DebuggerAnalyzerFactory {

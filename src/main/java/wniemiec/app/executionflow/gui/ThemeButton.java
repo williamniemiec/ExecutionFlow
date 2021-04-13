@@ -15,7 +15,6 @@ import javax.swing.JButton;
  * Responsible for generating application buttons.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class ThemeButton extends JButton {

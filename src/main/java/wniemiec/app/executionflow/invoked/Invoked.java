@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Stores information about an invoked, where an invoked can be a 
  * method or a constructor. 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class Invoked implements Serializable {
@@ -642,7 +641,7 @@ public class Invoked implements Serializable {
 			oos.writeUTF((binPath == null) ? "NULL" : binPath.toAbsolutePath().toString());
 		} 
 		catch (IOException e) {
-			Logger.error(e.toString());
+			Consolex.writeError(e.toString());
 		}
 	}
 
@@ -653,7 +652,7 @@ public class Invoked implements Serializable {
 			this.binPath = readPath(ois);
 		} 
 		catch (ClassNotFoundException | IOException e) {
-			Logger.error(e.toString());
+			Consolex.writeError(e.toString());
 		}
 	}
 	

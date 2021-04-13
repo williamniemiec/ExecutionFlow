@@ -15,7 +15,7 @@ import wniemiec.app.executionflow.io.processing.file.TestMethodFileProcessor;
 import wniemiec.app.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
 import wniemiec.app.executionflow.io.processing.file.factory.PreTestMethodFileProcessorFactory;
 import wniemiec.app.executionflow.io.processing.file.factory.TestMethodFileProcessorFactory;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for processing test methods, methods and constructors. The
@@ -27,7 +27,6 @@ import wniemiec.util.logger.Logger;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class ProcessingManager {
@@ -114,9 +113,9 @@ public class ProcessingManager {
 		catch (IOException e) {
 			success = false;
 			
-			Logger.error(e.getMessage());
-			Logger.error("Could not recover backup files.");
-			Logger.error("See more: https://github.com/williamniemiec/"
+			Consolex.writeError(e.getMessage());
+			Consolex.writeError("Could not recover backup files.");
+			Consolex.writeError("See more: https://github.com/williamniemiec/"
 					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
 					+ "#could-not-recover-all-backup-files");
 		}
@@ -169,7 +168,7 @@ public class ProcessingManager {
 			initializeProcessingManagers(restoreOriginalFiles);
 		}
 		catch(IOException | NoClassDefFoundError e) {
-			Logger.error(e.toString());
+			Consolex.writeError(e.toString());
 			
 			System.exit(-1);
 		}
@@ -200,7 +199,7 @@ public class ProcessingManager {
 			);
 		} 
 		catch (ClassNotFoundException e) {
-			Logger.error(e.toString());
+			Consolex.writeError(e.toString());
 			System.exit(-1);
 		}
 		
@@ -225,7 +224,7 @@ public class ProcessingManager {
 			);
 		} 
 		catch (ClassNotFoundException e) {
-			Logger.error(e.toString());
+			Consolex.writeError(e.toString());
 			System.exit(-1);
 		}
 		
@@ -253,7 +252,7 @@ public class ProcessingManager {
 				manager.loadBackup();
 		} 
 		catch (ClassNotFoundException e) {
-			Logger.error(e.toString());
+			Consolex.writeError(e.toString());
 			System.exit(-1);
 		}
 		
@@ -281,17 +280,17 @@ public class ProcessingManager {
 		initializePreTestMethodFileManager(testMethod);
 		
 		try {
-			Logger.info("Preprocessing test method...");
+			Consolex.writeInfo("Preprocessing test method...");
 			
 			preTestMethodProcessingManager.processAndCompile(
 					preTestMethodFileManager, 
 					autoRestore
 			);
 			
-			Logger.info("Preprocessing completed");
+			Consolex.writeInfo("Preprocessing completed");
 		}
 		catch (IOException e) {
-			Logger.error(e.getMessage());
+			Consolex.writeError(e.getMessage());
 			
 			if (preTestMethodProcessingManager != null) {
 				preTestMethodProcessingManager.restoreInvokedOriginalFiles();
@@ -376,7 +375,7 @@ public class ProcessingManager {
 	}
 	
 	private void processTestMethod() throws IOException {
-		Logger.info(
+		Consolex.writeInfo(
 				"Processing source file of test method "
 				+ currentTestMethod.getConcreteSignature() 
 				+ "..."
@@ -390,7 +389,7 @@ public class ProcessingManager {
 				currentTestedInvoked.getSrcPath()
 		);
 		
-		Logger.info("Processing completed");
+		Consolex.writeInfo("Processing completed");
 	}
 
 	private void doProcessingInTestMethod(FileProcessingManager testMethodFileManager) 
@@ -402,7 +401,7 @@ public class ProcessingManager {
 	}
 	
 	private void processInvokedMethod() throws IOException {
-		Logger.info("Processing source file of invoked - " 
+		Consolex.writeInfo("Processing source file of invoked - " 
 				+ currentTestedInvoked.getConcreteSignature() 
 				+ "..."
 		);
@@ -415,7 +414,7 @@ public class ProcessingManager {
 				currentTestedInvoked.getSrcPath()
 		);
 		
-		Logger.info("Processing completed");
+		Consolex.writeInfo("Processing completed");
 	}
 	
 	private void doProcessingInInvoked(FileProcessingManager invokedFileManager) 

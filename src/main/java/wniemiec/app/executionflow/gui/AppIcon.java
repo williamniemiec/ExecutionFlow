@@ -12,7 +12,6 @@ import wniemiec.app.executionflow.App;
  * Responsible for managing application icon.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class AppIcon {

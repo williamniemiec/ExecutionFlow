@@ -13,14 +13,13 @@ import java.util.Map;
 import java.util.Set;
 
 import wniemiec.app.executionflow.invoked.Invoked;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for collect method signatures of methods called inside a method
  * or constructor.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class CallCollector {
@@ -116,7 +115,7 @@ public class CallCollector {
 			store();
 		} 
 		catch (IOException e) {
-			Logger.error("MethodCallsCollector.aj - " + e.getMessage());
+			Consolex.writeError("MethodCallsCollector.aj - " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -226,7 +225,7 @@ public class CallCollector {
 			invokedMethods = (Map<Invoked, Set<String>>) ois.readObject();
 		} 
 		catch (IOException | ClassNotFoundException e) {
-			Logger.error("Methods called by tested invoked - " + e.getMessage());
+			Consolex.writeError("Methods called by tested invoked - " + e.getMessage());
 		}
 	
 		MCTI_FILE.delete();

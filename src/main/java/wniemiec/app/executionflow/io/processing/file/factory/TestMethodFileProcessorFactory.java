@@ -10,7 +10,6 @@ import wniemiec.app.executionflow.io.processing.file.TestMethodFileProcessor;
  * Responsible for generating {@link TestMethodFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessorFactory extends FileProcessorFactory {

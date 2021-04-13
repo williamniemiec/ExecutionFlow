@@ -5,10 +5,7 @@ import java.util.List;
 import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 
 /**
- * 
- * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since 		6.0.0
  */
 public class TryCatchFinallyProcessor extends SourceCodeProcessor {

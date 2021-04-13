@@ -18,7 +18,6 @@ import wniemiec.util.io.processor.indenter.JavaCodeIndenter;
  * test path.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since		5.2.0
  */
 public class ProcessedSourceFileExporter {

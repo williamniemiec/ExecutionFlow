@@ -6,7 +6,6 @@ import java.util.Map;
 
 /**
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since 		5.2.0
  */
 public class CodeCleanerAdapter extends CodeCleaner {

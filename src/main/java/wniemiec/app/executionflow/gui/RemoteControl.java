@@ -9,7 +9,6 @@ import javax.swing.WindowConstants;
  * commands to the application.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		5.1.0
  */
 public class RemoteControl {

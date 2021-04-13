@@ -18,13 +18,12 @@ import java.util.Set;
 import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.exporter.SignatureToPath;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Exports computed test path to a file.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since		1.0
  */
 public class FileExporter implements TestPathExporter {
@@ -65,7 +64,7 @@ public class FileExporter implements TestPathExporter {
 			exportTestPaths(testPaths);
 		} 
 		catch (IOException e) {
-			Logger.error("Error while exporting test paths: " + e.getMessage());
+			Consolex.writeError("Error while exporting test paths: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -88,8 +87,8 @@ public class FileExporter implements TestPathExporter {
 			);
 		}
 
-		Logger.info("Test paths have been successfully exported!");
-		Logger.info(
+		Consolex.writeInfo("Test paths have been successfully exported!");
+		Consolex.writeInfo(
 				"Location: " 
 				+ new File(
 						App.getAppRootPath().toFile(), 
@@ -192,7 +191,7 @@ public class FileExporter implements TestPathExporter {
 			bfw.newLine();
 		}
 		
-		Logger.info(
+		Consolex.writeInfo(
 				"Writing file " + testPathExportFile.getName() 
 				+ " in " + testPathExportFile.getAbsolutePath()
 		);

@@ -6,7 +6,6 @@ import wniemiec.util.io.path.replacer.ReservedCharactersReplacerFactory;
  * Path generator based on method or constructor signatures.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since		6.0.5
  */
 public class SignatureToPath {

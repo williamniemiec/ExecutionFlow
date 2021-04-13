@@ -17,7 +17,6 @@ import wniemiec.app.executionflow.io.processing.processor.trgeneration.CodeClean
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor {

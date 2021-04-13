@@ -10,7 +10,6 @@ import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
  * computed correctly. It will add an instruction in do statements.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since 		6.0.0
  */
 public class DoWhileProcessor extends SourceCodeProcessor {

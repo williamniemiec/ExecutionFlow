@@ -13,11 +13,8 @@ import org.junit.jupiter.api.Test;
 import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.io.processing.file.ProcessorType;
 import wniemiec.app.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
-import wniemiec.app.executionflow.io.processing.manager.FileProcessingManager;
-import wniemiec.app.executionflow.io.processing.manager.FilesProcessingManager;
-import wniemiec.app.executionflow.io.processing.manager.InvokedProcessingManager;
-import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
+import wniemiec.io.consolex.LogLevel;
 
 class InvokedProcessingManagerTest {
 
@@ -55,7 +52,7 @@ class InvokedProcessingManagerTest {
 				ProcessorType.INVOKED
 		);
 		
-		Logger.setLevel(LogLevel.WARNING);
+		Consolex.setLoggerLevel(LogLevel.WARNING);
 	}
 	
 	

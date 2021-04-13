@@ -10,7 +10,6 @@ import wniemiec.app.executionflow.invoked.TestedInvoked;
  * Responsible for exporting the results obtained in {@link TestedInvokedParser}.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		1.0
  */
 public interface TestPathExporter {

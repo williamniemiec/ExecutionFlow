@@ -16,7 +16,6 @@ import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
  * that returns true.
  *
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since 		6.0.0
  */
 public class ContinueBreakProcessor extends SourceCodeProcessor {

@@ -18,7 +18,6 @@ import wniemiec.app.executionflow.user.User;
  * Responsible for collect methods.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class MethodCollector extends InvokedCollector {

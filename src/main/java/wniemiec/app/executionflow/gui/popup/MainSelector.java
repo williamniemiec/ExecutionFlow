@@ -17,7 +17,7 @@ import wniemiec.app.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.app.executionflow.gui.AppIcon;
 import wniemiec.app.executionflow.gui.ThemeButton;
 import wniemiec.app.executionflow.gui.ThemePanel;
-import wniemiec.util.logger.LogLevel;
+import wniemiec.io.consolex.*;
 
 /**
  * Responsible for asking the user:
@@ -27,7 +27,6 @@ import wniemiec.util.logger.LogLevel;
  * </ul> 
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class MainSelector extends JDialog {
