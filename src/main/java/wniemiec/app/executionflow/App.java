@@ -111,8 +111,9 @@ public class App {
 	
 	public static void checkDevelopmentMode() {
 		if (!Files.exists(LibraryManager.getLibrary("JUNIT_4"))) {
-			Consolex.writeError("Development mode is off even in a development "
-					+ "environment. Turn it on in the ExecutionFlow class");
+			Consolex.writeError("Libraries missing");
+			Consolex.writeLine("AppRootPath: " + getAppRootPath());
+			Consolex.writeLine("JUnit4Lib: " + LibraryManager.getLibrary("JUNIT_4"));
 			
 			System.exit(-1);
 		}
@@ -423,6 +424,7 @@ public class App {
 			appRoot = appRoot.getParent().getParent();
 		
 		appRoot = appRoot.normalize().toAbsolutePath();
+		appRoot = fixWhiteSpaces(appRoot);
 	}
 	
 	private static Path getAppBinPath() {
@@ -431,6 +433,10 @@ public class App {
 	
 	private static Path urlToPath(URL url) {
 		return new File(url.getPath()).toPath();
+	}
+	
+	private static Path fixWhiteSpaces(Path absolutePath) {
+		return Path.of(absolutePath.toString().replaceAll("%20", " "));
 	}
 	
 	private static boolean isDevelopment(Path appRoot) {
