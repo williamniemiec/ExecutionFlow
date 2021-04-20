@@ -8,8 +8,8 @@ import wniemiec.api.junit4.JUnit4API;
 import wniemiec.app.executionflow.collector.CallCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.lib.LibraryManager;
-import wniemiec.util.data.storage.Session;
 import wniemiec.io.consolex.Consolex;
+import wniemiec.util.data.storage.Session;
 import wniemiec.util.task.Checkpoint;
 
 /**
