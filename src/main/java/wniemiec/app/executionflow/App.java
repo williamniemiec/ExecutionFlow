@@ -18,7 +18,8 @@ import wniemiec.io.consolex.Consolex;
 import wniemiec.util.task.Checkpoint;
 
 /**
- * Responsible for deciding what to do when a {@link wniemiec.app.executionflow.runtime.hook} is triggered.
+ * Responsible for deciding what to do when a 
+ * {@link wniemiec.app.executionflow.runtime.hook} is triggered.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since		7.0.0
@@ -151,14 +152,12 @@ public class App {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	try {
-		    		User.closeRemoteControl();
-		    		
 		    		if (!success)
 			    		finishedTestMethodWithAspectsDisabled = true;
 		    		
 			    	disableCheckpoint(currentTestMethodCheckpoint);
 					disableCheckpoint(firstRunCheckpoint);
-					
+
 					JUnitRunner.stopRunner();
 					User.unlinkSession();
 		    	}
@@ -179,7 +178,7 @@ public class App {
 		try {
 			checkpoint.disable();
 		} 
-		catch (IOException e) {
+		catch (IOException | InterruptedException e) {
 			success = false;
 		}
 		
@@ -285,8 +284,6 @@ public class App {
 			remainingTests = -1;
 			
 			successfullRestoration = undoInvokedProcessng();
-			
-			//User.closeRemoteControl();
 		}
 		
 		if (!currentTestMethodCheckpoint.isEnabled()) {

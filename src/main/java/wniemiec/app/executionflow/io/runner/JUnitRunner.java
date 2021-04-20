@@ -176,7 +176,7 @@ public class JUnitRunner {
 		try {
 			insideJUnitAPICheckpoint.disable();
 		}
-		catch (IOException e) {
+		catch (IOException | InterruptedException e) {
 			Consolex.writeError(e.toString());
 		}
 	}
