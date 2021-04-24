@@ -70,7 +70,7 @@ class CodeCleaner {
 	// CURRENT FORMAT CONSTRAINTS:
 	// TODO surrounding brackets aren't always necessary if blocks are simple
 	//   however, nested blocks without brackets will cause problems.
-	private int cleanup() {
+	private int cleanup() throws Exception {
 		eliminateComments();
 		if (debug) System.out.println("CLEANUP: Eliminated comments");
 		trimLines();
@@ -96,7 +96,7 @@ class CodeCleaner {
 		convertForEachToFor();
 		if (debug) System.out.println("CLEANUP: Converted forEachs to fors");
 		trimLines();
-		separateLinesWithSemicolons();
+		separateLinesWithSemicolons(); 
 		if (debug) System.out.println("CLEANUP: Separated lines with semicolons");
 		trimLines();
 		convertForToWhile();
@@ -108,10 +108,11 @@ class CodeCleaner {
 		separateCaseStatements();
 		if (debug) System.out.println("CLEANUP: Separated case statements");
 		trimLines();
-//		prepareTryCatchBlocks();
-
-		if (debug) System.out.println("CLEANUP DONE! Resulting code:");
-		if (debug) dumpCode();
+		removeIndependentBlocks();		
+		if (debug) System.out.println("CLEANUP: Removed independent blocks");
+		trimLines();
+		prepareTryCatchBlocks();
+		if (debug) System.out.println("CLEANUP: Prepared try-catch blocks");
 		return Defs.success;
 	}
 	
@@ -125,8 +126,8 @@ class CodeCleaner {
 		moveClosingBrackets();
 		trimLines();
 		moveCodeAfterClosedBracket();
-	
-		// At this point, all opening brackets end a line and all closing brackets are on their own line
+		// At this point, all opening brackets end a line and all closing brackets 
+		// are on their own line
 	}
 
 	// Trim all lines (remove indents and other leading/trailing whitespace)
@@ -153,7 +154,7 @@ class CodeCleaner {
 				processedCode.set(i, processedCode.get(i).substring(0, idxLastOpenCurlyBracket+1));
 			}
 			
-			int idxMulti = Helper.getIndexOfReservedSymbol(processedCode.get(i), "/\\*"); 
+			int idxMulti = processedCode.get(i).indexOf("/*");
 			if (idxMulti < 0 && processedCode.get(i).contains("/*")) {
 				idxMulti = processedCode.get(i).indexOf("/*");
 			}
@@ -164,9 +165,14 @@ class CodeCleaner {
 					
 			if (idx == -1) {
 				continue;
-			} else if (idx == idxSingle) {
+			}
+			else if (Helper.hasOddNumberOfQuotes(processedCode.get(i).substring(0, idx))) {
+				continue;
+			}
+			else if (idx == idxSingle) {
 				processedCode.set(i, processedCode.get(i).substring(0, idx));
-			} else {
+			} 
+			else {
 				i = eraseMultiLineComment(i, idx);
 			}
 		}
@@ -541,14 +547,13 @@ class CodeCleaner {
 			
 			mapping.put(i+removedLines, Helper.initArray(i));
 			String curLine = processedCode.get(i);
+			String nextLine = i < processedCode.size() - 1 ? processedCode.get(i+1) : "";
 			
 			while (!Helper.lineContainsReservedChar(curLine, ";")
 					&& !Helper.lineContainsReservedChar(curLine, "{") 
 					&& !Helper.lineContainsReservedChar(curLine, "}")
-					&& !(
-							(curLine.contains("case ") 
-							|| curLine.contains("default:")
-							)
+					&& !Helper.lineContainsReservedChar(nextLine, "}")
+					&& !((Helper.lineContainsReservedWord(curLine, "case") || Helper.lineContainsReservedWord(curLine, "default"))
 							&& Helper.lineContainsReservedChar(curLine, ":"))
 					) {
 				String separator = (curLine.charAt(curLine.length()-1) != ' '
@@ -557,13 +562,17 @@ class CodeCleaner {
 				if (processedCode.get(i+1).contains("catch(Throwable _"))
 					break;
 				
-				processedCode.set(i, curLine + separator + processedCode.get(i+1));
+				processedCode.set(i, curLine + separator + nextLine);
 				processedCode.remove(i+1);
 				removedLines++;
 				
 				mapping.put(i+removedLines, Helper.initArray(i));
 
 				curLine = processedCode.get(i);
+				
+				if (i < processedCode.size()-1) {
+					nextLine = processedCode.get(i+1);
+				}
 			}
 		}
 		
@@ -604,7 +613,7 @@ class CodeCleaner {
 		lineMappings.add(mapping);
 	}
 	
-	private void prepareTryCatchBlocks() {
+	private void prepareTryCatchBlocks() throws Exception {
 		for (int i=0; i<processedCode.size(); i++) {
 			if (isAnnotation(processedCode.get(i)))
 				continue;
@@ -625,6 +634,34 @@ class CodeCleaner {
 		}
 	}
 	
+	private void removeIndependentBlocks() throws Exception {
+		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
+		List<Integer> toRemove = new ArrayList<Integer>();
+		
+		for (int i=0; i<processedCode.size(); i++) {
+			if (processedCode.get(i).matches("^\\{$")) {
+				int closing = Helper.findEndOfBlock(processedCode, i+1);
+				toRemove.add(i);
+				toRemove.add(closing);
+			}
+		}
+		
+		int removedLines = 0;
+
+		for (int i=0; i<processedCode.size(); i++) {
+			if (toRemove.contains(i+removedLines)) {
+				mapping.put(i+removedLines, Helper.initArray(i-1));
+				processedCode.remove(i);
+				removedLines++;
+				i--;
+			} else {
+				mapping.put(i+removedLines, Helper.initArray(i));
+			}
+		}
+		
+		lineMappings.add(mapping);
+	}
+	
 	private void convertEmptyForToWhile() {
 		for (int i=0; i<processedCode.size(); i++) {
 			if (isAnnotation(processedCode.get(i)))
@@ -639,7 +676,7 @@ class CodeCleaner {
 	}
 	
 	//turn for loops into while loops
-	private void convertForToWhile() {
+	private void convertForToWhile() throws Exception {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		List<Integer> loopsClosingLines = new ArrayList<Integer>();
 		List<Pair<String, CurlyBracketBalance>> cbb = new ArrayList<>(); // Stack of pair(variable, curly bracket balance)
@@ -743,6 +780,9 @@ class CodeCleaner {
 				}
 	
 				// Move the iterator to just before the close
+				List<Integer> targetLinesIds = mapping.get(i+1+depth);
+				targetLinesIds.add(closingLine-1);
+				mapping.put(i+1+depth, targetLinesIds);
 				if (iteratorStep.contains("++"))
 					processedCode.add(closingLine+1, "%forcenode%" + iteratorStep + ";");
 				processedCode.remove(i+2); //remove old line
@@ -779,7 +819,7 @@ class CodeCleaner {
 		lineMappings.add(mapping);
 	}
 	
-	private List<Integer> getContinuesInLoopBlock(int loopStartingLine, int loopClosingLine) {
+	private List<Integer> getContinuesInLoopBlock(int loopStartingLine, int loopClosingLine) throws Exception {
 		List<Integer> foundLineIds = new ArrayList<Integer>();
 		for (int i=loopStartingLine+1; i<loopClosingLine; i++) {
 			if (isAnnotation(processedCode.get(i)))
@@ -901,33 +941,6 @@ class CodeCleaner {
 		return str;
 	}
 
-	private boolean isArrayVar(String setName, int currentIdx) {
-		final String REGEX_INVOKED_DECLARATION = 
-				"[\\s\\t]*(public|protected|private)[\\s\\t]+.+\\(.*\\)[\\s\\t]*\\{[\\s\\t]*$";
-		final String REGEX_ARRAY_VAR = 
-				"^.+(((\\.\\.\\.|\\[\\])[\\s\\t]+" + setName + ")|[\\s\\t]+" + setName + "\\[\\]).*$";
-		boolean isConstructorDeclaration;
-		boolean isMethodDeclaration;
-		boolean isArrayVariable = false;
-		String currentLine = processedCode.get(currentIdx);
-		
-		
-		do {
-			currentIdx--;
-			currentLine = processedCode.get(currentIdx);
-			
-			isConstructorDeclaration = currentLine.contains("new ");
-			isMethodDeclaration = currentLine.matches(REGEX_INVOKED_DECLARATION) && !isConstructorDeclaration;
-		}
-		while (!isMethodDeclaration && currentIdx > 0);
-		
-		if (currentIdx > 0) {
-			isArrayVariable = currentLine.matches(REGEX_ARRAY_VAR);
-		}
-		
-		return isArrayVariable;
-	}
-
 	// Given a line containing a for each statement, collect the necessary info
 	private List<String> extractForEachInfo(String line) {
 		String buffer = "";
@@ -953,36 +966,6 @@ class CodeCleaner {
 		info.add(line.substring(start, end));
 		
 		return info;
-	}
-
-	private void addDummyNodes() {
-		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
-		int numAddedLines = 0;
-		
-		for (int i=0; i<processedCode.size(); i++) {
-			if (isAnnotation(processedCode.get(i)))
-				continue;
-			
-			String line = processedCode.get(i);
-			
-			if (Helper.lineContainsReservedChar(line, "}")) {
-				//find the opening
-				int openline = Helper.findStartOfBlock(processedCode, i-1);
-
-				if ((processedCode.get(openline).toLowerCase().matches("^\\b(while|do|if|else)\\b.*")
-						|| processedCode.get(openline).matches(Regex.methodSignature))
-						&& processedCode.get(i-1).equals("}")) {
-					processedCode.add(i, "dummy_node;");
-					numAddedLines++;
-					// i--; //adjust i due to insertion // I don't think this is needed.
-				}
-			}
-			
-			int oldLineId = i-numAddedLines;
-			mapping.put(oldLineId, Helper.initArray(i));
-		}
-		
-		lineMappings.add(mapping);
 	}
 	
 	// Build mapping original -> final state

@@ -16,6 +16,7 @@ import wniemiec.io.consolex.Consolex;
  * @see			https://bitbucket.org/mwolfart/trgeneration/
  */
 class Helper {
+
 	private static List<String> regexReservedChars = new ArrayList<String>(Arrays.asList(
 			"{", "}", "\\", "\"", "(", ")"
 			));
@@ -58,13 +59,24 @@ class Helper {
 		return match;
 	}
 	
-	public static void createDir(String dirPath) {
-		dirPath = dirPath.replace("<", "{").replace(">", "}");
+	public static boolean hasOddNumberOfQuotes(String text) {
+		int countSimple = 0;
+		int countDouble = 0;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '"' && i > 0 && text.charAt(i-1) != '\\')
+				countDouble++;
+			else if (text.charAt(i) == '\'' && i > 0 && text.charAt(i-1) != '\\')
+				countSimple++;
+		}
+		return countSimple % 2 == 1 || countDouble % 2 == 1;
+	}
+	
+	public static void createDir(String dirPath) throws Exception {
+		dirPath = dirPath.replace("<", "{").replace(">", "}").replace("?", "QM");
 		File dir = new File(dirPath);
 		if (dir.exists()) return;
 		if (!dir.mkdir()) {
-			Consolex.writeError("Could not create directory " + dirPath);
-//			System.exit(2);
+			throw new Exception("Could not create directory " + dirPath);
 		}
 	}
 	
@@ -76,7 +88,7 @@ class Helper {
 			fr.write(content);
 			fr.close();
 		} catch (IOException e) {
-			Consolex.writeError("Error in writing file " + filePath);
+			System.out.println("Error in writing file " + filePath);
 		}
 	}
 	
@@ -89,7 +101,7 @@ class Helper {
 	}
 	
 	/* TODO: maybe refactor the three next functions */
-	public static int findStartOfBlock(List<String> sourceCode, int startingLine) {
+	public static int findStartOfBlock(List<String> sourceCode, int startingLine) throws Exception {
 		return findStartOfBlock(sourceCode, startingLine, false);
 	}
 	
@@ -99,27 +111,11 @@ class Helper {
 	
 	public static int findMatchingParenthesis(String text, int openParenthesisIdx) {
 		int depth = 0;
-		boolean insideStringOrChar = false;
-		boolean escapeChar = false;
-		
 		for (int i=openParenthesisIdx+1; i<text.length(); i++) {
-			if (escapeChar) {
-				escapeChar = false;
-				continue;
-			}
-			
 			char ch = text.charAt(i);
-			
-			if (ch == '\\') {
-				escapeChar = true;
-			}
-			else if (ch == '"' || ch == '\'')
-				insideStringOrChar = !insideStringOrChar;
-			else if (!insideStringOrChar) {
-				if (ch == ')' && depth == 0) return i;
-				else if (ch == '(') depth++;
-				else if (ch == ')') depth--;
-			}
+			if (ch == ')' && depth == 0) return i;
+			else if (ch == '(') depth++;
+			else if (ch == ')') depth--;
 		}
 		return -1;
 	}
@@ -151,9 +147,9 @@ class Helper {
 		}
 		return fragments;
 	}
-
+	
 	/* TODO: Maybe reenginer this */
-	public static int findStartOfBlock(List<String> sourceCode, int startingLine, boolean useBlockLines) {
+	public static int findStartOfBlock(List<String> sourceCode, int startingLine, boolean useBlockLines) throws Exception {
 		int curLineId = startingLine;
 		int openingLine = -1;
 		int depth = 0;
@@ -170,53 +166,43 @@ class Helper {
 			curLineId--;
 		}
 
-		if (openingLine == -1) {
-			Consolex.writeError("Braces are not balanced");
-			Consolex.writeError("When trying to find start of block ending at line " + (startingLine+1));
-//			System.exit(2);
+		if (openingLine == -1) {			
+			throw new Exception("Braces are not balanced when trying to find start of block ending at line " + (startingLine+1));
 		}
 		
 		return openingLine;
 	}
 	
-	public static int findEndOfBlock(List<String> sourceCode, int startingLine) {
+	public static int findEndOfBlock(List<String> sourceCode, int startingLine) throws Exception {
 		int curLineId = startingLine;
 		int closingLine = -1;
 		int depth = 0;
-		
+
 		while (curLineId < sourceCode.size() && closingLine == -1) {
-			if (!sourceCode.get(curLineId).contains("} catch(Throwable _")) {
-				String curLine = sourceCode.get(curLineId);
-				if (Helper.lineContainsReservedChar(curLine, "{")) {
-					depth++;
-				} else if (Helper.lineContainsReservedChar(curLine, "}") && depth > 0) {
-					depth--;
-				} else if (Helper.lineContainsReservedChar(curLine, "}")) {
-					closingLine = curLineId;
-				}
+			String curLine = sourceCode.get(curLineId);
+			if (Helper.lineContainsReservedChar(curLine, "{")) {
+				depth++;
+			} else if (Helper.lineContainsReservedChar(curLine, "}") && depth > 0) {
+				depth--;
+			} else if (Helper.lineContainsReservedChar(curLine, "}")) {
+				closingLine = curLineId;
 			}
-			
 			curLineId++;
 		}
-
+		
 		if (closingLine == -1) {
-			Consolex.writeLine("----");
-			Consolex.writeLines(sourceCode);
-			
-			
-			Consolex.writeError("Braces are not balanced");
-			Consolex.writeError("When trying to find end of block starting at line " + (startingLine+1));
-			Consolex.writeError("Line content: " + sourceCode.get(startingLine));
-//			System.exit(2);
+			throw new Exception("Braces are not balanced when trying to find end of block starting at line " 
+						+ (startingLine+1) + "\nLine content: " + sourceCode.get(startingLine));
 		}
 		
 		return closingLine;
 	}
 	
-	public static int findConditionalLine(List<String> sourceCode, int startingLine) {
+	public static int findConditionalLine(List<String> sourceCode, int startingLine, boolean isBreak) throws Exception {
 		int curLineId = startingLine;
 		int conditionalLine = -1;
 		int depth = 0;
+		String words = isBreak ? "do|while|switch" : "do|while";
 		
 		while (curLineId >= 0 && conditionalLine == -1) {
 			String curLine = sourceCode.get(curLineId);
@@ -224,19 +210,23 @@ class Helper {
 				depth++;
 			} else if (Helper.lineContainsReservedChar(curLine, "{") && depth > 0) {
 				depth--;
-			} else if (Helper.lineContainsReservedChar(curLine, "{") && curLine.matches("^\\b(do|while)\\b.*")) {
+			} else if (Helper.lineContainsReservedChar(curLine, "{") 
+					&& (curLine.matches("^\\b("+words+")\\b.*")
+							|| curLine.matches("^[a-zA-Z_]+[a-zA-Z0-9_]*:\\s*("+words+").*"))) {
 				conditionalLine = curLineId;
 			}
 			curLineId--;
 		}
 
-		if (conditionalLine == -1) {
-			Consolex.writeError("Continue without while or do");
-			Consolex.writeError("When trying to find conditional of continue at line " + (startingLine+1));			
-//			System.exit(2);
+		if (conditionalLine == -1) {		
+			throw new Exception("Continue or break without while or do when trying to find conditional of continue at line " + (startingLine+1));
 		}
 		
 		return conditionalLine;
+	}
+	
+	public static int findConditionalLine(List<String> sourceCode, int startingLine) throws Exception {
+		return findConditionalLine(sourceCode, startingLine, false);
 	}
 }
 
