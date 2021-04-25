@@ -102,7 +102,7 @@ public class App {
 			if (!inTestMethodWithAspectsDisabled())
 				doPreprocessing(testMethod);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			Consolex.writeError(e.toString());
 			
 			errorProcessingTestMethod = true;
@@ -232,12 +232,12 @@ public class App {
 		return currentTestMethodCheckpoint.exists();
 	}
 	
-	private static void doPreprocessing(Invoked testMethod) throws IOException {
+	private static void doPreprocessing(Invoked testMethod) throws Exception {
 		try {
 			currentTestMethodCheckpoint.enable();
 			processingManager.doPreprocessingInTestMethod(testMethod);
 		} 
-		catch (IOException e) {
+		catch (Exception e) {
 			disableCheckpoint(currentTestMethodCheckpoint);
 			throw e;
 		}

@@ -274,9 +274,9 @@ public class ProcessingManager {
 	 * 
 	 * @param		testMethod Test method to be processed
 	 * 
-	 * @throws		IOException If an error occurs while processing files
+	 * @throws		Exception If an error occurs while processing files
 	 */
-	public void doPreprocessingInTestMethod(Invoked testMethod) throws IOException {
+	public void doPreprocessingInTestMethod(Invoked testMethod) throws Exception {
 		initializePreTestMethodFileManager(testMethod);
 		
 		try {
@@ -289,8 +289,8 @@ public class ProcessingManager {
 			
 			Consolex.writeInfo("Preprocessing completed");
 		}
-		catch (IOException e) {
-			Consolex.writeError(e.getMessage());
+		catch (Exception e) {
+			Consolex.writeError(e.toString());
 			
 			if (preTestMethodProcessingManager != null) {
 				preTestMethodProcessingManager.restoreInvokedOriginalFiles();
@@ -397,7 +397,13 @@ public class ProcessingManager {
 		if (testMethodProcessingManager == null)
 			initializeTestMethodProcessingManager(true);
 		
-		testMethodProcessingManager.processAndCompile(testMethodFileManager, autoRestore);
+		try {
+			testMethodProcessingManager.processAndCompile(testMethodFileManager, autoRestore);
+		} 
+		catch (Exception e) {
+			Consolex.writeError(e.toString());
+			testMethodProcessingManager.restoreInvokedOriginalFile(testMethodFileManager);
+		}
 	}
 	
 	private void processInvokedMethod() throws IOException {
@@ -422,10 +428,16 @@ public class ProcessingManager {
 		if (invokedProcessingManager == null)
 			initializeInvokedProcessingManager(true);
 		
-		invokedProcessingManager.processAndCompile(
-				invokedFileManager, 
-				isTestMethodFileAndInvokedFileTheSameFile()
-		);
+		try {
+			invokedProcessingManager.processAndCompile(
+					invokedFileManager, 
+					isTestMethodFileAndInvokedFileTheSameFile()
+			);
+		} 
+		catch (Exception e) {
+			Consolex.writeError(e.toString());
+			testMethodProcessingManager.restoreInvokedOriginalFile(invokedFileManager);
+		}
 	}
 	
 	private boolean isTestMethodFileAndInvokedFileTheSameFile() {

@@ -1,13 +1,9 @@
 package wniemiec.app.executionflow.io.processing.processor;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import wniemiec.app.executionflow.io.processing.processor.MultilineToInlineCallsConverter;
-import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 
 class MultilineToInlineCallsConverterTest extends SourceCodeProcessorTest {
 
@@ -18,7 +14,7 @@ class MultilineToInlineCallsConverterTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"multiline-to-inline"
 	})
-	void testMultilineToInlineCallsConverter(String filename) throws IOException {
+	void testMultilineToInlineCallsConverter(String filename) throws Exception {
 		testProcessorOnFile(filename);
 	}
 	

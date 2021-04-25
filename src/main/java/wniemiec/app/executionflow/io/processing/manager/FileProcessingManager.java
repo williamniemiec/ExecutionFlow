@@ -268,12 +268,12 @@ public class FileProcessingManager implements Serializable {
 	 * 
 	 * @return		Itself to allow chained calls
 	 * 
-	 * @throws		IOException If file encoding cannot be defined
+	 * @throws		Exception If an error occurs during processing 
 	 * 
 	 * @implNote	This function overwrite file passed to the constructor! To
 	 * restore the original file, call {@link #revertProcessing()} function.
 	 */
-	public FileProcessingManager processFile(boolean autoRestore) throws IOException {
+	public FileProcessingManager processFile(boolean autoRestore) throws Exception {
 		createSrcBackupFile(autoRestore);
 		
 		Path processedFile = processFile();
@@ -343,7 +343,7 @@ public class FileProcessingManager implements Serializable {
 		return this;
 	}
 
-	private Path processFile() throws IOException {
+	private Path processFile() throws Exception {
 		Path processedFile = null;
 		
 		try {	
@@ -363,7 +363,7 @@ public class FileProcessingManager implements Serializable {
 		return processedFile;
 	}
 
-	private Path processFileUsingEncode(FileEncoding encoding) throws IOException {
+	private Path processFileUsingEncode(FileEncoding encoding) throws Exception {
 		fileProcessor.setEncoding(encoding);
 
 		return Path.of(fileProcessor.processFile());

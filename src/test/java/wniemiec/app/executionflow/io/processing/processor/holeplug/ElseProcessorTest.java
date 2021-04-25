@@ -1,6 +1,5 @@
 package wniemiec.app.executionflow.io.processing.processor.holeplug;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessorTest;
-import wniemiec.app.executionflow.io.processing.processor.holeplug.ElseProcessor;
 
 class ElseProcessorTest extends SourceCodeProcessorTest {
 
@@ -28,7 +26,7 @@ class ElseProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"else"
 	})
-	void tesElseProcessor(String filename) throws IOException {
+	void tesElseProcessor(String filename) throws Exception {
 		testProcessorOnFile(filename);
 	}
 	

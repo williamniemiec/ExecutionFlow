@@ -41,9 +41,9 @@ public abstract class FileProcessor implements Serializable {
 	 * 
 	 * @return		Location of parsed file
 	 * 
-	 * @throws		IOException If it cannot parse the file
+	 * @throws		Exception If an error occurs during processing
 	 */
-	public final String processFile() throws IOException {
+	public final String processFile() throws Exception {
 		if (file == null)
 			return "";
 		
@@ -67,7 +67,7 @@ public abstract class FileProcessor implements Serializable {
 		return txtFileManager.readLines();
 	}
 	
-	protected abstract List<String> doProcessing(List<String> sourceCode);
+	protected abstract List<String> doProcessing(List<String> sourceCode) throws Exception;
 	
 	private void writeLinesInOutputFile(List<String> lines) throws IOException {
 		TextFileManager outFileManager = new TextFileManager(

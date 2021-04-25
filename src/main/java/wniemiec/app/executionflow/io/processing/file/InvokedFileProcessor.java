@@ -208,7 +208,7 @@ public class InvokedFileProcessor extends FileProcessor {
 	}
 	
 	@Override
-	protected List<String> doProcessing(List<String> sourceCode) {
+	protected List<String> doProcessing(List<String> sourceCode) throws Exception {
 		processedLines = sourceCode;
 		
 		removeInlineComments();
@@ -226,7 +226,7 @@ public class InvokedFileProcessor extends FileProcessor {
 		processedLines = inlineCommentProcessor.processLines();
 	}
 
-	private void doTRGenerationProcesing() {
+	private void doTRGenerationProcesing() throws Exception {
 		CodeCleanerAdapter codeCleaner = new CodeCleanerAdapter(processedLines);
 		processedLines = codeCleaner.processLines();
 		

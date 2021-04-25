@@ -1,6 +1,5 @@
 package wniemiec.app.executionflow.io.processing.file;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
@@ -8,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.app.executionflow.io.FileEncoding;
-import wniemiec.app.executionflow.io.processing.file.FileProcessor;
-import wniemiec.app.executionflow.io.processing.file.TestMethodFileProcessor;
 
 class TestMethodFileProcessorTest extends FileProcessorTest {
 
@@ -95,17 +92,17 @@ class TestMethodFileProcessorTest extends FileProcessorTest {
 	}
 	
 	@Test
-	void testProcessingJUnit4() throws IOException {
+	void testProcessingJUnit4() throws Exception {
 		testProcessorOnFile("testmethod-junit4");
 	}
 	
 	@Test
-	void testProcessingJUnit5() throws IOException {
+	void testProcessingJUnit5() throws Exception {
 		testProcessorOnFile("testmethod-junit5");
 	}
 	
 	@Test
-	void testMappingOfJUnit4Processing() throws IOException {
+	void testMappingOfJUnit4Processing() throws Exception {
 		withFilename("testmethod-junit4");
 		
 		assertMappingIs(Map.ofEntries(
@@ -120,7 +117,7 @@ class TestMethodFileProcessorTest extends FileProcessorTest {
 	}
 
 	@Test
-	void testMappingOfJUnit5Processing() throws IOException {
+	void testMappingOfJUnit5Processing() throws Exception {
 		withFilename("testmethod-junit5");
 
 		assertMappingIs(Map.ofEntries(
@@ -140,7 +137,7 @@ class TestMethodFileProcessorTest extends FileProcessorTest {
 		this.filename = filename;
 	}
 	
-	private void assertMappingIs(Map<Integer, Integer> expectedMapping) throws IOException {
+	private void assertMappingIs(Map<Integer, Integer> expectedMapping) throws Exception {
 		TestMethodFileProcessor processor = new TestMethodFileProcessor.Builder()
 				.targetFile(getTestFile(filename))
 				.outputDir(getTempFolder())

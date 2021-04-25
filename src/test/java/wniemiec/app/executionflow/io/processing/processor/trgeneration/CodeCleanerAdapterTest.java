@@ -1,13 +1,11 @@
 package wniemiec.app.executionflow.io.processing.processor.trgeneration;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import wniemiec.app.executionflow.io.processing.Processing;
-import wniemiec.app.executionflow.io.processing.processor.trgeneration.CodeCleanerAdapter;
 
 class CodeCleanerAdapterTest extends Processing {
 
@@ -23,7 +21,7 @@ class CodeCleanerAdapterTest extends Processing {
 	//		Methods
 	//-----------------------------------------------------------------------
 	@Test
-	void testCodeCleaner() throws IOException {
+	void testCodeCleaner() throws Exception {
 		testProcessorOnFile("codecleaner");
 	}
 
@@ -32,7 +30,7 @@ class CodeCleanerAdapterTest extends Processing {
 	//		Methods
 	//-----------------------------------------------------------------------
 	@Override
-	protected List<String> processSourceCodeFrom(String filename) throws IOException {
+	protected List<String> processSourceCodeFrom(String filename) throws Exception {
 		CodeCleanerAdapter processor = new CodeCleanerAdapter(readTestFile(filename));
 		
 		return processor.processLines();

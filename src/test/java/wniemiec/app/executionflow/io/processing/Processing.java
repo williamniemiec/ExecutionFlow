@@ -39,7 +39,7 @@ public abstract class Processing {
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------|
-	protected void testProcessorOnFile(String filename) throws IOException {
+	protected void testProcessorOnFile(String filename) throws Exception {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> procTxt = processSourceCodeFrom(filename);
 		
@@ -86,7 +86,7 @@ public abstract class Processing {
 		return txtManager.readLines();
 	}
 	
-	abstract protected List<String> processSourceCodeFrom(String filename) throws IOException;
+	abstract protected List<String> processSourceCodeFrom(String filename) throws Exception;
 	
 	protected List<String> readTestFile(String name) throws IOException {
 		Path ansFile = workingDirectory.resolve(name + "-test.txt");

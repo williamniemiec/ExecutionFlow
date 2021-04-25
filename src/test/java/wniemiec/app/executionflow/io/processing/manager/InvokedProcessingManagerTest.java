@@ -74,7 +74,7 @@ class InvokedProcessingManagerTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	@Test
-	void testProcessAndCompile() throws ClassNotFoundException, IOException {
+	void testProcessAndCompile() throws ClassNotFoundException, Exception {
 		FileTime binFileTime = Files.getLastModifiedTime(binPath);
 		FileTime srcFileTime = Files.getLastModifiedTime(srcPath);
 		
@@ -116,7 +116,7 @@ class InvokedProcessingManagerTest {
 	}
 	
 	@Test
-	void testDeleteBackup() throws IOException {
+	void testDeleteBackup() throws Exception {
 		invokedProcessingManager.processAndCompile(fileProcessingManager);
 		invokedProcessingManager.restoreInvokedOriginalFile(fileProcessingManager);
 		

@@ -1,6 +1,5 @@
 package wniemiec.app.executionflow.io.processing.manager;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.app.executionflow.io.processing.manager.ProcessingManager;
 import wniemiec.io.consolex.Consolex;
 import wniemiec.io.consolex.LogLevel;
 
@@ -68,7 +66,7 @@ class ProcessingManagerTest {
 	//		Tests
 	//-------------------------------------------------------------------------
 	@Test
-	void testDoPreprocessing() throws IOException {
+	void testDoPreprocessing() throws Exception {
 		processingManager.initializeManagers();
 		processingManager.doPreprocessingInTestMethod(testMethod);
 		
@@ -78,7 +76,7 @@ class ProcessingManagerTest {
 	}
 	
 	@Test
-	void testDoProcessing() throws IOException {
+	void testDoProcessing() throws Exception {
 		processingManager.initializeManagers();
 		processingManager.doProcessingInTestedInvoked(new TestedInvoked(testedMethod, testMethod));
 		
@@ -88,7 +86,7 @@ class ProcessingManagerTest {
 	}
 	
 	@Test
-	void testRestoreOriginalFilesFromTestMethod() throws IOException {
+	void testRestoreOriginalFilesFromTestMethod() throws Exception {
 		processingManager.initializeManagers();
 		processingManager.doPreprocessingInTestMethod(testMethod);		
 		
@@ -96,7 +94,7 @@ class ProcessingManagerTest {
 	}
 	
 	@Test
-	void testRestoreOriginalFilesFromTestedInvoked() throws IOException {
+	void testRestoreOriginalFilesFromTestedInvoked() throws Exception {
 		processingManager.initializeManagers();
 		processingManager.doProcessingInTestedInvoked(
 				new TestedInvoked(testedMethod, testMethod)
@@ -106,7 +104,7 @@ class ProcessingManagerTest {
 	}
 	
 	@Test
-	void testResetLastProcessing() throws IOException {
+	void testResetLastProcessing() throws Exception {
 		processingManager.initializeManagers();
 		processingManager.doPreprocessingInTestMethod(testMethod);
 		

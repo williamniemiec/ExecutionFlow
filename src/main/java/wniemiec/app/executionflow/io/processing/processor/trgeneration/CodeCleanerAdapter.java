@@ -28,7 +28,7 @@ public class CodeCleanerAdapter extends CodeCleaner {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public List<String> processLines() {
+	public List<String> processLines() throws Exception {
 		cleanupCode(sourceCode);	
 		deleteContentBetweenPercentages(processedCode);
 

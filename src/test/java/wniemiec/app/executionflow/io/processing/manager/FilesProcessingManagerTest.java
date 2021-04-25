@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.io.processing.file.ProcessorType;
 import wniemiec.app.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
-import wniemiec.app.executionflow.io.processing.manager.FileProcessingManager;
-import wniemiec.app.executionflow.io.processing.manager.FilesProcessingManager;
 
 class FilesProcessingManagerTest {
 
@@ -68,7 +66,7 @@ class FilesProcessingManagerTest {
 	//-------------------------------------------------------------------------
 	@Test
 	void testProcessing() 
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, Exception {
 		processingManager.process(fileProcessingManager);
 		
 		Assertions.assertTrue(processingManager.wasProcessed(fileProcessingManager));
@@ -76,7 +74,7 @@ class FilesProcessingManagerTest {
 	
 	@Test
 	void testCompilation() 
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, Exception {
 		processingManager.process(fileProcessingManager);
 		processingManager.compile(fileProcessingManager);
 		
@@ -85,7 +83,7 @@ class FilesProcessingManagerTest {
 	
 	@Test
 	void testCreateBackup() 
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, Exception {
 		processingManager.process(fileProcessingManager);
 		processingManager.compile(fileProcessingManager);
 		processingManager.createBackup();
@@ -97,7 +95,7 @@ class FilesProcessingManagerTest {
 	
 	@Test
 	void testRestoreFromBackup() 
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, Exception {
 		processingManager.process(fileProcessingManager);
 		processingManager.compile(fileProcessingManager);
 		processingManager.createBackup();
@@ -109,7 +107,7 @@ class FilesProcessingManagerTest {
 	
 	@Test
 	void testRemoveProcessedFile() 
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, Exception {
 		processingManager.process(fileProcessingManager);
 		Assertions.assertTrue(processingManager.wasProcessed(fileProcessingManager));
 		
@@ -119,7 +117,7 @@ class FilesProcessingManagerTest {
 	
 	@Test
 	void testRemoveCompiledFile() 
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, Exception {
 		processingManager.compile(fileProcessingManager);
 		Assertions.assertTrue(processingManager.wasCompiled(fileProcessingManager));
 		
@@ -129,7 +127,7 @@ class FilesProcessingManagerTest {
 	
 	@Test
 	void testRemoveBackup() 
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, Exception {
 		processingManager.process(fileProcessingManager);
 		processingManager.createBackup();
 		processingManager.deleteBackup();

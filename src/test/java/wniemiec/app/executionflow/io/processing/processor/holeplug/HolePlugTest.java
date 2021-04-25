@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.app.executionflow.io.processing.Processing;
-import wniemiec.app.executionflow.io.processing.processor.holeplug.HolePlug;
 
 class HolePlugTest extends Processing {
 
@@ -23,7 +22,7 @@ class HolePlugTest extends Processing {
 	//		Methods
 	//-----------------------------------------------------------------------
 	@Test
-	void testHoleplug() throws IOException {
+	void testHoleplug() throws Exception {
 		testProcessorOnFile("holeplug");
 	}
 

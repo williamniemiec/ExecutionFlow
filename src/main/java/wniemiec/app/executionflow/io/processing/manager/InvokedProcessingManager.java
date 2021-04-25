@@ -89,7 +89,7 @@ public class InvokedProcessingManager {
 	
 	public void processAndCompile(FileProcessingManager invokedFileManager, 
 								  boolean autoRestore) 
-			throws IOException {
+			throws Exception {
 		checkInvokedFilesManagerIsInitialized();
 		checkFileProcessingManager(invokedFileManager);
 		
@@ -108,7 +108,7 @@ public class InvokedProcessingManager {
 	}
 
 	public void processAndCompile(FileProcessingManager invokedFileManager) 
-			throws IOException {
+			throws Exception {
 		processAndCompile(invokedFileManager, false);
 	}
 	

@@ -47,7 +47,7 @@ class CodeCleaner {
 		debug = d;
 	}
 	
-	public void cleanupCode(List<String> codeToCleanup) {
+	public void cleanupCode(List<String> codeToCleanup) throws Exception {
 		processedCode = codeToCleanup;
 		cleanup();
 //		addDummyNodes();

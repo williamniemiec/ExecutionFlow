@@ -1,13 +1,9 @@
 package wniemiec.app.executionflow.io.processing.processor;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
-import wniemiec.app.executionflow.io.processing.processor.TestAnnotationProcessor;
 
 class TestAnnotationProcessorTest extends SourceCodeProcessorTest {
 
@@ -18,7 +14,7 @@ class TestAnnotationProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"collect-calls"
 	})
-	void testTestAnnotationProcessor(String filename) throws IOException {
+	void testTestAnnotationProcessor(String filename) throws Exception {
 		testProcessorOnFile(filename);
 	}
 	

@@ -9,23 +9,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.app.executionflow.io.FileEncoding;
-import wniemiec.app.executionflow.io.processing.file.FileProcessor;
-import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
 
 class InvokedFileProcessorTest extends FileProcessorTest {
 
-	//-------------------------------------------------------------------------
-	//		Attributes
-	//-------------------------------------------------------------------------
-	private String filename;
-	
-	
 	//-------------------------------------------------------------------------
 	//		Test hooks
 	//-------------------------------------------------------------------------
 	@BeforeEach
 	void clean() {
-		filename = "";
 		InvokedFileProcessor.clearMapping();
 	}
 	
@@ -96,12 +87,12 @@ class InvokedFileProcessorTest extends FileProcessorTest {
 	}
 	
 	@Test
-	void testProcessing() throws IOException {
+	void testProcessing() throws Exception {
 		testProcessorOnFile("invoked");
 	}
 	
 	@Test
-	void testMapping() throws IOException {
+	void testMapping() throws Exception {
 		doProcessing("invoked");
 
 		assertMappingIs(Map.ofEntries(
