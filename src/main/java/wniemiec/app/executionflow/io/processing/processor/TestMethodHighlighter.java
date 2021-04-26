@@ -290,14 +290,17 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	private void commentBodyOfIgnoredMethods(List<String> lines) {
 		for (int idx : ignoredMethods) {
 			CurlyBracketBalance cbb = new CurlyBracketBalance();
-			String line = lines.get(idx);			
+			String line = lines.get(idx);
+			
+			if (removeInlineComments(line).isBlank())
+				continue;
 			
 			while (!endWithOpenCurlyBracket(line)) {
 				lines.set(idx, "//" + line);
 				idx++;
 				line = lines.get(idx);
 			}
-			
+
 			do {
 				line = lines.get(idx);
 				cbb.parse(line);
@@ -307,7 +310,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 			while (!cbb.isBalanceEmpty());
 		}
 	}
-	
+
 	private boolean endWithOpenCurlyBracket(String str) {
 		return removeInlineComments(str).matches(".*\\{[\\s\\t]*$");
 	}

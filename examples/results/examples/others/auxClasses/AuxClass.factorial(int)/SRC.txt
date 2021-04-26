@@ -24,7 +24,7 @@ public class AuxClass{
 	}
 	@wniemiec.app.executionflow.runtime.CollectCalls public static void test3(int x, int y, String k){
 		x = 0;
-		while (x < 3) {int _efe25f27d41db7acc742db221f9969ce=0;
+		while (x < 3) {int _6cafeade64a38c362548b8ebee452327=0;
 			x++;
 		}
 		x = 3;
@@ -34,7 +34,7 @@ public class AuxClass{
 	@wniemiec.app.executionflow.runtime.CollectCalls public long factorial(int x){
 		long response = 1;
 		int i=1;
-		while (i<=x) {int _5124af203362cb90319c6e7732b3d926=0;
+		while (i<=x) {int _2e4d9524e77d1fe346742ce95d3a99d3=0;
 			response *= i;
 			i++;
 		}
@@ -45,7 +45,7 @@ public class AuxClass{
 		long last = 1;
 		long aux = 0;
 		int i=2;
-		while (i<x) {int _e42993678b4a404f5fcf8749ccf0f11f=0;
+		while (i<x) {int _caf740ca6224e11492f30b6f5f7ab626=0;
 			aux = response;
 			response = response + last;
 			last = aux;
@@ -57,11 +57,11 @@ public class AuxClass{
 		char[] letters = cs.toString().toCharArray();
 		char[] response = new char[letters.length];
 		int i=0;
-		while (i<letters.length) {int _8d4c61a384774e5e31b84a7256e8b7d5=0;
+		while (i<letters.length) {int _30b193d45604397f69c8db0c2aa75c1=0;
 			if (letters[i] == Character.toUpperCase(letters[i])) {
 				response[i] =  Character.toLowerCase(letters[i]);
 			}
-			else {int _ced3a7a146bbd946b7359298dcf9c407=0;
+			else {int _beb5fae49354c3e504d0a53892d99c57=0;
 				response[i] =  Character.toUpperCase(letters[i]);
 			}
 			i++;
@@ -71,7 +71,7 @@ public class AuxClass{
 	@wniemiec.app.executionflow.runtime.CollectCalls public static char[] parseLetters_withInternalCall(char[] letters){
 		char[] response = new char[letters.length];
 		int i=0;
-		while (i<letters.length) {int _b3c54d5650064bca47691575daf3d2ad=0;
+		while (i<letters.length) {int _5cfd40a629881a2a808967e3a06ecb31=0;
 			response[i] = invertLetter(letters[i]);
 			i++;
 		}
@@ -122,9 +122,9 @@ public class AuxClass{
 	}
 	@wniemiec.app.executionflow.runtime.CollectCalls public static int countTotalArguments(Object... args){
 		int i = 2;
-		int k;int _ad4aab033a741c903c6324eadff79b34=0;
+		int k;int _f366d9b6211f692d06da6d76a113e69d=0;
 		k=0;
-		while (k<args.length) {int _1275baf1e84b26b0616c793325cec25=0;
+		while (k<args.length) {int _91882b00ce3dd9a3328802327b06238d=0;
 			k++;
 			if (Boolean.parseBoolean("True")) {continue;}
 			k++;
@@ -134,7 +134,7 @@ public class AuxClass{
 	@wniemiec.app.executionflow.runtime.CollectCalls public static int countTotalArguments2(Object... args){
 		int total = 0;
 		int i=0;
-		while (i<args.length) {int _5904c5ebd0f3ebcb6c7fcea72f18b251=0;
+		while (i<args.length) {int _1b90c6b6bfbe414dfb73bbb466dab2f1=0;
 			if (i == 0) {
 				i++;
 				if (Boolean.parseBoolean("True")) {continue;}

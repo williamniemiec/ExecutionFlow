@@ -56,7 +56,7 @@ public class TestedInvokedProcessingManager {
 			catch (IllegalStateException e2) {
 				Consolex.writeError(e2.toString());
 			}
-			catch (IOException e3) {
+			catch (Exception e3) {
 				Consolex.writeError(e3.toString());
 				
 				processingManager.undoLastProcessing();
@@ -68,7 +68,7 @@ public class TestedInvokedProcessingManager {
 
 	private void doProcessingAndParsing(TestedInvokedParser parser, 
 										TestedInvoked collector) 
-			throws IOException {
+			throws Exception {
 		processingManager.doProcessingInTestedInvoked(collector);
 		
 		parser.parse(collector, getDebuggerAnalyzerFor(collector));

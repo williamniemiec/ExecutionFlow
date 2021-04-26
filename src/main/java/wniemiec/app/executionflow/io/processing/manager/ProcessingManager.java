@@ -331,7 +331,7 @@ public class ProcessingManager {
 	 * 
 	 * @throws		IOException If an error occurs while processing files
 	 */
-	public void doProcessingInTestedInvoked(TestedInvoked testedInvoked) throws IOException {
+	public void doProcessingInTestedInvoked(TestedInvoked testedInvoked) throws Exception {
 		withTestedInvoked(testedInvoked);
 		
 		processTestMethod();
@@ -374,7 +374,7 @@ public class ProcessingManager {
 				.build();
 	}
 	
-	private void processTestMethod() throws IOException {
+	private void processTestMethod() throws Exception {
 		Consolex.writeInfo(
 				"Processing source file of test method "
 				+ currentTestMethod.getConcreteSignature() 
@@ -393,7 +393,7 @@ public class ProcessingManager {
 	}
 
 	private void doProcessingInTestMethod(FileProcessingManager testMethodFileManager) 
-			throws IOException {
+			throws Exception {
 		if (testMethodProcessingManager == null)
 			initializeTestMethodProcessingManager(true);
 		
@@ -403,10 +403,11 @@ public class ProcessingManager {
 		catch (Exception e) {
 			Consolex.writeError(e.toString());
 			testMethodProcessingManager.restoreInvokedOriginalFile(testMethodFileManager);
+			throw e;
 		}
 	}
 	
-	private void processInvokedMethod() throws IOException {
+	private void processInvokedMethod() throws Exception {
 		Consolex.writeInfo("Processing source file of invoked - " 
 				+ currentTestedInvoked.getConcreteSignature() 
 				+ "..."
@@ -424,7 +425,7 @@ public class ProcessingManager {
 	}
 	
 	private void doProcessingInInvoked(FileProcessingManager invokedFileManager) 
-			throws IOException {
+			throws Exception {
 		if (invokedProcessingManager == null)
 			initializeInvokedProcessingManager(true);
 		
@@ -437,6 +438,7 @@ public class ProcessingManager {
 		catch (Exception e) {
 			Consolex.writeError(e.toString());
 			testMethodProcessingManager.restoreInvokedOriginalFile(invokedFileManager);
+			throw e;
 		}
 	}
 	

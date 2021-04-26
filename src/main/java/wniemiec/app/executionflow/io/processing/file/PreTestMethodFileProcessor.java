@@ -249,7 +249,6 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	@Override
 	protected List<String> doProcessing(List<String> sourceCode) {
 		processedLines = sourceCode;
-		
 		convertJUnit5ToJUnit4();
 		commentAllTestMethodsExcept(testMethodSignature);
 		surroundAssertsWithTryCatch();
