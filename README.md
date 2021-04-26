@@ -78,7 +78,7 @@ If this message is displayed during the execution of the application, just click
 ## 🚩 Changelog
 Details about each version are documented in the [releases section](https://github.com/williamniemiec/ExecutionFlow/releases).
 
-## 🤝 Contribua
+## 🤝 Contribute!
 See the documentation on how you can contribute to the project [here](https://github.com/williamniemiec/ExecutionFlow/blob/master/CONTRIBUTING.md).
 
 ## 🗺 Project structure
