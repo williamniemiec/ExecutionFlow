@@ -7,20 +7,20 @@ public class SomeClass {
 		someMethod();
 	}
 	
-//	@Test
-//	public void foo() {
-//		someMethod();
-//	}
+//@	@Test
+//@	public void foo() {
+//@		someMethod();
+//@	}
 	
-//	@org.junit.Test
-//	public void foo2() {
-//		someMethod();
-//	}
+//@	@org.junit.Test
+//@	public void foo2() {
+//@		someMethod();
+//@	}
 	
-//	@org.junit.jupiter.api.Test
-//	public void foo3() {
-//		someMethod();
-//	}
+//@	@org.junit.jupiter.api.Test
+//@	public void foo3() {
+//@		someMethod();
+//@	}
 	
 	@ParameterizedTest
 	@ValueSource(ints = {-1})
@@ -32,9 +32,9 @@ public class SomeClass {
 		doSomething();
 	}
 	
-//	@RepeatedTest(2)
-//	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
-//	public void foo5() {
-//		someMethod();
-//	}
+//@	@RepeatedTest(2)
+//@	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
+//@	public void foo5() {
+//@		someMethod();
+//@	}
 }

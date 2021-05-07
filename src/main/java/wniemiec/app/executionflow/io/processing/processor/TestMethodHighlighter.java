@@ -277,7 +277,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 				if (!isAnnotation(line) && !line.contains("//"))
 					insideMethod = false;
 				else
-					line = "//" + line;		
+					line = "//@ " + line;		
 			}
 			else if (ignoredMethods.contains(i)) {
 				insideMethod = true;
@@ -296,7 +296,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 				continue;
 			
 			while (!endWithOpenCurlyBracket(line)) {
-				lines.set(idx, "//" + line);
+				lines.set(idx, "//@ " + line);
 				idx++;
 				line = lines.get(idx);
 			}
@@ -304,7 +304,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 			do {
 				line = lines.get(idx);
 				cbb.parse(line);
-				lines.set(idx, "//" + line);
+				lines.set(idx, "//@ " + line);
 				idx++;
 			}
 			while (!cbb.isBalanceEmpty());

@@ -56,6 +56,8 @@ class ProcessingManagerTest {
 	
 	@AfterEach
 	void clean() {
+		processingManager.restoreOriginalFilesFromTestMethod();
+		processingManager.restoreOriginalFilesFromInvoked();
 		processingManager.deleteBackupFilesOfPreprocessingOfTestMethod();
 		processingManager.deleteBackupFilesOfProcessingOfTestMethod();
 		processingManager.deleteBackupFilesOfProcessingOfInvoked();
@@ -113,13 +115,12 @@ class ProcessingManagerTest {
 		byte[] testMethodBinFileContent = Files.readAllBytes(testMethod.getBinPath());
 		byte[] testedInvokedSrcFileContent = Files.readAllBytes(testedMethod.getSrcPath());
 		byte[] testedInvokedBinFileContent = Files.readAllBytes(testedMethod.getBinPath());
-		
 		processingManager.doProcessingInTestedInvoked(
 				new TestedInvoked(testedMethod, testMethod)
 		);
 		
 		processingManager.undoLastProcessing();
-
+		
 		Assertions.assertArrayEquals(
 				testMethodSrcFileContent, 
 				Files.readAllBytes(testMethod.getSrcPath())
