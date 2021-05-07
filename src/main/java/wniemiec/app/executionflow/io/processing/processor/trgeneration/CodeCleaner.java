@@ -133,6 +133,9 @@ class CodeCleaner {
 	// Trim all lines (remove indents and other leading/trailing whitespace)
 	private void trimLines() {
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			processedCode.set(i, processedCode.get(i).trim());
 		}
 	}
@@ -141,6 +144,9 @@ class CodeCleaner {
 		final String REGEX_LINE_COMMENT = "^(([\\s\\t]*\\/\\/.*)|.*\\/\\/[^;]+)$";
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (processedCode.get(i).contains("@") && processedCode.get(i).contains("//"))
 				processedCode.set(i, processedCode.get(i).replaceAll("\\/\\/.+", ""));
 			
@@ -176,6 +182,10 @@ class CodeCleaner {
 				i = eraseMultiLineComment(i, idx);
 			}
 		}
+	}
+	
+	private boolean isHighlightComment(String line) {
+		return line.matches("^\\/\\/@.+");
 	}
 		
 	private String removeMultiSingleLineComment(String str) {
@@ -218,6 +228,9 @@ class CodeCleaner {
 	
 	private void eliminateAnnotations() {
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			boolean executionFlowAnnotation = processedCode.get(i).contains("executionflow.");
 			boolean testAnnotation = processedCode.get(i).contains("Test");
 			boolean supressAnnotation = processedCode.get(i).contains("@SuppressWarnings");
@@ -237,6 +250,9 @@ class CodeCleaner {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		
 		for(int i = 0; i < processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -259,6 +275,9 @@ class CodeCleaner {
 	private void addBracketsToBlocks() {
 		boolean mustReformatBrackets = false;
 		for (int i = 0; i < processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			String curLine = processedCode.get(i);
 			
 			if (curLine.contains("catch(Throwable _"))
@@ -322,6 +341,9 @@ class CodeCleaner {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -353,6 +375,9 @@ class CodeCleaner {
 		boolean wasInlineWhile = false;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -409,6 +434,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -447,6 +475,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -484,6 +515,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 
 		for (int i=0; i < processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -538,6 +572,9 @@ class CodeCleaner {
 		int removedLines = 0;
 		
 		for (int i=0; i < processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -581,6 +618,9 @@ class CodeCleaner {
 		int numAddedLines = 0;
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -611,6 +651,9 @@ class CodeCleaner {
 	
 	private void prepareTryCatchBlocks() throws Exception {
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -635,6 +678,9 @@ class CodeCleaner {
 		List<Integer> toRemove = new ArrayList<Integer>();
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (processedCode.get(i).matches("^\\{$")) {
 				int closing = Helper.findEndOfBlock(processedCode, i+1);
 				toRemove.add(i);
@@ -645,6 +691,9 @@ class CodeCleaner {
 		int removedLines = 0;
 
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (toRemove.contains(i+removedLines)) {
 				mapping.put(i+removedLines, Helper.initArray(i-1));
 				processedCode.remove(i);
@@ -660,6 +709,9 @@ class CodeCleaner {
 	
 	private void convertEmptyForToWhile() {
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -681,6 +733,9 @@ class CodeCleaner {
 		
 		
 		for (int i=0; i<processedCode.size(); i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -818,6 +873,9 @@ class CodeCleaner {
 	private List<Integer> getContinuesInLoopBlock(int loopStartingLine, int loopClosingLine) throws Exception {
 		List<Integer> foundLineIds = new ArrayList<Integer>();
 		for (int i=loopStartingLine+1; i<loopClosingLine; i++) {
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
@@ -839,6 +897,9 @@ class CodeCleaner {
 		
 		
 		for (int i=0; i<processedCode.size(); i++) {	
+			if (isHighlightComment(processedCode.get(i)))
+				continue;
+			
 			if (isAnnotation(processedCode.get(i)))
 				continue;
 			
