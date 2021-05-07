@@ -126,8 +126,8 @@ public class MethodCollector extends InvokedCollector {
 	}
 	
 	@Override
-	public void updateInvocationLines(Map<Integer, Integer> mapping, 
-			Path testMethodSrcFile) {
+	public void updateInvocationLines(Map<Integer, List<Integer>> mapping, 
+									  Path testMethodSrcFile) {
 		for (List<TestedInvoked> methodCollectorList : getMethodCollection()) {
 			updateInvokedInvocationLines(
 					mapping, 

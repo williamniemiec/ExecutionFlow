@@ -19,7 +19,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	//		Attributes
 	//---------------------------------------------------------------------
-	private static Map<Integer, Integer> mapping = new HashMap<>();
+	private static Map<Integer, List<Integer>> mapping = new HashMap<>();
 	private boolean insideMultilineArgs = false;
 	private int idxMethodInvocation = -1;
 	private RoundBracketBalance rbb;
@@ -64,7 +64,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			
 			processedLine = "";
 			
-			mapping.put(getCurrentIndex()+1, idxMethodInvocation+1);
+			mapping.put(idxMethodInvocation+1, List.of(getCurrentIndex()+1));
 		}
 		else if (hasTestAnnotation(processedLine) && (idxMethodInvocation > 0)) {
 			putOnMethodInvocationLine(line);
@@ -136,7 +136,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			newLine = getCurrentIndex()+1;
 		}
 		
-		mapping.put(oldLine, newLine);
+		mapping.put(newLine, List.of(oldLine));
 		
 		return processedLine;
 	}
@@ -183,11 +183,11 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	 * 
 	 * @return		Mapping with the following format:
 	 * <ul>
-	 *	<li><b>Key:</b> Original source file line</li>
-	 * 	<li><b>Value:</b> Modified source file line</li>
+	 *	<li><b>Key:</b> Modified source file lines</li>
+	 * 	<li><b>Value:</b> Original source file lines</li>
 	 * </ul>
 	 */
-	public Map<Integer, Integer> getMapping()
+	public Map<Integer, List<Integer>> getMapping()
 	{
 		return mapping;
 	}

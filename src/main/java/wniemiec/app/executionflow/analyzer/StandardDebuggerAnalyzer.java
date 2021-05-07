@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wniemiec.app.executionflow.invoked.TestedInvoked;
+import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
 import wniemiec.util.io.parser.balance.RoundBracketBalance;
 import wniemiec.io.consolex.Consolex;
 
@@ -496,8 +497,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 			inMethod = false;
 		} 
 		else if (insideTestedInvoked()) {
-			testPath.add(currentLine);
-			lastLineAdded = currentLine;
+			addTestPath(currentLine);
 			lastTpAddedWasReturn = (srcLine.contains("return ") && !srcLine.contains("if "));
 		}
 	}
@@ -520,6 +520,15 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	private boolean areParenthesesUnbalanced() {
 		return	(rbb == null)
 				|| !rbb.isBalanceEmpty();
+	}
+	
+	private void addTestPath(int lineNumber) {
+		if (InvokedFileProcessor.hasMapping(lineNumber))
+			testPath.addAll(InvokedFileProcessor.getMappingOf(lineNumber));
+		else
+			testPath.add(lineNumber);
+		
+		lastLineAdded = lineNumber;
 	}
 
 	private void storeAnalyzedInvokedSignature() {

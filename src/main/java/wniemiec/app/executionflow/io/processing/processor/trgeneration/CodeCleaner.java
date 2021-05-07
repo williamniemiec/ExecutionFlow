@@ -391,11 +391,7 @@ class CodeCleaner {
 				mapping.put(oldLineId, targetLinesIds);
 				numAddedLines++;
 			} else {
-				if (targetLinesIds.size() == 3) { // Fix inline if else
-					mapping.put(oldLineId, List.of(targetLinesIds.get(0)));
-				}
-				else 
-					mapping.put(oldLineId, targetLinesIds);
+				mapping.put(oldLineId, targetLinesIds);
 			}
 		}
 		
@@ -695,7 +691,7 @@ class CodeCleaner {
 				int closingLine = Helper.findEndOfBlock(processedCode, i+3);
 				
 				// Move the initialization before the loop
-				mapping.put(i+depth, Helper.initArray(i+1));
+				mapping.put(i+depth, Helper.initArray(i));
 				int idx = processedCode.get(i).indexOf("(");
 				String initVar = processedCode.get(i).substring(idx+1).trim();
 				boolean isVarDeclaration = initVar.matches("[\\s\\t]*([^\\s\\t]+)[\\s\\t]+([^\\s\\t]+)[\\s\\t]*=.+");
@@ -788,7 +784,7 @@ class CodeCleaner {
 				processedCode.remove(i+2); //remove old line
 				
 				// Replace for initialization with while
-				mapping.put(i+depth, Helper.initArray(i+1));
+				mapping.put(i+depth, Helper.initArray(i));
 				String testStatement = processedCode.get(i+1).substring(0, processedCode.get(i+1).length()-1).trim();
 				processedCode.set(i, "while (" + testStatement + ") {");
 				processedCode.remove(i+1); // Remove old (test) line
@@ -1011,11 +1007,8 @@ class CodeCleaner {
 			endLines.addAll(currentMap.get(id));
 		} else {
 			List<Integer> directTargets = currentMap.get(id);
-			
-			if (directTargets != null) {
-				for (Integer target : directTargets) {
-					endLines.addAll(getFinalTargetLineId(target, depth + 1));
-				}
+			for (Integer target : directTargets) {
+				endLines.addAll(getFinalTargetLineId(target, depth + 1));
 			}
 		}
 		

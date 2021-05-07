@@ -26,7 +26,7 @@ public class InlineCommentRemover extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	@Override
 	protected String processLine(String line) {
-		if (!line.contains("//"))
+		if (!hasNativeInlineComment(line))
 			return line;
 		
 		String processedLine = replaceStringWithBlankSpaces(line);
@@ -37,6 +37,10 @@ public class InlineCommentRemover extends SourceCodeProcessor {
 			processedLine = line;
 		
 		return processedLine;
+	}
+	
+	private boolean hasNativeInlineComment(String line) {
+		return line.contains("//") && !line.matches("^\\/\\/@.+");
 	}
 
 	private String replaceStringWithBlankSpaces(String line) {
