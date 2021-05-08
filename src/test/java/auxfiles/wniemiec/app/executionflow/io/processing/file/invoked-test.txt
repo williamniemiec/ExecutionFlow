@@ -11,18 +11,6 @@ public class Foo {
 		return k;
 	}
 	
-	public static int countTotalArguments2(Object... args) {
-		int total = 0;
-		
-		for (int i=0; i<args.length; i++) {
-			if (i == 0)
-				continue;
-			total = i;
-		}
-		
-		return total;
-	}
-	
 	public int doWhileMethod(int a, int b) {
 		if (a == 0)
 			return b;
@@ -94,28 +82,7 @@ public class Foo {
 		else
 			response = "Number "+num;
 		
-		
 		return response;
-	}
-	
-	public void m1(int num) 
-	{
-		someMethod();
-	}
-	
-	private void m2(int num) 
-	{
-		someMethod();
-	}
-	
-	public static void m3(int num) 
-	{
-		someMethod();
-	}
-	
-	public synchronized void m4(int num) 
-	{
-		someMethod();
 	}
 	
 	public char switchCaseMethod(char letter) { 
@@ -133,21 +100,7 @@ public class Foo {
 			case 'Ê':
 				letter = 'E';
 				break;
-			case 'Ì':
-			case 'Í':
-			case 'Î':
-				letter = 'I';
-				break;
-			case 'Ò':
-			case 'Ó':
-			case 'Ô':
-			case 'Õ':
-				letter = 'O';
-				break;
-			case 'Ú':
-			case 'Ù':
-			case 'Û':
-				letter = 'U';
+			default:
 				break;
 		}
 		
@@ -168,29 +121,5 @@ public class Foo {
 		}
 		
 		return true;
-	}
-	
-	public boolean tryCatchMethod_catch() {
-		File f = new File("tmp");
-		
-		FileWriter fw;
-		try {
-			throw new IOException();
-		} catch (IOException e) {
-			return false;
-		}
-	}
-	
-	public static void test3(int x, int y, String k) {
-		x = 0;
-		while (x < 3) {
-			x++;
-		}
-		
-		x = 3;
-	}
-	
-	private static void someMethod() {
-		// Code
 	}
 }

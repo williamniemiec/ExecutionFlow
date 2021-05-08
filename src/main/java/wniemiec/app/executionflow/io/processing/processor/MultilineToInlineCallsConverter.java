@@ -1,5 +1,6 @@
 package wniemiec.app.executionflow.io.processing.processor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			
 			processedLine = "";
 			
-			mapping.put(idxMethodInvocation+1, List.of(getCurrentIndex()+1));
+			addMapping(idxMethodInvocation+1, getCurrentIndex()+1);
 		}
 		else if (hasTestAnnotation(processedLine) && (idxMethodInvocation > 0)) {
 			putOnMethodInvocationLine(line);
@@ -136,7 +137,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			newLine = getCurrentIndex()+1;
 		}
 		
-		mapping.put(newLine, List.of(oldLine));
+		addMapping(newLine, oldLine);
 		
 		return processedLine;
 	}
@@ -164,6 +165,21 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		final String regexOnlyClosedCurlyBracket = "^.*[\\s\\t)}]+;[\\s\\t]*$";
 		
 		return line.matches(regexOnlyClosedCurlyBracket);
+	}
+	
+	private void addMapping(int newLine, int oldLine) {
+		List<Integer> oldLines;
+		
+		if (mapping.containsKey(newLine)) {
+			oldLines = mapping.get(newLine);
+			oldLines.add(oldLine);
+		}
+		else {
+			oldLines = new ArrayList<>();
+			oldLines.add(oldLine);
+			
+			mapping.put(newLine, oldLines);
+		}
 	}
 	
 	private boolean hasTestAnnotation(String line) {

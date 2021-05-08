@@ -2,6 +2,7 @@ package wniemiec.app.executionflow.collector;
 
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 import wniemiec.app.executionflow.App;
-import wniemiec.app.executionflow.collector.InvokedCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 
@@ -85,7 +85,7 @@ abstract class InvokedCollectorTest {
 		);
 	}
 	
-	protected void updateInvocationLineFromMapping(Map<Integer, Integer> mapping) {
+	protected void updateInvocationLineFromMapping(Map<Integer, List<Integer>> mapping) {
 		collector.updateInvocationLines(mapping, testMethod.getSrcPath());
 	}
 	

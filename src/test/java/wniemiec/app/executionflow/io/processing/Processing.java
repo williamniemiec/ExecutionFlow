@@ -42,7 +42,7 @@ public abstract class Processing {
 	protected void testProcessorOnFile(String filename) throws Exception {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> procTxt = processSourceCodeFrom(filename);
-		
+
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}

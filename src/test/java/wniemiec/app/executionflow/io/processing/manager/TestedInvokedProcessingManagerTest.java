@@ -69,8 +69,8 @@ class TestedInvokedProcessingManagerTest {
 		
 		parseAfterProcessing();
 		
-		assertTestPathIs(invokedCollector.get(0), 35, 36, 37, 38, 39, 40, 38,
-						 39, 40, 38, 39, 40, 38, 39, 40, 38, 42);
+		assertTestPathIs(invokedCollector.get(0), 94, 96, 98, 99, 98, 99, 98,
+						 99, 98, 99, 98, 102);
 	}
 	
 	

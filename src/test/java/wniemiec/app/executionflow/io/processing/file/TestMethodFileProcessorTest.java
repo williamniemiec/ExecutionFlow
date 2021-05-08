@@ -1,5 +1,6 @@
 package wniemiec.app.executionflow.io.processing.file;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
@@ -106,13 +107,7 @@ class TestMethodFileProcessorTest extends FileProcessorTest {
 		withFilename("testmethod-junit4");
 		
 		assertMappingIs(Map.ofEntries(
-				Map.entry(15, 14),
-				Map.entry(16, 14),
-				Map.entry(17, 14),
-				Map.entry(18, 14),
-				Map.entry(19, 14),
-				Map.entry(20, 14),
-				Map.entry(21, 14)
+				Map.entry(14, List.of(15, 16, 17, 18, 19, 20, 21))
 		));
 	}
 
@@ -121,12 +116,7 @@ class TestMethodFileProcessorTest extends FileProcessorTest {
 		withFilename("testmethod-junit5");
 
 		assertMappingIs(Map.ofEntries(
-				Map.entry(46, 45),
-				Map.entry(47, 45),
-				Map.entry(48, 45),
-				Map.entry(49, 45),
-				Map.entry(50, 45),
-				Map.entry(51, 45)
+				Map.entry(45, List.of(46, 47, 48, 49, 50, 51))
 		));
 	}
 	
@@ -137,7 +127,7 @@ class TestMethodFileProcessorTest extends FileProcessorTest {
 		this.filename = filename;
 	}
 	
-	private void assertMappingIs(Map<Integer, Integer> expectedMapping) throws Exception {
+	private void assertMappingIs(Map<Integer, List<Integer>> expectedMapping) throws Exception {
 		TestMethodFileProcessor processor = new TestMethodFileProcessor.Builder()
 				.targetFile(getTestFile(filename))
 				.outputDir(getTempFolder())

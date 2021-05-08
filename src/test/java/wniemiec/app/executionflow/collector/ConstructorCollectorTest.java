@@ -1,11 +1,11 @@
 package wniemiec.app.executionflow.collector;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import wniemiec.app.executionflow.collector.ConstructorCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 
 class ConstructorCollectorTest extends InvokedCollectorTest {
@@ -46,7 +46,7 @@ class ConstructorCollectorTest extends InvokedCollectorTest {
 		doCollection();
 		
 		updateInvocationLineFromMapping(Map.ofEntries(
-				Map.entry(24, 99)
+				Map.entry(99, List.of(24))
 		));
 		
 		assertTestedInvokedHasInvocationLine(99);

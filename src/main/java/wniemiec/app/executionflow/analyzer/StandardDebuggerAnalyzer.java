@@ -523,8 +523,12 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	}
 	
 	private void addTestPath(int lineNumber) {
-		if (InvokedFileProcessor.hasMapping(lineNumber))
-			testPath.addAll(InvokedFileProcessor.getMappingOf(lineNumber));
+		if (InvokedFileProcessor.hasMapping(lineNumber-1)) {
+			for (Integer tp : InvokedFileProcessor.getMappingOf(lineNumber-1)) {
+				if (testPath.isEmpty() || testPath.get(testPath.size()-1) != tp+1)
+					testPath.add(tp+1);			
+			}
+		}
 		else
 			testPath.add(lineNumber);
 		

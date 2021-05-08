@@ -56,29 +56,39 @@ public abstract class InvokedCollector {
 			if (!invoked.getTestMethod().getSrcPath().equals(testMethodSrcFile))
 				continue;
 			
+			int invocationLine = invoked.getTestedInvoked().getInvocationLine();
+			
 			for (Map.Entry<Integer, List<Integer>> m : mapping.entrySet()) {
-				updateInvocationLine(
+				boolean updated = updateInvocationLine(
 						invoked.getTestedInvoked(),
 						m.getKey(), 
 						m.getValue()
 				);
+				
+				if (updated)
+					break;
 			}
 			
 			if (!modifiedCollectorInvocationLine.containsKey(invoked.getTestedInvoked())) {
 				modifiedCollectorInvocationLine.put(
 						invoked.getTestedInvoked(), 
-						invoked.getTestedInvoked().getInvocationLine()
+						invocationLine
 				);
 			}
 		}
 	}
 
-	private static void updateInvocationLine(Invoked invoked, int newLine, 
-											 List<Integer> originalLines) {
-		for (Integer originalSrcLine : originalLines) {
-			if (originalSrcLine == invoked.getInvocationLine())
+	private static boolean updateInvocationLine(Invoked invoked, int newLine, 
+											 	List<Integer> originalLines) {
+		for (int originalSrcLine : originalLines) {
+			if (originalSrcLine == invoked.getInvocationLine()) {
 				invoked.setInvocationLine(newLine);
+				
+				return true;
+			}
 		}
+		
+		return false;
 	}
 	
 	/**

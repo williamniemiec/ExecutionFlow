@@ -50,7 +50,6 @@ class CodeCleaner {
 	public void cleanupCode(List<String> codeToCleanup) throws Exception {
 		processedCode = codeToCleanup;
 		cleanup();
-//		addDummyNodes();
 		buildFullMap();
 		buildReverseFullMap();
 		
@@ -372,7 +371,7 @@ class CodeCleaner {
 	private void moveCodeAfterOpenedBracket() {
 		Map<Integer, List<Integer>> mapping = new HashMap<Integer, List<Integer>>();
 		int numAddedLines = 0;
-		boolean wasInlineWhile = false;
+		//boolean wasInlineWhile = false;
 		
 		for (int i=0; i<processedCode.size(); i++) {
 			if (isHighlightComment(processedCode.get(i)))
@@ -389,7 +388,8 @@ class CodeCleaner {
 			// add current line to targets
 			List<Integer> targetLinesIds = (mapping.containsKey(oldLineId) ? 
 					mapping.get(oldLineId) : new ArrayList<Integer>());
-
+			targetLinesIds.add(i);
+			/*
 			if (wasInlineWhile) {
 				targetLinesIds.add(i-1);
 				wasInlineWhile = false;
@@ -400,7 +400,7 @@ class CodeCleaner {
 			
 			if (isInlineDoWhile(processedCode.get(i))|| processedCode.get(i).matches("while[\\s\\t]*\\([^\\)]+\\)[\\s\\t]*\\{[\\s\\t]*.+"))
 				wasInlineWhile = true;
-		
+			*/
 			
 			// find bracket and check if there is code after
 			int idx = Helper.getIndexOfReservedChar(processedCode.get(i), "{");
@@ -460,8 +460,8 @@ class CodeCleaner {
 				mapping.put(oldLineId, targetLinesIds);
 				numAddedLines++;
 			} else {
-				if (targetLinesIds.size() == 3)
-					System.out.println(targetLinesIds);
+				//if (targetLinesIds.size() == 3)
+				//	System.out.println(targetLinesIds);
 				mapping.put(oldLineId, targetLinesIds);
 			}
 		}
@@ -527,20 +527,21 @@ class CodeCleaner {
 			
 			targetLinesIds.add(i);
 			if (statements.size() > 1 && !processedCode.get(i).contains("catch(Throwable _")) {
-				boolean isForExpression = processedCode.get(i).matches("for[\\s\\t]*\\(.+");
 				boolean lineEndsWithSemicolon = processedCode.get(i).matches("^.*;$");
+				/*boolean isForExpression = processedCode.get(i).matches("for[\\s\\t]*\\(.+");
+				
 				boolean hasContinue = processedCode.get(i).contains("continue;");
 				boolean inlineTryCatch = processedCode.get(i).matches("try[\\s\\t]*\\{.+\\}[\\s\\t]*catch[\\s\\t]*\\(.+\\)[\\s\\t]*\\{.*\\}.*");
 				boolean isInlineIfElse = isInlineIfElse(processedCode.get(i));
 				boolean isInlineDoWhile = isInlineDoWhile(processedCode.get(i));
-				
+				*/
 				processedCode.set(i, statements.get(0) + ";");
 				for (int j=1; j < statements.size(); j++) {
 					String pause = (j == statements.size()-1 && !lineEndsWithSemicolon ? "" : ";");
 					processedCode.add(i+j, statements.get(j) + pause);
 					
-					if (!isForExpression && !isInlineIfElse && 
-							!isInlineDoWhile && !inlineTryCatch)
+					//if (!isForExpression && !isInlineIfElse && 
+					//		!isInlineDoWhile && !inlineTryCatch)
 						targetLinesIds.add(i+j);
 				}
 
@@ -548,11 +549,15 @@ class CodeCleaner {
 				
 				numAddedLines += statements.size()-1;
 				
-				if (!hasContinue)
+				//if (!hasContinue)
 					i += statements.size()-1;	// can skip what we altered already
-			} else if (!processedCode.get(i).matches("[\\s\\t]*[\\}\\{]+[\\s\\t]*")) {
+			} 
+			else {
 				mapping.put(oldLineId, targetLinesIds);
 			}
+			//} else if (!processedCode.get(i).matches("[\\s\\t]*[\\}\\{]+[\\s\\t]*")) {
+			//	mapping.put(oldLineId, targetLinesIds);
+			//}
 		}
 
 		lineMappings.add(mapping);
@@ -740,7 +745,7 @@ class CodeCleaner {
 				continue;
 			
 			// Updates the scope visibility of variables already initialized		
-			if (processedCode.get(i).matches("^for([\\s\\t]+|\\().+$")) {
+			if (processedCode.get(i).matches("^\\bfor\\b.+$")) {
 				String REGEX_MULTI_INITILIZATION = "^.+(=.+,.+).+;$";
 				int depth = loopsClosingLines.size();
 				int closingLine = Helper.findEndOfBlock(processedCode, i+3);
@@ -834,7 +839,7 @@ class CodeCleaner {
 				List<Integer> targetLinesIds = mapping.get(i+1+depth);
 				targetLinesIds.add(closingLine-1);
 				mapping.put(i+1+depth, targetLinesIds);
-				if (iteratorStep.contains("++"))
+				//if (iteratorStep.contains("++"))
 					processedCode.add(closingLine+1, "%forcenode%" + iteratorStep + ";");
 				processedCode.remove(i+2); //remove old line
 				
@@ -1068,6 +1073,7 @@ class CodeCleaner {
 			endLines.addAll(currentMap.get(id));
 		} else {
 			List<Integer> directTargets = currentMap.get(id);
+			
 			for (Integer target : directTargets) {
 				endLines.addAll(getFinalTargetLineId(target, depth + 1));
 			}

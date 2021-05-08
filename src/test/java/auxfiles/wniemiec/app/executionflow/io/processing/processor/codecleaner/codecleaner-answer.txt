@@ -200,6 +200,7 @@ forceDelete(file);
 catch (final IOException ioe) {
 exception = ioe;
 }
+;
 }
 if (null != exception) {
 throw exception;
