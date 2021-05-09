@@ -2,14 +2,12 @@ package wniemiec.app.executionflow.exporter;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.collector.parser.TestedInvokedParser;
-import wniemiec.app.executionflow.exporter.file.ProcessedSourceFileExporter;
 import wniemiec.app.executionflow.exporter.signature.MethodsCalledByTestedInvokedExporter;
 import wniemiec.app.executionflow.exporter.signature.TestedInvokedExporter;
 import wniemiec.app.executionflow.exporter.testpath.ConsoleExporter;
@@ -18,20 +16,18 @@ import wniemiec.app.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.app.executionflow.exporter.testpath.TestPathExporter;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for performing the exports that the application performs, which 
  * are as follow:
  * <ul>
  * 	<li>Test paths</li>
- * 	<li>Processed source files</li>
  * 	<li>Methods called by tested invoked</li>
  * 	<li>Test methods that use the tested invoked</li>
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		6.0.0
  */
 public abstract class ExportManager {
@@ -42,12 +38,10 @@ public abstract class ExportManager {
 	protected static TestPathExportType testPathExportType;
 	private static TestPathExporter testPathExporter;
 	private MethodsCalledByTestedInvokedExporter mcti;
-	private ProcessedSourceFileExporter processedSourceFileExporter;
 	private TestedInvokedExporter mcutmEffective;
 	private TestedInvokedExporter mcutmAll;
 	private boolean exportTestPaths = true;
 	private boolean exportCalledMethods = true;
-	private boolean exportProcessedSourceFile = true;
 	private boolean exportTesters = true;
 	private static boolean isConstructor;
 	private static String outputDir;
@@ -65,7 +59,6 @@ public abstract class ExportManager {
 		
 		initializeTestPathExporter();
 		initializeTestersExporter();
-		initializeProcessedSourceFileExporter();
 		initializeMethodsCalledByTestedInvokedExporter();
 	}
 
@@ -85,13 +78,6 @@ public abstract class ExportManager {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	private void initializeProcessedSourceFileExporter() {
-		this.processedSourceFileExporter = new ProcessedSourceFileExporter(
-				outputDir, 
-				isConstructor
-		);
-	}
-
 	private void initializeTestersExporter() {		
 		this.mcutmEffective = new TestedInvokedExporter(
 				"MCUTM-EFFECTIVE", 
@@ -130,7 +116,6 @@ public abstract class ExportManager {
 		exportEffectiveMethodsAndConstructorsUsedInTestMethods(
 				parser.getMethodsAndConstructorsUsedInTestMethod()
 		);
-		exportProcessedSourceFiles(parser.getProcessedSourceFiles());
 		exportMethodsCalledByTestedInvoked(
 				parser.getMethodsCalledByTestedInvoked()
 		);
@@ -151,18 +136,6 @@ public abstract class ExportManager {
 		mcutmEffective.export(invokedSet);
 	}
 	
-	public void exportProcessedSourceFiles(Map<String, Path> processedSourceFiles) {
-		if (!exportProcessedSourceFile)
-			return;
-		
-		try {
-			processedSourceFileExporter.export(processedSourceFiles);
-		} 
-		catch (IOException e) {
-			Logger.error(e.getMessage());
-		}
-	}
-	
 	public void exportMethodsCalledByTestedInvoked(
 			Map<Invoked, Set<String>> methodsCalledByTestedInvoked) {
 		if (!exportCalledMethods)
@@ -172,7 +145,7 @@ public abstract class ExportManager {
 			mcti.export(methodsCalledByTestedInvoked);
 		} 
 		catch (IOException e) {
-			Logger.error(e.getMessage());
+			Consolex.writeError(e.getMessage());
 		}
 	}
 	
@@ -194,14 +167,6 @@ public abstract class ExportManager {
 	
 	public void disableCalledMethodsByTestedInvokedExport() {
 		exportCalledMethods = false;
-	}
-	
-	public void enableProcesedSourceFileExport() {
-		exportProcessedSourceFile = true;
-	}
-	
-	public void disableProcesedSourceFileExport() {
-		exportProcessedSourceFile = false;
 	}
 	
 	public void enableTestersExport() {

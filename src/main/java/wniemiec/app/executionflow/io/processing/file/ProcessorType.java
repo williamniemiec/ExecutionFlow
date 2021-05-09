@@ -4,7 +4,6 @@ package wniemiec.app.executionflow.io.processing.file;
  * Contains all types of supported processors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		2.0.0
  * @since		2.0.0
  */
 public enum ProcessorType {

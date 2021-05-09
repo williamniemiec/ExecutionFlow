@@ -2,6 +2,7 @@ package wniemiec.app.executionflow.io.processing.manager;
 
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,7 +12,6 @@ import wniemiec.app.executionflow.collector.InvokedCollector;
  * Responsible for managing processing in collected methods and constructors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class CollectorProcessingManager {
@@ -50,12 +50,12 @@ public class CollectorProcessingManager {
 	 * Updates invocation line of all collected collectors based on a 
 	 * processing performed in a test method.
 	 * 
-	 * @param		mapping Mapping of the old lines in relation to the new 
+	 * @param		mapping Mapping of the new lines in relation to the old 
 	 * lines of the processed test method 
 	 * @param		testMethodSrcPath Test method that has been processed
 	 * @param		invokedSrcPath Tested invoked
 	 */
-	public void updateCollectorsFromMapping(Map<Integer, Integer> mapping, 
+	public void updateCollectorsFromMapping(Map<Integer, List<Integer>> mapping, 
 								 			Path testMethodSrcPath,
 								 			Path invokedSrcPath) {
 		if (mapping == null)

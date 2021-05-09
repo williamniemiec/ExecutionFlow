@@ -1,13 +1,9 @@
 package wniemiec.app.executionflow.io.processing.processor;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import wniemiec.app.executionflow.io.processing.processor.InlineCommentRemover;
-import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 
 class InlineCommentRemoverTest extends SourceCodeProcessorTest {
 
@@ -18,7 +14,7 @@ class InlineCommentRemoverTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"inline-comment"
 	})
-	void testInlineCommentRemover(String filename) throws IOException {
+	void testInlineCommentRemover(String filename) throws Exception {
 		testProcessorOnFile(filename);
 	}
 	

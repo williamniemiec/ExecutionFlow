@@ -1,6 +1,7 @@
 package wniemiec.app.executionflow.io.processing.manager;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,7 +15,6 @@ import wniemiec.app.executionflow.collector.InvokedCollector;
 import wniemiec.app.executionflow.collector.MethodCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.app.executionflow.io.processing.manager.CollectorProcessingManager;
 
 class CollectorProcessingManagerTest {
 
@@ -25,7 +25,7 @@ class CollectorProcessingManagerTest {
 	private final Invoked testMethod;
 	private static InvokedCollector methodCollector;
 	private static InvokedCollector constructorCollector;
-	private final Map<Integer, Integer> mapping; 
+	private final Map<Integer, List<Integer>> mapping; 
 	private final CollectorProcessingManager collectorManager;
 		
 	
@@ -57,10 +57,10 @@ class CollectorProcessingManagerTest {
 		));
 		
 		mapping = Map.ofEntries(
-				Map.entry(1, 1),
-				Map.entry(3, 2),
-				Map.entry(4, 3),
-				Map.entry(5, 4)
+				Map.entry(1, List.of(1)),
+				Map.entry(2, List.of(3)),
+				Map.entry(3, List.of(4)),
+				Map.entry(4, List.of(5))
 		);
 		
 		methodCollector.collect(new TestedInvoked(testedMethod, testMethod));
@@ -156,7 +156,7 @@ class CollectorProcessingManagerTest {
 		Assertions.assertEquals(4, getFirstCollectedTestedMethod().getInvocationLine());
 		
 		collectorManager.updateCollectorsFromMapping(
-				Map.of(4, 99), 
+				Map.of(99, List.of(4)), 
 				testMethod.getSrcPath(), 
 				testedMethod.getSrcPath()
 		);
@@ -175,7 +175,7 @@ class CollectorProcessingManagerTest {
 		Assertions.assertEquals(4, getFirstCollectedTestedMethod().getInvocationLine());
 		
 		collectorManager.updateCollectorsFromMapping(
-				Map.of(4, 99), 
+				Map.of(99, List.of(4)), 
 				testMethod.getSrcPath(), 
 				testMethod.getSrcPath()
 		);

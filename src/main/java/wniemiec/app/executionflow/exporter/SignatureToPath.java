@@ -6,7 +6,6 @@ import wniemiec.util.io.path.replacer.ReservedCharactersReplacerFactory;
  * Path generator based on method or constructor signatures.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since		6.0.5
  */
 public class SignatureToPath {
@@ -59,7 +58,12 @@ public class SignatureToPath {
 	}	
 	
 	private static String reduceSignature(String parameters) {
-		return parameters.replaceAll("([^.(\\s]+\\.)+", "");
+		String reducedSignature = parameters.replaceAll("\\.\\.\\.", "#");
+		reducedSignature = reducedSignature.replaceAll("([^.(\\s]+\\.)+", "");
+		reducedSignature = reducedSignature.replaceAll("#", "...");
+		reducedSignature = reducedSignature.replaceAll("<.+>", "");
+		
+		return reducedSignature;
 	}
 	
 	private static String extractParametersFromSignature(String signature) {

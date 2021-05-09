@@ -9,7 +9,6 @@ import wniemiec.app.executionflow.io.compiler.Compiler;
  * Compiler builder with support for AspectJ framework.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		6.0.0
  */
 public interface AspectJCompilerBuilder {

@@ -8,15 +8,14 @@ import wniemiec.api.junit4.JUnit4API;
 import wniemiec.app.executionflow.collector.CallCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.lib.LibraryManager;
+import wniemiec.io.consolex.Consolex;
 import wniemiec.util.data.storage.Session;
-import wniemiec.util.logger.Logger;
 import wniemiec.util.task.Checkpoint;
 
 /**
  * Responsible for running test methods using JUnit API.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class JUnitRunner {
@@ -92,7 +91,7 @@ public class JUnitRunner {
 			waitForJUnitAPI();
 		}
 		catch (IOException | InterruptedException e) {
-			Logger.error("Restart - " + e.toString());
+			Consolex.writeError("Restart - " + e.toString());
 		}
 		finally {
 			disableJUnitRunnerCheckpoint();
@@ -155,9 +154,9 @@ public class JUnitRunner {
 	}
 	
 	private static void dump(Invoked testMethod) {
-		Logger.debug("Working directory: " + generateClassRootDirectory(testMethod));
-		Logger.debug("Classpath: " + generateClasspaths());
-		Logger.debug("Class signature: " + testMethod.getClassSignature());
+		Consolex.writeDebug("Working directory: " + generateClassRootDirectory(testMethod));
+		Consolex.writeDebug("Classpath: " + generateClasspaths());
+		Consolex.writeDebug("Class signature: " + testMethod.getClassSignature());
 	}
 	
 	private static void waitForJUnitAPI() throws IOException, InterruptedException {
@@ -177,8 +176,8 @@ public class JUnitRunner {
 		try {
 			insideJUnitAPICheckpoint.disable();
 		}
-		catch (IOException e) {
-			Logger.error(e.toString());
+		catch (IOException | InterruptedException e) {
+			Consolex.writeError(e.toString());
 		}
 	}
 	

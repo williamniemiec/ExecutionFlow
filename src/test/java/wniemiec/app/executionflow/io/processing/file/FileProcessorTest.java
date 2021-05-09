@@ -6,7 +6,6 @@ import java.util.List;
 
 import wniemiec.app.executionflow.io.FileEncoding;
 import wniemiec.app.executionflow.io.processing.Processing;
-import wniemiec.app.executionflow.io.processing.file.FileProcessor;
 import wniemiec.util.io.manager.TextFileManager;
 
 public abstract class FileProcessorTest extends Processing {
@@ -30,13 +29,13 @@ public abstract class FileProcessorTest extends Processing {
 	//		Methods
 	//-----------------------------------------------------------------------
 	@Override
-	protected List<String> processSourceCodeFrom(String filename) throws IOException {
+	protected List<String> processSourceCodeFrom(String filename) throws Exception {
 		Path outputFile = doProcessing(filename);
 		
 		return readLinesFrom(outputFile);
 	}
 	
-	protected Path doProcessing(String filename) throws IOException {
+	protected Path doProcessing(String filename) throws Exception {
 		FileProcessor processor = getFileProcessor(filename);
 		
 		return Path.of(processor.processFile());

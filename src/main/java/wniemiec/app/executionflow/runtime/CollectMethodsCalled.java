@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
  * annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		6.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)

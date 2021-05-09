@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
  * class declarations.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.1
  * @since 		6.0.0
  */
 public class InlineCommentRemover extends SourceCodeProcessor {
@@ -27,7 +26,7 @@ public class InlineCommentRemover extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	@Override
 	protected String processLine(String line) {
-		if (!line.contains("//"))
+		if (!hasNativeInlineComment(line))
 			return line;
 		
 		String processedLine = replaceStringWithBlankSpaces(line);
@@ -38,6 +37,10 @@ public class InlineCommentRemover extends SourceCodeProcessor {
 			processedLine = line;
 		
 		return processedLine;
+	}
+	
+	private boolean hasNativeInlineComment(String line) {
+		return line.contains("//") && !line.matches("^\\/\\/@.+");
 	}
 
 	private String replaceStringWithBlankSpaces(String line) {

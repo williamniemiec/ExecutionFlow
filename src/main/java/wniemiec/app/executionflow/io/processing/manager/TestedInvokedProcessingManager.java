@@ -9,13 +9,12 @@ import wniemiec.app.executionflow.analyzer.DebuggerAnalyzerFactory;
 import wniemiec.app.executionflow.collector.InvokedCollector;
 import wniemiec.app.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for processing and parsing of tested methods and constructors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class TestedInvokedProcessingManager {
@@ -52,13 +51,13 @@ public class TestedInvokedProcessingManager {
 				doProcessingAndParsing(parser, collector);
 			}
 			catch (InterruptedByTimeoutException e1) {
-				Logger.error("Time exceeded");
+				Consolex.writeError("Time exceeded");
 			} 
 			catch (IllegalStateException e2) {
-				Logger.error(e2.toString());
+				Consolex.writeError(e2.toString());
 			}
-			catch (IOException e3) {
-				Logger.error(e3.toString());
+			catch (Exception e3) {
+				Consolex.writeError(e3.toString());
 				
 				processingManager.undoLastProcessing();
 			}
@@ -69,7 +68,7 @@ public class TestedInvokedProcessingManager {
 
 	private void doProcessingAndParsing(TestedInvokedParser parser, 
 										TestedInvoked collector) 
-			throws IOException {
+			throws Exception {
 		processingManager.doProcessingInTestedInvoked(collector);
 		
 		parser.parse(collector, getDebuggerAnalyzerFor(collector));
@@ -88,9 +87,9 @@ public class TestedInvokedProcessingManager {
 	}
 	
 	private void dumpCollector(Collection<TestedInvoked> invokedCollector) {
-		Logger.debug(
-				TestedInvokedProcessingManager.class, 
-				"collector: " + invokedCollector.toString()
+		Consolex.writeDebug(
+				TestedInvokedProcessingManager.class.getName() +  
+				" - collector: " + invokedCollector.toString()
 		);
 	}
 	

@@ -7,19 +7,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.user.User;
-import wniemiec.util.logger.Logger;
 
 /**
  * Responsible for collect constructors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class ConstructorCollector extends InvokedCollector {
@@ -86,8 +85,6 @@ public class ConstructorCollector extends InvokedCollector {
 			User.storeConstructorCollector(constructorCollector);
 		} 
 		catch (IOException e) {
-			Logger.error(e.toString());
-			Logger.error("Constructor collector cannot be stored");
 		}
 	}
 	
@@ -117,8 +114,8 @@ public class ConstructorCollector extends InvokedCollector {
 	}
 
 	@Override
-	public void updateInvocationLines(Map<Integer, Integer> mapping, 
-									  Path testMethodSrcFile) {
+	public void updateInvocationLines(Map<Integer, List<Integer>> mapping, 
+	  		   						  Path testMethodSrcFile) {
 		updateInvokedInvocationLines(
 				mapping, 
 				testMethodSrcFile, 

@@ -12,14 +12,13 @@ import java.util.Set;
 import wniemiec.app.executionflow.analyzer.DebuggerAnalyzer;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for running {@link DebuggerAnalyzer} from a 
  * {@link TestedInvoked}.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class TestedInvokedParser {
@@ -76,7 +75,7 @@ public class TestedInvokedParser {
 	}
 
 	private void runDebugger() throws IOException {
-		Logger.info(
+		Consolex.writeInfo(
 				"Computing test path of invoked " 
 				+ testedInvoked.getTestedInvoked().getConcreteSignature() 
 				+ "..."

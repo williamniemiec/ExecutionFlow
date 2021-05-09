@@ -11,14 +11,12 @@ import wniemiec.app.executionflow.gui.RemoteControl;
 import wniemiec.app.executionflow.gui.popup.MainSelector;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.util.data.storage.Session;
-import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.*;
 
 /**
  * Responsible for handling user interactions as well as managing your session.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class User {
@@ -72,8 +70,8 @@ public class User {
 			logLevel = (LogLevel) session.read("LOG_LEVEL");
 		} 
 		catch (IOException e) {
-			Logger.error("Corrupted session");
-			Logger.info("Default logging level selected: INFO");
+			Consolex.writeError("Corrupted session");
+			Consolex.writeInfo("Default logging level selected: INFO");
 			session.destroy();
 		}
 		
@@ -100,8 +98,8 @@ public class User {
 						: (TestPathExportType) exportType;
 		} 
 		catch (IOException e) {
-			Logger.error("Corrupted session");
-			Logger.info("Default test path export type selected: FILE");
+			Consolex.writeError("Corrupted session");
+			Consolex.writeInfo("Default test path export type selected: FILE");
 			
 			return TestPathExportType.FILE;
 		}
@@ -109,6 +107,9 @@ public class User {
 
 	public static void storeMethodCollector(Map<Integer, List<TestedInvoked>> collector)
 			throws IOException {
+		if (!session.exists())
+			return;
+		
 		session.save("METHOD_COLLECTOR", collector);
 	}
 	
@@ -140,8 +141,8 @@ public class User {
 			storeMethodCollector(new HashMap<>());
 		} 
 		catch (IOException e) {
-			Logger.error(e.toString());
-			Logger.error("Reset method collector - failed");
+			Consolex.writeError(e.toString());
+			Consolex.writeError("Reset method collector - failed");
 		}
 	}
 	
@@ -150,8 +151,8 @@ public class User {
 			storeConstructorCollector(new HashMap<>());
 		} 
 		catch (IOException e) {
-			Logger.error(e.toString());
-			Logger.error("Reset constructor collector - failed");
+			Consolex.writeError(e.toString());
+			Consolex.writeError("Reset constructor collector - failed");
 		}
 	}
 

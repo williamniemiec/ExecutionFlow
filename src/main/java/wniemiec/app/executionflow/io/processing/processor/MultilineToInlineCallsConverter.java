@@ -1,5 +1,6 @@
 package wniemiec.app.executionflow.io.processing.processor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,6 @@ import wniemiec.util.io.parser.balance.RoundBracketBalance;
  * arguments on a single line.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since 		6.0.0
  */
 public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
@@ -20,7 +20,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	//---------------------------------------------------------------------
 	//		Attributes
 	//---------------------------------------------------------------------
-	private static Map<Integer, Integer> mapping = new HashMap<>();
+	private static Map<Integer, List<Integer>> mapping = new HashMap<>();
 	private boolean insideMultilineArgs = false;
 	private int idxMethodInvocation = -1;
 	private RoundBracketBalance rbb;
@@ -45,15 +45,14 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		String processedLine = line;
 		
 		processedLine = combineMultilineArgs(line);
-		
-//		if (!insideMultilineArgs)
-//			idxMethodInvocation = -1;
 
 		return processedLine;
 	}
 
 	private String combineMultilineArgs(String line) {
 		String processedLine = line;
+
+		checkIsOutOfMethod();
 		
 		if (isMethodCallWithMultipleLines(line)) {
 			processedLine = parseMethodCallWithMultipleLines(line);
@@ -66,7 +65,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			
 			processedLine = "";
 			
-			mapping.put(getCurrentIndex()+1, idxMethodInvocation+1);
+			addMapping(idxMethodInvocation+1, getCurrentIndex()+1);
 		}
 		else if (hasTestAnnotation(processedLine) && (idxMethodInvocation > 0)) {
 			putOnMethodInvocationLine(line);
@@ -76,6 +75,15 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		}
 		
 		return processedLine;
+	}
+
+
+	private void checkIsOutOfMethod() {
+		if ((rbb != null) && rbb.alreadyIncreased() && rbb.isBalanceEmpty()) {
+			rbb = null;
+			insideMultilineArgs = false;
+			idxMethodInvocation = -1;
+		}
 	}
 
 	private boolean isMethodCallWithMultipleLines(String line) {
@@ -129,7 +137,7 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 			newLine = getCurrentIndex()+1;
 		}
 		
-		mapping.put(oldLine, newLine);
+		addMapping(newLine, oldLine);
 		
 		return processedLine;
 	}
@@ -159,6 +167,21 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 		return line.matches(regexOnlyClosedCurlyBracket);
 	}
 	
+	private void addMapping(int newLine, int oldLine) {
+		List<Integer> oldLines;
+		
+		if (mapping.containsKey(newLine)) {
+			oldLines = mapping.get(newLine);
+			oldLines.add(oldLine);
+		}
+		else {
+			oldLines = new ArrayList<>();
+			oldLines.add(oldLine);
+			
+			mapping.put(newLine, oldLines);
+		}
+	}
+	
 	private boolean hasTestAnnotation(String line) {
 		return line.matches("[\\s\\t]*@Test.+");
 	}
@@ -176,11 +199,11 @@ public class MultilineToInlineCallsConverter extends SourceCodeProcessor {
 	 * 
 	 * @return		Mapping with the following format:
 	 * <ul>
-	 *	<li><b>Key:</b> Original source file line</li>
-	 * 	<li><b>Value:</b> Modified source file line</li>
+	 *	<li><b>Key:</b> Modified source file lines</li>
+	 * 	<li><b>Value:</b> Original source file lines</li>
 	 * </ul>
 	 */
-	public Map<Integer, Integer> getMapping()
+	public Map<Integer, List<Integer>> getMapping()
 	{
 		return mapping;
 	}

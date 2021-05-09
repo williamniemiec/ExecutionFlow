@@ -19,7 +19,6 @@ import wniemiec.app.executionflow.io.processing.processor.TestAnnotationProcesso
  * removes inline comments and converts multiline calls to inline calls.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		2.0.0
  */
 public class TestMethodFileProcessor extends FileProcessor {
@@ -28,7 +27,7 @@ public class TestMethodFileProcessor extends FileProcessor {
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 600L;
-	private static Map<Integer, Integer> mapping = new HashMap<>();
+	private static Map<Integer, List<Integer>> mapping = new HashMap<>();
 	private List<String> processedLines;
 	
 	
@@ -258,11 +257,11 @@ public class TestMethodFileProcessor extends FileProcessor {
 	 * 
 	 * @return		Mapping with the following format:
 	 * <ul>
-	 *	<li><b>Key:</b> Original source file line</li>
-	 * 	<li><b>Value:</b> Modified source file line</li>
+	 *	<li><b>Key:</b> Modified source file lines</li>
+	 * 	<li><b>Value:</b> Original source file lines</li>
 	 * </ul>
 	 */
-	public static Map<Integer, Integer> getMapping() {
+	public static Map<Integer, List<Integer>> getMapping() {
 		return mapping;
 	}
 	

@@ -12,10 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.app.executionflow.App;
-import wniemiec.app.executionflow.analyzer.DebuggerAnalyzer;
-import wniemiec.app.executionflow.analyzer.DebuggerAnalyzerFactory;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
+import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
 
 class StandardDebuggerAnalyzerTest {
 
@@ -50,6 +49,7 @@ class StandardDebuggerAnalyzerTest {
 		testedInvoked = null;
 		testMethod = null;
 		debugger = null;
+		InvokedFileProcessor.clearMapping();
 	}
 	
 	

@@ -21,7 +21,6 @@ import wniemiec.app.executionflow.io.processing.file.ProcessorType;
  * files that have already been processed.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		2.0.0
  */
 public class FilesProcessingManager {
@@ -218,12 +217,11 @@ public class FilesProcessingManager {
 	 * 
 	 * @return		This object to allow chained calls
 	 * 
-	 * @throws		IOException If an error occurs during parsing or during
-	 * class serialization
+	 * @throws		Exception If an error occurs during processing 
 	 */
 	public FilesProcessingManager processFile(FileProcessingManager fm, 
 											  boolean autoRestore) 
-			throws IOException {
+			throws Exception {
 		if (wasProcessed(fm))
 			return this;
 		
@@ -275,12 +273,10 @@ public class FilesProcessingManager {
 	 * @param		isTestMethod If file contains test methods
 	 * 
 	 * @return		This object to allow chained calls
-	 * 
-	 * @throws		IOException If an error occurs during parsing or during
-	 * class serialization
+	 * @throws		Exception If an error occurs during processing  
 	 */
 	public FilesProcessingManager process(FileProcessingManager fm) 
-			throws IOException {
+			throws Exception {
 		return processFile(fm, true);
 	}
 	

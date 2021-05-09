@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
-import wniemiec.app.executionflow.io.processing.manager.FileProcessingManager;
 
 class FileProcessingManagerTest {
 
@@ -208,7 +207,7 @@ class FileProcessingManagerTest {
 	}
 	
 	@Test
-	void testProcessFile() throws IOException {
+	void testProcessFile() throws Exception {
 		fileProcessingManager = createFileProcessingManager();
 		
 		createBackupFiles();
@@ -217,7 +216,7 @@ class FileProcessingManagerTest {
 	}
 	
 	@Test
-	void testProcessAndCompileFile() throws IOException {
+	void testProcessAndCompileFile() throws Exception {
 		fileProcessingManager = createFileProcessingManager();
 		
 		createBackupFiles();
@@ -246,7 +245,7 @@ class FileProcessingManagerTest {
 	}
 	
 	@Test
-	void testRestoreSrcProcessing() throws IOException {
+	void testRestoreSrcProcessing() throws Exception {
 		fileProcessingManager = createFileProcessingManager();
 
 		createBackupFiles();
@@ -255,7 +254,7 @@ class FileProcessingManagerTest {
 	}
 	
 	@Test
-	void testRestoreBinProcessing() throws IOException {
+	void testRestoreBinProcessing() throws Exception {
 		fileProcessingManager = createFileProcessingManager();
 		
 		createBackupFiles();
@@ -282,7 +281,7 @@ class FileProcessingManagerTest {
 				.build();
 	}
 	
-	private void assertSrcFileIsRestoredAfterProcessing() throws IOException {
+	private void assertSrcFileIsRestoredAfterProcessing() throws Exception {
 		List<String> originalSrcFile = Files.readAllLines(srcPath);
 		
 		fileProcessingManager.processFile(false);
@@ -294,7 +293,7 @@ class FileProcessingManagerTest {
 		);
 	}
 	
-	private void assertBinFileIsRestoredAfterProcessing() throws IOException {
+	private void assertBinFileIsRestoredAfterProcessing() throws Exception {
 		byte[] originalBinFile = Files.readAllBytes(binPath);
 		
 		fileProcessingManager.processFile(false);
@@ -307,7 +306,7 @@ class FileProcessingManagerTest {
 		);
 	}
 
-	private void assertSrcFileIsCompiledAfterProcessing() throws IOException {
+	private void assertSrcFileIsCompiledAfterProcessing() throws Exception {
 		FileTime binFileTime = Files.getLastModifiedTime(binPath);
 		
 		fileProcessingManager.processFile(false);
@@ -320,7 +319,7 @@ class FileProcessingManagerTest {
 	}
 
 
-	private void assertSrcFileIsProcessed() throws IOException {
+	private void assertSrcFileIsProcessed() throws Exception {
 		FileTime srcFileTime = Files.getLastModifiedTime(srcPath);
 		
 		fileProcessingManager.processFile(false);

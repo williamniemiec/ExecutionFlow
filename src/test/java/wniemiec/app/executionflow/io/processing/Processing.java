@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import wniemiec.app.executionflow.App;
-import wniemiec.util.console.ConsoleFilePrinter;
 import wniemiec.util.io.manager.TextFileManager;
 
 public abstract class Processing {
@@ -40,10 +39,10 @@ public abstract class Processing {
 	//-----------------------------------------------------------------------
 	//		Methods
 	//-----------------------------------------------------------------------|
-	protected void testProcessorOnFile(String filename) throws IOException {
+	protected void testProcessorOnFile(String filename) throws Exception {
 		List<String> ansTxt = readAnswerFile(filename);
 		List<String> procTxt = processSourceCodeFrom(filename);
-		
+
 		assertHasEqualNumberOfLines(ansTxt, procTxt);
 		assertProcessedTextIsAccordingToExpected(ansTxt, procTxt);
 	}
@@ -87,7 +86,7 @@ public abstract class Processing {
 		return txtManager.readLines();
 	}
 	
-	abstract protected List<String> processSourceCodeFrom(String filename) throws IOException;
+	abstract protected List<String> processSourceCodeFrom(String filename) throws Exception;
 	
 	protected List<String> readTestFile(String name) throws IOException {
 		Path ansFile = workingDirectory.resolve(name + "-test.txt");

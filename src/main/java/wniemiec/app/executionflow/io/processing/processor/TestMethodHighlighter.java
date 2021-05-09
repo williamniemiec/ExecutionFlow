@@ -10,7 +10,6 @@ import wniemiec.util.io.parser.balance.CurlyBracketBalance;
  * Comments on all test methods except the one with the signature provided.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.4
  * @since 		6.0.0
  */
 public class TestMethodHighlighter extends SourceCodeProcessor {
@@ -278,7 +277,7 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 				if (!isAnnotation(line) && !line.contains("//"))
 					insideMethod = false;
 				else
-					line = "//" + line;		
+					line = "//@ " + line;		
 			}
 			else if (ignoredMethods.contains(i)) {
 				insideMethod = true;
@@ -291,24 +290,27 @@ public class TestMethodHighlighter extends SourceCodeProcessor {
 	private void commentBodyOfIgnoredMethods(List<String> lines) {
 		for (int idx : ignoredMethods) {
 			CurlyBracketBalance cbb = new CurlyBracketBalance();
-			String line = lines.get(idx);			
+			String line = lines.get(idx);
+			
+			if (removeInlineComments(line).isBlank())
+				continue;
 			
 			while (!endWithOpenCurlyBracket(line)) {
-				lines.set(idx, "//" + line);
+				lines.set(idx, "//@ " + line);
 				idx++;
 				line = lines.get(idx);
 			}
-			
+
 			do {
 				line = lines.get(idx);
 				cbb.parse(line);
-				lines.set(idx, "//" + line);
+				lines.set(idx, "//@ " + line);
 				idx++;
 			}
 			while (!cbb.isBalanceEmpty());
 		}
 	}
-	
+
 	private boolean endWithOpenCurlyBracket(String str) {
 		return removeInlineComments(str).matches(".*\\{[\\s\\t]*$");
 	}

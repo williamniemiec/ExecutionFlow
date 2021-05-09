@@ -3,6 +3,7 @@ package wniemiec.app.executionflow.collector;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,7 +14,6 @@ import wniemiec.app.executionflow.invoked.TestedInvoked;
  * Responsible for collect methods or constructors.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public abstract class InvokedCollector {
@@ -46,24 +46,49 @@ public abstract class InvokedCollector {
 	 */
 	public abstract void reset();	
 	
-	protected static void updateInvokedInvocationLines(Map<Integer, Integer> mapping, 
-													 Path testMethodSrcFile, 
-													 Collection<TestedInvoked> collector) {
+	protected static void updateInvokedInvocationLines(Map<Integer, List<Integer>> mapping, 
+													   Path testMethodSrcFile, 
+													   Collection<TestedInvoked> collector) {
 		if (modifiedCollectorInvocationLine == null)
 			modifiedCollectorInvocationLine = new HashMap<>();
 	
-		for (TestedInvoked cc : collector) {
-			int invocationLine = cc.getTestedInvoked().getInvocationLine();
-			
-			if (!cc.getTestMethod().getSrcPath().equals(testMethodSrcFile)  
-					|| !mapping.containsKey(invocationLine))
+		for (TestedInvoked invoked : collector) {
+			if (!invoked.getTestMethod().getSrcPath().equals(testMethodSrcFile))
 				continue;
 			
-			cc.getTestedInvoked().setInvocationLine(mapping.get(invocationLine));
+			int invocationLine = invoked.getTestedInvoked().getInvocationLine();
 			
-			if (!modifiedCollectorInvocationLine.containsKey(cc.getTestedInvoked()))
-				modifiedCollectorInvocationLine.put(cc.getTestedInvoked(), invocationLine);
+			for (Map.Entry<Integer, List<Integer>> m : mapping.entrySet()) {
+				boolean updated = updateInvocationLine(
+						invoked.getTestedInvoked(),
+						m.getKey(), 
+						m.getValue()
+				);
+				
+				if (updated)
+					break;
+			}
+			
+			if (!modifiedCollectorInvocationLine.containsKey(invoked.getTestedInvoked())) {
+				modifiedCollectorInvocationLine.put(
+						invoked.getTestedInvoked(), 
+						invocationLine
+				);
+			}
 		}
+	}
+
+	private static boolean updateInvocationLine(Invoked invoked, int newLine, 
+											 	List<Integer> originalLines) {
+		for (int originalSrcLine : originalLines) {
+			if (originalSrcLine == invoked.getInvocationLine()) {
+				invoked.setInvocationLine(newLine);
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -84,10 +109,10 @@ public abstract class InvokedCollector {
 	 * Updates the invocation line of all collected invoked based on a 
 	 * mapping.
 	 * 
-	 * @param		mapping Mapping that will be used as base for the update
+	 * @param		map Mapping that will be used as base for the update
 	 * @param		testMethodSrcFile Test method source file
 	 */
-	public abstract void updateInvocationLines(Map<Integer, Integer> mapping, 
+	public abstract void updateInvocationLines(Map<Integer, List<Integer>> map, 
 									  		   Path testMethodSrcFile);
 	
 	public abstract Set<TestedInvoked> getAllCollectedInvoked();

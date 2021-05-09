@@ -10,7 +10,7 @@ import java.util.Set;
 
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.util.io.manager.CSVFileManager;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for exporting invoked along with the test method that tests it
@@ -28,7 +28,6 @@ import wniemiec.util.logger.Logger;
  * <b>Note:</b> An invoked can be a method or a constructor
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since		2.0.0
  */
 public class TestedInvokedExporter {
@@ -198,7 +197,7 @@ public class TestedInvokedExporter {
 	}
 
 	private void storeExportFile() {
-		Logger.debug("Exporting all invoked along with test methods that " + 
+		Consolex.writeDebug("Exporting all invoked along with test methods that " + 
 					 "test them to CSV...");
 		
 		csvFile.delete();
@@ -212,10 +211,10 @@ public class TestedInvokedExporter {
 			}
 		} 
 		catch (IOException e1) {
-			Logger.debug("CSV - " + e1.getMessage());
+			Consolex.writeDebug("CSV - " + e1.getMessage());
 		}
 		
-		Logger.debug("The export has been successful");
-		Logger.debug("Location: " + csvFile.getAbsolutePath());
+		Consolex.writeDebug("The export has been successful");
+		Consolex.writeDebug("Location: " + csvFile.getAbsolutePath());
 	}
 }

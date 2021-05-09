@@ -11,7 +11,6 @@ import wniemiec.app.executionflow.io.processing.file.PreTestMethodFileProcessor;
  * Responsible for generating {@link PreTestMethodFileProcessor} classes.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		3.0.0
  * @since		2.0.0
  */
 public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {

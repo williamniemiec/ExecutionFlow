@@ -17,7 +17,7 @@ import wniemiec.app.executionflow.collector.MethodCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.io.ClassPathSearcher;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Collects various information about methods called by a JUnit test.
@@ -247,7 +247,7 @@ public aspect MethodHook extends RuntimeHook {
 	
 	private boolean hasSourceAndBinearyPath() {
 		if ((srcPath == null) || (classPath == null)) {
-			Logger.warning("The method with the following signature" 
+			Consolex.writeWarning("The method with the following signature" 
 					+ " will be skiped because its source file and / or " 
 					+ " binary file cannot be found: " + signature);
 			
@@ -263,7 +263,7 @@ public aspect MethodHook extends RuntimeHook {
 			srcPath = ClassPathSearcher.findSrcPath(getClassSignature(jp));
 		} 
 		catch (IOException e) {
-			Logger.error("[ERROR] MethodCollector - " + e.getMessage() + "\n");
+			Consolex.writeError("MethodCollector - " + e.getMessage() + "\n");
 		}
 	}
 	

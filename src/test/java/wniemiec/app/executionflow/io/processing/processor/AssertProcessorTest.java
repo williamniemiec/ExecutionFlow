@@ -1,13 +1,9 @@
 package wniemiec.app.executionflow.io.processing.processor;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import wniemiec.app.executionflow.io.processing.processor.AssertProcessor;
-import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 
 class AssertProcessorTest extends SourceCodeProcessorTest {
 
@@ -21,7 +17,7 @@ class AssertProcessorTest extends SourceCodeProcessorTest {
 			"last-curly-bracket-same-line-assert", 
 			"assert-in-try"
 	})
-	void testAssertProcessor(String filename) throws IOException {
+	void testAssertProcessor(String filename) throws Exception {
 		testProcessorOnFile(filename);
 	}
 	

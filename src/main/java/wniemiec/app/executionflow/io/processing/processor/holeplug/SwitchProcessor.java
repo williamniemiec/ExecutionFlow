@@ -9,7 +9,6 @@ import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
  * 'default' keyword).
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since 		6.0.0
  */
 public class SwitchProcessor extends SourceCodeProcessor {

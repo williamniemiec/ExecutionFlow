@@ -17,7 +17,6 @@ import org.aspectj.lang.Signature;
 import wniemiec.app.executionflow.collector.CallCollector;
 import wniemiec.app.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.app.executionflow.invoked.Invoked;
-import wniemiec.util.logger.Logger;
 
 /**
  * Captures all methods called within the tested invoked, where an invoked can

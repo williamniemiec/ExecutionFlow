@@ -11,7 +11,6 @@ import wniemiec.util.io.parser.balance.CurlyBracketBalance;
  * JUnit 5 test annotation to JUnit 4 test annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since 		6.0.0
  */
 public class JUnit5ToJUnit4Processor extends SourceCodeProcessor {

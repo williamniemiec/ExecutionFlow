@@ -7,7 +7,7 @@
 
 	<groupId>wniemiec.app</groupId>
 	<artifactId>executionflow</artifactId>
-	<version>7.0.0</version>
+	<version>7.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>ExecutionFlow</name>
@@ -19,11 +19,10 @@
 		<aspectj.version>1.9.6</aspectj.version>
 		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.source-target.version>11</java.source-target.version>
+		<java.source-target.version>12</java.source-target.version>
 	</properties>
 
 	<dependencies>
-		<!-- AspectJ -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
@@ -34,12 +33,12 @@
 			<artifactId>aspectjtools</artifactId>
 			<version>${aspectj.version}</version>
 		</dependency>
-
+	
 		<!-- JUnit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -67,19 +66,14 @@
 			<version>[1.0.2,)</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util</groupId>
-			<artifactId>logger</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
 			<groupId>wniemiec.util.task</groupId>
 			<artifactId>checkpoint</artifactId>
-			<version>[1.0.3,)</version>
+			<version>[1.1.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.task</groupId>
 			<artifactId>scheduler</artifactId>
-			<version>[1.0.0,)</version>
+			<version>[1.1.2,)</version>
 		</dependency>
 		<dependency>
 			<groupId>wniemiec.util.data.structure</groupId>
@@ -112,16 +106,6 @@
 			<version>[1.0.0,)</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.console</groupId>
-			<artifactId>console-file-printer</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
-			<groupId>wniemiec.util.console</groupId>
-			<artifactId>console-header</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
 			<groupId>wniemiec.util.io.manager</groupId>
 			<artifactId>csv-file-manager</artifactId>
 			<version>[1.0.0,)</version>
@@ -130,6 +114,11 @@
 			<groupId>wniemiec.util.io.path.replacer</groupId>
 			<artifactId>reserved-character-replacer</artifactId>
 			<version>[1.0.0,)</version>
+		</dependency>
+		<dependency>
+			<groupId>wniemiec.io</groupId>
+			<artifactId>consolex</artifactId>
+			<version>[1.0.1,)</version>
 		</dependency>
 	</dependencies>
 
@@ -177,6 +166,18 @@
 					<groupId>com.nickwongdev</groupId>
 					<artifactId>aspectj-maven-plugin</artifactId>
 					<version>1.12.6</version>
+					<dependencies>
+		                <dependency>
+							<groupId>org.aspectj</groupId>
+							<artifactId>aspectjrt</artifactId>
+							<version>${aspectj.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.aspectj</groupId>
+							<artifactId>aspectjtools</artifactId>
+							<version>${aspectj.version}</version>
+						</dependency>
+		            </dependencies>
 					<configuration>
 						<complianceLevel>${java.source-target.version}</complianceLevel>
 						<source>${java.source-target.version}</source>

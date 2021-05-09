@@ -17,7 +17,6 @@ import wniemiec.app.executionflow.io.processing.processor.trgeneration.CodeClean
  * another method that does not interfere with the code's operation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since 		2.0.0
  */
 public class InvokedFileProcessor extends FileProcessor {
@@ -35,7 +34,7 @@ public class InvokedFileProcessor extends FileProcessor {
 	 * 	<li><b>Value:</b> Modified source file line</li>
 	 * </ul>
 	 */
-	private static Map<Integer, Integer> mapping = new HashMap<>();
+	private static Map<Integer, List<Integer>> mapping = new HashMap<>();
 	private List<String> processedLines;
 	
 	
@@ -209,7 +208,7 @@ public class InvokedFileProcessor extends FileProcessor {
 	}
 	
 	@Override
-	protected List<String> doProcessing(List<String> sourceCode) {
+	protected List<String> doProcessing(List<String> sourceCode) throws Exception {
 		processedLines = sourceCode;
 		
 		removeInlineComments();
@@ -227,11 +226,11 @@ public class InvokedFileProcessor extends FileProcessor {
 		processedLines = inlineCommentProcessor.processLines();
 	}
 
-	private void doTRGenerationProcesing() {
+	private void doTRGenerationProcesing() throws Exception {
 		CodeCleanerAdapter codeCleaner = new CodeCleanerAdapter(processedLines);
 		processedLines = codeCleaner.processLines();
 		
-		Map<Integer, Integer> cleanupMapping = codeCleaner.getMapping();
+		Map<Integer, List<Integer>> cleanupMapping = codeCleaner.getMapping();
 		if (cleanupMapping != null)
 			mapping = cleanupMapping;
 	}
@@ -257,12 +256,20 @@ public class InvokedFileProcessor extends FileProcessor {
 	 * 
 	 * @return		Mapping with the following format:
 	 * <ul>
-	 * 	<li><b>Key:</b> Original source file line</li>
-	 * 	<li><b>Value:</b> Modified source file line</li>
+	 * 	<li><b>Key:</b> Modified source file lines</li>
+	 * 	<li><b>Value:</b> Original source file line</li>
 	 * </ul>
 	 */
-	public static Map<Integer, Integer> getMapping() {
+	public static Map<Integer, List<Integer>> getMapping() {
 		return mapping;
+	}
+	
+	public static List<Integer> getMappingOf(int number) {
+		return mapping.get(number);
+	}
+	
+	public static boolean hasMapping(int number) {
+		return mapping.containsKey(number);
 	}
 	
 	public static void clearMapping() {

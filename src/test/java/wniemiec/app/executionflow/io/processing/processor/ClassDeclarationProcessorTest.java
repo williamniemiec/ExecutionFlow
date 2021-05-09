@@ -1,13 +1,9 @@
 package wniemiec.app.executionflow.io.processing.processor;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import wniemiec.app.executionflow.io.processing.processor.ClassDeclarationProcessor;
-import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 
 class ClassDeclarationProcessorTest extends SourceCodeProcessorTest {
 
@@ -18,7 +14,7 @@ class ClassDeclarationProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"class-declaration"
 	})
-	void testClassDeclarationProcessor(String filename) throws IOException {
+	void testClassDeclarationProcessor(String filename) throws Exception {
 		testProcessorOnFile(filename);
 	}
 	

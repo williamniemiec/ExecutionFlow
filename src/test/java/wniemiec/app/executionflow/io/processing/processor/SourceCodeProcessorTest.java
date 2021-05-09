@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import wniemiec.app.executionflow.io.processing.Processing;
-import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 
 public abstract class SourceCodeProcessorTest extends Processing {
 	

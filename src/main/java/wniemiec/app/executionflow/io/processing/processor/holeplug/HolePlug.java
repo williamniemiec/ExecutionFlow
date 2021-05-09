@@ -15,7 +15,6 @@ import java.util.List;
  * </ul>
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since 		5.0.0
  */
 public class HolePlug {
@@ -39,11 +38,8 @@ public class HolePlug {
 	//-------------------------------------------------------------------------
 	public List<String> processLines() {
 		moveAloneOpenCurlyBracketsToThePreviousLine();
-		
 		putCollectAnnotationNextToInvokedDeclarations();
-		
 		addCurlyBracketsInElseStatementsWithoutCurlyBrackets();
-		
 		addInstructionNextToElseKeywords();
 		addInstructionNextToTryFinallyKeywords();
 		addInstructionNextToContinueBreakKeywords();

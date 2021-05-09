@@ -11,7 +11,6 @@ import wniemiec.util.io.parser.balance.RoundBracketBalance;
  * stop if an assert fails.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since 		6.0.0
  */
 public class AssertProcessor extends SourceCodeProcessor {

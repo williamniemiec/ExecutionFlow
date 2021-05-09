@@ -1,6 +1,5 @@
 package wniemiec.app.executionflow.io.processing.processor;
 
-import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import wniemiec.app.executionflow.io.FileEncoding;
-import wniemiec.app.executionflow.io.processing.processor.JUnit5ToJUnit4Processor;
-import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 
 class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 
@@ -38,7 +35,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-test-annotation"
 	})
-	void testTestAnnotation(String filename) throws IOException {
+	void testTestAnnotation(String filename) throws Exception {
 		testProcessorOnFile(filename);
 	}
 	
@@ -46,7 +43,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-repeated-annotation"
 	})
-	void testRepeatedAnnotation(String filename) throws IOException {
+	void testRepeatedAnnotation(String filename) throws Exception {
 		testProcessorOnFile(filename);
 	}
 	
@@ -54,7 +51,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-parameterized-annotation-valuesource1"
 	})
-	void testParameterizedAnnotationValueSource1(String filename) throws IOException {
+	void testParameterizedAnnotationValueSource1(String filename) throws Exception {
 		withTestMethodArgs(" ");
 		testProcessorOnFile(filename);
 	}
@@ -63,7 +60,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-parameterized-annotation-valuesource2"
 	})
-	void testParameterizedAnnotationValueSource2(String filename) throws IOException {
+	void testParameterizedAnnotationValueSource2(String filename) throws Exception {
 		withTestMethodArgs("\t");
 		testProcessorOnFile(filename);
 	}
@@ -72,7 +69,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-parameterized-annotation-csvsource"
 	})
-	void testParameterizedAnnotationCSVSource(String filename) throws IOException {
+	void testParameterizedAnnotationCSVSource(String filename) throws Exception {
 		withTestMethodArgs("I", -1);
 		testProcessorOnFile(filename);
 	}
@@ -81,7 +78,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-parameterized-annotation-enumsourceinterface"
 	})
-	void testParameterizedAnnotationEnumSourceInterface(String filename) throws IOException {
+	void testParameterizedAnnotationEnumSourceInterface(String filename) throws Exception {
 		withTestMethodArgs(ChronoUnit.DAYS);
 		testProcessorOnFile(filename);
 	}
@@ -90,7 +87,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-parameterized-annotation-enumsourcewithclass"
 	})
-	void testParameterizedAnnotationEnumSourceWithClass(String filename) throws IOException {
+	void testParameterizedAnnotationEnumSourceWithClass(String filename) throws Exception {
 		withTestMethodArgs(FileEncoding.ISO_8859_1);
 		testProcessorOnFile(filename);
 	}
@@ -99,7 +96,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-parameterized-annotation-methodsource"
 	})
-	void testParameterizedAnnotationMethodSource(String filename) throws IOException {
+	void testParameterizedAnnotationMethodSource(String filename) throws Exception {
 		withTestMethodArgs("Hello", 5);
 		testProcessorOnFile(filename);
 	}
@@ -108,7 +105,7 @@ class JUnit5ToJUnit4ProcessorTest extends SourceCodeProcessorTest {
 	@ValueSource(strings = {
 			"junit5-parameterized-annotation-nullsource"
 	})
-	void testParameterizedAnnotationNullSource(String filename) throws IOException {
+	void testParameterizedAnnotationNullSource(String filename) throws Exception {
 		withTestMethodArgs(new Object[] {null});
 		testProcessorOnFile(filename);
 	}

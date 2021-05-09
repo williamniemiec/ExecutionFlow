@@ -1,6 +1,6 @@
 package wniemiec.app.executionflow.io.processing.manager;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,9 +16,8 @@ import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.app.executionflow.io.processing.manager.TestedInvokedProcessingManager;
-import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
+import wniemiec.io.consolex.LogLevel;
 
 class TestedInvokedProcessingManagerTest {
 
@@ -43,7 +42,7 @@ class TestedInvokedProcessingManagerTest {
 				Path.of("test-classes", "auxfiles")
 		);
 
-		Logger.setLevel(LogLevel.WARNING);
+		Consolex.setLoggerLevel(LogLevel.WARNING);
 	}
 	
 	
@@ -70,8 +69,8 @@ class TestedInvokedProcessingManagerTest {
 		
 		parseAfterProcessing();
 		
-		assertTestPathIs(invokedCollector.get(0), 35, 36, 37, 38, 39, 40, 38,
-						 39, 40, 38, 39, 40, 38, 39, 40, 38, 42);
+		assertTestPathIs(invokedCollector.get(0), 94, 96, 98, 99, 98, 99, 98,
+						 99, 98, 99, 98, 102);
 	}
 	
 	

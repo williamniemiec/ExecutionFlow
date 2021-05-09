@@ -13,13 +13,11 @@ import java.util.Set;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.user.User;
-import wniemiec.util.logger.Logger;
 
 /**
  * Responsible for collect methods.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class MethodCollector extends InvokedCollector {
@@ -91,10 +89,8 @@ public class MethodCollector extends InvokedCollector {
 	private void storeMethodCollector() {
 		try {
 			User.storeMethodCollector(methodCollector);
-		} 
+		}
 		catch (IOException e) {
-			Logger.error(e.toString());
-			Logger.error("Method collector cannot be stored");
 		}
 	}
 	
@@ -130,8 +126,8 @@ public class MethodCollector extends InvokedCollector {
 	}
 	
 	@Override
-	public void updateInvocationLines(Map<Integer, Integer> mapping, 
-			Path testMethodSrcFile) {
+	public void updateInvocationLines(Map<Integer, List<Integer>> mapping, 
+									  Path testMethodSrcFile) {
 		for (List<TestedInvoked> methodCollectorList : getMethodCollection()) {
 			updateInvokedInvocationLines(
 					mapping, 

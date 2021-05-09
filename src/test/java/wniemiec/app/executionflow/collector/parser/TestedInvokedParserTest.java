@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.analyzer.DebuggerAnalyzerFactory;
-import wniemiec.app.executionflow.collector.parser.TestedInvokedParser;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.util.logger.LogLevel;
-import wniemiec.util.logger.Logger;
+import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
+import wniemiec.io.consolex.Consolex;
+import wniemiec.io.consolex.LogLevel;
 
 class TestedInvokedParserTest {
 
@@ -43,7 +43,7 @@ class TestedInvokedParserTest {
 				Path.of("test-classes", "auxfiles")
 		);
 
-		Logger.setLevel(LogLevel.WARNING);
+		Consolex.setLoggerLevel(LogLevel.WARNING);
 	}
 	
 	
@@ -51,8 +51,11 @@ class TestedInvokedParserTest {
 	//		Test hooks
 	//-------------------------------------------------------------------------
 	@BeforeEach
-	void prepare() throws InterruptedByTimeoutException, IOException {
+	void prepare() {
 		testedInvokedParser = new TestedInvokedParser();
+		testedInvoked = null;
+		testMethod = null;
+		InvokedFileProcessor.clearMapping();
 	}
 	
 	

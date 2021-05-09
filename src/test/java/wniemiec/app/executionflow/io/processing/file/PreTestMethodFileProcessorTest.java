@@ -1,6 +1,5 @@
 package wniemiec.app.executionflow.io.processing.file;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -8,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import wniemiec.app.executionflow.io.FileEncoding;
-import wniemiec.app.executionflow.io.processing.file.FileProcessor;
-import wniemiec.app.executionflow.io.processing.file.PreTestMethodFileProcessor;
 
 class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	
@@ -126,26 +123,26 @@ class PreTestMethodFileProcessorTest extends FileProcessorTest {
 	}
 	
 	@Test
-	void testProcessingJUnit4() throws IOException {
+	void testProcessingJUnit4() throws Exception {
 		withTestMethodSignature("examples.others.SimpleTestPath.simpleTestPath()");
 		testProcessorOnFile("pretestmethod-junit4");
 	}
 	
 	@Test
-	void testProcessingJUnit5() throws IOException {
+	void testProcessingJUnit5() throws Exception {
 		withTestMethodSignature("examples.junit5.MixedJUnit5Annotations.parameterizedTestAnnotation(int)");
 		testProcessorOnFile("pretestmethod-junit5");
 	}
 	
 	@Test
-	void testProcessingJUnit4TotalTests() throws IOException {
+	void testProcessingJUnit4TotalTests() throws Exception {
 		withTestMethodSignature("examples.others.SimpleTestPath.simpleTestPath()");
 		withFilename("pretestmethod-junit4");
 		assertTotalTestsIs(3);
 	}
 
 	@Test
-	void testProcessingJUnit5TotalTests() throws IOException {
+	void testProcessingJUnit5TotalTests() throws Exception {
 		withTestMethodSignature("examples.junit5.MixedJUnit5Annotations.parameterizedTestAnnotation(int)");
 		withFilename("pretestmethod-junit5");
 		assertTotalTestsIs(3);
@@ -163,7 +160,7 @@ class PreTestMethodFileProcessorTest extends FileProcessorTest {
 		this.filename = filename;
 	}
 	
-	private void assertTotalTestsIs(int totalTests) throws IOException {
+	private void assertTotalTestsIs(int totalTests) throws Exception {
 		PreTestMethodFileProcessor processor = 
 				(PreTestMethodFileProcessor) getFileProcessor(filename);
 		processor.processFile();

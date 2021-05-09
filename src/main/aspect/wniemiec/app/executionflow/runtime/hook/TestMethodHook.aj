@@ -8,7 +8,7 @@ import org.aspectj.lang.JoinPoint;
 import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.io.ClassPathSearcher;
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Run in each test method
@@ -125,7 +125,7 @@ public aspect TestMethodHook extends RuntimeHook {
 			srcPath = ClassPathSearcher.findSrcPath(getClassSignature(jp));
 		}
 		catch(IOException | NoClassDefFoundError e) {
-			Logger.error(e.getMessage());
+			Consolex.writeError(e.getMessage());
 			
 			System.exit(-1);
 		}
@@ -159,7 +159,7 @@ public aspect TestMethodHook extends RuntimeHook {
 			createTestMethodInfo(jp);
 		} 
 		catch(IllegalArgumentException e) {
-			Logger.error("Test method - " + e.getMessage());
+			Consolex.writeError("Test method - " + e.getMessage());
 		}
 	}
 	
@@ -175,7 +175,7 @@ public aspect TestMethodHook extends RuntimeHook {
 	}
 	
 	private void dump() {
-		Logger.debug("Test method: " + testMethod);
+		Consolex.writeDebug("Test method: " + testMethod);
 	}
 	
 	@Override

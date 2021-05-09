@@ -18,12 +18,12 @@ public class MixedJUnit5Annotations {
 		System.out.println("BeforeEach");
 	}
 
-//	@org.junit.Test
-//	public void testAnnotation() {
-//		AuxClass tc = new AuxClass(4);
-//
-//		assertEquals(24, tc.factorial(4));
-//	}
+//@	@org.junit.Test
+//@	public void testAnnotation() {
+//@		AuxClass tc = new AuxClass(4);
+//@
+//@		assertEquals(24, tc.factorial(4));
+//@	}
 
 	@org.junit.Test
 	@ValueSource(ints = { -1 })
@@ -33,11 +33,11 @@ public class MixedJUnit5Annotations {
 try {	assertEquals(1, tc.factorial(num));} catch(Throwable _0){}
 	}
 
-//@org.junit.Test
-//	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
-//	public void repeatedTestAnnotation() {int _0=0;while(_0++ < 2){
-//		AuxClass tc = new AuxClass(4);
-//
-//		assertEquals(24, tc.factorial(4));
-//	}}
+//@	@org.junit.Test
+//@	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
+//@	public void repeatedTestAnnotation() {int _0=0;while(_0++ < 2){
+//@		AuxClass tc = new AuxClass(4);
+//@
+//@		assertEquals(24, tc.factorial(4));
+//@	}}
 }

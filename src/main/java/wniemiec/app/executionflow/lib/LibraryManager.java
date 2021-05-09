@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import wniemiec.app.executionflow.App;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for gathering all libraries that the application needs.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.0
  * @since		5.2.0
  */
 public class LibraryManager {
@@ -68,6 +68,7 @@ public class LibraryManager {
 
 	private static void initializeLibPath() {
 		libPath = App.getAppRootPath().resolve("lib");
+		Consolex.writeDebug("Libpath: " + libPath);
 	}
 	
 	public static List<Path> getJavaClassPath()	{

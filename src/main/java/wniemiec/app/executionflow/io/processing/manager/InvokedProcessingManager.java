@@ -2,14 +2,13 @@ package wniemiec.app.executionflow.io.processing.manager;
 
 import java.io.IOException;
 
-import wniemiec.util.logger.Logger;
+import wniemiec.io.consolex.Consolex;
 
 /**
  * Responsible for managing the processing and compilation of methods, 
  * constructors and test methods.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		7.0.0
  */
 public class InvokedProcessingManager {
@@ -28,13 +27,11 @@ public class InvokedProcessingManager {
 	 * application execution; otherwise, the original files that have been 
 	 * modified in the last run may be lost.
 	 * 
-	 * @throws		ClassNotFoundException If FileManager class has not been
-	 * found
 	 * @throws		IOException If backup files could not be restored
 	 */
 	public InvokedProcessingManager(FilesProcessingManager invokedFilesManager) 
-			throws ClassNotFoundException, IOException {
-			this.invokedFilesManager = invokedFilesManager;
+			throws IOException {
+		this.invokedFilesManager = invokedFilesManager;
 	}
 	
 	
@@ -71,7 +68,7 @@ public class InvokedProcessingManager {
 			invokedFileManager.revertCompilation();
 		} 
 		catch (IOException e) {
-			Logger.error(
+			Consolex.writeError(
 					"An error occurred while restoring the original binary file - " 
 					+ e.getMessage()
 			);
@@ -83,7 +80,7 @@ public class InvokedProcessingManager {
 			invokedFileManager.revertProcessing();
 		} 
 		catch (IOException e) {
-			Logger.error(
+			Consolex.writeError(
 					"An error occurred while restoring the original source file - " 
 					+ e.getMessage()
 			);
@@ -92,7 +89,7 @@ public class InvokedProcessingManager {
 	
 	public void processAndCompile(FileProcessingManager invokedFileManager, 
 								  boolean autoRestore) 
-			throws IOException {
+			throws Exception {
 		checkInvokedFilesManagerIsInitialized();
 		checkFileProcessingManager(invokedFileManager);
 		
@@ -111,7 +108,7 @@ public class InvokedProcessingManager {
 	}
 
 	public void processAndCompile(FileProcessingManager invokedFileManager) 
-			throws IOException {
+			throws Exception {
 		processAndCompile(invokedFileManager, false);
 	}
 	
@@ -143,7 +140,7 @@ public class InvokedProcessingManager {
 				invokedFilesManager.restoreAll();
 		} 
 		catch (ClassNotFoundException e) {
-			Logger.error("Class missing: FileManager");
+			Consolex.writeError("Class missing: FileManager");
 			System.exit(-1);
 		}
 	}
