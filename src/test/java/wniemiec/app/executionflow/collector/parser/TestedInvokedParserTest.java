@@ -55,7 +55,6 @@ class TestedInvokedParserTest {
 		testedInvokedParser = new TestedInvokedParser();
 		testedInvoked = null;
 		testMethod = null;
-		debugger = null;
 		InvokedFileProcessor.clearMapping();
 	}
 	
