@@ -58,7 +58,12 @@ public class SignatureToPath {
 	}	
 	
 	private static String reduceSignature(String parameters) {
-		return parameters.replaceAll("([^.(\\s]+\\.)+", "");
+		String reducedSignature = parameters.replaceAll("\\.\\.\\.", "#");
+		reducedSignature = reducedSignature.replaceAll("([^.(\\s]+\\.)+", "");
+		reducedSignature = reducedSignature.replaceAll("#", "...");
+		reducedSignature = reducedSignature.replaceAll("<.+>", "");
+		
+		return reducedSignature;
 	}
 	
 	private static String extractParametersFromSignature(String signature) {
