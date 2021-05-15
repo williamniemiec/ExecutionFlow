@@ -36,6 +36,7 @@ public abstract aspect RuntimeHook {
 	//-------------------------------------------------------------------------
 	protected pointcut isInternalPackage():
 		within(wniemiec..*)
+		|| within(java.lang..*)
 		|| within(auxfiles..*)
 		|| within(org.aspectj..*)
 		|| within(org.eclipse..*)

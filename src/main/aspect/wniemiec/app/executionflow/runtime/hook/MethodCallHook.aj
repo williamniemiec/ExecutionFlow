@@ -85,15 +85,15 @@ public aspect MethodCallHook extends RuntimeHook {
 		if (isNativeMethod(getSignature(thisJoinPoint)) || !isValidSignature(thisJoinPoint)) 
 			return;
 		
-		collectInvoked(thisJoinPoint);
+		//collectInvoked(thisJoinPoint);
 	}
 	
 	before(): invokedMethodByTestedInvoker() {
 		if (!isMethod(thisJoinPoint) || isNativeMethod(getSignature(thisJoinPoint)) || !wasTestedInvokedCollected())
 			return;
 		
-		CallCollector callCollector = CallCollector.getInstance();
-		callCollector.collectCall(extractMethodCalledSignature(thisJoinPoint), invoked);
+		//CallCollector callCollector = CallCollector.getInstance();
+		//callCollector.collectCall(extractMethodCalledSignature(thisJoinPoint), invoked);
 	}
 	
 

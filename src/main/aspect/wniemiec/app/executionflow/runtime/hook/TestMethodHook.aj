@@ -9,6 +9,7 @@ import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.io.ClassPathSearcher;
 import wniemiec.io.consolex.Consolex;
+import wniemiec.util.task.Scheduler;
 
 /**
  * Run in each test method
@@ -27,11 +28,13 @@ public aspect TestMethodHook extends RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
+	private static final int COLLECTION_TIMEOUT_MS = 10000;
 	private static String testMethodSignature;
 	private boolean isRepeatedTest;
 	private String lastRepeatedTestSignature;
 	private Path classPath;
 	private Path srcPath;
+	private Object returnedContent;
 	
 	
 	//-------------------------------------------------------------------------
@@ -69,31 +72,53 @@ public aspect TestMethodHook extends RuntimeHook {
 		isRepeatedTest = true;
 	}
 	
-	before(): insideTestMethod() {
-		reset();
-		checkRepeatedTest(thisJoinPoint);
-		parseTestMethod(thisJoinPoint);
+	Object around(): insideTestMethod()
+	{
+		returnedContent = new Object();
 		
-		if (hasSourceAndBinearyPath()) {
-			collectTestMethod(thisJoinPoint);
-			App.inEachTestMethod(testMethod, isRepeatedTest);
-		}
+		beforeEachTestMethod(thisJoinPoint);
+		
+		boolean timeout = Scheduler.setTimeoutToRoutine(() -> {
+			Consolex.writeInfo("Obtaining information about the tested methods of " + 
+							   testMethodSignature + " ... ");
+			returnedContent = proceed();
+			Consolex.writeInfo("Done!");
+		}, COLLECTION_TIMEOUT_MS);
+		
+		if (timeout)
+			Consolex.writeWarning("Information on all tested methods will not " +
+								  "be collected due to timeout");
+		
+		afterEachTestMethod(thisJoinPoint);
+		
+		return returnedContent;
 	}
 	
-	after(): insideTestMethod() {
-		if (!hasSourceAndBinearyPath())
-			return;
-		
-		App.afterEachTestMethod(testMethod);
-		
-		if (!isRepeatedTest)
-			lastRepeatedTestSignature = getSignature(thisJoinPoint);
-	}
-
 	
 	//-------------------------------------------------------------------------
 	//		Methods
-	//-------------------------------------------------------------------------	
+	//-------------------------------------------------------------------------
+	private void beforeEachTestMethod(JoinPoint jp) {
+		reset();
+		checkRepeatedTest(jp);
+		parseTestMethod(jp);
+		
+		if (hasSourceAndBinearyPath()) {
+			collectTestMethod(jp);
+			//App.inEachTestMethod(testMethod, isRepeatedTest);
+		}
+	}
+	
+	private void afterEachTestMethod(JoinPoint jp) {
+		if (!hasSourceAndBinearyPath())
+			return;
+
+		//App.afterEachTestMethod(testMethod);
+		
+		if (!isRepeatedTest)
+			lastRepeatedTestSignature = getSignature(jp);
+	}
+	
 	private boolean hasSourceAndBinearyPath() {
 		return ((srcPath != null) && (classPath != null));
 	}
@@ -125,7 +150,7 @@ public aspect TestMethodHook extends RuntimeHook {
 			srcPath = ClassPathSearcher.findSrcPath(getClassSignature(jp));
 		}
 		catch(IOException | NoClassDefFoundError e) {
-			Consolex.writeError(e.getMessage());
+			Consolex.writeError(e.toString());
 			
 			System.exit(-1);
 		}

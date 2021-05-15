@@ -5,8 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Adds {@link wniemiec.app.executionflow.runtime.SkipCollection} annotation next to 
- * class declarations.
+ * Removes inline comments.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
  * @since 		6.0.0
