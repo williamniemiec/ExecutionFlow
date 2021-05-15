@@ -1,17 +1,18 @@
 package wniemiec.app.executionflow.user;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.exporter.testpath.TestPathExportType;
 import wniemiec.app.executionflow.gui.RemoteControl;
 import wniemiec.app.executionflow.gui.popup.MainSelector;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
+import wniemiec.io.consolex.Consolex;
+import wniemiec.io.consolex.LogLevel;
 import wniemiec.util.data.storage.Session;
-import wniemiec.io.consolex.*;
 
 /**
  * Responsible for handling user interactions as well as managing your session.
@@ -32,10 +33,7 @@ public class User {
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	static {
-		session = new Session(
-				"session.ef", 
-				new File(System.getProperty("user.home")
-		));
+		session = new Session("session.ef", App.getAppRootPath().toFile());
 	}
 	
 	
@@ -54,8 +52,8 @@ public class User {
 		selector.open();
 		
 		session.destroy();
-		session.save("LOG_LEVEL", selector.getSelectedLoggingLevel());
-		session.save("TESTPATH_EXPORT_TYPE", selector.getSelectedTestPathExportType());
+		session.save(UserInfo.LOG_LEVEL.name(), selector.getSelectedLoggingLevel());
+		session.save(UserInfo.TESTPATH_EXPORT_TYPE.name(), selector.getSelectedTestPathExportType());
 	}
 	
 	private static void initializeMainSelector() {
@@ -67,18 +65,28 @@ public class User {
 		LogLevel logLevel = null;
 		
 		try {
-			logLevel = (LogLevel) session.read("LOG_LEVEL");
+			logLevel = (LogLevel) session.read(UserInfo.LOG_LEVEL.name());
 		} 
 		catch (IOException e) {
 			Consolex.writeError("Corrupted session");
-			Consolex.writeInfo("Default logging level selected: INFO");
 			session.destroy();
+			
+			Consolex.writeInfo("Default logging level selected: INFO");
+			logLevel = LogLevel.INFO;
+			
+			tryStore(UserInfo.LOG_LEVEL.name(), logLevel);			
 		}
 		
-		if (logLevel == null)
-			logLevel = LogLevel.INFO;
-		
 		return logLevel;
+	}
+	
+	private static void tryStore(String key, Object value) {
+		try {
+			session.save(key, value);
+		} 
+		catch (IOException e) {
+			Consolex.writeError("Session cannot be stored");
+		}
 	}
 
 	public static void openRemoteControl() {
@@ -91,7 +99,7 @@ public class User {
 
 	public static TestPathExportType getSelectedTestPathExportType() {
 		try {
-			Object exportType = session.read("TESTPATH_EXPORT_TYPE");
+			Object exportType = session.read(UserInfo.TESTPATH_EXPORT_TYPE.name());
 			
 			return (exportType == null) 
 						? TestPathExportType.FILE 
@@ -99,7 +107,10 @@ public class User {
 		} 
 		catch (IOException e) {
 			Consolex.writeError("Corrupted session");
+			session.destroy();
+			
 			Consolex.writeInfo("Default test path export type selected: FILE");
+			tryStore(UserInfo.TESTPATH_EXPORT_TYPE.name(), TestPathExportType.FILE);
 			
 			return TestPathExportType.FILE;
 		}
@@ -110,7 +121,7 @@ public class User {
 		if (!session.exists())
 			return;
 		
-		session.save("METHOD_COLLECTOR", collector);
+		session.save(UserInfo.METHOD_COLLECTOR.name(), collector);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -119,12 +130,12 @@ public class User {
 		if (!session.exists())
 			return new HashMap<>();
 		
-		return (Map<Integer, List<TestedInvoked>>) session.read("METHOD_COLLECTOR");
+		return (Map<Integer, List<TestedInvoked>>) session.read(UserInfo.METHOD_COLLECTOR.name());
 	}
 
 	public static void storeConstructorCollector(Map<Integer, TestedInvoked> collector) 
 			throws IOException {
-		session.save("CONSTRUCTOR_COLLECTOR", collector);
+		session.save(UserInfo.CONSTRUCTOR_COLLECTOR.name(), collector);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -133,26 +144,32 @@ public class User {
 		if (!session.exists())
 			return new HashMap<>();
 		
-		return (Map<Integer, TestedInvoked>) session.read("CONSTRUCTOR_COLLECTOR");
+		return (Map<Integer, TestedInvoked>) session.read(UserInfo.CONSTRUCTOR_COLLECTOR.name());
 	}
 	
 	public static void resetMethodCollector() {
+		if (!session.exists())
+			return;
+		
 		try {
-			storeMethodCollector(new HashMap<>());
-		} 
-		catch (IOException e) {
-			Consolex.writeError(e.toString());
-			Consolex.writeError("Reset method collector - failed");
-		}
-	}
-	
-	public static void resetConstructorCollector() {
-		try {
-			storeConstructorCollector(new HashMap<>());
+			session.remove(UserInfo.METHOD_COLLECTOR.name());
 		} 
 		catch (IOException e) {
 			Consolex.writeError(e.toString());
 			Consolex.writeError("Reset constructor collector - failed");
+		}
+	}
+	
+	public static void resetConstructorCollector() {
+		if (!session.exists())
+			return;
+		
+		try {
+			session.remove(UserInfo.CONSTRUCTOR_COLLECTOR.name());
+		} 
+		catch (IOException e) {
+			Consolex.writeError(e.toString());
+			Consolex.writeError("Reset method collector - failed");
 		}
 	}
 
