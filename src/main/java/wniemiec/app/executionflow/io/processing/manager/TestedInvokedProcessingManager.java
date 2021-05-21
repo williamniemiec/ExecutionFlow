@@ -51,7 +51,7 @@ public class TestedInvokedProcessingManager {
 				doProcessingAndParsing(parser, collector);
 			}
 			catch (InterruptedByTimeoutException e1) {
-				Consolex.writeError("Time exceeded");
+				Consolex.writeWarning("Time exceeded");
 			} 
 			catch (IllegalStateException e2) {
 				Consolex.writeError(e2.toString());

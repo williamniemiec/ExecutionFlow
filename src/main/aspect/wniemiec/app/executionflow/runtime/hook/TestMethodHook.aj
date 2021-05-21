@@ -81,13 +81,16 @@ public aspect TestMethodHook extends RuntimeHook {
 		boolean timeout = Scheduler.setTimeoutToRoutine(() -> {
 			Consolex.writeInfo("Obtaining information about the tested methods of " + 
 							   testMethodSignature + " ... ");
+			
 			returnedContent = proceed();
+			
 			Consolex.writeInfo("Done!");
 		}, COLLECTION_TIMEOUT_MS);
 		
-		if (timeout)
+		if (timeout) {
 			Consolex.writeWarning("Information on all tested methods will not " +
 								  "be collected due to timeout");
+		}
 		
 		afterEachTestMethod(thisJoinPoint);
 		
@@ -105,7 +108,7 @@ public aspect TestMethodHook extends RuntimeHook {
 		
 		if (hasSourceAndBinearyPath()) {
 			collectTestMethod(jp);
-			//App.inEachTestMethod(testMethod, isRepeatedTest);
+			App.inEachTestMethod(testMethod, isRepeatedTest);
 		}
 	}
 	
@@ -113,7 +116,7 @@ public aspect TestMethodHook extends RuntimeHook {
 		if (!hasSourceAndBinearyPath())
 			return;
 
-		//App.afterEachTestMethod(testMethod);
+		App.afterEachTestMethod(testMethod);
 		
 		if (!isRepeatedTest)
 			lastRepeatedTestSignature = getSignature(jp);
