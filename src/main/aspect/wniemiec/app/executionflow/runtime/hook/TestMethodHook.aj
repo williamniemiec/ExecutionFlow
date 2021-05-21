@@ -28,7 +28,7 @@ public aspect TestMethodHook extends RuntimeHook {
 	//-------------------------------------------------------------------------
 	//		Attributes
 	//-------------------------------------------------------------------------
-	private static final int COLLECTION_TIMEOUT_MS = 10000;
+	private static final int COLLECTION_TIMEOUT_MS = 1000 * 60 * 10;
 	private static String testMethodSignature;
 	private boolean isRepeatedTest;
 	private String lastRepeatedTestSignature;
@@ -89,7 +89,7 @@ public aspect TestMethodHook extends RuntimeHook {
 		
 		if (timeout) {
 			Consolex.writeWarning("Information on all tested methods will not " +
-								  "be collected due to timeout");
+								  "be collected due to timeout (+10 min)");
 		}
 		
 		afterEachTestMethod(thisJoinPoint);
