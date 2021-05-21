@@ -81,8 +81,12 @@ public aspect TestMethodHook extends RuntimeHook {
 		boolean timeout = Scheduler.setTimeoutToRoutine(() -> {
 			Consolex.writeInfo("Obtaining information about the tested methods of " + 
 							   testMethodSignature + " ... ");
-			
-			returnedContent = proceed();
+			try {
+				returnedContent = proceed();
+			}
+			catch (Throwable t) {
+				// Ignores all possible exceptions
+			}
 			
 			Consolex.writeInfo("Done!");
 		}, COLLECTION_TIMEOUT_MS);
