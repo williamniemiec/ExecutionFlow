@@ -5,6 +5,7 @@ docs/uml/*.dia~
 *.ajproperties
 *.ef
 *.checkpoint
+*.bin
 
 # Maven
 target/
