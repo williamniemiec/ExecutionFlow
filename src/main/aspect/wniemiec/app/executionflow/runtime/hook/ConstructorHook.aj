@@ -82,7 +82,7 @@ public aspect ConstructorHook extends RuntimeHook {
 	}
 	
 	before(): insideTestedConstructor() {
-		/*if (!isValidConstructor(thisJoinPoint))
+		if (!isValidConstructor(thisJoinPoint))
 			return;
 
 		parseConstructorInfo(thisJoinPoint);
@@ -90,7 +90,7 @@ public aspect ConstructorHook extends RuntimeHook {
 		if (!wasConstructorAlreadyParsed() && hasSourceAndBinearyPath()) {
 			collectConstructor(thisJoinPoint);
 			markConstructorAsParsed();
-		}*/
+		}
 	}
 	
 	
