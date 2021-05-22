@@ -647,13 +647,29 @@ public class Invoked implements Serializable {
 
 	private void readObject(ObjectInputStream ois) {
 		try {
-			ois.defaultReadObject();
-			this.srcPath = readPath(ois);
-			this.binPath = readPath(ois);
+			loadStoredObject(ois);
 		} 
 		catch (ClassNotFoundException | IOException e) {
 			Consolex.writeError(e.toString());
 		}
+		catch (OutOfMemoryError e2) {
+			System.gc();
+			
+			try {
+				ois.reset();
+				loadStoredObject(ois);
+			} 
+			catch (ClassNotFoundException | IOException e3) {
+				Consolex.writeError(e3.toString());
+			}
+		}
+	}
+	
+	private void loadStoredObject(ObjectInputStream ois) 
+			throws ClassNotFoundException, IOException {
+		ois.defaultReadObject();
+		this.srcPath = readPath(ois);
+		this.binPath = readPath(ois);
 	}
 	
 	private Path readPath(ObjectInputStream ois) throws IOException {
