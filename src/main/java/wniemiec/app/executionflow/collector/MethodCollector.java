@@ -99,6 +99,9 @@ public class MethodCollector extends InvokedCollector {
 		Set<TestedInvoked> collectors = new HashSet<>();
 		
 		for (List<TestedInvoked> collector : getMethodCollection()) {
+			if (collector.isEmpty())
+				continue;
+			
 			collectors.add(collector.get(0));
 		}
 		
