@@ -1,5 +1,6 @@
 package wniemiec.app.executionflow.invoked;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -637,8 +638,8 @@ public class Invoked implements Serializable {
 	private void writeObject(ObjectOutputStream oos) {
 		try {
 			oos.defaultWriteObject();
-			oos.writeUTF((srcPath == null) ? "NULL" : srcPath.toAbsolutePath().toString());
-			oos.writeUTF((binPath == null) ? "NULL" : binPath.toAbsolutePath().toString());
+			oos.writeObject((srcPath == null) ? new File("") : srcPath.toFile());
+			oos.writeObject((binPath == null) ? new File("") : binPath.toFile());
 		} 
 		catch (IOException e) {
 			Consolex.writeError(e.toString());
@@ -673,8 +674,11 @@ public class Invoked implements Serializable {
 	}
 	
 	private Path readPath(ObjectInputStream ois) throws IOException {
-		String path = ois.readUTF();
-		
-		return path.equals("NULL") ? null : Path.of(path);
+		try {
+			return ((File) ois.readObject()).toPath();
+		} 
+		catch (ClassNotFoundException | IOException e) {
+			return null;
+		}
 	}
 }
