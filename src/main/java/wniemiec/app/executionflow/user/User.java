@@ -77,7 +77,7 @@ public class User {
 			tryStore(UserInfo.LOG_LEVEL.name(), logLevel);			
 		}
 		
-		return logLevel;
+		return (logLevel == null) ? LogLevel.INFO : logLevel;
 	}
 	
 	private static void tryStore(String key, Object value) {
@@ -121,6 +121,9 @@ public class User {
 		if (!session.exists())
 			return;
 		
+		if (collector.isEmpty())
+			return;
+		
 		session.save(UserInfo.METHOD_COLLECTOR.name(), collector);
 	}
 	
@@ -135,6 +138,12 @@ public class User {
 
 	public static void storeConstructorCollector(Map<Integer, TestedInvoked> collector) 
 			throws IOException {
+		if (!session.exists())
+			return;
+		
+		if (collector.isEmpty())
+			return;
+		
 		session.save(UserInfo.CONSTRUCTOR_COLLECTOR.name(), collector);
 	}
 	
@@ -153,9 +162,9 @@ public class User {
 		
 		try {
 			session.remove(UserInfo.METHOD_COLLECTOR.name());
-		} 
-		catch (IOException e) {
-			Consolex.writeError(e.toString());
+		}
+		catch (IOException e2) {
+			Consolex.writeError(e2.toString());
 			Consolex.writeError("Reset constructor collector - failed");
 		}
 	}
@@ -166,7 +175,7 @@ public class User {
 		
 		try {
 			session.remove(UserInfo.CONSTRUCTOR_COLLECTOR.name());
-		} 
+		}
 		catch (IOException e) {
 			Consolex.writeError(e.toString());
 			Consolex.writeError("Reset method collector - failed");

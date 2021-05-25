@@ -27,8 +27,8 @@ public class Invoked implements Serializable {
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 700L;
-	private transient Path binPath;
-	private transient Path srcPath;
+	private File binPath;
+	private File srcPath;
 	private String invokedSignature;
 	private String classSignature;
 	private String classPackage;
@@ -52,8 +52,8 @@ public class Invoked implements Serializable {
 		checkBinPath(binPath);
 		checkSrcPath(srcPath);
 		
-		this.binPath = binPath.normalize().toAbsolutePath();
-		this.srcPath = srcPath.normalize().toAbsolutePath();
+		this.binPath = new File(binPath.normalize().toAbsolutePath().toString());
+		this.srcPath = new File(srcPath.normalize().toAbsolutePath().toString());
 		this.invocationLine = invocationLine;
 		this.invokedSignature = removeKeywordFromSignature(invokedSignature);
 		this.invokedName = invokedName;
@@ -469,11 +469,11 @@ public class Invoked implements Serializable {
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	public Path getBinPath() {
-		return binPath;
+		return binPath.toPath();
 	}
 	
 	public Path getSrcPath() {
-		return srcPath;
+		return srcPath.toPath();
 	}
 
 	public String getInvokedSignature() {
@@ -638,8 +638,6 @@ public class Invoked implements Serializable {
 	private void writeObject(ObjectOutputStream oos) {
 		try {
 			oos.defaultWriteObject();
-			oos.writeObject((srcPath == null) ? new File("") : srcPath.toFile());
-			oos.writeObject((binPath == null) ? new File("") : binPath.toFile());
 		} 
 		catch (IOException e) {
 			Consolex.writeError(e.toString());
@@ -648,7 +646,7 @@ public class Invoked implements Serializable {
 
 	private void readObject(ObjectInputStream ois) {
 		try {
-			loadStoredObject(ois);
+			ois.defaultReadObject();
 		} 
 		catch (ClassNotFoundException | IOException e) {
 			Consolex.writeError(e.toString());
@@ -658,27 +656,11 @@ public class Invoked implements Serializable {
 			
 			try {
 				ois.reset();
-				loadStoredObject(ois);
+				ois.defaultReadObject();
 			} 
 			catch (ClassNotFoundException | IOException e3) {
 				Consolex.writeError(e3.toString());
 			}
-		}
-	}
-	
-	private void loadStoredObject(ObjectInputStream ois) 
-			throws ClassNotFoundException, IOException {
-		ois.defaultReadObject();
-		this.srcPath = readPath(ois);
-		this.binPath = readPath(ois);
-	}
-	
-	private Path readPath(ObjectInputStream ois) throws IOException {
-		try {
-			return ((File) ois.readObject()).toPath();
-		} 
-		catch (ClassNotFoundException | IOException e) {
-			return null;
 		}
 	}
 }
