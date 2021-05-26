@@ -1,5 +1,6 @@
 package wniemiec.app.executionflow.invoked;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -26,8 +27,8 @@ public class Invoked implements Serializable {
 	//		Attributes
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 700L;
-	private transient Path binPath;
-	private transient Path srcPath;
+	private File binPath;
+	private File srcPath;
 	private String invokedSignature;
 	private String classSignature;
 	private String classPackage;
@@ -51,8 +52,8 @@ public class Invoked implements Serializable {
 		checkBinPath(binPath);
 		checkSrcPath(srcPath);
 		
-		this.binPath = binPath.normalize().toAbsolutePath();
-		this.srcPath = srcPath.normalize().toAbsolutePath();
+		this.binPath = new File(binPath.normalize().toAbsolutePath().toString());
+		this.srcPath = new File(srcPath.normalize().toAbsolutePath().toString());
 		this.invocationLine = invocationLine;
 		this.invokedSignature = removeKeywordFromSignature(invokedSignature);
 		this.invokedName = invokedName;
@@ -468,11 +469,11 @@ public class Invoked implements Serializable {
 	//		Getters & Setters
 	//-------------------------------------------------------------------------
 	public Path getBinPath() {
-		return binPath;
+		return binPath.toPath();
 	}
 	
 	public Path getSrcPath() {
-		return srcPath;
+		return srcPath.toPath();
 	}
 
 	public String getInvokedSignature() {
@@ -637,8 +638,6 @@ public class Invoked implements Serializable {
 	private void writeObject(ObjectOutputStream oos) {
 		try {
 			oos.defaultWriteObject();
-			oos.writeUTF((srcPath == null) ? "NULL" : srcPath.toAbsolutePath().toString());
-			oos.writeUTF((binPath == null) ? "NULL" : binPath.toAbsolutePath().toString());
 		} 
 		catch (IOException e) {
 			Consolex.writeError(e.toString());
@@ -648,17 +647,20 @@ public class Invoked implements Serializable {
 	private void readObject(ObjectInputStream ois) {
 		try {
 			ois.defaultReadObject();
-			this.srcPath = readPath(ois);
-			this.binPath = readPath(ois);
 		} 
 		catch (ClassNotFoundException | IOException e) {
 			Consolex.writeError(e.toString());
 		}
-	}
-	
-	private Path readPath(ObjectInputStream ois) throws IOException {
-		String path = ois.readUTF();
-		
-		return path.equals("NULL") ? null : Path.of(path);
+		catch (OutOfMemoryError e2) {
+			System.gc();
+			
+			try {
+				ois.reset();
+				ois.defaultReadObject();
+			} 
+			catch (ClassNotFoundException | IOException e3) {
+				Consolex.writeError(e3.toString());
+			}
+		}
 	}
 }

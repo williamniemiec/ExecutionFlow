@@ -83,7 +83,7 @@ public class FileExporter implements TestPathExporter {
 			
 			storeExportFile(
 					tps, 
-					invokedContainer.getTestMethod().getInvokedSignature()
+					invokedContainer.getTestMethod().getConcreteSignature()
 			);
 		}
 

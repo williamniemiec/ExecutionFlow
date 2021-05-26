@@ -74,7 +74,7 @@ public class FilesProcessingManager {
 		this.autoDelete = (type != ProcessorType.PRE_TEST_METHOD);
 		
 		this.backupFile = new File(
-				App.getCurrentProjectRoot().toFile(), 
+				App.getAppRootPath().toFile(), 
 				"_EF_" + type.getName() + "_FILES.ef"
 		);
 

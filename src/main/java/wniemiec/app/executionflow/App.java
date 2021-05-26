@@ -159,7 +159,6 @@ public class App {
 					disableCheckpoint(firstRunCheckpoint);
 
 					JUnitRunner.stopRunner();
-					User.unlinkSession();
 		    	}
 		    	catch (Throwable t) {
 		    		// As the application will have finished, it is not 
