@@ -16,6 +16,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 12
+    - name: Surefire Report
+      uses: ScaCap/action-surefire-report@v1.0.5
     - name: Build with Maven and generate coverage report
       env:
         GITHUB_USERNAME: williamniemiec
