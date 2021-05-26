@@ -20,6 +20,8 @@ jobs:
       uses: stCarolas/setup-maven@v4
       with:
         maven-version: 3.6.3
+    - name: Maven clean
+      run: mvn clean
     - name: Build with Maven and generate coverage report
       env:
         GITHUB_USERNAME: williamniemiec
