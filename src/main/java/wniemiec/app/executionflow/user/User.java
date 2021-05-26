@@ -118,9 +118,6 @@ public class User {
 
 	public static void storeMethodCollector(Map<Integer, List<TestedInvoked>> collector)
 			throws IOException {
-		if (!session.exists())
-			return;
-		
 		if (collector.isEmpty())
 			return;
 		
@@ -138,9 +135,6 @@ public class User {
 
 	public static void storeConstructorCollector(Map<Integer, TestedInvoked> collector) 
 			throws IOException {
-		if (!session.exists())
-			return;
-		
 		if (collector.isEmpty())
 			return;
 		
