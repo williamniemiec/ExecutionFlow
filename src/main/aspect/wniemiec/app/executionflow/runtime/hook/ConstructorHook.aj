@@ -36,7 +36,6 @@ import wniemiec.io.consolex.Consolex;
  * annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.4
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -78,10 +77,16 @@ public aspect ConstructorHook extends RuntimeHook {
 	//		Join points
 	//-------------------------------------------------------------------------
 	before(): onClassInstantiation() {
+		if (wasInterrupted())
+			return;
+		
 		invocationLine = thisJoinPoint.getSourceLocation().getLine();
 	}
 	
 	before(): insideTestedConstructor() {
+		if (wasInterrupted())
+			return;
+		
 		if (!isValidConstructor(thisJoinPoint))
 			return;
 
@@ -219,6 +224,9 @@ public aspect ConstructorHook extends RuntimeHook {
 	}
 	
 	private void collectConstructor(JoinPoint jp) {
+		if (wasInterrupted())
+			return;
+		
 		collectConstructorInfo(jp);
 		
 		InvokedCollector collector = ConstructorCollector.getInstance();
@@ -227,6 +235,9 @@ public aspect ConstructorHook extends RuntimeHook {
 	}
 	
 	private void markConstructorAsParsed() {
+		if (wasInterrupted())
+			return;
+		
 		collectedConstructors.add(signature);
 		invocationLine = 0;
 	}

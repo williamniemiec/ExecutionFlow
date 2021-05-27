@@ -39,7 +39,6 @@ import wniemiec.io.consolex.Consolex;
  * from classes with {@link wniemiec.app.executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		1.0 
  */
 @SuppressWarnings("unused")
@@ -91,6 +90,9 @@ public aspect MethodHook extends RuntimeHook {
 	//		Join points
 	//-------------------------------------------------------------------------
 	before(): insideTestedMethod() {
+		if (wasInterrupted())
+			return;
+		
 		initializeSignature(thisJoinPoint);
 		
 		if (!isValidMethod(thisJoinPoint))
@@ -268,6 +270,9 @@ public aspect MethodHook extends RuntimeHook {
 	}
 	
 	private void collectMethod(JoinPoint jp) {
+		if (wasInterrupted())
+			return;
+		
 		collectMethodInfo(jp);
 		
 		InvokedCollector collector = MethodCollector.getInstance();

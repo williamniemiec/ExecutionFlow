@@ -20,7 +20,6 @@ import wniemiec.app.executionflow.io.processing.file.TestMethodFileProcessor;
  * {@link executionflow.runtime.SkipInvoked} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		1.0
  */
 public abstract aspect RuntimeHook {
@@ -124,5 +123,9 @@ public abstract aspect RuntimeHook {
 	
 	protected String removeParametersFromSignature(String signature) {
 		return signature.substring(signature.indexOf("("));
+	}
+	
+	protected boolean wasInterrupted() {
+		return Thread.currentThread().isInterrupted();
 	}
 }

@@ -19,7 +19,6 @@ import wniemiec.util.task.Scheduler;
  * {@link executionflow.runtime.SkipCollection} annotation.
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		6.0.5
  * @since		1.0
  */
 @SuppressWarnings("unused")
@@ -69,11 +68,17 @@ public aspect TestMethodHook extends RuntimeHook {
 	//		Join points
 	//-------------------------------------------------------------------------	
 	before(): insideJUnit5RepeatedTest() {
+		if (wasInterrupted())
+			return;
+		
 		isRepeatedTest = true;
 	}
 	
 	Object around(): insideTestMethod()
 	{
+		if (wasInterrupted())
+			return new Object();
+		
 		returnedContent = new Object();
 		
 		beforeEachTestMethod(thisJoinPoint);

@@ -26,7 +26,6 @@ import wniemiec.app.executionflow.invoked.Invoked;
  * must have {@link executionflow.runtime.CollectMethodsCalled} annotation
  * 
  * @author		William Niemiec &lt; williamniemiec@hotmail.com &gt;
- * @version		7.0.0
  * @since		2.0.0
  */
 @SuppressWarnings("unused")
@@ -82,6 +81,9 @@ public aspect MethodCallHook extends RuntimeHook {
 	//		Join points
 	//-------------------------------------------------------------------------
 	before(): testedInvoked() {
+		if (wasInterrupted())
+			return;
+		
 		if (isNativeMethod(getSignature(thisJoinPoint)) || !isValidSignature(thisJoinPoint)) 
 			return;
 		
@@ -89,6 +91,9 @@ public aspect MethodCallHook extends RuntimeHook {
 	}
 	
 	before(): invokedMethodByTestedInvoker() {
+		if (wasInterrupted())
+			return;
+		
 		if (!isMethod(thisJoinPoint) || isNativeMethod(getSignature(thisJoinPoint)) || !wasTestedInvokedCollected())
 			return;
 		
