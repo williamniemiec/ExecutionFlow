@@ -16,6 +16,9 @@
 ## ❇ Introduction
 Computes test path for tested methods and constructors from JUnit tests using a debugger and aspect-oriented programming.
 
+#### Demonstration (click to play)
+[![Video demonstration](http://img.youtube.com/vi/bpfoJe1xv5g/0.jpg)](http://www.youtube.com/watch?v=bpfoJe1xv5g "ExecutionFlow - Introduction and Demonstration")
+
 ## ❓ How to use
 The step by step on how to use the application can be found [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Don't forget to include [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar) in the build path of the project (otherwise the application will not work).
 
