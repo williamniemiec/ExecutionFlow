@@ -9,6 +9,7 @@ import java.util.Set;
 
 import wniemiec.api.jdb.JDB;
 import wniemiec.app.executionflow.App;
+import wniemiec.app.executionflow.analyzer.exceptions.AssertFailureException;
 import wniemiec.app.executionflow.collector.CallCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
@@ -85,6 +86,9 @@ public abstract class DebuggerAnalyzer {
 			startJDB();
 			enableTimeout(timeoutID);
 			run();
+		}
+		catch (AssertFailureException e) {
+			// If an assert fails, it should be ignored. 
 		}
 		finally {
 			try {

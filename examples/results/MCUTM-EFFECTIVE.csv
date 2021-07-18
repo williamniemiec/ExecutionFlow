@@ -1,2 +1,3 @@
-examples.others.auxClasses.AuxClass(int);examples.others.SimpleTestPath_Example.simpleTestPath()
+examples.others.auxClasses.AuxClass.threePaths(int);examples.others.AssertFailTest.assertFailAtTheEndTest();examples.others.AssertFailTest.assertFailInTheMiddleTest()
+examples.others.auxClasses.AuxClass(int);examples.others.SimpleTestPath_Example.simpleTestPath();examples.others.AssertFailTest.assertFailAtTheEndTest();examples.others.AssertFailTest.assertFailInTheMiddleTest()
 examples.others.auxClasses.AuxClass.factorial(int);examples.others.SimpleTestPath_Example.simpleTestPath()

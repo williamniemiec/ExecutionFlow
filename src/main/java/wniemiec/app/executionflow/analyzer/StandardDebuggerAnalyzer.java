@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import wniemiec.app.executionflow.analyzer.exceptions.AssertFailureException;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
 import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
 import wniemiec.util.io.parser.balance.RoundBracketBalance;
@@ -224,8 +225,15 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	}
 	
 	private void checkInternalError() throws IOException {
-		if (isErrorMessage(line)) 
-			throw new IOException("Error while running JDB");}
+		if (isAssertErrorMessage(line))
+			throw new AssertFailureException();
+		else if (isErrorMessage(line)) 
+			throw new IOException("Error while running JDB");
+	}
+
+	private boolean isAssertErrorMessage(String line2) {
+		return line.contains("ComparisonFailure:");
+	}
 
 	private boolean isErrorMessage(String line) {
 		return	line.contains("[INFO]")
