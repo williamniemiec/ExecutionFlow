@@ -9,7 +9,6 @@ import wniemiec.app.executionflow.io.FileEncoding;
 import wniemiec.app.executionflow.io.processing.processor.InlineCommentRemover;
 import wniemiec.app.executionflow.io.processing.processor.PrintCallDeactivator;
 import wniemiec.app.executionflow.io.processing.processor.holeplug.HolePlug;
-import wniemiec.app.executionflow.io.processing.processor.trgeneration.CodeCleanerAdapter;
 
 /**
  * Processes java file adding instructions in parts of the code that does not 
@@ -212,7 +211,6 @@ public class InvokedFileProcessor extends FileProcessor {
 		processedLines = sourceCode;
 		
 		removeInlineComments();
-		doTRGenerationProcesing();
 		doHolePlugProcessing();
 		disablePrintCalls();
 		
@@ -224,15 +222,6 @@ public class InvokedFileProcessor extends FileProcessor {
 				new InlineCommentRemover(processedLines);
 		
 		processedLines = inlineCommentProcessor.processLines();
-	}
-
-	private void doTRGenerationProcesing() throws Exception {
-		CodeCleanerAdapter codeCleaner = new CodeCleanerAdapter(processedLines);
-		processedLines = codeCleaner.processLines();
-		
-		Map<Integer, List<Integer>> cleanupMapping = codeCleaner.getMapping();
-		if (cleanupMapping != null)
-			mapping = cleanupMapping;
 	}
 
 	private void doHolePlugProcessing() {
