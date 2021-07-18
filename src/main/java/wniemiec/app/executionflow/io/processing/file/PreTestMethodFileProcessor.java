@@ -8,7 +8,6 @@ import wniemiec.app.executionflow.io.processing.processor.AssertProcessor;
 import wniemiec.app.executionflow.io.processing.processor.JUnit5ToJUnit4Processor;
 import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 import wniemiec.app.executionflow.io.processing.processor.TestMethodHighlighter;
-import wniemiec.app.executionflow.user.User;
 
 /**
  * Responsible for pre-processing test method file. Handles exceptions
@@ -27,6 +26,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	private String testMethodSignature;
 	private List<String> testMethodArgs;
 	private List<String> processedLines;
+	private boolean shouldSurroundAssertsWithTryCatch;
 		
 	
 	//-------------------------------------------------------------------------
@@ -50,7 +50,8 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 	 */ 
 	private PreTestMethodFileProcessor(Path file, Path outputDir, 
 			String outputFilename, String testMethodSignature, 
-			List<String> testMethodArgs, String fileExtension, FileEncoding encoding) {
+			List<String> testMethodArgs, String fileExtension, FileEncoding encoding,
+			boolean shouldSurroundAssertsWithTryCatch) {
 		checkRequiredFields(file, outputDir, outputFilename, testMethodSignature);
 		
 		this.file = file;
@@ -65,6 +66,8 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		
 		if (encoding != null)
 			this.encoding = encoding;
+		
+		this.shouldSurroundAssertsWithTryCatch = shouldSurroundAssertsWithTryCatch;
 	}
 
 	
@@ -90,6 +93,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		private String outputFilename;
 		private String testMethodSignature;
 		private List<String> testMethodArgs;
+		private boolean shouldSurroundAssertsWithTryCatch = true;
 
 		
 		/**
@@ -200,6 +204,12 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 			return this;
 		}
 		
+		public Builder shouldSurroundAssertsWithTryCatch(boolean value) {
+			shouldSurroundAssertsWithTryCatch = value;
+			
+			return this;
+		}
+		
 		/**
 		 * Creates {@link PreTestMethodFileProcessor} with provided information.
 		 * It is necessary to provide all required fields. The required fields 
@@ -218,7 +228,8 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		public PreTestMethodFileProcessor build() {
 			return new PreTestMethodFileProcessor(
 					file, outputDir, outputFilename, testMethodSignature, 
-					testMethodArgs, fileExtension, encoding
+					testMethodArgs, fileExtension, encoding,
+					shouldSurroundAssertsWithTryCatch
 			);
 		}
 	}
@@ -253,7 +264,7 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		convertJUnit5ToJUnit4();
 		commentAllTestMethodsExcept(testMethodSignature);
 		
-		if (User.hasSelectedSurroundAssertsWithTryCatch())
+		if (shouldSurroundAssertsWithTryCatch)
 			surroundAssertsWithTryCatch();
 		
 		return processedLines;

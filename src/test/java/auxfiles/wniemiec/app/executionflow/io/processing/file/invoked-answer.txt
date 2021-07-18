@@ -1,125 +1,125 @@
 public class Foo {
-@wniemiec.app.executionflow.runtime.CollectCalls public static int countTotalArguments(Object... args) {
-int i = 2;
-int k;int _fdb8612dc5ef37f14974727e8a130504=0;
-k=0;
-while (k<args.length) {int _fa9316e2ae5dad3b1f3e07626876884d=0;
-k++;
-if (Boolean.parseBoolean("True")) {continue;}
-k++;
-}
-return k;
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public int doWhileMethod(int a, int b) {
-if (a == 0) {
-return b;
-}
-if (b == 0) {
-return a;
-}
-do {int _9abacc9126f61bd83e7b33483ca244c8=0;
-a++;
-b--;
-}
-while (b != 0);
-return a;
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public int inlineWhile(int a) {
-while (a > 0) {int _d5ffe1292646bfc1960f84566d576234=0;
-a--;
-}
-return a;
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public int inlineDoWhile(int n)	{
-if (n <= 0) {
-n = 1;
-}
-do {int _7b6ad98e1ab53041cd8b02a208c22567=0;
-n--;
-}
-while (n > 0);
-return n;
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public String ifElseMethod(int num) {
-if (num < 0) {
-return "Negative value";
-}
-String response = "";
-if (num == 0) {
-response = "Number zero";
-}
-else if (num == 1) {
-response = "Number one";
-}
-else {int _d58a9989b369b11059127a695f27ec31=0;
-response = "Number "+num;
-}
-return response;
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public boolean inlineIfElse(int n) {
-if (n > 0) {
-return true;
-}
-else {int _18fd9184c74ca4b1ee92f5ccccc3ce88=0;
-return false;
-}
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public int ifElseSameLine2(int num)	{
-if (num > 0) {
-num *= 0;
-}
-else {int _af27cc9acaf8d64ca708e4494f50c61b=0;
-num = 10;
-}
-return num;
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public String ifElseMethod2(int num) {
-if (num < 0) {
-return "Negative value";
-}
-String response = "";
-if (num == 0) {
-response = "Number zero";
-}
-else if (num == 1) {
-response = "Number one";
-}
-else {int _204a8a7b1c808c23346f8015070940da=0;
-response = "Number "+num;
-}
-return response;
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public char switchCaseMethod(char letter) {
-letter = Character.toUpperCase(letter);
-switch (letter) {
-case 'Á':int _3405ab79075d77047c1f56a5eb6b4db5=0;
-case 'À':int _8bc51404c5c3a26195d5bca498e55435=0;
-case 'Ã':int _1d085a97b9a2c3d244a94a2022d4844f=0;
-case 'Â':int _e3bb0f8be9574268f6c4907676df65da=0;
-letter = 'A';
-if (Boolean.parseBoolean("True")) {break;}break;
-case 'É':int _709fca1b601ae34db659b2539264a520=0;
-case 'È':int _da544c06dd6d77a5503540ee491d616f=0;
-case 'Ê':int _4215d1bd7c01dea34a9ac366f400179b=0;
-letter = 'E';
-if (Boolean.parseBoolean("True")) {break;}break;
-default:
-if (Boolean.parseBoolean("True")) {break;}break;
-}
-return letter;
-}
-@wniemiec.app.executionflow.runtime.CollectCalls public boolean tryCatchMethod_try() {
-File f = new File("tmp");
-FileWriter fw;int _1bfdb4d2eb58346d5fe4c8113bd309b3=0;
- try {int _879037aa98b1a5d5dd8ea12de3f3f941=0;
-fw = new FileWriter(f);
-fw.write('x');
-fw.close();
- f.delete();
-}
- catch (IOException e) {
- return false;
-}
-return true;
-}
+
+@wniemiec.app.executionflow.runtime.CollectCalls 	public static int countTotalArguments(Object... args) {
+		int i = 2;
+		int k;int _88b0dd12ee82062112fa3afef61d16ed=0;
+		
+		for (k=0; k<args.length; k++) {
+if (Boolean.parseBoolean("True")) {			continue;}
+		}
+		
+		return k;
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public int doWhileMethod(int a, int b) {
+		if (a == 0)
+			return b;
+		if (b == 0)
+			return a;
+		
+		do {int _cc36d4f2ded420a37a5d2b912316791=0;
+			a++;
+			b--;
+		} while (b != 0);
+		
+		return a;	
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public int inlineWhile(int a) {
+		while (a > 0) a--;
+		
+		return a;
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public int inlineDoWhile(int n)	{
+		if (n <= 0)
+			n = 1;
+		
+		do {int _48f861edcc70ce6f91af508779911fac=0; n--; } while (n > 0);
+		
+		return n;
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public String ifElseMethod(int num) {
+		if (num < 0) {
+			return "Negative value";
+		}
+		
+		String response = "";
+		
+		if (num == 0) {
+			response = "Number zero";}
+ else if (num == 1) {
+			response = "Number one";}
+ else {int _e11e20b1a91e87074b76250be6c41c07=0;
+			response = "Number "+num;
+		}
+		
+		return response;
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public boolean inlineIfElse(int n) {
+		if (n > 0) return true; else return false; 
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public int ifElseSameLine2(int num)	{
+		if (num > 0) { num *= 0; } else { num = 10; }
+		
+		return num;
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public String ifElseMethod2(int num) {
+		if (num < 0) {
+			return "Negative value";
+		}
+		
+		String response = "";
+		
+		if (num == 0)
+			response = "Number zero";
+		else if (num == 1)
+			response = "Number one";
+		else{int _410da84a9b689e41009d7980498cc5bb=0;
+			response = "Number "+num;}
+		
+		return response;
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public char switchCaseMethod(char letter) { 
+		letter = Character.toUpperCase(letter);
+				
+		switch (letter) {
+			case 'Á':int _800f40e6ab863f9de878dcfc5e11f7ee=0;
+			case 'À':int _a30dc43958e3aea0afda09a134255b21=0;
+			case 'Ã':int _91d36467c6c7ca67e8ce9d568e837ca5=0;
+			case 'Â':int _f02189c7a3e86faa79caf447eae72346=0;
+				letter = 'A';
+if (Boolean.parseBoolean("True")) {				break;}break;
+			case 'É':int _b499d2728ffcf62f74d86ac186fa4383=0;
+			case 'È':int _bf5a7114477c5422cc9289c3a02b0f79=0;
+			case 'Ê':int _2912fb7e581aed9f8773788e52efc321=0;
+				letter = 'E';
+if (Boolean.parseBoolean("True")) {				break;}break;
+			default:
+if (Boolean.parseBoolean("True")) {				break;}break;
+		}
+		
+		return letter;
+	}
+	
+@wniemiec.app.executionflow.runtime.CollectCalls 	public boolean tryCatchMethod_try() {
+		File f = new File("tmp");
+		
+		FileWriter fw;int _de792b1fed7005aa5d1c8f3b1d3f683c=0;
+		try {int _c62e246e47dbb145e1912ca42bbd8085=0;
+			fw = new FileWriter(f);
+			fw.write('x');
+			fw.close();
+			f.delete();
+		} catch (IOException e) {
+			return false;
+		}
+		
+		return true;
+	}
 }

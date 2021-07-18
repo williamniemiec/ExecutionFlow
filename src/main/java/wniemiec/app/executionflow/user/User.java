@@ -1,5 +1,6 @@
 package wniemiec.app.executionflow.user;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class User {
 	//		Initialization blocks
 	//-------------------------------------------------------------------------
 	static {
-		session = new Session("session.ef", App.getAppRootPath().toFile());
+		initializeSession();
 	}
 	
 	
@@ -47,19 +48,32 @@ public class User {
 	//-------------------------------------------------------------------------
 	//		Methods
 	//-------------------------------------------------------------------------
-	public static void openMainSelector() throws IOException {
-		initializeMainSelector();
-		selector.open();
+	private static void initializeSession() {
+		File sessionLocation = App.getAppRootPath().toFile();
 		
-		session.destroy();
-		session.save(UserInfo.LOG_LEVEL.name(), selector.getSelectedLoggingLevel());
-		session.save(UserInfo.TESTPATH_EXPORT_TYPE.name(), selector.getSelectedTestPathExportType());
-		session.save(UserInfo.SURROUND_ASSERTS_WITH_TRY_CATCH.name(), selector.getShouldComputeTestPathOfFailingAsserts());
+		if (App.isDevelopment())
+			sessionLocation = new File(sessionLocation, "examples");
+		
+		session = new Session("session.ef", sessionLocation);
 	}
 	
+	public static void openMainSelector() throws IOException {
+		initializeMainSelector();
+		storeUserSelections();
+	}
+
 	private static void initializeMainSelector() {
 		if (selector == null)
 			selector = new MainSelector();
+		
+		session.destroy();
+		selector.open();
+	}
+	
+	private static void storeUserSelections() throws IOException {
+		session.save(UserInfo.LOG_LEVEL.name(), selector.getSelectedLoggingLevel());
+		session.save(UserInfo.TESTPATH_EXPORT_TYPE.name(), selector.getSelectedTestPathExportType());
+		session.save(UserInfo.SURROUND_ASSERTS_WITH_TRY_CATCH.name(), selector.getShouldComputeTestPathOfFailingAsserts());
 	}
 	
 	public static LogLevel getSelectedLogLevel() {

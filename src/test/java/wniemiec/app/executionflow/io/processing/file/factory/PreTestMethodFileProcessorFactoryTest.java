@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import wniemiec.app.executionflow.io.FileEncoding;
 import wniemiec.app.executionflow.io.processing.file.FileProcessor;
 import wniemiec.app.executionflow.io.processing.file.PreTestMethodFileProcessor;
-import wniemiec.app.executionflow.io.processing.file.factory.FileProcessorFactory;
-import wniemiec.app.executionflow.io.processing.file.factory.PreTestMethodFileProcessorFactory;
 
 class PreTestMethodFileProcessorFactoryTest {
 
@@ -23,7 +21,7 @@ class PreTestMethodFileProcessorFactoryTest {
 		Path tmpFile = Path.of(".");
 		String outputFilename = "output-filename";
 		
-		FileProcessorFactory factory = new PreTestMethodFileProcessorFactory("foo.SomeClass.bar(int)");
+		FileProcessorFactory factory = new PreTestMethodFileProcessorFactory("foo.SomeClass.bar(int)", true);
 		FileProcessor processor = factory.createInstance(
 				targetFile, 
 				tmpFile, 
@@ -42,7 +40,8 @@ class PreTestMethodFileProcessorFactoryTest {
 		
 		FileProcessorFactory factory = new PreTestMethodFileProcessorFactory(
 				"foo.SomeClass.bar(int)",
-				List.of("1")
+				List.of("1"),
+				true
 		);
 		FileProcessor processor = factory.createInstance(
 				targetFile, 

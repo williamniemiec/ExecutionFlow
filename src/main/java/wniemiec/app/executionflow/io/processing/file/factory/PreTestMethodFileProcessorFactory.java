@@ -20,6 +20,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 	//-------------------------------------------------------------------------
 	private String testMethodSignature;	
 	private List<String> testMethodArgs;
+	private boolean shouldSurroundAssertsWithTryCatch;
 	
 	
 	//-------------------------------------------------------------------------
@@ -32,7 +33,9 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 	 * @param		testMethodSignature Test method signature
 	 * @param		args Test method arguments
 	 */
-	public PreTestMethodFileProcessorFactory(String testMethodSignature, List<String> args) {
+	public PreTestMethodFileProcessorFactory(String testMethodSignature, 
+											 List<String> args,
+											 boolean shouldSurroundAssertsWithTryCatch) {
 		this.testMethodSignature = testMethodSignature;
 		
 		if (args != null && args.size() > 0)
@@ -45,8 +48,9 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 	 * 
 	 * @param		testMethodSignature Test method signature
 	 */
-	public PreTestMethodFileProcessorFactory(String testMethodSignature) { 
-		this(testMethodSignature, null);
+	public PreTestMethodFileProcessorFactory(String testMethodSignature, 
+											 boolean shouldSurroundAssertsWithTryCatch) { 
+		this(testMethodSignature, null, shouldSurroundAssertsWithTryCatch);
 	}
 	
 	
@@ -64,6 +68,7 @@ public class PreTestMethodFileProcessorFactory extends FileProcessorFactory {
 				.testMethodSignature(testMethodSignature)
 				.testMethodArgs(testMethodArgs)
 				.encoding(encode)
+				.shouldSurroundAssertsWithTryCatch(shouldSurroundAssertsWithTryCatch)
 				.build();
 	}
 }

@@ -1,9 +1,7 @@
 package wniemiec.app.executionflow.io.processing.file;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import wniemiec.app.executionflow.io.FileEncoding;
 import wniemiec.app.executionflow.io.processing.processor.InlineCommentRemover;
@@ -25,15 +23,6 @@ public class InvokedFileProcessor extends FileProcessor {
 	//-------------------------------------------------------------------------
 	private static final long serialVersionUID = 700L;
 	
-	/**
-	 * Stores the mapping of the original file with the modified file.
-	 * 
-	 * <ul>
-	 * 	<li><b>Key:</b> Original source file line</li>
-	 * 	<li><b>Value:</b> Modified source file line</li>
-	 * </ul>
-	 */
-	private static Map<Integer, List<Integer>> mapping = new HashMap<>();
 	private List<String> processedLines;
 	
 	
@@ -234,34 +223,5 @@ public class InvokedFileProcessor extends FileProcessor {
 				new PrintCallDeactivator(processedLines);
 		
 		processedLines = printCallProcessor.processLines();
-	}
-	
-	
-	//-------------------------------------------------------------------------
-	//		Getters
-	//-------------------------------------------------------------------------
-	/**
-	 * Gets the mapping of the original file with the modified file.
-	 * 
-	 * @return		Mapping with the following format:
-	 * <ul>
-	 * 	<li><b>Key:</b> Modified source file lines</li>
-	 * 	<li><b>Value:</b> Original source file line</li>
-	 * </ul>
-	 */
-	public static Map<Integer, List<Integer>> getMapping() {
-		return mapping;
-	}
-	
-	public static List<Integer> getMappingOf(int number) {
-		return mapping.get(number);
-	}
-	
-	public static boolean hasMapping(int number) {
-		return mapping.containsKey(number);
-	}
-	
-	public static void clearMapping() {
-		mapping.clear();
 	}
 }

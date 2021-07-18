@@ -1,6 +1,7 @@
 package wniemiec.app.executionflow.io.processing.manager;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,12 +10,12 @@ import wniemiec.app.executionflow.collector.InvokedCollector;
 import wniemiec.app.executionflow.collector.MethodCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
 import wniemiec.app.executionflow.io.processing.file.ProcessorType;
 import wniemiec.app.executionflow.io.processing.file.TestMethodFileProcessor;
 import wniemiec.app.executionflow.io.processing.file.factory.InvokedFileProcessorFactory;
 import wniemiec.app.executionflow.io.processing.file.factory.PreTestMethodFileProcessorFactory;
 import wniemiec.app.executionflow.io.processing.file.factory.TestMethodFileProcessorFactory;
+import wniemiec.app.executionflow.user.User;
 import wniemiec.io.consolex.Consolex;
 
 /**
@@ -311,7 +312,8 @@ public class ProcessingManager {
 				.backupExtensionName("pretestmethod.bkp")
 				.fileProcessorFactory(new PreTestMethodFileProcessorFactory(
 						testMethod.getInvokedSignature(), 
-						testMethod.getArgs()
+						testMethod.getArgs(),
+						User.hasSelectedSurroundAssertsWithTryCatch()
 				))
 				.build();
 	}
@@ -416,7 +418,7 @@ public class ProcessingManager {
 		doProcessingInInvoked(currentInvokedFileManager);
 		
 		collectorProcessingManager.updateCollectorsFromMapping(
-				InvokedFileProcessor.getMapping(),
+				new HashMap<>(),
 				currentTestMethod.getSrcPath(),
 				currentTestedInvoked.getSrcPath()
 		);

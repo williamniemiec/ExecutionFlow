@@ -6,9 +6,8 @@ import java.util.List;
 
 import wniemiec.app.executionflow.analyzer.exceptions.AssertFailureException;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
-import wniemiec.util.io.parser.balance.RoundBracketBalance;
 import wniemiec.io.consolex.Consolex;
+import wniemiec.util.io.parser.balance.RoundBracketBalance;
 
 /**
  * Standard strategy for computing test path of a method and records the 
@@ -531,15 +530,7 @@ class StandardDebuggerAnalyzer extends DebuggerAnalyzer {
 	}
 	
 	private void addTestPath(int lineNumber) {
-		if (InvokedFileProcessor.hasMapping(lineNumber-1)) {
-			for (Integer tp : InvokedFileProcessor.getMappingOf(lineNumber-1)) {
-				if (testPath.isEmpty() || testPath.get(testPath.size()-1) != tp+1)
-					testPath.add(tp+1);			
-			}
-		}
-		else
-			testPath.add(lineNumber);
-		
+		testPath.add(lineNumber);
 		lastLineAdded = lineNumber;
 	}
 

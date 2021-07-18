@@ -175,6 +175,7 @@ class PreTestMethodFileProcessorTest extends FileProcessorTest {
 				.outputDir(getTempFolder())
 				.outputFilename(filename + "-output")
 				.testMethodSignature(testMethodSignature)
+				.shouldSurroundAssertsWithTryCatch(true)
 				.build();
 	}
 }

@@ -15,7 +15,6 @@ import wniemiec.app.executionflow.App;
 import wniemiec.app.executionflow.analyzer.DebuggerAnalyzerFactory;
 import wniemiec.app.executionflow.invoked.Invoked;
 import wniemiec.app.executionflow.invoked.TestedInvoked;
-import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
 import wniemiec.io.consolex.Consolex;
 import wniemiec.io.consolex.LogLevel;
 
@@ -55,7 +54,6 @@ class TestedInvokedParserTest {
 		testedInvokedParser = new TestedInvokedParser();
 		testedInvoked = null;
 		testMethod = null;
-		InvokedFileProcessor.clearMapping();
 	}
 	
 	

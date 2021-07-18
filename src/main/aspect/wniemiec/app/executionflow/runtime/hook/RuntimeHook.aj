@@ -7,7 +7,6 @@ import wniemiec.app.executionflow.collector.ConstructorCollector;
 import wniemiec.app.executionflow.collector.InvokedCollector;
 import wniemiec.app.executionflow.collector.MethodCollector;
 import wniemiec.app.executionflow.invoked.Invoked;
-import wniemiec.app.executionflow.io.processing.file.InvokedFileProcessor;
 import wniemiec.app.executionflow.io.processing.file.TestMethodFileProcessor;
 
 /**
@@ -107,7 +106,6 @@ public abstract aspect RuntimeHook {
 	protected void reset() {
 		resetCollectors();
 		TestMethodFileProcessor.clearMapping();
-		InvokedFileProcessor.clearMapping();
 	}
 	
 	private void resetCollectors() {
