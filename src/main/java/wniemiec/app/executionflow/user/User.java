@@ -54,6 +54,7 @@ public class User {
 		session.destroy();
 		session.save(UserInfo.LOG_LEVEL.name(), selector.getSelectedLoggingLevel());
 		session.save(UserInfo.TESTPATH_EXPORT_TYPE.name(), selector.getSelectedTestPathExportType());
+		session.save(UserInfo.SURROUND_ASSERTS_WITH_TRY_CATCH.name(), selector.getShouldComputeTestPathOfFailingAsserts());
 	}
 	
 	private static void initializeMainSelector() {
@@ -182,5 +183,18 @@ public class User {
 	
 	public static boolean hasLinkedSession() {
 		return session.exists();
+	}
+
+
+	public static boolean hasSelectedSurroundAssertsWithTryCatch() {
+		if (!session.exists() || !session.hasKey(UserInfo.SURROUND_ASSERTS_WITH_TRY_CATCH.name()))
+			return false;
+		
+		try {
+			return ((boolean) session.read(UserInfo.SURROUND_ASSERTS_WITH_TRY_CATCH.name()));
+		} 
+		catch (IOException e) {
+			return false;
+		}
 	}
 }

@@ -8,6 +8,7 @@ import wniemiec.app.executionflow.io.processing.processor.AssertProcessor;
 import wniemiec.app.executionflow.io.processing.processor.JUnit5ToJUnit4Processor;
 import wniemiec.app.executionflow.io.processing.processor.SourceCodeProcessor;
 import wniemiec.app.executionflow.io.processing.processor.TestMethodHighlighter;
+import wniemiec.app.executionflow.user.User;
 
 /**
  * Responsible for pre-processing test method file. Handles exceptions
@@ -251,7 +252,9 @@ public class PreTestMethodFileProcessor extends FileProcessor {
 		processedLines = sourceCode;
 		convertJUnit5ToJUnit4();
 		commentAllTestMethodsExcept(testMethodSignature);
-		surroundAssertsWithTryCatch();
+		
+		if (User.hasSelectedSurroundAssertsWithTryCatch())
+			surroundAssertsWithTryCatch();
 		
 		return processedLines;
 	}
