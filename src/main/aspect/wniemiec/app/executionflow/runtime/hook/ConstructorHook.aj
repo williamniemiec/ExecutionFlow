@@ -59,13 +59,13 @@ public aspect ConstructorHook extends RuntimeHook {
 	//-------------------------------------------------------------------------
 	private pointcut onClassInstantiation(): 
 		!skipAnnotation()
-		&& (insideJUnit4Test() || insideJUnit5Test())
+		&& (insideJUnit4Test() /*|| insideJUnit5Test()*/)
 		&& !isInternalPackage()
 		&& call(*.new(..));
 
 	private pointcut insideTestedConstructor(): 
 		!skipAnnotation()
-		&& !(JUnit4InternalCall() || JUnit5InternalCall())
+		&& !(JUnit4InternalCall() /*|| JUnit5InternalCall()*/)
 		&& call(*.new(..))
 		&& !cflowbelow(withincode(* *(..)))
 		&& !within(executionflow..*)

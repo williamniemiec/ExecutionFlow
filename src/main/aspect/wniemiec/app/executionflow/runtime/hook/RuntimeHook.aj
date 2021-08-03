@@ -47,8 +47,8 @@ public abstract aspect RuntimeHook {
 		|| execution(@wniemiec.app.executionflow.runtime.SkipInvoked * *.*(..));
 	
 	protected pointcut insideJUnitTest():
-		insideJUnit4Test() 
-		|| insideJUnit5Test();
+		insideJUnit4Test(); 
+		//|| insideJUnit5Test();
 	
 	protected pointcut insideJUnit4Test():
 		JUnit4Annotation()
@@ -62,6 +62,7 @@ public abstract aspect RuntimeHook {
 		|| call(void org.junit.Assert.*(..))
 		|| call(void org.junit.Assert.fail());
 
+	/*
 	protected pointcut insideJUnit5Test():
 		JUnit5Annotation()
 		&& !JUnit5InternalCall();
@@ -73,6 +74,7 @@ public abstract aspect RuntimeHook {
 
 	protected pointcut JUnit5InternalCall():
 		call(void org.junit.jupiter.api.Assertions.*(..));
+	*/
 	
 	
 	//-------------------------------------------------------------------------

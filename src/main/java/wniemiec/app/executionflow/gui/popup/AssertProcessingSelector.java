@@ -70,8 +70,6 @@ class AssertProcessingSelector extends Selector {
 			shouldComputeTestPathOfFailingAsserts = true
 		);
 		
-		rdoYes.doClick();
-		
 		return rdoYes;
 	}
 	
@@ -81,6 +79,8 @@ class AssertProcessingSelector extends Selector {
 		rdoNo.addActionListener(event -> 
 			shouldComputeTestPathOfFailingAsserts = false
 		);
+		
+		rdoNo.doClick();
 		
 		return rdoNo;
 	}
