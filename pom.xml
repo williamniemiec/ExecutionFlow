@@ -2,20 +2,21 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>wniemiec.app</groupId>
+	<groupId>wniemiec.app.java</groupId>
 	<artifactId>executionflow</artifactId>
-	<version>7.2.0</version>
+	<version>8.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>ExecutionFlow</name>
-	<description>Generates test path for tested methods and constructors from JUnit tests.</description>
+	<description>A tool to compute test paths of Java methods and constructors.</description>
 	<url>https://github.com/williamniemiec/ExecutionFlow</url>
 
 	<properties>
-		<version.major>7</version.major>
+		<version.major>8</version.major>
 		<aspectj.version>1.9.6</aspectj.version>
 		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,79 +57,71 @@
 
 		<!-- wniemiec -->
 		<dependency>
-			<groupId>wniemiec.api</groupId>
-			<artifactId>junit4</artifactId>
-			<version>[1.0.3,)</version>
+			<groupId>io.github.wniemiec-component-java</groupId>
+			<artifactId>junit4-runner</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.api</groupId>
+			<groupId>io.github.wniemiec-component-java</groupId>
 			<artifactId>jdb</artifactId>
-			<version>[1.0.2,)</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.task</groupId>
+			<groupId>io.github.wniemiec-task-java</groupId>
 			<artifactId>checkpoint</artifactId>
-			<version>[1.1.0,)</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.task</groupId>
+			<groupId>io.github.wniemiec-task-java</groupId>
 			<artifactId>scheduler</artifactId>
-			<version>[1.1.3,)</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.data.structure</groupId>
+			<groupId>io.github.wniemiec-data-java</groupId>
 			<artifactId>pair</artifactId>
-			<version>[1.0.0,)</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.data.storage</groupId>
+			<groupId>io.github.wniemiec-data-java</groupId>
 			<artifactId>session</artifactId>
-			<version>[1.0.2,)</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.data.encrypt</groupId>
-			<artifactId>md5</artifactId>
-			<version>[1.0.0,)</version>
+			<groupId>io.github.wniemiec-data-java</groupId>
+			<artifactId>encryptor</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.io.search</groupId>
+			<groupId>io.github.wniemiec-io-java</groupId>
 			<artifactId>file-searcher</artifactId>
-			<version>[1.0.0,)</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>wniemiec.util.io.parser</groupId>
-			<artifactId>balance</artifactId>
-			<version>[1.0.1,)</version>
-		</dependency>
-		<dependency>
-			<groupId>wniemiec.util.io.processor.indenter</groupId>
-			<artifactId>java-code-indenter</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
-			<groupId>wniemiec.util.io.manager</groupId>
-			<artifactId>csv-file-manager</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
-			<groupId>wniemiec.util.io.path.replacer</groupId>
-			<artifactId>reserved-character-replacer</artifactId>
-			<version>[1.0.0,)</version>
-		</dependency>
-		<dependency>
-			<groupId>wniemiec.io</groupId>
+			<groupId>io.github.wniemiec-io-java</groupId>
 			<artifactId>consolex</artifactId>
-			<version>[1.0.1,)</version>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.wniemiec-io-java</groupId>
+			<artifactId>csv-file-manager</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.wniemiec-io-java</groupId>
+			<artifactId>text-file-manager</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.wniemiec-util-java</groupId>
+			<artifactId>parser-balance</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.wniemiec-util-java</groupId>
+			<artifactId>reserved-character-replacer</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
-
-	<distributionManagement>
-		<repository>
-			<id>github-ef</id>
-			<name>GitHub williamniemiec Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/williamniemiec/ExecutionFlow/</url>
-		</repository>
-	</distributionManagement>
 
 	<build>
 		<resources>
