@@ -1,7 +1,7 @@
 ![](https://github.com/williamniemiec/ExecutionFlow/blob/v7.x/docs/img/logo/logo.jpg?raw=true)
 
-<h1 align='center'>Execution Flow</h1>
-<p align='center'>Generates test path for tested methods and constructors from JUnit tests</p>
+<h1 align='center'>ExecutionFlow</h1>
+<p align='center'>A tool to compute test paths of Java methods and constructors.</p>
 <p align="center">
 	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AWindows"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Windows?label=Windows" alt=""></a>
 	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AMacOS"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/MacOS?label=MacOS" alt=""></a>
@@ -9,15 +9,15 @@
 	<a href="https://codecov.io/gh/williamniemiec/ExecutionFlow"><img src="https://codecov.io/gh/williamniemiec/ExecutionFlow/branch/v7.x/graph/badge.svg?token=R2SFS4SP86" alt="Coverage status"></a>
 	<a href="http://java.oracle.com"><img src="https://img.shields.io/badge/java-12+-D0008F.svg" alt="Java compatibility"></a>
 	<a href="https://github.com/williamniemiec/ExecutionFlow/releases"><img src="https://img.shields.io/github/v/release/williamniemiec/ExecutionFlow" alt="Release"></a>
-	<a href="https://github.com/williamniemiec/ExecutionFlow/blob/master/LICENCE"><img src="https://img.shields.io/github/license/williamniemiec/ExecutionFlow" alt="Licence"></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/blob/master/LICENSE"><img src="https://img.shields.io/github/license/williamniemiec/ExecutionFlow" alt="License"></a>
 </p>
 <hr />
 
 ## ❇ Introduction
 Computes test path for tested methods and constructors from JUnit tests using a debugger and aspect-oriented programming.
 
-#### Demonstration (click to play)
-[![Video demonstration](http://img.youtube.com/vi/bpfoJe1xv5g/0.jpg)](http://www.youtube.com/watch?v=bpfoJe1xv5g "ExecutionFlow - Introduction and Demonstration")
+#### Presentation (click to play)
+[![Video demonstration](http://img.youtube.com/vi/2W5BjVuc6fw/0.jpg)](https://youtu.be/2W5BjVuc6fw "SBES 21 - ExecutionFlow: a tool to compute test paths of Java methods and constructors")
 
 ## ❓ How to use
 The step by step on how to use the application can be found [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Don't forget to include [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar) in the build path of the project (otherwise the application will not work).
