@@ -3,9 +3,9 @@
 <h1 align='center'>ExecutionFlow</h1>
 <p align='center'>A tool to compute test paths of Java methods and constructors.</p>
 <p align="center">
-	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AWindows"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Windows?label=Windows" alt=""></a>
-	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AMacOS"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/MacOS?label=MacOS" alt=""></a>
-	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AUbuntu"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Ubuntu?label=Ubuntu" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/windows.yml"><img src="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/windows.yml/badge.svg" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/macos.yml"><img src="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/macos.yml/badge.svg" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/ubuntu.yml"><img src="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/ubuntu.yml/badge.svg" alt=""></a>
 	<a href="https://codecov.io/gh/williamniemiec/ExecutionFlow"><img src="https://codecov.io/gh/williamniemiec/ExecutionFlow/branch/v7.x/graph/badge.svg?token=R2SFS4SP86" alt="Coverage status"></a>
 	<a href="http://java.oracle.com"><img src="https://img.shields.io/badge/java-12+-D0008F.svg" alt="Java compatibility"></a>
 	<a href="https://github.com/williamniemiec/ExecutionFlow/releases"><img src="https://img.shields.io/github/v/release/williamniemiec/ExecutionFlow" alt="Release"></a>

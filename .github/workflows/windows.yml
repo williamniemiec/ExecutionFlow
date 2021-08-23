@@ -1,14 +1,14 @@
-name: Ubuntu
+name: Windows
 
 on:
   push:
-    branches: [ v7.x ]
+    branches: [ v8.x ]
   pull_request:
-    branches: [ v7.x ]
+    branches: [ v8.x ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
   
     steps:
     - uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
       env:
         GITHUB_USERNAME: williamniemiec
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: mvn -Djava.awt.headless=true --settings settings.xml --file pom.xml jacoco:prepare-agent resources:testResources install jacoco:report
+      run: mvn --file pom.xml jacoco:prepare-agent install jacoco:report
     - uses: codecov/codecov-action@v1
       with:
           file: ./**/target/site/jacoco/jacoco.xml
