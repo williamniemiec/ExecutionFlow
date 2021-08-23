@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>wniemiec.app.java</groupId>
+	<groupId>io.github.wniemiec-app-java</groupId>
 	<artifactId>executionflow</artifactId>
 	<version>8.0.0</version>
 	<packaging>jar</packaging>
