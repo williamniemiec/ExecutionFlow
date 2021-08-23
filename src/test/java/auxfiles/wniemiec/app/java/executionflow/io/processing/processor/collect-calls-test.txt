@@ -1,0 +1,32 @@
+package foo.bar;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+public class AssertFailTest {
+
+	@Test
+	public void method1() {
+		// code
+	}
+	
+	@org.junit.Test
+	public void method2() {
+		// code
+	}
+	
+	@wniemiec.app.java.executionflow.runtime.CollectMethodsCalled @Test
+	public void method3() {
+		// code
+	}
+	
+	@Test
+	public void method4() {
+		// code
+	}
+	
+	public void method5() {
+		// code
+	}
+}
