@@ -98,7 +98,7 @@ public abstract class ExportManager {
 	
 	private void initializeMethodsCalledByTestedInvokedExporter() {
 		this.mcti = new MethodsCalledByTestedInvokedExporter(
-				"MCTI", 
+				"MCTMC", 
 				outputDir
 		);
 	}
