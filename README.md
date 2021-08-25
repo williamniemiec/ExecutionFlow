@@ -14,7 +14,7 @@
 <hr />
 
 ## ❇ Introduction
-Computes test path for tested methods and constructors from JUnit tests using a debugger and aspect-oriented programming.
+ExecutionFlow is a tool to trace executed test paths in Java code. The tool is based on the use of a debugger, aspect-oriented programming, and a testing framework.
 
 #### Presentation (click to play)
 [![Video demonstration](http://img.youtube.com/vi/2W5BjVuc6fw/0.jpg)](https://youtu.be/2W5BjVuc6fw "SBES 21 - ExecutionFlow: a tool to compute test paths of Java methods and constructors")
