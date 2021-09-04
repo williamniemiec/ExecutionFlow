@@ -1,0 +1,9 @@
+examples.others.AssertFailTest.assertFailAtTheEndTest()
+[188, 189]
+
+examples.others.AssertFailTest.assertFailAtTheEndTest()
+[188, 192, 193]
+
+examples.others.AssertFailTest.assertFailAtTheEndTest()
+[188, 192, 196]
+

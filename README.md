@@ -1,26 +1,29 @@
-![](https://github.com/williamniemiec/ExecutionFlow/blob/v7.x/docs/img/logo/logo.jpg?raw=true)
+![](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/logo/logo.jpg?raw=true)
 
-<h1 align='center'>Execution Flow</h1>
-<p align='center'>Generates test path for tested methods and constructors from JUnit tests</p>
+<h1 align='center'>ExecutionFlow</h1>
+<p align='center'>A tool to compute test paths of Java methods and constructors.</p>
 <p align="center">
-	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AWindows"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Windows?label=Windows" alt=""></a>
-	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AMacOS"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/MacOS?label=MacOS" alt=""></a>
-	<a href="https://github.com/williamniemiec/ExecutionFlow/actions?query=workflow%3AUbuntu"><img src="https://img.shields.io/github/workflow/status/williamniemiec/ExecutionFlow/Ubuntu?label=Ubuntu" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/windows.yml"><img src="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/windows.yml/badge.svg" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/macos.yml"><img src="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/macos.yml/badge.svg" alt=""></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/ubuntu.yml"><img src="https://github.com/williamniemiec/ExecutionFlow/actions/workflows/ubuntu.yml/badge.svg" alt=""></a>
 	<a href="https://codecov.io/gh/williamniemiec/ExecutionFlow"><img src="https://codecov.io/gh/williamniemiec/ExecutionFlow/branch/v7.x/graph/badge.svg?token=R2SFS4SP86" alt="Coverage status"></a>
 	<a href="http://java.oracle.com"><img src="https://img.shields.io/badge/java-12+-D0008F.svg" alt="Java compatibility"></a>
 	<a href="https://github.com/williamniemiec/ExecutionFlow/releases"><img src="https://img.shields.io/github/v/release/williamniemiec/ExecutionFlow" alt="Release"></a>
-	<a href="https://github.com/williamniemiec/ExecutionFlow/blob/master/LICENCE"><img src="https://img.shields.io/github/license/williamniemiec/ExecutionFlow" alt="Licence"></a>
+	<a href="https://github.com/williamniemiec/ExecutionFlow/blob/master/LICENSE"><img src="https://img.shields.io/github/license/williamniemiec/ExecutionFlow" alt="License"></a>
 </p>
 <hr />
 
 ## ❇ Introduction
-Computes test path for tested methods and constructors from JUnit tests using a debugger and aspect-oriented programming.
+ExecutionFlow is a tool to trace executed test paths in Java code. The tool is based on the use of a debugger, aspect-oriented programming, and a testing framework.
+
+#### Presentation (click to play)
+[![Video demonstration](http://img.youtube.com/vi/2W5BjVuc6fw/0.jpg)](https://youtu.be/2W5BjVuc6fw "SBES 21 - ExecutionFlow: a tool to compute test paths of Java methods and constructors")
 
 ## ❓ How to use
-The step by step on how to use the application can be found [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Don't forget to include [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools.jar) in the build path of the project (otherwise the application will not work).
+The step by step on how to use the application can be found [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Don't forget to include [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools-1.9.6.jar) in the build path of the project (otherwise the application will not work).
 
 ## 📖 Documentation
-See the full documentation on [wiki](https://github.com/williamniemiec/ExecutionFlow/wiki). See [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Limita%C3%A7%C3%B5es-e-pontos-importantes) the application restrictions and other important points .
+See the full documentation on [wiki](https://github.com/williamniemiec/ExecutionFlow/wiki). See [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Limitations-and-important-notices) the application restrictions and other important points .
 
 ## ✔ Requiremens
 - [Eclipse 2019-06](https://www.eclipse.org/downloads/packages/release/2019-06) ou higher;
@@ -50,12 +53,12 @@ examples.others.auxClasses.AuxClass(int)
 [12]
 ```
 
-See more [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Exemplos).
+See more [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Examples).
 
 ## ℹ How it works?
-![app-schema](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/schemas/app.png?raw=true)
+![app-schema](https://github.com/williamniemiec/ExecutionFlow/blob/master/docs/img/schemas/general-schema-2.png?raw=true)
 
-See more [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-funciona).
+See more [here](https://github.com/williamniemiec/ExecutionFlow/wiki/How-it-works).
 
 ## ⚠ Warnings
 If you encounter any problems with the application, be sure to check the wiki for troubleshooting. If your problem is not resolved, check to see if there is already an [issue](https://github.com/williamniemiec/ExecutionFlow/issues) with your problem. If not, [create an issue](https://github.com/williamniemiec/ExecutionFlow/issues/new/choose) describing the problem in detail. 
@@ -82,7 +85,7 @@ Details about each version are documented in the [releases section](https://gith
 See the documentation on how you can contribute to the project [here](https://github.com/williamniemiec/ExecutionFlow/blob/master/CONTRIBUTING.md).
 
 ## 🗺 Project structure
-![global-schema](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/global.png?raw=true)
+![architecture](https://raw.githubusercontent.com/williamniemiec/ExecutionFlow/master/docs/img/schemas/architecture.png?raw=true)
 
 ## 📁 Files
 

@@ -1,0 +1,55 @@
+package examples.junit5;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import examples.others.auxClasses.AuxClass;
+
+@wniemiec.app.java.executionflow.runtime.SkipCollection public class MixedJUnit5Annotations {
+	
+	@BeforeEach
+	public void bef() {
+Boolean.parseBoolean("True");
+	}
+
+@wniemiec.app.java.executionflow.runtime.CollectMethodsCalled 	@Test 
+	public void testAnnotation() {
+		AuxClass tc = new AuxClass(4);
+
+		assertEquals(24, tc.factorial(4));
+	}
+
+	@ParameterizedTest
+	@ValueSource(ints = { -1 })
+	public void parameterizedTestAnnotation(int num) {
+		AuxClass tc = new AuxClass(4);
+
+		assertEquals(1, tc.factorial(num));
+	}
+
+	@RepeatedTest(2)
+	@DisplayName(RepeatedTest.LONG_DISPLAY_NAME)
+	public void repeatedTestAnnotation() {
+		AuxClass tc = new AuxClass(4);
+
+		assertEquals(24, tc.factorial(4));
+	}
+	
+	@wniemiec.app.java.executionflow.runtime.CollectMethodsCalled 	@Test public List<Integer> identity(int num1, int num2, int num3, int num4, int num5) { 
+		List<Integer> response = Arrays.asList(num1,				num2,				num3,				num4,				num5		);
+
+
+
+
+
+
+		
+		return response;
+	}
+}
