@@ -117,8 +117,8 @@ public class ProcessingManager {
 			Consolex.writeError(e.getMessage());
 			Consolex.writeError("Could not recover backup files.");
 			Consolex.writeError("See more: https://github.com/williamniemiec/"
-					+ "ExecutionFlow/wiki/Solu%C3%A7%C3%A3o-de-problemas"
-					+ "#could-not-recover-all-backup-files");
+					+ "ExecutionFlow/wiki/troubleshooting"
+					+ "#-it-is-not-possible-to-recover-all-backup-files");
 		}
 		catch (NullPointerException e) {
 			success = false;
