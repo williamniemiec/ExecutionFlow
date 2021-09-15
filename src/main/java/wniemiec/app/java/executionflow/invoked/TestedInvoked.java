@@ -63,7 +63,7 @@ public class TestedInvoked implements Serializable {
 		
 		result = prime * result + ((testedInvoked == null) ? 0 
 				: testedInvoked.getConcreteSignature().hashCode());
-		result = prime * result + ((testMethod == null) ? 0 
+		result += prime * result + ((testMethod == null) ? 0 
 				: testMethod.getInvokedSignature().hashCode());
 		
 		return result;

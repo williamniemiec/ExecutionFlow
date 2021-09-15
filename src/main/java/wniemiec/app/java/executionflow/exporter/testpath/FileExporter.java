@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,12 +74,14 @@ public class FileExporter implements TestPathExporter {
 	private void exportTestPaths(Map<TestedInvoked, List<List<Integer>>> testPaths) 
 			throws IOException {
 		removeConflictingExportFiles(testPaths.keySet());
+		
+		Map<TestedInvoked, List<List<Integer>>> mergedTestPaths = mergeTestedInvoked(testPaths);
 
-		for (Map.Entry<TestedInvoked, List<List<Integer>>> e : testPaths.entrySet()) {
+		for (Map.Entry<TestedInvoked, List<List<Integer>>> e : mergedTestPaths.entrySet()) {
 			TestedInvoked invokedContainer = e.getKey();
 			List<List<Integer>> tps = e.getValue();
 
-			prepareExportFile(invokedContainer);
+			prepareExportFile(e.getKey());
 						
 			tps = removeEmptyTestPaths(tps);
 			
@@ -97,6 +101,39 @@ public class FileExporter implements TestPathExporter {
 		);
 	}
 	
+	private Map<TestedInvoked, List<List<Integer>>> mergeTestedInvoked(
+			Map<TestedInvoked, List<List<Integer>>> collectedTestPaths) {
+		Map<TestedInvoked, List<List<Integer>>> mergedTestPaths = new HashMap<>();
+		Map<String, List<List<Integer>>> uniqueMergedTestPaths = new HashMap<>();
+		Set<String> checked = new HashSet<>();
+		
+		for (Map.Entry<TestedInvoked, List<List<Integer>>> e : collectedTestPaths.entrySet()) {
+			String testMethodSignature = e.getKey().getTestMethod().getConcreteSignature();
+			List<List<Integer>> testPaths = e.getValue();
+			
+			if (uniqueMergedTestPaths.containsKey(testMethodSignature)) {
+				List<List<Integer>> storedTestPaths = uniqueMergedTestPaths.get(testMethodSignature);
+				storedTestPaths.addAll(testPaths);
+			}
+			else {
+				uniqueMergedTestPaths.put(testMethodSignature, testPaths);
+			}
+		}
+		
+		for (TestedInvoked testedInvoked : collectedTestPaths.keySet()) {
+			String testMethodSignature = testedInvoked.getTestMethod().getConcreteSignature();
+			List<List<Integer>> testPaths = uniqueMergedTestPaths.get(testMethodSignature);
+			
+			if (!checked.contains(testMethodSignature)) {
+				checked.add(testMethodSignature);
+				mergedTestPaths.put(testedInvoked, testPaths);
+			}
+		}
+		
+		return mergedTestPaths;
+	}
+
+
 	/**
 	 * Removes test path export files that will be overwritten (avoids 
 	 * creating duplicate files).
