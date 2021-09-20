@@ -405,8 +405,14 @@ public class FileProcessingManager implements Serializable {
 	}
 
 	private Path generateAspectsRootDirectory() {
+		Path mavenProject = ExecutionFlow.getAppTargetPath().resolve(
+				Path.of("classes", "wniemiec", "app", "java", "executionflow", "runtime"));
+		
+		if (Files.exists(mavenProject))
+			return mavenProject;
+			
 		return ExecutionFlow.getAppTargetPath().resolve(
-				Path.of("classes", "wniemiec", "app", "java", "executionflow", "runtime")
+				Path.of("bin", "wniemiec", "app", "java", "executionflow", "runtime")
 		);
 	}
 
