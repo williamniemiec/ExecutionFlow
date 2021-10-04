@@ -16,8 +16,14 @@
 ## ❇ Introduction
 ExecutionFlow is a tool to trace executed test paths in Java code. The tool is based on the use of a debugger, aspect-oriented programming, and a testing framework.
 
+#### Abstract
+[![Video abstract](http://img.youtube.com/vi/2W5BjVuc6fw/0.jpg)](https://youtu.be/2W5BjVuc6fw "SBES 21 - Presentation - ExecutionFlow: a tool to compute test paths of Java methods and constructors")
+
 #### Presentation (click to play)
-[![Video demonstration](http://img.youtube.com/vi/2W5BjVuc6fw/0.jpg)](https://youtu.be/2W5BjVuc6fw "SBES 21 - ExecutionFlow: a tool to compute test paths of Java methods and constructors")
+[![Video presentation](http://img.youtube.com/vi/3ALLrjnFbtk/0.jpg)](https://youtu.be/3ALLrjnFbtk "ExecutionFlow: a tool to compute test paths of Java methods and constructors")
+
+#### Demonstration (click to play)
+[![Video demonstration](http://img.youtube.com/vi/1klRSltsSaA/0.jpg)](https://youtu.be/1klRSltsSaA "SBES 21 - Demonstration - ExecutionFlow: a tool to compute test paths of Java methods and constructors")
 
 ## ❓ How to use
 The step by step on how to use the application can be found [here](https://github.com/williamniemiec/ExecutionFlow/wiki/Como-usar). Don't forget to include [aspectjtools.jar](https://github.com/williamniemiec/ExecutionFlow/blob/master/lib/aspectjtools-1.9.6.jar) in the build path of the project (otherwise the application will not work).
